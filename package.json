@@ -1,0 +1,16 @@
+{
+  "name": "gy-fly",
+  "version": "1.0.0",
+  "description": "个人网站",
+  "main": "index.js",
+  "repository": "https://github.com/mineMineGo/gy-fly.git",
+  "author": "gaoyuan <gaoyuan_flying@163.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "vuepress": "^2.0.0-beta.36"
+  },
+  "scripts": {
+    "dev": "vuepress dev docs",
+    "build": "vuepress build docs"
+  }
+}
