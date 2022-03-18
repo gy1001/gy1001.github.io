@@ -1038,7 +1038,7 @@ define(['module'], function (module) {
 
 For passing config to a package, target the main module in the package, not the package ID:
 
-要将一个配置传递给一个包，目标是包中的主模块，而不是 包 ID
+要将一个配置传递给一个包，目标是包中的主模块，而不是包 ID
 
 ```javascript
 requirejs.config({
@@ -1060,29 +1060,49 @@ requirejs.config({
 })
 ```
 
-packages: configures loading modules from CommonJS packages. See the packages topic for more information.
+**packages**: configures loading modules from CommonJS packages. See the packages topic for more information.
 
-nodeIdCompat: Node treats module ID example.js and example the same. By default these are two different IDs in RequireJS. If you end up using modules installed from npm, then you may need to set this config value to true to avoid resolution issues. This option only applies to treating the ".js" suffix differently, it does not do any other node resolution and evaluation matching such as .json file handling (JSON handling needs a 'json!' loader plugin anyway). Available in 2.1.10 and greater.
+**packages**: 关于从 commonjs 包中加载模块的配置。有关更多信息，参阅 packages 主题
 
-waitSeconds: The number of seconds to wait before giving up on loading a script. Setting it to 0 disables the timeout. The default is 7 seconds.
+**nodeIdCompat**: Node treats module ID example.js and example the same. By default these are two different IDs in RequireJS. If you end up using modules installed from npm, then you may need to set this config value to true to avoid resolution issues. This option only applies to treating the ".js" suffix differently, it does not do any other node resolution and evaluation matching such as .json file handling (JSON handling needs a 'json!' loader plugin anyway). Available in 2.1.10 and greater.
 
-context: A name to give to a loading context. This allows require.js to load multiple versions of modules in a page, as long as each top-level require call specifies a unique context string. To use it correctly, see the Multiversion Support section.
+**nodeIdCompat**： node 对于模块 id example.js 和 example 是一样的。默认情况下，这是 requireJS 中两个不同的 ids. 如果你最终使用了从 npm 安装的模块，那么你可能需要设置这个选项值为 true 来避免解决问题。这个选项只适用与不同的处理 js 后缀，他不做任何其他节点解析和评估匹配，如 json 文件处理(JSON 处理无论如何需要 json! 插件)。可在 2.1.10 及以上版本中使用
 
-deps: An array of dependencies to load. Useful when require is defined as a config object before require.js is loaded, and you want to specify dependencies to load as soon as require() is defined. Using deps is just like doing a require([]) call, but done as soon as the loader has processed the configuration. It does not block any other require() calls from starting their requests for modules, it is just a way to specify some modules to load asynchronously as part of a config block.
+**waitSeconds**: The number of seconds to wait before giving up on loading a script. Setting it to 0 disables the timeout. The default is 7 seconds.
 
-callback: A function to execute after deps have been loaded. Useful when require is defined as a config object before require.js is loaded, and you want to specify a function to require after the configuration's deps array has been loaded.
+**waitSeconds**：在放弃加载脚本之前等待的秒数。设置为 0 表示禁用超时，默认是 7 秒
 
-enforceDefine: If set to true, an error will be thrown if a script loads that does not call define() or have a shim exports string value that can be checked. See Catching load failures in IE for more information.
+**context**: A name to give to a loading context. This allows require.js to load multiple versions of modules in a page, as long as each top-level require call specifies a unique context string. To use it correctly, see the Multiversion Support section.
 
-xhtml: If set to true, document.createElementNS() will be used to create script elements.
+**context**: 给加载上下文的一个名字。这个允许 require.js 来在一个页面加载不同版本的模块，只要每个顶级 require 调用指定一个唯一的上下文字符串，参阅多版本支持部分
 
-urlArgs: Extra query string arguments appended to URLs that RequireJS uses to fetch resources. Most useful to cache bust when the browser or server is not configured correctly. Example cache bust setting for urlArgs:
+**deps**: An array of dependencies to load. Useful when require is defined as a config object before require.js is loaded, and you want to specify dependencies to load as soon as require() is defined. Using deps is just like doing a require([]) call, but done as soon as the loader has processed the configuration. It does not block any other require() calls from starting their requests for modules, it is just a way to specify some modules to load asynchronously as part of a config block.
+
+**deps**: 要加载的数组依赖项。 在 require.js 被加载前被定义为一个配置对象时时候，并且你希望在 require()被定义后立即加载指定的依赖项时候，这个方法很有用。使用 deps 很像使用 require([]) 调用，但是在加载器处理完配置后立即执行。它不会阻止任何其他 require() 调用启动它们对模块的请求，它只是指定一些模块作为配置块的一部分来异步加载的一种方式。
+
+**callback**: A function to execute after deps have been loaded. Useful when require is defined as a config object before require.js is loaded, and you want to specify a function to require after the configuration's deps array has been loaded.
+
+**callback**: 一个当 deps 已经被加载完执行的函数。当 require 在 require.js 被加载前被定义为一个配置对象，并且你想在配置的 deps 数组被执行完指定执行一个函数来 require 时候非常有用。
+
+**enforceDefine**: If set to true, an error will be thrown if a script loads that does not call define() or have a shim exports string value that can be checked. See Catching load failures in IE for more information.
+
+**enforceDefine**: 如果设置为 true, 那么如果加载的脚本(没有调用 define()或者没有一个 shim 来导出一个可被检查的字符串）将抛出一个错误。查看 Catching load failures in IE 获得更多信息。
+
+**xhtml**: If set to true, document.createElementNS() will be used to create script elements.
+
+**xhtml**: 如果设置为 true, document.createElementNS() 将会被用来创建脚本元素。
+
+**urlArgs**: Extra query string arguments appended to URLs that RequireJS uses to fetch resources. Most useful to cache bust when the browser or server is not configured correctly. Example cache bust setting for urlArgs:
+
+**urlArgs**: 附加到 RequiresJS 用来获取资源的 URLS 的额外的查询字符串参数。当浏览器或者服务器没有配置正确时候，更多的用来缓存 bust。urlArgs 的缓存 bust 设置例子如下
 
 ```javascript
 urlArgs: 'bust=' + new Date().getTime()
 ```
 
 As of RequireJS 2.2.0, urlArgs can be a function. If a function, it will receive the module ID and the URL as parameters, and it should return a string that will be added to the end of the URL. Return an empty string if no args. Be sure to take care of adding the '?' or '&' depending on the existing state of the URL. Example:
+
+作为 RequireJS 2.2.0，urlArgs 可以是一个函数。如果是一个函数，它将接收模块 id 和 URL 作为参数，并且它应该返回一个字符串 用来添加到 URL 的结尾处。如果没有参数将返回空。一定要注意添加 ? 或者 &, 这取决于 URL 的现存状态。例如：
 
 ```javascript
 requirejs.config({
@@ -1099,9 +1119,15 @@ requirejs.config({
 
 During development it can be useful to use this, however be sure to remove it before deploying your code.
 
-scriptType: Specify the value for the type="" attribute used for script tags inserted into the document by RequireJS. Default is "text/javascript". To use Firefox's JavaScript 1.8 features, use "text/javascript;version=1.8".
+在开发环境使用这个将会非常有用，但是确保在部署代码之前删除它。
 
-skipDataMain: Introduced in RequireJS 2.1.9: If set to true, skips the data-main attribute scanning done to start module loading. Useful if RequireJS is embedded in a utility library that may interact with other RequireJS library on the page, and the embedded version should not do data-main loading.
+**scriptType**: Specify the value for the type="" attribute used for script tags inserted into the document by RequireJS. Default is "text/javascript". To use Firefox's JavaScript 1.8 features, use "text/javascript;version=1.8".
+
+**scriptType**: 指定 type= 属性的值，该属性用来用于由 requireJS 插入到文档中的脚本标签。默认为 "text/javascript". 为了使用 火狐的 JavaScript 1.8 特性，使用 "text/javascript;version=1.8".
+
+**skipDataMain**: Introduced in RequireJS 2.1.9: If set to true, skips the data-main attribute scanning done to start module loading. Useful if RequireJS is embedded in a utility library that may interact with other RequireJS library on the page, and the embedded version should not do data-main loading.
+
+**skipDataMain**：RequireJS 2.1.9 引进： 如果设置为 true, 将跳过为开始加载模块而进行的 data-main 属性扫描。如果 RequireJS 被嵌入到一个 可能会在页面中与其他 RequireJS 进行交互的并且这个嵌入的版本不应该处理 data-main 加载的公共的库中，将会很有用。
 
 ### ADVANCED USAGE
 
@@ -1109,19 +1135,33 @@ skipDataMain: Introduced in RequireJS 2.1.9: If set to true, skips the data-main
 
 RequireJS supports loading modules that are in a CommonJS Packages directory structure, but some additional configuration needs to be specified for it to work. Specifically, there is support for the following CommonJS Packages features:
 
+RequireJS 支持加载 在 CommonJS Packages 目录结构中的模块，但是一些额外的配置需要被指明才能工作。具体来说，它支持以下 CommonJS Packages 特性
+
 - A package can be associated with a module name/prefix.
 - The package config can specify the following properties for a specific package:
   - name: The name of the package (used for the module name/prefix mapping)
   - location: The location on disk. Locations are relative to the baseUrl configuration value, unless they contain a protocol or start with a front slash (/).
   - main: The name of the module inside the package that should be used when someone does a require for "packageName". The default value is "main", so only \* specify it if it differs from the default. The value is relative to the package folder.
 
+* 包可以与模块名/前缀相关联
+* 包配置可以为特定的包指定以下属性
+  - name: 这个包的名字（用于模块名/前缀映射）
+  - location: 磁盘上的位置。Locations 是相对于设置的 baseUrl 的值，除非他们还能有协议(http、https) 或者以 前缀 / 开头
+  * main：当有人要求 packageName 时，包中的模块名应该被使用。默认值的 main, 因此 仅当 如果它不同于默认值时，\* 指定它。这个值是相对于包文件夹的
+
 ##### IMPORTANT NOTES
 
 - While the packages can have the CommonJS directory layout, the modules themselves should be in a module format that RequireJS can understand. Exception to the rule: if you are using the r.js Node adapter, the modules can be in the traditional CommonJS module format. You can use the CommonJS converter tool if you need to convert traditional CommonJS modules into the async module format that RequireJS uses.
 
+* 虽然包可以有 commonJS 目录布局，但是模块本身应该是一个 RequireJS 可以理解的模块格式。规则期望是：如果你正在使用 r.js Node 适配器，模块可以采用传统的 CommonJS 模块格式。如果你需要把传统的 CommonJS 模块转换为 RequireJS 使用的异步模块格式，你可以使用 CommonJS 转换工具。
+
 * Only one version of a package can be used in a project context at a time. You can use RequireJS multiversion support to load two different module contexts, but if you want to use Package A and B in one context and they depend on different versions of Package C, then that will be a problem. This may change in the future.
 
+* 在同一时间，在一个项目上下文中，仅仅一个版本的包可以被使用。你可以使用 RequireJS 多版本支持来加载两个不同的模块上下文，但是如果你想在一个上下文中使用 包 A 和 B, 并且他们都依赖于不同版本的 包 C, 这将是一个问题。 它也许将在将来进行改变。
+
 If you use a similar project layout as specified in the Start Guide, the start of your web project would look something like this (Node/Rhino-based projects are similar, just use the contents of the scripts directory as the top-level project directory):
+
+在开始指南中，如果你使用一个类似的项目布局，你的 web 项目开始时将看起来像这样(Node/Rhino-based 项目是类似的，仅仅使用 scripts 目录的内容作为顶级项目目录)
 
 ```
 project-directory/
@@ -1131,6 +1171,8 @@ project-directory/
 ```
 
 Here is how the example directory layout looks with two packages, cart and store:
+
+下面是两个包的目录布局示例，购物车和商店。
 
 ```
 project-directory/
@@ -1153,6 +1195,8 @@ project.html will have a script tag like this:
 
 This will instruct require.js to load scripts/main.js. main.js uses the "packages" config to set up packages that are relative to require.js, which in this case are the source packages "cart" and "store":
 
+这将直到 require.js 来加载 scripts/main.js. main.js 使用 packages 配置来设置相对于 require.js 的包，在本例中是资源包 cart 和 store
+
 ```javascript
 //main.js contents
 //Pass a config object to require
@@ -1167,7 +1211,11 @@ require(['cart', 'store', 'store/util'], function (cart, store, util) {
 
 A require of "cart" means that it will be loaded from scripts/cart/main.js, since "main" is the default main module setting supported by RequireJS. A require of "store/util" will be loaded from scripts/store/util.js.
 
+cart require 意味着 它将从 scripts/cart/main.js 中加载，因为 main 是 RequireJS 支持的默认主模块设置。A require of "store/util" 将从 scripts/store/util.js 中被加载。
+
 If the "store" package did not follow the "main.js" convention, and looked more like this:
+
+如果 store 包 没有 遵循 main.js 约定，并且看起来类似这样
 
 ```
 project-directory/
@@ -1186,6 +1234,8 @@ project-directory/
 
 Then the RequireJS configuration would look like so:
 
+然后 RequireJS 配置将看起来像这样
+
 ```javascript
 require.config({
 	packages: [
@@ -1200,9 +1250,13 @@ require.config({
 
 To avoid verbosity, it is strongly suggested to always use packages that use "main" convention in their structure.
 
+为了避免冗长，强烈建议总是在其结构中使用 main 约定的包。
+
 #### Multiversion Support
 
 As mentioned in Configuration Options, multiple versions of a module can be loaded in a page by using different "context" configuration options. require.config() returns a require function that will use the context configuration. Here is an example that loads two different versions of the alpha and beta modules (this example is taken from one of the test files):
+
+如配置选项中所述的，在一个页面中一个模块的多版本可以通过使用不同的上下文配合选项来被加载。require.config() 返回一个函数，这个函数将使用上下文配置。这有一个例子，它加载了 alpha 和 beta 模块的 两个不同的版本(这个例子取自其中一个测试文件)
 
 ```javascript
 <script src="../require.js"></script>
@@ -1212,8 +1266,7 @@ var reqOne = require.config({
   baseUrl: "version1"
 });
 
-reqOne(["require", "alpha", "beta",],
-function(require,   alpha,   beta) {
+reqOne(["require", "alpha", "beta",], function(require,   alpha,   beta) {
   log("alpha version is: " + alpha.version); //prints 1
   log("beta version is: " + beta.version); //prints 1
 
@@ -1232,8 +1285,7 @@ var reqTwo = require.config({
       baseUrl: "version2"
     });
 
-reqTwo(["require", "alpha", "beta"],
-function(require,   alpha,   beta) {
+reqTwo(["require", "alpha", "beta"], function(require,   alpha,   beta) {
   log("alpha version is: " + alpha.version); //prints 2
   log("beta version is: " + beta.version); //prints 2
 
@@ -1251,61 +1303,105 @@ function(require,   alpha,   beta) {
 
 Note that "require" is specified as a dependency for the module. This allows the require() function that is passed to the function callback to use the right context to load the modules correctly for multiversion support. If "require" is not specified as a dependency, then there will likely be an error.
 
+注意 require 被指定为模块的依赖项。这允许传递给函数回调的 require()函数类使用正确的上下文来正确的模块以获取多版本支持。如果 require 不是作为依赖项被指名，则可能会出现错误。
+
 #### Loading Code After Page Load
 
 The example above in the Multiversion Support section shows how code can later be loaded by nested require() calls.
+
+上面多版本支持一节中的例子展示了被嵌套的 require()调用之后如何加载代码的。
 
 #### Web Worker Support
 
 As of release 0.12, RequireJS can be run inside a Web Worker. Just use importScripts() inside a web worker to load require.js (or the JS file that contains the require() definition), then call require.
 
+在 发布的 0.12 版本中，RequireJS 可以在 Web Worker 中运行。 仅仅在一个 web worker 中使用 importScripts()来加载 require.js(或者包含 require()定义的 JS 文件)。然后调用 require
+
 You will likely need to set the baseUrl configuration option to make sure require() can find the scripts to load.
 
+你可能需要设置 baseUrl 配置选项来确保 require() 可以找到需要加载的脚本。
+
 You can see an example of its use by looking at one of the files used in the unit test.
+
+通过查看单元测试中使用的一个文件，你可以看到它的使用示例。
 
 #### Rhino Support
 
 RequireJS can be used in Rhino via the r.js adapter. See the r.js README for more information.
 
+RequireJS 可以通过 r.js 适配器 在 Rhino 使用。查看 r.js README 来获取更多信息
+
 #### Nashorn Support
 
 As of RequireJS 2.1.16, RequireJS can be used in Nashorn, Java 8+'s JavaScript engine, via the r.js adapter. See the r.js README for more information.
+
+从 RequireJS 2.1.16 起，RequireJS 可以在通过使用 r.js 适配器在 Nashorn java8+的 JS 引擎中使用。参阅 r.js README 来获取更多信息
 
 #### Handling Errors
 
 The general class of errors are 404s for scripts (not found), network timeouts or errors in the scripts that are loaded. RequireJS has a few tools to deal with them: require-specific errbacks, a "paths" array config, and a global requirejs.onError.
 
+通常错误类型是 404(脚本未找到)、网络超时、加载脚本错误。 RequireJS 有一些工具来处理它们：require-specific errbacks， 一个 paths 数组配置，和一个全局的 requirejs.onError
+
 The error object passed to errbacks and the global requirejs.onError function will usually contain two custom properties:
+
+传递给 errbacks 的 error 对象和全局的 requirejs.onError 函数通常包含两部分自定义的属性
 
 - requireType: A string value with a general classification, like "timeout", "nodefine", "scripterror".
 
+* requireType: 一个具有一般分类的值，例如： timeout、nodefine、scripterror
+
 * requireModules: an array of module names/URLs that timed out.
 
+* requireModules： 一个超时的模块名/urls 数组
+
 If you get an error with a requireModules, it probably means other modules that depend on the modules in that requireModules array are not defined.
+
+如果你在使用 requireModules 时候出现错误，它可能意味着在 其他依赖于 requireModules 数组中的模块的模块没有定义。
 
 #### Catching load failures in IE
 
 Internet Explorer has a set of problems that make it difficult to detect load failures for errbacks/paths fallbacks:
 
+Internet Explorer 有一组问题，使它很难检测 errbacks/paths 回退的加载故障
+
 - script.onerror does not work in IE 6-8. There is no way to know if loading a script generates a 404, worse, it triggers the onreadystatechange with a complete state even in a 404 case.
+
+* script.onerror 在 IE6-8 中不能工作。这里没有办法知道加载一个脚本是否会产生一个 404，更坏的是，即使在 404 状态下，它也会用一个完整的状态触发 onreadystatechange
 
 * script.onerror does work in IE 9+, but it has a bug where it does not fire script.onload event handlers right after execution of script, so it cannot support the standard method of allowing anonymous AMD modules. So script.onreadystatechange is still used. However, onreadystatechange fires with a complete state before the script.onerror function fires.
 
+* script.onerror 在 IE9.0 中可以运行，但是它有一个问题，在脚本执行后，它不能触发 script.onload 事件，因此它不能支持允许匿名 AMD 模块的标准方法。
+
 So it is very difficult with IE to allow both anonymous AMD modules, which are a core benefit of AMD modules, and reliable detect errors.
+
+因此在 IE 中很难同时允许匿名 AMD 模块（这是 AMD 模块的核心优势）和可靠的错误检测
 
 However, if you are in a project that you know uses define() to declare all of its modules, or it uses the shim config to specify string exports for anything that does not use define(), then if you set the enforceDefine config value to true, the loader can confirm if a script load by checking for the define() call or the existence of the shim's exports global value.
 
+但是，如果你在一个你知道使用 define() 来声明所有模块的工程中，或者它使用 shim 配置来为其他不使用 define()的任何东西指定字符串导出值，那么如果你设置 enforceDefine 为 true, 这个加载器可以通过检查 define() 调用或者 shim 的全局导出值的存在来确认脚本是否加载。
+
 So if you want to support Internet Explorer, catch load errors, and have modular code either through direct define() calls or shim config, always set enforceDefine to be true. See the next section for an example.
+
+如果你想支持 Internet Explorer，捕获加载 errors，并通过直接 define()调用或者 shim 配置类获得模块化代码，请始终设置 enforceDefine 为 true.查看下面的区域获取例子
 
 NOTE: If you do set enforceDefine: true, and you use data-main="" to load your main JS module, then that main JS module must call define() instead of require() to load the code it needs. The main JS module can still call require/requirejs to set config values, but for loading modules it should use define().
 
+注意：如果你设置 enforceDefine 为 true, 并且你使用 data-main="" 来加载你的 main JS 模块，然后 main JS 模块必须调用 define() 而不是 require()来加载它需要的代码。
+
 If you then also use almond to build your code without require.js, be sure to use the insertRequire build setting to insert a require call for the main module -- that serves the same purpose of the initial require() call that data-main does.
+
+如果你也使用 almond 在不适用 require.js 情况下来构建代码，请确保使用 insertRequire 构建设置来为主模块插入一个 require 调用 -- 这与初始化 require()调用和 data-main 调用的目的相同。
 
 #### require([]) errbacks
 
-Errbacks, when used with requirejs.undef(), will allow you to detect if a module fails to load, undefine that module, reset the config to a another location, then try again.
+**Errbacks**, when used with requirejs.undef(), will allow you to detect if a module fails to load, undefine that module, reset the config to a another location, then try again.
+
+**Errbacks**： 当使用 requirejs.undef()时，将允许你检测模块是否加载失败，取消模块定义，重置配置到另一个位置，然后重试。
 
 A common use case for this is to use a CDN-hosted version of a library, but if that fails, switch to loading the file locally:
+
+一个常见的用例是使用 cdn 托管的库版本，但是如果加载失败，切换到本地加载文件
 
 ```javascript
 requirejs.config({
@@ -1349,11 +1445,17 @@ require(['jquery'], function ($) {
 
 With `requirejs.undef()`, if you later set up a different config and try to load the same module, the loader will still remember which modules needed that dependency and finish loading them when the newly configured module loads.
 
+使用 `requirejs.undef()`，如果你稍后设置了不同的配置并尝试加载相同的模块，这个加载器仍然会记住哪些模块需要这些依赖，并在新配置加载后完成加载。
+
 Note: errbacks only work with callback-style require calls, not define() calls. define() is only for declaring modules.
+
+笔记： errbacks 仅仅在 callback-style require 调用时候起作用，而不是 define() 调用。define() 仅仅用来声明模块。
 
 #### paths config fallbacks
 
 The above pattern for detecting a load failure, undef()ing a module, modifying paths and reloading is a common enough request that there is also a shorthand for it. The paths config allows array values:
+
+以上用于检测加载失败、undef()ing 一个模块、修复路径并重载模型的模型是一个非常常见的请求，它也有一个简写。路径配置允许使用数组值
 
 ```javascript
 requirejs.config({
@@ -1374,11 +1476,17 @@ require(['jquery'], function ($) {})
 
 This above code will try the CDN location, but if that fails, fall back to the local lib/jquery.js location.
 
+以上的代码将先尝试使用 CDN 位置，但是如果它失败了，会回退到本地的 lib/jquery.js 位置
+
 Note: paths fallbacks only work for exact module ID matches. This is different from normal paths config which can apply to any part of a module ID prefix segment. Fallbacks are targeted more for unusual error recovery, not a generic path search path solution, since those are inefficient in the browser.
+
+笔记：paths 回退仅仅适用于完全匹配的 模块 ID。这与普通的路径配置不同，后者可以用于模块 ID 前缀的任何部分。回退方法更多的针对不寻常的错误恢复，而不是通用的路径搜索路径解决方案，因为在浏览器中它们效率很低。
 
 #### Global requirejs.onError function
 
 To detect errors that are not caught by local errbacks, you can override requirejs.onError():
+
+为了检测那些没有被本地 errbacks 捕获的错误，你可以重写 requirejs.onError():
 
 ```javascript
 requirejs.onError = function (err) {
@@ -1395,17 +1503,27 @@ requirejs.onError = function (err) {
 
 RequireJS supports loader plugins. This is a way to support dependencies that are not plain JS files, but are still important for a script to have loaded before it can do its work. The RequireJS wiki has a list of plugins. This section talks about some specific plugins that are maintained alongside RequireJS:
 
+RequireJS 支持加载插件。这是一种支持非纯 JS 文件依赖的方法，但是在脚本工作之前加载脚本仍然很重要。The RequireJS wiki 有一些插件的列表。这里讨论了一些与 RequireJS 一起维护的特定插件
+
 ##### Specify a Text File Dependency
 
 It is nice to build HTML using regular HTML tags, instead of building up DOM structures in script. However, there is no good way to embed HTML in a JavaScript file. The best that can be done is using a string of HTML, but that can be hard to manage, particularly for multi-line HTML.
 
+使用常规的 HTML 标签而不是在脚本中构建脚本结构来构建 HTML 是非常好的。但是，这里没有好办法来在 JavaScript 文件中来嵌入 HTML. 能做的最好的办法就是使用一个 HTML 字符串，但是这很难管理，特别是对于多行 HTML.
+
 RequireJS has a plugin, text.js, that can help with this issue. It will automatically be loaded if the text! prefix is used for a dependency. See the text.js README for more information.
+
+RequireJS 有一个插件, text.js.它能帮助解决这个问题。如果 text! 前缀被用来做为一个依赖项，它将自动加载。查看 text.js README 获取更多信息。
 
 #### Page Load Event Support/DOM Ready
 
 It is possible when using RequireJS to load scripts quickly enough that they complete before the DOM is ready. Any work that tries to interact with the DOM should wait for the DOM to be ready. For modern browsers, this is done by waiting for the DOMContentLoaded event.
 
+当使用 RequireJS 加载脚本足够快时，它们在 DOM 准备好之前加载完成是很有可能的。任何试图与 DOM 有交互的工作都应该等待 DOM 准备好之后进行。对于现代的浏览器，等待 DOMContentLoaded 事件已经被做了。
+
 However, not all browsers in use support DOMContentLoaded. The domReady module implements a cross-browser method to determine when the DOM is ready. Download the module and use it in your project like so:
+
+但是，并不是所有的浏览器都支持 DOMContentLoaded。domReady 模块
 
 ```javascript
 require(['domReady'], function (domReady) {
