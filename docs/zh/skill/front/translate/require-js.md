@@ -1523,7 +1523,7 @@ It is possible when using RequireJS to load scripts quickly enough that they com
 
 However, not all browsers in use support DOMContentLoaded. The domReady module implements a cross-browser method to determine when the DOM is ready. Download the module and use it in your project like so:
 
-但是，并不是所有的浏览器都支持 DOMContentLoaded。domReady 模块
+但是，并不是所有的浏览器都支持 DOMContentLoaded。domReady 模块实现了一个跨浏览器的方法来确定何时 Dom 准备好。下载这个模块并且在项目中这样使用：
 
 ```javascript
 require(['domReady'], function (domReady) {
@@ -1537,11 +1537,15 @@ require(['domReady'], function (domReady) {
 
 Since DOM ready is a common application need, ideally the nested functions in the API above could be avoided. The domReady module also implements the Loader Plugin API, so you can use the loader plugin syntax (notice the ! in the domReady dependency) to force the require() callback function to wait for the DOM to be ready before executing.
 
+因为 DOM ready 是一种常见的应用需求，理想情况下可以避免上述 API 中的嵌套函数。domReady 模块还实现了 Loader Plugin API，所以你可以使用 Loader plugin 语法(注意在 domReady 依赖中的 ！)来强制 require() 回调函数在执行前等待 DOM 准备好
+
 ```
 domReady
 ```
 
 will return the current document when used as a loader plugin:
+
+- 当它作为一个加载插件使用时，将会返回一个当前的元素
 
 ```javascript
 require(['domReady!'], function (doc) {
@@ -1553,15 +1557,25 @@ require(['domReady!'], function (doc) {
 
 Note: If the document takes a while to load (maybe it is a very large document, or has HTML script tags loading large JS files that block DOM completion until they are done), using domReady as a loader plugin may result in a RequireJS "timeout" error. If this is a problem either increase the waitSeconds configuration, or just use domReady as a module and call domReady() inside the require() callback.
 
+笔记：如果元素加载需要一段时间（也许它是一个很大的文件，或者有 HTML 脚本标签加载阻止 DOM 完成知道它们完成的大型 JS 文件），使用 domReady 作为加载器可能会导致 Requirejs 超时错误。如果这是一个问题，可以增加 waitSeconds 配置，或者只是使用 domReady 作为一个模块，并在 require() 回调函数中 调用 domReady()
+
 #### Define an I18N Bundle
 
 Once your web app gets to a certain size and popularity, localizing the strings in the interface and providing other locale-specific information becomes more useful. However, it can be cumbersome to work out a scheme that scales well for supporting multiple locales.
 
+一旦你的网页 app 达到一定规模和流行度，在界面中本地化字符串并提供其他特定于区域设置的信息变得更加有用。然而，要定制出一种能够很好地扩展以支持多个地区的方案可能会变得很繁琐。
+
 RequireJS allows you to set up a basic module that has localized information without forcing you to provide all locale-specific information up front. It can be added over time, and only strings/values that change between locales can be defined in the locale-specific file.
+
+RequireJS 允许你设置一个包含本地化信息的基本模块，而不是强制你预先提供所有的特定于地区的信息。它可以随着时间的推移而添加，并且仅特定于语言环境的文件中的在本地之间改变的 string/values 可以被定义。
 
 i18n bundle support is provided by the i18n.js plugin. It is automatically loaded when a module or dependency specifies the i18n! prefix (more info below). Download the plugin and put it in the same directory as your app's main JS file.
 
+i18n.js 插件已经提供了 i18n 包支持。当一个模块或者依赖指明了 i18n! 前缀，它将会自动加载。下载这个插件并且把它放在与你的 app 的主 JS 文件同样的目录下。
+
 To define a bundle, put it in a directory called "nls" -- the i18n! plugin assumes a module name with "nls" in it indicates an i18n bundle. The "nls" marker in the name tells the i18n plugin where to expect the locale directories (they should be immediate children of the nls directory). If you wanted to provide a bundle of color names in your "my" set of modules, create the directory structure like so:
+
+为了定义一个包，将它放在一个名为 nls 的文件夹中--这个 i18n! 插件假设一个带有 nls 的模块名字表示一个 i18n 包。这个名字中的 nls 标记告诉 i18n 插件在哪里可以找到 本地的文件夹(它们应该是 nls 目录中的直接子目录)。如果你想要在你的“my”模块中提供一束颜色名称，可以创建类似这样的目录结构：
 
 ```
 my/nls/colors.js
@@ -1582,7 +1596,11 @@ define({
 
 An object literal with a property of "root" defines this module. That is all you have to do to set the stage for later localization work.
 
+带有 root 属性的对象字面量定义了这个模块。这就是为以后的本地化工作奠定基础所需要的一切。
+
 You can then use the above module in another module, say, in a my/lamps.js file:
+
+你可以在其他模块中使用以上模块，例如在 my/lamps.js 文件中
 
 ```javascript
 //Contents of my/lamps.js
@@ -1595,7 +1613,11 @@ define(['i18n!my/nls/colors'], function (colors) {
 
 The my/lamps module has one property called "testMessage" that uses colors.red to show the localized value for the color red.
 
+这个 my/lamps 模块一个叫做 testMessage 的属性，它使用 colors.red 来展示 本地的红色的值
+
 Later, when you want to add a specific translation to a file, say for the fr-fr locale, change my/nls/colors to look like so:
+
+然后，当你想要添加一个指定的翻译到一个文件，离去 fr-fr 区域，更改 my/nls/colors 看起来像这样
 
 ```javascript
 //Contents of my/nls/colors.js
@@ -1611,6 +1633,8 @@ define({
 
 Then define a file at my/nls/fr-fr/colors.js that has the following contents:
 
+然后定义一个包含如下内容的在 my/nls/fr-fr/colors.js 文件
+
 ```javascript
 //Contents of my/nls/fr-fr/colors.js
 define({
@@ -1621,6 +1645,8 @@ define({
 ```
 
 RequireJS will use the browser's navigator.languages, navigator.language or navigator.userLanguage property to determine what locale values to use for my/nls/colors, so your app does not have to change. If you prefer to set the locale, you can use the module config to pass the locale to the plugin:
+
+RequireJS 将使用 浏览器的 navigator.languages, navigator.language or navigator.userLanguage 属性来决定为 my/nls/colors 使用什么样的本地值，这样你的 app 没有必要改变。如果你更想设置本地，你可以使用模块配置将本地值传递给插件
 
 ```javascript
 requirejs.config({
@@ -1636,9 +1662,15 @@ requirejs.config({
 
 Note that RequireJS will always use a lowercase version of the locale, to avoid case issues, so all of the directories and files on disk for i18n bundles should use lowercase locales.
 
+注意为了避免大小写问题， RequireJS 将始终使用本地的一个小写版本，因此磁盘中的 i18n 包中的所有文件夹和文件都应该使用小写的语言环境。
+
 RequireJS is also smart enough to pick the right locale bundle, the one that most closely matches the ones provided by my/nls/colors. For instance, if the locale is "en-us", then the "root" bundle will be used. If the locale is "fr-fr-paris" then the "fr-fr" bundle will be used.
 
+RequireJS 同时也足够聪明来选择正确的本地捆绑，与 my/nls/colors 提供的最接近的那个。例如，如果区域是 “en-us”，那么将使用 root 包.如果本地是 "fr-fr-paris"，那么 fr-fr 包将会被使用。
+
 RequireJS also combines bundles together, so for instance, if the french bundle was defined like so (omitting a value for red):
+
+RequireJS 也把 bundle 组合在一起，例如，如果 french bundle 是这样定义到
 
 ```javascript
 //Contents of my/nls/fr-fr/colors.js
@@ -1650,12 +1682,16 @@ define({
 
 Then the value for red in "root" will be used. This works for all locale pieces. If all the bundles listed below were defined, then RequireJS will use the values in the following priority order (the one at the top takes the most precedence):
 
+那么将会使用在 root 中的 red 值。这个为本地所有的片段服务。如果下面列出的所有 bundle 都被定义了，那么 RequireJS 将会按照以下优先级使用这些值（最上面的优先级最高）
+
 - my/nls/fr-fr-paris/colors.js
 - my/nls/fr-fr/colors.js
 - my/nls/fr/colors.js
 - my/nls/colors.js
 
 If you prefer to not include the root bundle in the top level module, you can define it like a normal locale bundle. In that case, the top level module would look like:
+
+如果你不希望在顶级模块中包含 根包，那么你可以像定义普通本地包那样定义它。在这种情况下，顶层模块看起来像这样：
 
 ```javascript
 //my/nls/colors.js contents:
@@ -1667,6 +1703,8 @@ define({
 ```
 
 and the root bundle would look like:
+
+根目录像这样
 
 ```javascript
 //Contents of my/nls/root/colors.js
