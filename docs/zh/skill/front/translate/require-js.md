@@ -1714,3 +1714,462 @@ define({
 	green: 'green',
 })
 ```
+
+## RequireJS Optimizer
+
+RequireJS has an optimization tool that does the following
+
+- Combines related scripts together into build layers and minifies them via UglifyJS (the default) or Closure Compiler (an option when using Java).
+
+- Optimizes CSS by inlining CSS files referenced by @import and removing comments.
+
+The optimizer is part of the r.js adapter for Node and Nashorn, and it is designed to be run as part of a build or packaging step after you are done with development and are ready to deploy the code for your users.
+
+The optimizer will only combine modules that are specified in arrays of string literals that are passed to top-level require and define calls, or the require('name') string literal calls in a simplified CommonJS wrapping. So, it will not find modules that are loaded via a variable name:
+
+```javascript
+var mods = someCondition ? ['a', 'b'] : ['c', 'd']
+require(mods)
+```
+
+but 'a' and 'b' will be included if specified like so:
+
+```javascript
+require(['a', 'b'])
+```
+
+or:
+
+```javascript
+define(['a', 'b'], function (a, b) {})
+```
+
+This behavior allows dynamic loading of modules even after optimization. You can always explicitly add modules that are not found via the optimizer's static analysis by using the include option.
+
+### Requirements
+
+The optimizer can be run using Node, Java with Rhino or Nashorn, or in the browser. The requirements for each option:
+
+- Node: (preferred) Node 0.4.0 or later.
+- Java: Java 1.6 or later.
+- Browser: as of 2.1.2, the optimizer can run in a web browser that has array extras. While the optimizer options are the same as shown below, it is called via JavaScript instead of command line options. It is also only good for generating optimized single files, not a directory optimization. See the browser example. This option is really only useful for providing web-based custom builds of your library.
+
+For command line use, Node is the preferred execution environment. The optimizer runs **much faster** with Node.
+
+All the example commands in this page assume Node usage, and running on a Linux/OS X command line. See the r.js README for how to run it in Java.
+
+### Download
+
+1. You can download the tool on the download page.
+
+2. If you are using Node with NPM, you can install r.js globally as part of the "requirejs" package in NPM:
+
+```javascript
+npm install -g requirejs
+r.js -o app.build.js
+```
+
+If on Windows, you may need to type r.js.cmd instead of r.js. Or, you can use DOSKEY:
+
+```javascript
+DOSKEY r.js=r.js.cmd $\*
+```
+
+If you want to install requirejs locally in a project as an npm package, instead of globally:
+
+```javascript
+npm install requirejs
+```
+
+With this local install, you can run the optimizer by running the r.js or r.js.cmd file found in the project's node_modules/.bin directory.
+
+With the local install, you can also use the optimizer via a function call inside a node program.
+
+The rest of this page assumes that r.js is just downloaded manually from the download page. It is normally the clearest, most portable way to use the optimizer.
+
+### Example setup
+
+The examples in this page will assume you downloaded and saved r.js in a directory that is a sibling to your project directory. The optimizer that is part of r.js can live anywhere you want, but you will likely need to adjust the paths accordingly in these examples.
+
+Example setup:
+
+```
+appdirectory
+	main.html
+	css
+		common.css
+		main.css
+	scripts
+		require.js
+		main.js
+		one.js
+		two.js
+		three.js
+r.js (The r.js optimizer from download page)
+```
+
+main.html has script tags for require.js and loads main.js via a require call, like so:
+
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>My App</title>
+		<link rel="stylesheet" type="text/css" href="css/main.css" />
+		<script data-main="scripts/main" src="scripts/require.js"></script>
+	</head>
+	<body>
+		<h1>My App</h1>
+	</body>
+</html>
+```
+
+main.js loads one.js, two.js and three.js via a require call:
+
+```javascript
+require(['one', 'two', 'three'], function (one, two, three) {})
+```
+
+main.css has content like the following:
+
+```css
+@import url('common.css');
+.app {
+	background: transparent url(../../img/app.png);
+}
+```
+
+### Basics
+
+Command line arguments are interchangeable with a build profile properties
+
+You can either specify options on the command line:
+
+```
+node r.js -o baseUrl=. paths.jquery=some/other/jquery name=main out=main-built.js
+```
+
+or in a build profile. In a build.js, the same command line arguments can be specified like so:
+
+```javascript
+;({
+	baseUrl: '.',
+	paths: {
+		jquery: 'some/other/jquery',
+	},
+	name: 'main',
+	out: 'main-built.js',
+})
+```
+
+then just pass the build profile's file name to the optimizer:
+
+```
+node r.js -o build.js
+```
+
+Command line arguments take precedence over build profile settings, and you can mix them together:
+
+```
+node r.js -o build.js optimize=none
+```
+
+There is a limitation on the command line argument syntax. Dots are viewed as object property separators, to allow something like paths.jquery=lib/jquery to be transformed to the following in the optimizer:
+
+```
+paths: {
+    jquery: 'lib/jquery'
+}
+```
+
+but this means you cannot set the value for a paths property of "core/jquery.tabs" to a value. This would not work: paths.core/jquery.tabs=empty:, since it would result in this incorrect structure:
+
+```
+paths: {
+    'core/jquery': {
+        tabs: 'empty:'
+    }
+}
+```
+
+If you need to set a path like the "core/jquery.tabs" one, use a build.js file with the build options specified as a JavaScript object instead of using command line arguments.
+
+For a list of all options, see all configuration options.
+
+Relative path resolution rules::
+
+In general, if it is a path, it is relative to the build.js file used to hold the build options, or if just using command line arguments, relative to the current working directory. Example of properties that are file paths: appDir, dir, mainConfigFile, out, wrap.startFile, wrap.endFile.
+
+For baseUrl, it is relative to appDir. If no appDir, then baseUrl is relative to the build.js file, or if just using command line arguments, the current working directory.
+
+For paths and packages, they are relative to baseUrl, just as they are for require.js.
+
+For properties that are module IDs, they should be module IDs, and not file paths. Examples are name, include, exclude, excludeShallow, deps.
+
+Config settings in your main JS module that is loaded in the browser at runtime are not read by default by the optimizer
+
+This is because the config settings for a build can be very different, with multiple optimization targets. So a separate set of config options need to be specified for the optimizer.
+
+In version 1.0.5+ of the optimizer, the mainConfigFile option can be used to specify the location of the runtime config. If specified with the path to your main JS file, the first requirejs({}), requirejs.config({}), require({}), or require.config({}) found in that file will be parsed out and used as part of the configuration options passed to the optimizer:
+
+```
+mainConfigFile: 'path/to/main.js'
+```
+
+The precedence for config: command line, build profile, mainConfigFile. In other words, the mainConfigFile configuration has the lowest priority.
+
+### Optimizing one JavaScript file
+
+Use the above example setup, if you just wanted to optimize main.js, you could use this command, from inside the appdirectory/scripts directory:
+
+```
+node ../../r.js -o name=main out=main-built.js baseUrl=.
+```
+
+This will create a file called appdirectory/scripts/main-built.js that will include the contents of main.js, one.js, two.js and three.js.
+
+Normally you should not save optimized files with your pristine project source. Normally you would save them to a copy of your project, but to make this example easier it is saved with the source. Change the out= option to any directory you like, that has a copy of your source. Then, you can change the main-built.js file name to just main.js so the HTML page will load the optimized version of the file.
+
+If you want to include require.js with the main.js source, you can use this kind of command:
+
+```
+node ../../r.js -o baseUrl=. paths.requireLib=../../require name=main include=requireLib out=main-built.js
+```
+
+Since "require" is a reserved dependency name, you create a "requireLib" dependency and map it to the require.js file.
+
+Once that optimization is done, you can change the script tag to reference "main-built.js" instead of "require.js", and your optimized project will only need to make one script request.
+
+If you want to wrap your built file so it can be used in pages that do not have an AMD loader like RequireJS, see the Optimization FAQ.
+
+### Shallow exclusions for fast development
+
+You can use the one JavaScript file optimization approach to make your development experience faster. By optimizing all the modules in your project into one file, except the one you are currently developing, you can reload your project quickly in the browser, but still give you the option of fine grained debugging in a module.
+
+You can do this by using the excludeShallow option. Using the example setup above, assume you are currently building out or debugging two.js. You could use this optimization command:
+
+```
+node ../../r.js -o name=main excludeShallow=two out=main-built.js baseUrl=.
+```
+
+If you do not want the main-build.js file minified, pass optimize=none in the command above.
+
+Then configure the HTML page to load the main-built.js file instead of main.js by configuring the path used for "main" to be "main-built":
+
+```html
+!DOCTYPE html>
+<html>
+	<head>
+		<title>My App</title>
+		<link rel="stylesheet" type="text/css" href="css/main.css" />
+		<script src="scripts/require.js"></script>
+		<script>
+			require.config({
+				paths: {
+					//Comment out this line to go back to loading
+					//the non-optimized main.js source file.
+					main: 'main-built',
+				},
+			})
+			require(['main'])
+		</script>
+	</head>
+	<body>
+		<h1>My App</h1>
+	</body>
+</html>
+```
+
+Now, when this page is loaded, the require() for "main" will load the main-built.js file. Since excludeShallow told it just to exclude two.js, two.js will still be loaded as a separate file, allowing you to see it as a separate file in the browser's debugger, so you can set breakpoints and better track its individual changes.
+
+### empty: paths for network/CDN resources
+
+You may have a script you want to load from a Content Delivery Network (CDN) or any other server on a different domain.
+
+The optimizer cannot load network resources, so if you want it included in the build, be sure to create a paths config to map the file to a module name. Then, for running the optimizer, download the CDN script and pass a paths config to the optimizer that maps the module name to the local file path.
+
+However, it is more likely that you do not want to include that resource in the build. If the script does not have any dependencies, or you do not want to include its dependencies or will be including them in another way, then you can use the special 'empty:' scheme in the paths config to just skip the file when doing an optimization.
+
+In your main.js file, create a paths config that gives the script a module name. This can be done even if the script does not define a module via a call to define(). paths config are just used to map short module/script IDs to an URL. This allows you to use a different paths config for the optimization. In main.js:
+
+```javascript
+requirejs.config({
+	paths: {
+		jquery: 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min',
+	},
+})
+
+require(['jquery'], function ($) {})
+```
+
+Then, when running the optimizer, use 'empty:' for the paths config:
+
+```
+node ../../r.js -o name=main out=main-built.js baseUrl=. paths.jquery=empty:
+```
+
+Or, in a build profile:
+
+```
+({
+    baseUrl: ".",
+    name: "main",
+    out: "main-built.js",
+    paths: {
+        jquery: "empty:"
+    }
+})
+```
+
+### Optimizing one CSS file
+
+Use the above example setup, if you just wanted to optimize main.css, you could use this command, from inside the appdirectory/css directory:
+
+```
+node ../../r.js -o cssIn=main.css out=main-built.css
+```
+
+This will create a file called appdirectory/css/main-build.css that will include the contents of main.css, have the url() paths properly adjusted, and have comments removed.
+
+See the notes for the Optimizing one JavaScript file about avoiding saving optimized files in your pristine source tree. It is only done here to make the example simpler.
+Note: The url() path fixing will always fix the paths relative to the cssIn build option path, not the out build option.
+
+### Optimizing a whole project
+
+The optimizer can take care of optimizing all the CSS and JS files in your project by using a build profile.
+
+Create a build profile, call it app.build.js, and put it in the scripts directory. The app.build.js file can live anywhere, but just be sure to adjust the paths accordingly in the example below -- all paths will be relative to where the app.build.js is located. Example app.build.js:
+
+```
+({
+    appDir: "../",
+    baseUrl: "scripts",
+    dir: "../../appdirectory-build",
+    modules: [
+        {
+            name: "main"
+        }
+    ]
+})
+```
+
+This build profile tells RequireJS to copy all of appdirectory to a sibling directory called appdirectory-build and apply all the optimizations in the appdirectory-build directory. It is strongly suggested you use a different output directory than the source directory -- otherwise bad things will likely happen as the optimizer overwrites your source.
+
+RequireJS will use baseUrl to resolve the paths for any module names. The baseUrl should be relative to appDir.
+
+In the modules array, specify the module names that you want to optimize, in the example, "main". "main" will be mapped to appdirectory/scripts/main.js in your project. The build system will then trace the dependencies for main.js and inject them into the appdirectory-build/scripts/main.js file.
+
+It will also optimize any CSS files it finds inside appdirectory-build.
+
+To run the build, run this command from inside the appdirectory/scripts directory:
+
+```
+node ../../r.js -o app.build.js
+```
+
+Once the build is done, you can use appdirectory-build as your optimized project, ready for deployment.
+
+### Optimizing a multi-page project
+
+requirejs/example-multipage is an example of a project that has multiple pages, but shares a common configuration and a common optimized build layer.
+
+### Turbo options
+
+The default for the optimizer is to do the safest, most robust set of actions that avoid surprises after a build. However, depending on your project setup, you may want to turn off some of these features to get faster builds:
+
+- The biggest time drain is minification. If you are just doing builds as part of a dev workflow, then set optimize to "none".
+- If doing a whole project optimization, but only want to minify the build layers specified in modules options and not the rest of the JS files in the build output directory, you can set skipDirOptimize to true.
+- Normally each run of a whole project optimization will delete the output build directory specified by dir for cleanliness. Some build options, like onBuildWrite, will modify the output directory in a way that is hazardous to do twice over the same files. However, if you are doing simple builds with no extra file transforms besides build layer minification, then you can set keepBuildDir to true to keep the build directory between runs. Then, only files that have changed between build runs will be copied.
+
+As of version 2.1.2, there are some speed shortcuts the optimizer will take by default if optimize is set to "none". However, if you are using "none" for optimize and you are planning to minify the built files after the optimizer runs, then you should turn set normalizeDirDefines to "all" so that define() calls are normalized correctly to withstand minification. If you are doing minification via the optimize option, then you do not need to worry about setting this option.
+
+### Integration with has.js
+
+has.js is a great tool to that adds easy feature detection for your project. There is some optimizer support for optimizing code paths for has.js tests.
+
+If your code uses tests like the following:
+
+```javascript
+if (has('someThing')) {
+	//use native someThing
+} else {
+	//do some workaround
+}
+```
+
+You can define a has object in the build config with true or false values for some has() tests, and the optimizer will replace the has() test with the true or false value.
+
+If your build profile looked like so:
+
+```
+({
+    baseUrl: ".",
+    name: "hasTestModule",
+    out: "builds/hasTestModule.js",
+    has: {
+        someThing: true
+    }
+})
+```
+
+Then the optimizer will transform the above code sample to:
+
+```javascript
+if (true) {
+	//use native someThing
+} else {
+	//do some workaround
+}
+```
+
+Then, if you use the default optimize setting of "uglify" in r.js 0.26.0 or later, or if the optimize setting is set to "closure" (when run under Java), the minifier will optimize out the dead code branch! So you can do custom builds of your code that are optimized for a set of has() tests.
+
+### Source maps
+
+Version 2.1.6 and higher have experimental support for source maps. It works for mapping minified, bundled code to unminified, separate modules and only when optimize is set to "uglify2". optimize set to "closure" allows only mapping minified, bundled code to unminified bundled code (closure only available when running under Java with Rhino). The unminified files will show up in the developer tools with a ".src.js" file extension.
+
+To enable the source map generation, set generateSourceMaps to true. Since the minifier needs to have full control over the minified file to generate the source map, the preserveLicenseComments should be explicitly set to false. There is is a way to get some license comments in the minified source though.
+
+The optimizer has supported sourceURL (by setting useSourceUrl to true), for debugging combined modules as individual files. However, that only works with non-minified code. Source maps translate a minified file to a non-minified version. It does not make sense to use useSourceUrl with generateSourceMaps since useSourceUrl needs the source values as strings, which prohibits the useful minification done in combination with generateSourceMaps.
+
+### All configuration options
+
+There is an example.build.js file in the requirejs/build directory that details all of the allowed optimizer configuration options.
+
+### Deployment techniques
+
+The r.js optimizer is designed to offer some primitives that can be used for different deployment scenarios by adding other code on top of it. See the deployment techniques wiki page for ideas on how to use the optimizer in that fashion.
+
+### Common pitfalls
+
+If you are having trouble with the examples below, here are some common pitfalls that might be the source of the problem:
+
+Do not specify the output directory to within the source area for your JavaScript
+
+For instance, if your baseUrl is 'js' and your build output goes into 'js/build', there will likely be problems with extra, nested files generated on each optimization run. This guidance is only for optimizations that are not single file optimizations.
+
+Avoid optimization names that are outside the baseUrl
+
+For instance, if your baseUrl is 'js', and your optimization targets:
+
+```
+name: '../main'
+```
+
+the optimization could overwrite or place files outside the output directory. For those cases, create a paths config to map that file to a local name, like:
+
+```
+paths: {
+    main: '../main'
+}
+```
+
+then use name:
+
+```
+name: 'main'
+```
+
+for the optimization target.
+
+Note the build limitations of shim config. In particular, you cannot load dependencies for shimmed libraries from a CDN. See the shim config section for more information.
