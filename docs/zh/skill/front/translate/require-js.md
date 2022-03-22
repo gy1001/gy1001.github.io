@@ -1719,13 +1719,23 @@ define({
 
 RequireJS has an optimization tool that does the following
 
+RequireJS 有一个优化工具，可以做如下的工作
+
 - Combines related scripts together into build layers and minifies them via UglifyJS (the default) or Closure Compiler (an option when using Java).
+
+* 将相关脚本组合成构架层，并通过 UglifyJS(默认值)或者 Closure Compiler(使用 java 时候的一个选项)缩小它们
 
 - Optimizes CSS by inlining CSS files referenced by @import and removing comments.
 
+* 通过内联@import 引用 css 文件和删除注释来优化 CSS
+
 The optimizer is part of the r.js adapter for Node and Nashorn, and it is designed to be run as part of a build or packaging step after you are done with development and are ready to deploy the code for your users.
 
+这个加载器是 Node 和 Nashorn 的 r.js 适配器的一部分，并且它被设计成在你完成开发并准备好为你的用户部署代码之后，作为构建或者打包步骤的一部分运行。
+
 The optimizer will only combine modules that are specified in arrays of string literals that are passed to top-level require and define calls, or the require('name') string literal calls in a simplified CommonJS wrapping. So, it will not find modules that are loaded via a variable name:
+
+这个优化器将只会组合传递给顶层 require 和定义调用的字符串字面量数组中指定的模块，或者在简化 CommonJS 包装中组合 require('name')字符串字面量调用。因此，它不会找到通过变量名加载的模块
 
 ```javascript
 var mods = someCondition ? ['a', 'b'] : ['c', 'd']
@@ -1733,6 +1743,8 @@ require(mods)
 ```
 
 but 'a' and 'b' will be included if specified like so:
+
+但如果像这样声明， a 和 b 将会包括
 
 ```javascript
 require(['a', 'b'])
@@ -1746,17 +1758,27 @@ define(['a', 'b'], function (a, b) {})
 
 This behavior allows dynamic loading of modules even after optimization. You can always explicitly add modules that are not found via the optimizer's static analysis by using the include option.
 
+这种行为允许在优化之后动态加载模块。通过使用 include 选项，你总是可以显式地添加没有通过优化器的静态分析找到的模块。
+
 ### Requirements
 
 The optimizer can be run using Node, Java with Rhino or Nashorn, or in the browser. The requirements for each option:
+
+这个优化器可以通过使用 Node, Java with Rhino or Nashorn, 或者 in the browser 来运行。每一个选项要求如下
 
 - Node: (preferred) Node 0.4.0 or later.
 - Java: Java 1.6 or later.
 - Browser: as of 2.1.2, the optimizer can run in a web browser that has array extras. While the optimizer options are the same as shown below, it is called via JavaScript instead of command line options. It is also only good for generating optimized single files, not a directory optimization. See the browser example. This option is really only useful for providing web-based custom builds of your library.
 
+* Browser: 从 2.1.2 之后，这个优化器可以运行在一个拥有额外数组的浏览器中。虽然优化器选项如下所示，它通过 JavaScript 来调用，而不是命令行选项。它也适用于生成优化的单个文件，而不是适用于目录优化。这个选项只对提供了 web-based 自定义的构建有用。
+
 For command line use, Node is the preferred execution environment. The optimizer runs **much faster** with Node.
 
+对于命令行，Node 是首选的额执行环境。使用 Node, 优化器运行起来要更快
+
 All the example commands in this page assume Node usage, and running on a Linux/OS X command line. See the r.js README for how to run it in Java.
+
+本页中的所有示例命令都假定使用 Node,并且运行在 Linux/OS 命令行。查看 r.js README 来查看它在 java 中如何运行
 
 ### Download
 
