@@ -125,11 +125,11 @@ There may be times when you do want to reference a script directly and not confo
 In general though, it is best to use the baseUrl and "paths" config to set paths for module IDs.
 By doing so, it gives you more flexibility in renaming and configuring the paths to different locations for optimization builds.
 
-不过一般来说，最好是使用 baseUrl 和 paths 设置属性来为 module IDs 设置路径。因为这样做，它让你在重命名和为其他优化文件项配置路径时有了更多的灵活性。
+不过一般来说，最好是使用 baseUrl 和 paths 设置属性来为 module IDs 设置路径。因为这样做， 它会给你带来额外的灵活性，如便于脚本的重命名，重定位等。
 
 Similarly, to avoid a bunch of configuration, it is best to avoid deep folder hierarchies for scripts, and instead either keep all the scripts in baseUrl, or if you want to separate your library/vendor-supplied code from your app code, use a directory layout like this:
 
-同样的，为了避免大量配置，最好是避免脚本的深层文件夹等级结构，取而代之的是，保持所有的搅拌都在 baseUrl 中，或者你想 从你的应用程序中分离出库文件/打包代码，你可以使用类似下面的布局方式
+同样的，为了避免凌乱的配置，最好不要使用多级嵌套的目录层次来组织代码，而是要么将所有的脚本都放置到 baseUrl，要么要么分置为项目库/第三方库的一个扁平结构，如下：
 
 ```
 www/
@@ -180,11 +180,9 @@ It is recommended to store that version info in a separate text file if you want
 This allows you to have the very minimal configuration instead of having to put an entry in the "paths" config for each library.
 For instance, configure "jquery" to be "jquery-1.7.2".
 
-注意作为示例的一部分，类似 jQuery 这样的库供应者在他们的名字中是没有它们的版本号码的。如果你想追踪它，建议你在单独的文本文件中存储下来这个版本信息，或者如果你使用一个类似 volo 的工具，它将在 package.json 文件中 记录下版本信息，但将文件保存在 jquery.js 文件中。这将是你进行最少的配置，而不必在 paths 设置 为每个库都在添加一个入口。例如，设置 jquery 为 jquery-1.7.2
+注意在示例中，三方库如 jQuery 没有将版本号包含在他们的文件中。我们建议将版本信息放置在单独的文件中进行追踪，使用如何 volo 这来的工具，可以将 package.json 打上版本信息，并在磁盘上保持文件名为 jquery.js。 这有助于你保持配置的最小化，避免为每一个库版本设置一条 path。例如，将 jquery 设置为 jquery-1.7.2
 
-Ideally the scripts you load will be modules that are defined by calling define().
-However, you may need to use some traditional/legacy "browser globals" scripts that do not express their dependencies via define().
-For those, you can use the shim config. To properly express their dependencies.
+Ideally the scripts you load will be modules that are defined by calling define().However, you may need to use some traditional/legacy "browser globals" scripts that do not express their dependencies via define().For those, you can use the shim config. To properly express their dependencies.
 
 理想情况下，这些你加载的脚本将会被被称为 define() 的方式被定义为模块。但是，你也许需要使用一些不能通过 define()表达他们的依赖的 传统的、遗留的 浏览器全局的 脚本。对于这种情况，你可以使用 shim 设置项。来正确的表达出他们的依赖
 
