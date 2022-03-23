@@ -92,17 +92,11 @@ Once you are finished doing development and want to deploy your code for your en
 
 RequireJS takes a different approach to script loading than traditional `<script>` tags. While it can also run fast and optimize well, the primary goal is to encourage modular code. As part of that, it encourages using module IDs instead of URLs for script tags.
 
-RequireJS 采用与传统 script 标签不一样的脚本加载方式。虽然它运行和优化都很不错，但是它的主要目标就是鼓励模块化代码。作为它的一部分，对于脚本标签它鼓励使用 模块 id 而不是 URLs
+RequireJS 使用了不同于传统 script 标签的脚本加载方式。可以用它来加速、优化代码，但是它的主要目标还是为了代码的模块化。它鼓励在使用脚本时以 module IDs 替代 URL 地址
 
-RequireJS loads all code relative to a baseUrl.
-The baseUrl is normally set to the same directory as the script used in a data-main attribute for the top level script to load for a page.
-The data-main attribute is a special attribute that require.js will check to start script loading.
-This example will end up with a baseUrl of scripts:
+RequireJS loads all code relative to a baseUrl.The baseUrl is normally set to the same directory as the script used in a data-main attribute for the top level script to load for a page.The data-main attribute is a special attribute that require.js will check to start script loading.This example will end up with a baseUrl of scripts:
 
-RequireJS 加载与 baseUrl 相关的所有 code。
-这个 baseUrl 通常设置为与用于为页面加载的顶级脚本的 data-main 属性中的脚本相同的目录。
-这个 data-main 属性是一个特殊的属性，RequireJS 将检查来开始加载脚本。
-这个例子将以含有 baseUrl 的脚本结束
+RequireJS 加载与 baseUrl 相关的所有 code。这个 baseUrl 通常设置为与用于为页面加载的顶级脚本的 data-main 属性中的脚本相同的目录。这个 data-main 属性是一个特殊的属性，RequireJS 将检查来开始加载脚本。这个例子将以含有 baseUrl 的脚本结束
 
 ```javascript
 <!--This sets the baseUrl to the "scripts" directory, and
@@ -115,21 +109,14 @@ If there is no explicit config and data-main is not used, then the default baseU
 
 或者 baseUrl 也可以通过 RequireJS config 来手动设置。如果没有明确的配置，并且 data-main 也没有被使用， 那么默认的 baseUrl 就是 包含运行 RequireJS 的 HTML 页面的目录
 
-RequireJS also assumes by default that all dependencies are scripts, so it does not expect to see a trailing ".js" suffix on module IDs.
-RequireJS will automatically add it when translating the module ID to a path.
-With the paths config, you can set up locations of a group of scripts.
-All of these capabilities allow you to use smaller strings for scripts as compared to traditional `<script>` tags.
+RequireJS also assumes by default that all dependencies are scripts, so it does not expect to see a trailing ".js" suffix on module IDs.RequireJS will automatically add it when translating the module ID to a path.With the paths config, you can set up locations of a group of scripts. All of these capabilities allow you to use smaller strings for scripts as compared to traditional `<script>` tags.
 
-RequireJS 也会默认假定所有依赖的都是脚本，所以他不期望在 模块 ids 上看到 ".js"后缀。
-RequireJS 将在转换 模块 id 为路径时候， 自动添加它。
-使用设置的 path,你能设置一组脚本的位置。
-所有这些功能，都允许你使用比传统的 script 标签 更小的脚本字符串。
+RequireJS 也会默认假定所有依赖的都是脚本，所以他不期望在 模块 ids 上看到 ".js"后缀。RequireJS 将在转换 模块 id 为路径时候， 自动添加它。
+使用设置的 path,你能设置一组脚本的位置。所有这些功能，都允许你使用比传统的 script 标签 更小的脚本字符串。
 
-There may be times when you do want to reference a script directly and not conform to the "baseUrl + paths" rules for finding it.
-If a module ID has one of the following characteristics, the ID will not be passed through the "baseUrl + paths" configuration, and just be treated like a regular URL that is relative to the document:
+There may be times when you do want to reference a script directly and not conform to the "baseUrl + paths" rules for finding it.If a module ID has one of the following characteristics, the ID will not be passed through the "baseUrl + paths" configuration, and just be treated like a regular URL that is relative to the document:
 
-这里也许有多次你想直接引用一个脚本，并且它不遵守 "baseUrl + paths" 规则来找到它。
-如果一个 module ID 有以下其中一个特点，这个 ID 将不会通过 "baseUrl + paths" 配置传递，并且只会当做被视为与文件相关的常规 url 来对待。
+这里也许有多次你想直接引用一个脚本，并且它不遵守 "baseUrl + paths" 规则来找到它。如果一个 module ID 有以下其中一个特点，这个 ID 将不会通过 "baseUrl + paths" 配置传递，并且只会当做被视为与文件相关的常规 url 来对待。
 
 - Ends in ".js".--- 以 .js 结尾的
 - Starts with a "/". --- 以 / 开头的
@@ -138,8 +125,7 @@ If a module ID has one of the following characteristics, the ID will not be pass
 In general though, it is best to use the baseUrl and "paths" config to set paths for module IDs.
 By doing so, it gives you more flexibility in renaming and configuring the paths to different locations for optimization builds.
 
-不过一般来说，最好是使用 baseUrl 和 paths 设置属性来为 module IDs 设置路径
-因为这样做，它让你在重命名和为其他优化文件项配置路径时有了更多的灵活性。
+不过一般来说，最好是使用 baseUrl 和 paths 设置属性来为 module IDs 设置路径。因为这样做，它让你在重命名和为其他优化文件项配置路径时有了更多的灵活性。
 
 Similarly, to avoid a bunch of configuration, it is best to avoid deep folder hierarchies for scripts, and instead either keep all the scripts in baseUrl, or if you want to separate your library/vendor-supplied code from your app code, use a directory layout like this:
 
