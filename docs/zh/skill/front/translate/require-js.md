@@ -4,7 +4,7 @@
 
 RequireJS is a JavaScript file and module loader. It is optimized for in-browser use, but it can be used in other JavaScript environments, like Rhino and Node. Using a modular script loader like RequireJS will improve the speed and quality of your code.
 
-RequireJs 是一个 js 文件和一个模块加载器。它对浏览器的使用做了优化，但是也可以使用在其他 js 环境中，比如 Rhino 和 Node。用一个类似 RequireJs 的模块化脚本将提高你的代码的质量和加载速度。
+RequireJS 是一个 JavaScript 文件和模块加载器。它针对浏览器内使用进行了优化，但可以在其他 JavaScript 环境中使用，例如 Rhino 和 Node。使用像 RequireJS 这样的模块化脚本加载器将提高代码的速度和质量。
 
 兼容性也非常好
 
@@ -30,7 +30,7 @@ Go to the download page and get the file.
 
 This setup assumes you keep all your JavaScript files in a "scripts" directory in your project. For example, if you have a project that has a project.html page, with some scripts, the directory layout might look like so:
 
-此设置假定你把所有的 JavaScript 文件 都放在工程下面的 “script” 文件夹下。比如，如果有一个项目有一个带有一些脚本文件 的 project.html 的页面，这个文件夹布局方式像下面：
+此设置假定您将所有 JavaScript 文件都保留在项目的"scripts"目录中。例如，如果您有一个包含 project.html 页面的项目，其中包含一些脚本，则目录布局可能如下所示：
 
 ```
 project-directory/
@@ -44,7 +44,7 @@ project-directory/
 
 To take full advantage of the optimization tool, it is suggested that you keep all inline script out of the HTML, and only reference require.js with a requirejs call like so to load your script:
 
-为了充分利用优化工具，建议你 把所有的内连脚本保留在 html 之外，并且只引用 require.js 文件来加载你的脚本
+为了充分利用优化工具，建议您将所有内联脚本都保留在 HTML 之外，并且仅通过 requirejs 调用引用 require.js 即可加载脚本：
 
 ```html
 <!DOCTYPE html>
@@ -63,11 +63,11 @@ To take full advantage of the optimization tool, it is suggested that you keep a
 
 You could also place the script tag end of the `<body>` section if you do not want the loading of the require.js script to block rendering. For browsers that support it, you could also add an async attribute to the script tag.
 
-如果你不希望因为加载 require.js 而阻断渲染，你可以把 script 标签 放在 `<body>` 区域的最后面。如果浏览器支持，你也可以在 script 标签上使用 async 属性
+如果您不想加载 require.js 脚本来阻止渲染，也可以将 script 标签放在`<body>`部分的末尾。对于支持它的浏览器，您还可以在 script 标签中添加 async 属性。
 
 Inside of main.js, you can use requirejs() to load any other scripts you need to run. This ensures a single entry point, since the data-main script you specify is loaded asynchronously.
 
-在 main.js 内部，你可以使用 requirejs 来加载你需要运行的其他脚本。这个保证了一个单一的入口，因为您指定的数据主脚本是异步加载的。
+在 main.js 内部，您可以使用 requirejs()来加载需要运行的其他脚本。这确保了一个入口点，因为您指定的数据主脚本是异步加载。
 
 ```javascript
 requirejs(['helper/util'], function (util) {
@@ -78,11 +78,13 @@ requirejs(['helper/util'], function (util) {
 })
 ```
 
+这将加载 helper/util.js 脚本。要充分利用 RequireJS，请参阅 API 文档，以了解有关定义和使用模块的更多信息。
+
 ### 优化
 
 Once you are finished doing development and want to deploy your code for your end users, you can use the optimizer to combine the JavaScript files together and minify it. In the example above, it can combine main.js and helper/util.js into one file and minify the result.
 
-一旦你完成开发并且想为最终使用者部署你的代码，你可以使用 优化器 去组合和压缩你的 javascript 文件。在上面的例子中，它将 main.js 和 helper/util.js 组合为一个文件并进行了压缩。
+一旦完成开发并希望为最终用户部署代码，就可以使用优化器将 JavaScript 文件组合在一起并进行最小化。在上面的示例中，它可以将 main.js 和 helper/util.js 合并到一个文件中并最小化结果。
 
 ## API
 
@@ -92,11 +94,11 @@ Once you are finished doing development and want to deploy your code for your en
 
 RequireJS takes a different approach to script loading than traditional `<script>` tags. While it can also run fast and optimize well, the primary goal is to encourage modular code. As part of that, it encourages using module IDs instead of URLs for script tags.
 
-RequireJS 使用了不同于传统 script 标签的脚本加载方式。可以用它来加速、优化代码，但是它的主要目标还是为了代码的模块化。它鼓励在使用脚本时以 module IDs 替代 URL 地址
+与传统的`<script>`标记相比，RequireJS 采用了不同的方法来加载脚本。尽管它还可以快速运行并优化得很好，但主要目标是鼓励使用模块化代码。作为其一部分，它鼓励使用模块 ID 代替脚本标记的 URL。
 
 RequireJS loads all code relative to a baseUrl.The baseUrl is normally set to the same directory as the script used in a data-main attribute for the top level script to load for a page.The data-main attribute is a special attribute that require.js will check to start script loading.This example will end up with a baseUrl of scripts:
 
-RequireJS 加载与 baseUrl 相关的所有 code。这个 baseUrl 通常设置为与用于为页面加载的顶级脚本的 data-main 属性中的脚本相同的目录。这个 data-main 属性是一个特殊的属性，RequireJS 将检查来开始加载脚本。这个例子将以含有 baseUrl 的脚本结束
+RequireJS 加载相对于 baseUrl 的所有代码。通常，将 baseUrl 设置为与 data-main 属性中使用的脚本相同的目录，以使顶级脚本加载页面。该数据主要属性是一个特殊的属性，require.js 将检查启动脚本加载。本示例将以脚本的 baseUrl 结尾：
 
 ```javascript
 <!--This sets the baseUrl to the "scripts" directory, and
@@ -106,29 +108,32 @@ RequireJS 加载与 baseUrl 相关的所有 code。这个 baseUrl 通常设置�
 
 Or, baseUrl can be set manually via the RequireJS config.If there is no explicit config and data-main is not used, then the default baseUrl is the directory that contains the HTML page running RequireJS.
 
-或者 baseUrl 也可以通过 RequireJS config 来手动设置。如果没有明确的配置，并且 data-main 也没有被使用， 那么默认的 baseUrl 就是 包含运行 RequireJS 的 HTML 页面的目录
+或者，可以通过 RequireJS config 手动设置 baseUrl。如果没有显式配置并且未使用 data-main，则默认的 baseUrl 是包含运行 RequireJS 的 HTML 页面的目录。
 
 RequireJS also assumes by default that all dependencies are scripts, so it does not expect to see a trailing ".js" suffix on module IDs.RequireJS will automatically add it when translating the module ID to a path.With the paths config, you can set up locations of a group of scripts. All of these capabilities allow you to use smaller strings for scripts as compared to traditional `<script>` tags.
 
-RequireJS 也会默认假定所有依赖的都是脚本，所以他不期望在 模块 ids 上看到 ".js"后缀。RequireJS 将在转换 模块 id 为路径时候， 自动添加它。
-使用设置的 path,你能设置一组脚本的位置。所有这些功能，都允许你使用比传统的 script 标签 更小的脚本字符串。
+默认情况下，RequireJS 还假定所有依赖项都是脚本，因此它不希望在模块 ID 上看到尾随的".js"后缀。在将模块 ID 转换为路径时，RequireJS 将自动添加它。使用 path config，您可以设置一组脚本的位置。与传统的 `<script>` 标记相比，所有这些函数都允许您为脚本使用较小的字符串。
 
 There may be times when you do want to reference a script directly and not conform to the "baseUrl + paths" rules for finding it.If a module ID has one of the following characteristics, the ID will not be passed through the "baseUrl + paths" configuration, and just be treated like a regular URL that is relative to the document:
 
-这里也许有多次你想直接引用一个脚本，并且它不遵守 "baseUrl + paths" 规则来找到它。如果一个 module ID 有以下其中一个特点，这个 ID 将不会通过 "baseUrl + paths" 配置传递，并且只会当做被视为与文件相关的常规 url 来对待。
+有时您确实希望直接引用脚本，而又不遵循"baseUrl +路径"规则来查找脚本。如果模块 ID 具有以下特征之一，则该 ID 将不会通过"baseUrl +路径"配置传递，而只会被视为与文档相关的常规 URL：
 
-- Ends in ".js".--- 以 .js 结尾的
-- Starts with a "/". --- 以 / 开头的
-- Contains an URL protocol, like "http:" or "https:". --- 包含一个 URL 协议，例如 http htpps
+- Ends in ".js".
+- Starts with a "/".
+- Contains an URL protocol, like "http:" or "https:".
+
+* 以".js"结尾。
+* 以"/"开头。
+* 包含 URL 协议，例如"http："或"https："
 
 In general though, it is best to use the baseUrl and "paths" config to set paths for module IDs.
 By doing so, it gives you more flexibility in renaming and configuring the paths to different locations for optimization builds.
 
-不过一般来说，最好是使用 baseUrl 和 paths 设置属性来为 module IDs 设置路径。因为这样做， 它会给你带来额外的灵活性，如便于脚本的重命名，重定位等。
+通常，最好使用 baseUrl 和"paths"配置来设置模块 ID 的路径。这样，您可以在重命名和配置指向不同位置的路径以进行优化构建时更加灵活。
 
 Similarly, to avoid a bunch of configuration, it is best to avoid deep folder hierarchies for scripts, and instead either keep all the scripts in baseUrl, or if you want to separate your library/vendor-supplied code from your app code, use a directory layout like this:
 
-同样的，为了避免凌乱的配置，最好不要使用多级嵌套的目录层次来组织代码，而是要么将所有的脚本都放置到 baseUrl，要么要么分置为项目库/第三方库的一个扁平结构，如下：
+同样，为避免进行大量配置，最好避免对脚本使用较深的文件夹层次结构，而是将所有脚本都保留在 baseUrl 中，或者如果要从应用程序代码中分离库/供应商提供的代码，请使用目录布局如下：
 
 ```
 www/
@@ -144,7 +149,7 @@ www/
 ```
 
 in index.htm
-在 inde.html 文件中
+在 inde.html 中
 
 ```html
 <script data-main="js/app.js" src="js/require.js"></script>
@@ -179,21 +184,21 @@ It is recommended to store that version info in a separate text file if you want
 This allows you to have the very minimal configuration instead of having to put an entry in the "paths" config for each library.
 For instance, configure "jquery" to be "jquery-1.7.2".
 
-注意在示例中，三方库如 jQuery 没有将版本号包含在他们的文件中。我们建议将版本信息放置在单独的文件中进行追踪，使用如何 volo 这来的工具，可以将 package.json 打上版本信息，并在磁盘上保持文件名为 jquery.js。 这有助于你保持配置的最小化，避免为每一个库版本设置一条 path。例如，将 jquery 设置为 jquery-1.7.2
+请注意，作为该示例的一部分，像 jQuery 这样的供应商库在文件名中没有其版本号。如果要跟踪版本信息，建议将其存储在单独的文本文件中，或者如果使用诸如 volo 之类的工具，它将在 package.json 中标记版本信息，但将文件保留在磁盘上为"jquery"。 js"。这使您可以进行非常小的配置，而不必在每个库的"路径"配置中放置一个条目。例如，将"jquery"配置为"jquery-1.7.2"。
 
 Ideally the scripts you load will be modules that are defined by calling define().However, you may need to use some traditional/legacy "browser globals" scripts that do not express their dependencies via define().For those, you can use the shim config. To properly express their dependencies.
 
-理想状况下，每个加载的脚本都是通过 define()来定义的一个模块；但有些"浏览器全局变量注入"型的传统/遗留库并没有使用 define()来定义它们的依赖关系，你必须为此使用 shim config 来指明它们的依赖关系。
+理想情况下，您加载的脚本将是通过调用 define（）定义的模块。但是，您可能需要使用某些传统/旧版的"浏览器全局变量"脚本，这些脚本无法通过 define（）表达它们的依赖性。对于那些，您可以使用 shim config。正确表达其依赖性。
 
 If you do not express the dependencies, you will likely get loading errors since RequireJS loads scripts asynchronously and out of order for speed.
 
-如果你没有指明依赖关系，加载可能报错。这是因为基于速度的原因，RequireJS 会异步地以无序的形式加载这些库。
+如果不表达依赖关系，则由于 RequireJS 异步加载脚本且速度不佳，可能会导致加载错误。
 
 ### data-main Entry Point
 
 The data-main attribute is a special attribute that require.js will check to start script loading:
 
-这个 data-main 属性是 require.js 用来检查以开始加载脚本的一个特殊的属性
+data-main 属性是 require.js 将检查以开始加载脚本的特殊属性：
 
 ```html
 <!--when require.js loads it will inject another script tag
@@ -203,11 +208,11 @@ The data-main attribute is a special attribute that require.js will check to sta
 
 You will typically use a data-main script to set configuration options and then load the first application module. Note: the script tag require.js generates for your data-main module includes the async attribute. This means that you cannot assume that the load and execution of your data-main script will finish prior to other scripts referenced later in the same page.
 
-你通常会使用一个 data-main 脚本来配置设置选项 ，然后加载第一个应用脚本。注意：这个由 require.js 为你的 data-main 模块生成的脚本标签包含了 async 异步属性. 这意味着你不能假设 这个 data-main 脚本的加载和执行 将在同一个页面引用的其他脚本 之前完成。
+通常，您将使用数据主脚本来设置配置选项，然后加载第一个应用程序模块。注意：为您的数据主模块生成的脚本标签 require.js 包含 async 属性。这意味着您不能假定数据主脚本的加载和执行将在同一页面稍后引用的其他脚本之前完成。
 
 For example, this arrangement will fail randomly when the require.config path for the 'foo' module has not been set prior to it being require()'d later:
 
-例如，在为“foo”模块的 require.config 路径未在以后被 require()'d 之前设置时这种安排会随机失败：
+例如，当在稍后需要 require（）之前未设置'foo'模块的 require.config 路径时，此安排将随机失败：
 
 ```html
 <script data-main="scripts/main" src="scripts/require.js"></script>
@@ -234,7 +239,7 @@ require(['foo'], function (foo) {})
 
 If you want to do require() calls in the HTML page, then it is best to not use data-main. data-main is only intended for use when the page just has one main entry point, the data-main script. For pages that want to do inline require() calls, it is best to nest those inside a require() call for the configuration:
 
-如果你想要在 HTML 页面中使用 require()命令，那么最好不要使用 data-main. data-main 仅仅适用于放页面中仅仅只有一个主入口，即 data-main 脚本的时候。 对于页面中想再行内使用 require.js 命令的，最好是将它们 嵌套在 require() 命令的调用中进行配置。
+如果要 require()在 HTML 页面中进行调用，则最好不要使用 data-main。data-main 仅在页面只有一个主要入口点 data-main 脚本时使用。对于要进行内联 require()调用的页面，最好将其嵌套 require()在配置调用中：
 
 ```javascript
 <script src="scripts/require.js"></script>
@@ -253,27 +258,25 @@ require(['scripts/config'], function() {
 
 A module is different from a traditional script file in that it defines a well-scoped object that avoids polluting the global namespace. It can explicitly list its dependencies and get a handle on those dependencies without needing to refer to global objects, but instead receive the dependencies as arguments to the function that defines the module. Modules in RequireJS are an extension of the Module Pattern, with the benefit of not needing globals to refer to other modules.
 
-模块不同于传统的脚本文件，它良好地定义了一个作用域来避免全局名称空间污染。它可以显式地列出其依赖关系，并以函数(定义此模块的那个函数)参数的形式将这些依赖进行注入，而无需引用全局变量。RequireJS 的模块是模块模式的一个扩展，其好处是无需全局地引用其他模块。
+模块与传统脚本文件的不同之处在于，它定义了一个范围广泛的对象，可避免污染全局名称空间。它可以显式列出其依赖关系，并在不需要引用全局对象的情况下获取这些依赖关系的句柄，而是将依赖关系作为定义模块的函数的参数来接收。RequireJS 中的模块是 Module Pattern 的扩展，其优点是不需要全局变量来引用其他模块。
 
 The RequireJS syntax for modules allows them to be loaded as fast as possible, even out of order, but evaluated in the correct dependency order, and since global variables are not created, it makes it possible to load multiple versions of a module in a page.
 
-RequireJS 的模块语法允许它尽快地加载多个模块，虽然加载的顺序不定，但依赖的顺序最终是正确的。同时因为无需创建全局变量，甚至可以做到在同一个页面上同时加载同一模块的不同版本。
+模块的 RequireJS 语法允许它们以尽可能快的速度加载，即使不按顺序加载，但以正确的依赖关系顺序进行评估，并且由于未创建全局变量，因此可以在页面中加载模块的多个版本。
 
 (If you are familiar with or are using CommonJS modules, then please also see CommonJS Notes for information on how the RequireJS module format maps to CommonJS modules).
 
-如果你很熟悉或者正在使用 CommonJS 模块，那也请看看 CommonJS 笔记 以了解有关 RequireJS 模块怎么样把格式映射到 CommonJS 模块的信息
-
-(如果你熟悉 ConmmonJS，可参看 CommonJS 的注释信息以了解 RequireJS 模块到 CommonJS 模块的映射关系)。
+（如果您熟悉或正在使用 CommonJS 模块，那么也请参阅 CommonJS Notes 以获取有关 RequireJS 模块格式如何映射到 CommonJS 模块的信息）。
 
 There should only be one module definition per file on disk. The modules can be grouped into optimized bundles by the optimization tool.
 
-一个磁盘文件应该只定义 1 个模块。多个模块可以使用内置优化工具将其组织打包。
+磁盘上每个文件应该只有一个模块定义。可以通过优化工具将模块分组为优化的包。
 
 #### Simple Name/Value Pairs
 
 If the module does not have any dependencies, and it is just a collection of name/value pairs, then just pass an object literal to define():
 
-如果一个模块仅含值对，没有任何依赖，则在 define()中定义这些值对就好了
+如果模块没有任何依赖关系，而只是名称/值对的集合，则只需将对象文字传递给 define（）：
 
 ```javascript
 // Inside file my/shirt.js:
@@ -287,7 +290,7 @@ define({
 
 If the module does not have dependencies, but needs to use a function to do some setup work, then define itself, pass a function to define():
 
-如果一个模块没有任何依赖，但需要一个做 setup 工作的函数，则在 define()中定义该函数，并将其传给 define()
+如果模块没有依赖项，但是需要使用函数来完成一些设置工作，则定义自己，然后将函数传递给 define（）：
 
 ```javascript
 //my/shirt.js now does setup work
@@ -306,7 +309,7 @@ define(function () {
 
 If the module has dependencies, the first argument should be an array of dependency names, and the second argument should be a definition function. The function will be called to define the module once all dependencies have loaded. The function should return an object that defines the module. The dependencies will be passed to the definition function as function arguments, listed in the same order as the order in the dependency array:
 
-如果一个模块有依赖项，第一个参数应该是 依赖项名字组成的数组 ，并且第二个参数应该是一个定义的函数。一旦所有的依赖加载完成，这个函数将会被调用来定义模块。这个函数返回应该一个定义这个模块的对象。这些依赖项目将会被当做函数参数传递给定义个函数，按照与依赖数组中相同的顺序列出。
+如果模块具有依赖项，则第一个参数应为依赖项名称数组，第二个参数应为定义函数。加载所有依赖项后，将调用该函数以定义模块。该函数应返回定义模块的对象。依赖项将作为函数参数传递给定义函数，列出的顺序与依赖项数组中的顺序相同：
 
 ```javascript
 //my/shirt.js now has some dependencies, a cart and inventory
@@ -336,25 +339,25 @@ my/shirt.js
 
 The function call above specifies two arguments, "cart" and "inventory". These are the modules represented by the "./cart" and "./inventory" module names.
 
-这个函数指定了以上两个参数："cart" and "inventory".这里有被 "./cart" and "./inventory" 模块名字 代表的模块。
+上面的函数调用指定了两个参数："cart"和"inventory"。这些是由"./cart"和"./inventory"模块名称表示的模块。
 
 The function is not called until the my/cart and my/inventory modules have been loaded, and the function receives the modules as the "cart" and "inventory" arguments.
 
-模块函数以参数"cart"及"inventory"使用这两个以"./cart"及"./inventory"名称指定的模块。在这两个模块加载完毕之前，模块函数不会被调用。
+在加载了 my/cart 和 my/inventory 模块之后，该函数才被调用，并且该函数将这些模块作为"cart"和"inventory"参数接收。
 
 Modules that define globals are explicitly discouraged, so that multiple versions of a module can exist in a page at a time (see Advanced Usage). Also, the order of the function arguments should match the order of the dependencies.
 
-严重不鼓励模块定义全局变量。遵循此处的定义模式，可以使得同一模块的不同版本并存于同一个页面上(参见 高级用法 )。另外，函参的顺序应与依赖顺序保存一致。
+明确建议不要使用定义全局变量的模块，以便一次在一个页面中可以存在一个模块的多个版本（请参阅高级用法）。此外，函数参数的顺序应与依赖项的顺序匹配。
 
 The return object from the function call defines the "my/shirt" module. By defining modules in this way, "my/shirt" does not exist as a global object.
 
-返回的 object 定义了"my/shirt"模块。这种定义模式下，"my/shirt"不作为一个全局变量而存在。
+函数调用的返回对象定义 "my/shirt" 模块。通过以这种方式定义模块，"my/shirt"就不会作为全局对象存在。
 
 #### Define a Module as a Function
 
 Modules do not have to return objects. Any valid return value from a function is allowed. Here is a module that returns a function as its module definition:
 
-对模块的返回值类型并没有强制为一定是个 object，任何函数的返回值都是允许的。此处是一个返回了函数的模块定义：
+模块不必返回对象。允许从函数返回任何有效的返回值。这是一个返回函数作为其模块定义的模块：
 
 ```javascript
 //A module definition inside foo/title.js. It uses
@@ -377,7 +380,7 @@ define(['my/cart', 'my/inventory'], function (cart, inventory) {
 
 If you wish to reuse some code that was written in the traditional CommonJS module format it may be difficult to re-work to the array of dependencies used above, and you may prefer to have direct alignment of dependency name to the local variable used for that dependency. You can use the simplified CommonJS wrapper for those cases:
 
-如果你想重用一些 通过传统的 CommonJS 模块格式来书写的的代码，那么重新处理上面的依赖项数组就会比较困难，并且你也许更喜欢将依赖项目名称与用于该依赖的本地变量直接对齐
+如果您希望重用以传统 CommonJS 模块格式编写的某些代码，则可能难以对上面使用的依赖项数组进行重新处理，并且您可能更希望将依赖项名称直接与用于此的本地变量对齐依赖性。在以下情况下，可以使用简化的 CommonJS 包装器：
 
 ```javascript
 define(function (require, exports, module) {
@@ -391,17 +394,17 @@ define(function (require, exports, module) {
 
 This wrapper relies on Function.prototype.toString() to give a useful string value of the function contents. This does not work on some devices like the PS3 and some older Opera mobile browsers. Use the optimizer to pull out the dependencies in the array format for use on those devices.
 
-该包装方法依靠 Function.prototype.toString()将函数内容赋予一个有意义的字串值，但在一些设备如 PS3 及一些老的 Opera 手机浏览器中不起作用。考虑在这些设备上使用优化器将依赖导出为数组形式。
+该包装器依赖于 Function.prototype.toString（）给出函数内容的有用字符串值。这在某些设备（例如 PS3 和某些较旧的 Opera 移动浏览器）上不起作用。使用优化器以数组格式提取依赖项，以在这些设备上使用。
 
 More information is available on the CommonJS page, and in the "Sugar" section in the Why AMD page.
 
-更多的信息可参看 CommonJS Notes 页面，以及"Why AMD"页面的"Sugar"段落。
+有关更多信息，请参见 CommonJS 页面，以及"为什么选择 AMD"页面的"糖"部分。
 
 #### Define a Module with a Name
 
 You may encounter some define() calls that include a name for the module as the first argument to define():
 
-你可能会看到一些 define()中包含了一个模块名称作为首个参数：
+您可能会遇到一些 define（）调用，其中包含模块的名称作为 define（）的第一个参数：
 
 ```javascript
 //Explicitly defines the "foo/title" module:
@@ -412,17 +415,17 @@ define('foo/title', ['my/cart', 'my/inventory'], function (cart, inventory) {
 
 These are normally generated by the optimization tool. You can explicitly name modules yourself, but it makes the modules less portable -- if you move the file to another directory you will need to change the name. It is normally best to avoid coding in a name for the module and just let the optimization tool burn in the module names. The optimization tool needs to add the names so that more than one module can be bundled in a file, to allow for faster loading in the browser.
 
-这些常由优化工具生成。你也可以自己显式指定模块名称，但这使模块更不具备移植性——就是说若你将文件移动到其他目录下，你就得重命名。一般最好避免对模块硬编码，而是交给优化工具去生成。优化工具需要生成模块名以将多个模块打成一个包，加快到浏览器的载人速度。
+这些通常是由优化工具生成的。您可以自己显式命名模块，但这会使模块的可移植性降低-如果将文件移动到另一个目录，则需要更改名称。通常最好避免为模块的名称编码，而让优化工具以模块名称的形式进行刻录。优化工具需要添加名称，以便一个文件中可以捆绑多个模块，以允许在浏览器中更快地加载。
 
 #### Other Module Notes
 
 **One module per file**: Only one module should be defined per JavaScript file, given the nature of the module name-to-file-path lookup algorithm. You should only use the optimization tool to group multiple modules into optimized files.
 
-**一个文件一个模块**: 每个 Javascript 文件应该只定义一个模块，这是模块名-至-文件名查找机制的自然要求。多个模块会被优化工具组织优化，但你在使用优化工具时应将多个模块放置到一个文件中。
+**每个文件一个模块**: 鉴于模块名称到文件路径查找算法的性质，每个 JavaScript 文件只能定义一个模块。您仅应使用优化工具将多个模块分组为优化文件。
 
 **Relative module names inside define()**: For require("./relative/name") calls that can happen inside a define() function call, be sure to ask for "require" as a dependency, so that the relative name is resolved correctly:
 
-**define()中的相对模块名**: 为了可以在 define()内部使用诸如 require("./relative/name")的调用以正确解析相对名称，记得将"require"本身作为一个依赖注入到模块中：
+**define()中的相对模块名**: 对于在 define（）函数调用中可能发生的 require（"./ relative/name"）调用，请务必要求"require"作为依赖项，以便解析相对名称正确地：
 
 ```javascript
 define(['require', './relative/name'], function (require) {
@@ -432,7 +435,7 @@ define(['require', './relative/name'], function (require) {
 
 Or better yet, use the shortened syntax that is available for use with translating CommonJS modules:
 
-或者更好地，使用下述为转换 CommonJS 模块所设的更短的语法：
+或更妙的是，使用可用于翻译 CommonJS 模块的缩短的语法：
 
 ```javascript
 define(function (require) {
@@ -442,15 +445,15 @@ define(function (require) {
 
 This form will use Function.prototype.toString() to find the require() calls, and add them to the dependency array, along with "require", so the code will work correctly with relative paths.
 
-该形式利用了 Function.prototype.toString()去查找 require()调用，然后将其与"require"一起加入到依赖数组中，这样代码可以正确地解析相对路径了。
+这种形式将使用 Function.prototype.toString（）查找 require（）调用，并将它们与"require"一起添加到依赖项数组中，因此代码可以在相对路径下正常工作。
 
 Relative paths are really useful if you are creating a few modules inside a directory, so that you can share the directory with other people or other projects, and you want to be able to get a handle on the sibling modules in that directory without having to know the directory's name.
 
-相对路径在一些场景下格外有用，例如：为了以便于将代码共享给其他人或项目，你在某个目录下创建了一些模块。你可以访问模块的相邻模块，无需知道该目录的名称。
+如果要在目录中创建一些模块，则相对路径非常有用，这样您就可以与其他人或其他项目共享目录，并且希望能够获得该目录中同级模块的句柄而不必知道目录的名称。
 
 Relative module names are relative to other names, not paths: The loader stores modules by their name and not by their path internally. So for relative name references, those are resolved relative to the module name making the reference, then that module name, or ID, is converted to a path if needs to be loaded. Example code for a 'compute' package that has a 'main' and 'extras' modules in it:
 
-相对的模块名字是相对于其他名字的，而不是路径：这个加载器内部是通过他们的名字记录模块的而不是通过他们的路径。因为对于相对的名字引用，他们是相对于引用的模块名字来进行解析的，然后如果他们想要被加载的话，这些模块名字、或者模块 id 会被转换为路径。下面是含有 main 和 extras 模块 的 compute 包的示例代码
+相对模块名称相对于其他名称，而不是路径: 加载程序按模块名称而不是内部路径存储模块。因此，对于相对名称引用，相对于引用的模块名称进行解析，然后如果需要加载，则将该模块名称或 ID 转换为路径。其中具有"main"和"extras"模块的"compute"包的示例代码：
 
 ```
 * lib/
@@ -461,7 +464,7 @@ Relative module names are relative to other names, not paths: The loader stores 
 
 where the main.js module looks like this:
 
-main.js 模块像这样
+main.js 模块如下所示：
 
 ```javascript
 define(['./extras'], function (extras) {
@@ -471,7 +474,7 @@ define(['./extras'], function (extras) {
 
 If this was the paths config:
 
-这个是路径配置
+如果这是路径配置：
 
 ```javascript
 require.config({
@@ -484,23 +487,23 @@ require.config({
 
 And a require(['compute']) is done, then lib/compute/main.js will have the module name of 'compute'. When it asks for './extras', that is resolved relative to 'compute', so 'compute/./extras', which normalizes to just 'extras'. Since there is no paths config for that module name, the path generated will be for 'lib/extras.js', which is incorrect.
 
-一个 require(['computed'])加载完成，这个 lib/compute/main.js 就有了一个叫做 'compute' 的模块名字。当它遇到 "./extras" 时候，它是相对于 compute 被解析的，因此 'compute/./extras' 将被规范化地处理为 extras. 因为这个模块名字没有设置，因此生成的路径将用于“lib/extras.js”，这是不正确的
+并且 require(['compute'])做了，那么 LIB /计算/ main.js 将有"计算"的模块名称。当它要求"./extras"时，相对于"compute"可以解决，因此"compute /./ extras"将其标准化为"extras"。由于没有用于该模块名称的路径配置，因此生成的路径将用于"lib/extras.js"，这是不正确的。
 
 For this case, packages config is a better option, since it allows setting the main module up as 'compute', but internally the loader will store the module with the ID of 'compute/main' so that the relative reference for './extras' works.
 
-对于这个例子，包配置是一个好的选项，因为它允许将主模块设置为 "compute"， 但是在内部这个加载器将记录下 compute/main 的模块 id ，以便 "./extras"的相对引用的工作。
+在这种情况下，packages config 是一个更好的选择，因为它允许将主模块设置为"compute"，但是在内部加载程序将以 ID"compute/main"存储该模块，以便"./演员的作品。
 
 Another option is to construct a module at lib/compute.js that is just define(['./compute/main'], function(m) { return m; });, then there is no need for paths or packages config.
 
-另一个设置是在 lib/compute.js 上构建一个模块，它只是用来 define(['./compute/main'], function(m) { return m; });， 然后这里不需要路径或者包配置。
+另一个选择是在 lib/compute.js 处构建一个模块 just define(['./compute/main'], function(m) { return m; });，那么就不需要路径或程序包配置了。
 
 Or, do not set that paths or packages config and do the top level require call as require(['compute/main']).
 
-或者，不设置路径或者包配置并且，将 require(['compute/main]) 作为顶层 require 调用
+或者，不要设置路径或程序包配置，并且不要在顶层要求调用 as require(['compute/main'])。
 
 Generate URLs relative to module: You may need to generate an URL that is relative to a module. To do so, ask for "require" as a dependency and then use require.toUrl() to generate the URL:
 
-生成相对于模块的 URL 地址: 你可能需要生成一个相对于模块的 URL 地址。你可以将"require"作为一个依赖注入进来，然后调用 require.toUrl()以生成该 URL:
+生成相对于模块的 URL: 您可能需要生成相对于模块的 URL。为此，要求"require"作为依赖项，然后使用 require.toUrl（）生成 URL：
 
 ```javascript
 define(['require'], function (require) {
@@ -510,7 +513,7 @@ define(['require'], function (require) {
 
 Console debugging: If you need to work with a module you already loaded via a require(["module/name"], function(){}) call in the JavaScript console, then you can use the require() form that just uses the string name of the module to fetch it:
 
-控制台调试: 如果你需要处理一个已通过 require(["module/name"], function(){})调用加载了的模块，可以使用模块名作为字符串参数的 require()调用来获取它:
+控制台调试: 如果需要使用已经通过 require(["module/name"], function(){})JavaScript 控制台中的调用加载的模块，则可以使用 require（）表单，该表单仅使用模块的字符串名称来获取它：
 
 ```javascript
 require('module/name').callSomeFunction()
@@ -518,13 +521,13 @@ require('module/name').callSomeFunction()
 
 Note this only works if "module/name" was previously loaded via the async version of require: require(["module/name"]). If using a relative path, like './module/name', those only work inside define
 
-注意这种形式仅在"module/name"已经由其异步形式的 require(["module/name"])加载了后才有效。只能在 define 内部使用形如"./module/name"的相对路径。
+请注意，这仅在先前通过 require：的异步版本加载"模块/名称"时有效 require(["module/name"])。如果使用相对路径，例如"./module/name"，则这些仅在内部定义
 
 #### Dependencies
 
 If you define a circular dependency ("a" needs "b" and "b" needs "a"), then in this case when "b"'s module function is called, it will get an undefined value for "a". "b" can fetch "a" later after modules have been defined by using the require() method (be sure to specify require as a dependency so the right context is used to look up "a"):
 
-如果你定义了一个循环依赖(a 依赖 b，b 同时依赖 a)，则在这种情形下当 b 的模块函数被调用的时候，它会得到一个 undefined 的 a。b 可以在模块已经定义好后用 require()方法再获取(记得将 require 作为依赖注入进来)：
+如果定义循环依赖关系（"a"需要"b"，"b"需要"a"），则在这种情况下，当调用"b"的模块函数时，它将获得"a"的未定义值。在使用 require（）方法定义模块之后，"b"可以稍后获取"a"（请确保将 require 指定为依赖项，以便使用正确的上下文查找"a"）：
 
 ```javascript
 //Inside b.js:
@@ -539,11 +542,11 @@ define(['require', 'a'], function (require, a) {
 
 Normally you should not need to use require() to fetch a module, but instead rely on the module being passed in to the function as an argument. Circular dependencies are rare, and usually a sign that you might want to rethink the design. However, sometimes they are needed, and in that case, use require() as specified above.
 
-一般说来你无需使用 require()去获取一个模块，而是应当使用注入到模块函数参数中的依赖。循环依赖比较罕见，它也是一个重构代码重新设计的警示灯。但不管怎样，有时候还是要用到循环依赖，这种情形下就使用上述的 require()方式来解决。
+通常，您不需要使用 require（）来获取模块，而是依靠将模块作为参数传递给函数。循环依赖很少见，通常是您可能需要重新考虑设计的信号。但是，有时需要它们，在这种情况下，请使用上面指定的 require（）。
 
 If you are familiar with CommonJS modules, you could instead use exports to create an empty object for the module that is available immediately for reference by other modules. By doing this on both sides of a circular dependency, you can then safely hold on to the the other module. This only works if each module is exporting an object for the module value, not a function:
 
-如果你熟悉 CommonJS，你可以考虑使用 exports 为模块建立一个空 object，该 object 可以立即被其他模块引用。在循环依赖的两头都如此操作之后，你就可以安全地持有其他模块了。这种方法仅在每个模块都是输出 object 作为模块值的时候有效，换成函数无效。
+如果您熟悉 CommonJS 模块，则可以使用导出为该模块创建一个空对象，该空对象可立即供其他模块引用。通过在循环依赖关系的两侧执行此操作，然后可以安全地保留另一个模块。仅当每个模块都为模块值而不是函数导出对象时，此方法才有效：
 
 ```javascript
 //Inside b.js:
@@ -561,7 +564,7 @@ define(function (require, exports, module) {
 
 Or, if you are using the dependency array approach, ask for the special 'exports' dependency:
 
-或者，如果你使用依赖注入数组的步骤，则可用注入特殊的"exports"来解决：
+或者，如果您使用的是依赖项数组方法，则要求特殊的 "exports"依赖项：
 
 ```javascript
 //Inside b.js:
@@ -580,15 +583,15 @@ define(['a', 'exports'], function (a, exports) {
 
 JSONP is a way of calling some services in JavaScript. It works across domains and it is an established approach to calling services that just require an HTTP GET via a script tag.
 
-JSONP 是在 javascript 中服务调用的一种方式。它仅需简单地通过一个 script 标签发起 HTTP GET 请求，是实现跨域服务调用一种公认手段。
+JSONP 是使用 JavaScript 调用某些服务的一种方式。它跨域工作，并且是一种仅通过脚本标签仅需要 HTTP GET 即可调用服务的既定方法。
 
 To use a JSONP service in RequireJS, specify "define" as the callback parameter's value. This means you can get the value of a JSONP URL as if it was a module definition.
 
-为了在 RequireJS 中使用 JSON 服务，须要将 callback 参数的值指定为"define"。这意味着你可将获取到的 JSONP URL 的值看成是一个模块定义。
+要在 RequireJS 中使用 JSONP 服务，请指定"define"作为回调参数的值。这意味着您可以获得 JSONP URL 的值，就好像它是模块定义一样。
 
 Here is an example that calls a JSONP API endpoint. In this example, the JSONP callback parameter is called "callback", so "callback=define" tells the API to wrap the JSON response in a "define()" wrapper:
 
-下面是一个调用 JSONP API 端点的示例。该示例中，JSONP 的 callback 参数为"callback"，因此"callback=define"告诉 API 将 JSON 响应包裹到一个"define()"中：
+这是一个调用 JSONP API 端点的示例。在此示例中，JSONP 回调参数称为"callback"，因此"callback = define"告诉 API 将 JSON 响应包装在"define（）"包装器中：
 
 ```javascript
 require(['http://example.com/api/data.json?callback=define'], function (data) {
@@ -600,57 +603,57 @@ require(['http://example.com/api/data.json?callback=define'], function (data) {
 
 This use of JSONP should be limited to JSONP services for initial application setup. If the JSONP service times out, it means other modules you define via define() may not get executed, so the error handling is not robust.
 
-JSONP 的这种用法应仅限于应用的初始化中。一旦 JSONP 服务超时，其他通过 define()定义了的模块也可能得不得执行，错误处理不是十分健壮。
+JSONP 的这种使用应限于初始应用程序设置的 JSONP 服务。如果 JSONP 服务超时，则意味着可能无法执行通过 define（）定义的其他模块，因此错误处理不可靠。
 
 Only JSONP return values that are JSON objects are supported. A JSONP response that is an array, a string or a number will not work.
 
-仅支持返回值类型为 JSON object 的 JSONP 服务，其他返回类型如数组、字串、数字等都不能支持。
+仅支持作为 JSON 对象的 JSONP 返回值.数组，字符串或数字的 JSONP 响应将不起作用。
 
 This functionality should not be used for long-polling JSONP connections -- APIs that deal with real time streaming. Those kinds of APIs should do more script cleanup after receiving each response, and RequireJS will only fetch a JSONP URL once -- subsequent uses of the same URL as a dependency in a require() or define() call will get a cached value.
 
-这种功能不该用于 long-polling 类的 JSONP 连接——那些用来处理实时流的 API。这些 API 在接收响应后一般会做 script 的清理，而 RequireJS 则只能获取该 JSONP URL 一次——后继使用 require()或 define()发起的的对同一 URL 的依赖(请求)只会得到一个缓存过的值。
+此函数不应用于长轮询 JSONP 连接-用于处理实时流的 API。这类 API 在收到每个响应后应该执行更多的脚本清理工作，并且 RequireJS 仅会提取一次 JSONP URL-随后将相同的 URL 作为 require（）或 define（）调用中的依赖项使用，将获得一个缓存的值。
 
 Errors in loading a JSONP service are normally surfaced via timeouts for the service, since script tag loading does not give much detail into network problems. To detect errors, you can override requirejs.onError() to get errors. There is more information in the Handling Errors section.
 
-JSONP 调用错误一般以服务超时的形式出现，因为简单加载一个 script 标签一般不会得到很 详细的网络错误信息。你可以 override requirejs.onError()来过去错误。更多的信息请参看错误处理部分。
+加载 JSONP 服务的错误通常会通过该服务的超时而浮出水面，因为脚本标记加载不会为网络问题提供太多详细信息。要检测错误，可以重写 requirejs.onError（）以获取错误。在"处理错误"部分中有更多信息。
 
 #### Undefining a Module
 
 There is a global function, requirejs.undef(), that allows undefining a module. It will reset the loader's internal state to forget about the previous definition of the module.
 
-有一个全局函数 requirejs.undef()用来 undefine 一个模块。它会重置 loader 的内部状态以使其忘记之前定义的一个模块。
+有一个全局函数 requirejs.undef（），它允许取消定义模块。它将重置加载程序的内部状态，以忽略模块的先前定义。
 
 However, it will not remove the module from other modules that are already defined and got a handle on that module as a dependency when they executed. So it is really only useful to use in error situations when no other modules have gotten a handle on a module value, or as part of any future module loading that may use that module. See the errback section for an example.
 
-但是若有其他模块已将此模块作为依赖使用了，该模块就不会被清除，所以该功能仅在无其他模块持有该模块时的错误处理中，或者当未来需要加载该模块时有点用。参见备错(errbacks)段的示例。
+但是，它将不会从其他已定义的模块中删除该模块，并且在执行时会将该模块作为依赖项获得该模块的句柄。因此，只有在没有其他模块都无法处理该模块值的错误情况下使用它，或者作为将来可能使用该模块的模块加载的一部分，它才真正有用。有关示例，请参见 errback 部分。
 
 If you want to do more sophisticated dependency graph analysis for undefining work, the semi-private onResourceLoad API may be helpful.
 
-如果你打算在 undefine 时做一些复杂的依赖图分析，则半私有的 onResourceLoad API 可能对你有用。
+如果要进行更复杂的依赖关系图分析以进行未定义的工作，则半私有的 onResourceLoad API 可能会有所帮助。
 
 ### MECHANICS
 
 RequireJS loads each dependency as a script tag, using head.appendChild().
 
-RequireJS 使用 head.appendChild()将每一个依赖加载为一个 script 标签。
+RequireJS 使用 head.appendChild（）将每个依赖项作为脚本标签加载。
 
 RequireJS waits for all dependencies to load, figures out the right order in which to call the functions that define the modules, then calls the module definition functions once the dependencies for those functions have been called. Note that the dependencies for a given module definition function could be called in any order, due to their sub-dependency relationships and network load order.
 
-RequireJS 等待所有的依赖加载完毕，计算出模块定义函数正确调用顺序,然后一旦这些函数依赖项被调用时候就触发这些模块定义。注意一个给定的被定义的模块可以以任何顺序被调用，这依赖于他们的子依赖关系和网络记载熟顺序。
+RequireJS 等待所有依赖项加载，找出正确的顺序来调用定义模块的函数，然后在调用这些函数的依赖项后调用模块定义函数。请注意，由于给定模块定义函数的子依赖关系和网络负载顺序，可以按任何顺序调用它们的依赖关系。
 
 Using RequireJS in a server-side JavaScript environment that has synchronous loading should be as easy as redefining require.load(). The build system does this, the require.load method for that environment can be found in build/jslib/requirePatch.js.
 
-在同步加载的服务端 JavaScript 环境中，可简单地重定义 require.load()来使用 RequireJS。build 系统就是这么做的。该环境中的 require.load 实现可在 build/jslib/requirePatch.js 中找到。
+在具有同步加载的服务器端 JavaScript 环境中使用 RequireJS 就像重新定义 require.load（）一样容易。构建系统会执行此操作，可以在 build/jslib/requirePatch.js 中找到该环境的 require.load 方法。
 
 In the future, this code may be pulled into the require/ directory as an optional module that you can load in your env to get the right load behavior based on the host environment.
 
-未来可能将该部分代码置入 require/目录下作为一个可选模块，这样你可以在你的宿主环境中使用它来获得正确的加载顺序。
+将来，此代码可能作为可选模块被拉入 require /目录，您可以在环境中加载该模块以根据主机环境获得正确的加载行为。
 
 ### CONFIGURATION OPTIONS
 
 When using require() in the top-level HTML page (or top-level script file that does not define a module), a configuration object can be passed as the first option:
 
-当在顶层 HTML 页面(或不作为一个模块定义的顶层脚本文件)中，可将配置作为首项放入：
+在顶层 HTML 页面（或未定义模块的顶层脚本文件）中使用 require（）时，可以将配置对象作为第一个选项传递：
 
 ```javascript
 <script src="scripts/require.js"></script>
@@ -676,11 +679,11 @@ When using require() in the top-level HTML page (or top-level script file that d
 
 You may also call require.config from your data-main Entry Point, but be aware that the data-main script is loaded asynchronously. Avoid other entry point scripts which wrongly assume that data-main and its require.config will always execute prior to their script loading.
 
-你也可以在你的 data-main 入口调用 require.config，但是请注意到，data-main 脚本文件是被异步加载的。避免其他的错误地假设 data-main 和它的 require.config 将总是比其他的脚本加载优先执行的脚本入口 。
+您也可以从数据主入口点调用 require.config ，但是请注意，数据主脚本是异步加载的。避免使用其他入口点脚本，这些脚本错误地假定 data-main 及其 require.config 将始终在脚本加载之前执行。
 
 Also, you can define the config object as the global variable require before require.js is loaded, and have the values applied automatically. This example specifies some dependencies to load as soon as require.js defines require():
 
-或者，你将配置作为全局变量"require"在 require.js 加载之前进行定义，它会被自动应用。下面的示例定义的依赖会在 require.js 一旦定义了 require()之后即被加载：
+另外，可以 require 在加载 require.js 之前将 config 对象定义为全局变量，并自动应用值。此示例指定了一些要在 require.js 定义 require（）时加载的依赖项：
 
 ```javascript
 <script>
@@ -699,7 +702,7 @@ Also, you can define the config object as the global variable require before req
 
 Note: It is best to use var require = {} and do not use window.require = {}, it will not behave correctly in IE.
 
-注意：最好使用 var require = {} 的形式而不是 window.require = {}的形式。后者在 IE 中运行不正常。
+注意: 最好使用 var require = {}并且不要使用 window.require = {}，它将在 IE 中无法正确运行。
 
 There are some patterns for separating the config from main module loading.
 
@@ -714,6 +717,8 @@ Supported configuration options:
 If no baseUrl is explicitly set in the configuration, the default value will be the location of the HTML page that loads require.js. If a data-main attribute is used, that path will become the baseUrl.
 
 The baseUrl can be a URL on a different domain as the page that will load require.js. RequireJS script loading works across domains. The only restriction is on text content loaded by text! plugins: those paths should be on the same domain as the page, at least during development. The optimization tool will inline text! plugin resources so after using the optimization tool, you can use resources that reference text! plugin resources from another domain.
+
+TODO
 
 **baseUrl**: 用来查找所有模块的主路径。在以上例子中， "my/module"的脚本 将会拥有一个 地址指向 /another/path/my/module.js. baseUrl 在加载普通的 js 文件(明确以斜杠开头、有协议或以 .js 结尾的) 时并不适用，这些字符串将会原样适用，并且 a.js 和 b.js 将会从 包含上述代码段的 HTML 页面的同级目录中加载。
 
