@@ -718,13 +718,11 @@ If no baseUrl is explicitly set in the configuration, the default value will be 
 
 The baseUrl can be a URL on a different domain as the page that will load require.js. RequireJS script loading works across domains. The only restriction is on text content loaded by text! plugins: those paths should be on the same domain as the page, at least during development. The optimization tool will inline text! plugin resources so after using the optimization tool, you can use resources that reference text! plugin resources from another domain.
 
-TODO
+**baseUrl**: 用于所有模块查找的根路径。因此，在上面的示例中，"my/module"的脚本标签将具有 src ="/another/path/my/module.js"。是的 baseUrl 不装入普通.js 文件时使用的（由一个依赖字符串指示开始以斜线，具有协议，或在端部的.js），这些字符串被原样使用，所以 a.js 和 b.js 将从与包含上述代码段的 HTML 页面相同的目录中加载。
 
-**baseUrl**: 用来查找所有模块的主路径。在以上例子中， "my/module"的脚本 将会拥有一个 地址指向 /another/path/my/module.js. baseUrl 在加载普通的 js 文件(明确以斜杠开头、有协议或以 .js 结尾的) 时并不适用，这些字符串将会原样适用，并且 a.js 和 b.js 将会从 包含上述代码段的 HTML 页面的同级目录中加载。
+如果在配置中未显式设置 baseUrl，则默认值将是加载 require.js 的 HTML 页面的位置。如果使用 data-main 属性，则该路径将成为 baseUrl。
 
-如未显式设置 baseUrl，则默认值是加载 require.js 的 HTML 所处的位置。如果用了 data-main 属性，则该路径就变成 baseUrl。
-
-baseUrl 可跟 require.js 页面处于不同的域下，RequireJS 脚本的加载是跨域的。唯一的限制是使用 text! plugins 加载文本内容时，这些路径应跟页面同域，至少在开发时应这样。优化工具会将 text! plugin 资源内联，因此在使用优化工具之后你可以使用跨域引用 text! plugin 资源的那些资源。
+baseUrl 可以是与将加载 require.js 的页面不同的域上的 URL。RequireJS 脚本加载跨域工作。唯一的限制是文本加载的文本内容！插件：至少在开发过程中，这些路径应与页面位于同一域。优化工具将内联文本！插件资源，因此在使用优化工具后，您可以使用引用文本的资源！来自另一个域的插件资源。
 
 **paths**: path mappings for module names not found directly under baseUrl. The path settings are assumed to be relative to baseUrl, unless the paths setting starts with a "/" or has a URL protocol in it ("like http:"). Using the above sample config, "some/module"'s script tag will be src="/another/path/some/v1.0/module.js".
 
@@ -732,11 +730,11 @@ The path that is used for a module name should not include an extension, since t
 
 When run in a browser, paths fallbacks can be specified, to allow trying a load from a CDN location, but falling back to a local location if the CDN location fails to load.
 
-**paths** ：path 映射那些不直接放置于 baseUrl 下的模块名。设置 path 时起始位置是相对于 baseUrl 的，除非该 path 设置以"/"开头或含有 URL 协议（如 http:）。在上述的配置下，"some/module"的 script 标签 src 值是"/another/path/some/v1.0/module.js"。
+**paths** ：在 baseUrl 的正下方找不到模块名称的路径映射。除非路径设置以"/"开头或其中包含 URL 协议（例如"http："），否则假定该路径设置相对于 baseUrl。使用上面的示例配置，"some/module"的脚本标签将为 src ="/another/path/some/v1.0/module.js"。
 
-用于模块名的 path 不应含有.js 后缀，因为一个 path 有可能映射到一个目录。路径解析机制会自动在映射模块名到 path 时添加上.js 后缀。在文本模版之类的场景中使用 require.toUrl()时它也会添加合适的后缀。
+被用于模块名称应该路径不包括扩展名，因为 path 映射可能是一个目录。当将模块名称映射到路径时，路径映射代码将自动添加.js 扩展名。如果使用了 require.toUrl（），它将添加适当的扩展名（如果用于文本模板）。
 
-在浏览器中运行时，可指定路径的备选(fallbacks)，以实现诸如首先指定了从 CDN 中加载，一旦 CDN 加载失败则从本地位置中加载这类的机制。
+在浏览器中运行时，可以指定路径回退，以允许尝试从 CDN 位置进行加载，但是如果 CDN 位置无法加载，则回退到本地位置。
 
 **bundles**: Introduced in RequireJS 2.1.10: allows configuring multiple module IDs to be found in another script. Example:
 
@@ -759,31 +757,31 @@ require(['util', 'text'], function (util, text) {
 
 That config states: modules 'main', 'util', 'text' and 'text!template.html' will be found by loading module ID 'primary'. Module 'text!secondary.html' can be found by loading module ID 'secondary'.
 
-这个设置状态：模块 main util text 和 'text!template.html' 在加载 模块 id "primary"时候被发现。模块 'text!secondary.html' 在 加载模块 id "secondary" 时候被发现
+该配置指出：模块"main"，"util"，"text"和"text！template.html"将通过加载模块 ID"primary"来找到。可以通过加载模块 ID"secondary"来找到模块 ​​"text！secondary.html"。
 
 This only sets up where to find a module inside a script that has multiple define()'d modules in it. It does not automatically bind those modules to the bundle's module ID. The bundle's module ID is just used for locating the set of modules.
 
-这只设置在一个有多个 define()的脚本中哪里找到一个模块。它不会自动把这些模块自动绑定到这些包的模块 id 上。这个包的模块 id 仅仅用来定位模块集。
+这仅设置了在脚本中包含多个 define（）模块的模块中查找模块的位置。它不会自动将那些模块绑定到捆绑软件的模块 ID。捆绑软件的模块 ID 仅用于查找模块集。
 
 Something similar is possible with paths config, but it is much wordier, and the paths config route does not allow loader plugin resource IDs in its configuration, since the paths config values are path segments, not IDs.
 
-类似的情况也可以通过 路径设置 来实现，但它更冗长，并且这个路径配置路由不允许在它的设置中加载插件资源 ids，因为这个路径设置值是路径片段，而不是 ids
+使用 path config 可能会发生类似的事情，但是它要复杂得多，并且 path config 路由不允许在其配置中使用加载程序插件资源 ID，因为 path config 的值是路径段而不是 ID。
 
 bundles config is useful if doing a build and that build target was not an existing module ID, or if you have loader plugin resources in built JS files that should not be loaded by the loader plugin. Note that the keys and values are module IDs, not path segments. They are absolute module IDs, not a module ID prefix like paths config or map config. Also, bundle config is different from map config in that map config is a one-to-one module ID relationship, where bundle config is for pointing multiple module IDs to a bundle's module ID.
 
-如果你正在做一个构建而且执行构建目标不是一个现有的模块 id， 或者你在构建的 js 文件中有加载插件资源，而这些资源不应该被加载器插件加载 ，包配置是很有用的。请注意，键和值是 模块 ids，而不是路径段。它们是绝对的模块 id，不是一个带类似于 paths config 或者 map config 前缀 的模块 id.此外，包配置是不同于 map 配置的的，因为 map 配置是一对一的模块 id 关系，而包配置是将多个模块 id 指向一个包模块的 id.
+如果执行构建并且该构建目标不是现有的模块 ID，或者如果已构建的 JS 文件中包含不应由加载程序插件加载的加载程序插件资源，则 bundles config 很有用。请注意，键和值是模块 ID，而不是路径段。它们是绝对模块 ID，而不是像 path config 或 map config 这样的模块 ID 前缀。另外，bundle config 与 map config 的不同之处在于 map config 是一对一的模块 ID 关系，其中 bundle config 用于将多个模块 ID 指向 bundle 的模块 ID。
 
 As of RequireJS 2.2.0, the optimizer can generate the bundles config and insert it into the top level requirejs.config() call. See the bundlesConfigOutFile build config option for more details.
 
-作为 requireJS 2.2.0, 这个优化器可以产生这个包配置并且将其插入顶层的 requirejs.config()调用。有关更多细节，参阅 bundlesConfigOutFile 构建配置选项
+从 RequireJS 2.2.0 开始，优化器可以生成 bundle config 并将其插入到顶层 requirejs.config（）调用中。有关更多详细信息，请参见 bundlesConfigOutFile 构建配置选项。
 
 **shim**: Configure the dependencies, exports, and custom initialization for older, traditional "browser globals" scripts that do not use define() to declare the dependencies and set a module value.
 
-shim: 配置依赖项，exports 和 旧版本的自定义初始化，传统的 “浏览器全局” 脚本不使用 define() 来声明依赖关系和设置一个模块值。
+shim: 为不使用 define（）声明依赖关系和设置模块值的较旧的传统"浏览器全局变量"脚本配置依赖关系，导出和自定义初始化。
 
 Here is an example. It requires RequireJS 2.1.0+, and assumes backbone.js, underscore.js and jquery.js have been installed in the baseUrl directory. If not, then you may need to set a paths config for them:
 
-下面是一个例子。它需要 RequireJS 2.1.0+， 并假设 backbone.js, underscore.js and jquery.js 在 baseUrl 文件夹中已经被安装了。如果没有，你可能需要为它们设置一个路径配置。
+这是一个例子。它需要 RequireJS 2.1.0+，并假定在 baseUrl 目录中已安装了 ribs.js，underscore.js 和 jquery.js。如果没有，那么您可能需要为它们设置路径配置：
 
 ```javascript
 requirejs.config({
@@ -838,11 +836,11 @@ define(['backbone'], function (Backbone) {
 
 In RequireJS 2.0.\*, the "exports" property in the shim config could have been a function instead of a string. In that case, it functioned the same as the "init" property as shown above. The "init" pattern is used in RequireJS 2.1.0+ so a string value for exports can be used for enforceDefine, but then allow functional work once the library is known to have loaded.
 
-在 RequireJS 2.0.中，这个在 shim 配置中的 exports 属性 可以是一个函数而不是一个字符串。在这种情况下，它的功能与上面的所示 init 属性相同。这个 init 模型可以在 RequireJS 2.1。0+中使用，因此导出的一个字符串值可以用于强定义，但是一旦知道库已经被加载了，就允许函数工作。
+在 RequireJS 2.0。\*中，shim 配置中的"exports"属性可能是函数而不是字符串。在这种情况下，它的函数与上述"init"属性相同。"init"模式在 RequireJS 2.1.0+中使用，因此 exports 可以将字符串值用于 forceDefine，但是一旦已知已加载库，就可以进行函数工作。
 
 For "modules" that are just jQuery or Backbone plugins that do not need to export any module value, the shim config can just be an array of dependencies:
 
-对于那些仅仅是 jQuery or Backbone 插件，不需要导出任何模块值，这个 shim 配置可以是一个依赖性数组。
+对于只是 jQuery 或 Backbone 插件的"模块"，不需要导出任何模块值，shim 配置可以只是一个依赖项数组：
 
 ```javascript
 requirejs.config({
@@ -855,8 +853,7 @@ requirejs.config({
 ```
 
 Note however if you want to get 404 load detection in IE so that you can use paths fallbacks or errbacks, then a string exports value should be given so the loader can check if the scripts actually loaded (a return from init is not used for enforceDefine checking):
-
-注意：如果你这 IE 中获得 404 加载提示你可以使用路径回退或者 errbacks, 那么应该给出一个字符串导出值，这样加载器可以检查脚本是否实际加载了（init 返回值不是用来强制执行定义检查的）
+但是请注意，如果要在 IE 中进行 404 负载检测，以便可以使用路径回退或 errbacks，则应提供字符串输出值，以便加载程序可以检查脚本是否实际加载（init 的返回不用于 enforceDefine 检查）：
 
 ```javascript
 requirejs.config({
@@ -879,11 +876,11 @@ requirejs.config({
 
 Important notes for "shim" config:
 
-重要的关于 shim 配置的笔记
+"shim"配置的重要说明：
 
 - The shim config only sets up code relationships. To load modules that are part of or use shim config, a normal require/define call is needed. Setting shim by itself does not trigger code to load.
 
-shim 配置只设置代码关系。为了加载属于或者使用 shim 配置加载模块，需要一个正常的 require/define 调用。自行设置 shim 不会触发加载代码。
+shim 配置仅设置代码关系。要加载属于 shim config 或使用 shim config 的模块，需要一个正常的 require/define 调用。本身设置填充程序不会触发代码加载。
 
 - Only use other "shim" modules as dependencies for shimmed scripts, or AMD libraries that have no dependencies and call define() after they also create a global (like jQuery or lodash). Otherwise, if you use an AMD module as a dependency for a shim config module, after a build, that AMD module may not be evaluated until after the shimmed code in the build executes, and an error will occur. The ultimate fix is to upgrade all the shimmed code to have optional AMD define() calls.
 
@@ -891,15 +888,17 @@ shim 配置只设置代码关系。为了加载属于或者使用 shim 配置加
 
 - If it is not possible to upgrade the shimmed code to use AMD define() calls, as of RequireJS 2.1.11, the optimizer has a wrapShim build option that will try to automatically wrap the shimmed code in a define() for a build. This changes the scope of shimmed dependencies, so it is not guaranteed to always work, but, for example, for shimmed dependencies that depend on an AMD version of Backbone, it can be helpful.
 
+从 RequireJS 2.1.11 开始，如果无法升级填充代码以使用 AMD define（）调用，则优化器具有 wrapShim 构建选项，该选项将尝试自动将填充代码包装在 define（）中以进行构建。这会更改填充的依赖项的范围，因此不能保证始终起作用，但是，例如，对于依赖于 AMD 版本的 Backbone 的填充的依赖项，它可能会有所帮助。
+
 如果不能升级 shimmed 代码来使用 AMD define()调用，从 RequireJS 2.1.11 开始，这个优化器有一个 wrapShim 构建选项，他会尝试自动将 shimmed 代码 包装在一个 define() 中去构建。这改变了 shimmed 依赖项的范围，因此它不能确保总是工作，例如，对于依赖于一个 AMD 的版本的 Backbone 的 shimmed 依赖，他是有用的。
 
 - The init function will not be called for AMD modules. For example, you cannot use a shim init function to call jQuery's noConflict. See Mapping Modules to use noConflict for an alternate approach to jQuery.
 
-这个初始化函数将不会被 AMD 模块调用。例如，你不能使用一个 shim 初始化函数来调用 jQuery's 的 noConflict. 映射模块来使用 noConflict 作为 jQuery 的替代方法
+对于 AMD 模块，不会调用 init 函数。例如，您不能使用 shim init 函数来调用 jQuery 的 noConflict。请参阅映射模块以将 noConflict 用于 jQuery 的替代方法。
 
 - Shim config is not supported when running AMD modules in node via RequireJS (it works for optimizer use though). Depending on the module being shimmed, it may fail in Node because Node does not have the same global environment as browsers. As of RequireJS 2.1.7, it will warn you in the console that shim config is not supported, and it may or may not work. If you wish to suppress that message, you can pass requirejs.config({ suppress: { nodeShim: true }});.
 
-当在 node 中 运行 RequireJS 中 AMD 模块时候，shim 配置是不支持的。（它适用于优化器使用）。依赖于被 shimmed 的模块，在 node 中他可能会失败因为 node 没有和浏览器一样的全局环境。在 RequireJS 2.1.7 中，它将在控制台中警告你：shim 配置不被支持，它可能不会工作。如果你想要抑制这个信息，你可以传递 require.config({ suppress: { nodeShim: true }} )
+通过 RequireJS 在 Node 中运行 AMD 模块时，不支持 Shim config（尽管它可用于优化程序）。取决于要填充的模块，它可能在 Node 中失败，因为 Node 与浏览器没有相同的全局环境。从 RequireJS 2.1.7 开始，它将在控制台中警告您不支持 shim config，并且它可能会或可能不会起作用。如果您希望隐藏该消息，则可以通过 requirejs.config({ suppress: { nodeShim: true }});。
 
 Important optimizer notes for "shim" config:
 
@@ -907,31 +906,31 @@ Important optimizer notes for "shim" config:
 
 - You should use the mainConfigFile build option to specify the file where to find the shim config. Otherwise the optimizer will not know of the shim config. The other option is to duplicate the shim config in the build profile.
 
-你应该使用 mainConfigFile 构建选项来指定在哪个文件中找到 shim 配置。否则，优化器将不会知道 shim 设置。另一个选项是在构建概要文件中复制 shim 配置的。
+您应该使用 mainConfigFile 构建选项来指定可在其中找到垫片配置的文件。否则，优化程序将不了解填充程序配置。另一个选项是在构建配置文件中复制填充程序配置。
 
 - Do not mix CDN loading with shim config in a build. Example scenario: you load jQuery from the CDN but use the shim config to load something like the stock version of Backbone that depends on jQuery. When you do the build, be sure to inline jQuery in the built file and do not load it from the CDN. Otherwise, Backbone will be inlined in the built file and it will execute before the CDN-loaded jQuery will load. This is because the shim config just delays loading of the files until dependencies are loaded, but does not do any auto-wrapping of define. After a build, the dependencies are already inlined, the shim config cannot delay execution of the non-define()'d code until later. define()'d modules do work with CDN loaded code after a build because they properly wrap their source in define factory function that will not execute until dependencies are loaded. So the lesson: shim config is a stop-gap measure for non-modular code, legacy code. define()'d modules are better.
 
-不要在构建中混合 CDN 加载和 shim 配置。示例场景：你从 CDN 中加载 jQuery，但是使用这个 shim 配置来加载一些类似依赖于 jQuery 的库存版本。当你进行构建时候，请确保 jQuery 内联到构建文件中而不是从 CDN 中加载它。否则，Backbone 将内联在构建文件中，并且他将在 cdn-loader jQuery 加载之前执行。这是因为这个 shim 配置会延迟这个文件的加载，直到依赖项加载完毕，但不会对 define 进行任何 auto-wrapping. 在构建之后，这些依赖项已经被内联，shim 配置不能将 非-define()'d 代码的指向延迟到以后。define()的模块确实可以在编译后与 CDN 加载的代码一起工作，因为他们正确地将它们的源代码包装在 define 工厂函数中，该函数在执行依赖加载后才会执行。所以教训是：shim 配置是对非模块化代码、遗留代码的权益措施。Define()'d 模块更好
+不要在构建中将 CDN 加载与 shim config 混合使用。示例方案：从 CDN 加载 jQuery，但使用 shim 配置加载类似于 jQuery 的 Backbone 的普通版本。在执行构建时，请确保在内建文件中内联 jQuery，并且不要从 CDN 加载它。否则，Backbone 将内联到生成的文件中，并在 CDN 加载的 jQuery 加载之前执行。这是因为 shim config 只是延迟文件的加载，直到加载依赖项为止，但不对 define 进行任何自动包装。构建后，依赖关系已经内联，shim 配置无法将 non-define（）代码的执行推迟到以后。限定（）' d 模块在构建后确实可以处理 CDN 加载的代码，因为它们将其源代码正确包装在 define factory 函数中，只有在加载依赖项后才能执行。因此，课程：shim config 是非模块化代码，传统代码的权宜之计。define（）的模块更好。
 
 - For local, multi-file builds, the above CDN advice also applies. For any shimmed script, its dependencies must be loaded before the shimmed script executes. This means either building its dependencies directly in the buid layer that includes the shimmed script, or loading its dependencies with a require([], function (){}) call, then doing a nested require([]) call for the build layer that has the shimmed script.
 
-对于本地的多文件构建，上面的 CDN 建议也适用。对于任何 shimmed 脚本，它的依赖项必须在 shimmed 脚本执行前被加载。这就意味着，要么直接在包含 shimmed 脚本的 buid 层中构建它的依赖项，要么使用 require([],function(){})调用来加载它的依赖项，然后对具有 shimmed 脚本的构建层执行嵌套的 require([]) 调用。
+对于本地的多文件构建，上述 CDN 建议也适用。对于任何匀场脚本，必须在匀场脚本执行之前加载其依赖项。这意味着要么直接在包含填充脚本的 buid 层中构建其依赖项，要么通过 require([], function (){})调用加载其依赖项，然后 require([])对具有填充脚本的构建层进行嵌套调用。
 
 - If you are using uglifyjs to minify the code, do not set the uglify option toplevel to true, or if using the command line do not pass -mt. That option mangles the global names that shim uses to find exports.
 
-如果你正在使用 uglifyjs 来压缩代码，不要将 uglify 选项设置为 true, 或者如果使用命令行，不要传递 -mt。这个选项破坏了 shim 用来寻找出口产品的全局名称。
+如果您使用 uglifyjs 缩小代码，请不要将 uglify 选项设置 toplevel 为 true，或者如果使用命令 行不通过-mt。该选项会破坏 shim 用于查找出口的全局名称。
 
 **map**: For the given module prefix, instead of loading the module with the given ID, substitute a different module ID.
 
-**map**： 对于给定的模块前缀，而不是加载具有给定 ID 的模块，而是替换一个不同的模块 ID
+**map**： 对于给定的模块前缀，而不是使用给定的 ID 加载模块，而是使用其他模块 ID。
 
 This sort of capability is really important for larger projects which may have two sets of modules that need to use two different versions of 'foo', but they still need to cooperate with each other.
 
-这种排序能力对于大型项目来说非常重要，因为他们也许有两组模块，需要不同版本的 foo， 但是他们仍然需要相互协作。
+这种函数对于大型项目而言非常重要，因为大型项目可能有两组模块需要使用两个不同的'foo'版本，但是它们仍然需要彼此合作。
 
 This is not possible with the context-backed multiversion support. In addition, the paths config is only for setting up root paths for module IDs, not for mapping one module ID to another one.
 
-这在上下文支持的多版本支持下是不可能的。此外，路径配置仅仅用于为模块 ID 设置根路径，而不是映射一个模块 ID 到另一个
+使用上下文支持的多版本支持是不可能的。另外，路径配置仅用于设置模块 ID 的根路径，而不用于将一个模块 ID 映射到另一个模块。
 
 map example:
 
@@ -963,15 +962,15 @@ If the modules are laid out on disk like this:
 
 When 'some/newmodule' does `require('foo')` it will get the foo1.2.js file, and when 'some/oldmodule' does `require('foo')` it will get the foo1.0.js file.
 
-当 'some/newmodule' 做   `require('foo')` 时候，它将获得 foo1.2.js 文件，而当 'some/oldmodule' 做`require('foo')`时候，它将获得 foo1.0.js 文件
+当 'some/newmodule' 做  `require('foo')` 时候，它将获得 foo1.2.js 文件，而当 'some/oldmodule' 做`require('foo')`时候，它将获得 foo1.0.js 文件
 
 This feature only works well for scripts that are real AMD modules that call define() and register as anonymous modules. Also, only use absolute module IDs for map config. Relative IDs (like '../some/thing') do not work.
 
-这个特征只适用了那些调用了那些调用 define() 并注册为匿名模块的真正的 AMD 模块脚本。同样，map 配置只能适用绝对模块 ids. 相对的 ids(类似 '../some/thing')不起作用。
+该函数仅适用于调用了 define（）并注册为匿名模块的真实 AMD 模块的脚本。另外，仅对映射配置使用绝对模块 ID。相对 ID（如'../some/thing'）不起作用。
 
 There is also support for a "\*" map value which means "for all modules loaded, use this map config". If there is a more specific map config, that one will take precedence over the star config. Example:
 
-它还支持一个 "\*" 映射值。意思是"对于所有的加载的模块，使用这个映射配置"。如果有一个更具体的 map 配置，他将优先于开始配置。例如：
+还支持"\*"映射值，这意味着"对于所有加载的模块，请使用此映射配置"。如果有更具体的地图配置，则该配置优先于星型配置。例：
 
 ```javascript
 requirejs.config({
@@ -988,15 +987,15 @@ requirejs.config({
 
 Means that for any module except "some/oldmodule", when "foo" is wanted, use "foo1.2" instead. For "some/oldmodule" only, use "foo1.0" when it asks for "foo".
 
-意味着任何除了"some/oldmodule"意外的模块，当需要 foo 时候，使用 "foo1.2" 来代替。 仅对于 "some/oldmodule"，当它请求 "foo"时候，使用 "foo1.0"
+表示对于除"some/oldmodule"以外的任何模块，当需要"foo"时，请改用"foo1.2"。仅对于"some/oldmodule"，当要求"foo"时使用"foo1.0"。
 
 Note: when doing builds with map config, the map config needs to be fed to the optimizer, and the build output must still contain a requirejs config call that sets up the map config. The optimizer does not do ID renaming during the build, because some dependency references in a project could depend on runtime variable state. So the optimizer does not invalidate the need for a map config after the build.
 
-笔记：当用 map 设置进行构建时候，map 配置需要提供给优化器，并且构建输出必须仍然包含一个 requirejs 配置用来设置 map 配置。优化器在构建期间不进行 id 重命名，因为项目中引用的一些依赖可以依靠于运行时候的变装状态。因此这个优化器不会在构建之后取消对 map 配置的需求。
+注意: 使用 map config 进行构建时，需要将 map config 馈送到优化器，并且 build 输出必须仍然包含 requirejs config 调用来设置 map config。优化器在构建期间不会进行 ID 重命名，因为项目中的某些依赖项引用可能取决于运行时变量状态。因此，优化器不会在构建后使对映射配置的需求无效。
 
 config: There is a common need to pass configuration info to a module. That configuration info is usually known as part of the application, and there needs to be a way to pass that down to a module. In RequireJS, that is done with the config option for requirejs.config(). Modules can then read that info by asking for the special dependency "module" and calling module.config(). Example:
 
-配置：通常把配置信息传递给一个模块。配置信息通常被认为是应用程序的一部分，并且需要有一种方法将其传递给一个模块。在 RequireJS 中，这是通过 requireJS.config() 的配置选项来完成的。模块可以通过请求特殊的依赖项模块来读取 和调用 module.config。例如
+config：通常需要将配置信息传递给模块。该配置信息通常被称为应用程序的一部分，并且需要一种将其传递给模块的方法。在 RequireJS 中，这是通过 requirejs.config（）的 config 选项完成的。然后，模块可以通过请求特殊的依赖项"模块"并调用 module.config（）来读取该信息。例：
 
 ```javascript
 requirejs.config({
@@ -1028,7 +1027,7 @@ define(['module'], function (module) {
 
 For passing config to a package, target the main module in the package, not the package ID:
 
-要将一个配置传递给一个包，目标是包中的主模块，而不是包 ID
+要将 config 传递给软件包，请以软件包中的主模块为目标，而不是软件包 ID 为目标：
 
 ```javascript
 requirejs.config({
@@ -1052,39 +1051,39 @@ requirejs.config({
 
 **packages**: configures loading modules from CommonJS packages. See the packages topic for more information.
 
-**packages**: 关于从 commonjs 包中加载模块的配置。有关更多信息，参阅 packages 主题
+**packages**: 配置来自 CommonJS 包的加载模块。请参阅软件包主题以获取更多信息。
 
 **nodeIdCompat**: Node treats module ID example.js and example the same. By default these are two different IDs in RequireJS. If you end up using modules installed from npm, then you may need to set this config value to true to avoid resolution issues. This option only applies to treating the ".js" suffix differently, it does not do any other node resolution and evaluation matching such as .json file handling (JSON handling needs a 'json!' loader plugin anyway). Available in 2.1.10 and greater.
 
-**nodeIdCompat**： node 对于模块 id example.js 和 example 是一样的。默认情况下，这是 requireJS 中两个不同的 ids. 如果你最终使用了从 npm 安装的模块，那么你可能需要设置这个选项值为 true 来避免解决问题。这个选项只适用与不同的处理 js 后缀，他不做任何其他节点解析和评估匹配，如 json 文件处理(JSON 处理无论如何需要 json! 插件)。可在 2.1.10 及以上版本中使用
+**nodeIdCompat**： Node 治疗模块 IDexample.js 和 example 相同的。默认情况下，这是 RequireJS 中的两个不同 ID。如果最终使用的是从 npm 安装的模块，则可能需要设置此配置值 true 以避免出现解析问题。此选项仅适用于以不同方式处理".js"后缀，它不执行任何其他 Node 解析和评估匹配，例如.json 文件处理（JSON 处理仍然需要"json！"加载程序插件）。在 2.1.10 及更高版本中可用。
 
 **waitSeconds**: The number of seconds to wait before giving up on loading a script. Setting it to 0 disables the timeout. The default is 7 seconds.
 
-**waitSeconds**：在放弃加载脚本之前等待的秒数。设置为 0 表示禁用超时，默认是 7 秒
+**waitSeconds**：放弃放弃加载脚本之前要等待的秒数。将其设置为 0 将禁用超时。默认值为 7 秒。
 
 **context**: A name to give to a loading context. This allows require.js to load multiple versions of modules in a page, as long as each top-level require call specifies a unique context string. To use it correctly, see the Multiversion Support section.
 
-**context**: 给加载上下文的一个名字。这个允许 require.js 来在一个页面加载不同版本的模块，只要每个顶级 require 调用指定一个唯一的上下文字符串，参阅多版本支持部分
+**context**: 赋予加载上下文的名称。只要每个顶级 require 调用指定一个唯一的上下文字符串，这都允许 require.js 在页面中加载模块的多个版本。要正确使用它，请参阅"Multiversion 支持"部分。
 
 **deps**: An array of dependencies to load. Useful when require is defined as a config object before require.js is loaded, and you want to specify dependencies to load as soon as require() is defined. Using deps is just like doing a require([]) call, but done as soon as the loader has processed the configuration. It does not block any other require() calls from starting their requests for modules, it is just a way to specify some modules to load asynchronously as part of a config block.
 
-**deps**: 要加载的数组依赖项。 在 require.js 被加载前被定义为一个配置对象时时候，并且你希望在 require()被定义后立即加载指定的依赖项时候，这个方法很有用。使用 deps 很像使用 require([]) 调用，但是在加载器处理完配置后立即执行。它不会阻止任何其他 require() 调用启动它们对模块的请求，它只是指定一些模块作为配置块的一部分来异步加载的一种方式。
+**deps**: 要加载的依赖项数组。当在 require.js 加载之前将 require 定义为配置对象时，并且您要指定要在 require（）定义后立即加载的依赖项时，此选项很有用。使用 deps 就像进行 require([])调用一样，但是在加载程序处理完配置后立即使用。它不会阻止 其他任何 require（）调用启动对模块的请求，它只是指定某些模块作为 config 块的一部分异步加载的一种方法。
 
 **callback**: A function to execute after deps have been loaded. Useful when require is defined as a config object before require.js is loaded, and you want to specify a function to require after the configuration's deps array has been loaded.
 
-**callback**: 一个当 deps 已经被加载完执行的函数。当 require 在 require.js 被加载前被定义为一个配置对象，并且你想在配置的 deps 数组被执行完指定执行一个函数来 require 时候非常有用。
+**callback**: 加载 deps 后执行的函数。在将 require.js 加载之前，将 require 定义为配置对象，并且您希望在加载配置的 deps 数组后指定要使用的函数时，此选项很有用。
 
 **enforceDefine**: If set to true, an error will be thrown if a script loads that does not call define() or have a shim exports string value that can be checked. See Catching load failures in IE for more information.
 
-**enforceDefine**: 如果设置为 true, 那么如果加载的脚本(没有调用 define()或者没有一个 shim 来导出一个可被检查的字符串）将抛出一个错误。查看 Catching load failures in IE 获得更多信息。
+**enforceDefine**: 设置为 true 时，如果加载的脚本未调用 define（）或具有可检查的填充程序导出字符串值，则将引发错误。有关更多信息，请参见在 IE 中捕获负载故障。
 
 **xhtml**: If set to true, document.createElementNS() will be used to create script elements.
 
-**xhtml**: 如果设置为 true, document.createElementNS() 将会被用来创建脚本元素。
+**xhtml**: 如果设置为 true，则 document.createElementNS（）将用于创建脚本元素。
 
 **urlArgs**: Extra query string arguments appended to URLs that RequireJS uses to fetch resources. Most useful to cache bust when the browser or server is not configured correctly. Example cache bust setting for urlArgs:
 
-**urlArgs**: 附加到 RequiresJS 用来获取资源的 URLS 的额外的查询字符串参数。当浏览器或者服务器没有配置正确时候，更多的用来缓存 bust。urlArgs 的缓存 bust 设置例子如下
+**urlArgs**: 附加到 RequireJS 用于获取资源的 URL 的附加查询字符串参数。当浏览器或服务器配置不正确时，最有用的方法是缓存崩溃。urlArgs 的高速缓存半身设置示例：
 
 ```javascript
 urlArgs: 'bust=' + new Date().getTime()
@@ -1092,7 +1091,7 @@ urlArgs: 'bust=' + new Date().getTime()
 
 As of RequireJS 2.2.0, urlArgs can be a function. If a function, it will receive the module ID and the URL as parameters, and it should return a string that will be added to the end of the URL. Return an empty string if no args. Be sure to take care of adding the '?' or '&' depending on the existing state of the URL. Example:
 
-作为 RequireJS 2.2.0，urlArgs 可以是一个函数。如果是一个函数，它将接收模块 id 和 URL 作为参数，并且它应该返回一个字符串 用来添加到 URL 的结尾处。如果没有参数将返回空。一定要注意添加 ? 或者 &, 这取决于 URL 的现存状态。例如：
+从 RequireJS 2.2.0 开始，urlArgs 可以是一个函数。如果是函数，它将接收模块 ID 和 URL 作为参数，并且应返回将添加到 URL 末尾的字符串。如果没有参数，则返回一个空字符串。请务必注意添加"？" 或"＆"（取决于 URL 的现有状态）。例：
 
 ```javascript
 requirejs.config({
@@ -1109,15 +1108,15 @@ requirejs.config({
 
 During development it can be useful to use this, however be sure to remove it before deploying your code.
 
-在开发环境使用这个将会非常有用，但是确保在部署代码之前删除它。
+在开发过程中，使用它可能会很有用，但是请确保在部署代码之前将其删除。
 
 **scriptType**: Specify the value for the type="" attribute used for script tags inserted into the document by RequireJS. Default is "text/javascript". To use Firefox's JavaScript 1.8 features, use "text/javascript;version=1.8".
 
-**scriptType**: 指定 type= 属性的值，该属性用来用于由 requireJS 插入到文档中的脚本标签。默认为 "text/javascript". 为了使用 火狐的 JavaScript 1.8 特性，使用 "text/javascript;version=1.8".
+**scriptType**: 指定 type =""属性的值，该属性用于 RequireJS 插入文档中的脚本标签。默认值为"文本/ javascript"。要使用 Firefox 的 JavaScript 1.8 函数，请使用"text/javascript; version = 1.8"。
 
 **skipDataMain**: Introduced in RequireJS 2.1.9: If set to true, skips the data-main attribute scanning done to start module loading. Useful if RequireJS is embedded in a utility library that may interact with other RequireJS library on the page, and the embedded version should not do data-main loading.
 
-**skipDataMain**：RequireJS 2.1.9 引进： 如果设置为 true, 将跳过为开始加载模块而进行的 data-main 属性扫描。如果 RequireJS 被嵌入到一个 可能会在页面中与其他 RequireJS 进行交互的并且这个嵌入的版本不应该处理 data-main 加载的公共的库中，将会很有用。
+**skipDataMain**：在 RequireJS 2.1.9 中引入：如果设置为 true，则跳过对数据主属性的扫描以开始加载模块。如果 RequireJS 嵌入在可以与页面上的其他 RequireJS 库进行交互的实用程序库中，并且嵌入的版本不应进行数据主加载，则很有用。
 
 ### ADVANCED USAGE
 
@@ -1125,7 +1124,7 @@ During development it can be useful to use this, however be sure to remove it be
 
 RequireJS supports loading modules that are in a CommonJS Packages directory structure, but some additional configuration needs to be specified for it to work. Specifically, there is support for the following CommonJS Packages features:
 
-RequireJS 支持加载 在 CommonJS Packages 目录结构中的模块，但是一些额外的配置需要被指明才能工作。具体来说，它支持以下 CommonJS Packages 特性
+RequireJS 支持加载 CommonJS Packages 目录结构中的模块，但是需要指定一些其他配置才能使其正常工作。具体来说，它支持以下 CommonJS Packages 函数：
 
 - A package can be associated with a module name/prefix.
 - The package config can specify the following properties for a specific package:
@@ -1133,25 +1132,25 @@ RequireJS 支持加载 在 CommonJS Packages 目录结构中的模块，但是�
   - location: The location on disk. Locations are relative to the baseUrl configuration value, unless they contain a protocol or start with a front slash (/).
   - main: The name of the module inside the package that should be used when someone does a require for "packageName". The default value is "main", so only \* specify it if it differs from the default. The value is relative to the package folder.
 
-* 包可以与模块名/前缀相关联
-* 包配置可以为特定的包指定以下属性
-  - name: 这个包的名字（用于模块名/前缀映射）
-  - location: 磁盘上的位置。Locations 是相对于设置的 baseUrl 的值，除非他们还能有协议(http、https) 或者以 前缀 / 开头
-  * main：当有人要求 packageName 时，包中的模块名应该被使用。默认值的 main, 因此 仅当 如果它不同于默认值时，\* 指定它。这个值是相对于包文件夹的
+* 包可以与模块名称/前缀关联。
+* 程序包配置可以为特定程序包指定以下属性：
+  - name: 包的名称（用于模块名称/前缀映射）
+  - location: 磁盘上的位置。位置相对于 baseUrl 配置值，除非它们包含协议或以反斜杠（/）开头。
+  * main：某人对"packageName"的要求时应使用的包装内部模块的名称。默认值为"main"，因此仅当它不同于默认值时才指定它。该值相对于包文件夹。
 
 ##### IMPORTANT NOTES
 
 - While the packages can have the CommonJS directory layout, the modules themselves should be in a module format that RequireJS can understand. Exception to the rule: if you are using the r.js Node adapter, the modules can be in the traditional CommonJS module format. You can use the CommonJS converter tool if you need to convert traditional CommonJS modules into the async module format that RequireJS uses.
 
-* 虽然包可以有 commonJS 目录布局，但是模块本身应该是一个 RequireJS 可以理解的模块格式。规则期望是：如果你正在使用 r.js Node 适配器，模块可以采用传统的 CommonJS 模块格式。如果你需要把传统的 CommonJS 模块转换为 RequireJS 使用的异步模块格式，你可以使用 CommonJS 转换工具。
+* 尽管软件包可以具有 CommonJS 目录布局，但模块本身应采用 RequireJS 可以理解的模块格式。规则的例外：如果使用 r.jsNode 适配器，则模块可以采用传统的 CommonJS 模块格式。如果需要将传统的 CommonJS 模块转换为 RequireJS 使用的异步模块格式，则可以使用 CommonJS 转换工具。
 
 * Only one version of a package can be used in a project context at a time. You can use RequireJS multiversion support to load two different module contexts, but if you want to use Package A and B in one context and they depend on different versions of Package C, then that will be a problem. This may change in the future.
 
-* 在同一时间，在一个项目上下文中，仅仅一个版本的包可以被使用。你可以使用 RequireJS 多版本支持来加载两个不同的模块上下文，但是如果你想在一个上下文中使用 包 A 和 B, 并且他们都依赖于不同版本的 包 C, 这将是一个问题。 它也许将在将来进行改变。
+* 一次只能在项目上下文中使用软件包的一个版本。您可以使用 RequireJS 多版本支持来加载两个不同的模块上下文，但是如果您想在一个上下文中使用程序包 A 和 B，并且它们依赖于程序包 C 的不同版本，那么这将是一个问题。将来可能会改变。
 
 If you use a similar project layout as specified in the Start Guide, the start of your web project would look something like this (Node/Rhino-based projects are similar, just use the contents of the scripts directory as the top-level project directory):
 
-在开始指南中，如果你使用一个类似的项目布局，你的 web 项目开始时将看起来像这样(Node/Rhino-based 项目是类似的，仅仅使用 scripts 目录的内容作为顶级项目目录)
+如果您使用《入门指南》中指定的类似项目布局，则 Web 项目的开始将看起来像这样（基于 Node/Rhino 的项目是类似的，只需使用 scripts 目录的内容作为顶级项目目录）：
 
 ```
 project-directory/
@@ -1162,7 +1161,7 @@ project-directory/
 
 Here is how the example directory layout looks with two packages, cart and store:
 
-下面是两个包的目录布局示例，购物车和商店。
+这是带有两个包 cart 和 store 的示例目录布局的外观：
 
 ```
 project-directory/
@@ -1185,7 +1184,7 @@ project.html will have a script tag like this:
 
 This will instruct require.js to load scripts/main.js. main.js uses the "packages" config to set up packages that are relative to require.js, which in this case are the source packages "cart" and "store":
 
-这将直到 require.js 来加载 scripts/main.js. main.js 使用 packages 配置来设置相对于 require.js 的包，在本例中是资源包 cart 和 store
+这将指示 require.js 加载脚本/main.js。main.js 使用"packages"配置来设置相对于 require.js 的软件包，在这种情况下，它们是源软件包"cart"和"store"：
 
 ```javascript
 //main.js contents
@@ -1201,11 +1200,11 @@ require(['cart', 'store', 'store/util'], function (cart, store, util) {
 
 A require of "cart" means that it will be loaded from scripts/cart/main.js, since "main" is the default main module setting supported by RequireJS. A require of "store/util" will be loaded from scripts/store/util.js.
 
-cart require 意味着 它将从 scripts/cart/main.js 中加载，因为 main 是 RequireJS 支持的默认主模块设置。A require of "store/util" 将从 scripts/store/util.js 中被加载。
+"cart"的需求意味着它将从 scripts/cart/main.js 加载，因为"main"是 RequireJS 支持的默认主模块设置。将从 scripts/store/util.js 加载"store/util"的需求。
 
 If the "store" package did not follow the "main.js" convention, and looked more like this:
 
-如果 store 包 没有 遵循 main.js 约定，并且看起来类似这样
+如果"store"包未遵循"main.js"约定，则看起来更像这样：
 
 ```
 project-directory/
@@ -1240,13 +1239,13 @@ require.config({
 
 To avoid verbosity, it is strongly suggested to always use packages that use "main" convention in their structure.
 
-为了避免冗长，强烈建议总是在其结构中使用 main 约定的包。
+为避免冗长，强烈建议始终使用在其结构中使用"主要"约定的软件包。
 
 #### Multiversion Support
 
 As mentioned in Configuration Options, multiple versions of a module can be loaded in a page by using different "context" configuration options. require.config() returns a require function that will use the context configuration. Here is an example that loads two different versions of the alpha and beta modules (this example is taken from one of the test files):
 
-如配置选项中所述的，在一个页面中一个模块的多版本可以通过使用不同的上下文配合选项来被加载。require.config() 返回一个函数，这个函数将使用上下文配置。这有一个例子，它加载了 alpha 和 beta 模块的 两个不同的版本(这个例子取自其中一个测试文件)
+如配置选项中所述，可以使用不同的"上下文"配置选项将模块的多个版本加载到页面中。require.config（）返回一个使用上下文配置的 require 函数。这是加载两个不同版本的 alpha 和 beta 模块的示例（此示例摘自一个测试文件）：
 
 ```javascript
 <script src="../require.js"></script>
@@ -1293,105 +1292,103 @@ reqTwo(["require", "alpha", "beta"], function(require,   alpha,   beta) {
 
 Note that "require" is specified as a dependency for the module. This allows the require() function that is passed to the function callback to use the right context to load the modules correctly for multiversion support. If "require" is not specified as a dependency, then there will likely be an error.
 
-注意 require 被指定为模块的依赖项。这允许传递给函数回调的 require()函数类使用正确的上下文来正确的模块以获取多版本支持。如果 require 不是作为依赖项被指名，则可能会出现错误。
+注意，"require"被指定为模块的依赖项。这允许传递给函数回调的 require（）函数使用正确的上下文正确加载模块以支持多版本。如果未将"require"指定为依赖项，则可能会出现错误。
 
 #### Loading Code After Page Load
 
 The example above in the Multiversion Support section shows how code can later be loaded by nested require() calls.
 
-上面多版本支持一节中的例子展示了被嵌套的 require()调用之后如何加载代码的。
+上面"Multiversion 支持"部分中的示例显示了以后如何通过嵌套的 require（）调用来加载代码。
 
 #### Web Worker Support
 
 As of release 0.12, RequireJS can be run inside a Web Worker. Just use importScripts() inside a web worker to load require.js (or the JS file that contains the require() definition), then call require.
 
-在 发布的 0.12 版本中，RequireJS 可以在 Web Worker 中运行。 仅仅在一个 web worker 中使用 importScripts()来加载 require.js(或者包含 require()定义的 JS 文件)。然后调用 require
+从 0.12 版开始，RequireJS 可以在 Web Worker 中运行。只需在网络工作者中使用 importScripts（）来加载 require.js（或包含 require（）定义的 JS 文件），然后调用 require。
 
 You will likely need to set the baseUrl configuration option to make sure require() can find the scripts to load.
 
-你可能需要设置 baseUrl 配置选项来确保 require() 可以找到需要加载的脚本。
+您可能需要设置 baseUrl 配置选项，以确保 require（）可以找到要加载的脚本。
 
 You can see an example of its use by looking at one of the files used in the unit test.
 
-通过查看单元测试中使用的一个文件，你可以看到它的使用示例。
+通过查看单元测试中使用的文件之一，可以看到其用法示例。
 
 #### Rhino Support
 
 RequireJS can be used in Rhino via the r.js adapter. See the r.js README for more information.
 
-RequireJS 可以通过 r.js 适配器 在 Rhino 使用。查看 r.js README 来获取更多信息
+RequireJS 可以通过 r.js 适配器在 Rhino 中使用。有关更多信息，请参见 r.js 自述文件。
 
 #### Nashorn Support
 
 As of RequireJS 2.1.16, RequireJS can be used in Nashorn, Java 8+'s JavaScript engine, via the r.js adapter. See the r.js README for more information.
 
-从 RequireJS 2.1.16 起，RequireJS 可以在通过使用 r.js 适配器在 Nashorn java8+的 JS 引擎中使用。参阅 r.js README 来获取更多信息
+从 RequireJS 2.1.16 开始，RequireJS 可以通过 r.js 适配器在 Java 8+的 JavaScript 引擎 Nashorn 中使用。有关更多信息，请参见 r.js 自述文件。
 
 #### Handling Errors
 
 The general class of errors are 404s for scripts (not found), network timeouts or errors in the scripts that are loaded. RequireJS has a few tools to deal with them: require-specific errbacks, a "paths" array config, and a global requirejs.onError.
 
-通常错误类型是 404(脚本未找到)、网络超时、加载脚本错误。 RequireJS 有一些工具来处理它们：require-specific errbacks， 一个 paths 数组配置，和一个全局的 requirejs.onError
+错误的一般类别是脚本（未找到）的 404，网络超时或加载的脚本中的错误。RequireJS 有一些用于处理它们的工具：特定于需求的 errback，"paths"数组配置以及全局的 requirejs.onError。
 
 The error object passed to errbacks and the global requirejs.onError function will usually contain two custom properties:
 
-传递给 errbacks 的 error 对象和全局的 requirejs.onError 函数通常包含两部分自定义的属性
+传递给 errbacks 的错误对象和全局 requirejs.onError 函数通常将包含两个自定义属性：
 
 - requireType: A string value with a general classification, like "timeout", "nodefine", "scripterror".
 
-* requireType: 一个具有一般分类的值，例如： timeout、nodefine、scripterror
-
 * requireModules: an array of module names/URLs that timed out.
 
-* requireModules： 一个超时的模块名/urls 数组
+* requireType: 具有一般分类的字符串值，例如"timeout"，"nodefine"，"scripterror"。
+* requireModules： 超时的模块名称/ URL 的数组。
 
 If you get an error with a requireModules, it probably means other modules that depend on the modules in that requireModules array are not defined.
 
-如果你在使用 requireModules 时候出现错误，它可能意味着在 其他依赖于 requireModules 数组中的模块的模块没有定义。
+如果您在 requireModules 中遇到错误，则可能意味着未定义依赖于 requireModules 数组中模块的其他模块。
 
 #### Catching load failures in IE
 
 Internet Explorer has a set of problems that make it difficult to detect load failures for errbacks/paths fallbacks:
 
-Internet Explorer 有一组问题，使它很难检测 errbacks/paths 回退的加载故障
+Internet Explorer 存在一系列问题，使得难以检测到错误/路径后备的加载失败：
 
 - script.onerror does not work in IE 6-8. There is no way to know if loading a script generates a 404, worse, it triggers the onreadystatechange with a complete state even in a 404 case.
 
-* script.onerror 在 IE6-8 中不能工作。这里没有办法知道加载一个脚本是否会产生一个 404，更坏的是，即使在 404 状态下，它也会用一个完整的状态触发 onreadystatechange
-
 * script.onerror does work in IE 9+, but it has a bug where it does not fire script.onload event handlers right after execution of script, so it cannot support the standard method of allowing anonymous AMD modules. So script.onreadystatechange is still used. However, onreadystatechange fires with a complete state before the script.onerror function fires.
 
-* script.onerror 在 IE9.0 中可以运行，但是它有一个问题，在脚本执行后，它不能触发 script.onload 事件，因此它不能支持允许匿名 AMD 模块的标准方法。
+* script.onerror 在 IE 6-8 中不起作用。无法知道加载脚本是否会生成 404，更糟糕的是，即使在 404 情况下，它也会以完整状态触发 onreadystatechange。
+* script.onerror 确实可以在 IE 9+中运行，但存在一个错误，即在执行脚本后不立即触发 script.onload 事件处理程序，因此它不支持允许匿名 AMD 模块的标准方法。因此仍使用 script.onreadystatechange。但是，在 script.onerror 函数启动之前，onreadystatechange 会以完整状态启动。
 
 So it is very difficult with IE to allow both anonymous AMD modules, which are a core benefit of AMD modules, and reliable detect errors.
 
-因此在 IE 中很难同时允许匿名 AMD 模块（这是 AMD 模块的核心优势）和可靠的错误检测
+因此，使用 IE 很难同时允许匿名的 AMD 模块和可靠的检测错误，匿名的 AMD 模块是 AMD 模块的核心优势。
 
 However, if you are in a project that you know uses define() to declare all of its modules, or it uses the shim config to specify string exports for anything that does not use define(), then if you set the enforceDefine config value to true, the loader can confirm if a script load by checking for the define() call or the existence of the shim's exports global value.
 
-但是，如果你在一个你知道使用 define() 来声明所有模块的工程中，或者它使用 shim 配置来为其他不使用 define()的任何东西指定字符串导出值，那么如果你设置 enforceDefine 为 true, 这个加载器可以通过检查 define() 调用或者 shim 的全局导出值的存在来确认脚本是否加载。
+但是，如果您知道在一个项目中使用 define（）声明其所有模块，或者它使用 shim config 为不使用 define（）的任何内容指定字符串导出，那么如果您设置了 defineDefine 配置值确实，加载器可以通过检查 define（）调用或填充程序的导出全局值的存在来确认脚本是否已加载。
 
 So if you want to support Internet Explorer, catch load errors, and have modular code either through direct define() calls or shim config, always set enforceDefine to be true. See the next section for an example.
 
-如果你想支持 Internet Explorer，捕获加载 errors，并通过直接 define()调用或者 shim 配置类获得模块化代码，请始终设置 enforceDefine 为 true.查看下面的区域获取例子
+因此，如果要支持 Internet Explorer，捕获负载错误并通过直接 define（）调用或 shim config 获得模块化代码，请始终将 forcedDefine 设置为 true。有关示例，请参见下一部分。
 
 NOTE: If you do set enforceDefine: true, and you use data-main="" to load your main JS module, then that main JS module must call define() instead of require() to load the code it needs. The main JS module can still call require/requirejs to set config values, but for loading modules it should use define().
 
-注意：如果你设置 enforceDefine 为 true, 并且你使用 data-main="" 来加载你的 main JS 模块，然后 main JS 模块必须调用 define() 而不是 require()来加载它需要的代码。
+注意: 如果您确实设置了 forceDefine：true，并且使用 data-main =""来加载主 JS 模块，则该主 JS 模块必须调用 define（）而不是 require（）来加载所需的代码。JS 主模块仍然可以调用 require/requirejs 来设置配置值，但是对于加载模块，它应该使用 define（）。
 
 If you then also use almond to build your code without require.js, be sure to use the insertRequire build setting to insert a require call for the main module -- that serves the same purpose of the initial require() call that data-main does.
 
-如果你也使用 almond 在不适用 require.js 情况下来构建代码，请确保使用 insertRequire 构建设置来为主模块插入一个 require 调用 -- 这与初始化 require()调用和 data-main 调用的目的相同。
+如果然后还使用 almond 来构建没有 require.js 的代码，请确保使用 insertRequire 构建设置为主模块插入一个 require 调用-达到与最初的 require（）调用相同的目的，即调用 data-main 做。
 
 #### require([]) errbacks
 
 **Errbacks**, when used with requirejs.undef(), will allow you to detect if a module fails to load, undefine that module, reset the config to a another location, then try again.
 
-**Errbacks**： 当使用 requirejs.undef()时，将允许你检测模块是否加载失败，取消模块定义，重置配置到另一个位置，然后重试。
+当与 requirejs.undef（）一起使用时，**Errbacks** 将允许您检测模块是否无法加载，取消定义该模块，将配置重置到另一个位置，然后重试。
 
 A common use case for this is to use a CDN-hosted version of a library, but if that fails, switch to loading the file locally:
 
-一个常见的用例是使用 cdn 托管的库版本，但是如果加载失败，切换到本地加载文件
+一个常见的用例是使用 CDN 托管的库版本，但是如果失败，请切换到本地加载文件：
 
 ```javascript
 requirejs.config({
@@ -1435,17 +1432,17 @@ require(['jquery'], function ($) {
 
 With `requirejs.undef()`, if you later set up a different config and try to load the same module, the loader will still remember which modules needed that dependency and finish loading them when the newly configured module loads.
 
-使用 `requirejs.undef()`，如果你稍后设置了不同的配置并尝试加载相同的模块，这个加载器仍然会记住哪些模块需要这些依赖，并在新配置加载后完成加载。
+使用`requirejs.undef（）`，如果您稍后设置其他配置并尝试加载相同的模块，则加载器仍会记住哪些模块需要该依赖关系，并在新配置的模块加载时完成加载。
 
 Note: errbacks only work with callback-style require calls, not define() calls. define() is only for declaring modules.
 
-笔记： errbacks 仅仅在 callback-style require 调用时候起作用，而不是 define() 调用。define() 仅仅用来声明模块。
+Note：errbacks 仅适用于回调样式的 require 调用，而不适用 define（）调用。define（）仅用于声明模块。
 
 #### paths config fallbacks
 
 The above pattern for detecting a load failure, undef()ing a module, modifying paths and reloading is a common enough request that there is also a shorthand for it. The paths config allows array values:
 
-以上用于检测加载失败、undef()ing 一个模块、修复路径并重载模型的模型是一个非常常见的请求，它也有一个简写。路径配置允许使用数组值
+上面的用于检测负载故障，对模块进行 undef（），修改路径和重新加载的模式是一个足够普遍的要求，它也有一个简写形式。路径配置允许数组值：
 
 ```javascript
 requirejs.config({
@@ -1466,17 +1463,17 @@ require(['jquery'], function ($) {})
 
 This above code will try the CDN location, but if that fails, fall back to the local lib/jquery.js location.
 
-以上的代码将先尝试使用 CDN 位置，但是如果它失败了，会回退到本地的 lib/jquery.js 位置
+上面的代码将尝试 CDN 位置，但是如果失败，请退回到本地 lib/jquery.js 位置。
 
 Note: paths fallbacks only work for exact module ID matches. This is different from normal paths config which can apply to any part of a module ID prefix segment. Fallbacks are targeted more for unusual error recovery, not a generic path search path solution, since those are inefficient in the browser.
 
-笔记：paths 回退仅仅适用于完全匹配的 模块 ID。这与普通的路径配置不同，后者可以用于模块 ID 前缀的任何部分。回退方法更多的针对不寻常的错误恢复，而不是通用的路径搜索路径解决方案，因为在浏览器中它们效率很低。
+注意：路径回退仅适用于确切的模块 ID 匹配。这与可应用于模块 ID 前缀段的任何部分的普通路径配置不同。后备的目标更多是针对异常错误的恢复，而不是通用的路径搜索路径解决方案，因为它们在浏览器中效率低下。
 
 #### Global requirejs.onError function
 
 To detect errors that are not caught by local errbacks, you can override requirejs.onError():
 
-为了检测那些没有被本地 errbacks 捕获的错误，你可以重写 requirejs.onError():
+要检测本地错误未捕获的错误，可以覆盖 requirejs.onError（）：
 
 ```javascript
 requirejs.onError = function (err) {
@@ -1493,27 +1490,27 @@ requirejs.onError = function (err) {
 
 RequireJS supports loader plugins. This is a way to support dependencies that are not plain JS files, but are still important for a script to have loaded before it can do its work. The RequireJS wiki has a list of plugins. This section talks about some specific plugins that are maintained alongside RequireJS:
 
-RequireJS 支持加载插件。这是一种支持非纯 JS 文件依赖的方法，但是在脚本工作之前加载脚本仍然很重要。The RequireJS wiki 有一些插件的列表。这里讨论了一些与 RequireJS 一起维护的特定插件
+RequireJS 支持加载程序插件。这是一种支持依赖关系的方法，该依赖关系不是普通的 JS 文件，但是对于脚本在执行工作之前已加载仍然很重要。RequireJS Wiki 有一个插件列表。本节讨论与 RequireJS 一起维护的一些特定插件：
 
 ##### Specify a Text File Dependency
 
 It is nice to build HTML using regular HTML tags, instead of building up DOM structures in script. However, there is no good way to embed HTML in a JavaScript file. The best that can be done is using a string of HTML, but that can be hard to manage, particularly for multi-line HTML.
 
-使用常规的 HTML 标签而不是在脚本中构建脚本结构来构建 HTML 是非常好的。但是，这里没有好办法来在 JavaScript 文件中来嵌入 HTML. 能做的最好的办法就是使用一个 HTML 字符串，但是这很难管理，特别是对于多行 HTML.
+使用常规 HTML 标签构建 HTML 很好，而不是在脚本中构建 DOM 结构。但是，没有很好的方法将 HTML 嵌入 JavaScript 文件中。最好的办法是使用 HTML 字符串，但这可能很难管理，尤其是对于多行 HTML。
 
 RequireJS has a plugin, text.js, that can help with this issue. It will automatically be loaded if the text! prefix is used for a dependency. See the text.js README for more information.
 
-RequireJS 有一个插件, text.js.它能帮助解决这个问题。如果 text! 前缀被用来做为一个依赖项，它将自动加载。查看 text.js README 获取更多信息。
+RequireJS 有一个插件 text.js，可以帮助解决此问题。如果文本将自动加载！前缀用于依赖项。有关更多信息，请参见 text.js 自述文件。
 
 #### Page Load Event Support/DOM Ready
 
 It is possible when using RequireJS to load scripts quickly enough that they complete before the DOM is ready. Any work that tries to interact with the DOM should wait for the DOM to be ready. For modern browsers, this is done by waiting for the DOMContentLoaded event.
 
-当使用 RequireJS 加载脚本足够快时，它们在 DOM 准备好之前加载完成是很有可能的。任何试图与 DOM 有交互的工作都应该等待 DOM 准备好之后进行。对于现代的浏览器，等待 DOMContentLoaded 事件已经被做了。
+使用 RequireJS 足够快地加载脚本以使其在 DOM 准备好之前完成时，这是可能的。任何尝试与 DOM 交互的工作都应等待 DOM 准备就绪。对于现代浏览器，这是通过等待 DOMContentLoaded 事件来完成的。
 
 However, not all browsers in use support DOMContentLoaded. The domReady module implements a cross-browser method to determine when the DOM is ready. Download the module and use it in your project like so:
 
-但是，并不是所有的浏览器都支持 DOMContentLoaded。domReady 模块实现了一个跨浏览器的方法来确定何时 Dom 准备好。下载这个模块并且在项目中这样使用：
+但是，并非所有使用中的浏览器都支持 DOMContentLoaded。domReady 模块实现了跨浏览器方法来确定 DOM 准备就绪的时间。下载模块，并在您的项目中使用它，如下所示：
 
 ```javascript
 require(['domReady'], function (domReady) {
@@ -1527,7 +1524,7 @@ require(['domReady'], function (domReady) {
 
 Since DOM ready is a common application need, ideally the nested functions in the API above could be avoided. The domReady module also implements the Loader Plugin API, so you can use the loader plugin syntax (notice the ! in the domReady dependency) to force the require() callback function to wait for the DOM to be ready before executing.
 
-因为 DOM ready 是一种常见的应用需求，理想情况下可以避免上述 API 中的嵌套函数。domReady 模块还实现了 Loader Plugin API，所以你可以使用 Loader plugin 语法(注意在 domReady 依赖中的 ！)来强制 require() 回调函数在执行前等待 DOM 准备好
+由于 DOM ready 是常见的应用程序需求，因此理想情况下可以避免上面 API 中的嵌套函数。domReady 模块还实现了 Loader Plugin API，因此您可以使用 loader 插件语法（注意 domReady 依赖项中的！）来强制 require（）回调函数在执行之前等待 DOM 准备就绪。
 
 ```
 domReady
@@ -1535,7 +1532,7 @@ domReady
 
 will return the current document when used as a loader plugin:
 
-- 当它作为一个加载插件使用时，将会返回一个当前的元素
+用作加载程序插件时，将返回当前文档：
 
 ```javascript
 require(['domReady!'], function (doc) {
@@ -1547,25 +1544,25 @@ require(['domReady!'], function (doc) {
 
 Note: If the document takes a while to load (maybe it is a very large document, or has HTML script tags loading large JS files that block DOM completion until they are done), using domReady as a loader plugin may result in a RequireJS "timeout" error. If this is a problem either increase the waitSeconds configuration, or just use domReady as a module and call domReady() inside the require() callback.
 
-笔记：如果元素加载需要一段时间（也许它是一个很大的文件，或者有 HTML 脚本标签加载阻止 DOM 完成知道它们完成的大型 JS 文件），使用 domReady 作为加载器可能会导致 Requirejs 超时错误。如果这是一个问题，可以增加 waitSeconds 配置，或者只是使用 domReady 作为一个模块，并在 require() 回调函数中 调用 domReady()
+注意: 如果文档加载时间较长（可能是非常大的文档，或者 HTML 脚本标签加载了大型 JS 文件，这些文件会阻止 DOM 完成直到完成），那么使用 domReady 作为加载程序插件可能会导致 RequireJS"超时"错误。如果这是一个问题，请增加 waitSeconds 配置，或者仅使用 domReady 作为模块并在 require（）回调内调用 domReady（）。
 
 #### Define an I18N Bundle
 
 Once your web app gets to a certain size and popularity, localizing the strings in the interface and providing other locale-specific information becomes more useful. However, it can be cumbersome to work out a scheme that scales well for supporting multiple locales.
 
-一旦你的网页 app 达到一定规模和流行度，在界面中本地化字符串并提供其他特定于区域设置的信息变得更加有用。然而，要定制出一种能够很好地扩展以支持多个地区的方案可能会变得很繁琐。
+一旦您的 Web 应用达到一定的大小和流行度，在界面中本地化字符串并提供其他特定于语言环境的信息就变得更加有用。但是，制定一个可以很好地扩展以支持多个语言环境的方案可能很麻烦。
 
 RequireJS allows you to set up a basic module that has localized information without forcing you to provide all locale-specific information up front. It can be added over time, and only strings/values that change between locales can be defined in the locale-specific file.
 
-RequireJS 允许你设置一个包含本地化信息的基本模块，而不是强制你预先提供所有的特定于地区的信息。它可以随着时间的推移而添加，并且仅特定于语言环境的文件中的在本地之间改变的 string/values 可以被定义。
+RequireJS 允许您设置具有本地化信息的基本模块，而不必强制您预先提供所有特定于语言环境的信息。它可以随时间添加，并且只能在特定于语言环境的文件中定义在语言环境之间更改的字符串/值。
 
 i18n bundle support is provided by the i18n.js plugin. It is automatically loaded when a module or dependency specifies the i18n! prefix (more info below). Download the plugin and put it in the same directory as your app's main JS file.
 
-i18n.js 插件已经提供了 i18n 包支持。当一个模块或者依赖指明了 i18n! 前缀，它将会自动加载。下载这个插件并且把它放在与你的 app 的主 JS 文件同样的目录下。
+i18n.js 插件提供了对 i18n 包的支持。当模块或依赖项指定 i18n 时，它将自动加载！前缀（下面有更多信息）。下载插件，并将其与应用程序的主 JS 文件放在同一目录中。
 
 To define a bundle, put it in a directory called "nls" -- the i18n! plugin assumes a module name with "nls" in it indicates an i18n bundle. The "nls" marker in the name tells the i18n plugin where to expect the locale directories (they should be immediate children of the nls directory). If you wanted to provide a bundle of color names in your "my" set of modules, create the directory structure like so:
 
-为了定义一个包，将它放在一个名为 nls 的文件夹中--这个 i18n! 插件假设一个带有 nls 的模块名字表示一个 i18n 包。这个名字中的 nls 标记告诉 i18n 插件在哪里可以找到 本地的文件夹(它们应该是 nls 目录中的直接子目录)。如果你想要在你的“my”模块中提供一束颜色名称，可以创建类似这样的目录结构：
+要定义包，请将其放在名为"nls"的目录中-i18n！插件假定模块名称中带有"nls"，表示一个 i18n 软件包。名称中的"nls"标记告诉 i18n 插件在哪里可以看到语言环境目录（它们应该是 nls 目录的直接子目录）。如果要在"我的"模块集中提供一组颜色名称，请按以下方式创建目录结构：
 
 ```
 my/nls/colors.js
@@ -1586,11 +1583,11 @@ define({
 
 An object literal with a property of "root" defines this module. That is all you have to do to set the stage for later localization work.
 
-带有 root 属性的对象字面量定义了这个模块。这就是为以后的本地化工作奠定基础所需要的一切。
+属性为"root"的对象文字定义了此模块。您要做的就是为以后的本地化工作奠定基础。
 
 You can then use the above module in another module, say, in a my/lamps.js file:
 
-你可以在其他模块中使用以上模块，例如在 my/lamps.js 文件中
+然后，您可以在 my/lamps.js 文件的另一个模块中使用上述模块：
 
 ```javascript
 //Contents of my/lamps.js
@@ -1603,11 +1600,11 @@ define(['i18n!my/nls/colors'], function (colors) {
 
 The my/lamps module has one property called "testMessage" that uses colors.red to show the localized value for the color red.
 
-这个 my/lamps 模块一个叫做 testMessage 的属性，它使用 colors.red 来展示 本地的红色的值
-
 Later, when you want to add a specific translation to a file, say for the fr-fr locale, change my/nls/colors to look like so:
 
-然后，当你想要添加一个指定的翻译到一个文件，离去 fr-fr 区域，更改 my/nls/colors 看起来像这样
+my/lamps 模块具有一个名为"testMessage"的属性，该属性使用 colors.red 来显示红色的本地化值。
+
+稍后，当您想向文件添加特定的翻译时，例如使用 fr-fr 语言环境，请将 my/nls/colors 更改为如下所示：
 
 ```javascript
 //Contents of my/nls/colors.js
@@ -1623,7 +1620,7 @@ define({
 
 Then define a file at my/nls/fr-fr/colors.js that has the following contents:
 
-然后定义一个包含如下内容的在 my/nls/fr-fr/colors.js 文件
+然后在 my/nls/fr-fr/colors.js 定义一个文件，该文件包含以下内容：
 
 ```javascript
 //Contents of my/nls/fr-fr/colors.js
@@ -1636,7 +1633,7 @@ define({
 
 RequireJS will use the browser's navigator.languages, navigator.language or navigator.userLanguage property to determine what locale values to use for my/nls/colors, so your app does not have to change. If you prefer to set the locale, you can use the module config to pass the locale to the plugin:
 
-RequireJS 将使用 浏览器的 navigator.languages, navigator.language or navigator.userLanguage 属性来决定为 my/nls/colors 使用什么样的本地值，这样你的 app 没有必要改变。如果你更想设置本地，你可以使用模块配置将本地值传递给插件
+RequireJS 将使用浏览器的 navigator.languages，navigator.language 或 navigator.userLanguage 属性来确定要用于 my/nls/colors 的语言环境值，因此您的应用程序不必更改。如果您希望设置语言环境，则可以使用模块配置将语言环境传递给插件：
 
 ```javascript
 requirejs.config({
@@ -1652,15 +1649,15 @@ requirejs.config({
 
 Note that RequireJS will always use a lowercase version of the locale, to avoid case issues, so all of the directories and files on disk for i18n bundles should use lowercase locales.
 
-注意为了避免大小写问题， RequireJS 将始终使用本地的一个小写版本，因此磁盘中的 i18n 包中的所有文件夹和文件都应该使用小写的语言环境。
+注意 RequireJS 将始终使用小写版本的语言环境，以避免出现大小写问题，因此，i18n 软件包的磁盘上的所有目录和文件都应使用小写语言环境。
 
 RequireJS is also smart enough to pick the right locale bundle, the one that most closely matches the ones provided by my/nls/colors. For instance, if the locale is "en-us", then the "root" bundle will be used. If the locale is "fr-fr-paris" then the "fr-fr" bundle will be used.
 
-RequireJS 同时也足够聪明来选择正确的本地捆绑，与 my/nls/colors 提供的最接近的那个。例如，如果区域是 “en-us”，那么将使用 root 包.如果本地是 "fr-fr-paris"，那么 fr-fr 包将会被使用。
+RequireJS 也足够聪明，可以选择正确的语言环境包，该语言包与 my/nls/colors 提供的语言包最匹配。例如，如果区域设置为"en-us"，则将使用"root"捆绑包。如果区域设置为"fr-fr-paris"，则将使用"fr-fr"捆绑包。
 
 RequireJS also combines bundles together, so for instance, if the french bundle was defined like so (omitting a value for red):
 
-RequireJS 也把 bundle 组合在一起，例如，如果 french bundle 是这样定义到
+RequireJS 还将捆绑包合并在一起，因此，例如，如果法式捆绑包是这样定义的（将红色值省略）：
 
 ```javascript
 //Contents of my/nls/fr-fr/colors.js
@@ -1672,7 +1669,7 @@ define({
 
 Then the value for red in "root" will be used. This works for all locale pieces. If all the bundles listed below were defined, then RequireJS will use the values in the following priority order (the one at the top takes the most precedence):
 
-那么将会使用在 root 中的 red 值。这个为本地所有的片段服务。如果下面列出的所有 bundle 都被定义了，那么 RequireJS 将会按照以下优先级使用这些值（最上面的优先级最高）
+然后将使用"root"中 red 的值。这适用于所有语言环境。如果定义了下面列出的所有捆绑包，那么 RequireJS 将按照以下优先级顺序使用值（顶部的优先级最高）：
 
 - my/nls/fr-fr-paris/colors.js
 - my/nls/fr-fr/colors.js
@@ -1681,7 +1678,7 @@ Then the value for red in "root" will be used. This works for all locale pieces.
 
 If you prefer to not include the root bundle in the top level module, you can define it like a normal locale bundle. In that case, the top level module would look like:
 
-如果你不希望在顶级模块中包含 根包，那么你可以像定义普通本地包那样定义它。在这种情况下，顶层模块看起来像这样：
+如果您不希望在顶级模块中包含根包，则可以像普通语言环境包一样定义它。在这种情况下，顶层模块如下所示：
 
 ```javascript
 //my/nls/colors.js contents:
@@ -1694,7 +1691,7 @@ define({
 
 and the root bundle would look like:
 
-根目录像这样
+根束看起来像：
 
 ```javascript
 //Contents of my/nls/root/colors.js
@@ -1709,23 +1706,23 @@ define({
 
 RequireJS has an optimization tool that does the following
 
-RequireJS 有一个优化工具，可以做如下的工作
+RequireJS 有一个优化工具，可以执行以下操作
 
 - Combines related scripts together into build layers and minifies them via UglifyJS (the default) or Closure Compiler (an option when using Java).
 
-* 将相关脚本组合成构架层，并通过 UglifyJS(默认值)或者 Closure Compiler(使用 java 时候的一个选项)缩小它们
+* 将相关脚本组合到构建层中，并通过 UglifyJS (默认设置)或 Closure Compiler(使用 Java 时的选项)将它们最小化。
 
 - Optimizes CSS by inlining CSS files referenced by @import and removing comments.
 
-* 通过内联@import 引用 css 文件和删除注释来优化 CSS
+* 通过内联@import 引用的 CSS 文件并删除注释来优化 CSS。
 
 The optimizer is part of the r.js adapter for Node and Nashorn, and it is designed to be run as part of a build or packaging step after you are done with development and are ready to deploy the code for your users.
 
-这个加载器是 Node 和 Nashorn 的 r.js 适配器的一部分，并且它被设计成在你完成开发并准备好为你的用户部署代码之后，作为构建或者打包步骤的一部分运行。
+优化程序是用于 Node 和 Nashorn 的 r.js 适配器的一部分，它被设计为在完成开发并准备为用户部署代码后，作为构建或打包步骤的一部分运行。
 
 The optimizer will only combine modules that are specified in arrays of string literals that are passed to top-level require and define calls, or the require('name') string literal calls in a simplified CommonJS wrapping. So, it will not find modules that are loaded via a variable name:
 
-这个优化器将只会组合传递给顶层 require 和定义调用的字符串字面量数组中指定的模块，或者在简化 CommonJS 包装中组合 require('name')字符串字面量调用。因此，它不会找到通过变量名加载的模块
+优化器将仅组合在传递给顶级 require 和 define 调用的字符串常量数组中指定的模块，或在简化的 CommonJS 包装中使用 require('name')字符串常量调用。因此，它将找不到通过变量名称加载的模块：
 
 ```javascript
 var mods = someCondition ? ['a', 'b'] : ['c', 'd']
@@ -1734,7 +1731,7 @@ require(mods)
 
 but 'a' and 'b' will be included if specified like so:
 
-但如果像这样声明， a 和 b 将会包括
+但如果这样指定，将包括"a"和"b"：
 
 ```javascript
 require(['a', 'b'])
@@ -1748,33 +1745,39 @@ define(['a', 'b'], function (a, b) {})
 
 This behavior allows dynamic loading of modules even after optimization. You can always explicitly add modules that are not found via the optimizer's static analysis by using the include option.
 
-这种行为允许在优化之后动态加载模块。通过使用 include 选项，你总是可以显式地添加没有通过优化器的静态分析找到的模块。
+此行为即使在优化后也允许动态加载模块。您始终可以使用 include 选项来显式添加通过优化器的静态分析找不到的模块。
 
 ### Requirements
 
 The optimizer can be run using Node, Java with Rhino or Nashorn, or in the browser. The requirements for each option:
 
-这个优化器可以通过使用 Node, Java with Rhino or Nashorn, 或者 in the browser 来运行。每一个选项要求如下
+可以使用 Node，带有 Rhino 或 Nashorn 的 Java 或在浏览器中运行优化器。每个选项的要求：
 
 - Node: (preferred) Node 0.4.0 or later.
 - Java: Java 1.6 or later.
 - Browser: as of 2.1.2, the optimizer can run in a web browser that has array extras. While the optimizer options are the same as shown below, it is called via JavaScript instead of command line options. It is also only good for generating optimized single files, not a directory optimization. See the browser example. This option is really only useful for providing web-based custom builds of your library.
 
-* Browser: 从 2.1.2 之后，这个优化器可以运行在一个拥有额外数组的浏览器中。虽然优化器选项如下所示，它通过 JavaScript 来调用，而不是命令行选项。它也适用于生成优化的单个文件，而不是适用于目录优化。这个选项只对提供了 web-based 自定义的构建有用。
+* Node: (首选)Node 0.4.0 或更高版本。
+* Java: Java 1.6 或更高版本。
+* 浏览器: 从 2.1.2 开始，优化器可以在具有 extras 数组的 Web 浏览器中运行。尽管优化程序选项与以下所示相同，但 ​​ 它是通过 JavaScript 而不是命令行选项调用的。它也仅适用于生成优化的单个文件，而不是目录优化。请参阅浏览器示例。此选项实际上仅对提供库的基于 Web 的自定义版本有用。
 
 For command line use, Node is the preferred execution environment. The optimizer runs **much faster** with Node.
 
-对于命令行，Node 是首选的额执行环境。使用 Node, 优化器运行起来要更快
+对于命令行使用，Node 是首选的执行环境。优化器通过 Node 运行得更快。
 
 All the example commands in this page assume Node usage, and running on a Linux/OS X command line. See the r.js README for how to run it in Java.
 
-本页中的所有示例命令都假定使用 Node,并且运行在 Linux/OS 命令行。查看 r.js README 来查看它在 java 中如何运行
+此页面中的所有示例命令均假定使用 Node，并且在 Linux/OS X 命令行上运行。有关如何在 Java 中运行它的信息，请参见 r.js 自述文件。
 
 ### Download
 
 1. You can download the tool on the download page.
 
 2. If you are using Node with NPM, you can install r.js globally as part of the "requirejs" package in NPM:
+
+1): 您可以在下载页面上下载该工具。
+
+2):如果将 Node 与 NPM 一起使用，则可以将 R.js 全局安装为 NPM 中"requirejs"软件包的一部分：
 
 ```javascript
 npm install -g requirejs
@@ -1783,11 +1786,15 @@ r.js -o app.build.js
 
 If on Windows, you may need to type r.js.cmd instead of r.js. Or, you can use DOSKEY:
 
+如果在 Windows 上，则可能需要键入 r.js.cmd 而不是 r.js。或者，您可以使用 DOSKEY：
+
 ```javascript
 DOSKEY r.js=r.js.cmd $\*
 ```
 
 If you want to install requirejs locally in a project as an npm package, instead of globally:
+
+如果要以 npm 软件包的形式在项目中本地安装 requirejs，而不是全局安装：
 
 ```javascript
 npm install requirejs
@@ -1795,13 +1802,21 @@ npm install requirejs
 
 With this local install, you can run the optimizer by running the r.js or r.js.cmd file found in the project's node_modules/.bin directory.
 
+使用此本地安装，您可以通过运行项目目录中的 r.js 或 r.js.cmd 文件来运行优化器 node_modules/.bin。
+
 With the local install, you can also use the optimizer via a function call inside a node program.
 
+在本地安装中，您还可以通过 Node 程序内部的函数调用来使用优化器。
+
 The rest of this page assumes that r.js is just downloaded manually from the download page. It is normally the clearest, most portable way to use the optimizer.
+
+该页面的其余部分假定 r.js 只是从下载页面手动下载的。通常，这是使用优化器的最清晰，最便捷的方法。
 
 ### Example setup
 
 The examples in this page will assume you downloaded and saved r.js in a directory that is a sibling to your project directory. The optimizer that is part of r.js can live anywhere you want, but you will likely need to adjust the paths accordingly in these examples.
+
+此页面中的示例将假定您已将 r.js 下载并保存在项目目录的同级目录中。作为 r.js 一部分的优化器可以放在您想要的任何位置，但是在这些示例中，您可能需要相应地调整路径。
 
 Example setup:
 
@@ -1822,6 +1837,8 @@ r.js (The r.js optimizer from download page)
 
 main.html has script tags for require.js and loads main.js via a require call, like so:
 
+main.html 具有 require.js 的脚本标签，并通过 require 调用加载 main.js，如下所示：
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -1838,11 +1855,15 @@ main.html has script tags for require.js and loads main.js via a require call, l
 
 main.js loads one.js, two.js and three.js via a require call:
 
+main.js 通过 require 调用加载 one.js，two.js 和 three.js：
+
 ```javascript
 require(['one', 'two', 'three'], function (one, two, three) {})
 ```
 
 main.css has content like the following:
+
+main.css 的内容如下：
 
 ```css
 @import url('common.css');
@@ -1855,13 +1876,19 @@ main.css has content like the following:
 
 Command line arguments are interchangeable with a build profile properties
 
+命令行参数可与构建配置文件属性互换
+
 You can either specify options on the command line:
+
+您可以在命令行中指定选项：
 
 ```
 node r.js -o baseUrl=. paths.jquery=some/other/jquery name=main out=main-built.js
 ```
 
 or in a build profile. In a build.js, the same command line arguments can be specified like so:
+
+或在构建配置文件中。在 build.js 中，可以像下面这样指定相同的命令行参数：
 
 ```javascript
 ;({
@@ -1876,17 +1903,23 @@ or in a build profile. In a build.js, the same command line arguments can be spe
 
 then just pass the build profile's file name to the optimizer:
 
+然后只需将构建配置文件的文件名传递给优化器：
+
 ```
 node r.js -o build.js
 ```
 
 Command line arguments take precedence over build profile settings, and you can mix them together:
 
+命令行参数优先于构建配置文件设置，您可以将它们混合在一起：
+
 ```
 node r.js -o build.js optimize=none
 ```
 
 There is a limitation on the command line argument syntax. Dots are viewed as object property separators, to allow something like paths.jquery=lib/jquery to be transformed to the following in the optimizer:
+
+命令行参数语法有限制。点被视为对象属性分隔符，以允许 paths.jquery=lib/jquery 在优化器中将类似的内容转换为以下内容：
 
 ```
 paths: {
@@ -1895,6 +1928,8 @@ paths: {
 ```
 
 but this means you cannot set the value for a paths property of "core/jquery.tabs" to a value. This would not work: paths.core/jquery.tabs=empty:, since it would result in this incorrect structure:
+
+但这意味着您不能将"core/jquery.tabs"的 paths 属性的值设置为一个值。这将不起作用：paths.core/jquery.tabs=empty:，因为它会导致此错误的结构：
 
 ```
 paths: {
@@ -1906,23 +1941,43 @@ paths: {
 
 If you need to set a path like the "core/jquery.tabs" one, use a build.js file with the build options specified as a JavaScript object instead of using command line arguments.
 
+如果您需要设置类似"core/jquery.tabs"的路径，请使用带有指定为 JavaScript 对象的构建选项的 build.js 文件，而不要使用命令行参数。
+
 For a list of all options, see all configuration options.
 
-Relative path resolution rules::
+有关所有选项的列表，请参阅所有配置选项。
+
+Relative path resolution rules:
+
+相对路径解析规则：
 
 In general, if it is a path, it is relative to the build.js file used to hold the build options, or if just using command line arguments, relative to the current working directory. Example of properties that are file paths: appDir, dir, mainConfigFile, out, wrap.startFile, wrap.endFile.
 
+通常，如果它是路径，则相对于用于保存构建选项的 build.js 文件，或者仅相对于当前工作目录而言，如果仅使用命令行参数。文件路径属性的示例：appDir，dir，mainConfigFile，out，wrap.startFile，wrap.endFile。
+
 For baseUrl, it is relative to appDir. If no appDir, then baseUrl is relative to the build.js file, or if just using command line arguments, the current working directory.
+
+对于的 baseUrl，它是相对于 APPDIR。如果没有 appDir，则 baseUrl 相对于 build.js 文件，或者如果仅使用命令行参数，则相对于当前工作目录。
 
 For paths and packages, they are relative to baseUrl, just as they are for require.js.
 
+对于路径和包，它们是相对的 baseUrl，只是因为他们是 require.js。
+
 For properties that are module IDs, they should be module IDs, and not file paths. Examples are name, include, exclude, excludeShallow, deps.
+
+对于作为模块 ID 的属性，它们应该是模块 ID，而不是文件路径。示例包括 name，include，exclude，excludeShallow，deps。
 
 Config settings in your main JS module that is loaded in the browser at runtime are not read by default by the optimizer
 
+优化器默认不会读取运行时在浏览器中加载的主 JS 模块中的配置设置
+
 This is because the config settings for a build can be very different, with multiple optimization targets. So a separate set of config options need to be specified for the optimizer.
 
+这是因为构建的配置设置可能非常不同，有多个优化目标。因此，需要为优化程序指定一组单独的配置选项。
+
 In version 1.0.5+ of the optimizer, the mainConfigFile option can be used to specify the location of the runtime config. If specified with the path to your main JS file, the first requirejs({}), requirejs.config({}), require({}), or require.config({}) found in that file will be parsed out and used as part of the configuration options passed to the optimizer:
+
+在优化程序的 1.0.5+版本中，mainConfigFile 选项可用于指定运行时配置的位置。如果使用主 JS 文件的路径指定，requirejs({}), requirejs.config({}), require({}), or require.config({})则将解析出该文件中的第一个文件，并将其用作传递给优化器的配置选项的一部分：
 
 ```
 mainConfigFile: 'path/to/main.js'
@@ -1930,9 +1985,13 @@ mainConfigFile: 'path/to/main.js'
 
 The precedence for config: command line, build profile, mainConfigFile. In other words, the mainConfigFile configuration has the lowest priority.
 
+config 的优先级：命令行，构建配置文件，mainConfigFile。换句话说，mainConfigFile 配置的优先级最低。
+
 ### Optimizing one JavaScript file
 
 Use the above example setup, if you just wanted to optimize main.js, you could use this command, from inside the appdirectory/scripts directory:
+
+使用上面的示例设置，如果您只想优化 main.js，则可以在 appdirectory/scripts 目录内部使用此命令：
 
 ```
 node ../../r.js -o name=main out=main-built.js baseUrl=.
@@ -1940,9 +1999,15 @@ node ../../r.js -o name=main out=main-built.js baseUrl=.
 
 This will create a file called appdirectory/scripts/main-built.js that will include the contents of main.js, one.js, two.js and three.js.
 
+这将创建一个名为 appdirectory/scripts/main-built.js 的文件，其中将包含 main.js，one.js，two.js 和 three.js 的内容。
+
 Normally you should not save optimized files with your pristine project source. Normally you would save them to a copy of your project, but to make this example easier it is saved with the source. Change the out= option to any directory you like, that has a copy of your source. Then, you can change the main-built.js file name to just main.js so the HTML page will load the optimized version of the file.
 
+通常你应该不保存优化后的文件与原始的项目源。通常，您会将它们保存到项目的副本中，但是为了使此示例更加容易，它与源一起保存。将 out =选项更改为您喜欢的任何包含源副本的目录。然后，您可以将 main-built.js 文件名更改为 main.js，以便 HTML 页面将加载文件的优化版本。
+
 If you want to include require.js with the main.js source, you can use this kind of command:
+
+如果要在 main.js 源代码中包含 require.js，则可以使用以下命令：
 
 ```
 node ../../r.js -o baseUrl=. paths.requireLib=../../require name=main include=requireLib out=main-built.js
@@ -1950,15 +2015,25 @@ node ../../r.js -o baseUrl=. paths.requireLib=../../require name=main include=re
 
 Since "require" is a reserved dependency name, you create a "requireLib" dependency and map it to the require.js file.
 
+由于"require"是保留的依赖项名称，因此您将创建"requireLib"依赖项并将其映射到 require.js 文件。
+
 Once that optimization is done, you can change the script tag to reference "main-built.js" instead of "require.js", and your optimized project will only need to make one script request.
 
+优化完成后，您可以更改脚本标记以引用"main-built.js"而不是"require.js"，并且优化后的项目仅需要发出一个脚本请求。
+
 If you want to wrap your built file so it can be used in pages that do not have an AMD loader like RequireJS, see the Optimization FAQ.
+
+如果您想打包生成的文件，以便可以在没有 AMD 加载器的页面(如 RequireJS)中使用它，请参阅优化常见问题解答.
 
 ### Shallow exclusions for fast development
 
 You can use the one JavaScript file optimization approach to make your development experience faster. By optimizing all the modules in your project into one file, except the one you are currently developing, you can reload your project quickly in the browser, but still give you the option of fine grained debugging in a module.
 
+您可以使用一种 JavaScript 文件优化方法来加快您的开发体验。通过将项目中的所有模块优化为一个文件(当前正在开发的文件除外)，可以在浏览器中快速重新加载项目，但仍可以选择在模块中进行精细调试。
+
 You can do this by using the excludeShallow option. Using the example setup above, assume you are currently building out or debugging two.js. You could use this optimization command:
+
+您可以使用 excludeShallow 选项来执行此操作。使用上面的示例设置，假设您当前正在构建或调试 two.js。您可以使用以下优化命令：
 
 ```
 node ../../r.js -o name=main excludeShallow=two out=main-built.js baseUrl=.
@@ -1966,7 +2041,11 @@ node ../../r.js -o name=main excludeShallow=two out=main-built.js baseUrl=.
 
 If you do not want the main-build.js file minified, pass optimize=none in the command above.
 
+如果您不想缩小 main-build.js 文件，请在上面的命令中传递 optimize = none。
+
 Then configure the HTML page to load the main-built.js file instead of main.js by configuring the path used for "main" to be "main-built":
+
+然后通过将用于"main"的路径配置为"main-built"，将 HTML 页面配置为加载 main-built.js 文件而不是 main.js：
 
 ```html
 !DOCTYPE html>
@@ -1994,15 +2073,25 @@ Then configure the HTML page to load the main-built.js file instead of main.js b
 
 Now, when this page is loaded, the require() for "main" will load the main-built.js file. Since excludeShallow told it just to exclude two.js, two.js will still be loaded as a separate file, allowing you to see it as a separate file in the browser's debugger, so you can set breakpoints and better track its individual changes.
 
+现在，当加载此页面时，"main"的 require()将加载 main-built.js 文件。由于 excludeShallow 告诉它只是要排除 two.js，因此 two.js 仍将作为独立文件加载，使您可以在浏览器的调试器中将其视为独立文件，因此可以设置断点并更好地跟踪其各个更改。
+
 ### empty: paths for network/CDN resources
 
 You may have a script you want to load from a Content Delivery Network (CDN) or any other server on a different domain.
 
+您可能具有要从 Content Delivery Network(CDN)或其他域上的任何其他服务器加载的脚本。
+
 The optimizer cannot load network resources, so if you want it included in the build, be sure to create a paths config to map the file to a module name. Then, for running the optimizer, download the CDN script and pass a paths config to the optimizer that maps the module name to the local file path.
+
+优化器无法加载网络资源，因此，如果您希望将其包含在构建中，请确保创建路径配置以将文件映射到模块名称。然后，要运行优化器，请下载 CDN 脚本，然后将路径配置传递给优化器，以将模块名称映射到本地文件路径。
 
 However, it is more likely that you do not want to include that resource in the build. If the script does not have any dependencies, or you do not want to include its dependencies or will be including them in another way, then you can use the special 'empty:' scheme in the paths config to just skip the file when doing an optimization.
 
+但是，您很可能不想在构建中包括该资源。如果脚本没有任何依赖关系，或者您不想包含其依赖关系或将以其他方式包含它们，则可以在 paths 配置中使用特殊的"empty："方案在执行操作时跳过该文件。优化。
+
 In your main.js file, create a paths config that gives the script a module name. This can be done even if the script does not define a module via a call to define(). paths config are just used to map short module/script IDs to an URL. This allows you to use a different paths config for the optimization. In main.js:
+
+在 main.js 文件中，创建一个路径配置，为脚本提供模块名称。即使脚本没有通过调用 define()来定义模块，也可以这样做。路径配置仅用于将简短的模块/脚本 ID 映射到 URL。这使您可以使用其他路径配置进行优化。在 main.js 中：
 
 ```javascript
 requirejs.config({
@@ -2016,11 +2105,15 @@ require(['jquery'], function ($) {})
 
 Then, when running the optimizer, use 'empty:' for the paths config:
 
+然后，在运行优化程序时，将"empty："用于路径配置：
+
 ```
 node ../../r.js -o name=main out=main-built.js baseUrl=. paths.jquery=empty:
 ```
 
 Or, in a build profile:
+
+或者，在构建配置文件中：
 
 ```
 ({
@@ -2037,20 +2130,33 @@ Or, in a build profile:
 
 Use the above example setup, if you just wanted to optimize main.css, you could use this command, from inside the appdirectory/css directory:
 
+使用上面的示例设置，如果您只想优化 main.css，则可以在 appdirectory/css 目录中使用以下命令：
+
 ```
 node ../../r.js -o cssIn=main.css out=main-built.css
 ```
 
 This will create a file called appdirectory/css/main-build.css that will include the contents of main.css, have the url() paths properly adjusted, and have comments removed.
 
+这将创建一个名为 appdirectory/css/main-build.css 的文件，该文件将包含 main.css 的内容，已正确调整 url()路径，并删除了注释。
+
 See the notes for the Optimizing one JavaScript file about avoiding saving optimized files in your pristine source tree. It is only done here to make the example simpler.
+
 Note: The url() path fixing will always fix the paths relative to the cssIn build option path, not the out build option.
+
+请参阅"优化一个 JavaScript 文件"的注释，有关避免在原始源代码树中保存优化的文件。仅在此处进行操作以简化示例。
+
+注意：url()路径固定将始终固定相对于 cssIn 构建选项路径的路径，而不是 out 构建选项的路径。
 
 ### Optimizing a whole project
 
 The optimizer can take care of optimizing all the CSS and JS files in your project by using a build profile.
 
+优化器可以使用构建配置文件来优化项目中的所有 CSS 和 JS 文件。
+
 Create a build profile, call it app.build.js, and put it in the scripts directory. The app.build.js file can live anywhere, but just be sure to adjust the paths accordingly in the example below -- all paths will be relative to where the app.build.js is located. Example app.build.js:
+
+创建一个构建配置文件，将其称为 app.build.js，并将其放在脚本目录中。app.build.js 文件可以存在于任何地方，但是请确保在下面的示例中相应地调整路径-所有路径都将相对于 app.build.js 所在的位置。示例 app.build.js：
 
 ```
 ({
@@ -2067,13 +2173,23 @@ Create a build profile, call it app.build.js, and put it in the scripts director
 
 This build profile tells RequireJS to copy all of appdirectory to a sibling directory called appdirectory-build and apply all the optimizations in the appdirectory-build directory. It is strongly suggested you use a different output directory than the source directory -- otherwise bad things will likely happen as the optimizer overwrites your source.
 
+该构建配置文件告诉 RequireJS 将所有 appdirectory 复制到一个名为 appdirectory-build 的兄弟目录中，并在 appdirectory-build 目录中应用所有优化。强烈建议您使用与源目录不同的输出目录-否则，当优化程序覆盖源时，可能会发生不良情况。
+
 RequireJS will use baseUrl to resolve the paths for any module names. The baseUrl should be relative to appDir.
+
+RequireJS 将使用 baseUrl 解析任何模块名称的路径。该的 baseUrl 应该是相对于 APPDIR。
 
 In the modules array, specify the module names that you want to optimize, in the example, "main". "main" will be mapped to appdirectory/scripts/main.js in your project. The build system will then trace the dependencies for main.js and inject them into the appdirectory-build/scripts/main.js file.
 
+在模块数组中，指定要优化的模块名称，例如"main"。"main"将映射到您项目中的 appdirectory/scripts/main.js。然后，构建系统将跟踪 main.js 的依赖项，并将其注入到 appdirectory-build/scripts/main.js 文件中。
+
 It will also optimize any CSS files it finds inside appdirectory-build.
 
+它还会优化在 appdirectory-build 中找到的所有 CSS 文件。
+
 To run the build, run this command from inside the appdirectory/scripts directory:
+
+要运行构建，请从 appdirectory/scripts 目录内部运行以下命令：
 
 ```
 node ../../r.js -o app.build.js
@@ -2081,25 +2197,41 @@ node ../../r.js -o app.build.js
 
 Once the build is done, you can use appdirectory-build as your optimized project, ready for deployment.
 
+构建完成后，您可以将 appdirectory-build 用作优化的项目，准备进行部署。
+
 ### Optimizing a multi-page project
 
 requirejs/example-multipage is an example of a project that has multiple pages, but shares a common configuration and a common optimized build layer.
+
+requirejs/example-multipage 是一个项目的示例，该项目具有多个页面，但是共享一个公共配置和一个公共的优化构建层。
 
 ### Turbo options
 
 The default for the optimizer is to do the safest, most robust set of actions that avoid surprises after a build. However, depending on your project setup, you may want to turn off some of these features to get faster builds:
 
+优化器的默认设置是执行最安全，最可靠的一组操作，以避免在构建后出现意外情况。但是，根据您的项目设置，您可能需要关闭其中一些函数以获得更快的构建：
+
 - The biggest time drain is minification. If you are just doing builds as part of a dev workflow, then set optimize to "none".
 - If doing a whole project optimization, but only want to minify the build layers specified in modules options and not the rest of the JS files in the build output directory, you can set skipDirOptimize to true.
 - Normally each run of a whole project optimization will delete the output build directory specified by dir for cleanliness. Some build options, like onBuildWrite, will modify the output directory in a way that is hazardous to do twice over the same files. However, if you are doing simple builds with no extra file transforms besides build layer minification, then you can set keepBuildDir to true to keep the build directory between runs. Then, only files that have changed between build runs will be copied.
 
+* 最大的时间流失是缩小。如果您只是将构建作为开发工作流程的一部分，则将 optimize 设置为"none"。
+* 如果要进行整个项目的优化，而只希望最小化模块选项中指定的构建层，而不是最小化构建输出目录中的其余 JS 文件，则可以将 skipDirOptimize 设置为 true。
+* 通常，整个项目优化的每次运行都会删除 dir 指定的输出构建目录，以保持整洁。某些构建选项(如 onBuildWrite)将以危险的方式修改输出目录，从而对同一文件执行两次。但是，如果您执行的是简单构建，并且除了最小化构建层之外，没有其他文件转换，则可以将 keepBuildDir 设置为 true 在两次运行之间保留构建目录。然后，将仅复制在两次构建运行之间已更改的文件。
+
 As of version 2.1.2, there are some speed shortcuts the optimizer will take by default if optimize is set to "none". However, if you are using "none" for optimize and you are planning to minify the built files after the optimizer runs, then you should turn set normalizeDirDefines to "all" so that define() calls are normalized correctly to withstand minification. If you are doing minification via the optimize option, then you do not need to worry about setting this option.
+
+从 2.1.2 版开始，如果将 optimize 设置为，则优化器默认会采用一些速度快捷方式"none"。但是，如果你正在使用"none"的优化和您所规划的优化运行后，来缩小内置文件，那么你应该把一套 normalizeDirDefines 以"all"使定义()调用正确归承受微小。如果要通过优化选项进行缩小，则无需担心设置此选项。
 
 ### Integration with has.js
 
 has.js is a great tool to that adds easy feature detection for your project. There is some optimizer support for optimizing code paths for has.js tests.
 
+has.js 是一个很棒的工具，可以为您的项目添加简单的函数检测。有一些优化器支持可优化 has.js 测试的代码路径。
+
 If your code uses tests like the following:
+
+如果您的代码使用如下测试：
 
 ```javascript
 if (has('someThing')) {
@@ -2111,7 +2243,11 @@ if (has('someThing')) {
 
 You can define a has object in the build config with true or false values for some has() tests, and the optimizer will replace the has() test with the true or false value.
 
+您可以在构建配置中为某些 has()测试使用 true 或 false 值定义 has 对象，并且优化程序将用 true 或 false 值替换 has()测试。
+
 If your build profile looked like so:
+
+如果您的构建配置文件如下所示：
 
 ```
 ({
@@ -2126,6 +2262,8 @@ If your build profile looked like so:
 
 Then the optimizer will transform the above code sample to:
 
+然后，优化器会将上面的代码示例转换为：
+
 ```javascript
 if (true) {
 	//use native someThing
@@ -2136,39 +2274,63 @@ if (true) {
 
 Then, if you use the default optimize setting of "uglify" in r.js 0.26.0 or later, or if the optimize setting is set to "closure" (when run under Java), the minifier will optimize out the dead code branch! So you can do custom builds of your code that are optimized for a set of has() tests.
 
+然后，如果您在 r.js 0.26.0 或更高版本中使用默认的优化设置"uglify"，或者如果将优化设置设置为"closure"(在 Java 下运行)，则压缩程序将优化无效代码分支！因此，您可以对代码进行自定义构建，这些构建针对一组 has()测试进行了优化。
+
 ### Source maps
 
 Version 2.1.6 and higher have experimental support for source maps. It works for mapping minified, bundled code to unminified, separate modules and only when optimize is set to "uglify2". optimize set to "closure" allows only mapping minified, bundled code to unminified bundled code (closure only available when running under Java with Rhino). The unminified files will show up in the developer tools with a ".src.js" file extension.
 
+2.1.6 版或更高版本具有对源映射的实验性支持。仅在将 optimize 设置为时，它才能将缩小的捆绑代码映射到未缩小的单独模块"uglify2"。最优化设置为"closure"只允许将缩小的捆绑代码映射到最小的捆绑代码(仅当在具有 Rhino 的 Java 下运行时，闭包才可用)。未缩小的文件将以".src.js"文件扩展名显示在开发人员工具中。
+
 To enable the source map generation, set generateSourceMaps to true. Since the minifier needs to have full control over the minified file to generate the source map, the preserveLicenseComments should be explicitly set to false. There is is a way to get some license comments in the minified source though.
 
+要启用源地图生成，请将 generateSourceMaps 设置为 true。由于 minifier 需要有完全控制权缩小的文件生成源图，preserveLicenseComments 应明确设定 false。不过，有一种方法可以在缩小的源代码中获得一 些许可证注释。
+
 The optimizer has supported sourceURL (by setting useSourceUrl to true), for debugging combined modules as individual files. However, that only works with non-minified code. Source maps translate a minified file to a non-minified version. It does not make sense to use useSourceUrl with generateSourceMaps since useSourceUrl needs the source values as strings, which prohibits the useful minification done in combination with generateSourceMaps.
+
+优化器支持 sourceURL(通过将 useSourceUrl 设置为 true)，用于将组合的模块作为单个文件进行调试。但是，这仅适用于未缩小的代码。源映射将缩小的文件转换为非缩小的版本。将 useSourceUrl 与 generateSourceMaps 一起使用是没有意义的，因为 useSourceUrl 需要将源值作为字符串使用，这禁止了与 generateSourceMaps 一起进行的有用缩小。
 
 ### All configuration options
 
 There is an example.build.js file in the requirejs/build directory that details all of the allowed optimizer configuration options.
 
+requirejs/build 目录中有一个 example.build.js 文件，其中详述了所有允许的优化器配置选项。
+
 ### Deployment techniques
 
 The r.js optimizer is designed to offer some primitives that can be used for different deployment scenarios by adding other code on top of it. See the deployment techniques wiki page for ideas on how to use the optimizer in that fashion.
+
+r.js 优化器旨在通过在其之上添加其他代码来提供一些可用于不同部署方案的原语。有关如何以这种方式使用优化器的想法，请参阅部署技术 Wiki 页面。
 
 ### Common pitfalls
 
 If you are having trouble with the examples below, here are some common pitfalls that might be the source of the problem:
 
+如果您在使用以下示例时遇到问题，请注意以下常见问题，这可能是问题的根源：
+
 Do not specify the output directory to within the source area for your JavaScript
+
+不要将输出目录指定为 JavaScript 的源区域内
 
 For instance, if your baseUrl is 'js' and your build output goes into 'js/build', there will likely be problems with extra, nested files generated on each optimization run. This guidance is only for optimizations that are not single file optimizations.
 
+例如，如果您的 baseUrl 是'js'，而您的构建输出进入了'js/build'，则每次优化运行时生成的额外的嵌套文件可能会出现问题。本指南仅适用于不是单文件优化的优化。
+
 Avoid optimization names that are outside the baseUrl
 
+避免使用 baseUrl 之外的优化名称
+
 For instance, if your baseUrl is 'js', and your optimization targets:
+
+例如，如果您的 baseUrl 是'js'，并且您的优化目标是：
 
 ```
 name: '../main'
 ```
 
 the optimization could overwrite or place files outside the output directory. For those cases, create a paths config to map that file to a local name, like:
+
+优化可能会覆盖文件或将文件放置在输出目录之外。对于这些情况，请创建路径配置以将该文件映射到本地名称，例如：
 
 ```
 paths: {
@@ -2178,10 +2340,16 @@ paths: {
 
 then use name:
 
+然后使用名称：
+
 ```
 name: 'main'
 ```
 
 for the optimization target.
 
+用于优化目标。
+
 Note the build limitations of shim config. In particular, you cannot load dependencies for shimmed libraries from a CDN. See the shim config section for more information.
+
+请注意垫片配置的构建限制。特别是，您不能从 CDN 加载填充程序库的依赖项。有关更多信息，请参见垫片配置部分。
