@@ -2353,3 +2353,134 @@ for the optimization target.
 Note the build limitations of shim config. In particular, you cannot load dependencies for shimmed libraries from a CDN. See the shim config section for more information.
 
 请注意垫片配置的构建限制。特别是，您不能从 CDN 加载填充程序库的依赖项。有关更多信息，请参见垫片配置部分。
+
+## How to use RequireJS with jQuery
+
+### Introduction
+
+While RequireJS loads jQuery just like any other dependency, jQuery's wide use and extensive plugin ecosystem mean you'll likely have other scripts in your project that also depend on jQuery. You might approach your jQuery RequireJS configuration differently depending on whether you are starting a new project or whether you are adapting existing code.
+
+尽管 RequireJS 像其他依赖项一样加载 jQuery，但 jQuery 的广泛使用和广泛的插件生态系统意味着您可能在项目中拥有也依赖 jQuery 的其他脚本。您可能会以不同的方式来处理 jQuery RequireJS 配置，具体取决于您是开始一个新项目还是正在改编现有的
+
+### Global Functions
+
+jQuery registers itself as the global variables "$" and "jQuery", even when it detects AMD/RequireJS. The AMD approach advises against the use of global functions, but the decision to turn off these jQuery globals hinges on whether you have non-AMD code that depends on them. jQuery has a noConflict function that supports releasing control of the global variables and this can be automated in your requirejs.config, as we will see later.
+
+jQuery 将自己注册为全局变量"$"和"jQuery"，即使它检测到 AMD/RequireJS。AMD 方法建议不要使用全局函数，但是关闭这些 jQuery 全局变量的决定取决于您是否拥有依赖于它们的非 AMD 代码。jQuery 具有一个 noConflict 函数，该函数支持释放对全局变量的控制，并且可以在您的 requirejs.config 中将其自动化，这将在后面介绍。
+
+### Module Name
+
+jQuery defines named AMD module 'jquery' (all lower case) when it detects AMD/RequireJS. To reduce confusion, we recommend using 'jquery' as the module name in your requirejs.config.
+
+jQuery 在检测到 AMD/RequireJS 时定义了命名为 AMD 的模块 "jquery"(全部小写)。为了减少混乱，我们建议在您的 requirejs.config 中使用"jquery"作为模块名称。
+
+```javascript
+requirejs.config({
+	baseUrl: 'js/lib',
+	paths: {
+		// the left side is the module ID,
+		// the right side is the path to
+		// the jQuery file, relative to baseUrl.
+		// Also, the path should NOT include
+		// the '.js' file extension. This example
+		// is using jQuery 1.9.0 located at
+		// js/lib/jquery-1.9.0.js, relative to
+		// the HTML page.
+		jquery: 'jquery-1.9.0',
+	},
+})
+```
+
+The other (recommended) solution is to just name the file 'jquery.js' and place it in the baseUrl directory. Then the above paths entry is not needed.
+
+另一个(推荐)解决方案是仅将文件命名为"jquery.js"并将其放置在 baseUrl 目录中。然后，不需要上述路径条目。
+
+You can avoid lots of configuration lines by placing the files according to the default ID-to-path convention of baseUrl + moduleID + '.js'. The examples below show how to set baseUrl to be the directory for third-party, library code, and use one extra paths config for your app code.
+
+通过根据默认的 ID 到路径约定放置文件，可以避免很多配置行 baseUrl + moduleID + '.js'。以下示例显示了如何将 baseUrl 设置为第三方库代码的目录，以及如何为您的应用程序代码使用一个额外的路径配置。
+
+So to reiterate, you will likely get an error if you refer to jQuery with another module name, like 'lib/jquery'. **This example will not work**:
+
+因此，重申一下，如果使用其他模块名称(如)引用 jQuery，则可能会出现错误'lib/jquery'。这个例子不起作用：
+
+```javascript
+	// THIS WILL NOT WORK
+	define(['lib/jquery'], function ($) {...});
+```
+
+It will not work, since jQuery registers itself with the name of 'jquery' and not 'lib/jquery'. In general, explicitly naming modules in the define() call are discouraged, but jQuery has some special constraints.
+
+由于 jQuery 使用'jquery'而不是'lib/jquery'的名称进行注册，因此无法使用。通常，不建议在 define()调用中显式命名模块，但是 jQuery 有一些特殊的约束。
+
+### Example using shim config
+
+This example shows how to use the shim config to specify dependencies for jQuery plugins that do not call define(). This example is useful if you have an existing jQuery project you want to convert and do not want to modify the sources of the jQuery plugins to call define().
+
+此示例显示如何使用 shim config 为不调用 define()的 jQuery 插件指定依赖项。如果您有一个现有的 jQuery 项目要转换并且不想修改 jQuery 插件的源以调用 define()，则此示例很有用。
+
+[Example using jQuery with shim config](https://github.com/requirejs/example-jquery-shim)
+
+### Example loading jquery from a CDN
+
+This example shows how to load and optimize your code while loading jQuery from a Content Delivery Network (CDN). This example requires all your jQuery plugins to call define() to properly express their dependencies. Shim config does not work after optimization builds with CDN resources.
+
+本示例说明了如何从 Content Delivery Network(CDN)加载 jQuery 时加载和优化代码。这个例子要求您所有的 jQuery 插件都调用 define()来正确表达它们的依赖关系。使用 CDN 资源进行优化构建后，shim config 不起作用。
+
+[Example using jQuery from a CDN](https://github.com/requirejs/example-jquery-cdn)
+
+### Mapping Modules to use noConflict
+
+If all of your modules (including any third party jQuery plugins or library code that depend on jQuery) are AMD compatible and you want to avoid having $ or jQuery in the global namespace when they call requirejs(['jquery']), you can use the map config to map the use of jQuery to a module that calls noConflict and returns that value of jQuery for the 'jquery' module ID.
+
+如果您所有模块(包括依赖 jQuery 的任何第三方 jQuery 插件或库代码)都与 AMD 兼容，并且您希望避免在调用它们时在全局命名空间中使用$或 jQuery，则 requirejs(['jquery'])可以使用 map config 映射使用将 jQuery 转换为一个调用 noConflict 的模块，并返回 jQuery 的值作为'jquery'模块 ID。
+
+You can use this example with the CDN example above -- the shim example will not work since shimmed libraries need a global jQuery.
+
+您可以将此示例与上面的 CDN 示例一起使用-shim 示例将不起作用，因为填充的库需要全局 jQuery。
+
+```javascript
+requirejs.config({
+	// Add this map config in addition to any baseUrl or
+	// paths config you may already have in the project.
+	map: {
+		// '*' means all modules will get 'jquery-private'
+		// for their 'jquery' dependency.
+		'*': { jquery: 'jquery-private' },
+
+		// 'jquery-private' wants the real jQuery module
+		// though. If this line was not here, there would
+		// be an unresolvable cyclic dependency.
+		'jquery-private': { jquery: 'jquery' },
+	},
+})
+
+// and the 'jquery-private' module, in the
+// jquery-private.js file:
+define(['jquery'], function (jq) {
+	return jq.noConflict(true)
+})
+```
+
+This means that any module which uses jQuery will need to use the AMD return value rather than depending on the global $:
+
+这意味着任何使用 jQuery 的模块都将需要使用 AMD 返回值，而不是依赖于全局$：
+
+```javascript
+requirejs(['jquery'], function ($) {
+	console.log($) // OK
+})
+
+requirejs(['jquery'], function (jq) {
+	console.log(jq) // OK
+})
+
+requirejs(['jquery'], function () {
+	console.log($) // UNDEFINED!
+})
+```
+
+### The previous example with a concatenated require-jquery file
+
+Previously, we've been pointing to an example using a special require-jquery file, which consisted of require.js and jQuery concatenated. This is no longer the recommended way to use jQuery with require.js, but if you're looking for the (no longer maintained) example, you can find require-jquery here.
+
+以前，我们一直在使用一个特殊的 require-jquery 文件指向一个示例，该文件由 require.js 和 jQuery 串联而成。这不再是将 jQuery 与 require.js 一起使用的推荐方法，但是如果您正在寻找(不再维护)示例，则可以在此处找到 require-jquery。
