@@ -2484,3 +2484,211 @@ requirejs(['jquery'], function () {
 Previously, we've been pointing to an example using a special require-jquery file, which consisted of require.js and jQuery concatenated. This is no longer the recommended way to use jQuery with require.js, but if you're looking for the (no longer maintained) example, you can find require-jquery here.
 
 以前，我们一直在使用一个特殊的 require-jquery 文件指向一个示例，该文件由 require.js 和 jQuery 串联而成。这不再是将 jQuery 与 require.js 一起使用的推荐方法，但是如果您正在寻找(不再维护)示例，则可以在此处找到 require-jquery。
+
+## RequireJS in Node
+
+### Doesn't Node already have a module loader?
+
+Yes Node does. That loader uses the CommonJS module format. The CommonJS module format is non-optimal for the browser, and I do not agree with some of the trade-offs made in the CommonJS module format. By using RequireJS on the server, you can use one format for all your modules, whether they are running server side or in the browser. That way you can preserve the speed benefits and easy debugging you get with RequireJS in the browser, and not have to worry about extra translation costs for moving between two formats.
+
+If you want to use define() for your modules but still run them in Node without needing to run RequireJS on the server, see the section below about using amdefine.
+
+是的，Node 可以。该加载器使用 CommonJS 模块格式。对于浏览器来说，CommonJS 模块格式不是最佳的，我不同意使用 CommonJS 模块格式进行的一些折衷。通过在服务器上使用 RequireJS，您可以对所有模块使用一种格式，无论它们是在服务器端还是在浏览器中运行。这样，您可以保留在浏览器中使用 RequireJS 所获得的速度优势和简便的调试函数，而不必担心在两种格式之间移动会产生额外的解析成本。
+
+如果要对模块使用 define()，但仍在 Node 中运行它们而不需要在服务器上运行 RequireJS，请参阅下面有关使用 amdefine 的部分。
+
+### Can I use Node modules already written in the CommonJS module format?
+
+Yes! The Node adapter for RequireJS, called r.js, will use Node's implementation of require and Node's search paths if the module is not found with the configuration used by RequireJS, so you can continue to use your existing Node-based modules without having to do changes to them.
+
+RequireJS will use its Configuration Options first to find modules. If RequireJS cannot find the module with its configuration, it is assumed to be a module that uses Node's type of modules and configuration. So, only configure module locations with RequireJS if they use the RequireJS API. For modules that expect Node's APIs and configuration/paths, just install them with a Node package manager, like npm, and do not configure their locations with RequireJS.
+
+Best practice: Use npm to install Node-only packages/modules into the projects node_modules directory, but do not configure RequireJS to look inside the node_modules directory. Also avoid using relative module IDs to reference modules that are Node-only modules. So, do not do something like require("./node_modules/foo/foo").
+
+Other notes:
+
+- RequireJS in Node can only load modules that are on the local disk -- fetching modules across http, for instance, is not supported at this time.
+- RequireJS config options like map, packages, paths are only applied if RequireJS loads the module. If RequireJS needs to ask the node module system, the original ID is passed to Node. If you need a node module to work with a map config, inline define() calls work, as shown in this email list thread.
+
+如果未通过 RequireJS 使用的配置找到模块，则 RequireJS 的 Node 适配器 r.js 将使用 Node 的 require 实现和 Node 的搜索路径，因此您可以继续使用现有的基于 Node 的模块，而不必这样做改变他们。
+
+RequireJS 将首先使用其配置选项来查找模块。如果 RequireJS 找不到具有其配置的模块，则将其假定为使用 Node 的模块类型和配置的模块。因此，如果模块位置使用 RequireJS API，则仅使用 RequireJS 配置模块位置。对于需要 Node API 和配置/路径的模块，只需使用 Node 软件包管理器(如 npm)安装它们，而不用 RequireJS 配置它们的位置。
+
+最佳实践: 使用 npm 将仅 Node 的软件包/模块安装到项目的 node_modules 目录中，但不要将 RequireJS 配置为在 node_modules 目录中查找。还要避免使用相对模块 ID 来引用作为仅 Node 模块的模块。因此，请勿执行 require(“./node_modules/foo/foo")之类的操作。
+
+其他说明:
+
+- Node 中的 RequireJS 只能加载本地磁盘上的模块-例如，目前不支持跨 http 提取模块。
+- 仅在 RequireJS 加载模块时才应用诸如 map，包，路径之类的 RequireJS 配置选项。如果 RequireJS 需要询问 Node 模块系统，则将原始 ID 传递给 Node。如果您需要 Node 模块来处理 map config，则内联 define()调用可以正常工作。
+
+### How do I use it?
+
+There are two ways to get the Node adapter:
+
+有两种获取 Node 适配器的方法：
+
+#### npm
+
+Use npm to install it:
+
+```
+npm install requirejs
+```
+
+This option will install the latest release.
+
+#### Download r.js
+
+If you prefer to not use npm, you can get r.js directly:
+
+- Download r.js from the [the download page](https://requirejs.org/docs/download.html#rjs) and place it in your project.
+- Get the source from the [r.js repo](https://github.com/requirejs/r.js) and either generate the r.js via "node dist.js", or grab a snapshot from the dist directory.
+
+* 从下载页面下载 r.js 并将其放在您的项目中。
+* 从 r.js 仓库获取源代码，或者通过"node dist.js"生成 r.js，或者从 dist 目录中获取快照。
+
+#### Usage
+
+These instructions assume an npm installation of 'requirejs'. If you are using the r.js file directly, replace require('requirejs') with require('./path/to/r.js'). Basic usage is:
+
+这些说明假定 npm 安装了'requirejs'。如果直接使用 r.js 文件，则将 require('requirejs')替换为 require('./path/to/r.js')。基本用法是：
+
+- require('requirejs')
+- Pass the main js file's "require" function in the configuration to requirejs.
+
+* require('requirejs')
+* 在配置中将主 js 文件的"require"函数传递给 requirejs。
+
+```javascript
+var requirejs = require('requirejs')
+
+requirejs.config({
+	//Pass the top-level main.js/index.js require
+	//function to requirejs so that node modules
+	//are loaded relative to the top-level JS file.
+	nodeRequire: require,
+})
+
+requirejs(['foo', 'bar'], function (foo, bar) {
+	//foo and bar are loaded according to requirejs
+	//config, but if not found, then node's require
+	//is used to load the module.
+})
+```
+
+Be sure to read the notes in section 2 about configuring RequireJS so that it can load node-only modules installed via npm.
+
+To see a more complete example that loads a module via RequireJS but uses Node-native modules for other things, see the embedded test in the r.js repo.
+
+Note: requirejs([], function() {}) will call the function callback asynchronously in RequireJS 2.1+ (for earlier versions it was synchronously called). However, when running in Node, module loading will be loaded using sync IO calls, and loader plugins should resolve calls to their load method synchronously. This allows sync uses of the requirejs module in node to work via requirejs('stringValue') calls:
+
+确保阅读第 2 节中有关配置 RequireJS 的注释，以便它可以加载通过 npm 安装的仅 Node 模块。
+
+要查看通过 RequireJS 加载模块但将 Node-native 模块用于其他用途的更完整的示例，请参阅 r.js 存储库中的嵌入式测试。
+
+注意: requirejs([], function() {}) 将在 RequireJS 2.1+中异步调用函数回调(对于早期版本，它是同步调用的)。但是，在 Node 中运行时，将使用同步 IO 调用来加载模块加载，并且加载器插件应同步解析对其加载方法的调用。这允许 Node 中对 requirejs 模块的同步使用通过 requirejs('stringValue')调用来工作：
+
+```javascript
+//Retrieves the module value for 'a' synchronously
+var a = requirejs('a')
+```
+
+#### Building node modules with AMD or RequireJS
+
+If you want to code a module so that it works with RequireJS and in Node, without requiring users of your library in Node to use RequireJS, then you can use the amdefine package to do this:
+
+如果要对模块进行编码以使其可与 RequireJS 和 Node 一起使用，而无需 Node 中库的用户使用 RequireJS，则可以使用 amdefine 包来执行此操作：
+
+```javascript
+if (typeof define !== 'function') {
+	var define = require('amdefine')(module)
+}
+
+define(function (require) {
+	var dep = require('dependency')
+
+	//The value returned from the function is
+	//used as the module export visible to Node.
+	return function () {}
+})
+```
+
+The RequireJS optimizer, as of version 1.0.3, will strip out the use of 'amdefine' above, so it is safe to use this module for your web-based projects too. Just be sure to use **the exact 'amdefine' if() test and contents as shown above**. Differences in spaces/line breaks are allowed. See the amdefine project for more information.
+
+If you want to use RequireJS directly to code your module, and then export a module value to node so that it can be used in other Node programs without requiring that app to use RequireJS, you can use the approach listed in the next example.
+
+It is best to set the baseUrl specifically to the directory containing the module, so that it works properly when nested inside a node_modules heirarchy. Use the synchronous requirejs('moduleId') to fetch the module using the config and rules in requirejs, then use Node's module.exports to export your module value:
+
+从 1.0.3 版开始，RequireJS 优化器将取消上面的"amdefine"的使用，因此也可以将该模块用于基于 Web 的项目。只要确保使用精确的'amdefine'if()测试和内容即可，如上所示。允许空格/换行符之间存在差异。有关更多信息，请参见 amdefine 项目。
+
+如果要直接使用 RequireJS 对模块进行编码，然后将模块值导出到 Node，以便可以在其他 Node 程序中使用它，而无需该应用程序使用 RequireJS，则可以使用下一个示例中列出的方法。
+
+最好将 baseUrl 专门设置为包含模块的目录，以便嵌套在 node_modules 层次结构中时可以正常工作。使用 requirejs('moduleId')sync 通过 requirejs 中的配置和规则获取模块，然后使用 Node 的 module.exports 导出模块值：
+
+```javascript
+var requirejs = require('requirejs')
+
+requirejs.config({
+	//Use node's special variable __dirname to
+	//get the directory containing this file.
+	//Useful if building a library that will
+	//be used in node but does not require the
+	//use of node outside
+	baseUrl: __dirname,
+
+	//Pass the top-level main.js/index.js require
+	//function to requirejs so that node modules
+	//are loaded relative to the top-level JS file.
+	nodeRequire: require,
+})
+
+//foo and bar are loaded according to requirejs
+//config, and if found, assumed to be an AMD module.
+//If they are not found via the requirejs config,
+//then node's require is used to load the module,
+//and if found, the module is assumed to be a
+//node-formatted module. Note: this synchronous
+//style of loading a module only works in Node.
+var foo = requirejs('foo')
+var bar = requirejs('bar')
+
+//Now export a value visible to Node.
+module.exports = function () {}
+```
+
+#### Using the optimizer as a node module
+
+The node module also exposes the RequireJS Optimizer as an optimize method for using the RequireJS optimizer via a function call instead of a command line tool:
+
+Node 模块也暴露了 RequireJS 优化为优化用于使用该方法 RequireJS 优化器通过一个函数调用，而不是一个命令行工具：
+
+```javascript
+var requirejs = require('requirejs')
+
+var config = {
+	baseUrl: '../appDir/scripts',
+	name: 'main',
+	out: '../build/main-built.js',
+}
+
+requirejs.optimize(
+	config,
+	function (buildResponse) {
+		//buildResponse is just a text output of the modules
+		//included. Load the built file for the contents.
+		//Use config.out to get the optimized file contents.
+		var contents = fs.readFileSync(config.out, 'utf8')
+	},
+	function (err) {
+		//optimization err callback
+	}
+)
+```
+
+This allows you to build other optimization workflows, like a web builder that can be used if you prefer to always develop with the "one script file included before the `</body>` tag" approach. The optimizer running in Node is fairly fast, but for larger projects that do not want to regenerate the build for every browser request, but just if you modify a script that is part of the build. You could use Node's fs.watchFile() to watch files and then trigger the build when a file changes.
+
+这样，您就可以构建其他优化工作流，例如，如果您希望始终使用"标记之前包含一个脚本文件"的方法进行开发，则可以使用 Web 构建器。在 Node 中运行的优化器运行速度相当快，但是对于那些不想为每个浏览器请求重新生成构建文件的大型项目而言，只是您修改了构建文件中的脚本。您可以使用 Node 的 fs.watchFile()监视文件，然后在文件更改时触发构建。
+
+#### Feedback
+
+If you find you have a problem, and want to report it, use the r.js [GitHub Issues page](http://github.com/requirejs/r.js/issues).
