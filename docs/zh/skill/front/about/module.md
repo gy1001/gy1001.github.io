@@ -379,6 +379,8 @@ import { stat, exists, readFile } from 'fs'
 
 ## 参考文献
 
+[深入了解 CommonJS, AMD, CMD, UMD, ES6 Module 的前世今生](https://www.1024sou.com/article/14132.html)
+
 [【深度全面】前端 JavaScript 模块化规范进化论](https://segmentfault.com/a/1190000023711059)
 
 [前端模块化](https://www.cnblogs.com/dolphinX/p/4381855.html)
