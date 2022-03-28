@@ -2692,3 +2692,104 @@ This allows you to build other optimization workflows, like a web builder that c
 #### Feedback
 
 If you find you have a problem, and want to report it, use the r.js [GitHub Issues page](http://github.com/requirejs/r.js/issues).
+
+## CommonJS Notes
+
+### INTRODUCTION
+
+CommonJS defines a module format. Unfortunately, it was defined without giving browsers equal footing to other JavaScript environments. Because of that, there are CommonJS spec proposals for Transport formats and an asynchronous require.
+
+RequireJS tries to keep with the spirit of CommonJS, with using string names to refer to dependencies, and to avoid modules defining global objects, but still allow coding a module format that works well natively in the browser. RequireJS implements the Asynchronous Module Definition (formerly Transport/C) proposal.
+
+If you have modules that are in the traditional CommonJS module format, then you can easily convert them to work with RequireJS. Not all modules will convert cleanly to the new format. Types of modules that may not convert well:
+
+- Modules that use conditional code to do a require call, like if(someCondition) require('a1') else require('a2');
+- Some types of circular dependencies.
+
+CommonJS 定义了一种模块格式。不幸的是，它在定义时并未赋予浏览器与其他 JavaScript 环境同等的地位。因此，存在有关传输格式和异步 require 的 CommonJS 规范建议。
+
+RequireJS 尝试保持 CommonJS 的精神，使用字符串名称来引用依赖项，并避免模块定义全局对象，但仍然允许编码在浏览器中本机运行良好的模块格式。RequireJS 实现异步模块定义(以前称为 Transport/C)建议。
+
+如果您具有传统 CommonJS 模块格式的模块，则可以轻松地将它们转换为与 RequireJS 一起使用。并非所有模块都会干净地转换为新格式。可能无法很好转换的模块类型：
+
+- 使用条件代码执行 require 调用的模块，例如 if(someCondition)require('a1')else require('a2');
+- 某些类型的循环依赖项。
+
+### MANUAL CONVERSION
+
+If you just have a few modules to convert, then all you need to do is wrap the module in this code:
+
+如果您只有几个要转换的模块，则只需将模块包装在以下代码中：
+
+```javascript
+define(function (require, exports, module) {
+	//Put traditional CommonJS module content here
+})
+```
+
+**IMPORTANT**: The function arguments should always be listed as require, exports, module, with those exact names and in that exact order, otherwise chaos will ensue. You can leave off exports and module from the list, but if they are needed, they need to be specified in the exact order illustrated here.
+
+重要提示: 函数参数应始终按 require, exports, module,顺序列出，并具有确切的名称和正确的顺序，否则会造成混乱。您可以从列表中省略导出和模块，但是如果需要它们，则需要按照此处说明的确切顺序进行指定。
+
+### CONVERSION TOOL
+
+If you have many modules to convert, the r.js project has a converter tool built into the r.js file. Give it the path to the directory you want to convert and an output directory
+
+如果您有许多要转换的模块，则 r.js 项目在 r.js 文件中内置了一个转换工具。为其提供要转换的目录的路径和输出目录：
+
+```javascript
+node r.js -convert path/to/commonjs/modules/ path/to/output
+```
+
+There are a small number of CommonJS modules do not work well as define()-wrapped modules. See the r.js README
+
+少数 CommonJS 模块不能像 define()包裹的模块那样很好地工作。
+
+### SETTING EXPORTED VALUE
+
+There are some CommonJS systems, mainly Node, that allow setting the exported value by assigning the exported value as module.exports. That idiom is supported by RequireJS, but there is another, easier way -- just return the value from the function passed to define
+
+有一些 CommonJS 系统(主要是 Node)允许通过将导出的值分配为 module.exports 来设置导出的值。RequireJS 支持该惯用语，但是还有另一种更简单的方法-只需从传递给 define 的函数中返回值即可：
+
+```javascript
+define(function (require) {
+	var foo = require('foo')
+
+	//Define this module as exporting a function
+	return function () {
+		foo.doSomething()
+	}
+})
+```
+
+With this approach, then you normally do not need the exports and module function arguments, so you can leave them off the module definition.
+
+使用这种方法，通常不需要 exports 和模块函数参数，因此可以将它们保留在模块定义之外。
+
+### ALTERNATIVE SYNTAX
+
+Instead of using require() to get dependencies inside the function passed to define(), you can also specify them via a dependency array argument to define(). The order of the names in the dependency array match the order of arguments passed to the definition function passed to define(). So the above example that uses the module foo:
+
+除了使用 require()获取传递给 define()的函数内部的依赖关系之外，您还可以通过 define()的依赖关系数组参数来指定它们。依赖关系数组中名称的顺序与传递给传递给 define()的定义函数的参数顺序相匹配。因此，上面的示例使用模块 foo：
+
+```javascript
+define(['foo'], function (foo) {
+	return function () {
+		foo.doSomething()
+	}
+})
+```
+
+See the [API docs](https://requirejs.org/docs/api.html) for more information on that syntax.
+
+### LOADING MODULES FROM COMMONJS PACKAGES
+
+Modules in CommonJS packages can be loaded by RequireJS by setting up the RequireJS configuration to know about the location and package attributes. See the packages API section for more information.
+
+可以通过设置 RequireJS 配置以了解位置和包属性来由 RequireJS 加载 CommonJS 包中的模块。有关更多信息，请参见包 API 部分。
+
+### OPTIMIZATION TOOL
+
+RequireJS has an optimization tool that can combine module definitions together into optimized bundles for browser delivery. It works as a command-line tool that you use as part of code deployment. See the optimization docs for more information.
+
+RequireJS 有一个优化工具，可以将模块定义组合到优化的包中，以供浏览器交付。它用作命令行工具，您可以在代码部署中使用它。有关更多信息，请参见 优化文档。
