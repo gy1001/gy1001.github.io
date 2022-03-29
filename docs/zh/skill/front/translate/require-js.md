@@ -2793,3 +2793,191 @@ Modules in CommonJS packages can be loaded by RequireJS by setting up the Requir
 RequireJS has an optimization tool that can combine module definitions together into optimized bundles for browser delivery. It works as a command-line tool that you use as part of code deployment. See the optimization docs for more information.
 
 RequireJS 有一个优化工具，可以将模块定义组合到优化的包中，以供浏览器交付。它用作命令行工具，您可以在代码部署中使用它。有关更多信息，请参见 优化文档。
+
+## Common Errors
+
+### Mismatched anonymous define() modules ...
+
+If you manually code a script tag in HTML to load a script with an anonymous define() call, this error can occur.
+
+If you manually code a script tag in HTML to load a script that has a few named modules, but then try to load an anonymous module that ends up having the same name as one of the named modules in the script loaded by the manually coded script tag.
+
+If you use the loader plugins or anonymous modules (modules that call define() with no string ID) but do not use the RequireJS optimizer to combine files together, this error can occur. The optimizer knows how to name anonymous modules correctly so that they can be combined with other modules in an optimized file.
+
+If you use var define; at the top of your file for jshint/jslint purposes, this will cause a problem for the optimizer because it avoids parsing files that declare a define variable, since that may indicate a script that was created by a concatenation of some scripts that use a local define.
+
+To avoid the error:
+
+- Be sure to load all scripts that call define() via the RequireJS API. Do not manually code script tags in HTML to load scripts that have define() calls in them.
+- If you manually code an HTML script tag, be sure it only includes named modules, and that an anonymous module that will have the same name as one of the modules in that file is not loaded.
+- If the problem is the use of loader plugins or anonymous modules but the RequireJS optimizer is not used for file bundling, use the RequireJS optimizer.
+- If the problem is the var define lint approach, use /_global define _/ (no space before "global") comment style instead.
+
+### Load timeout for modules: ...
+
+Likely causes and fixes:
+
+- There was a script error in one of the listed modules. If there is no script error in the browser's error console, and if you are using Firebug, try loading the page in another browser like Chrome or Safari. Sometimes script errors do not show up in Firebug.
+- The path configuration for a module is incorrect. Check the "Net" or "Network" tab in the browser's developer tools to see if there was a 404 for an URL that would map to the module name. Make sure the script file is in the right place. In some cases you may need to use the paths configuration to fix the URL resolution for the script.
+- The paths config was used to set two module IDs to the same file, and that file only has one anonymous module in it. If module IDs "something" and "lib/something" are both configured to point to the same "scripts/libs/something.js" file, and something.js only has one anonymous module in it, this kind of timeout error can occur. The fix is to make sure all module ID references use the same ID (either choose "something" or "lib/something" for all references), or use map config.
+
+### Error evaluating module ...
+
+An error occured when the define() function was called for the module given in the error message. It is an error with the code logic inside the define function. The error could happen inside a require callback.
+
+In Firefox and WebKit browsers, a line number and file name will be indicated in the error. It can be used to locate the source of the problem. Better isolation of the error can be done by using a debugger to place a breakpoint in the file that contains the error.
+
+### Module name ... has not been loaded yet for context: ...
+
+This occurs when there is a require('name') call, but the 'name' module has not been loaded yet.
+
+If the error message includes Use require([]), then it was a top-level require call (not a require call inside a define() call) that should be using the async, callback version of require to load the code:
+
+```javascript
+//If this code is not in a define call,
+//DO NOT use require('foo'), but use the async
+//callback version:
+require(['foo'], function (foo) {
+	//foo is now loaded.
+})
+```
+
+If you are using the simplified define wrapper, make sure you have require as the first argument to the definition function:
+
+```javascript
+define(function (require) {
+	var namedModule = require('name')
+})
+```
+
+If you are listing dependencies in the dependency array, make sure that require and name are in the dependency array:
+
+```javascript
+define(['require', 'name'], function (require) {
+	var namedModule = require('name')
+})
+```
+
+In particular, the following will not work:
+
+```javascript
+//THIS WILL FAIL
+define(['require'], function (require) {
+	var namedModule = require('name')
+})
+```
+
+This fails because requirejs needs to be sure to load and execute all dependencies before calling the factory function above. If a dependency array is given to define(), then requirejs assumes that all dependencies are listed in that array, and it will not scan the factory function for other dependencies. So, either do not pass in the dependency array, or if using the dependency array, list all the dependencies in it.
+
+If part of a require() callback, all the dependencies need to be listed in the array:
+
+```javascript
+require(['require', 'name'], function (require) {
+	var namedModule = require('name')
+})
+```
+
+Be sure that require('name') only occurs inside a define() definition function or a require() callback function, never in the global space by its own.
+
+In the RequreJS 1.0.x releases, there is a bug with having a space between the require and parens in WebKit browsers when using the simplified CommonJS wrapping (no dependency array):
+
+```javascript
+define(function (require) {
+	//Notice the space between require and the arguments.
+	var namedModule = require('name')
+})
+```
+
+The workaround is to just remove the space. This is fixed in the 2.0 code, and may be backported to the 1.0.x series if a 1.0.9 release is done.
+
+### Invalid require call
+
+This occurs when there is a call like:
+
+```javascript
+require('dependency', function (dependency) {})
+```
+
+Asynchronously loading dependencies should use an array to list the dependencies:
+
+```javascript
+require(['dependency'], function (dependency) {})
+```
+
+### No define call for ...
+
+This occurs when enforceDefine is set to true, and a script that is loaded either:
+
+- Did not call define() to declare a module.
+- Or was part of a shim config that specified a string exports property that can be checked to verify loading, and that check failed.
+- Or was part of a shim config that did not set a string value for the exports config option.
+
+Or, if the error shows up only in IE and not in other browsers (which may generate a Script error, the script probably:
+
+- Threw a JavaScript syntax/evaluation error.
+- Or there was a 404 error in IE where the script failed to load.
+
+Those IE behaviors result in IE's quirks in detecting script errors.
+
+To fix it:
+
+- If the module calls define(), make sure the define call was reached by debugging in a script debugger.
+- If part of a shim config, make sure the shim config's exports check is correct.
+- If in IE, check for an HTTP 404 error or a JavaScript sytnax error by using a script debugger.
+
+### Script error
+
+This occurs when the script.onerror function is triggered in a browser. This usually means there is a JavaScript syntax error or other execution problem running the script. To fix it, examine the script that generated the error in a script debugger.
+
+This error may not show up in IE, just other browsers, and instead, in IE you may see the No define call for ... error when you see "Script error". This is due to IE's quirks in detecting script errors.
+
+### No matching script interactive for
+
+This error only shows up in some IE browsers. Most likely caused by loading a script that calls define() but was loaded in a plain script tag or via some other call, like an eval() of a JavaScript string.
+
+To avoid the error, be sure to load all scripts that call define via the RequireJS API.
+
+### Path is not supported: ...
+
+This error occurs when the optimizer encounters a path to a module or script which is a network path. The optimizer only allows building with local resources. To fix it:
+
+Make sure you reference the network dependency as a module name, not as a full URL, so that it can be mapped to a different during the build:
+
+```javascript
+//DO NOT DO THIS
+require(['http://some.domain.dom/path/to/dependency.js'], function (dependency) {})
+
+//Rather, do this:
+require.config({
+	paths: {
+		dependency: 'http://some.domain.dom/path/to/dependency',
+	},
+})
+```
+
+require(['dependency'], function (dependency) {});
+
+If you want to include this dependency in the built/optimized file, download the JS file and in the build profile for the optimizer, put in a paths config that points to that local file.
+
+If you want to exclude that file from being included, and just need to map "dependency" for the build (otherwise it will not build), then use the special "empty:" paths config:
+
+```javascript
+//Inside the build profile
+{
+    paths: {
+        'dependency': 'empty:'
+    }
+}
+```
+
+### Cannot use preserveLicenseComments and generateSourceMaps together§ 10
+
+In the r.js optimizer, preserveLicenseComments works as a pre- and post-processing step on a JS file. Various kinds of license comments are found, pulled out of the JS source, then that modified source is passed to the minifier. When the minifier is done, the comments are added to the top of the file by the r.js optimizer.
+
+However, for the minifier to accurately construct a source map, the minified source cannot be modified in any way, so preserveLicenseComments is incompatible with generateSourceMaps. generateSourceMaps was introduced in version 2.1.2 of the optimizer.
+
+The default for the optimizer is for preserveLicenseComments to be true. So if using generateSourceMaps, then explicitly set preserveLicenseComments to false. If you want to preserve some license comments, you can manually modify the license comments in the JS source to use the JSDoc-style @license comment. See "Annotating JavaScript for the Closure Compiler" for more information. That same format works for UglifyJS2.
+
+### importScripts failed for ...
+
+When RequireJS is used in a Web Worker, importScripts is used to load modules. If that call failed for some reason, this error is generated.
