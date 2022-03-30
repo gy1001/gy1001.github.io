@@ -2798,34 +2798,65 @@ RequireJS 有一个优化工具，可以将模块定义组合到优化的包中�
 
 ### Mismatched anonymous define() modules ...
 
+不匹配的匿名 DEFINE()模块...
+
 If you manually code a script tag in HTML to load a script with an anonymous define() call, this error can occur.
+
+如果您手动编写 HTML 脚本标记以通过匿名 define()调用加载脚本，则可能会发生此错误。
 
 If you manually code a script tag in HTML to load a script that has a few named modules, but then try to load an anonymous module that ends up having the same name as one of the named modules in the script loaded by the manually coded script tag.
 
+如果您在 HTML 中手动编码脚本标记以加载具有一些命名模块的脚本，但是随后尝试加载最终与在手动编码脚本加载的脚本中具有名称模块之一名称相同的匿名模块标签。
+
 If you use the loader plugins or anonymous modules (modules that call define() with no string ID) but do not use the RequireJS optimizer to combine files together, this error can occur. The optimizer knows how to name anonymous modules correctly so that they can be combined with other modules in an optimized file.
+
+如果您使用加载程序插件或匿名模块(不带字符串 ID 调用 define()的模块)但不使用 RequireJS 优化器将文件组合在一起，则可能发生此错误。优化器知道如何正确命名匿名模块，以便它们可以与优化模块中的其他模块组合。
 
 If you use var define; at the top of your file for jshint/jslint purposes, this will cause a problem for the optimizer because it avoids parsing files that declare a define variable, since that may indicate a script that was created by a concatenation of some scripts that use a local define.
 
+如果 var define;将文件顶部用于 jshint/jslint，这将对优化器造成问题，因为它避免了解析声明 define 变量的文件，因为这可能表明脚本是由某些使用以下脚本的脚本串联而成的本地定义。
+
 To avoid the error:
+
+为避免该错误：
 
 - Be sure to load all scripts that call define() via the RequireJS API. Do not manually code script tags in HTML to load scripts that have define() calls in them.
 - If you manually code an HTML script tag, be sure it only includes named modules, and that an anonymous module that will have the same name as one of the modules in that file is not loaded.
 - If the problem is the use of loader plugins or anonymous modules but the RequireJS optimizer is not used for file bundling, use the RequireJS optimizer.
 - If the problem is the var define lint approach, use /_global define _/ (no space before "global") comment style instead.
 
+* 确保通过 RequireJS API 加载所有调用 define()的脚本。不要手动在 HTML 中编写脚本标记，以加载其中具有 define()调用的脚本。
+* 如果您手动编码 HTML 脚本标记，请确保它仅包含命名模块，并且不会加载与该文件中的模块名称相同的匿名模块。
+* 如果问题是使用加载程序插件或匿名模块，但 RequireJS 优化器未用于文件捆绑，请使用 RequireJS 优化器。
+* 如果问题是 var define 棉绒方法，请改用/_global define _/(“全局"前不能有空格)注释样式。
+
 ### Load timeout for modules: ...
 
+模块的加载超时：...
+
 Likely causes and fixes:
+
+可能的原因和解决方法：
 
 - There was a script error in one of the listed modules. If there is no script error in the browser's error console, and if you are using Firebug, try loading the page in another browser like Chrome or Safari. Sometimes script errors do not show up in Firebug.
 - The path configuration for a module is incorrect. Check the "Net" or "Network" tab in the browser's developer tools to see if there was a 404 for an URL that would map to the module name. Make sure the script file is in the right place. In some cases you may need to use the paths configuration to fix the URL resolution for the script.
 - The paths config was used to set two module IDs to the same file, and that file only has one anonymous module in it. If module IDs "something" and "lib/something" are both configured to point to the same "scripts/libs/something.js" file, and something.js only has one anonymous module in it, this kind of timeout error can occur. The fix is to make sure all module ID references use the same ID (either choose "something" or "lib/something" for all references), or use map config.
 
+* 列出的模块之一中存在脚本错误。如果浏览器的错误控制台中没有脚本错误，并且您使用的是 Firebug，请尝试在其他浏览器(例如 Chrome 或 Safari)中加载页面。有时，脚本错误不会在 Firebug 中显示。
+* 模块的路径配置不正确。检查浏览器开发人员工具中的“网络"或“网络"选项卡，以查看是否存在 404 映射到模块名称的 URL。确保脚本文件在正确的位置。在某些情况下，您可能需要使用路径配置来修复脚本的 URL 解析。
+* 路径配置用于将两个模块 ID 设置为同一文件，并且该文件中仅包含一个匿名模块。如果将模块标识"something"和"lib/something"都配置为指向相同的"scripts/libs/something.js"文件，并且 something.js 中仅包含一个匿名模块，则可能会发生这种超时错误。解决方法是确保所有模块 ID 引用都使用相同的 ID(为所有引用选择"something"或"lib/something")，或使用 map config.
+
 ### Error evaluating module ...
+
+错误评估模块...
 
 An error occured when the define() function was called for the module given in the error message. It is an error with the code logic inside the define function. The error could happen inside a require callback.
 
+为错误消息中给定的模块调用 define()函数时发生错误。define 函数内部的代码逻辑存在错误。该错误可能发生在 require 回调内部。
+
 In Firefox and WebKit browsers, a line number and file name will be indicated in the error. It can be used to locate the source of the problem. Better isolation of the error can be done by using a debugger to place a breakpoint in the file that contains the error.
+
+在 Firefox 和 WebKit 浏览器中，错误中将显示行号和文件名。它可以用来定位问题的根源。通过使用调试器在包含错误的文件中放置一个断点，可以更好地隔离错误。
 
 ### Module name ... has not been loaded yet for context: ...
 
