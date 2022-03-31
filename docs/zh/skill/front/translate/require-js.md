@@ -2860,9 +2860,15 @@ In Firefox and WebKit browsers, a line number and file name will be indicated in
 
 ### Module name ... has not been loaded yet for context: ...
 
+模块名称...尚未为上下文加载：...
+
 This occurs when there is a require('name') call, but the 'name' module has not been loaded yet.
 
+当有一个 require('name')调用，但尚未加载'name'模块时，会发生这种情况。
+
 If the error message includes Use require([]), then it was a top-level require call (not a require call inside a define() call) that should be using the async, callback version of require to load the code:
+
+如果错误消息包含 Use require([])，则它是应使用异步，回调版 require 加载代码的顶级 require 调用(而不是 define()调用内的 require 调用)：
 
 ```javascript
 //If this code is not in a define call,
@@ -2875,6 +2881,8 @@ require(['foo'], function (foo) {
 
 If you are using the simplified define wrapper, make sure you have require as the first argument to the definition function:
 
+如果使用简化的定义包装器，请确保将 require 作为定义函数的第一个参数：
+
 ```javascript
 define(function (require) {
 	var namedModule = require('name')
@@ -2883,6 +2891,8 @@ define(function (require) {
 
 If you are listing dependencies in the dependency array, make sure that require and name are in the dependency array:
 
+如果要在依赖项数组中列出依赖项，请确保 require 和 name 在依赖项数组中：
+
 ```javascript
 define(['require', 'name'], function (require) {
 	var namedModule = require('name')
@@ -2890,6 +2900,8 @@ define(['require', 'name'], function (require) {
 ```
 
 In particular, the following will not work:
+
+特别是以下情况将不起作用：
 
 ```javascript
 //THIS WILL FAIL
@@ -2902,6 +2914,10 @@ This fails because requirejs needs to be sure to load and execute all dependenci
 
 If part of a require() callback, all the dependencies need to be listed in the array:
 
+失败是因为在调用上述工厂函数之前，requirejs 需要确保加载并执行所有依赖项。如果为 define()提供了一个依赖项数组，则 requirejs 假定该数组中列出了所有依赖项，并且不会扫描工厂函数中是否存在其他依赖项。因此，要么不传入依赖项数组，要么使用依赖项数组列出其中的所有依赖项。
+
+如果是 require()回调的一部分，则所有依赖项都需要在数组中列出：
+
 ```javascript
 require(['require', 'name'], function (require) {
 	var namedModule = require('name')
@@ -2912,6 +2928,10 @@ Be sure that require('name') only occurs inside a define() definition function o
 
 In the RequreJS 1.0.x releases, there is a bug with having a space between the require and parens in WebKit browsers when using the simplified CommonJS wrapping (no dependency array):
 
+确保 require('name')仅出现在 define()定义函数或 require()回调函数内部，而不会出现在全局空间中。
+
+在 RequreJS 1.0.x 发行版中，使用简化的 CommonJS 包装(无依赖项数组)时，WebKit 浏览器中的 require 和 parens 之间存在空格存在一个错误：
+
 ```javascript
 define(function (require) {
 	//Notice the space between require and the arguments.
@@ -2921,9 +2941,15 @@ define(function (require) {
 
 The workaround is to just remove the space. This is fixed in the 2.0 code, and may be backported to the 1.0.x series if a 1.0.9 release is done.
 
+解决方法是仅删除空间。这在 2.0 代码中已修复，如果完成 1.0.9 版，则可以反向移植到 1.0.x 系列。
+
 ### Invalid require call
 
+无效的要求呼叫
+
 This occurs when there is a call like:
+
+当有类似这样的呼叫时会发生这种情况：
 
 ```javascript
 require('dependency', function (dependency) {})
@@ -2931,48 +2957,87 @@ require('dependency', function (dependency) {})
 
 Asynchronously loading dependencies should use an array to list the dependencies:
 
+异步加载依赖项应使用数组列出依赖项：
+
 ```javascript
 require(['dependency'], function (dependency) {})
 ```
 
 ### No define call for ...
 
+没有定义要求...
+
 This occurs when enforceDefine is set to true, and a script that is loaded either:
+
+当 forcemDefine 设置为 true，并且加载了以下任一脚本时，会发生这种情况：
 
 - Did not call define() to declare a module.
 - Or was part of a shim config that specified a string exports property that can be checked to verify loading, and that check failed.
 - Or was part of a shim config that did not set a string value for the exports config option.
 
+* 没有调用 define()来声明模块。
+* 或者是垫片配置的一部分，垫片配置指定了 exports 可以检查以验证加载的字符串属性，但检查失败。
+* 或者是未为 config 选项设置字符串值的填充程序配置的一部分 exports。
+
 Or, if the error shows up only in IE and not in other browsers (which may generate a Script error, the script probably:
+
+或者，如果错误仅在 IE 中显示，而不在其他浏览器中显示(这可能会产生 Script 错误，则该脚本可能是：
 
 - Threw a JavaScript syntax/evaluation error.
 - Or there was a 404 error in IE where the script failed to load.
+
+* 引发 JavaScript 语法/评估错误。
+* 或 IE 中出现 404 错误，脚本无法加载。
 
 Those IE behaviors result in IE's quirks in detecting script errors.
 
 To fix it:
 
+要解决这个问题：
+
 - If the module calls define(), make sure the define call was reached by debugging in a script debugger.
 - If part of a shim config, make sure the shim config's exports check is correct.
 - If in IE, check for an HTTP 404 error or a JavaScript sytnax error by using a script debugger.
 
+* 如果模块调用 define()，请通过在脚本调试器中进行调试来确保已到达 define 调用。
+* 如果是匀场配置的一部分，请确保匀场配置的导出检查正确无误。
+* 如果在 IE 中，请使用脚本调试器检查 HTTP 404 错误或 JavaScript sytnax 错误。
+
 ### Script error
+
+脚本错误
 
 This occurs when the script.onerror function is triggered in a browser. This usually means there is a JavaScript syntax error or other execution problem running the script. To fix it, examine the script that generated the error in a script debugger.
 
 This error may not show up in IE, just other browsers, and instead, in IE you may see the No define call for ... error when you see "Script error". This is due to IE's quirks in detecting script errors.
 
+在浏览器中触发 script.onerror 函数时，会发生这种情况。这通常意味着运行脚本存在 JavaScript 语法错误或其他执行问题。要解决此问题，请在脚本调试器中检查生成错误的脚本。
+
+该错误可能不会在 IE 中显示，而只会在其他浏览器中显示，相反，在 IE 中，当您看到“脚本错误"时，可能会看到 No define call for ...错误。.
+
 ### No matching script interactive for
+
+没有匹配的脚本互动式的...
 
 This error only shows up in some IE browsers. Most likely caused by loading a script that calls define() but was loaded in a plain script tag or via some other call, like an eval() of a JavaScript string.
 
+此错误仅在某些 IE 浏览器中显示。最有可能是由于加载了调用 define()但已通过纯脚本标记或通过其他调用(例如 JavaScript 字符串的 eval())加载的脚本引起的。
+
 To avoid the error, be sure to load all scripts that call define via the RequireJS API.
 
+为避免该错误，请确保通过 RequireJS API 加载所有调用 define 的脚本。
+
 ### Path is not supported: ...
+
+不支持路径：...
 
 This error occurs when the optimizer encounters a path to a module or script which is a network path. The optimizer only allows building with local resources. To fix it:
 
 Make sure you reference the network dependency as a module name, not as a full URL, so that it can be mapped to a different during the build:
+
+当优化器遇到模块或脚本的路径(即网络路径)时，会发生此错误。优化器仅允许使用本地资源进行构建。要解决这个问题：
+
+确保将网络依赖项作为模块名称而不是完整的 URL 引用，以便在构建过程中可以将其映射到其他名称：
 
 ```javascript
 //DO NOT DO THIS
@@ -2992,6 +3057,10 @@ If you want to include this dependency in the built/optimized file, download the
 
 If you want to exclude that file from being included, and just need to map "dependency" for the build (otherwise it will not build), then use the special "empty:" paths config:
 
+如果要在构建/优化的文件中包含此依赖项，请下载 JS 文件，并在优化器的构建配置文件中，放入指向该本地文件的路径配置。
+
+如果要从该文件中排除该文件，而只需要为构建映射“依赖关系"(否则它将无法构建)，则请使用特殊的"empty："路径配置：
+
 ```javascript
 //Inside the build profile
 {
@@ -3003,12 +3072,24 @@ If you want to exclude that file from being included, and just need to map "depe
 
 ### Cannot use preserveLicenseComments and generateSourceMaps together§ 10
 
+不能用 PRESERVELICENSECOMMENTS 和 GENERATESOURCEMAPS 一起
+
 In the r.js optimizer, preserveLicenseComments works as a pre- and post-processing step on a JS file. Various kinds of license comments are found, pulled out of the JS source, then that modified source is passed to the minifier. When the minifier is done, the comments are added to the top of the file by the r.js optimizer.
 
 However, for the minifier to accurately construct a source map, the minified source cannot be modified in any way, so preserveLicenseComments is incompatible with generateSourceMaps. generateSourceMaps was introduced in version 2.1.2 of the optimizer.
 
 The default for the optimizer is for preserveLicenseComments to be true. So if using generateSourceMaps, then explicitly set preserveLicenseComments to false. If you want to preserve some license comments, you can manually modify the license comments in the JS source to use the JSDoc-style @license comment. See "Annotating JavaScript for the Closure Compiler" for more information. That same format works for UglifyJS2.
 
+在 r.js 优化器中，preserveLicenseComments 充当 JS 文件的预处理和后处理步骤。找到各种许可证注释，将其从 JS 源中拉出，然后将修改后的源传递给压缩程序。完成压缩程序后，r.js 优化器会将注释添加到文件顶部。
+
+然而，对于 minifier 准确地构建源映射，源精缩不能以任何方式修改，所以 preserveLicenseComments 与不相容 generateSourceMaps。在优化器的 2.1.2 版本中引入了 generateSourceMaps。
+
+优化程序的默认值是 keepLicenseComments 为 true。因此，如果使用 generateSourceMaps，则将显式地将 preserveLicenseComments 设置为 false。如果要保留一些许可证注释，则可以在 JS 源代码中手动修改许可证注释以使用 JSDoc 样式的@license 注释。
+
 ### importScripts failed for ...
 
+IMPORTSCRIPTS 失败...
+
 When RequireJS is used in a Web Worker, importScripts is used to load modules. If that call failed for some reason, this error is generated.
+
+当 RequireJS 在使用 Web 工作，importScripts 用于加载模块。如果该呼叫由于某种原因失败，则会生成此错误。
