@@ -1,18 +1,18 @@
 # Webpack
 
-## webpack 初探
+## 1. webpack 初探
 
-### webpack 究竟是什么
+### 1.1 webpack 究竟是什么
 
-#### 早期开发 HTML
+#### 1.1.1 早期开发 HTML
 
-##### 实现步骤
+##### 1.1.1.1 实现步骤
 
 1. 创建 index.html 文件
 2. 创建并引入 index.js 文件
 3. 如果有其他 js 文件，需要创建并在 index.html 中引入其他 js 文件，例如 index2.js 文件
 
-##### 缺点：
+##### 1.1.1.2 缺点：
 
 1.  在一个 index.html 引入了多个 js 文件，带来如下问题：
 2.  整个页面的加载速度会变慢
@@ -21,9 +21,9 @@
 
 所以，有没有一种办法，html 文件还是只引用 index.js 文件，对于其中需要的类或者方法，可以在这个 js 文件中去引用使用。并且原生方式是无法直接引入(比如利用 import 等方式)，而 webpack 可以帮助转译 import 为浏览器识别的方式
 
-#### 利用 webpack 开发
+#### 1.1.2 利用 webpack 开发
 
-##### 实现步骤:
+##### 1.1.2.1 实现步骤:
 
 ```shell
 // 创建webpack-demo文件夹
@@ -85,9 +85,11 @@ index.html 文件内容如下
 
 > 这里可以看出 webpack 做了翻译 js 文件的功能，此时可以简单理解为文件编译器。其实，它的功能远不止于此。
 
-### 什么是模块打包工具
+### 1.2 什么是模块打包工具
 
 > 官方定义： _webpack_ is a module bundler.
+
+#### 1.2.1 更换其他规范进行打包
 
 在上一节中 index2.js 中 add 函数是通过 export default 方式来导出，并在 index.js 中通过 import add from "./index2.js"来引入的。这是 Es Module 的导出、导入方式。
 
@@ -119,7 +121,7 @@ npx webpack ./index.js --mode development
 
 > 可以看出，webpack 不仅可以打包符合 Es Module 规范的 js 文件，还可以打包 Commonjs 规范的文件。其实他还可以打包 CSS 文件，image 图片，等等其他格式的文件。所以，准确地说，webpack 就是一个模块打包工具。
 
-推荐阅读：
+#### 1.2.2 推荐阅读
 
 [webpack 之 Modules](https://webpack.js.org/concepts/modules/)
 
@@ -127,7 +129,7 @@ npx webpack ./index.js --mode development
 
 [webpack API 之 Module Variables](https://webpack.js.org/api/module-variables/)
 
-### webpack 的环境搭建
+### 1.3 webpack 的环境搭建
 
 1. 安装 nodejs LTS 版本
 
@@ -156,4 +158,291 @@ npx webpack ./index.js --mode development
 
    此命令可满足在不同项目中使用不同版本的 webpack
 
-### webpack 的配置文件
+### 1.4 webpack 的配置文件
+
+#### 1.4.1 使用默认配置文件
+
+1. 上述编译命令中没有指明配置文件，一样可以打包编译。那时因为 webpack 为了便于使用， 本身设置了一些默认配置。
+
+   默认配置文件名：webpack.config.js
+
+2. webpack.config.js 配置文件内容如下
+
+   ```javascript
+   import path from 'path'
+
+   module.exports = {
+   	entry: './index.js', // 入口文件
+   	output: {
+   		// 打包后的文件配置
+   		filename: 'bundle.js', // 文件名
+   		path: path.resolve(__dirname, 'bundle'), // 文件所在路径配置，
+   	},
+   }
+   ```
+
+3. 重新运行命令`npx webpck`
+
+4. 结果出现了
+
+   1. 一个 bundle.js 文件
+   2. 一个 bundle 文件夹
+
+5. 更改 index.html 中的引入文件为 bundle/bundle.js
+
+6. 运行到浏览器，控制台输出结果仍然是5
+
+#### 1.4.2 使用自定义配置文件名
+
+1. 例如自定义配置文件为 webpack.mine.js
+
+2. 文件内容同上
+
+3. 删除bundle文件夹及内容
+
+4. 运行命令需要更改为
+
+   ```shell
+   npx webpack --config webpack.mine.js
+   ```
+
+5. 重新运行上述命令，并再次打开index.html文件
+
+6. 运行到浏览器中，控制台输出结果仍然是5
+
+#### 1.4.3 使用脚本命令
+
+1. 创建 js 文件夹，并把 js 文件都移入文件夹内
+
+   ```shell
+   // 文件夹结构如下
+   - index.html
+   - node_modules
+   - package.json
+   - webpack.config.js
+   - src
+     - js 
+       - index.js
+       - index2.js
+   ```
+
+2. webpack.config.js 内容更改如下
+
+   ```shell
+   const path = require('path')
+   
+   module.exports = {
+   	mode: 'development',
+   	entry: './src/js/index.js',
+   	output: {
+   		filename: 'bundle.js',
+   		path: path.resolve(__dirname, 'bundle'),
+   	},
+   }
+   ```
+
+3. 更改package.json内容如下
+
+   ```javascript
+   {
+     "name": "webpack-demo",
+     "version": "1.0.0",
+     "description": "",
+     "main": "index.js",
+     "private": true,
+     "scripts": {
+       "dev": "webpack"
+     },
+     "author": "",
+     "license": "ISC",
+     "dependencies": {
+       "webpack": "^5.71.0",
+       "webpack-cli": "^4.9.2"
+     }
+   }
+   ```
+
+4. 此时只需要运行 `npm run dev` 即可
+
+   > 实际上 这里运行的也是 webapack , 当然是 node_modules 中的webpack，然后寻找相应的配置文件
+
+#### 1.4.4 本节小结
+
+1. 使用全局安装并运行
+
+   ```shell
+   npm install webpack -g
+   webpack index.js
+   ```
+
+2. 使用本地安装并运行
+
+   ```shell
+   npm install webpack --save-dev
+   npx webpack index.js
+   ```
+
+3. 本地安装，并使用npm 脚本运行
+
+   安装方式参考上述文档
+
+   ```shell
+   npm run webpack // 本质还是运行 webpack
+   ```
+
+#### 1.4.5 官方参考文档
+
+[webpack之Getting Started](https://webpack.js.org/guides/getting-started/)
+
+### 1.5 浅谈 Webpack 打包知识点
+
+1. webpack.config.js 中 mode 模式可设置为 development、production ,默认是 production。后者打包会进行压缩、处理空格等
+2. 在 npm run webpack 脚本运行后，webpack 也会出现相应的一些打包信息，比如：打包耗费时间、打包文件名字等
+
+### 1.6 小结
+
+* Webpack 是什么
+* 模块是什么
+* Webpack配置文件的作用是什么，以及基本的配置信息
+
+## 2. webpack的核心观念
+
+### 2.1 什么是loader
+
+> Webpack默认是知道如何打包 js、json文件的，但是对于css、image等文件是不能识别的，所以需要一种方式来帮助webpack 识别相应的文件类型，这种方式可以称为loader。常见的如：ts-loader、css-loader、style-loader、ts-loader、file-loader 等
+
+Loader 就是一个打包方案，
+
+例如：下属代码引入一个 img 图片
+
+1.  找到一张图片放置scr 目录下
+
+2. index.js 中引入图片，增加以下代码
+
+   ```javascript
+   const img = require('../math.jpeg') // 类型可能有出入，以自身为准
+   document.getElementById('img').src = img
+   ```
+
+3. index.html 中增加如下代码
+
+   ```html
+     <img id="img"></div>
+   ```
+
+4. 终端安装 file-loader
+
+   ```shell
+   npm install file-loader --save-dev
+   ```
+
+5. webpakc中设定规则，使用file-loader，webpack.config.js 文件变为如下配置
+
+   ```javascript
+   const path = require('path')
+   module.exports = {
+     mode: 'development',
+     entry: './src/js/index.js',
+     output: {
+       filename: 'bundle.js',
+       path: path.resolve(__dirname, 'bundle'),
+     },
+     module: {
+       rules: [
+         {
+           test: /\.jpeg$/, // 这里注意同上面图片类型保持一致
+           use: {
+             loader: 'file-loader',
+             options: {
+               esModule: false, // file-loader在新版本中esModule默认为true，因此手动设置为false
+             },
+           },
+         },
+       ],
+     },
+   }
+   
+   ```
+
+6. 重新运行打包命令```npm run dev```
+
+7. 重新运行index.html 会看到图片正常显示
+
+### 2.2 使用 Loader 打包静态资源（图片篇）
+
+1. 上节发现图片打包后名字变为了一长串字符串，那么如何让他变为自己想要的名字呢
+2. 如果想让图片打包后放在一个文件夹中呢
+
+**webpack 4** 中 webpack.config.js 文件中内容配置如下
+
+```javascript
+const path = require('path')
+module.exports = {
+	mode: 'development',
+	entry: './src/js/index.js',
+	output: {
+		filename: 'bundle.js',
+		path: path.resolve(__dirname, 'bundle')
+	},
+	module: {
+		rules: [
+			{
+				test: /\.(jpg|png|gif|jpeg)$/,
+        use: {
+				 	loader: 'file-loader',
+				 	options: {
+				 		esModule: false,
+				 		// placeholder 占位符
+				 		name: '[name].[ext]',
+				 		// 设置打包后的文件夹
+				 		outputPath: 'images/',
+          },
+        },
+			},
+		],
+	},
+}
+```
+
+以上是使用file-loader进行处理，其实还可以使用 url-loader 来进行处理，后者可以设limit,当大小小于设置的大小时候，url-loader会把他打包为一个base64位流数据，而不是一个文件，这样可以减少资源的请求，当然图片要尽量小。
+
+**webpack 5 **中的 webpack.config.js 文件中内容配置如下
+
+```javascript
+const path = require('path')
+
+module.exports = {
+	mode: 'development',
+	entry: './src/js/index.js',
+	output: {
+		filename: 'bundle.js',
+		path: path.resolve(__dirname, 'bundle'),
+    // 通过这里也可以设置, webpack5中不用加.
+		// assetModuleFilename: 'images/[name][ext]',
+	},
+	module: {
+		rules: [
+			{
+				test: /\.(jpg|png|gif|jpeg)$/,
+				type: 'asset/resource',
+				generator: {
+					filename: 'images/[name][ext]',
+				}
+			},
+		],
+	},
+}
+
+```
+
+
+
+注意：webpack 5 中 file-loader 已经废弃
+
+### 参考文档
+
+[webpack4之file-loader](https://v4.webpack.js.org/loaders/file-loader/)
+
+[webpack4之url-loader](https://v4.webpack.js.org/loaders/url-loader/)
+
+[webpack 5之asset-modules](https://webpack.docschina.org/guides/asset-modules#root)
