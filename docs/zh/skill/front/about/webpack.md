@@ -190,7 +190,7 @@ npx webpack ./index.js --mode development
 
 5. 更改 index.html 中的引入文件为 bundle/bundle.js
 
-6. 运行到浏览器，控制台输出结果仍然是5
+6. 运行到浏览器，控制台输出结果仍然是 5
 
 #### 1.4.2 使用自定义配置文件名
 
@@ -198,7 +198,7 @@ npx webpack ./index.js --mode development
 
 2. 文件内容同上
 
-3. 删除bundle文件夹及内容
+3. 删除 bundle 文件夹及内容
 
 4. 运行命令需要更改为
 
@@ -206,9 +206,9 @@ npx webpack ./index.js --mode development
    npx webpack --config webpack.mine.js
    ```
 
-5. 重新运行上述命令，并再次打开index.html文件
+5. 重新运行上述命令，并再次打开 index.html 文件
 
-6. 运行到浏览器中，控制台输出结果仍然是5
+6. 运行到浏览器中，控制台输出结果仍然是 5
 
 #### 1.4.3 使用脚本命令
 
@@ -221,7 +221,7 @@ npx webpack ./index.js --mode development
    - package.json
    - webpack.config.js
    - src
-     - js 
+     - js
        - index.js
        - index2.js
    ```
@@ -230,7 +230,7 @@ npx webpack ./index.js --mode development
 
    ```shell
    const path = require('path')
-   
+
    module.exports = {
    	mode: 'development',
    	entry: './src/js/index.js',
@@ -241,7 +241,7 @@ npx webpack ./index.js --mode development
    }
    ```
 
-3. 更改package.json内容如下
+3. 更改 package.json 内容如下
 
    ```javascript
    {
@@ -264,7 +264,7 @@ npx webpack ./index.js --mode development
 
 4. 此时只需要运行 `npm run dev` 即可
 
-   > 实际上 这里运行的也是 webapack , 当然是 node_modules 中的webpack，然后寻找相应的配置文件
+   > 实际上 这里运行的也是 webapack , 当然是 node_modules 中的 webpack，然后寻找相应的配置文件
 
 #### 1.4.4 本节小结
 
@@ -282,7 +282,7 @@ npx webpack ./index.js --mode development
    npx webpack index.js
    ```
 
-3. 本地安装，并使用npm 脚本运行
+3. 本地安装，并使用 npm 脚本运行
 
    安装方式参考上述文档
 
@@ -292,7 +292,7 @@ npx webpack ./index.js --mode development
 
 #### 1.4.5 官方参考文档
 
-[webpack之Getting Started](https://webpack.js.org/guides/getting-started/)
+[webpack 之 Getting Started](https://webpack.js.org/guides/getting-started/)
 
 ### 1.5 浅谈 Webpack 打包知识点
 
@@ -301,72 +301,71 @@ npx webpack ./index.js --mode development
 
 ### 1.6 小结
 
-* Webpack 是什么
-* 模块是什么
-* Webpack配置文件的作用是什么，以及基本的配置信息
+- Webpack 是什么
+- 模块是什么
+- Webpack 配置文件的作用是什么，以及基本的配置信息
 
-## 2. webpack的核心观念
+## 2. webpack 的核心观念
 
-### 2.1 什么是loader
+### 2.1 什么是 loader
 
-> Webpack默认是知道如何打包 js、json文件的，但是对于css、image等文件是不能识别的，所以需要一种方式来帮助webpack 识别相应的文件类型，这种方式可以称为loader。常见的如：ts-loader、css-loader、style-loader、ts-loader、file-loader 等
+> Webpack 默认是知道如何打包 js、json 文件的，但是对于 css、image 等文件是不能识别的，所以需要一种方式来帮助 webpack 识别相应的文件类型，这种方式可以称为 loader。常见的如：ts-loader、css-loader、style-loader、ts-loader、file-loader 等
 
 Loader 就是一个打包方案，
 
 例如：下属代码引入一个 img 图片
 
-1.  找到一张图片放置scr 目录下
+1.  找到一张图片放置 scr 目录下
 
-2. index.js 中引入图片，增加以下代码
+2.  index.js 中引入图片，增加以下代码
 
-   ```javascript
-   const img = require('../math.jpeg') // 类型可能有出入，以自身为准
-   document.getElementById('img').src = img
-   ```
+    ```javascript
+    const img = require('../math.jpeg') // 类型可能有出入，以自身为准
+    document.getElementById('img').src = img
+    ```
 
-3. index.html 中增加如下代码
+3.  index.html 中增加如下代码
 
-   ```html
-     <img id="img"></div>
-   ```
+    ```html
+      <img id="img"></div>
+    ```
 
-4. 终端安装 file-loader
+4.  终端安装 file-loader
 
-   ```shell
-   npm install file-loader --save-dev
-   ```
+    ```shell
+    npm install file-loader --save-dev
+    ```
 
-5. webpakc中设定规则，使用file-loader，webpack.config.js 文件变为如下配置
+5.  webpakc 中设定规则，使用 file-loader，webpack.config.js 文件变为如下配置
 
-   ```javascript
-   const path = require('path')
-   module.exports = {
-     mode: 'development',
-     entry: './src/js/index.js',
-     output: {
-       filename: 'bundle.js',
-       path: path.resolve(__dirname, 'bundle'),
-     },
-     module: {
-       rules: [
-         {
-           test: /\.jpeg$/, // 这里注意同上面图片类型保持一致
-           use: {
-             loader: 'file-loader',
-             options: {
-               esModule: false, // file-loader在新版本中esModule默认为true，因此手动设置为false
-             },
-           },
-         },
-       ],
-     },
-   }
-   
-   ```
+    ```javascript
+    const path = require('path')
+    module.exports = {
+    	mode: 'development',
+    	entry: './src/js/index.js',
+    	output: {
+    		filename: 'bundle.js',
+    		path: path.resolve(__dirname, 'bundle'),
+    	},
+    	module: {
+    		rules: [
+    			{
+    				test: /\.jpeg$/, // 这里注意同上面图片类型保持一致
+    				use: {
+    					loader: 'file-loader',
+    					options: {
+    						esModule: false, // file-loader在新版本中esModule默认为true，因此手动设置为false
+    					},
+    				},
+    			},
+    		],
+    	},
+    }
+    ```
 
-6. 重新运行打包命令```npm run dev```
+6.  重新运行打包命令`npm run dev`
 
-7. 重新运行index.html 会看到图片正常显示
+7.  重新运行 index.html 会看到图片正常显示
 
 ### 2.2 使用 Loader 打包静态资源（图片篇）
 
@@ -382,29 +381,29 @@ module.exports = {
 	entry: './src/js/index.js',
 	output: {
 		filename: 'bundle.js',
-		path: path.resolve(__dirname, 'bundle')
+		path: path.resolve(__dirname, 'bundle'),
 	},
 	module: {
 		rules: [
 			{
 				test: /\.(jpg|png|gif|jpeg)$/,
-        use: {
-				 	loader: 'file-loader',
-				 	options: {
-				 		esModule: false,
-				 		// placeholder 占位符
-				 		name: '[name].[ext]',
-				 		// 设置打包后的文件夹
-				 		outputPath: 'images/',
-          },
-        },
+				use: {
+					loader: 'file-loader',
+					options: {
+						esModule: false,
+						// placeholder 占位符
+						name: '[name].[ext]',
+						// 设置打包后的文件夹
+						outputPath: 'images/',
+					},
+				},
 			},
 		],
 	},
 }
 ```
 
-以上是使用file-loader进行处理，其实还可以使用 url-loader 来进行处理，后者可以设limit,当大小小于设置的大小时候，url-loader会把他打包为一个base64位流数据，而不是一个文件，这样可以减少资源的请求，当然图片要尽量小。
+以上是使用 file-loader 进行处理，其实还可以使用 url-loader 来进行处理，后者可以设 limit,当大小小于设置的大小时候，url-loader 会把他打包为一个 base64 位流数据，而不是一个文件，这样可以减少资源的请求，当然图片要尽量小。
 
 **webpack 5 **中的 webpack.config.js 文件中内容配置如下
 
@@ -417,7 +416,7 @@ module.exports = {
 	output: {
 		filename: 'bundle.js',
 		path: path.resolve(__dirname, 'bundle'),
-    // 通过这里也可以设置, webpack5中不用加.
+		// 通过这里也可以设置, webpack5中不用加.
 		// assetModuleFilename: 'images/[name][ext]',
 	},
 	module: {
@@ -427,22 +426,19 @@ module.exports = {
 				type: 'asset/resource',
 				generator: {
 					filename: 'images/[name][ext]',
-				}
+				},
 			},
 		],
 	},
 }
-
 ```
-
-
 
 注意：webpack 5 中 file-loader 已经废弃
 
 ### 参考文档
 
-[webpack4之file-loader](https://v4.webpack.js.org/loaders/file-loader/)
+[webpack4 之 file-loader](https://v4.webpack.js.org/loaders/file-loader/)
 
-[webpack4之url-loader](https://v4.webpack.js.org/loaders/url-loader/)
+[webpack4 之 url-loader](https://v4.webpack.js.org/loaders/url-loader/)
 
-[webpack 5之asset-modules](https://webpack.docschina.org/guides/asset-modules#root)
+[webpack 5 之 asset-modules](https://webpack.docschina.org/guides/asset-modules#root)
