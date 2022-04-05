@@ -608,7 +608,6 @@ module.exports = {
    const HtmlWebpackPlugin = require('html-webpack-plugin')
    const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
-
    module.exports = {
      ...
      modules: {...},
@@ -632,14 +631,15 @@ module.exports = {
 
 [webpack 之 Plugin](https://webpack.docschina.org/plugins/)
 
-## 2.5 Entry 与 Output 的基本配置
+### 2.5 Entry 与 Output 的基本配置
 
-### 2.5.1 entry 基本配置
+#### 2.5.1 entry 基本配置
 
 1. 可以是一个字符串
 
    ```javascript
    entry: './src/js/index.js', // 入口文件
+
    ```
 
 2. 也可以是一个对象，左侧键表示打包后生成的文件名字
@@ -681,3 +681,45 @@ output: {
 [webpack 之 Output Management](https://webpack.js.org/guides/output-management/)
 
 [webpack 之 output](https://webpack.js.org/configuration/output/)
+
+### 2.6 SourceMap 的配置
+
+#### 2.6.1 sourceMap
+
+> sourceMap 是一个映射关系。假如代码运行时候，控制台提示 96 行报错，因为代码是打包压缩后的，根据提示的 96 行根本不能快速定位到源文件中的错误位置。而 sourceMap 可以帮助我们快速定位到相应的错误位置。
+
+#### 2.6.2 相应的配置选项 devtool
+
+```javascript
+devtool: 'source-map' // 此选项控制是否生成，以及如何生成 source map。
+```
+
+#### 2.6.3 可以配置的值
+
+```shell
+^(inline-|hidden-|eval-)?(nosources-)?(cheap-(module-)?)?source-map$
+
+eval: 可以通过 eval 的方式 对我们的代码或者 sourcemap 进行打包，提高打包速度
+module: loader等其中的错误也进行定位
+cheap: 1: 只提示多少行出错了，不提示列数 2：只负责业务代码中的错误，loader等依赖三方的错误不定位
+inline: 会把map文件打包入 js 文件中去
+source-map: 会自动生成一个 .map 文件
+```
+
+#### 2.6.4 推荐的配置
+
+mode: development 环境下的推荐配置
+
+```javascript
+devtool: 'cheap-module-eval-source-map'
+```
+
+mode: production 环境下的推荐配置
+
+```javascript
+devtool: 'cheap-module-source-map'
+```
+
+#### 2.6.5 参考文档
+
+[webpack 之 Devtool：source-map](https://webpack.docschina.org/configuration/devtool/)
