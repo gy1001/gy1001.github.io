@@ -372,7 +372,9 @@ Loader 就是一个打包方案，
 1. 上节发现图片打包后名字变为了一长串字符串，那么如何让他变为自己想要的名字呢
 2. 如果想让图片打包后放在一个文件夹中呢
 
-**webpack 4** 中 webpack.config.js 文件中内容配置如下
+#### 2.2.1 **webpack 4**
+
+webpack 4 中 webpack.config.js 文件中内容配置如下
 
 ```javascript
 const path = require('path')
@@ -405,7 +407,9 @@ module.exports = {
 
 以上是使用 file-loader 进行处理，其实还可以使用 url-loader 来进行处理，后者可以设 limit,当大小小于设置的大小时候，url-loader 会把他打包为一个 base64 位流数据，而不是一个文件，这样可以减少资源的请求，当然图片要尽量小。
 
-**webpack 5 **中的 webpack.config.js 文件中内容配置如下
+#### 2.2.2 **webpack 5 **
+
+webpack 5 中的 webpack.config.js 文件中内容配置如下
 
 ```javascript
 const path = require('path')
@@ -435,10 +439,146 @@ module.exports = {
 
 注意：webpack 5 中 file-loader 已经废弃
 
-### 参考文档
+#### 2.2.3 参考文档
 
 [webpack4 之 file-loader](https://v4.webpack.js.org/loaders/file-loader/)
 
 [webpack4 之 url-loader](https://v4.webpack.js.org/loaders/url-loader/)
 
 [webpack 5 之 asset-modules](https://webpack.docschina.org/guides/asset-modules#root)
+
+### 2.3 使用 Loader 打包静态资源（样式篇）
+
+#### 2.3.1 css-loader
+
+`css-loader` 解释(interpret) `@import` 和 `url()` ，会 `import/require()` 后再解析(resolve)它们。
+
+#### 2.3.2 style-loader
+
+建议将 `style-loader` 与 [`css-loader`](https://github.com/webpack/css-loader) 结合使用
+
+#### 2.3.3 less-loader
+
+一个 less 加载器，帮助 webpack 处理 less 文件的。同理，还有 sass-loader、stylus-loader 等, 这里以 less-loader 为例
+
+#### 2.3.4 postcss-loader
+
+实现样式兼容性处理，自动为样式添加浏览器前缀。
+
+#### 2.3.5 示例
+
+1. 在 src 下新建 css 文件夹，新建 index.css、img.less 文件，文件内容如下
+
+   img.less 文件内容如下
+
+   ```css
+   html {
+   	.el-img {
+   		width: 100px;
+   		transform: translate(100px, 100px) // 这里属于新特性，某些浏览需要增加相应前缀才会识别，postcss-loader 可以解决这个问题，自动增加前缀
+   ;
+   	}
+   }
+   ```
+
+   index.css 文件内容如下
+
+   ```css
+   @import './img.less'; // 注意这里是 css 文件引入 less 文件
+   ```
+
+2. index.js 中引入 index.css 文件, 并修改引入 img 片段内容，更改如下
+
+   1. 当不使用 modules: true 模块化配置时候如此引人，是作为全局样式引入
+
+      ```css
+      ...
+      // 当不使用 modules: true 模块化配置时候如此引人，是作为全局样式引入, 假如其他文件中也有同名元素，将会收到影响
+      import '../css/index.css'
+
+      const img = require('../math.jpeg')
+      const imgEl = document.getElementById('img')
+      imgEl.classList.add('el-img')
+      ...
+      ```
+
+   2. 当使用模块化引入时候，需要更改如下
+
+      ```css
+      ...
+      // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
+      import styles from '../css/index.css'
+
+      const img = require('../math.jpeg')
+      const imgEl = document.getElementById('img')
+      imgEl.classList.add(styles['el-img'])
+      ...
+      ```
+
+3. 安装 css-loader style-loader less-loader postcss-loader ，因为 css、less 文件 webpack 并不能识别
+
+   ```shell
+   npm install css-loader style-loader -D
+   npm install less less-loader -D
+   npm install --save-dev postcss-loader postcss
+   ```
+
+4. webpack.config.js 文件修改如下
+
+   > 注意：多个 loader 的执行顺序是 `从后往前` 执行的
+
+   ```javascript
+   ...
+   	rules: [{
+       ...
+       ...
+       	{
+   				test: /\.css$/,
+   				use: [
+   					'style-loader',
+   					{
+   						loader: 'css-loader',
+   						options: {
+   							// 引入模块化，注意第2步中的引入区别
+   							modules: true,
+   						},
+   					},
+   					'less-loader',
+   				],
+   			},
+         {
+            test: /\.less$/,
+            use: [
+              'style-loader',
+              {
+       				 loader:'css-loader',
+       				 options: {
+       						// 通过 import 加载的less文件也需要执行前两个loader
+       						importLoaders: 2
+     					 }
+     				 },
+              'less-loader',
+              {
+                loader: 'postcss-loader',
+                //  或者使用 PostCSS 本身的 配置文件：postcss.config.js
+                options: {
+                  postcssOptions: {
+                    plugins: [require('autoprefixer')()],
+                  },
+                },
+              },
+            ],
+          },
+     ]
+   ...
+   ```
+
+5. 运行脚本打包命令`npm run dev`
+
+6. 运行 index.html 到浏览器中，发现图片身上有指定的 css, 且按照指定的样式显示
+
+#### 2.3.6 参考文献
+
+[webpack 之 postcss-loader](https://v4.webpack.js.org/loaders/postcss-loader/)
+
+[webpack 之 Asset Management](https://webpack.js.org/guides/asset-management/)
