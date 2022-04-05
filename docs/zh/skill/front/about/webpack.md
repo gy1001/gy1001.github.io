@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-
+   
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -582,3 +582,52 @@ module.exports = {
 [webpack 之 postcss-loader](https://v4.webpack.js.org/loaders/postcss-loader/)
 
 [webpack 之 Asset Management](https://webpack.js.org/guides/asset-management/)
+
+### 2.4 使用 plugins 让打包更便捷
+
+#### 2.4.1 html-webpack-plugin
+
+[`HtmlWebpackPlugin`](https://github.com/jantimon/html-webpack-plugin) 会帮我自动创建或者根据引入的文件模板创建一个html文件，，并把打包生成的js文件自动引入。
+
+#### 2.4.2  clean-webpack-plugin
+
+在每次打包时候，帮你先清空目标文件夹：dist或者配置的其他名称文件夹
+
+#### 2.4.3 示例步骤 
+
+1. 安装插件
+
+   ```shell
+   npm install html-webpack-plugin --save-dev
+   npm install clean-webpack-plugin --save-dev
+   ```
+
+2. webpack 引入插件，Webpack.config.js 文件修改如下
+
+   ```javascript
+   const HtmlWebpackPlugin = require('html-webpack-plugin')
+   const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+   
+   
+   module.exports = {
+     ...
+     modules: {...},
+     // plugin 会在webpack运行到某些时机的时候，处理一些事情
+     plugins: [
+       new HtmlWebpackPlugin({
+           // 指定文件模板，也可以不指定
+          	template: './index.html',
+       }),
+       new CleanWebpackPlugin(),
+     ]
+     ...
+   }
+   ```
+
+3. 重新运行打包命令，并运行到浏览器里
+
+4. 查看页面效果
+
+#### 2.4.4 相关文档
+
+[webpack之Plugin](https://webpack.docschina.org/plugins/)
