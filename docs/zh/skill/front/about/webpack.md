@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-   
+
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -587,13 +587,13 @@ module.exports = {
 
 #### 2.4.1 html-webpack-plugin
 
-[`HtmlWebpackPlugin`](https://github.com/jantimon/html-webpack-plugin) 会帮我自动创建或者根据引入的文件模板创建一个html文件，，并把打包生成的js文件自动引入。
+[`HtmlWebpackPlugin`](https://github.com/jantimon/html-webpack-plugin) 会帮我自动创建或者根据引入的文件模板创建一个 html 文件，，并把打包生成的 js 文件自动引入。
 
-#### 2.4.2  clean-webpack-plugin
+#### 2.4.2 clean-webpack-plugin
 
-在每次打包时候，帮你先清空目标文件夹：dist或者配置的其他名称文件夹
+在每次打包时候，帮你先清空目标文件夹：dist 或者配置的其他名称文件夹
 
-#### 2.4.3 示例步骤 
+#### 2.4.3 示例步骤
 
 1. 安装插件
 
@@ -607,8 +607,8 @@ module.exports = {
    ```javascript
    const HtmlWebpackPlugin = require('html-webpack-plugin')
    const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-   
-   
+
+
    module.exports = {
      ...
      modules: {...},
@@ -630,4 +630,54 @@ module.exports = {
 
 #### 2.4.4 相关文档
 
-[webpack之Plugin](https://webpack.docschina.org/plugins/)
+[webpack 之 Plugin](https://webpack.docschina.org/plugins/)
+
+## 2.5 Entry 与 Output 的基本配置
+
+### 2.5.1 entry 基本配置
+
+1. 可以是一个字符串
+
+   ```javascript
+   entry: './src/js/index.js', // 入口文件
+   ```
+
+2. 也可以是一个对象，左侧键表示打包后生成的文件名字
+
+   ```javascript
+   entry: {
+     // main 是打包后的文件名，右侧是文件入口
+     main: "./src/index.js",
+     publicPath: ''
+   }
+   ```
+
+3. 也可以是多个键值对对象, 表示生成两个文件; 表示多个文件入口
+
+   tips: 这里如果用的是 html-webpack-plugin 生成的 html 文件，将会自动引入这两个生成的 js 文件
+
+   ```javascript
+   entry: {
+     main: "./src/index.js",
+     sub: "./src/index.js"
+   }
+   ```
+
+#### 2.5.2 output 基本配置
+
+```javascript
+output: {
+  filename: '[name].js',
+  path: path.resolve(__dirname, 'bundle'),
+  // 如果打包后的文件不是直接饮用，而是放到了别的服务器，比如使用了CDN, 就可以使用publicPath来进行设置
+  publicPath: 'https://xxcdn.com/',
+},
+```
+
+#### 2.5.3 参考文档
+
+[webpack 之 Entry Points](https://webpack.js.org/concepts/entry-points)
+
+[webpack 之 Output Management](https://webpack.js.org/guides/output-management/)
+
+[webpack 之 output](https://webpack.js.org/configuration/output/)
