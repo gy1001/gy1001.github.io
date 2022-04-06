@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-   
+
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -903,4 +903,4 @@ devtool: 'cheap-module-source-map'
 
 [webpack 之 dev-server 中使用 HMR](https://webpack.js.org/configuration/dev-server/)
 
-[API之HMR](https://webpack.js.org/api/hot-module-replacement/#module-api)
+[API 之 HMR](https://webpack.js.org/api/hot-module-replacement/#module-api)
