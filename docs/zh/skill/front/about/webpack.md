@@ -723,3 +723,114 @@ devtool: 'cheap-module-source-map'
 #### 2.6.5 参考文档
 
 [webpack 之 Devtool：source-map](https://webpack.docschina.org/configuration/devtool/)
+
+### 2.7 使用 WebpackDevServer 提升开发效率
+
+#### 2.7.1 webpack-dev-server
+
+[webpack-dev-server](https://github.com/webpack/webpack-dev-server) 可用于快速开发应用程序。可以实现如下的效果：更改了代码时候，自动进行编译运行，刷新浏览器。
+
+#### 2.7.2 使用 webpack -- watch 实现
+
+1. 更改脚本 dev 的运行命令
+
+```javascript
+"scripts": {
+  "dev": "webpack --watch"
+},
+```
+
+2. 运行命令`npm run dev`
+3. 修改文件内容，手动刷新浏览器, 然后观察效果
+
+#### 2.7.3 使用 webpack-dev-server
+
+1. 安装 webpack-dev-server
+
+   ```shell
+   npm install webpack-dev-server -D
+   ```
+
+2. 更改脚本命令如下
+
+   ```javascript
+   "scripts": {
+     "dev": "webpack --watch",
+     "start": "webpack-dev-server"
+   },
+   ```
+
+3. 为 webpack.config.js 添加如下内容
+
+   ```javascript
+   ...
+   module.exports = {
+   	...
+     plugins: [],
+     devServer: {
+   		open: true, // 自动打开浏览器，并运行本地启动时的服务器地址
+   	}
+   }
+   ```
+
+4. 运行命令`npm run start`
+
+5. 可以看到控制台输出结果
+
+   ```shell
+   <i> [webpack-dev-server] Project is running at:
+   <i> [webpack-dev-server] Loopback: http://localhost:8081/
+   <i> [webpack-dev-server] On Your Network (IPv4): http://192.168.31.191:8081/
+   <i> [webpack-dev-server] On Your Network (IPv6): http://[fe80::1]:8081/
+   <i> [webpack-dev-server] Content not from webpack is served from '/Users/yuangao/Desktop/webpack-demo/public' directory
+   ```
+
+6. 打开如下提示的地址`http://localhost:8081` （可能会有出入，以本地运行为准）
+
+7. 更改代码后，可以看到代码`自动编译`，浏览器`自动刷新`，呈现最新效果
+
+#### 2.7.4 使用 node 方式
+
+1. 更改脚本命令如下
+
+   ```shell
+   "scripts": {
+     "dev": "webpack --watch",
+     "start": "webpack-dev-server",
+     "middle": "node server.js"
+   },
+   ```
+
+2. 安装 express, webpack-dev-middle
+
+   ```shell
+   npm install webpack-dev-middleware express -D
+   ```
+
+3. 根目录下新建 server.js ,内容如下
+
+   ```javascript
+   const express = require('express')
+   const webpack = require('webpack')
+   const webpackDevMiddleware = require('webpack-dev-middleware')
+   const config = require('./webpack.config')
+   const compiler = webpack(config)
+   const app = express()
+   app.use(
+   	webpackDevMiddleware(compiler, {
+   		// 相应的webpack.config.js中的output需要进行设置，也可以简单设置如下为"/", 或不设置
+   		publicPath: config.output.publicPath,
+   	})
+   )
+   app.listen(3000, () => {
+   	console.log('server is running')
+   })
+   ```
+
+#### 2.7.5 参考文档
+
+[webpack 之 webpack-dev-server](https://webpack.js.org/configuration/dev-server/)
+
+[webpack 之 development](https://webpack.js.org/guides/development/)
+
+[webpack 之 nodejs Api](https://webpack.js.org/api/node/)
