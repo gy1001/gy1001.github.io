@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-
+   
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -834,3 +834,73 @@ devtool: 'cheap-module-source-map'
 [webpack 之 development](https://webpack.js.org/guides/development/)
 
 [webpack 之 nodejs Api](https://webpack.js.org/api/node/)
+
+### 2.8 Hot Module Replacement 热模块替换
+
+#### 2.8.1 定义
+
+模块热替换(HMR - Hot Module Replacement)功能会在应用程序运行过程中替换、添加或删除[模块](https://www.webpackjs.com/concepts/modules/)，而无需重新加载整个页面。主要是通过以下几种方式，来显著加快开发速度：
+
+- 保留在完全重新加载页面时丢失的应用程序状态
+- 只更新变更内容，以节省宝贵的开发时间
+- 调整样式更加快速 - 几乎相当于在浏览器调试器中更改样式
+
+#### 2.8.2 使用
+
+1. 更改 webpack.config.js 中的相关配置, 更改如下
+
+   ```javascript
+   devServer: {
+     open: true,
+     hot: 'only',
+   },
+   ```
+
+2. index.js 中添加如下代码
+
+   ```javascript
+   ...
+   function createBtn() {
+   	const btn = document.createElement('button')
+   	btn.innerHTML = '我是按钮，点击我新增一个div'
+   	btn.onclick = function () {
+   		const div = document.createElement('div')
+   		div.classList.add('test-btn')
+   		div.innerHTML = 'item'
+   		document.body.appendChild(div)
+   	}
+   	document.body.appendChild(btn)
+   }
+
+   createBtn()
+   ...
+   ```
+
+3. 运行命令`npm run start`, 使用 `webpack-dev-server`进行编译运行
+
+4. 点击 `我是按钮，点击我新增一个div` 查看页面效果，发现页面中多了许多 内容为 item 的`div`
+
+5. 在`index.css` 中添加如下样式, 然后保存，查看浏览器效果
+
+   ```css
+   .test-btn:nth-child(2n) {
+   	background-color: lightblue;
+   }
+   .test-btn:nth-child(2n + 1) {
+   	background-color: lightgreen;
+   }
+   ```
+
+6. 会发现，内容为 item 的`div` 并不会消失，同时背景色变为上述设置的背景色。（注意：这些 div，是点击以后才添加的，如果刷新就会消失，说明这时没有刷新，只是添加或者修改了某些模块）
+
+7. 如果你再改变 index.css 中的背景色，会看到相应的元素背景色也发生了变化，这就是 HMR 的神奇之处。
+
+#### 2.8.3 HMR 本质
+
+#### 2.8.x
+
+[concepts 之 Hot Module Replacement](https://webpack.js.org/concepts/hot-module-replacement/#how-it-works)
+
+[webpack 之 dev-server 中使用 HMR](https://webpack.js.org/configuration/dev-server/)
+
+[API之HMR](https://webpack.js.org/api/hot-module-replacement/#module-api)
