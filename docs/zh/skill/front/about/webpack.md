@@ -491,7 +491,7 @@ module.exports = {
 
    1. 当不使用 modules: true 模块化配置时候如此引人，是作为全局样式引入
 
-      ```css
+      ```javascript
       ...
       // 当不使用 modules: true 模块化配置时候如此引人，是作为全局样式引入, 假如其他文件中也有同名元素，将会收到影响
       import '../css/index.css'
@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-
+   
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -895,9 +895,65 @@ devtool: 'cheap-module-source-map'
 
 7. 如果你再改变 index.css 中的背景色，会看到相应的元素背景色也发生了变化，这就是 HMR 的神奇之处。
 
-#### 2.8.3 HMR 本质
+#### 2.8.3 实现 JS 的热更新
+
+##### 2.8.3.1   用上述代码看是否支持 JS 的热更新
+
+> 上一节代码示例中，使用 hmr 来实现 css 内容的更新替换，同时不会影响页面元素，那么对于 JS 呢
+
+1. 新建文件 counter.js、number.js 文件，并在 index.js 中引入
+
+   counter.js 文件内容如下
+
+   ```javascript
+   function counter() {
+   	var div = document.createElement('div')
+   	div.innerHTML = 1
+   	div.setAttribute('id', 'counter')
+   	div.onclick = function () {
+   		div.innerHTML = parseInt(div.innerHTML) + 1
+   	}
+   	document.body.appendChild(div)
+   }
+   
+   export default counter
+   ```
+
+   number.js 文件内容如下
+
+   ```javascript
+   function number() {
+   	var div = document.createElement('div')
+   	div.innerHTML = 1000
+   	div.setAttribute('id', 'number')
+   	document.body.appendChild(div)
+   }
+   
+   export default number
+   ```
+
+   index.js 中新增如下代码
+
+   ```javascript
+   import counter from './counter'
+   import number from './number'
+   counter()
+   number()
+   ```
+
+2. 其余配置不变，运行编译命令 `npm run dev` 查看效果，可以看到页面中有一行显示 1，有一行显示 1000，点击 1 的元素div 内容会进行自增加，例如此时点击使其变为 10
+
+3. 此时对`numebr.js`文件进行更改，将 1000 变为 2000，然后保存运行，会发现页面内容没有发生变化。
+
+4. 可以看出来：HMR 对 JS 文件内容的更新是做不到的
+
+##### 2.8.3.2 实现 HMR 对 JS 文件的热更新
+
+
 
 #### 2.8.x
+
+[GUIDE 之 HMR](https://webpack.js.org/guides/hot-module-replacement/#enabling-hmr)
 
 [concepts 之 Hot Module Replacement](https://webpack.js.org/concepts/hot-module-replacement/#how-it-works)
 
