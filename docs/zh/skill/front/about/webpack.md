@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-   
+
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -897,7 +897,7 @@ devtool: 'cheap-module-source-map'
 
 #### 2.8.3 实现 JS 的热更新
 
-##### 2.8.3.1   用上述代码看是否支持 JS 的热更新
+##### 2.8.3.1 用上述代码看是否支持 JS 的热更新
 
 > 上一节代码示例中，使用 hmr 来实现 css 内容的更新替换，同时不会影响页面元素，那么对于 JS 呢
 
@@ -915,7 +915,7 @@ devtool: 'cheap-module-source-map'
    	}
    	document.body.appendChild(div)
    }
-   
+
    export default counter
    ```
 
@@ -928,7 +928,7 @@ devtool: 'cheap-module-source-map'
    	div.setAttribute('id', 'number')
    	document.body.appendChild(div)
    }
-   
+
    export default number
    ```
 
@@ -941,7 +941,7 @@ devtool: 'cheap-module-source-map'
    number()
    ```
 
-2. 其余配置不变，运行编译命令 `npm run dev` 查看效果，可以看到页面中有一行显示 1，有一行显示 1000，点击 1 的元素div 内容会进行自增加，例如此时点击使其变为 10
+2. 其余配置不变，运行编译命令 `npm run dev` 查看效果，可以看到页面中有一行显示 1，有一行显示 1000，点击 1 的元素 div 内容会进行自增加，例如此时点击使其变为 10
 
 3. 此时对`numebr.js`文件进行更改，将 1000 变为 2000，然后保存运行，会发现页面内容没有发生变化。
 
@@ -949,9 +949,39 @@ devtool: 'cheap-module-source-map'
 
 ##### 2.8.3.2 实现 HMR 对 JS 文件的热更新
 
+1. 修改 webpack.config.js 文件中的内容，增加如下插件配置
 
+   ```javascript
+   const { HotModuleReplacementPlugin } = require('webpack')
 
-#### 2.8.x
+   plugins:[
+     ...
+     new HotModuleReplacementPlugin(),
+     ...
+   ]
+   ```
+
+2. index.js 中增加如下配置
+
+   ```javascript
+   // 代表 当 number.js 文件发生变化时候，执行后面的回调函数
+   if (module.hot) {
+   	module.hot.accept('./number.js', () => {
+   		document.body.removeChild(document.getElementById('number'))
+   		number()
+   	})
+   }
+   ```
+
+3. 重新运行 `npm run dev` 查看效果，然后先点击 1 使其变为 10， 在更改 numebr.js 中的 1000 为 2000， 为 300，
+
+4. 可以看到结果 发生变化，而上面的 10 没有变化。这时就说明对 js 执行了热更新模块
+
+##### 2.8.3.3 主流框架内置了上述处理函数
+
+在日常开发中，像 vue 或者 react 技术栈都内置了热更新处理模块，所以我们并不需要写上一节的代码去手动处理。
+
+#### 2.8.4 参考文献
 
 [GUIDE 之 HMR](https://webpack.js.org/guides/hot-module-replacement/#enabling-hmr)
 
@@ -960,3 +990,409 @@ devtool: 'cheap-module-source-map'
 [webpack 之 dev-server 中使用 HMR](https://webpack.js.org/configuration/dev-server/)
 
 [API 之 HMR](https://webpack.js.org/api/hot-module-replacement/#module-api)
+
+### 2.9 使用 babel 处理 ES6 函数
+
+#### 2.9.1 不处理时候会怎么样
+
+1. 清空 index.js 中的内容，修改为如下内容
+
+   ```javascript
+   const arr = [new Promise(() => {}), new Promise(() => {})]
+
+   arr.map((item) => {
+   	console.log(item)
+   })
+   ```
+
+   > 注意： Promise 是新的语法，另外上面用到了新的语法 箭头函数，部分浏览器可能不兼容
+
+2. 往 `package.json`中添加打包命令脚本
+
+   ```javascript
+   "scripts": {
+     ...
+     "build": "webpack",
+     ...
+   },
+   ```
+
+3. 运行打包命令`npm run build`，查看打包后的文件内容
+
+4. 可以看到如下打包结果(可能版本不同，打包内容有差异)
+
+   ```javascript
+   ...
+   /***/ "./src/js/index.js":
+   /*!*************************!*\
+     !*** ./src/js/index.js ***!
+     \*************************/
+   /***/ (() => {
+
+   const arr = [new Promise(() => {}), new Promise(() => {})]
+
+   arr.map((item) => {
+   	console.log(item)
+   })
+
+   /***/ })
+   ...
+   ```
+
+5. 从上面可以看到文件内容基本没有发生变化，这样运行到浏览器中肯定会遇到兼容性问题的
+
+#### 2.9.2 如何解决呢
+
+> 打开 [babel 之 setup](https://babeljs.io/setup#installation) 选择 webpack ，会出现如下命令, 按照操作即可
+
+1. 安装 babel
+
+   ```shell
+   npm install --save-dev babel-loader @babel/core
+   ```
+
+2. Webpack.config.js 中增加相应配置
+
+   ```javascript
+   {
+   	module: {
+   		rules: [
+   			{
+   				test: /\.m?js$/,
+   				exclude: /node_modules/,
+   				use: {
+   					loader: 'babel-loader',
+   					options: {
+   						presets: ['@babel/preset-env'],
+   					},
+   				},
+   			},
+   		]
+   	}
+   }
+   ```
+
+3. 增加 `babel.config.json` 文件，并进行如下操作(此时 3.2 步可以不用操作，因为上述第 2 步已经引入，不创建文件也可打包编译)
+
+   1. 先安装依赖模块
+
+      ```shell
+      npm install @babel/preset-env --save-dev
+      ```
+
+   2. `babel.config.json`写入如下内容
+
+      ```javascript
+      {
+        "presets": ["@babel/preset-env"]
+      }
+      ```
+
+4. 运行打包命令`npm run build`，查看打包编译结果如下
+
+   ```javascript
+   /***/ "./src/js/index.js":
+   /*!*************************!*\
+     !*** ./src/js/index.js ***!
+     \*************************/
+   /***/ (() => {
+
+   var arr = [new Promise(function () {}), new Promise(function () {})];
+   arr.map(function (item) {
+     console.log(item);
+   });
+
+   /***/ })
+   ```
+
+5. 可以发现上述代码中的箭头函数已经进行了编译转换，已经初步完成了转换，可是部分浏览器是不能识别 Promise 以及 map 语法的，那又该怎么办呢
+
+#### 2.9.3 初步进行再转换
+
+1. 此时就需要借助另一个 `babel/polyfill`, 同样的先安装
+
+   ```shell
+   npm install --save @babel/polyfill
+   ```
+
+2. 然后在 index.js 页面中进行引入, 增加以下代码
+
+   ```javascript
+   // 保证在顶端引入
+   import '@babel/polyfill'
+   ```
+
+3. 此时在进行打包命令`npm run build`的执行, 查看编译后的结果,(大概类似如下结果)
+
+   ```javascript
+   ...
+   /***/ "./node_modules/core-js/es6/index.js":
+   /*!*******************************************!*\
+     !*** ./node_modules/core-js/es6/index.js ***!
+     \*******************************************/
+   /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+   __webpack_require__(/*! ../modules/es6.symbol */ "./node_modules/core-js/modules/es6.symbol.js");
+   __webpack_require__(/*! ../modules/es6.object.create */ "./node_modules/core-js/modules/es6.object.create.js");
+   __webpack_require__(/*! ../modules/es6.object.define-property */ "./node_modules/core-js/modules/es6.object.define-property.js");
+   __webpack_require__(/*! ../modules/es6.object.define-properties */ "./node_modules/core-js/modules/es6.object.define-properties.js");
+   __webpack_require__(/*! ../modules/es6.object.get-own-property-descriptor */ "./node_modules/core-js/modules/es6.object.get-own-property-descriptor.js");
+   __webpack_require__(/*! ../modules/es6.object.get-prototype-of */ "./node_modules/core-js/modules/es6.object.get-prototype-of.js");
+   __webpack_require__(/*! ../modules/es6.object.keys */ "./node_modules/core-js/modules/es6.object.keys.js");
+   __webpack_require__(/*! ../modules/es6.object.get-own-property-names */ "./node_modules/core-js/modules/es6.object.get-own-property-names.js");
+   __webpack_require__(/*! ../modules/es6.object.freeze */ "./node_modules/core-js/modules/es6.object.freeze.js");
+   __webpack_require__(/*! ../modules/es6.object.seal */ "./node_modules/core-js/modules/es6.object.seal.js");
+   __webpack_require__(/*! ../modules/es6.object.prevent-extensions */ "./node_modules/core-js/modules/es6.object.prevent-extensions.js");
+   __webpack_require__(/*! ../modules/es6.object.is-frozen */ "./node_modules/core-js/modules/es6.object.is-frozen.js");
+   __webpack_require__(/*! ../modules/es6.object.is-sealed */ "./node_modules/core-js/modules/es6.object.is-sealed.js");
+   __webpack_require__(/*! ../modules/es6.object.is-extensible */ "./node_modules/core-js/modules/es6.object.is-extensible.js");
+   __webpack_require__(/*! ../modules/es6.object.assign */ "./node_modules/core-js/modules/es6.object.assign.js");
+   __webpack_require__(/*! ../modules/es6.object.is */ "./node_modules/core-js/modules/es6.object.is.js");
+   __webpack_require__(/*! ../modules/es6.object.set-prototype-of */ "./node_modules/core-js/modules/es6.object.set-prototype-of.js");
+   __webpack_require__(/*! ../modules/es6.object.to-string */ "./node_modules/core-js/modules/es6.object.to-string.js");
+   __webpack_require__(/*! ../modules/es6.function.bind */ "./node_modules/core-js/modules/es6.function.bind.js");
+   __webpack_require__(/*! ../modules/es6.function.name */ "./node_modules/core-js/modules/es6.function.name.js");
+   __webpack_require__(/*! ../modules/es6.function.has-instance */ "./node_modules/core-js/modules/es6.function.has-instance.js");
+   __webpack_require__(/*! ../modules/es6.parse-int */ "./node_modules/core-js/modules/es6.parse-int.js");
+   __webpack_require__(/*! ../modules/es6.parse-float */ "./node_modules/core-js/modules/es6.parse-float.js");
+   __webpack_require__(/*! ../modules/es6.number.constructor */ "./node_modules/core-js/modules/es6.number.constructor.js");
+   __webpack_require__(/*! ../modules/es6.number.to-fixed */ "./node_modules/core-js/modules/es6.number.to-fixed.js");
+   __webpack_require__(/*! ../modules/es6.number.to-precision */ "./node_modules/core-js/modules/es6.number.to-precision.js");
+   __webpack_require__(/*! ../modules/es6.number.epsilon */ "./node_modules/core-js/modules/es6.number.epsilon.js");
+   __webpack_require__(/*! ../modules/es6.number.is-finite */ "./node_modules/core-js/modules/es6.number.is-finite.js");
+   __webpack_require__(/*! ../modules/es6.number.is-integer */ "./node_modules/core-js/modules/es6.number.is-integer.js");
+   __webpack_require__(/*! ../modules/es6.number.is-nan */ "./node_modules/core-js/modules/es6.number.is-nan.js");
+   __webpack_require__(/*! ../modules/es6.number.is-safe-integer */ "./node_modules/core-js/modules/es6.number.is-safe-integer.js");
+   __webpack_require__(/*! ../modules/es6.number.max-safe-integer */ "./node_modules/core-js/modules/es6.number.max-safe-integer.js");
+   __webpack_require__(/*! ../modules/es6.number.min-safe-integer */ "./node_modules/core-js/modules/es6.number.min-safe-integer.js");
+   __webpack_require__(/*! ../modules/es6.number.parse-float */ "./node_modules/core-js/modules/es6.number.parse-float.js");
+   __webpack_require__(/*! ../modules/es6.number.parse-int */ "./node_modules/core-js/modules/es6.number.parse-int.js");
+   __webpack_require__(/*! ../modules/es6.math.acosh */ "./node_modules/core-js/modules/es6.math.acosh.js");
+   __webpack_require__(/*! ../modules/es6.math.asinh */ "./node_modules/core-js/modules/es6.math.asinh.js");
+   __webpack_require__(/*! ../modules/es6.math.atanh */ "./node_modules/core-js/modules/es6.math.atanh.js");
+   __webpack_require__(/*! ../modules/es6.math.cbrt */ "./node_modules/core-js/modules/es6.math.cbrt.js");
+   __webpack_require__(/*! ../modules/es6.math.clz32 */ "./node_modules/core-js/modules/es6.math.clz32.js");
+   __webpack_require__(/*! ../modules/es6.math.cosh */ "./node_modules/core-js/modules/es6.math.cosh.js");
+   __webpack_require__(/*! ../modules/es6.math.expm1 */ "./node_modules/core-js/modules/es6.math.expm1.js");
+   __webpack_require__(/*! ../modules/es6.math.fround */ "./node_modules/core-js/modules/es6.math.fround.js");
+   __webpack_require__(/*! ../modules/es6.math.hypot */ "./node_modules/core-js/modules/es6.math.hypot.js");
+   __webpack_require__(/*! ../modules/es6.math.imul */ "./node_modules/core-js/modules/es6.math.imul.js");
+   __webpack_require__(/*! ../modules/es6.math.log10 */ "./node_modules/core-js/modules/es6.math.log10.js");
+   __webpack_require__(/*! ../modules/es6.math.log1p */ "./node_modules/core-js/modules/es6.math.log1p.js");
+   __webpack_require__(/*! ../modules/es6.math.log2 */ "./node_modules/core-js/modules/es6.math.log2.js");
+   __webpack_require__(/*! ../modules/es6.math.sign */ "./node_modules/core-js/modules/es6.math.sign.js");
+   __webpack_require__(/*! ../modules/es6.math.sinh */ "./node_modules/core-js/modules/es6.math.sinh.js");
+   __webpack_require__(/*! ../modules/es6.math.tanh */ "./node_modules/core-js/modules/es6.math.tanh.js");
+   __webpack_require__(/*! ../modules/es6.math.trunc */ "./node_modules/core-js/modules/es6.math.trunc.js");
+   __webpack_require__(/*! ../modules/es6.string.from-code-point */ "./node_modules/core-js/modules/es6.string.from-code-point.js");
+   __webpack_require__(/*! ../modules/es6.string.raw */ "./node_modules/core-js/modules/es6.string.raw.js");
+   __webpack_require__(/*! ../modules/es6.string.trim */ "./node_modules/core-js/modules/es6.string.trim.js");
+   __webpack_require__(/*! ../modules/es6.string.iterator */ "./node_modules/core-js/modules/es6.string.iterator.js");
+   __webpack_require__(/*! ../modules/es6.string.code-point-at */ "./node_modules/core-js/modules/es6.string.code-point-at.js");
+   __webpack_require__(/*! ../modules/es6.string.ends-with */ "./node_modules/core-js/modules/es6.string.ends-with.js");
+   __webpack_require__(/*! ../modules/es6.string.includes */ "./node_modules/core-js/modules/es6.string.includes.js");
+   __webpack_require__(/*! ../modules/es6.string.repeat */ "./node_modules/core-js/modules/es6.string.repeat.js");
+   __webpack_require__(/*! ../modules/es6.string.starts-with */ "./node_modules/core-js/modules/es6.string.starts-with.js");
+   __webpack_require__(/*! ../modules/es6.string.anchor */ "./node_modules/core-js/modules/es6.string.anchor.js");
+   __webpack_require__(/*! ../modules/es6.string.big */ "./node_modules/core-js/modules/es6.string.big.js");
+   __webpack_require__(/*! ../modules/es6.string.blink */ "./node_modules/core-js/modules/es6.string.blink.js");
+   __webpack_require__(/*! ../modules/es6.string.bold */ "./node_modules/core-js/modules/es6.string.bold.js");
+   __webpack_require__(/*! ../modules/es6.string.fixed */ "./node_modules/core-js/modules/es6.string.fixed.js");
+   __webpack_require__(/*! ../modules/es6.string.fontcolor */ "./node_modules/core-js/modules/es6.string.fontcolor.js");
+   __webpack_require__(/*! ../modules/es6.string.fontsize */ "./node_modules/core-js/modules/es6.string.fontsize.js");
+   __webpack_require__(/*! ../modules/es6.string.italics */ "./node_modules/core-js/modules/es6.string.italics.js");
+   __webpack_require__(/*! ../modules/es6.string.link */ "./node_modules/core-js/modules/es6.string.link.js");
+   __webpack_require__(/*! ../modules/es6.string.small */ "./node_modules/core-js/modules/es6.string.small.js");
+   __webpack_require__(/*! ../modules/es6.string.strike */ "./node_modules/core-js/modules/es6.string.strike.js");
+   __webpack_require__(/*! ../modules/es6.string.sub */ "./node_modules/core-js/modules/es6.string.sub.js");
+   __webpack_require__(/*! ../modules/es6.string.sup */ "./node_modules/core-js/modules/es6.string.sup.js");
+   __webpack_require__(/*! ../modules/es6.date.now */ "./node_modules/core-js/modules/es6.date.now.js");
+   __webpack_require__(/*! ../modules/es6.date.to-json */ "./node_modules/core-js/modules/es6.date.to-json.js");
+   __webpack_require__(/*! ../modules/es6.date.to-iso-string */ "./node_modules/core-js/modules/es6.date.to-iso-string.js");
+   __webpack_require__(/*! ../modules/es6.date.to-string */ "./node_modules/core-js/modules/es6.date.to-string.js");
+   __webpack_require__(/*! ../modules/es6.date.to-primitive */ "./node_modules/core-js/modules/es6.date.to-primitive.js");
+   __webpack_require__(/*! ../modules/es6.array.is-array */ "./node_modules/core-js/modules/es6.array.is-array.js");
+   __webpack_require__(/*! ../modules/es6.array.from */ "./node_modules/core-js/modules/es6.array.from.js");
+   __webpack_require__(/*! ../modules/es6.array.of */ "./node_modules/core-js/modules/es6.array.of.js");
+   __webpack_require__(/*! ../modules/es6.array.join */ "./node_modules/core-js/modules/es6.array.join.js");
+   __webpack_require__(/*! ../modules/es6.array.slice */ "./node_modules/core-js/modules/es6.array.slice.js");
+   __webpack_require__(/*! ../modules/es6.array.sort */ "./node_modules/core-js/modules/es6.array.sort.js");
+   __webpack_require__(/*! ../modules/es6.array.for-each */ "./node_modules/core-js/modules/es6.array.for-each.js");
+   __webpack_require__(/*! ../modules/es6.array.map */ "./node_modules/core-js/modules/es6.array.map.js");
+   __webpack_require__(/*! ../modules/es6.array.filter */ "./node_modules/core-js/modules/es6.array.filter.js");
+   __webpack_require__(/*! ../modules/es6.array.some */ "./node_modules/core-js/modules/es6.array.some.js");
+   __webpack_require__(/*! ../modules/es6.array.every */ "./node_modules/core-js/modules/es6.array.every.js");
+   __webpack_require__(/*! ../modules/es6.array.reduce */ "./node_modules/core-js/modules/es6.array.reduce.js");
+   __webpack_require__(/*! ../modules/es6.array.reduce-right */ "./node_modules/core-js/modules/es6.array.reduce-right.js");
+   __webpack_require__(/*! ../modules/es6.array.index-of */ "./node_modules/core-js/modules/es6.array.index-of.js");
+   __webpack_require__(/*! ../modules/es6.array.last-index-of */ "./node_modules/core-js/modules/es6.array.last-index-of.js");
+   __webpack_require__(/*! ../modules/es6.array.copy-within */ "./node_modules/core-js/modules/es6.array.copy-within.js");
+   __webpack_require__(/*! ../modules/es6.array.fill */ "./node_modules/core-js/modules/es6.array.fill.js");
+   __webpack_require__(/*! ../modules/es6.array.find */ "./node_modules/core-js/modules/es6.array.find.js");
+   __webpack_require__(/*! ../modules/es6.array.find-index */ "./node_modules/core-js/modules/es6.array.find-index.js");
+   __webpack_require__(/*! ../modules/es6.array.species */ "./node_modules/core-js/modules/es6.array.species.js");
+   __webpack_require__(/*! ../modules/es6.array.iterator */ "./node_modules/core-js/modules/es6.array.iterator.js");
+   __webpack_require__(/*! ../modules/es6.regexp.constructor */ "./node_modules/core-js/modules/es6.regexp.constructor.js");
+   __webpack_require__(/*! ../modules/es6.regexp.exec */ "./node_modules/core-js/modules/es6.regexp.exec.js");
+   __webpack_require__(/*! ../modules/es6.regexp.to-string */ "./node_modules/core-js/modules/es6.regexp.to-string.js");
+   __webpack_require__(/*! ../modules/es6.regexp.flags */ "./node_modules/core-js/modules/es6.regexp.flags.js");
+   __webpack_require__(/*! ../modules/es6.regexp.match */ "./node_modules/core-js/modules/es6.regexp.match.js");
+   __webpack_require__(/*! ../modules/es6.regexp.replace */ "./node_modules/core-js/modules/es6.regexp.replace.js");
+   __webpack_require__(/*! ../modules/es6.regexp.search */ "./node_modules/core-js/modules/es6.regexp.search.js");
+   __webpack_require__(/*! ../modules/es6.regexp.split */ "./node_modules/core-js/modules/es6.regexp.split.js");
+   __webpack_require__(/*! ../modules/es6.promise */ "./node_modules/core-js/modules/es6.promise.js");
+   __webpack_require__(/*! ../modules/es6.map */ "./node_modules/core-js/modules/es6.map.js");
+   __webpack_require__(/*! ../modules/es6.set */ "./node_modules/core-js/modules/es6.set.js");
+   __webpack_require__(/*! ../modules/es6.weak-map */ "./node_modules/core-js/modules/es6.weak-map.js");
+   __webpack_require__(/*! ../modules/es6.weak-set */ "./node_modules/core-js/modules/es6.weak-set.js");
+   __webpack_require__(/*! ../modules/es6.typed.array-buffer */ "./node_modules/core-js/modules/es6.typed.array-buffer.js");
+   __webpack_require__(/*! ../modules/es6.typed.data-view */ "./node_modules/core-js/modules/es6.typed.data-view.js");
+   __webpack_require__(/*! ../modules/es6.typed.int8-array */ "./node_modules/core-js/modules/es6.typed.int8-array.js");
+   __webpack_require__(/*! ../modules/es6.typed.uint8-array */ "./node_modules/core-js/modules/es6.typed.uint8-array.js");
+   __webpack_require__(/*! ../modules/es6.typed.uint8-clamped-array */ "./node_modules/core-js/modules/es6.typed.uint8-clamped-array.js");
+   __webpack_require__(/*! ../modules/es6.typed.int16-array */ "./node_modules/core-js/modules/es6.typed.int16-array.js");
+   __webpack_require__(/*! ../modules/es6.typed.uint16-array */ "./node_modules/core-js/modules/es6.typed.uint16-array.js");
+   __webpack_require__(/*! ../modules/es6.typed.int32-array */ "./node_modules/core-js/modules/es6.typed.int32-array.js");
+   __webpack_require__(/*! ../modules/es6.typed.uint32-array */ "./node_modules/core-js/modules/es6.typed.uint32-array.js");
+   __webpack_require__(/*! ../modules/es6.typed.float32-array */ "./node_modules/core-js/modules/es6.typed.float32-array.js");
+   __webpack_require__(/*! ../modules/es6.typed.float64-array */ "./node_modules/core-js/modules/es6.typed.float64-array.js");
+   __webpack_require__(/*! ../modules/es6.reflect.apply */ "./node_modules/core-js/modules/es6.reflect.apply.js");
+   __webpack_require__(/*! ../modules/es6.reflect.construct */ "./node_modules/core-js/modules/es6.reflect.construct.js");
+   __webpack_require__(/*! ../modules/es6.reflect.define-property */ "./node_modules/core-js/modules/es6.reflect.define-property.js");
+   __webpack_require__(/*! ../modules/es6.reflect.delete-property */ "./node_modules/core-js/modules/es6.reflect.delete-property.js");
+   __webpack_require__(/*! ../modules/es6.reflect.enumerate */ "./node_modules/core-js/modules/es6.reflect.enumerate.js");
+   __webpack_require__(/*! ../modules/es6.reflect.get */ "./node_modules/core-js/modules/es6.reflect.get.js");
+   __webpack_require__(/*! ../modules/es6.reflect.get-own-property-descriptor */ "./node_modules/core-js/modules/es6.reflect.get-own-property-descriptor.js");
+   __webpack_require__(/*! ../modules/es6.reflect.get-prototype-of */ "./node_modules/core-js/modules/es6.reflect.get-prototype-of.js");
+   __webpack_require__(/*! ../modules/es6.reflect.has */ "./node_modules/core-js/modules/es6.reflect.has.js");
+   __webpack_require__(/*! ../modules/es6.reflect.is-extensible */ "./node_modules/core-js/modules/es6.reflect.is-extensible.js");
+   __webpack_require__(/*! ../modules/es6.reflect.own-keys */ "./node_modules/core-js/modules/es6.reflect.own-keys.js");
+   __webpack_require__(/*! ../modules/es6.reflect.prevent-extensions */ "./node_modules/core-js/modules/es6.reflect.prevent-extensions.js");
+   __webpack_require__(/*! ../modules/es6.reflect.set */ "./node_modules/core-js/modules/es6.reflect.set.js");
+   __webpack_require__(/*! ../modules/es6.reflect.set-prototype-of */ "./node_modules/core-js/modules/es6.reflect.set-prototype-of.js");
+   module.exports = __webpack_require__(/*! ../modules/_core */ "./node_modules/core-js/modules/_core.js");
+
+
+   /***/ }),
+     ....
+   ```
+
+4. 可以看到文件内容中多了很多处理函数，并且打包后的文件体积也变得很大(引入了全部的转换函数，即使代码中没有使用相应的语法功能，这时候就很没有必要，有没有办法进行优化呢)
+
+#### 2.9.4 继续优化 1
+
+> 上节打包中引入了全量的处理函数，即使我的代码中没有使用相应的语法，有没有可能我用了什么新语法，他就只转换某种语法呢，那些我没有使用的语法，相应的编译包就不引入呢
+
+1. 更改 webpack.config.js 中相应 js 文件的处理规则，如下
+
+   ```javascript
+   {
+     test: /\.m?js$/,
+     exclude: /node_modules/,
+     use: {
+       loader: 'babel-loader',
+         options: {
+           presets: [
+             [
+               '@babel/preset-env',
+               {
+                 useBuiltIns: 'usage',  // 它的意思是只加用户使用的那些需要编译的处理函数
+               },
+             ],
+           ],
+         },
+     },
+   },
+   ```
+
+2. 此时在进行打包命令`npm run build`的执行, 查看编译后的结果,(大概类似如下结果)
+
+   ```javascript
+   ...
+   /***/ "./src/js/index.js":
+   /*!*************************!*\
+     !*** ./src/js/index.js ***!
+     \*************************/
+   /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+   "use strict";
+   __webpack_require__.r(__webpack_exports__);
+   /* harmony import */ var core_js_modules_es6_object_to_string_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es6.object.to-string.js */ "./node_modules/core-js/modules/es6.object.to-string.js");
+   /* harmony import */ var core_js_modules_es6_object_to_string_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_object_to_string_js__WEBPACK_IMPORTED_MODULE_0__);
+   /* harmony import */ var core_js_modules_es6_promise_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es6.promise.js */ "./node_modules/core-js/modules/es6.promise.js");
+   /* harmony import */ var core_js_modules_es6_promise_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_promise_js__WEBPACK_IMPORTED_MODULE_1__);
+   /* harmony import */ var core_js_modules_es6_array_map_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es6.array.map.js */ "./node_modules/core-js/modules/es6.array.map.js");
+   /* harmony import */ var core_js_modules_es6_array_map_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_array_map_js__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+   var arr = [new Promise(function () {}), new Promise(function () {})];
+   arr.map(function (item) {
+     console.log(item);
+   });
+
+   /***/ }),
+   ...
+   ```
+
+3. 注意这里的结果：只引入了代码中实际用到的处理函数，引入量少了很多
+
+4. 注意：我目前的版本配置中有如下警告
+
+   ```javascript
+   WARNING (@babel/preset-env): We noticed you're using the `useBuiltIns` option without declaring a core-js version. Currently, we assume version 2.x when no version is passed. Since this default version will likely change in future versions of Babel, we recommend explicitly setting the core-js version you are using via the `corejs` option.
+
+   You should also be sure that the version you pass to the `corejs` option matches the version specified in your `package.json`'s `dependencies` section. If it doesn't, you need to run one of the following commands:
+
+     npm install --save core-js@2    npm install --save core-js@3
+     yarn add core-js@2              yarn add core-js@3
+
+   More info about useBuiltIns: https://babeljs.io/docs/en/babel-preset-env#usebuiltins
+   More info about core-js: https://babeljs.io/docs/en/babel-preset-env#corejs
+
+   When setting `useBuiltIns: 'usage'`, polyfills are automatically imported when needed.
+   Please remove the direct import of `@babel/polyfill` or use `useBuiltIns: 'entry'` instead.
+   ```
+
+5. 可以先忽略，后续会进行处理
+
+#### 2.9.5 继续继续优化 2
+
+1. 上述配置中，还有其他一些配置选项，具体参考 [babel-useage](https://babeljs.io/docs/en/usage)
+
+   ```javascript
+   {
+     test: /\.m?js$/,
+     exclude: /node_modules/,
+     use: {
+       loader: 'babel-loader',
+         options: {
+           presets: [
+             [
+               '@babel/preset-env',
+               {
+                 // 需要支持的目标浏览器版本，如果目标浏览器版本支持语法，就会略过转换处理
+                 "targets": {
+                   "edge": "17",
+                   "firefox": "60",
+                   "chrome": "67",
+                   "safari": "11.1"
+                 },
+                 useBuiltIns: 'usage',  // 它的意思是只加用户使用的那些需要编译的处理函数
+               },
+             ],
+           ],
+         },
+     },
+   },
+   ```
+
+#### 2.9.6 参考文档
+
+[@babel/preset-env 与@babel/plugin-transform-runtime 使用及场景区别](https://segmentfault.com/a/1190000021188054)
+
+[姜瑞涛的官方网站之 Babel 教程](https://www.jiangruitao.com/babel/rudiments/)
+
+[吃一堑长一智系列: 99% 开发者没弄明白的 babel 知识](https://github.com/pigcan/blog/issues/26)
+
+[Show me the code，babel 7 最佳实践](https://github.com/SunshowerC/blog/issues/5)
