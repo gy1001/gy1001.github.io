@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-
+   
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -1131,7 +1131,7 @@ devtool: 'cheap-module-source-map'
      !*** ./node_modules/core-js/es6/index.js ***!
      \*******************************************/
    /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
+   
    __webpack_require__(/*! ../modules/es6.symbol */ "./node_modules/core-js/modules/es6.symbol.js");
    __webpack_require__(/*! ../modules/es6.object.create */ "./node_modules/core-js/modules/es6.object.create.js");
    __webpack_require__(/*! ../modules/es6.object.define-property */ "./node_modules/core-js/modules/es6.object.define-property.js");
@@ -1314,7 +1314,7 @@ devtool: 'cheap-module-source-map'
      !*** ./src/js/index.js ***!
      \*************************/
    /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
+   
    "use strict";
    __webpack_require__.r(__webpack_exports__);
    /* harmony import */ var core_js_modules_es6_object_to_string_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es6.object.to-string.js */ "./node_modules/core-js/modules/es6.object.to-string.js");
@@ -1387,7 +1387,17 @@ devtool: 'cheap-module-source-map'
    },
    ```
 
-#### 2.9.6 参考文档
+#### 2.9.6 @babel/preset-env useBuiltIns 说明
+
+> useBuiltIns 选项可以配置的选项有：false、entry、usage
+
+1. false: 此时不对 polyfill 做操作。如果引入 `@babel/polyfill`，则无视配置的浏览器兼容，引入所有的 polyfill。
+2. entry: 根据配置的浏览器兼容，引入浏览器不兼容的 polyfill。需要在入口文件手动添加 `import '@babel/polyfill'`，会自动根据 browserslist 替换成浏览器不兼容的所有 polyfill
+   
+   > **注意**：`import '@babel/polyfill'` 官方已经提示废弃，建议改为如下配置：`import 'core-js/stable';import 'regenerator-runtime/runtime';`
+3. usage: usage 会根据配置的浏览器兼容，以及你代码中用到的 API 来进行 polyfill，实现了按需添加。
+
+#### 2.9.7 参考文档
 
 [@babel/preset-env 与@babel/plugin-transform-runtime 使用及场景区别](https://segmentfault.com/a/1190000021188054)
 
@@ -1396,3 +1406,9 @@ devtool: 'cheap-module-source-map'
 [吃一堑长一智系列: 99% 开发者没弄明白的 babel 知识](https://github.com/pigcan/blog/issues/26)
 
 [Show me the code，babel 7 最佳实践](https://github.com/SunshowerC/blog/issues/5)
+
+[用了 babel 还需要 polyfill 吗？？？](https://juejin.cn/post/6845166891015602190)
+
+[Babel 7 升级实践](https://blog.hhking.cn/2019/04/02/babel-v7-update/)
+
+[关于babel的详细解读(精华又通俗)](https://juejin.cn/post/6844904199554072583)
