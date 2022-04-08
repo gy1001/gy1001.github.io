@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-   
+      
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -1393,11 +1393,123 @@ devtool: 'cheap-module-source-map'
 
 1. false: 此时不对 polyfill 做操作。如果引入 `@babel/polyfill`，则无视配置的浏览器兼容，引入所有的 polyfill。
 2. entry: 根据配置的浏览器兼容，引入浏览器不兼容的 polyfill。需要在入口文件手动添加 `import '@babel/polyfill'`，会自动根据 browserslist 替换成浏览器不兼容的所有 polyfill
-   
+
    > **注意**：`import '@babel/polyfill'` 官方已经提示废弃，建议改为如下配置：`import 'core-js/stable';import 'regenerator-runtime/runtime';`
 3. usage: usage 会根据配置的浏览器兼容，以及你代码中用到的 API 来进行 polyfill，实现了按需添加。
 
-#### 2.9.7 参考文档
+#### 2.9.7  使用 @babel/plugin-transform-runtime
+
+##### 2.9.7.1 为什么要使用它
+
+@babel/plugin-transform-runtime有三大作用
+
+* 自动移除语法转换后内联的辅助函数（inline Babel helpers），使用@babel/runtime/helpers里的辅助函数来替代。这样就减少了我们手动引入的麻烦。
+* 当代码里使用了core-js的API，自动引入@babel/runtime-corejs3/core-js-stable/，以此来替代全局引入的core-js/stable;
+* 当代码里使用了Generator/async函数，自动引入@babel/runtime/regenerator，以此来替代全局引入的regenerator-runtime/runtime；
+
+1. 使用如下配置其实已经满足基本需求了
+
+   ```javascript
+   {
+   	"presets": [
+   		[
+   			"@babel/preset-env",
+   			{
+   				"useBuiltIns": "usage", // 实现按需加载
+   				"corejs": {
+   					"version": 3,
+   					"proposals": true
+   				},
+            // 需要支持的目标浏览器版本，如果目标浏览器版本支持语法，就会略过转换处理
+           targets: {
+             "edge": "17",
+             "firefox": "60",
+             "chrome": "67",
+             "safari": "11.1"
+           }
+   			}
+   		]
+   	]
+   }
+   ```
+
+2. index.js中写入如下内容
+
+   ```javascript
+   const arr = [new Promise(() => {}), new Promise(() => {})]
+   arr.map((item) => {
+   	console.log(item)
+   })
+   
+   class Person {
+   	sayname() {
+   		return 'name'
+   	}
+   }
+   var john = new Person()
+   console.log(john)
+   ```
+
+3. 执行打包命令`npm run build`,查看打包后的编译效果, 内容大概类似如下
+
+   ```javascript
+   /***/ "./src/index.js":
+   /*!**********************!*\
+     !*** ./src/index.js ***!
+     \**********************/
+   /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+   
+   "use strict";
+   __webpack_require__.r(__webpack_exports__);
+   /* harmony import */ var core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.object.to-string.js */ "./node_modules/core-js/modules/es.object.to-string.js");
+   /* harmony import */ var core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_0__);
+   /* harmony import */ var core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.promise.js */ "./node_modules/core-js/modules/es.promise.js");
+   /* harmony import */ var core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_1__);
+   /* harmony import */ var core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.map.js */ "./node_modules/core-js/modules/es.array.map.js");
+   /* harmony import */ var core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_2__);
+   /* harmony import */ var core_js_modules_es_object_define_property_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.object.define-property.js */ "./node_modules/core-js/modules/es.object.define-property.js");
+   /* harmony import */ var core_js_modules_es_object_define_property_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property_js__WEBPACK_IMPORTED_MODULE_3__);
+   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+   
+   function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+   
+   function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+   
+   
+   
+   
+   
+   var arr = [new Promise(function () {}), new Promise(function () {})];
+   arr.map(function (item) {
+     console.log(item);
+   });
+   
+   var Person = /*#__PURE__*/function () {
+     function Person() {
+       _classCallCheck(this, Person);
+     }
+   
+     _createClass(Person, [{
+       key: "sayname",
+       value: function sayname() {
+         return 'name';
+       }
+     }]);
+   
+     return Person;
+   }();
+   
+   var john = new Person();
+   console.log(john);
+   
+   /***/ }),
+   ```
+
+4. 可以看到里面声明了很多变量和函数，这会产生以下问题
+
+   1. 如果其他的文件也有类似的语法，并且打包后是两个文件，那么两个文件中都会有类似的函数和变量，这样会导致代码重复，影响最终体积的问题。不过这么多的辅助函数，一个个记住并手动引入，平常人做不到，Babel插件@babel/plugin-transform-runtime就来帮我们解决这个问题。
+
+#### 2.9.8 参考文档
 
 [@babel/preset-env 与@babel/plugin-transform-runtime 使用及场景区别](https://segmentfault.com/a/1190000021188054)
 
