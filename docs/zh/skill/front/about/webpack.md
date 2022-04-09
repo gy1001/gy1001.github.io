@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-
+   
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -1072,7 +1072,7 @@ devtool: 'cheap-module-source-map'
    }
    ```
 
-3. 增加 `babel.config.json` 文件，并进行如下操作(此时 3.2 步可以不用操作，因为上述第 2 步已经引入，不创建文件也可打包编译)
+3. 增加 `babel.config.json` 文件，并进行如下操作(此时 3.2 步可以不用操作，因为上述第 2 步已经引入，两种方式选择其一即可)
 
    1. 先安装依赖模块
 
@@ -1096,16 +1096,22 @@ devtool: 'cheap-module-source-map'
      !*** ./src/js/index.js ***!
      \*************************/
    /***/ (() => {
-
+   
    var arr = [new Promise(function () {}), new Promise(function () {})];
    arr.map(function (item) {
      console.log(item);
    });
-
+   
    /***/ })
    ```
 
 5. 可以发现上述代码中的箭头函数已经进行了编译转换，已经初步完成了转换，可是部分浏览器是不能识别 Promise 以及 map 语法的，那又该怎么办呢
+
+   > 注意：@babel/preset-env是Babel6时代babel-preset-latest的增强版。该预设除了包含所有稳定的转码插件，还可以根据我们设定的目标环境进行针对性转码。
+   >
+   > Babel的编译分为语法和API两部分：语法（诸如const let ...解构、class语法等）、API（诸如[].includes、[].reduce等）
+   >
+   > 默认的Babel如下，只会编译语法，不会编译API ；Babel提供了polyfill库进行api的转换，同时 @babel/preset-env 提供了配置参数 useBuiltIns 进行设置如何处理。
 
 #### 2.9.3 初步进行再转换
 
@@ -1272,7 +1278,6 @@ devtool: 'cheap-module-source-map'
    __webpack_require__(/*! ../modules/es6.reflect.set-prototype-of */ "./node_modules/core-js/modules/es6.reflect.set-prototype-of.js");
    module.exports = __webpack_require__(/*! ../modules/_core */ "./node_modules/core-js/modules/_core.js");
 
-
    /***/ }),
      ....
    ```
@@ -1314,7 +1319,7 @@ devtool: 'cheap-module-source-map'
      !*** ./src/js/index.js ***!
      \*************************/
    /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
+   
    "use strict";
    __webpack_require__.r(__webpack_exports__);
    /* harmony import */ var core_js_modules_es6_object_to_string_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es6.object.to-string.js */ "./node_modules/core-js/modules/es6.object.to-string.js");
@@ -1323,14 +1328,12 @@ devtool: 'cheap-module-source-map'
    /* harmony import */ var core_js_modules_es6_promise_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_promise_js__WEBPACK_IMPORTED_MODULE_1__);
    /* harmony import */ var core_js_modules_es6_array_map_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es6.array.map.js */ "./node_modules/core-js/modules/es6.array.map.js");
    /* harmony import */ var core_js_modules_es6_array_map_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_array_map_js__WEBPACK_IMPORTED_MODULE_2__);
-
-
-
+   
    var arr = [new Promise(function () {}), new Promise(function () {})];
    arr.map(function (item) {
      console.log(item);
    });
-
+   
    /***/ }),
    ...
    ```
@@ -1341,20 +1344,43 @@ devtool: 'cheap-module-source-map'
 
    ```javascript
    WARNING (@babel/preset-env): We noticed you're using the `useBuiltIns` option without declaring a core-js version. Currently, we assume version 2.x when no version is passed. Since this default version will likely change in future versions of Babel, we recommend explicitly setting the core-js version you are using via the `corejs` option.
-
+   
    You should also be sure that the version you pass to the `corejs` option matches the version specified in your `package.json`'s `dependencies` section. If it doesn't, you need to run one of the following commands:
-
+   
      npm install --save core-js@2    npm install --save core-js@3
      yarn add core-js@2              yarn add core-js@3
-
+   
    More info about useBuiltIns: https://babeljs.io/docs/en/babel-preset-env#usebuiltins
    More info about core-js: https://babeljs.io/docs/en/babel-preset-env#corejs
-
+   
    When setting `useBuiltIns: 'usage'`, polyfills are automatically imported when needed.
    Please remove the direct import of `@babel/polyfill` or use `useBuiltIns: 'entry'` instead.
    ```
 
 5. 可以先忽略，后续会进行处理
+
+   > 上面的意思是说当你使用配置 useBuiltIns 时候，建议增加 corejs配置，如果不声明的话，会默认使用 2.x 版本，而2.x的版本已经不更新，建议使用版本 3.x ，可以修改为如下配置并安装相应依赖
+   >
+   > ```javascript
+   > {
+   >   test: /\.m?js$/,
+   >   exclude: /node_modules/,
+   >   use: {
+   >     loader: 'babel-loader',
+   >       options: {
+   >         presets: [
+   >           [
+   >             '@babel/preset-env',
+   >             {
+   >               useBuiltIns: 'usage',  // 它的意思是只加用户使用的那些需要编译的处理函数
+   >               corejs: 3 // 需要执行 yarn add core-js@3
+   >             },
+   >           ],
+   >         ],
+   >       },
+   >   },
+   > },
+   > ```
 
 #### 2.9.5 继续继续优化 2
 
@@ -1394,13 +1420,25 @@ devtool: 'cheap-module-source-map'
 1. false: 此时不对 polyfill 做操作。如果引入 `@babel/polyfill`，则无视配置的浏览器兼容，引入所有的 polyfill。
 2. entry: 根据配置的浏览器兼容，引入浏览器不兼容的 polyfill。需要在入口文件手动添加 `import '@babel/polyfill'`，会自动根据 browserslist 替换成浏览器不兼容的所有 polyfill
 
-   > **注意**：`import '@babel/polyfill'` 官方已经提示废弃，建议改为如下配置：`import 'core-js/stable';import 'regenerator-runtime/runtime';`
+   > **注意**：`import '@babel/polyfill'` 官方已经提示废弃，建议改为如下配置：
+   >
+   > ```javascript
+   > import 'core-js/stable'
+   > import 'regenerator-runtime/runtime'
+   > ```
 
-3. usage: usage 会根据配置的浏览器兼容，以及你代码中用到的 API 来进行 polyfill，实现了按需添加。
+3. usage: usage 会根据配置的浏览器兼容，以及你代码中用到的 API 来进行 polyfill，实现了自动按需添加。
 
 #### 2.9.7 使用 @babel/plugin-transform-runtime
 
 ##### 2.9.7.1 为什么要使用它
+
+1. 不使用它的时候配置是这样时：
+
+   ```javascript
+   ```
+
+   
 
 @babel/plugin-transform-runtime 有三大作用
 
@@ -1602,29 +1640,17 @@ devtool: 'cheap-module-source-map'
 
 3. 此时我们发现辅助函数并没有被提取出来，仍然在编译后的代码中，此时需要引入另一个模块`@babel/runtime`
 
-##### 2.9.7.3 @babel/runtime
-
-> @babel/runtime 把所有语法转换会用到的辅助函数都集成在了一起。
-
-1. 安装@babel/runtime
-
-   ```shell
-    npm install --save @babel/runtime
-   ```
-
-2. 执行打包命令`npm run build`,查看打包后的编译效果, 内容大概类似如下
-
-   ```javascript
-
-   ```
+##### 2.9.7.3 xxxxxxx
 
 #### 2.9.8 参考文档
 
-[@babel/preset-env 与@babel/plugin-transform-runtime 使用及场景区别](https://segmentfault.com/a/1190000021188054)
+[强烈推荐 1:「前端基建」深入 Babel 的世界](https://mp.weixin.qq.com/s?__biz=Mzg3ODAyNDI0OQ==&mid=2247486933&idx=1&sn=50a9e7812f8bc60b95038283b15fab4b&chksm=cf1b4e83f86cc795bd8dc6da8e5b0007a835ac1314715326026e73f8eb2c3ceb53109fb3121e&mpshare=1&scene=1&srcid=0409aSB7Ktrj8y5vFbNND9Ra&sharer_sharetime=1649482090275&sharer_shareid=1d8b1570dbbf3ea076148a4c359b60bd#rd)
 
-[姜瑞涛的官方网站之 Babel 教程](https://www.jiangruitao.com/babel/rudiments/)
+[强烈推荐 2:姜瑞涛的官方网站之 Babel 教程](https://www.jiangruitao.com/babel/rudiments/)
 
 [吃一堑长一智系列: 99% 开发者没弄明白的 babel 知识](https://github.com/pigcan/blog/issues/26)
+
+[@babel/preset-env 与@babel/plugin-transform-runtime 使用及场景区别](https://segmentfault.com/a/1190000021188054)
 
 [Show me the code，babel 7 最佳实践](https://github.com/SunshowerC/blog/issues/5)
 
@@ -1633,3 +1659,5 @@ devtool: 'cheap-module-source-map'
 [Babel 7 升级实践](https://blog.hhking.cn/2019/04/02/babel-v7-update/)
 
 [关于 babel 的详细解读(精华又通俗)](https://juejin.cn/post/6844904199554072583)
+
+[@babel/preset-env 与@babel/plugin-transform-runtime 使用及场景区别](https://blog.csdn.net/m0_37846579/article/details/103379084?spm=1001.2101.3001.6661.1&utm_medium=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1.pc_relevant_aa&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1.pc_relevant_aa&utm_relevant_index=1)
