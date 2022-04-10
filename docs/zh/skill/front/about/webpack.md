@@ -1096,22 +1096,22 @@ devtool: 'cheap-module-source-map'
      !*** ./src/js/index.js ***!
      \*************************/
    /***/ (() => {
-   
+
    var arr = [new Promise(function () {}), new Promise(function () {})];
    arr.map(function (item) {
      console.log(item);
    });
-   
+
    /***/ })
    ```
 
 5. 可以发现上述代码中的箭头函数已经进行了编译转换，已经初步完成了转换，可是部分浏览器是不能识别 Promise 以及 map 语法的，那又该怎么办呢
 
-   > 注意：@babel/preset-env是Babel6时代babel-preset-latest的增强版。该预设除了包含所有稳定的转码插件，还可以根据我们设定的目标环境进行针对性转码。
+   > 注意：@babel/preset-env 是 Babel6 时代 babel-preset-latest 的增强版。该预设除了包含所有稳定的转码插件，还可以根据我们设定的目标环境进行针对性转码。
    >
-   > Babel的编译分为语法和API两部分：语法（诸如const let ...解构、class语法等）、API（诸如[].includes、[].reduce等）
+   > Babel 的编译分为语法和 API 两部分：语法（诸如 const let ...解构、class 语法等）、API（诸如[].includes、[].reduce 等）
    >
-   > 默认的Babel如下，只会编译语法，不会编译API ；Babel提供了polyfill库进行api的转换，同时 @babel/preset-env 提供了配置参数 useBuiltIns 进行设置如何处理。
+   > 默认的 Babel 如下，只会编译语法，不会编译 API ；Babel 提供了 polyfill 库进行 api 的转换，同时 @babel/preset-env 提供了配置参数 useBuiltIns 进行设置如何处理。
 
 #### 2.9.3 初步进行再转换
 
@@ -1319,7 +1319,7 @@ devtool: 'cheap-module-source-map'
      !*** ./src/js/index.js ***!
      \*************************/
    /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-   
+
    "use strict";
    __webpack_require__.r(__webpack_exports__);
    /* harmony import */ var core_js_modules_es6_object_to_string_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es6.object.to-string.js */ "./node_modules/core-js/modules/es6.object.to-string.js");
@@ -1328,12 +1328,12 @@ devtool: 'cheap-module-source-map'
    /* harmony import */ var core_js_modules_es6_promise_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_promise_js__WEBPACK_IMPORTED_MODULE_1__);
    /* harmony import */ var core_js_modules_es6_array_map_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es6.array.map.js */ "./node_modules/core-js/modules/es6.array.map.js");
    /* harmony import */ var core_js_modules_es6_array_map_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_array_map_js__WEBPACK_IMPORTED_MODULE_2__);
-   
+
    var arr = [new Promise(function () {}), new Promise(function () {})];
    arr.map(function (item) {
      console.log(item);
    });
-   
+
    /***/ }),
    ...
    ```
@@ -1344,22 +1344,22 @@ devtool: 'cheap-module-source-map'
 
    ```javascript
    WARNING (@babel/preset-env): We noticed you're using the `useBuiltIns` option without declaring a core-js version. Currently, we assume version 2.x when no version is passed. Since this default version will likely change in future versions of Babel, we recommend explicitly setting the core-js version you are using via the `corejs` option.
-   
+
    You should also be sure that the version you pass to the `corejs` option matches the version specified in your `package.json`'s `dependencies` section. If it doesn't, you need to run one of the following commands:
-   
+
      npm install --save core-js@2    npm install --save core-js@3
      yarn add core-js@2              yarn add core-js@3
-   
+
    More info about useBuiltIns: https://babeljs.io/docs/en/babel-preset-env#usebuiltins
    More info about core-js: https://babeljs.io/docs/en/babel-preset-env#corejs
-   
+
    When setting `useBuiltIns: 'usage'`, polyfills are automatically imported when needed.
    Please remove the direct import of `@babel/polyfill` or use `useBuiltIns: 'entry'` instead.
    ```
 
 5. 可以先忽略，后续会进行处理
 
-   > 上面的意思是说当你使用配置 useBuiltIns 时候，建议增加 corejs配置，如果不声明的话，会默认使用 2.x 版本，而2.x的版本已经不更新，建议使用版本 3.x ，可以修改为如下配置并安装相应依赖
+   > 上面的意思是说当你使用配置 useBuiltIns 时候，建议增加 corejs 配置，如果不声明的话，会默认使用 2.x 版本，而 2.x 的版本已经不更新，建议使用版本 3.x ，可以修改为如下配置并安装相应依赖
    >
    > ```javascript
    > {
@@ -1432,13 +1432,6 @@ devtool: 'cheap-module-source-map'
 #### 2.9.7 使用 @babel/plugin-transform-runtime
 
 ##### 2.9.7.1 为什么要使用它
-
-1. 不使用它的时候配置是这样时：
-
-   ```javascript
-   ```
-
-   
 
 @babel/plugin-transform-runtime 有三大作用
 
@@ -1640,9 +1633,75 @@ devtool: 'cheap-module-source-map'
 
 3. 此时我们发现辅助函数并没有被提取出来，仍然在编译后的代码中，此时需要引入另一个模块`@babel/runtime`
 
-##### 2.9.7.3 xxxxxxx
+##### 2.9.7.3 Babel 中 plugins 和 presets 的区别
 
-#### 2.9.8 参考文档
+###### 2.9.7.3.1 Plugin 与 Preset 执行顺序：
+
+可以同时使用多个 Plugin 和 Preset，此时，它们的执行顺序非常重要。
+
+1. **先执行完所有 Plugin，再执行 Preset。**
+
+2. **多个 Plugin，按照声明次序顺序执行。**
+
+3. **多个 Preset，按照声明次序逆序执行。**
+
+#### 2.9.8 Webpack 实现对 React 框架代码的打包
+
+1. React 是一种流行的前端框架，如何使用 webpack+babel 对 react 语法进行打包编译呢
+
+2. 我们目前只是书写也无文件，所以无需使用 plugin-transform-runtime, 只使用 preset-ent 即可，具体配置信息如下
+
+   ```javascript
+   {
+   	"presets": [
+   		[
+   			"@babel/preset-env",
+   			{
+   				"useBuiltIns": "usage", // 实现按需加载
+   				"corejs": {
+   					"version": 3,
+   					"proposals": true
+   				},
+           // 需要支持的目标浏览器版本，如果目标浏览器版本支持语法，就会略过转换处理
+           targets: {
+             // edge: '17',
+             // firefox: '60',
+             // chrome: '67',
+             // safari: '11.1',
+           }
+   			}
+   		],
+       '@babel/preset-react',
+   	]
+   }
+   ```
+
+3. 安装 react 依赖模块
+
+   ```shell
+   yarn add react react-dom @babel/preset-react
+   ```
+
+4. 修改 index.js 文件内容如下
+
+   ```javascript
+   import React, { Component } from 'react'
+   import ReactDom from 'react-dom/client'
+   class App extends Component {
+   	render() {
+   		return <div>Hello World</div>
+   	}
+   }
+   // 注意 index.html 中保证有元素id 为 root
+   const root = ReactDom.createRoot(document.getElementById('root'))
+   root.render(<App></App>)
+   ```
+
+5. 执行打包命令`npm run dev`, 查看浏览器运行效果
+
+6. 可以看到有 hello world 显示
+
+#### 2.9.9 参考文档
 
 [强烈推荐 1:「前端基建」深入 Babel 的世界](https://mp.weixin.qq.com/s?__biz=Mzg3ODAyNDI0OQ==&mid=2247486933&idx=1&sn=50a9e7812f8bc60b95038283b15fab4b&chksm=cf1b4e83f86cc795bd8dc6da8e5b0007a835ac1314715326026e73f8eb2c3ceb53109fb3121e&mpshare=1&scene=1&srcid=0409aSB7Ktrj8y5vFbNND9Ra&sharer_sharetime=1649482090275&sharer_shareid=1d8b1570dbbf3ea076148a4c359b60bd#rd)
 
@@ -1661,3 +1720,812 @@ devtool: 'cheap-module-source-map'
 [关于 babel 的详细解读(精华又通俗)](https://juejin.cn/post/6844904199554072583)
 
 [@babel/preset-env 与@babel/plugin-transform-runtime 使用及场景区别](https://blog.csdn.net/m0_37846579/article/details/103379084?spm=1001.2101.3001.6661.1&utm_medium=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1.pc_relevant_aa&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1.pc_relevant_aa&utm_relevant_index=1)
+
+## 3 Webpack 的高级概念
+
+### 3.1 Tree Shaking 概念详解
+
+#### 3.1.1 定义
+
+> _tree shaking_ 是一个术语，通常用于描述移除 JavaScript 上下文中的未引用代码(dead-code)。具体来说，在 webpack 项目中，有一个入口文件，相当于一棵树的主干，入口文件有很多依赖的模块，相当于树枝。实际情况中，虽然依赖了某个模块，但其实只使用其中的某些功能。通过 tree-shaking，将没有使用的模块摇掉，这样来达到删除无用代码的目的。
+
+#### 3.1.2 为什么 tree-shaking 是最近几年流行起来了
+
+前端模块化概念已经有很多年历史了，这是因为 `tree-shaking` 的消除原理是依赖于 ES6 的模块特性。
+
+1. ES6 module 特点：
+
+   - 能作为模块顶层的语句出现
+   - import 的模块名只能是字符串常量
+   - import binding 是 immutable(不可更改) 的
+
+   ES6 模块依赖关系是确定的，和运行时的状态无关，可以进行可靠的静态分析，这就是 tree-shaking 的基础。所谓静态分析就是不执行代码，从字面量上对代码进行分析，ES6 之前的模块化，比如我们可以动态 require 一个模块，只有执行后才知道引用的什么模块，这个就不能通过静态分析去做优化。
+
+#### 3.1.3 使用举例
+
+1. 新建 math.js 文件，内容如下
+
+   ```javascript
+   export const add = (a, b) => {
+   	console.log('add')
+   	return a + b
+   }
+
+   export const minus = (a, b) => {
+   	console.log('minus')
+   	return a - b
+   }
+   ```
+
+2. index.js 中引入 math.js 的 add 函数，内容如下
+
+   ```javascript
+   // Tree Shaking 只支持 ES Module
+   import { add } from './math'
+   console.log(add(1, 2))
+   ```
+
+3. 其中 babel 的配置文件 babel.config.js 内容如下
+
+   ```javascript
+   module.exports = {
+   	// presets 执行顺序是从后往前执行
+   	presets: [
+   		[
+   			'@babel/preset-env',
+   			{
+   				useBuiltIns: 'usage',
+   				corejs: {
+   					version: 3,
+   					proposals: true,
+   				},
+   				// 	// 需要支持的目标浏览器版本，如果目标浏览器版本支持语法，就会略过转换处理
+   				targets: {
+   					ie: '8',
+   					// 		// edge: '17',
+   					// 		// firefox: '60',
+   					// 		// chrome: '67',
+   					// 		// safari: '11.1',
+   				},
+   			},
+   		],
+   	],
+   }
+   ```
+
+4. 这里要区分开发环境和生产环境
+
+   开发环境下
+
+5. webpack.config.js 配置如下
+
+   ```javascript
+   const path = require('path')
+   const HtmlWebpackPlugin = require('html-webpack-plugin')
+   const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+   const { HotModuleReplacementPlugin } = require('webpack')
+
+   module.exports = {
+   	mode: 'development',
+   	entry: {
+   		bundle: './src/js/index.js',
+   	},
+   	output: {
+   		publicPath: '/',
+   		filename: '[name].js',
+   		path: path.resolve(__dirname, 'bundle'),
+   	},
+   	optimization: {
+   		usedExports: true, // 过标记某些函数是否被使用，之后通过Terser来进行优化的
+   	},
+   	module: {
+   		rules: [
+   			{
+   				test: /\.(jpg|png|gif|jpeg)$/,
+   				type: 'asset/resource',
+   			},
+   			{
+   				test: /\.ts$/,
+   				use: {
+   					loader: 'ts-loader',
+   				},
+   			},
+   			{
+   				test: /\.css$/,
+   				use: [
+   					'style-loader',
+   					{
+   						loader: 'css-loader',
+   						options: {},
+   					},
+   					'less-loader',
+   				],
+   			},
+   			{
+   				test: /\.less$/,
+   				use: [
+   					'style-loader',
+   					{
+   						loader: 'css-loader',
+   						options: {
+   							// 通过import 加载的less文件也需要执行前两个loader
+   							importLoaders: 2,
+   							modules: true,
+   						},
+   					},
+   					'less-loader',
+   					{
+   						loader: 'postcss-loader',
+   						//  或者使用 PostCSS 本身的 配置文件：postcss.config.js
+   						options: {
+   							postcssOptions: {
+   								plugins: [require('autoprefixer')()],
+   							},
+   						},
+   					},
+   				],
+   			},
+   			{
+   				test: /\.m?js$/,
+   				exclude: /node_modules/,
+   				use: {
+   					loader: 'babel-loader',
+   				},
+   			},
+   		],
+   	},
+   	// plugin 会在webpack运行到某些时机的时候，处理一些事情
+   	plugins: [
+   		new HtmlWebpackPlugin({
+   			template: './index.html',
+   		}),
+   		new CleanWebpackPlugin(),
+   		new HotModuleReplacementPlugin(),
+   	],
+   	devServer: {
+   		open: true,
+   		hot: 'only',
+   	},
+   }
+   ```
+
+6. 执行打包命令`npm run build`,查看打包后的编译效果, 内容大概类似如下
+
+   ```javascript
+   	/***/ './src/js/math.js':
+   			/*!************************!*\
+     !*** ./src/js/math.js ***!
+     \************************/
+   			/***/ (__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+   				eval(
+   					"/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"add\": () => (/* binding */ add)\n/* harmony export */ });\n/* unused harmony export minus */\nvar add = function add(a, b) {\n  console.log('add');\n  return a + b;\n};\nvar minus = function minus(a, b) {\n  console.log('minus');\n  return a - b;\n};\n\n//# sourceURL=webpack://webpack-demo/./src/js/math.js?"
+   				)
+
+   				/***/
+   			},
+   ```
+
+7. 这里发现两个模块均被打包进入了，但是有一个标记(unused harmony export minus),表示没有用过的模块( 在 usedExports 设置为 true 时，会有一段注释：unused harmony export mul；这段注释的意义是什么呢？告知 Terser 在优化时，可以删除掉这段代码; usedExports 实现 Tree Shaking 是结合 Terser 来完成的。)
+
+ 生产环境下
+
+5. webpack.config.js 的配置如下
+
+   ```javascript
+   const path = require('path')
+   const HtmlWebpackPlugin = require('html-webpack-plugin')
+   const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+   const { HotModuleReplacementPlugin } = require('webpack')
+
+   module.exports = {
+   	mode: 'production',
+   	entry: {
+   		bundle: './src/js/index.js',
+   	},
+   	output: {
+   		publicPath: '/',
+   		filename: '[name].js',
+   		path: path.resolve(__dirname, 'bundle'),
+   	},
+   	module: {
+   		rules: [
+   			{
+   				test: /\.(jpg|png|gif|jpeg)$/,
+   				type: 'asset/resource',
+   			},
+   			{
+   				test: /\.ts$/,
+   				use: {
+   					loader: 'ts-loader',
+   				},
+   			},
+   			{
+   				test: /\.css$/,
+   				use: [
+   					'style-loader',
+   					{
+   						loader: 'css-loader',
+   						options: {},
+   					},
+   					'less-loader',
+   				],
+   			},
+   			{
+   				test: /\.less$/,
+   				use: [
+   					'style-loader',
+   					{
+   						loader: 'css-loader',
+   						options: {
+   							// 通过import 加载的less文件也需要执行前两个loader
+   							importLoaders: 2,
+   							modules: true,
+   						},
+   					},
+   					'less-loader',
+   					{
+   						loader: 'postcss-loader',
+   						//  或者使用 PostCSS 本身的 配置文件：postcss.config.js
+   						options: {
+   							postcssOptions: {
+   								plugins: [require('autoprefixer')()],
+   							},
+   						},
+   					},
+   				],
+   			},
+   			{
+   				test: /\.m?js$/,
+   				exclude: /node_modules/,
+   				use: {
+   					loader: 'babel-loader',
+   				},
+   			},
+   		],
+   	},
+   	// plugin 会在webpack运行到某些时机的时候，处理一些事情
+   	plugins: [
+   		new HtmlWebpackPlugin({
+   			template: './index.html',
+   		}),
+   		new CleanWebpackPlugin(),
+   		new HotModuleReplacementPlugin(),
+   	],
+   	devServer: {
+   		open: true,
+   		hot: 'only',
+   	},
+   }
+   ```
+
+6. 执行打包命令`npm run build`,查看打包后的编译效果, 内容大概类似如下
+
+   ```javascript
+   'use strict' var e,r,n = {782: () => {console.log((1, 2, console.log('add'), 3))},},t = {}
+   ```
+
+7. 全局中搜不到 miuns 函数中的 console.log("miuns"),说明此函数在生产环境下没有被编译进入。已经被忽略了
+
+#### 3.1.4 **usedExports**、**sideEffects**
+
+事实上 webpack 实现 Tree Shaking 采用了两种不同的方案：
+
+- usedExports：通过标记某些函数是否被使用，之后通过 Terser 来进行优化的；
+- sideEffects：跳过整个模块/文件，直接查看该文件是否有副作用；
+
+1. **usedExports**
+
+   将 mode 设置为 development 模式：
+
+   - 为了可以看到 usedExports 带来的效果，我们需要设置为 development 模式
+   - 因为在 production 模式下，webpack 默认的一些优化会带来很大额影响。
+
+   设置 usedExports 为 true 和 false 对比打包后的代码
+
+   - 在 usedExports 设置为 true 时，会有一段注释：unused harmony export mul；
+   - 这段注释的意义是什么呢？告知 Terser 在优化时，可以删除掉这段代码；
+
+   这个时候，我们讲 minimize 设置 true：
+
+   - usedExports 设置为 false 时，mul 函数没有被移除掉；
+   - usedExports 设置为 true 时，mul 函数有被移除掉；
+
+   所以，usedExports 实现 Tree Shaking 是结合 Terser 来完成的。
+
+2. **sideEffects**
+
+   sideEffects 用于告知 webpack compiler 哪些模块时有副作用的：
+
+   - 副作用的意思是这里面的代码有执行一些特殊的任务，不能仅仅通过 export 来判断这段代码的意义；
+   - 副作用的问题，在讲 React 的纯函数时是有讲过的；
+
+   在 package.json 中设置 sideEffects 的值：
+
+   - 如果我们将 sideEffects 设置为 false，就是告知 webpack 可以安全的删除未用到的 exports；
+   - 如果有一些我们希望保留，可以设置为数组；
+
+   比如我们有一个 format.js、style.css 文件：
+
+   - 该文件在导入时没有使用任何的变量来接受；
+   - 那么打包后的文件，不会保留 format.js、style.css 相关的任何代码；
+
+   ```javascript
+   "sideEffects": [
+   	"./src/util/format.js",
+   	"*.css"
+   ]
+   ```
+
+3. **Webpack 中 tree shaking 的设置**
+
+   所以，如何在项目中对 JavaScript 的代码进行 TreeShaking 呢（生成环境）？
+
+   - 在 optimization 中配置 usedExports 为 true，来帮助 Terser 进行优化；
+
+   - 在 package.json 中配置 sideEffects，直接对模块进行优化；
+
+### 3.2 Develoment 和 Production 模式的区分打包
+
+#### 3.2.1 分离的配置文件
+
+1. 实际开发中要区分 development、production 模式，所以配置文件需要分离开
+
+2. 新建开发环境下的配置文件 webpack.dev.js，内容如下
+
+   ```javascript
+   const path = require('path')
+   const HtmlWebpackPlugin = require('html-webpack-plugin')
+   const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+   const { HotModuleReplacementPlugin } = require('webpack')
+
+   module.exports = {
+   	// development 默认没有 tree shaking
+   	mode: 'development',
+   	devtool: 'eval-cheap-module-source-map',
+   	entry: {
+   		bundle: './src/js/index.js',
+   	},
+   	output: {
+   		publicPath: '/',
+   		// publicPath: 'https://xxcdn.com/',
+   		filename: '[name].js',
+   		path: path.resolve(__dirname, 'bundle'),
+   	},
+   	optimization: {
+   		usedExports: true,
+   	},
+   	module: {
+   		rules: [
+   			{
+   				test: /\.(jpg|png|gif|jpeg)$/,
+   				type: 'asset/resource',
+   			},
+   			{
+   				test: /\.ts$/,
+   				use: {
+   					loader: 'ts-loader',
+   				},
+   			},
+   			{
+   				test: /\.css$/,
+   				use: [
+   					'style-loader',
+   					{
+   						loader: 'css-loader',
+   						options: {
+   							// 引入模块化，
+   							// modules: true,
+   						},
+   					},
+   					'less-loader',
+   				],
+   			},
+   			{
+   				test: /\.less$/,
+   				use: [
+   					'style-loader',
+   					{
+   						loader: 'css-loader',
+   						options: {
+   							// 通过import 加载的less文件也需要执行前两个loader
+   							importLoaders: 2,
+   							modules: true,
+   						},
+   					},
+   					'less-loader',
+   					{
+   						loader: 'postcss-loader',
+   						//  或者使用 PostCSS 本身的 配置文件：postcss.config.js
+   						options: {
+   							postcssOptions: {
+   								plugins: [require('autoprefixer')()],
+   							},
+   						},
+   					},
+   				],
+   			},
+   			{
+   				test: /\.m?js$/,
+   				exclude: /node_modules/,
+   				use: {
+   					loader: 'babel-loader',
+   				},
+   			},
+   		],
+   	},
+   	// plugin 会在webpack运行到某些时机的时候，处理一些事情
+   	plugins: [
+   		new HtmlWebpackPlugin({
+   			template: './index.html',
+   		}),
+   		new CleanWebpackPlugin(),
+   		new HotModuleReplacementPlugin(),
+   	],
+   	devServer: {
+   		open: true,
+   		hot: 'only',
+   	},
+   }
+   ```
+
+3. 新建生产环境配置文件 webpack.prod.js, 文件内容如下
+
+   ```javascript
+   const path = require('path')
+   const HtmlWebpackPlugin = require('html-webpack-plugin')
+   const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+   const { HotModuleReplacementPlugin } = require('webpack')
+
+   module.exports = {
+   	mode: 'production',
+   	devtool: 'nosources-source-map',
+   	entry: {
+   		bundle: './src/js/index.js',
+   	},
+   	output: {
+   		publicPath: '/',
+   		// publicPath: 'https://xxcdn.com/',
+   		// filename: 'bundle.js',
+   		filename: '[name].js',
+   		path: path.resolve(__dirname, 'bundle'),
+   	},
+   	module: {
+   		rules: [
+   			{
+   				test: /\.(jpg|png|gif|jpeg)$/,
+   				type: 'asset/resource',
+   				// generator: {
+   				// 	filename: 'images/[name][ext]',
+   				// },
+   				// use: {
+   				// 	loader: 'file-loader',
+   				// 	options: {
+   				// 		esModule: false,
+   				// 		// placeholder 占位符
+   				// 		name: '[name].[ext]',
+   				// 		// 设置打包后的文件夹
+   				// 		outputPath: 'images/',
+   				// 	},
+   				// },
+   			},
+   			{
+   				test: /\.ts$/,
+   				use: {
+   					loader: 'ts-loader',
+   				},
+   			},
+   			{
+   				test: /\.css$/,
+   				use: [
+   					'style-loader',
+   					{
+   						loader: 'css-loader',
+   						options: {
+   							// 引入模块化，
+   							// modules: true,
+   						},
+   					},
+   					'less-loader',
+   				],
+   			},
+   			{
+   				test: /\.less$/,
+   				use: [
+   					'style-loader',
+   					{
+   						loader: 'css-loader',
+   						options: {
+   							// 通过import 加载的less文件也需要执行前两个loader
+   							importLoaders: 2,
+   							modules: true,
+   						},
+   					},
+   					'less-loader',
+   					{
+   						loader: 'postcss-loader',
+   						//  或者使用 PostCSS 本身的 配置文件：postcss.config.js
+   						options: {
+   							postcssOptions: {
+   								plugins: [require('autoprefixer')()],
+   							},
+   						},
+   					},
+   				],
+   			},
+   			{
+   				test: /\.m?js$/,
+   				exclude: /node_modules/,
+   				use: {
+   					loader: 'babel-loader',
+   				},
+   			},
+   		],
+   	},
+   	// plugin 会在webpack运行到某些时机的时候，处理一些事情
+   	plugins: [
+   		new HtmlWebpackPlugin({
+   			template: './index.html',
+   		}),
+   		new CleanWebpackPlugin(),
+   	],
+   }
+   ```
+
+4. 相应编译时候的命令更改如下
+
+   ```javascript
+   "scripts": {
+     "start": "webpack-dev-server --config webpack.dev.js",
+     "build": "webpack --config webpack.prod.js",
+   }
+   ```
+
+#### 3.2.2 如何合并相同部分，分离差异部分
+
+> 涉及到 webpack-merge, 帮助我们合并相关配置
+>
+> 安装命令：npm install webpack-merge
+
+1. 新建 webpack.common.js 文件，文件内容（是相同的部分）如下：
+
+   ```javascript
+   const path = require('path')
+   const HtmlWebpackPlugin = require('html-webpack-plugin')
+   const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+
+   module.exports = {
+   	entry: {
+   		bundle: './src/js/index.js',
+   	},
+   	output: {
+   		publicPath: './',
+   		filename: '[name].js',
+   		path: path.resolve(__dirname, 'bundle'),
+   		assetModuleFilename: 'images/[name][ext]',
+   	},
+   	module: {
+   		rules: [
+   			{
+   				test: /\.(jpg|png|gif|jpeg)$/,
+   				type: 'asset/resource',
+   				// generator: {
+   				// 	filename: 'images/[name][ext]',
+   				// },
+   				// use: {
+   				// 	loader: 'file-loader',
+   				// 	options: {
+   				// 		esModule: false,
+   				// 		// placeholder 占位符
+   				// 		name: '[name].[ext]',
+   				// 		// 设置打包后的文件夹
+   				// 		outputPath: 'images/',
+   				// 	},
+   				// },
+   			},
+   			{
+   				test: /\.ts$/,
+   				use: {
+   					loader: 'ts-loader',
+   				},
+   			},
+   			{
+   				test: /\.css$/,
+   				use: [
+   					'style-loader',
+   					{
+   						loader: 'css-loader',
+   						options: {
+   							// 引入模块化，
+   							// modules: true,
+   						},
+   					},
+   					'less-loader',
+   				],
+   			},
+   			{
+   				test: /\.less$/,
+   				use: [
+   					'style-loader',
+   					{
+   						loader: 'css-loader',
+   						options: {
+   							// 通过import 加载的less文件也需要执行前两个loader
+   							importLoaders: 2,
+   							modules: true,
+   						},
+   					},
+   					'less-loader',
+   					{
+   						loader: 'postcss-loader',
+   						//  或者使用 PostCSS 本身的 配置文件：postcss.config.js
+   						options: {
+   							postcssOptions: {
+   								plugins: [require('autoprefixer')()],
+   							},
+   						},
+   					},
+   				],
+   			},
+   			{
+   				test: /\.m?js$/,
+   				exclude: /node_modules/,
+   				use: {
+   					loader: 'babel-loader',
+   				},
+   			},
+   		],
+   	},
+   	// plugin 会在webpack运行到某些时机的时候，处理一些事情
+   	plugins: [
+   		new HtmlWebpackPlugin({
+   			template: './index.html',
+   		}),
+   		new CleanWebpackPlugin(),
+   	],
+   }
+   ```
+
+2. 开发环境下的配置文件 webpack.dev.js，内容精简如下
+
+   ```javascript
+   const { HotModuleReplacementPlugin } = require('webpack')
+   const { merge } = require('webpack-merge')
+   const commonConfig = require('./webpack.common.js')
+   const devConfig = {
+   	mode: 'development',
+   	devtool: 'eval-cheap-module-source-map',
+   	optimization: {
+   		usedExports: true,
+   	},
+   	// plugin 会在webpack运行到某些时机的时候，处理一些事情
+   	plugins: [new HotModuleReplacementPlugin()],
+   	devServer: {
+   		open: true,
+   		hot: 'only',
+   	},
+   }
+   module.exports = merge(commonConfig, devConfig)
+   ```
+
+3. 生产环境配置文件 webpack.prod.js, 内容精简如下
+
+   ```JavaScript
+   const commonConfig = require('./webpack.common.js')
+   const { merge } = require("webpack-merge")
+   const prodConfig = {
+   	mode: 'production',
+   	devtool: 'nosources-source-map',
+   }
+   module.exports = merge(commonConfig, prodConfig )
+   ```
+
+4. 其他的打包命令不变
+
+#### 3.2.3 Webpack 和 Code Spliting
+
+##### 3.2.3.1 Code Splitting 是什么以及为什么
+
+> 在以前，为了减少 HTTP 请求，通常地，我们都会把所有的代码都打包成一个单独的 JS 文件。但是，如果这个 JS 文件体积很大的话，那就得不偿失了。
+>
+> 这时，我们不妨把所有代码分成一块一块，需要某块代码的时候再去加载它；还可以利用浏览器的缓存，下次用到它的话，直接从缓存中读取。很显然，这种做法可以加快我们网页的加载速度，美滋滋！
+
+##### 3.2.3.2 Code Splitting 怎么做
+
+主要有 2 种方式：
+
+- [分离业务代码和第三方库](https://webpack.js.org/guides/code-splitting/#resource-splitting-for-caching-and-parallel-loads)（ vendor ）: 之所以把业务代码和第三方库代码分离出来，是因为产品经理的需求是源源不断的，因此业务代码更新频率大，相反第三方库代码更新迭代相对较慢且可以锁版本，所以可以充分利用浏览器的缓存来加载这些第三方库。
+- [按需加载](https://webpack.js.org/guides/code-splitting/#resource-splitting-for-caching-and-parallel-loads)（利用 [import()](https://github.com/tc39/proposal-dynamic-import) 语法）:而按需加载的适用场景，比如说「访问某个路由的时候再去加载对应的组件」，用户不一定会访问所有的路由，所以没必要把所有路由对应的组件都先在开始的加载完；更典型的例子是「某些用户他们的权限只能访问某些页面」，所以没必要把他们没权限访问的页面的代码也加载。
+
+1. 假设我们的项目中使用了 vue、lodash、element-ui 等三方依赖，如果不使用 code spliting 的话，打包后的文件内容全部在目标文件 dist.js 中，文件就显得很大很臃肿，下次业务代码发生了改变，重新打包，仍然要重新加载很大的文件。相对的效率不太友好；对于第三方依赖的库，一般情况下，不会有改变，其实完全可以抽离出去，变为一个不变的文件处理
+
+###### 3.2.3.2.1 分离 Vendor
+
+> 最简单方法就是：加一个 entry ( [File Changes](https://github.com/lyyourc/webpack-code-splitting-demo/commit/6324e8a591b0c2b1fe5cd6c288a2cdfe56e17550) )：
+
+```javascript
+// webpack.config.js
+module.exports = {
+	entry: {
+		main: './src/index.js',
+		vendor: ['vue', 'axios', 'element-ui', 'jquery'],
+	},
+}
+```
+
+1. 安装 vue、axios
+
+   ```shell
+   yarn add vue axios
+   ```
+
+2. index.js 中引入相应依赖，增加如下代码
+
+   ```javascript
+   import Vue from 'vue'
+   import Axios from 'axios'
+   ```
+
+3. 打包命令中添加如下命令
+
+   ```javascript
+   "scripts": {
+     "build": "webpack --config webpack.prod.js",
+     "start": "webpack-dev-server --config webpack.dev.js",
+     "build:test": "webpack --config webpack.dev.js"
+   },
+   ```
+
+4. `webpack.dev.js`中的配置文件增加如下内容
+
+   ```javascript
+   entry: {
+     vendor: ['vue', 'axios'],
+   },
+   ```
+
+5. 执行命令`npm run build:test`, 后发现 dist 目录中有文件 vendor.js 和 main.js
+
+6. 我们如果打开时候会发现：虽然 vendor.js 这个 entry chunk 包含了我们想要的 vue 和 axios ，但是 main.js 也包含了他们！为什么！？这是因为：每个 entry 都包含了他自己的依赖，这样他才能作为一个入口，独立地跑起来。很难受，事实上我们并不想 app.js 还包含了 vue 和 axios 。如果可以把他们俩相同的依赖提取出来就好了。如果想要提取公共模块的话，就需要用到 [CommonsChunkPlugin](https://webpack.js.org/plugins/commons-chunk-plugin/) 这个插件。
+
+###### 3.2.3.2.2 ~~使用 CommonsChunkPlugin 插件~~（ webpack4后已被移除，推荐使用 `optimization.splitChunks`.）
+
+> 注意：从 webpack4 以后， `CommonsChunkPlugin` 被移除了，来支持 `optimization.splitChunks`.
+
+1. webpack.dev.js 文件中需要做如下修改配置
+
+   ```javascript
+   const { optimize } = require('webpack')
+   
+   plugins: [
+     ...,
+     new optimize.CommonsChunkPlugin({
+       name: 'vendor',
+     }),
+   ]
+   ```
+
+###### 3.2.3.2.3 使用`optimization.splitChunks`
+
+1. webpack.dev.js 中的以下代码删除
+
+   ~~entry~~: {~~
+     	~~vendor: ['vue', 'axios'],~~
+   ~~},~~
+
+2. 添加如下代码
+
+   ```javascript
+   const { optimize } = require('webpack')
+   
+   plugins: [
+     ...
+     new optimize.SplitChunksPlugin({
+     	name: 'vendor',
+     }),
+   ]
+   ```
+
+3. 执行命令`npm run build:test`, 后发现 dist 目录中有文件 vendor.js 和 main.js, 并且 vendor.js 中添加了 vue、axios等第三方库，而main.js文件只有我们编写的相关业务代码
+
+
+
