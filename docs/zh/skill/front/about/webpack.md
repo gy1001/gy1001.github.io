@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-      
+
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -1907,7 +1907,7 @@ devtool: 'cheap-module-source-map'
 
 7. 这里发现两个模块均被打包进入了，但是有一个标记(unused harmony export minus),表示没有用过的模块( 在 usedExports 设置为 true 时，会有一段注释：unused harmony export mul；这段注释的意义是什么呢？告知 Terser 在优化时，可以删除掉这段代码; usedExports 实现 Tree Shaking 是结合 Terser 来完成的。)
 
- 生产环境下
+生产环境下
 
 5. webpack.config.js 的配置如下
 
@@ -2487,7 +2487,7 @@ module.exports = {
 
 6. 我们如果打开时候会发现：虽然 vendor.js 这个 entry chunk 包含了我们想要的 vue 和 axios ，但是 main.js 也包含了他们！为什么！？这是因为：每个 entry 都包含了他自己的依赖，这样他才能作为一个入口，独立地跑起来。很难受，事实上我们并不想 app.js 还包含了 vue 和 axios 。如果可以把他们俩相同的依赖提取出来就好了。如果想要提取公共模块的话，就需要用到 [CommonsChunkPlugin](https://webpack.js.org/plugins/commons-chunk-plugin/) 这个插件。
 
-###### 3.2.3.2.2 ~~使用 CommonsChunkPlugin 插件~~（ webpack4后已被移除，推荐使用 `optimization.splitChunks`.）
+###### 3.2.3.2.2 ~~使用 CommonsChunkPlugin 插件~~（ webpack4 后已被移除，推荐使用 `optimization.splitChunks`.）
 
 > 注意：从 webpack4 以后， `CommonsChunkPlugin` 被移除了，来支持 `optimization.splitChunks`.
 
@@ -2495,7 +2495,7 @@ module.exports = {
 
    ```javascript
    const { optimize } = require('webpack')
-   
+
    plugins: [
      ...,
      new optimize.CommonsChunkPlugin({
@@ -2509,23 +2509,22 @@ module.exports = {
 1. webpack.dev.js 中的以下代码删除
 
    ~~entry~~: {~~
-     	~~vendor: ['vue', 'axios'],~~
+   ~~vendor: ['vue', 'axios'],~~
    ~~},~~
 
 2. 添加如下代码
 
    ```javascript
    const { optimize } = require('webpack')
-   
+
    plugins: [
-     ...
-     new optimize.SplitChunksPlugin({
-     	name: 'vendor',
-     }),
+   	...new optimize.SplitChunksPlugin({
+   		name: 'vendor',
+   	}),
    ]
    ```
 
-3. 执行命令`npm run build:test`, 后发现 dist 目录中有文件 vendor.js 和 main.js, 并且 vendor.js 中添加了 vue、axios等第三方库，而main.js文件只有我们编写的相关业务代码
+3. 执行命令`npm run build:test`, 后发现 dist 目录中有文件 vendor.js 和 main.js, 并且 vendor.js 中添加了 vue、axios 等第三方库，而 main.js 文件只有我们编写的相关业务代码
 
 4. 虽然说这样将第三方模块单独打包出去能够减小入口文件的大小，但这样仍然是个不小的文件；这个小的测试项目中我们使用到了 axios 和 lodash 这两个第三方模块，因此我们希望的应该是将这两个模块单独分离出来两个文件，而不是全部放到一个 vendors 中去，那么我们继续配置 webpack.config.js:
 
@@ -2539,46 +2538,47 @@ module.exports = {
    >
    > 最后配置匹配的依赖以及分离出的文件名格式
    >
-   > 另外，我们还将运行时代码分离出来，这块代码还可以配合 **InlineManifestWebpackPlugin** 直接插入到 HTML 文件中。这里我们将这个配置设置成 single，即将所有chunk的运行代码打包到一个文件中
+   > 另外，我们还将运行时代码分离出来，这块代码还可以配合 **InlineManifestWebpackPlugin** 直接插入到 HTML 文件中。这里我们将这个配置设置成 single，即将所有 chunk 的运行代码打包到一个文件中
 
    ```javascript
    const path = require('path')
    const webpack = require('webpack')
-   
+
    module.exports = {
-       mode: 'development',
-       entry: path.resolve(__dirname, 'src/index.js'),
-       plugins: [
-           new webpack.ids.HashedModuleIdsPlugin() // 根据模块的相对路径生成 HASH 作为模块 ID
-       ],
-       output: {
-           path: path.resolve(__dirname, 'dist'),
-           filename: '[name].[contenthash].js'
-       },
-       optimization: {
-           runtimeChunk: 'single',
-           splitChunks: {
-               chunks: 'all', // 默认 async 可选值 all 和 initial
-               maxInitialRequests: Infinity, // 一个入口最大的并行请求数
-               minSize: 0, // 避免模块体积过小而被忽略
-               minChunks: 1, // 默认也是一表示最小引用次数
-               cacheGroups: {
-                   vendor: {
-                       test: /[\\/]node_modules[\\/]/, // 如果需要的依赖特别小，可以直接设置成需要打包的依赖名称
-                       name(module, chunks, chcheGroupKey) { // 可提供布尔值、字符串和函数，如果是函数，可编写自定义返回值
-                           const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1] // 获取模块名称
-                           return `npm.${packageName.replace('@', '')}` // 可选，一般情况下不需要将模块名称 @ 符号去除
-                       }
-                   }
-               }
-           }
-       }
+   	mode: 'development',
+   	entry: path.resolve(__dirname, 'src/index.js'),
+   	plugins: [
+   		new webpack.ids.HashedModuleIdsPlugin(), // 根据模块的相对路径生成 HASH 作为模块 ID
+   	],
+   	output: {
+   		path: path.resolve(__dirname, 'dist'),
+   		filename: '[name].[contenthash].js',
+   	},
+   	optimization: {
+   		runtimeChunk: 'single',
+   		splitChunks: {
+   			chunks: 'all', // 默认 async 可选值 all 和 initial
+   			maxInitialRequests: Infinity, // 一个入口最大的并行请求数
+   			minSize: 0, // 避免模块体积过小而被忽略
+   			minChunks: 1, // 默认也是一表示最小引用次数
+   			cacheGroups: {
+   				vendor: {
+   					test: /[\\/]node_modules[\\/]/, // 如果需要的依赖特别小，可以直接设置成需要打包的依赖名称
+   					name(module, chunks, chcheGroupKey) {
+   						// 可提供布尔值、字符串和函数，如果是函数，可编写自定义返回值
+   						const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1] // 获取模块名称
+   						return `npm.${packageName.replace('@', '')}` // 可选，一般情况下不需要将模块名称 @ 符号去除
+   					},
+   				},
+   			},
+   		},
+   	},
    }
    ```
 
 #### 3.2.4 SplitChunksPlugin 配置参数详解
 
-1. Webpack之魔法注释 /* webpackChunkName: x x x x */ 的做用
+1. Webpack 之魔法注释 /_ webpackChunkName: x x x x _/ 的做用
 
    魔术注释是由 Webpack 提供的，可以为代码分割服务的一种技术。通过在 import 关键字后的括号中使用指定注释，我们可以对代码分割后的 chunk 有更多的控制权，让我们看一个例子：
 
@@ -2626,9 +2626,6 @@ module.exports = {
    }
    ```
 
-   
-
 3. 参考文档:
 
    [使用 webpack 代码分割和魔术注释提升应用性能](https://segmentfault.com/a/1190000039134142)
-
