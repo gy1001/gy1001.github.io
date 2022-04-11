@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-   
+      
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -2527,5 +2527,108 @@ module.exports = {
 
 3. 执行命令`npm run build:test`, 后发现 dist 目录中有文件 vendor.js 和 main.js, 并且 vendor.js 中添加了 vue、axios等第三方库，而main.js文件只有我们编写的相关业务代码
 
+4. 虽然说这样将第三方模块单独打包出去能够减小入口文件的大小，但这样仍然是个不小的文件；这个小的测试项目中我们使用到了 axios 和 lodash 这两个第三方模块，因此我们希望的应该是将这两个模块单独分离出来两个文件，而不是全部放到一个 vendors 中去，那么我们继续配置 webpack.config.js:
 
+5. **如何将每个 npm 包单独分离出来**
+
+   > 这里我们主要做了几件事：为了避免每次打包的文件哈希变化，我们可以使用 webpack 内置的 HashedModuleIdsPlugin，这样可以避免每次打包的文件哈希值变化
+   >
+   > 首先增加 maxInitialRequests 并设置成 Infinity，指定这个入口文件最大并行请求数
+   >
+   > 然后将 minSize 和 minChunks 分别设置成 0 和 1，即使模块非常小也将其提取出来，并且这个模块的引用次数只有 1 也要提取
+   >
+   > 最后配置匹配的依赖以及分离出的文件名格式
+   >
+   > 另外，我们还将运行时代码分离出来，这块代码还可以配合 **InlineManifestWebpackPlugin** 直接插入到 HTML 文件中。这里我们将这个配置设置成 single，即将所有chunk的运行代码打包到一个文件中
+
+   ```javascript
+   const path = require('path')
+   const webpack = require('webpack')
+   
+   module.exports = {
+       mode: 'development',
+       entry: path.resolve(__dirname, 'src/index.js'),
+       plugins: [
+           new webpack.ids.HashedModuleIdsPlugin() // 根据模块的相对路径生成 HASH 作为模块 ID
+       ],
+       output: {
+           path: path.resolve(__dirname, 'dist'),
+           filename: '[name].[contenthash].js'
+       },
+       optimization: {
+           runtimeChunk: 'single',
+           splitChunks: {
+               chunks: 'all', // 默认 async 可选值 all 和 initial
+               maxInitialRequests: Infinity, // 一个入口最大的并行请求数
+               minSize: 0, // 避免模块体积过小而被忽略
+               minChunks: 1, // 默认也是一表示最小引用次数
+               cacheGroups: {
+                   vendor: {
+                       test: /[\\/]node_modules[\\/]/, // 如果需要的依赖特别小，可以直接设置成需要打包的依赖名称
+                       name(module, chunks, chcheGroupKey) { // 可提供布尔值、字符串和函数，如果是函数，可编写自定义返回值
+                           const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1] // 获取模块名称
+                           return `npm.${packageName.replace('@', '')}` // 可选，一般情况下不需要将模块名称 @ 符号去除
+                       }
+                   }
+               }
+           }
+       }
+   }
+   ```
+
+#### 3.2.4 SplitChunksPlugin 配置参数详解
+
+1. Webpack之魔法注释 /* webpackChunkName: x x x x */ 的做用
+
+   魔术注释是由 Webpack 提供的，可以为代码分割服务的一种技术。通过在 import 关键字后的括号中使用指定注释，我们可以对代码分割后的 chunk 有更多的控制权，让我们看一个例子：
+
+   **通过这样的配置，我们可以对分离出的 chunk 进行命名，这对于我们 debug 而言非常方便。**
+
+   ```javascript
+   // index.js
+   import (
+     /* webpackChunkName: "my-chunk-name" */
+     './footer'
+   )
+   同时，也要在 webpack.config.js 中做一些改动：
+   // webpack.config.js
+   {
+     output: {
+       filename: "bundle.js",
+       chunkFilename: "[name].lazy-chunk.js"
+     }
+   }
+   ```
+
+2. 参数详解
+
+   ```javascript
+   splitChunks: {
+     chunks: 'all', // 默认 async 可选值 all 和 initial
+       maxInitialRequests: Infinity, // 一个入口最大的并行请求数
+       minSize: 0, // 避免模块体积过小而被忽略
+       minChunks: 1, // 默认也是一表示最小引用次数
+       cacheGroups: {
+        	vendor: {
+           test: /[\\/]node_modules[\\/]/, // 如果需要的依赖特别小，可以直接设置成需要打包的依赖名称
+             name(module, chunks, chcheGroupKey) { // 可提供布尔值、字符串和函数，如果是函数，可编写自定义返回值
+             const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1] // 获取模块名称
+             return `npm.${packageName.replace('@', '')}` // 可选，一般情况下不需要将模块名称 @ 符号去除
+           }
+         },
+         defaultVendors: {
+   				filename: (pathData) => {
+               // Use pathData object for generating filename string based on your requirements
+               return `${pathData.chunk.name}-bundle.js`;
+             },
+         }
+       }
+   }
+   ```
+
+   
+
+3. 参考文档:
+
+   [使用 webpack 代码分割和魔术注释提升应用性能](https://segmentfault.com/a/1190000039134142)
 
