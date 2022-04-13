@@ -2421,15 +2421,15 @@ devtool: 'cheap-module-source-map'
 
 4. 其他的打包命令不变
 
-#### 3.2.3 Webpack 和 Code Spliting
+### 3.3 Webpack 和 Code Splitting
 
-##### 3.2.3.1 Code Splitting 是什么以及为什么
+#### 3.2.3.1 Code Splitting 是什么以及为什么
 
 > 在以前，为了减少 HTTP 请求，通常地，我们都会把所有的代码都打包成一个单独的 JS 文件。但是，如果这个 JS 文件体积很大的话，那就得不偿失了。
 >
 > 这时，我们不妨把所有代码分成一块一块，需要某块代码的时候再去加载它；还可以利用浏览器的缓存，下次用到它的话，直接从缓存中读取。很显然，这种做法可以加快我们网页的加载速度，美滋滋！
 
-##### 3.2.3.2 Code Splitting 怎么做
+#### 3.2.3.2 Code Splitting 怎么做
 
 主要有 2 种方式：
 
@@ -2438,7 +2438,7 @@ devtool: 'cheap-module-source-map'
 
 1. 假设我们的项目中使用了 vue、lodash、element-ui 等三方依赖，如果不使用 code spliting 的话，打包后的文件内容全部在目标文件 dist.js 中，文件就显得很大很臃肿，下次业务代码发生了改变，重新打包，仍然要重新加载很大的文件。相对的效率不太友好；对于第三方依赖的库，一般情况下，不会有改变，其实完全可以抽离出去，变为一个不变的文件处理
 
-###### 3.2.3.2.1 分离 Vendor
+##### 3.2.3.2.1 分离 Vendor
 
 > 最简单方法就是：加一个 entry ( [File Changes](https://github.com/lyyourc/webpack-code-splitting-demo/commit/6324e8a591b0c2b1fe5cd6c288a2cdfe56e17550) )：
 
@@ -2487,7 +2487,7 @@ module.exports = {
 
 6. 我们如果打开时候会发现：虽然 vendor.js 这个 entry chunk 包含了我们想要的 vue 和 axios ，但是 main.js 也包含了他们！为什么！？这是因为：每个 entry 都包含了他自己的依赖，这样他才能作为一个入口，独立地跑起来。很难受，事实上我们并不想 app.js 还包含了 vue 和 axios 。如果可以把他们俩相同的依赖提取出来就好了。如果想要提取公共模块的话，就需要用到 [CommonsChunkPlugin](https://webpack.js.org/plugins/commons-chunk-plugin/) 这个插件。
 
-###### 3.2.3.2.2 ~~使用 CommonsChunkPlugin 插件~~（ webpack4 后已被移除，推荐使用 `optimization.splitChunks`.）
+##### 3.2.3.2.2 ~~使用 CommonsChunkPlugin 插件~~（ webpack4 后已被移除，推荐使用 `optimization.splitChunks`.）
 
 > 注意：从 webpack4 以后， `CommonsChunkPlugin` 被移除了，来支持 `optimization.splitChunks`.
 
@@ -2504,7 +2504,7 @@ module.exports = {
    ]
    ```
 
-###### 3.2.3.2.3 使用`optimization.splitChunks`
+##### 3.2.3.2.3 使用`optimization.splitChunks`
 
 1. webpack.dev.js 中的以下代码删除
 
@@ -2576,7 +2576,7 @@ module.exports = {
    }
    ```
 
-#### 3.2.4 SplitChunksPlugin 配置参数详解
+### 3.4 SplitChunksPlugin 配置参数详解
 
 1. Webpack 之魔法注释 /_ webpackChunkName: x x x x _/ 的做用
 
@@ -2602,30 +2602,61 @@ module.exports = {
 
 2. 参数详解
 
+   > `chunks`的意思是对那些类型的代码进行分割，`all`是全部、`async`是异步、`initial`是同步;
+   >
+   > `minSize`的意思是引入的模块必须大于 30kb，才会进行代码分割；
+   >
+   > `maxSize`的意思是如果引入的模块，如果大于 50kb，进行二次分割，分成多个文件；
+   >
+   > `minChunks`当模块引入次数大于 1 时，才会进行代码分割；
+   >
+   > `maxAsyncRequests`同时加载 5 个以上的 js 文件，并行请求的最大数目为 5；
+   >
+   > `maxInitialRequests` 入口文件中，如果加载的模块大于 3 个时，不再进行代码分割；
+   >
+   > `automaticNameDelimiter`表示拆分出的 chunk 的名称连接符。默认为~。如 vendors~main.js;
+   >
+   > `name` 可重新定义打包后的文件名称，cacheGroups 的 vendors 的 filename 生效;
+   >
+   > `priority`当一个文件的打包条件同时满足`vendors`以及`default`中的条件时,会根据`priority`的大小优先选择应用那个，数值越大优先级越高；
+   >
+   > `reuseExistingChunk`如果 a 模块引用的模块 b 已经打包过，再打包时 b 模块不再进行打包，直接使用;
+
    ```javascript
    splitChunks: {
-     chunks: 'all', // 默认 async 可选值 all 和 initial
-       maxInitialRequests: Infinity, // 一个入口最大的并行请求数
-       minSize: 0, // 避免模块体积过小而被忽略
-       minChunks: 1, // 默认也是一表示最小引用次数
-       cacheGroups: {
-        	vendor: {
-           test: /[\\/]node_modules[\\/]/, // 如果需要的依赖特别小，可以直接设置成需要打包的依赖名称
-             name(module, chunks, chcheGroupKey) { // 可提供布尔值、字符串和函数，如果是函数，可编写自定义返回值
-             const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1] // 获取模块名称
-             return `npm.${packageName.replace('@', '')}` // 可选，一般情况下不需要将模块名称 @ 符号去除
-           }
+      chunks: 'async', // 代码分割时对异步代码生效，all：所有代码有效，inital：同步代码有效
+      minSize: 30000, // 代码分割最小的模块大小，引入的模块大于 30000B 才做代码分割
+      maxSize: 0, // 代码分割最大的模块大小，大于这个值要进行代码分割，一般使用默认值
+      minChunks: 1, // 引入的次数大于等于1时才进行代码分割
+      maxAsyncRequests: 6, // 最大的异步请求数量,也就是同时加载的模块最大模块数量
+      maxInitialRequests: 4, // 入口文件做代码分割最多分成 4 个 js 文件
+      automaticNameDelimiter: '~', // 文件生成时的连接符
+      automaticNameMaxLength: 30, // 自动生成的文件名的最大长度
+      cacheGroups: {
+         vendor: {
+            test: /[\\/]node_modules[\\/]/, // 位于node_modules中的模块做代码分割
+            priority: -10, // 根据优先级决定打包到哪个组里，例如一个 node_modules 中的模块进行代码
+               name(module, chunks, cacheGroupKey) { // 可提供布尔值、字符串和函数，如果是函数，可编写自定义返回值
+               const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1] // 获取模块名称
+               return `npm.${packageName.replace('@', '')}` // 可选，一般情况下不需要将模块名称 @ 符号去除
+            }
          },
          defaultVendors: {
-   				filename: (pathData) => {
+            priority: -20, //  根据优先级决定打包到哪个组里,打包到优先级高的组里。
+            reuseExistingChunk: true // //如果一个模块已经被打包过了,那么再打包时就忽略这个上模块
+            filename: (pathData) => {
                // Use pathData object for generating filename string based on your requirements
                return `${pathData.chunk.name}-bundle.js`;
-             },
+            },
          }
-       }
+      }
    }
    ```
 
 3. 参考文档:
 
    [使用 webpack 代码分割和魔术注释提升应用性能](https://segmentfault.com/a/1190000039134142)
+
+   [Code Splitting 以及 SplitChunksPlugin 配置参数详解](https://juejin.cn/post/6975898319780315173)
+
+### 3.5 Lazy Loading 懒加载，Chunk 是什么？
