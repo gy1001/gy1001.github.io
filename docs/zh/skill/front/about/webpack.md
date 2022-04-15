@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-
+   
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -2495,7 +2495,7 @@ module.exports = {
 
    ```javascript
    const { optimize } = require('webpack')
-
+   
    plugins: [
      ...,
      new optimize.CommonsChunkPlugin({
@@ -2543,7 +2543,7 @@ module.exports = {
    ```javascript
    const path = require('path')
    const webpack = require('webpack')
-
+   
    module.exports = {
    	mode: 'development',
    	entry: path.resolve(__dirname, 'src/index.js'),
@@ -2623,33 +2623,35 @@ module.exports = {
    > `reuseExistingChunk`如果 a 模块引用的模块 b 已经打包过，再打包时 b 模块不再进行打包，直接使用;
 
    ```javascript
-   splitChunks: {
-      chunks: 'async', // 代码分割时对异步代码生效，all：所有代码有效，inital：同步代码有效
-      minSize: 30000, // 代码分割最小的模块大小，引入的模块大于 30000B 才做代码分割
-      maxSize: 0, // 代码分割最大的模块大小，大于这个值要进行代码分割，一般使用默认值
-      minChunks: 1, // 引入的次数大于等于1时才进行代码分割
-      maxAsyncRequests: 6, // 最大的异步请求数量,也就是同时加载的模块最大模块数量
-      maxInitialRequests: 4, // 入口文件做代码分割最多分成 4 个 js 文件
-      automaticNameDelimiter: '~', // 文件生成时的连接符
-      automaticNameMaxLength: 30, // 自动生成的文件名的最大长度
-      cacheGroups: {
-         vendor: {
-            test: /[\\/]node_modules[\\/]/, // 位于node_modules中的模块做代码分割
-            priority: -10, // 根据优先级决定打包到哪个组里，例如一个 node_modules 中的模块进行代码
-               name(module, chunks, cacheGroupKey) { // 可提供布尔值、字符串和函数，如果是函数，可编写自定义返回值
-               const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1] // 获取模块名称
-               return `npm.${packageName.replace('@', '')}` // 可选，一般情况下不需要将模块名称 @ 符号去除
-            }
-         },
-         defaultVendors: {
-            priority: -20, //  根据优先级决定打包到哪个组里,打包到优先级高的组里。
-            reuseExistingChunk: true // //如果一个模块已经被打包过了,那么再打包时就忽略这个上模块
-            filename: (pathData) => {
-               // Use pathData object for generating filename string based on your requirements
-               return `${pathData.chunk.name}-bundle.js`;
-            },
-         }
-      }
+   optimization: {
+   	splitChunks: {
+   		chunks: 'async', // 代码分割时对异步代码生效，all：所有代码有效，inital：同步代码有效
+   		minSize: 30000, // 代码分割最小的模块大小，引入的模块大于 30000B 才做代码分割
+   		maxSize: 0, // 代码分割最大的模块大小，大于这个值要进行代码分割，一般使用默认值
+   		minChunks: 1, // 引入的次数大于等于1时才进行代码分割
+   		maxAsyncRequests: 6, // 最大的异步请求数量,也就是同时加载的模块最大模块数量
+   		maxInitialRequests: 4, // 入口文件做代码分割最多分成 4 个 js 文件
+   		automaticNameDelimiter: '~', // 文件生成时的连接符
+   		cacheGroups: {
+   			vendor: {
+   				test: /[\\/]node_modules[\\/]/, // 位于node_modules中的模块做代码分割
+   				priority: -10, // 根据优先级决定打包到哪个组里，例如一个 node_modules 中的模块进行代码
+   				name(module, chunks, cacheGroupKey) {
+   					// 可提供布尔值、字符串和函数，如果是函数，可编写自定义返回值
+   					const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1] // 获取模块名称
+   					return `npm.${packageName.replace('@', '')}` // 可选，一般情况下不需要将模块名称 @ 符号去除
+   				},
+   			},
+   			defaultVendors: {
+   				priority: -20, //  根据优先级决定打包到哪个组里,打包到优先级高的组里。
+   				reuseExistingChunk: true, // //如果一个模块已经被打包过了,那么再打包时就忽略这个上模块
+   				filename: (pathData) => {
+   					// Use pathData object for generating filename string based on your requirements
+   					return `${pathData.chunk.name}-bundle.js`
+   				},
+   			},
+   		},
+   	},
    }
    ```
 
@@ -2658,5 +2660,7 @@ module.exports = {
    [使用 webpack 代码分割和魔术注释提升应用性能](https://segmentfault.com/a/1190000039134142)
 
    [Code Splitting 以及 SplitChunksPlugin 配置参数详解](https://juejin.cn/post/6975898319780315173)
+
+   [代码干燥计划之 SplitChunksPlugin](https://drylint.com/Webpack/SplitChunksPlugin.html)
 
 ### 3.5 Lazy Loading 懒加载，Chunk 是什么？
