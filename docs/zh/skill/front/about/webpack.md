@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-      
+   
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -2665,20 +2665,20 @@ module.exports = {
 
 ### 3.5 Lazy Loading 懒加载，Chunk 是什么？
 
-#### 3.5.1 Lazy Loading 基本示例 
+#### 3.5.1 Lazy Loading 基本示例
 
-1. index.js中更改为如下内容
+1. index.js 中更改为如下内容
 
    ```javascript
    import { add } from './math'
    console.log(add(1, 2))
-   
+
    function getVueComponent() {
    	return import(/*webpackChunkName:"vue"*/ 'vue').then((vue) => {
    		console.log(vue)
    	})
    }
-   
+
    setTimeout(() => {
    	getVueComponent()
    }, 3000)
@@ -2686,23 +2686,23 @@ module.exports = {
 
 2. 重新运行编译命令`npm run start`，打开浏览器观看效果
 
-3. 首先加载`add`函数，打印出结果，3s延迟后加载 vue 模块，并打印出结果。可以在开发工具中的网络查看懒加载过程。
+3. 首先加载`add`函数，打印出结果，3s 延迟后加载 vue 模块，并打印出结果。可以在开发工具中的网络查看懒加载过程。
 
 #### 3.5.2 chunk 是什么
 
 > ##### `webpack`打包的过程种，生成的`JS文件`，每一个`JS文件`我们都把它叫做`Chunk`。
 
-注意上面配置的参数 minChunks、以及 chunks：all  配置等
+注意上面配置的参数 minChunks、以及 chunks：all 配置等
 
 #### 3.5.3 参考文献
 
-[Chunk是什么？](https://www.jianshu.com/p/c73570cb934b)
+[Chunk 是什么？](https://www.jianshu.com/p/c73570cb934b)
 
-### 3.6  打包分析，Preloading, Prefetching
+### 3.6 打包分析，Preloading, Prefetching
 
 #### 3.6.1 官方打包分析
 
-1. 打开地址  https://github.com/webpack/analyse 查看 analyse 打包命令
+1. 打开地址 https://github.com/webpack/analyse 查看 analyse 打包命令
 
 2. 修改打包脚本命令，增加如下命令
 
@@ -2712,7 +2712,7 @@ module.exports = {
    },
    ```
 
-3. 执行命令`npm run analyse`, 查看文件新增加 stats.json 
+3. 执行命令`npm run analyse`, 查看文件新增加 stats.json
 
 4. 打开网址：https://webpack.github.io/analyse/ 上传 stats.json ，它会显示分析结果
 
@@ -2726,4 +2726,47 @@ module.exports = {
 4. [webpack bundle optimize helper](https://webpack.jakoblind.no/optimize): This tool will analyze your bundle and give you actionable suggestions on what to improve to reduce your bundle size.
 5. [bundle-stats](https://github.com/bundle-stats/bundle-stats): Generate a bundle report(bundle size, assets, modules) and compare the results between different builds.
 
-#### 3.6.3 preloading、prefecthing
+#### 3.6.3 preloading、prefetching
+
+> preloading：设置这个指令，就会在当前的页面中，以较高优先级预加载某个资源。其实就相当于浏览器的预加载，但是浏览器的预加载只会加载html中声明的资源，但是preloading突破了这个限制，连css和js资源也可以预加载一波。
+>
+> Prefetching：设置这个指令，就表示允许浏览器在后台（空闲时）获取将来可能用得到的资源，并且将他们存储在浏览器的缓存中。
+> 这两种其实都是webpack提供的资源加载优化的方式，反正如果就是设置了这几个指令，就会先走个http的缓存，然后下次再次请求的时候直接从缓存里面拿，这样就节省了加载的时间。
+
+##### 3.6.3.1 设置Prefetching 
+
+> 使用魔法注释的方式，在需要预加载的地方添加：
+
+```javascript
+document.body.addEventListener("click", () => {
+ 	import(/* webpackPrefetch: true */ "./footer.js").then(module => {
+    console.log(module);
+    module.createFooter();
+  });
+});
+```
+
+##### 3.6.3.2 设置Preloading
+
+```javascript
+document.body.addEventListener("click", () => {
+	import(/* webpackPreload: true */ "./footer.js").then(module => {
+    console.log(module);
+    module.createFooter();
+  });
+});
+```
+
+##### 3.6.3 使用时机
+
+Preloading什么时候用呢？比如说，你页面中的很多组件都用到了jQuery，比较强依赖这个东西，那么我们就可以当import引入jQuery库的时候设置为Preloading，让他预加载一波。
+
+而Prefetching我们一般用的比较多，也比较好理解，用官网的例子来说：一般当我们进入一个网站首页，只有当点击登录按钮的时候模态框才需要弹出来，那么我们就可以对这个login模态框组件做下Prefetching，当首页加载完毕，浏览器空闲的时候提前加载一下，这样当用户点击登录按钮就可以直接从缓存里面加载这个组件了。
+
+##### 参考文献
+
+[prefetching 和 preloading](https://www.jianshu.com/p/2ad9535968aa)
+
+[webpack Prefetching/Preloading](https://blog.csdn.net/ks8380/article/details/107825899)
+
+[聊一聊 webpack 中的 preloading 和 Prefetching](http://www.360doc.com/content/20/0820/08/65839755_931232900.shtml)
