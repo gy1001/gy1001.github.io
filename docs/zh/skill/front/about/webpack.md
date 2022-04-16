@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-   
+
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -2495,7 +2495,7 @@ module.exports = {
 
    ```javascript
    const { optimize } = require('webpack')
-   
+
    plugins: [
      ...,
      new optimize.CommonsChunkPlugin({
@@ -2543,7 +2543,7 @@ module.exports = {
    ```javascript
    const path = require('path')
    const webpack = require('webpack')
-   
+
    module.exports = {
    	mode: 'development',
    	entry: path.resolve(__dirname, 'src/index.js'),
@@ -2728,40 +2728,40 @@ module.exports = {
 
 #### 3.6.3 preloading、prefetching
 
-> preloading：设置这个指令，就会在当前的页面中，以较高优先级预加载某个资源。其实就相当于浏览器的预加载，但是浏览器的预加载只会加载html中声明的资源，但是preloading突破了这个限制，连css和js资源也可以预加载一波。
+> preloading：设置这个指令，就会在当前的页面中，以较高优先级预加载某个资源。其实就相当于浏览器的预加载，但是浏览器的预加载只会加载 html 中声明的资源，但是 preloading 突破了这个限制，连 css 和 js 资源也可以预加载一波。
 >
 > Prefetching：设置这个指令，就表示允许浏览器在后台（空闲时）获取将来可能用得到的资源，并且将他们存储在浏览器的缓存中。
-> 这两种其实都是webpack提供的资源加载优化的方式，反正如果就是设置了这几个指令，就会先走个http的缓存，然后下次再次请求的时候直接从缓存里面拿，这样就节省了加载的时间。
+> 这两种其实都是 webpack 提供的资源加载优化的方式，反正如果就是设置了这几个指令，就会先走个 http 的缓存，然后下次再次请求的时候直接从缓存里面拿，这样就节省了加载的时间。
 
-##### 3.6.3.1 设置Prefetching 
+##### 3.6.3.1 设置 Prefetching
 
 > 使用魔法注释的方式，在需要预加载的地方添加：
 
 ```javascript
-document.body.addEventListener("click", () => {
- 	import(/* webpackPrefetch: true */ "./footer.js").then(module => {
-    console.log(module);
-    module.createFooter();
-  });
-});
+document.body.addEventListener('click', () => {
+	import(/* webpackPrefetch: true */ './footer.js').then((module) => {
+		console.log(module)
+		module.createFooter()
+	})
+})
 ```
 
-##### 3.6.3.2 设置Preloading
+##### 3.6.3.2 设置 Preloading
 
 ```javascript
-document.body.addEventListener("click", () => {
-	import(/* webpackPreload: true */ "./footer.js").then(module => {
-    console.log(module);
-    module.createFooter();
-  });
-});
+document.body.addEventListener('click', () => {
+	import(/* webpackPreload: true */ './footer.js').then((module) => {
+		console.log(module)
+		module.createFooter()
+	})
+})
 ```
 
 ##### 3.6.3 使用时机
 
-Preloading什么时候用呢？比如说，你页面中的很多组件都用到了jQuery，比较强依赖这个东西，那么我们就可以当import引入jQuery库的时候设置为Preloading，让他预加载一波。
+Preloading 什么时候用呢？比如说，你页面中的很多组件都用到了 jQuery，比较强依赖这个东西，那么我们就可以当 import 引入 jQuery 库的时候设置为 Preloading，让他预加载一波。
 
-而Prefetching我们一般用的比较多，也比较好理解，用官网的例子来说：一般当我们进入一个网站首页，只有当点击登录按钮的时候模态框才需要弹出来，那么我们就可以对这个login模态框组件做下Prefetching，当首页加载完毕，浏览器空闲的时候提前加载一下，这样当用户点击登录按钮就可以直接从缓存里面加载这个组件了。
+而 Prefetching 我们一般用的比较多，也比较好理解，用官网的例子来说：一般当我们进入一个网站首页，只有当点击登录按钮的时候模态框才需要弹出来，那么我们就可以对这个 login 模态框组件做下 Prefetching，当首页加载完毕，浏览器空闲的时候提前加载一下，这样当用户点击登录按钮就可以直接从缓存里面加载这个组件了。
 
 ##### 参考文献
 
