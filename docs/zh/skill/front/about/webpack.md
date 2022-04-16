@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-   
+      
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -2626,8 +2626,8 @@ module.exports = {
    optimization: {
    	splitChunks: {
    		chunks: 'async', // 代码分割时对异步代码生效，all：所有代码有效，inital：同步代码有效
-   		minSize: 30000, // 代码分割最小的模块大小，引入的模块大于 30000B 才做代码分割
-   		maxSize: 0, // 代码分割最大的模块大小，大于这个值要进行代码分割，一般使用默认值
+       minSize: 30000, // 例如导入10kb的依赖包小于30kb便不会拆分代码块
+       maxSize: 50000, // 代码分割最大的模块大小，大于这个值要进行代码分割，一般使用默认值
    		minChunks: 1, // 引入的次数大于等于1时才进行代码分割
    		maxAsyncRequests: 6, // 最大的异步请求数量,也就是同时加载的模块最大模块数量
    		maxInitialRequests: 4, // 入口文件做代码分割最多分成 4 个 js 文件
@@ -2664,3 +2664,66 @@ module.exports = {
    [代码干燥计划之 SplitChunksPlugin](https://drylint.com/Webpack/SplitChunksPlugin.html)
 
 ### 3.5 Lazy Loading 懒加载，Chunk 是什么？
+
+#### 3.5.1 Lazy Loading 基本示例 
+
+1. index.js中更改为如下内容
+
+   ```javascript
+   import { add } from './math'
+   console.log(add(1, 2))
+   
+   function getVueComponent() {
+   	return import(/*webpackChunkName:"vue"*/ 'vue').then((vue) => {
+   		console.log(vue)
+   	})
+   }
+   
+   setTimeout(() => {
+   	getVueComponent()
+   }, 3000)
+   ```
+
+2. 重新运行编译命令`npm run start`，打开浏览器观看效果
+
+3. 首先加载`add`函数，打印出结果，3s延迟后加载 vue 模块，并打印出结果。可以在开发工具中的网络查看懒加载过程。
+
+#### 3.5.2 chunk 是什么
+
+> ##### `webpack`打包的过程种，生成的`JS文件`，每一个`JS文件`我们都把它叫做`Chunk`。
+
+注意上面配置的参数 minChunks、以及 chunks：all  配置等
+
+#### 3.5.3 参考文献
+
+[Chunk是什么？](https://www.jianshu.com/p/c73570cb934b)
+
+### 3.6  打包分析，Preloading, Prefetching
+
+#### 3.6.1 官方打包分析
+
+1. 打开地址  https://github.com/webpack/analyse 查看 analyse 打包命令
+
+2. 修改打包脚本命令，增加如下命令
+
+   ```shell
+   "scripts": {
+     "analyse": "webpack --profile --json > stats.json --config webpack.prod.js",
+   },
+   ```
+
+3. 执行命令`npm run analyse`, 查看文件新增加 stats.json 
+
+4. 打开网址：https://webpack.github.io/analyse/ 上传 stats.json ，它会显示分析结果
+
+#### 3.6.2 官方其他工具分析
+
+> 地址：https://webpack.js.org/guides/code-splitting/#bundle-analysis
+
+1. [webpack-chart](https://alexkuz.github.io/webpack-chart/): Interactive pie chart for webpack stats.
+2. [webpack-visualizer](https://chrisbateman.github.io/webpack-visualizer/): Visualize and analyze your bundles to see which modules are taking up space and which might be duplicates.
+3. [webpack-bundle-analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer): A plugin and CLI utility that represents bundle content as a convenient interactive zoomable treemap.
+4. [webpack bundle optimize helper](https://webpack.jakoblind.no/optimize): This tool will analyze your bundle and give you actionable suggestions on what to improve to reduce your bundle size.
+5. [bundle-stats](https://github.com/bundle-stats/bundle-stats): Generate a bundle report(bundle size, assets, modules) and compare the results between different builds.
+
+#### 3.6.3 preloading、prefecthing
