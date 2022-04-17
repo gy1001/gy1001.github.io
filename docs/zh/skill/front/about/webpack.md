@@ -476,16 +476,17 @@ module.exports = {
    	.el-img {
    		width: 100px;
    		transform: translate(100px, 100px) // 这里属于新特性，某些浏览需要增加相应前缀才会识别，postcss-loader 可以解决这个问题，自动增加前缀
+   ;
    	}
    }
    ```
-   
+
    index.css 文件内容如下
-   
+
    ```css
    @import './img.less'; // 注意这里是 css 文件引入 less 文件
    ```
-   
+
 2. index.js 中引入 index.css 文件, 并修改引入 img 片段内容，更改如下
 
    1. 当不使用 modules: true 模块化配置时候如此引人，是作为全局样式引入
@@ -507,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-   
+
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -2494,7 +2495,7 @@ module.exports = {
 
    ```javascript
    const { optimize } = require('webpack')
-   
+
    plugins: [
      ...,
      new optimize.CommonsChunkPlugin({
@@ -2542,7 +2543,7 @@ module.exports = {
    ```javascript
    const path = require('path')
    const webpack = require('webpack')
-   
+
    module.exports = {
    	mode: 'development',
    	entry: path.resolve(__dirname, 'src/index.js'),
@@ -2772,7 +2773,7 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
 ### 3.7 CSS 文件的分割
 
-> 知识点： output中有filename、chunkFilename 两个配置项，有何区别呢？前者表示是入口文件打包后的文件名规则，而后者是相关依赖产生的文件名配置规则。
+> 知识点： output 中有 filename、chunkFilename 两个配置项，有何区别呢？前者表示是入口文件打包后的文件名规则，而后者是相关依赖产生的文件名配置规则。
 
 #### 3.7.1 MiniCssExtractPlugin
 
@@ -2786,26 +2787,26 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```css
    body {
-     background: green;
+   	background: green;
    }
    ```
 
 3. **webpack.dev.config.js** 修改如下
 
    ```javascript
-   const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-   
+   const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+
    module.exports = {
-     plugins: [new MiniCssExtractPlugin()],
-     module: {
-       rules: [
-         {
-           test: /\.css$/i,
-           use: [MiniCssExtractPlugin.loader, "css-loader"],
-         },
-       ],
-     },
-   };
+   	plugins: [new MiniCssExtractPlugin()],
+   	module: {
+   		rules: [
+   			{
+   				test: /\.css$/i,
+   				use: [MiniCssExtractPlugin.loader, 'css-loader'],
+   			},
+   		],
+   	},
+   }
    ```
 
 4. 注意 package.json 中的 相关配置需要有如下设置
@@ -2828,30 +2829,30 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    npm install css-minimizer-webpack-plugin --save-dev
    ```
 
-2. Webpack.配置文件中做如下更改（本例中为webpack.prod.js）
+2. Webpack.配置文件中做如下更改（本例中为 webpack.prod.js）
 
    ```javascript
-   const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-   const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-   
+   const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+   const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+
    module.exports = {
-     module: {
-       rules: [
-         {
-           test: /.s?css$/,
-           use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
-         },
-       ],
-     },
-     optimization: {
-       minimizer: [
-         // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
-         // `...`,
-         new CssMinimizerPlugin(),
-       ],
-     },
-     plugins: [new MiniCssExtractPlugin()],
-   };
+   	module: {
+   		rules: [
+   			{
+   				test: /.s?css$/,
+   				use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+   			},
+   		],
+   	},
+   	optimization: {
+   		minimizer: [
+   			// For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
+   			// `...`,
+   			new CssMinimizerPlugin(),
+   		],
+   	},
+   	plugins: [new MiniCssExtractPlugin()],
+   }
    ```
 
    注意：This will enable CSS optimization only in production mode。If you want to run it also in development set the `optimization.minimize` option to `true` （这只在生产环境中使 CSS 优化器生效，如果你想要在开发环境中使用，设置 optimization.minimize 选项为 true）
@@ -2859,21 +2860,21 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    ```javascript
    // [...]
    module.exports = {
-     optimization: {
-       // [...]
-       minimize: true,
-     },
-   };
+   	optimization: {
+   		// [...]
+   		minimize: true,
+   	},
+   }
    ```
 
 3. 运行打包命令`npm run build`, 即可发现打包后的文件被压缩了
 
-4. 
+4.
 
 #### 3.7.3 文档参考
 
-[webpack之MiniCssExtractPlugin](https://webpack.docschina.org/plugins/mini-css-extract-plugin/) 
+[webpack 之 MiniCssExtractPlugin](https://webpack.docschina.org/plugins/mini-css-extract-plugin/)
 
-[『Webpack系列』—— MiniCssExtractPlugin插件用法详解](https://juejin.cn/post/6850418117500715015)
+[『Webpack 系列』—— MiniCssExtractPlugin 插件用法详解](https://juejin.cn/post/6850418117500715015)
 
-[webpack之CssMinimizerWebpackPlugin](https://webpack.js.org/plugins/css-minimizer-webpack-plugin/)
+[webpack 之 CssMinimizerWebpackPlugin](https://webpack.js.org/plugins/css-minimizer-webpack-plugin/)
