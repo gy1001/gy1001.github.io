@@ -2878,3 +2878,73 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 [『Webpack 系列』—— MiniCssExtractPlugin 插件用法详解](https://juejin.cn/post/6850418117500715015)
 
 [webpack 之 CssMinimizerWebpackPlugin](https://webpack.js.org/plugins/css-minimizer-webpack-plugin/)
+
+### 3.8 Webpack 与浏览器缓存( Caching )
+
+#### 3.8.1 filename 和 chunkFilename
+
+1. 目前的 打包设置 output 是类似下面这样的
+
+   ```javascript
+   output: {
+      publicPath: '/',
+      filename: '[name].js',
+      path: path.resolve(__dirname, 'bundle'),
+      assetModuleFilename: 'images/[name][ext]',
+   },
+   ```
+
+2. 打包后的文件是类似 vendor.js、main.js 等，
+
+3. 这样把文件上传到服务器后，如果用户访问，第一次是会获取最新的代码，然后浏览器会缓存下来
+
+4. 下次在进行访问时候，会通过本地缓存进行获取渲染页面
+
+5. 如果这时候我们更改了一些业务代码，再次执行打包命令，打包后的文件名字没有变化(其实内容已经变化了)，然后把文件上传到服务器
+
+6. 这时候用户如果刷新(非强刷)时，这时候是不会获取最新上传的代码的
+
+7. 那怎么处理呢
+
+#### 3.8.2 contenthash
+
+> contenthash 占位符，是根据内容生成的 hash，内容不变，hash 就不变
+
+1. 这时候我们可以在 output 项目设置如下
+
+   ```javascript
+   output: {
+      path: path.resolve(__dirname, '../dist'),
+      filename: "[name].[contenthash].js",
+      chunkFilename: "[name].[contenthash].js"
+   },
+   ```
+
+2. 这样修改后通过打包命令打包后的文件会是如下的样子
+
+   ```javascript
+   index.html、main.fadsff787f89675.js  vendor.78asdfasdh90s90f89.js
+   ```
+
+3. 这样把文件上传到服务器后，如果用户访问，第一次是会获取最新的代码，然后浏览器会缓存下来
+
+4. 如果这时候我们更改了一些业务代码，再次执行打包命令，打包后的文件名字没有变化(其实内容已经变化了)，然后把文件上传到服务器
+
+   ```javascript
+   // 打包后，未发生变化的 vendor 是不会变化的
+   index.html、main.fadsff787f8788.js  vendor.78asdfasdh90s90f89.js
+   ```
+
+5. 这样用户在服务器更新后，没有变化的文件本地有同名文件，直接使用；而发生变化的，由于 contenthash 不同，所以本地没有同名文件，就会去服务器重新获取最新的文件
+
+6. 这样就起到了始终访问的是最新的，并且又合理利用了缓存功能，加快了响应速度
+
+#### 3.8.3 文献参考
+
+[webpack 与浏览器缓存（caching）](https://cloud.tencent.com/developer/article/1602205)
+
+下面的文章又对老版本的 webapck，做单独处理：相关理论如下
+
+> 我们已经知道，业务代码存在于 main 中，第三方库代码存在于 vendors 中，但是库和业务逻辑之间也是有关联的，这个关联就是`manifest`，默认 manifest 是存在于 main 也存在于 vendors 中的，在不同版本的 webapck 中，`manifest`可能有差异，（可能存在 content 不改变改变 manifest 改变，从而影响其他文件改变）这就导致了上面出现的，旧版本 webpack4 中，即使没有改变 content，hash 也会改变。当我们配置了`runtimeChunk`就会吧`manifest`中的代码提出来到 runtime.js 中，这样的话，main 和 vendors 相对独立一点，就不会出现上面的问题了。当然了，新版本的 webpack 也是可以配置的，大家不放试一试，不过新版本可以不用配置。
+
+[webpack 与浏览器缓存(Caching)](https://www.jianshu.com/p/906c61a716e6)
