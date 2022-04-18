@@ -2948,3 +2948,13 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 > 我们已经知道，业务代码存在于 main 中，第三方库代码存在于 vendors 中，但是库和业务逻辑之间也是有关联的，这个关联就是`manifest`，默认 manifest 是存在于 main 也存在于 vendors 中的，在不同版本的 webapck 中，`manifest`可能有差异，（可能存在 content 不改变改变 manifest 改变，从而影响其他文件改变）这就导致了上面出现的，旧版本 webpack4 中，即使没有改变 content，hash 也会改变。当我们配置了`runtimeChunk`就会吧`manifest`中的代码提出来到 runtime.js 中，这样的话，main 和 vendors 相对独立一点，就不会出现上面的问题了。当然了，新版本的 webpack 也是可以配置的，大家不放试一试，不过新版本可以不用配置。
 
 [webpack 与浏览器缓存(Caching)](https://www.jianshu.com/p/906c61a716e6)
+
+### 3.9 Shimming 的作用
+
+#### 3.9.x 参考文献
+
+[webpack 指南：shimming](https://www.cnblogs.com/ceceliahappycoding/p/12259786.html)
+
+[webpack 官网之 shimming](https://webpack.js.org/guides/shimming/)
+
+[webpack 中文文档之 shimming](https://www.webpackjs.com/guides/shimming/)
