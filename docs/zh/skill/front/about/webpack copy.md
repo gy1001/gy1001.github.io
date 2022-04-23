@@ -164,4 +164,10 @@
     3. global：**入口起点的返回值** 将会被复制给全局对象下的 `output.library.name`。取决于 [`target`](https://webpack.docschina.org/configuration/target/) 值，全局对象可以分别改变,例如，`self`、`global` 或者 `globalThis`。
     4. window：**入口起点的返回值**将使用 `output.library` 中定义的值，分配给 `window` 对象的这个属性下。
 
-12.
+12. 参考文档
+
+    [详解 webpack 的 out.libraryTarget 属性](https://www.xlaoyu.info/2018/01/05/webpack-output-librarytarget/)
+
+    [webpack 官网之 library](https://webpack.docschina.org/configuration/output/#outputlibrary)
+
+    [如何使用 webpack 打包一个库 library](https://segmentfault.com/a/1190000021318631)
