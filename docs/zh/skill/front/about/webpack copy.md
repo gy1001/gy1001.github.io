@@ -173,3 +173,5 @@
     [如何使用 webpack 打包一个库 library](https://segmentfault.com/a/1190000021318631)
 
 #### 4.1.2 引入其他的库用法
+
+[webpack 之 externals](https://webpack.docschina.org/configuration/externals/)
