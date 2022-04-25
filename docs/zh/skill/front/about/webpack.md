@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-      
+
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -2495,7 +2495,7 @@ module.exports = {
 
    ```javascript
    const { optimize } = require('webpack')
-   
+
    plugins: [
      ...,
      new optimize.CommonsChunkPlugin({
@@ -2543,7 +2543,7 @@ module.exports = {
    ```javascript
    const path = require('path')
    const webpack = require('webpack')
-   
+
    module.exports = {
    	mode: 'development',
    	entry: path.resolve(__dirname, 'src/index.js'),
@@ -2951,11 +2951,11 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
 ### 3.9 Shimming 的作用
 
-> ***shimming*** **将一个新的 API 引入到一个旧的环境中，而且仅靠旧的环境中已有的手段实现。**
+> **_shimming_** **将一个新的 API 引入到一个旧的环境中，而且仅靠旧的环境中已有的手段实现。**
 >
-> ***ProvidePlugin*** 我们在程序中暴露一个变量，通知webpack某个库被使用，webpack将在最终的bundle中引入该库。
+> **_ProvidePlugin_** 我们在程序中暴露一个变量，通知 webpack 某个库被使用，webpack 将在最终的 bundle 中引入该库。
 
-####  3.9.1 初步使用
+#### 3.9.1 初步使用
 
 1. 安装 `lodash`
 
@@ -2968,60 +2968,60 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    ```javascript
    // 注意：这里没有写：import _ from "lodash"
    function component() {
-       var element = document.createElement('div');
-       element.innerHTML = _.join(['hello','webpack'],' ');
-       return element;
+   	var element = document.createElement('div')
+   	element.innerHTML = _.join(['hello', 'webpack'], ' ')
+   	return element
    }
-   document.body.appendChild(component());
+   document.body.appendChild(component())
    ```
 
 3. `webpack.common.js`中进行如下添加
 
    ```javascript
-   plugins:[
-     new webpack.ProvidePlugin({
-       _: 'lodash'
-     })
+   plugins: [
+   	new webpack.ProvidePlugin({
+   		_: 'lodash',
+   	}),
    ]
    ```
 
 4. 运行命令`npm run start`, 打开浏览器，可以看到界面中显示 "hello webpack"
 
-4. 运行命令`npm run build`, 可以看到打包后的文件大小略大，1M左右
+5. 运行命令`npm run build`, 可以看到打包后的文件大小略大，1M 左右
 
-#### 3.9.2 还可以利用ProvidePlugin暴露库中的单一函数（变量）
+#### 3.9.2 还可以利用 ProvidePlugin 暴露库中的单一函数（变量）
 
 1. index.js 中代码可以更改为如下
 
    ```javascript
    function component() {
-       var element = document.createElement('div');
-       element.innerHTML = join(['hello','webpack'],' ');
-       return element;
+   	var element = document.createElement('div')
+   	element.innerHTML = join(['hello', 'webpack'], ' ')
+   	return element
    }
-   document.body.appendChild(component());
+   document.body.appendChild(component())
    ```
 
-2. 注意，这个文件里不需要 import _ from lodash了
+2. 注意，这个文件里不需要 import \_ from lodash 了
 
    ```javascript
    // webpack.common.js 更改如下
-    plugins:[
-      new CleanWebpackPlugin(),
-      new HtmlWebpackPlugin({
-        title: 'shimming'
-      }),
-      // 参照官网使用 webpack.ProvidePlugin 的 treeshaking 写法无效: join: ['lodash', 'join']
-      // 更改为如下有效
-      new webpack.ProvidePlugin({
-        join: "lodash-es/join" 
-      })
-    ]
+   plugins: [
+   	new CleanWebpackPlugin(),
+   	new HtmlWebpackPlugin({
+   		title: 'shimming',
+   	}),
+   	// 参照官网使用 webpack.ProvidePlugin 的 treeshaking 写法无效: join: ['lodash', 'join']
+   	// 更改为如下有效
+   	new webpack.ProvidePlugin({
+   		join: 'lodash-es/join',
+   	}),
+   ]
    ```
 
-   注意：这样，就可以将lodash库中的其他没用到的部分去除。（tree shaking）
+   注意：这样，就可以将 lodash 库中的其他没用到的部分去除。（tree shaking）
 
-   > 任何需要AST的功能，ProvidePlugin都无法正常运行
+   > 任何需要 AST 的功能，ProvidePlugin 都无法正常运行
 
 3. 运行命令`npm run start`, 打开浏览器，可以看到界面中显示 "hello webpack"
 
@@ -3036,12 +3036,11 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    > **1. 如下语法无效**
    >
    > ```jsx
-   > import { chunk } from 'lodash' 
+   > import { chunk } from 'lodash'
    > ```
    >
    > `lodash` 模块不支持 `ES6` 写法，需要使用 `lodash-es` 模块
-   >  **2. 参照官网使用 webpack.ProvidePlugin 的 treeshaking 写法无效**
-   >  [官网写法](https://links.jianshu.com/go?to=https%3A%2F%2Fwebpack.docschina.org%2Fguides%2Fshimming%2F%23shimming-%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F)：
+   > **2. 参照官网使用 webpack.ProvidePlugin 的 treeshaking 写法无效** > [官网写法](https://links.jianshu.com/go?to=https%3A%2F%2Fwebpack.docschina.org%2Fguides%2Fshimming%2F%23shimming-%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F)：
    >
    > ```csharp
    >     plugins: [
@@ -3060,32 +3059,31 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    > })
    > ```
    >
-   > **3. treeshaking 在 development 模式下无效，production 下效果正常**
-   >  **4. 还有一种情况也会导致 treeshaking 无效。当你使用 babel 进行语法转换时， babel 有可能会将你的 import 语法进行了转换，而 treeshaking 是基于 import 语法的。你需要做的是把 babel 的配置文件 .babelrc 中添加如下字段 "modules":false**
+   > **3. treeshaking 在 development 模式下无效，production 下效果正常** > **4. 还有一种情况也会导致 treeshaking 无效。当你使用 babel 进行语法转换时， babel 有可能会将你的 import 语法进行了转换，而 treeshaking 是基于 import 语法的。你需要做的是把 babel 的配置文件 .babelrc 中添加如下字段 "modules":false**
    >
    > ```json
    > {
-   >     "presets": [
-   >         [
-   >             "env",
-   >             {
-   >                 "modules": false,
-   >             }
-   >         ]
-   >     ]
+   > 	"presets": [
+   > 		[
+   > 			"env",
+   > 			{
+   > 				"modules": false
+   > 			}
+   > 		]
+   > 	]
    > }
    > ```
    >
    > PS：**[modules](https://links.jianshu.com/go?to=https%3A%2F%2Fbabel.docschina.org%2Fdocs%2Fen%2Fbabel-preset-env%23modules)** 字段用于将 `ES6` 写法转换为 `CommonJS`、`AMD` 等规范的写法，`false` 就是保留 `ES6` 的 `import` 写法，不进行转换
    >
-   > 作者：_月光临海
+   > 作者：\_月光临海
    > 链接：https://www.jianshu.com/p/193b00d57ef5
    > 来源：简书
    > 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 
-#### 3.9.3  imports-loader 覆写this指向
+#### 3.9.3 imports-loader 覆写 this 指向
 
-> [参考官网](https://webpack.docschina.org/guides/shimming/#granular-shimming) 
+> [参考官网](https://webpack.docschina.org/guides/shimming/#granular-shimming)
 
 1. 先进行安装
 
@@ -3093,36 +3091,36 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    npm i imports-loader
    ```
 
-2. 在CommonJS环境下，this指向module.exports。通过imports-loader将this指向window.
+2. 在 CommonJS 环境下，this 指向 module.exports。通过 imports-loader 将 this 指向 window.
 
 3. index.js 修改如下
 
    ```javascript
    function component() {
-     var element = document.createElement('div');
-     element.innerHTML = join(['hello','webpack'],' ');
-     this.alert('test hahaha');
-     return element;
+   	var element = document.createElement('div')
+   	element.innerHTML = join(['hello', 'webpack'], ' ')
+   	this.alert('test hahaha')
+   	return element
    }
-   document.body.appendChild(component());
+   document.body.appendChild(component())
    ```
 
 4. module 中的 rules 添加如下规则
 
    ```javascript
    module: {
-     rules: [
-       {
-         test: require.resolve('./src/index.js'),
-         use: 'imports-loader?wrapper=window'
-       }
-     ]
+   	rules: [
+   		{
+   			test: require.resolve('./src/index.js'),
+   			use: 'imports-loader?wrapper=window',
+   		},
+   	]
    }
    ```
 
-5. 运行命令 `npm run start` ,  打开浏览器, 可以看到界面中显示 "hello webpack"
+5. 运行命令 `npm run start` , 打开浏览器, 可以看到界面中显示 "hello webpack"
 
-#### 3.9.4 全局 Exports: ***exports-loader*** 将一个全局变量作为一个普通模块导出。
+#### 3.9.4 全局 Exports: **_exports-loader_** 将一个全局变量作为一个普通模块导出。
 
 > [官网链接](https://webpack.docschina.org/guides/shimming/#global-exports)
 
@@ -3134,30 +3132,30 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
 2. 新建 global.js 文件
 
-   > 注意：这个文件中没有任何export语句。
+   > 注意：这个文件中没有任何 export 语句。
 
    ```javascript
-   const file = 'blah.txt';
+   const file = 'blah.txt'
    const helpers = {
-     test: function () {
-       console.log('test something');
-     },
-     parse: function () {
-       console.log('parse something');
-     },
-   };
+   	test: function () {
+   		console.log('test something')
+   	},
+   	parse: function () {
+   		console.log('parse something')
+   	},
+   }
    ```
 
 3. `webpack.common.js` 增加如下代码
 
    ```javascript
    module: {
-     rules: [
-       {
-         test: require.resolve('./src/global.js'),
-         use: 'exports-loader?type=commonjs&exports=file,multiple|helpers.parse|parse'
-       }
-     ]
+   	rules: [
+   		{
+   			test: require.resolve('./src/global.js'),
+   			use: 'exports-loader?type=commonjs&exports=file,multiple|helpers.parse|parse',
+   		},
+   	]
    }
    ```
 
@@ -3165,7 +3163,7 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```javascript
    const { file, parse } = require('./global.js')
-   
+
    parse()
    console.log(file)
    ```
@@ -3178,7 +3176,25 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    },
    ```
 
-#### 
+#### 3.9.5 加载 Polyfills
+
+> 我们通常的做法是先检查当前浏览器是否支持某个 API，如果不支持的话就加载对应的 polyfill。
+
+#### 3.9.6 **_script-loader_**
+
+> 会在全局上下文中对代码进行取值，类似于通过一个 `script` 标签引入脚本。在这种模式下，每一个标准的库(library)都应该能正常运行。require,module 等取值为 undefine.
+>
+> 当使用 script-loader 时，模块将转化为字符串，然后添加到 bundle 中。它不会被 webpack 压缩，所以应该选择一个 min 版本。同时，script-loader 将不会有 devtool 的支持。
+
+这些老旧的模块如果没有 AMD/CommonJS 规范版本，但你也想将他们加入 /dist 目录，你可以使用 **_`noParse`_** 来标识出这个模块。这样就能使 webpack 将引入这些模块，但是不进行转化(parse)和解析(resolve) `require`和 `import` 语句。这个实践将提升构建性能。
+
+#### 3.9.7 **_thread-loader_**
+
+可以将非常消耗资源的 loaders 转存到 worker pool 中。
+
+#### 3.9.8 **_cache-loader_** 启用持久化缓存
+
+可以在多个编译之间共享缓存。使用 `package.json` 中的 `"postinstall"` 清除缓存目录。
 
 #### 3.9.x 参考文献
 
@@ -3190,3 +3206,182 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
 [webpack4 模板配置及遇到的问题](https://www.jianshu.com/p/193b00d57ef5)
 
+### 3.10 环境变量的使用方法
+
+#### 3.10.1 初步应用
+
+> 此用法不建议，只做了解就可，主流的不用这种
+
+1. 修改打包脚本命令如下
+
+   ```javascript
+   "scripts": {
+      "dev-build": "webpack --config webpack.common.js",
+      "prod-build": "webpack --env production --config webpack.common.js"
+   },
+   ```
+
+2. 修改 `webpack.common.js` 文件内容如下
+   ```javascript
+   ...
+   const { merge } = require('webpack-merge')
+   const devConfig = require('./webpack.dev')
+   const prodConfig = require('./webpack.prod')
+   const commonConfig = {
+     entry:{ ...},
+   ...
+   }
+   module.exports = (env) => {
+     if (env && env.production) {
+       return merge(commonConfig, prodConfig)
+     }
+     return merge(commonConfig, devConfig)
+   }
+   ```
+3. 再次执行如下打包命令
+
+   ```shell
+   npm run dev-build  // 产生测试环境的结果
+   npm run prod-build // 产生生产环境的结果
+   ```
+
+#### 3.10.2 参考文献
+
+[webpack 使用环境变量](https://webpack.js.org/guides/environment-variables/)
+
+## 4. Webpack 实战配置案例讲解
+
+### 4.1 Library 的打包
+
+#### 4.1.1 没有使用依赖的自有库 library
+
+> 上面的教程更多是开发业务代码，除了打包应用程序，webpack 还可以用于打包 JavaScript library。以下指南适用于希望简化打包策略的 library 作者。
+
+1. 新创建一个文件夹，名字比如叫做 `library`
+
+2. 进行初始化
+
+   ```javascript
+   npm init
+   ```
+
+3. 安装 webpack webpack-cli
+
+   ```shell
+   npm install webpack webpack-cli
+   ```
+
+4. 创建 `index.js`、`math.js`、`string.js` 文件，内容如下
+
+   ```javascript
+   // index.js: 注意这里写法不同，引入方式也会不同
+   export * from './math'
+   export * from './string'
+
+   // math.js
+   export function add(a, b) {
+   	return a + b
+   }
+
+   export function minus(a, b) {
+   	return a - b
+   }
+
+   export function multiply(a, b) {
+   	return a * b
+   }
+
+   export function division(a, b) {
+   	return a / b
+   }
+
+   // string.js
+   export function join(a, b) {
+   	return a + '' + b
+   }
+   ```
+
+5. 创建 `webpack.config.js`，内容如下
+
+   ```javascript
+   const path = require('path')
+
+   module.exports = {
+   	mode: 'production',
+   	entry: './src/index.js',
+   	output: {
+   		filename: 'library.js',
+   		path: path.resolve(__dirname, 'dist'),
+   	},
+   }
+   ```
+
+6. 修改`package.json`文件中的打包命令，更改如下
+
+   ```javascript
+    "scripts": {
+       "build": "webpack build"
+     },
+   ```
+
+7. 运行打包命令`npm run build`, 进行打包，结果输出`dist` 目录和`librarya.js`文件
+
+8. 这时候，显然作为业务代码开发是上面的流程，也是可以使用。但是如果作为库文件供其他开发者使用，显然是不可以的
+
+9. 首先，作为开发者，使用第三方依赖库有如下几种调用方式
+
+   ```javascript
+   // 第一种:es6方式
+   import library from "library"
+
+   // 第二种:commonjs方式
+   const library = require('library')
+
+   // 第三种:AMD方式
+   define("library", function(library){
+
+   })
+
+   // 第四种:script标签引入
+   <script src="http://xxx.com/library.js"></script>
+   <script>
+     // 这里直接使用 library
+   </script>
+   ```
+
+10. 我们可以在`webpack.config.js`中的`output`项目中在添加一项`libraryTarget`
+
+    ```javascript
+    output:{
+      ...
+      // libraryTarget: 'umd',
+      // library: 'library'
+      // 上述写法在官网提到：未来可能会移除，建议更改为如下写法
+      //
+      library: {
+        name: 'library',
+        type: 'umd',
+      },
+    }
+    ```
+
+11. 注意：这里的 `libraryTarget`、`library`有几种不同的配置(官方网站建议更改为：[`output.library.type`](https://webpack.docschina.org/configuration/output/#outputlibrarytype))
+
+    > 类型默认包括 `'var'`、`'module'`、`'assign'`、`'assign-properties'`、`'this'`、`'window'`、`'self'`、`'global'`、`'commonjs'`、`'commonjs2'`、`'commonjs-module'`、`'commonjs-static'`、`'amd'`、`'amd-require'`、`'umd'`、`'umd2'`、`'jsonp'` 以及 `'system'`，除此之外也可以通过插件添加。
+
+    1. var：当 library 加载完成，**入口起点的返回值**将分配给一个变量：
+    2. This：**入口起点的返回值** 将会被赋值给 this 对象下的 `output.library.name` 属性。
+    3. global：**入口起点的返回值** 将会被复制给全局对象下的 `output.library.name`。取决于 [`target`](https://webpack.docschina.org/configuration/target/) 值，全局对象可以分别改变,例如，`self`、`global` 或者 `globalThis`。
+    4. window：**入口起点的返回值**将使用 `output.library` 中定义的值，分配给 `window` 对象的这个属性下。
+
+12. 参考文档
+
+    [详解 webpack 的 out.libraryTarget 属性](https://www.xlaoyu.info/2018/01/05/webpack-output-librarytarget/)
+
+    [webpack 官网之 library](https://webpack.docschina.org/configuration/output/#outputlibrary)
+
+    [如何使用 webpack 打包一个库 library](https://segmentfault.com/a/1190000021318631)
+
+#### 4.1.2 引入其他的库用法
+
+[webpack 之 externals](https://webpack.docschina.org/configuration/externals/)
