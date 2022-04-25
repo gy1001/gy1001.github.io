@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-
+      
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -2495,7 +2495,7 @@ module.exports = {
 
    ```javascript
    const { optimize } = require('webpack')
-
+   
    plugins: [
      ...,
      new optimize.CommonsChunkPlugin({
@@ -2543,7 +2543,7 @@ module.exports = {
    ```javascript
    const path = require('path')
    const webpack = require('webpack')
-
+   
    module.exports = {
    	mode: 'development',
    	entry: path.resolve(__dirname, 'src/index.js'),
@@ -2950,6 +2950,42 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 [webpack 与浏览器缓存(Caching)](https://www.jianshu.com/p/906c61a716e6)
 
 ### 3.9 Shimming 的作用
+
+> ***shimming*** **将一个新的 API 引入到一个旧的环境中，而且仅靠旧的环境中已有的手段实现。**
+>
+> ***ProvidePlugin*** 我们在程序中暴露一个变量，通知webpack某个库被使用，webpack将在最终的bundle中引入该库。
+
+####  3.9.1 初步使用
+
+1. 安装 `lodash`
+
+   ```shell
+   npm install lodash -D
+   ```
+
+2. index.js 中更改为如下代码
+
+   ```javascript
+   // 注意：这里没有写：import _ from "lodash"
+   function component() {
+       var element = document.createElement('div');
+       element.innerHTML = _.join(['hello','webpack'],' ');
+       return element;
+   }
+   document.body.appendChild(component());
+   ```
+
+3. `webpack.common.js`中进行如下添加
+
+   ```javascript
+   plugins:[
+     new webpack.ProvidePlugin({
+       _: 'lodash'
+     })
+   ]
+   ```
+
+4. 运行命令`npm run start`
 
 #### 3.9.x 参考文献
 
