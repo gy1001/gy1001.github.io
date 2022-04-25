@@ -2985,7 +2985,200 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    ]
    ```
 
-4. 运行命令`npm run start`
+4. 运行命令`npm run start`, 打开浏览器，可以看到界面中显示 "hello webpack"
+
+4. 运行命令`npm run build`, 可以看到打包后的文件大小略大，1M左右
+
+#### 3.9.2 还可以利用ProvidePlugin暴露库中的单一函数（变量）
+
+1. index.js 中代码可以更改为如下
+
+   ```javascript
+   function component() {
+       var element = document.createElement('div');
+       element.innerHTML = join(['hello','webpack'],' ');
+       return element;
+   }
+   document.body.appendChild(component());
+   ```
+
+2. 注意，这个文件里不需要 import _ from lodash了
+
+   ```javascript
+   // webpack.common.js 更改如下
+    plugins:[
+      new CleanWebpackPlugin(),
+      new HtmlWebpackPlugin({
+        title: 'shimming'
+      }),
+      // 参照官网使用 webpack.ProvidePlugin 的 treeshaking 写法无效: join: ['lodash', 'join']
+      // 更改为如下有效
+      new webpack.ProvidePlugin({
+        join: "lodash-es/join" 
+      })
+    ]
+   ```
+
+   注意：这样，就可以将lodash库中的其他没用到的部分去除。（tree shaking）
+
+   > 任何需要AST的功能，ProvidePlugin都无法正常运行
+
+3. 运行命令`npm run start`, 打开浏览器，可以看到界面中显示 "hello webpack"
+
+4. 运行打包命令`npm run prod-build` , 打包体积明显减少了很多
+
+5. 注意：以下问题
+
+   > 我想要使用 `lodash` 中的 `chunk` 方法，但是直接导入 `lodash` 并打包显然很冗余，因为我就用 `chunk` 那个方法而已，多了没用。`treeshaking` 就负责帮你只引用 `chunk`，把多余的代码像摇树一样摇掉。
+   >
+   > `treeshaking` 是基于 `ES6` 的 `import` 和 `export` 语法，我在实践中遇到了以下几个问题
+   >
+   > **1. 如下语法无效**
+   >
+   > ```jsx
+   > import { chunk } from 'lodash' 
+   > ```
+   >
+   > `lodash` 模块不支持 `ES6` 写法，需要使用 `lodash-es` 模块
+   >  **2. 参照官网使用 webpack.ProvidePlugin 的 treeshaking 写法无效**
+   >  [官网写法](https://links.jianshu.com/go?to=https%3A%2F%2Fwebpack.docschina.org%2Fguides%2Fshimming%2F%23shimming-%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F)：
+   >
+   > ```csharp
+   >     plugins: [
+   >       new webpack.ProvidePlugin({
+   > -       _: 'lodash'
+   > +       join: ['lodash', 'join']
+   >       })
+   >     ]
+   > ```
+   >
+   > 目前写法：
+   >
+   > ```css
+   > new webpack.ProvidePlugin({
+   >   _join: "lodash-es/join"    //   lodash/join 也可
+   > })
+   > ```
+   >
+   > **3. treeshaking 在 development 模式下无效，production 下效果正常**
+   >  **4. 还有一种情况也会导致 treeshaking 无效。当你使用 babel 进行语法转换时， babel 有可能会将你的 import 语法进行了转换，而 treeshaking 是基于 import 语法的。你需要做的是把 babel 的配置文件 .babelrc 中添加如下字段 "modules":false**
+   >
+   > ```json
+   > {
+   >     "presets": [
+   >         [
+   >             "env",
+   >             {
+   >                 "modules": false,
+   >             }
+   >         ]
+   >     ]
+   > }
+   > ```
+   >
+   > PS：**[modules](https://links.jianshu.com/go?to=https%3A%2F%2Fbabel.docschina.org%2Fdocs%2Fen%2Fbabel-preset-env%23modules)** 字段用于将 `ES6` 写法转换为 `CommonJS`、`AMD` 等规范的写法，`false` 就是保留 `ES6` 的 `import` 写法，不进行转换
+   >
+   > 作者：_月光临海
+   > 链接：https://www.jianshu.com/p/193b00d57ef5
+   > 来源：简书
+   > 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+#### 3.9.3  imports-loader 覆写this指向
+
+> [参考官网](https://webpack.docschina.org/guides/shimming/#granular-shimming) 
+
+1. 先进行安装
+
+   ```shell
+   npm i imports-loader
+   ```
+
+2. 在CommonJS环境下，this指向module.exports。通过imports-loader将this指向window.
+
+3. index.js 修改如下
+
+   ```javascript
+   function component() {
+     var element = document.createElement('div');
+     element.innerHTML = join(['hello','webpack'],' ');
+     this.alert('test hahaha');
+     return element;
+   }
+   document.body.appendChild(component());
+   ```
+
+4. module 中的 rules 添加如下规则
+
+   ```javascript
+   module: {
+     rules: [
+       {
+         test: require.resolve('./src/index.js'),
+         use: 'imports-loader?wrapper=window'
+       }
+     ]
+   }
+   ```
+
+5. 运行命令 `npm run start` ,  打开浏览器, 可以看到界面中显示 "hello webpack"
+
+#### 3.9.4 全局 Exports: ***exports-loader*** 将一个全局变量作为一个普通模块导出。
+
+> [官网链接](https://webpack.docschina.org/guides/shimming/#global-exports)
+
+1. 安装命令
+
+   ```shell
+   npm i exports-loader
+   ```
+
+2. 新建 global.js 文件
+
+   > 注意：这个文件中没有任何export语句。
+
+   ```javascript
+   const file = 'blah.txt';
+   const helpers = {
+     test: function () {
+       console.log('test something');
+     },
+     parse: function () {
+       console.log('parse something');
+     },
+   };
+   ```
+
+3. `webpack.common.js` 增加如下代码
+
+   ```javascript
+   module: {
+     rules: [
+       {
+         test: require.resolve('./src/global.js'),
+         use: 'exports-loader?type=commonjs&exports=file,multiple|helpers.parse|parse'
+       }
+     ]
+   }
+   ```
+
+4. `index.js`中修改如下
+
+   ```javascript
+   const { file, parse } = require('./global.js')
+   
+   parse()
+   console.log(file)
+   ```
+
+5. 运行命令`npm run start`, 打开浏览器可以在控制台看到效果
+
+   ```shell
+   "scripts": {
+   	"start": "webpack server --config webpack.common.js",
+   },
+   ```
+
+#### 
 
 #### 3.9.x 参考文献
 
@@ -2994,3 +3187,6 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 [webpack 官网之 shimming](https://webpack.js.org/guides/shimming/)
 
 [webpack 中文文档之 shimming](https://www.webpackjs.com/guides/shimming/)
+
+[webpack4 模板配置及遇到的问题](https://www.jianshu.com/p/193b00d57ef5)
+
