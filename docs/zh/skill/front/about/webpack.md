@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-
+   
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -2495,7 +2495,7 @@ module.exports = {
 
    ```javascript
    const { optimize } = require('webpack')
-
+   
    plugins: [
      ...,
      new optimize.CommonsChunkPlugin({
@@ -2543,7 +2543,7 @@ module.exports = {
    ```javascript
    const path = require('path')
    const webpack = require('webpack')
-
+   
    module.exports = {
    	mode: 'development',
    	entry: path.resolve(__dirname, 'src/index.js'),
@@ -3384,4 +3384,48 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
 #### 4.1.2 引入其他的库用法
 
+> `externals` 配置选项提供了「从输出的 bundle 中排除依赖」的方法。相反，所创建的 bundle 依赖于那些存在于用户环境(consumer's environment)中的依赖。此功能通常对 **library 开发人员**来说是最有用的，然而也会有各种各样的应用程序用到它。
+
+1. 上述项目中未使用 `lodash`, 假如引入第三方时候，更改`string.js`文件如下
+
+   ```javascript
+   import _ from "lodash"
+   export function join(a, b) {
+   	return _.join(a,b)
+   }
+   ```
+
+2. 安装`lodash`依赖
+
+   ```shell
+   npm install lodash --save-dev
+   ```
+
+3. 此时如果进行打包`npm run build`，可以发现打包文件`bundle.js`文件略大，因为它把`lodash`库也打包进入了。
+
+4. 在开发相关库或者其他功能时，我们并不希望打包文件引入相关依赖库，因为如果其他使用者也使用了相关依赖，就会造成加载的重复。为此，通过`externals`配置项就可以解决这个问题
+
+5. `string.js`修改为如下代码
+
+   ```javascript
+   export function join(a, b) {
+   	return _.join(a,b)
+   }
+   ```
+
+6. `webpack.common.js`中的配置文件修改如下
+
+   ```javascript
+   module.exports = {
+     //...
+     externals: {
+       _: 'lodash',
+     },
+   };
+   ```
+
+7. 
+
 [webpack 之 externals](https://webpack.docschina.org/configuration/externals/)
+
+[webpack externals 深入理解:把依赖包变为CDN引用，减少加载时间，配置External忽略库文件的打包](https://segmentfault.com/a/1190000012113011)
