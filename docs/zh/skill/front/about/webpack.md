@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-   
+
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -2495,7 +2495,7 @@ module.exports = {
 
    ```javascript
    const { optimize } = require('webpack')
-   
+
    plugins: [
      ...,
      new optimize.CommonsChunkPlugin({
@@ -2543,7 +2543,7 @@ module.exports = {
    ```javascript
    const path = require('path')
    const webpack = require('webpack')
-   
+
    module.exports = {
    	mode: 'development',
    	entry: path.resolve(__dirname, 'src/index.js'),
@@ -3389,9 +3389,9 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 1. 上述项目中未使用 `lodash`, 假如引入第三方时候，更改`string.js`文件如下
 
    ```javascript
-   import _ from "lodash"
+   import _ from 'lodash'
    export function join(a, b) {
-   	return _.join(a,b)
+   	return _.join(a, b)
    }
    ```
 
@@ -3408,8 +3408,9 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 5. `string.js`修改为如下代码
 
    ```javascript
+   import _ from 'lodash1'
    export function join(a, b) {
-   	return _.join(a,b)
+   	return _.join(a, b)
    }
    ```
 
@@ -3417,15 +3418,52 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```javascript
    module.exports = {
-     //...
-     externals: {
-       _: 'lodash',
-     },
-   };
+   	//...
+   	externals: {
+   		lodash1: 'lodash',
+   	},
+   }
    ```
 
-7. 
+7. 此时如果进行打包`npm run build`，可以发现打包文件`bundle.js`文件已经变小了，因为它把`lodash`库在打包过程中忽略了
+
+8. 关于 externals 的赋值方式有以下几种
+
+   1. 数组：
+
+      ```javascript
+      externals: ['lodash']
+      ```
+
+   2. 对象
+
+      > 外部 library 可能是以下任何一种形式：
+      >
+      > - **root**：可以通过一个全局变量访问 library（例如，通过 script 标签）。
+      > - **commonjs**：可以将 library 作为一个 CommonJS 模块访问。
+      > - **commonjs2**：和上面的类似，但导出的是 `module.exports.default`.
+      > - **amd**：类似于 `commonjs`，但使用 AMD 模块系统。
+
+      ```javascript
+       externals: {
+          jquery: 'jQuery',
+        }
+      // 或者
+       externals: {
+         lodash: {
+           commonjs: 'lodash',
+           amd: 'lodash',
+           root: '_', // 指向全局变量
+         },
+       },
+      ```
+
+   3. 还有其他的函数、正则等，常见的是上述方式
+
+#### 4.1.3 参考文献
 
 [webpack 之 externals](https://webpack.docschina.org/configuration/externals/)
 
-[webpack externals 深入理解:把依赖包变为CDN引用，减少加载时间，配置External忽略库文件的打包](https://segmentfault.com/a/1190000012113011)
+[webpack externals 深入理解:把依赖包变为 CDN 引用，减少加载时间，配置 External 忽略库文件的打包](https://segmentfault.com/a/1190000012113011)
+
+[Webpack 优化总会让你不得不爱](https://juejin.cn/post/6844904079320154126)
