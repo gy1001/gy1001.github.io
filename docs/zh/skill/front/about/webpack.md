@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-   
+
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -2495,7 +2495,7 @@ module.exports = {
 
    ```javascript
    const { optimize } = require('webpack')
-   
+
    plugins: [
      ...,
      new optimize.CommonsChunkPlugin({
@@ -2543,7 +2543,7 @@ module.exports = {
    ```javascript
    const path = require('path')
    const webpack = require('webpack')
-   
+
    module.exports = {
    	mode: 'development',
    	entry: path.resolve(__dirname, 'src/index.js'),
@@ -3470,4 +3470,4 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
 ### 4.2 PWA: Progressive Web Application
 
-> Progressive Web Apps（PWA）是一个结合了最好的web和app经验的渐进式网络应用程序。它对用户来说是非常有用的，它不需要安装，只需要从浏览器标签开始访问。随着用户与app建立的关系，它变得越来越强大。即使在片状网络上，它也可以实现快速加载，并发送相关推送通知。它可以在主屏幕上创建图标，并加载为顶级全屏体验。
+> Progressive Web Apps（PWA）是一个结合了最好的 web 和 app 经验的渐进式网络应用程序。它对用户来说是非常有用的，它不需要安装，只需要从浏览器标签开始访问。随着用户与 app 建立的关系，它变得越来越强大。即使在片状网络上，它也可以实现快速加载，并发送相关推送通知。它可以在主屏幕上创建图标，并加载为顶级全屏体验。
