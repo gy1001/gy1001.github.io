@@ -3702,3 +3702,169 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 #### 4.2.3 PWA 其他
 
 [神奇的 Workbox 3.0：让你的 Web 站点轻松做到离线可访问](https://toutiao.io/posts/eie19m/preview)
+
+### 4.3 TypeScript 的打包配置
+
+#### 4.3.1 ts 项目实战
+
+1. 新建文件夹 `ts-demo`, 并进行项目初始化
+
+   ```shell
+   mkdir ts-demo
+   cd ts-demo
+   npm init -y
+   ```
+
+2. 安装 `webpack`相关依赖
+
+   ```shell
+   npm i webpack webpack-cli -D
+   ```
+
+3. 新建 `src/index.ts`文件，内容如下
+
+   ```javascript
+   class Greeter {
+   	greeting: string
+   	constructor(message: string) {
+   		this.greeting = message
+   	}
+   	greet() {
+   		return 'Hello, ' + this.greeting
+   	}
+   }
+
+   let greeter = new Greeter('world')
+
+   alert(greeter.greet())
+   ```
+
+4. 新建`webpack.config.js`文件，并写入以下内容
+
+   ```javascript
+   const path = require('path')
+
+   module.exports = {
+   	mode: 'production',
+   	entry: './src/index.ts',
+   	module: {
+   		rules: [
+   			{
+   				test: /\.ts?$/,
+   				use: 'ts-loader',
+   				exclude: /node_modules/,
+   			},
+   		],
+   	},
+   	output: {
+   		filename: 'bundle.js',
+   		path: path.resolve(__dirname, 'dist'),
+   	},
+   }
+   ```
+
+5. 注意这里用到一个新的`ts-loader`, 需要进行安装
+
+   ```shell
+   npm install typescript ts-loader --save-dev
+   ```
+
+6. `package.json` 文件中新增加打包命令
+
+   ```javascript
+   "scripts": {
+     "build": "webpack build"
+   }
+   ```
+
+7. 此时直接进行`npm run build` 会提示，缺少`tsconfig.json`文件
+
+8. 根目录下新建文件`tsconfig.json`文件，内容如下
+
+   ```javascript
+   {
+     "compilerOptions": {
+       "outDir": "./dist", // 写不写都行
+       "module": "es6", // 用 es6 模块引入 import
+       "target": "es5", // 打包成 es5
+       "allowJs": true // 允许在 ts 中也能引入 js 的文件
+     }
+   }
+   ```
+
+9. 再次执行 `npm run build` , 打包后的 js 文件就可以直接在浏览器控制台运行了。说明文件中的 ts 语法已经被转换为浏览器可以识别的 js 语法了。
+
+#### 4.3.2 ts 中使用三方库，如何处理
+
+> 在上述的 index.ts 文件中，Greeter 的实例对象要求是 string 类型，如果通过 new 进行实例化时候传入不是 string 类型的，就会提示报错。而假如直接引入三方库，并使用时候，是没有办法感知的。如何处理，看下面操作
+
+1. 引入第三方库， 比如`lodash`
+
+   ```javascript
+   npm install lodash -D
+   ```
+
+2. 修改`index.ts`
+
+   ```javascript
+   import _ from 'lodash'
+
+   class Greeter {
+   	greeting: string
+   	constructor(message: string) {
+   		this.greeting = message
+   	}
+   	greet() {
+   		return _.join(['Hello', '', this.greeting], ' ')
+   		// return 'Hello, ' + this.greeting
+   	}
+   }
+   let greeter = new Greeter('world')
+   alert(greeter.greet())
+   ```
+
+3. 这里首行会报错
+
+   > 找不到模块“lodash”。你的意思是要将 "moduleResolution" 选项设置为 "node"，还是要将别名添加到 "paths" 选项中?ts(2792)
+   >
+   > 问题在于：问题出在没有 *声明文件*来描述你的代码库
+
+4. 安装声明文件库，解决上述问题
+
+   ```javascript
+   npm install @types/lodash -D
+   ```
+
+5. 安装后会发现没有了最开始的报错，会变为其他的报错，`index.ts` 需要更新为下面的代码
+
+   ```javascript
+   import * as _ from 'lodash'
+
+   class Greeter {
+   	greeting: string
+   	constructor(message: string) {
+   		this.greeting = message
+   	}
+   	greet() {
+   		// 这样写会进行类型检查，会提示报错：应有 1-2 个参数，但获得 0 个
+   		// return _.join()
+
+   		// 这样写也会报错：类型“number”的参数不能赋给类型“List<any>”的参数。
+   		// return _.join(1)
+
+   		// 正确的写法
+   		return _.join(['Hello', '', this.greeting], ' ')
+   	}
+   }
+
+   let greeter = new Greeter('world')
+   alert(greeter.greet())
+   ```
+
+6. 以上的类型检查就体现出了`typescript` 的优势
+
+#### 4.3.3 如何知道使用的库需要安装对应的类型插件呢?
+
+1. 打开[TypeSearch](https://link.segmentfault.com/?enc=oi9pp6M%2BLjGa5UX2Y%2FbphQ%3D%3D.80p4Ag6FsglGkTHM791PokbHE%2F9iRIwgvMrXfRGVudvejRgrTW6%2BvGu0YITO4Xsw)，在这里对应的去搜索你想用的库有没有类型插件，如果有, 只需要 `npm i @types/xxx-D` 即可
+
+   > 例如 需要 jquery 就执行 `npm i @types/jquery -D` 即可
