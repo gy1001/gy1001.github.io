@@ -3471,3 +3471,234 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 ### 4.2 PWA: Progressive Web Application
 
 > Progressive Web Apps（PWA）是一个结合了最好的 web 和 app 经验的渐进式网络应用程序。它对用户来说是非常有用的，它不需要安装，只需要从浏览器标签开始访问。随着用户与 app 建立的关系，它变得越来越强大。即使在片状网络上，它也可以实现快速加载，并发送相关推送通知。它可以在主屏幕上创建图标，并加载为顶级全屏体验。
+
+#### 4.2.1 不使用时的情况
+
+1. 删除 node_modules 文件夹，以及其他一些不必要的 package.json 中的依赖删除，并更改打包命令（可以参考以下配置内容）
+
+   ```javascript
+   // package.json
+   {
+     "name": "webpack-demo",
+     "sideEffects": [
+       "*.css"
+     ],
+     "version": "1.0.0",
+     "description": "我的",
+     "private": true,
+     "scripts": {
+       "dev": "webpack server --config webpack.common.js",
+       "dev-build": "webpack --config webpack.common.js",
+       "prod-build": "webpack --env production --config webpack.common.js"
+     },
+     "author": "",
+     "license": "ISC",
+     "dependencies": {
+       "@babel/core": "^7.17.9",
+       "@babel/preset-env": "^7.16.11",
+       "@babel/preset-react": "^7.16.7",
+       "@babel/runtime-corejs2": "^7.17.9",
+       "core-js": "3",
+       "webpack": "^5.71.0",
+       "webpack-cli": "^4.9.2",
+       "webpack-merge": "^5.8.0"
+     },
+     "devDependencies": {
+       "@babel/plugin-transform-runtime": "^7.17.0",
+       "autoprefixer": "^10.4.4",
+       "babel-loader": "^8.2.4",
+       "clean-webpack-plugin": "^4.0.0",
+       "css-loader": "^6.7.1",
+       "css-minimizer-webpack-plugin": "^3.4.1",
+       "file-loader": "^6.2.0",
+       "html-webpack-plugin": "^5.5.0",
+       "less": "^4.1.2",
+       "less-loader": "^10.2.0",
+       "mini-css-extract-plugin": "^2.6.0",
+       "postcss": "^8.4.12",
+       "postcss-loader": "^6.2.1",
+       "style-loader": "^3.3.1",
+       "webpack-dev-middleware": "^5.3.1",
+       "webpack-dev-server": "^4.8.1"
+     }
+   ```
+
+2. 重新执行安装命令
+
+   ```shell
+   npm install
+   ```
+
+3. 入口文件内容进行更改
+
+   ```javascript
+   // index.js
+   console.log('hello, this is pwa')
+   ```
+
+4. ```webpack.common.js`文件中删除不必要配置项(可以参考下述配置)
+
+   ```javascript
+   const path = require('path')
+   const HtmlWebpackPlugin = require('html-webpack-plugin')
+   const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+   const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+   const { merge } = require('webpack-merge')
+   const devConfig = require('./webpack.dev')
+   const prodConfig = require('./webpack.prod')
+   const webpack = require('webpack')
+
+   const commonConfig = {
+   	entry: {
+   		bundle: '/src/js/index.js',
+   	},
+
+   	output: {
+   		publicPath: '/',
+   		filename: '[name].js',
+   		path: path.resolve(__dirname, 'bundle'),
+   		assetModuleFilename: 'images/[name][ext]',
+   	},
+   	module: {
+   		rules: [
+   			{
+   				test: /\.(jpg|png|gif|jpeg)$/,
+   				type: 'asset/resource',
+   			},
+   			{
+   				test: /\.css$/,
+   				use: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader'],
+   			},
+   		],
+   	},
+   	// plugin 会在webpack运行到某些时机的时候，处理一些事情
+   	plugins: [
+   		new MiniCssExtractPlugin({
+   			filename: 'css/[name].[hash:3].css', // 此选项决定了输出的每个 CSS 文件的名称。机制类似于 output.filename。
+   			chunkFilename: 'css/[name].[hash:3].css', // 此选项决定了非入口的 chunk 文件名称机制类似于 output.chunkFilename
+   		}),
+   		new HtmlWebpackPlugin({
+   			template: './index.html',
+   		}),
+   		new CleanWebpackPlugin(),
+   	],
+   }
+
+   module.exports = (env) => {
+   	if (env && env.production) {
+   		return merge(commonConfig, prodConfig)
+   	}
+   	return merge(commonConfig, devConfig)
+   }
+   ```
+
+5. `pwa`技术主要用于生产环境, `webpack.prod.js`文件内容如下(仅供参考)
+
+   ```javascript
+   const { merge } = require('webpack-merge')
+   const CommonConfig = require('./webpack.common')
+   const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+   const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+
+   const prodConfig = {
+   	mode: 'production',
+   	output: {
+   		publicPath: '/',
+   		filename: '[name].[contenthash].js',
+   	},
+   	devtool: 'nosources-source-map',
+   	module: {},
+   	optimization: {
+   		minimizer: [
+   			// For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
+   			// `...`,
+   			new CssMinimizerPlugin(),
+   		],
+   	},
+   	plugins: [new MiniCssExtractPlugin()],
+   }
+
+   module.exports = merge(CommonConfig, prodConfig)
+   ```
+
+6. 执行打包命令`npm run prod-build`，生成 `bundle`文件夹。
+
+7. 安装`http-server`模块，模拟线上服务器环境
+
+   ```shell
+   npm install http-server -D
+   ```
+
+8. 添加运行脚本命令
+
+   ```javascript
+   // package.json
+    "scripts": {
+      "start": "http-server ./bundle", // 后面是打包文件夹，具体以自己项目打包配置文件夹为准
+      ....
+    },
+   ```
+
+9. 运行命令`npm run start`进行模拟效果，可在浏览器中打包服务网页，控制台中打印出`index.js`中的结果`hello, this is pwa`
+
+10. 关闭终端模拟服务命令，再次刷新浏览器可以看待页面已经不能正常显示。有没有办法，可以在服务器挂掉后，还可以正常显示呢，答案自然是有的
+
+#### 4.2.2 实战 PWA
+
+1. 安装相关依赖
+
+   ```shell
+   npm install workbox-webpack-plugin --save-dev
+   ```
+
+2. `webpack.prod.js`中添加插件
+
+   ```javascript
+   const { GenerateSW } = require('workbox-webpack-plugin')
+
+   const prodConfig = {
+     ...,
+       plugins:[
+         ...
+      	// sw 全写 service worker
+         new GenerateSW({
+           clientsClaim: true,
+           skipWaiting: true,
+         }),
+       ]
+   }
+
+   module.exports = merge(CommonConfig, prodConfig)
+   ```
+
+3. 执行打包命令`npm run prod-build`，生成 `bundle`文件夹。会发现文件夹中多了几个文件，其中有一个是`service-worker.js`, 这个文件就是用来做 pwa 处理
+
+4. 不过，`index.js`还要做如下更改
+
+   ```javascript
+   console.log('hello, this is pwa')
+
+   // 添加如下代码
+   if ('serviceWorker' in navigator) {
+   	window.addEventListener('load', () => {
+   		navigator.serviceWorker
+   			.register('./service-worker.js')
+   			.then((registration) => {
+   				console.log('service-worker registered')
+   			})
+   			.catch((error) => {
+   				console.log('service-worker registered error')
+   			})
+   	})
+   }
+   ```
+
+5. 再次运行打包命令`npm run prod-build`，重新打包
+
+6. 然后运行`npm run start`, 在浏览器里看效果，正常输出
+
+7. 此后，把终端运行的本地服务器命令退出，此时在看浏览器中，还可以正常运行。PWA 效果配置完成
+
+#### 4.2.3 PWA 其他
+
+[神奇的 Workbox 3.0：让你的 Web 站点轻松做到离线可访问](https://toutiao.io/posts/eie19m/preview)
