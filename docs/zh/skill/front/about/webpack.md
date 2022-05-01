@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-
+   
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -2495,7 +2495,7 @@ module.exports = {
 
    ```javascript
    const { optimize } = require('webpack')
-
+   
    plugins: [
      ...,
      new optimize.CommonsChunkPlugin({
@@ -2543,7 +2543,7 @@ module.exports = {
    ```javascript
    const path = require('path')
    const webpack = require('webpack')
-
+   
    module.exports = {
    	mode: 'development',
    	entry: path.resolve(__dirname, 'src/index.js'),
@@ -3868,3 +3868,237 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 1. 打开[TypeSearch](https://link.segmentfault.com/?enc=oi9pp6M%2BLjGa5UX2Y%2FbphQ%3D%3D.80p4Ag6FsglGkTHM791PokbHE%2F9iRIwgvMrXfRGVudvejRgrTW6%2BvGu0YITO4Xsw)，在这里对应的去搜索你想用的库有没有类型插件，如果有, 只需要 `npm i @types/xxx-D` 即可
 
    > 例如 需要 jquery 就执行 `npm i @types/jquery -D` 即可
+
+### 4.4 使用 WebpackDevServer 实现请求转发
+
+#### 4.4.1 使用 proxy 处理跨域
+
+1. 回到最开始的项目，项目里的文件内容都是静态渲染的，但是实际开发中，往往是通过网络请求进行获取数据然后渲染的。这时往往域名是不一致的，如果直接进行请求服务器借口，会产生跨域问题，开发环境下通过配置 devserver 可以解决这个问题
+
+   > 这里模拟使用的是公共开放接口：https://api.apiopen.top/swagger/index.html#/%E5%BC%80%E6%94%BE%E6%8E%A5%E5%8F%A3/get_getHaoKanVideo
+   >
+   > [具体文档参考](https://api.apiopen.top/swagger/index.html)
+
+2. 安装相关依赖`axios`
+
+   ```javascript
+   npm install axios --save-dev
+   ```
+
+3. 修改 `index.js`中的内容，增加如下代码
+
+   ```javascript
+   import axios from 'axios'
+
+   axios
+   	.get('https://api.apiopen.top/api/getHaoKanVideo', {
+   		data: {
+   			page: 0,
+   			size: 10,
+   		},
+   	})
+   	.then((res) => {
+   		console.log(res)
+   	})
+   ```
+
+4. 此时`package.json`中的脚本命令如下
+
+   ```javascript
+     "scripts": {
+       "start": "http-server ./bundle",
+       "dev": "webpack server --config webpack.common.js",
+       "dev-build": "webpack --config webpack.common.js",
+       "prod-build": "webpack --env production --config webpack.common.js"
+     },
+   ```
+
+5. 运行命令`npm run dev`, 用浏览器打开相应本地服务，可以发现，提示跨域报错
+
+   ```javascript
+   Access to XMLHttpRequest at 'https://api.apiopen.top/api/getHaoKanVideo' from origin 'http://localhost:8080' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+   ```
+
+6. 此时可以对`webpack.dev.js`中的 `devServer`选项进行配置如下
+
+   ```javascript
+   	devServer: {
+   		proxy: {
+   			'/videoApi/': {
+   				target: 'https://api.apiopen.top',
+   				changeOrigin: true,
+   				pathRewrite: { '^/videoApi': '' },
+   			},
+   		},
+   	},
+   ```
+
+7. 再次运行`npm run dev`, 用浏览器打开相应本地服务，可以发现，控制台中`network`选项可以正常返回接口
+
+#### 4.4.2 proxy 中其他的一些配置
+
+1. 使用一：
+
+   > 请求到 `/api/xxx` 现在会被代理到请求 `http://localhost:3000/api/xxx`, 例如 `/api/user` 现在会被代理到请求 `http://localhost:3000/api/user`
+
+   ```javascript
+   module.exports = {
+   	//...
+   	devServer: {
+   		proxy: {
+   			'/api': 'http://localhost:3000',
+   		},
+   	},
+   }
+   ```
+
+2. 使用二：
+
+   > 如果你想要代码多个路径代理到同一个 target 下, 你可以使用由一个或多个「具有 context 属性的对象」构成的数组：
+
+   ```javascript
+   module.exports = {
+   	//...
+   	devServer: {
+   		proxy: [
+   			{
+   				context: ['/auth', '/api'],
+   				target: 'http://localhost:3000',
+   			},
+   		],
+   	},
+   }
+   ```
+
+3. 使用三：
+
+   > 如果你不想始终传递 /api ，则需要重写路径：
+   >
+   > 请求到 /api/xxx 现在会被代理到请求 `http://localhost:3000/xxx`, 例如 /api/user 现在会被代理到请求 `http://localhost:3000/user`
+
+   ```javascript
+   module.exports = {
+   	//...
+   	devServer: {
+   		proxy: {
+   			'/api': {
+   				target: 'http://localhost:3000',
+   				pathRewrite: { '^/api': '' },
+   			},
+   		},
+   	},
+   }
+   ```
+
+4. 使用四：
+
+   > 默认情况下，不接受运行在 HTTPS 上，且使用了无效证书的后端服务器。如果你想要接受，只要设置 `secure: false` 就行。修改配置如下：
+
+   ```javascript
+   module.exports = {
+   	//...
+   	devServer: {
+   		proxy: {
+   			'/api': {
+   				target: 'https://other-server.example.com',
+   				secure: false,
+   			},
+   		},
+   	},
+   }
+   ```
+
+5. 使用五：
+
+   > 有时你不想代理所有的请求。可以基于一个函数的返回值绕过代理。
+   > 在函数中你可以访问请求体、响应体和代理选项。必须返回 false 或路径，来跳过代理请求。
+   >
+   > 例如：对于浏览器请求，你想要提供一个 HTML 页面，但是对于 API 请求则保持代理。你可以这样做：
+
+   ```javascript
+   module.exports = {
+   	//...
+   	devServer: {
+   		proxy: {
+   			'/api': {
+   				target: 'http://localhost:3000',
+   				bypass: function (req, res, proxyOptions) {
+   					if (req.headers.accept.indexOf('html') !== -1) {
+   						console.log('Skipping proxy for browser request.')
+   						// 也可以通过 return false 来跳过代理
+   						return '/index.html'
+   					}
+   				},
+   			},
+   		},
+   	},
+   }
+   ```
+
+#### 4.4.3 解决跨域原理
+
+> 上面的参数列表中有一个`changeOrigin`参数, 是一个布尔值, 设置为 true, 本地就会虚拟一个服务器接收你的请求并代你发送该请求,
+
+1. vue-cli 中 proxyTable 配置接口地址代理示例
+
+   ```javascript
+   module.exports = {
+       dev: {
+       // 静态资源文件夹
+       assetsSubDirectory: 'static',
+       // 发布路径
+       assetsPublicPath: '/',
+
+       // 代理配置表，在这里可以配置特定的请求代理到对应的API接口
+       // 使用方法：https://vuejs-templates.github.io/webpack/proxy.html
+       proxyTable: {
+           // 例如将'localhost:8080/api/xxx'代理到'https://wangyaxing.cn/api/xxx'
+           '/api': {
+               target: 'https://wangyaxing.cn', // 接口的域名
+               secure: false,  // 如果是https接口，需要配置这个参数
+               changeOrigin: true, // 如果接口跨域，需要进行这个参数配置
+           },
+           // 例如将'localhost:8080/img/xxx'代理到'https://cdn.wangyaxing.cn/xxx'
+           '/img': {
+               target: 'https://cdn.wangyaxing.cn', // 接口的域名
+               secure: false,  // 如果是https接口，需要配置这个参数
+               changeOrigin: true, // 如果接口跨域，需要进行这个参数配置
+               pathRewrite: {'^/img': ''}  // pathRewrite 来重写地址，将前缀 '/api' 转为 '/'。
+           }
+       },
+       // Various Dev Server settings
+       host: 'localhost', // can be overwritten by process.env.HOST
+       port: 4200, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+   }
+   ```
+
+2. 更多的参数参考
+
+   `dev-server` 使用了非常强大的 [http-proxy-middleware](https://github.com/chimurai/http-proxy-middleware) , `http-proxy-middleware` 基于 `http-proxy` 实现的，可以查看 http-proxy 的源
+
+   码和文档:https://github.com/nodejitsu/node-http-proxy 。
+
+   ```javascript
+   target：要使用url模块解析的url字符串
+   forward：要使用url模块解析的url字符串
+   agent：要传递给http（s）.request的对象（请参阅Node的https代理和http代理对象）
+   ssl：要传递给https.createServer（）的对象
+   ws：true / false，是否代理websockets
+   xfwd：true / false，添加x-forward标头
+   secure：true / false，是否验证SSL Certs
+   toProxy：true / false，传递绝对URL作为路径（对代理代理很有用）
+   prependPath：true / false，默认值：true - 指定是否要将目标的路径添加到代理路径
+   ignorePath：true / false，默认值：false - 指定是否要忽略传入请求的代理路径（注意：如果需要，您必须附加/手动）。
+   localAddress：要为传出连接绑定的本地接口字符串
+   changeOrigin：true / false，默认值：false - 将主机标头的原点更改为目标URL
+   ```
+
+#### 4.4.x 参考文档
+
+[webpack 开发配置 API 代理解决跨域问题-devServer](https://segmentfault.com/a/1190000016199721)
+
+[webpack 配置 changeOrigin 无效的说明](https://blog.csdn.net/qq_39291919/article/details/108807111)
+
+[Webpack-dev-server 的 proxy 用法](https://segmentfault.com/a/1190000016314976)
+
+[github 之 http-proxy-middleware](https://github.com/chimurai/http-proxy-middleware)
