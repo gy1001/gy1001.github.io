@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-   
+
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -2495,7 +2495,7 @@ module.exports = {
 
    ```javascript
    const { optimize } = require('webpack')
-   
+
    plugins: [
      ...,
      new optimize.CommonsChunkPlugin({
@@ -2543,7 +2543,7 @@ module.exports = {
    ```javascript
    const path = require('path')
    const webpack = require('webpack')
-   
+
    module.exports = {
    	mode: 'development',
    	entry: path.resolve(__dirname, 'src/index.js'),
@@ -4102,3 +4102,231 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 [Webpack-dev-server 的 proxy 用法](https://segmentfault.com/a/1190000016314976)
 
 [github 之 http-proxy-middleware](https://github.com/chimurai/http-proxy-middleware)
+
+### 4.5 WebpackDevServer 解决单页面应用路由问题
+
+#### 4.5.1 无路由页面时的使用
+
+1. 安装 `react` 相关依赖
+
+   ```javascript
+   npm install react react-dom -D
+   ```
+
+2. `webpack.common.js`中的配置如下
+
+   ```javascript
+   const path = require('path')
+   const HtmlWebpackPlugin = require('html-webpack-plugin')
+   const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+   const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+   const { merge } = require('webpack-merge')
+   const devConfig = require('./webpack.dev')
+   const prodConfig = require('./webpack.prod')
+   const webpack = require('webpack')
+
+   const commonConfig = {
+   	entry: {
+   		bundle: '/src/js/index.js',
+   	},
+
+   	output: {
+   		publicPath: '/',
+   		filename: '[name].js',
+   		path: path.resolve(__dirname, 'bundle'),
+   		assetModuleFilename: 'images/[name][ext]',
+   	},
+   	module: {
+   		rules: [
+   			{
+   				test: /\.(jpg|png|gif|jpeg)$/,
+   				type: 'asset/resource',
+   			},
+   			{
+   				test: /\.css$/,
+   				use: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader'],
+   			},
+   			{
+   				test: /\.m?js$/,
+   				exclude: /node_modules/,
+   				use: {
+   					loader: 'babel-loader',
+   				},
+   			},
+   		],
+   	},
+   	// plugin 会在webpack运行到某些时机的时候，处理一些事情
+   	plugins: [
+   		new MiniCssExtractPlugin({
+   			filename: 'css/[name].[hash:3].css', // 此选项决定了输出的每个 CSS 文件的名称。机制类似于 output.filename。
+   			chunkFilename: 'css/[name].[hash:3].css', // 此选项决定了非入口的 chunk 文件名称机制类似于 output.chunkFilename
+   		}),
+   		new HtmlWebpackPlugin({
+   			template: './index.html',
+   		}),
+   		new CleanWebpackPlugin(),
+   	],
+   }
+
+   module.exports = (env) => {
+   	if (env && env.production) {
+   		return merge(commonConfig, prodConfig)
+   	}
+   	return merge(commonConfig, devConfig)
+   }
+   ```
+
+3. `babel.config.js`文件内容如下
+
+   ```javascript
+   module.exports = {
+   	// presets 执行顺序是从后往前执行
+   	presets: [
+   		[
+   			'@babel/preset-env',
+   			{
+   				useBuiltIns: 'usage',
+   				corejs: {
+   					version: 3,
+   					proposals: true,
+   				},
+   				// 需要支持的目标浏览器版本，如果目标浏览器版本支持语法，就会略过转换处理
+   				targets: {
+   					ie: '8',
+   				},
+   			},
+   		],
+   		'@babel/preset-react',
+   	],
+   }
+   ```
+
+4. 执行`npm run dev`打包命令，可以看到浏览器中出现`hello world`字样
+
+5. `index.js` 内容修改如下
+
+   ```javascript
+   import React, { Component } from 'react'
+   import { createRoot } from 'react-dom/client'
+   import { BrowserRouter, Route, Routes } from 'react-router-dom'
+   import Home from './home'
+   import List from './list'
+
+   class App extends Component {
+   	componentDidMount() {}
+
+   	render() {
+   		return <div>hello i am test</div>
+   	}
+   }
+   const root = createRoot(document.getElementById('root'))
+   root.render(<App />)
+   ```
+
+6. 新建`list.js`、`home.js`文件，内容如下
+
+   ```javascript
+   // list.js
+   import React, { Component } from 'react'
+
+   class List extends Component {
+   	componentDidMount() {}
+
+   	render() {
+   		return <div>List Page</div>
+   	}
+   }
+   export default List
+
+
+   // home.js
+   import React, { Component } from 'react'
+
+   class Home extends Component {
+   	componentDidMount() {}
+
+   	render() {
+   		return <div>Home Page</div>
+   	}
+   }
+   export default Home
+
+   ```
+
+7. 执行打包命令`npm run dev`时候，可以在浏览器中看到主页内容`hello i am test`正常显示
+
+#### 4.5.2 使用路由配置时候
+
+> 理想情况下，当路径为 / 时候，显示 home 页面； 当路由为 /list 时候，显示 list 页面；
+
+1. 安装 `react-router-dom`
+
+   ```shell
+   npm install react-router-dom --save-dev
+   ```
+
+2. 修改 `index.js`内容如下
+
+   ```javascript
+   import React, { Component } from 'react'
+   import { createRoot } from 'react-dom/client'
+   import { BrowserRouter, Route, Routes } from 'react-router-dom'
+   import Home from './home'
+   import List from './list'
+
+   class App extends Component {
+   	componentDidMount() {}
+
+   	render() {
+   		return (
+   			<BrowserRouter>
+   				<Routes>
+   					<Route path='/' exact element={<Home />}></Route>
+   					<Route path='/list' element={<List />}></Route>
+   				</Routes>
+   			</BrowserRouter>
+   		)
+   	}
+   }
+   const root = createRoot(document.getElementById('root'))
+   root.render(<App />)
+   ```
+
+3. 此时要引入 `devServer`中的另一个配置 `historyApiFallback`，增加如下内容
+
+   ```javascript
+   devServer: {
+     ...
+     historyApiFallback: true,
+   },
+   ```
+
+4. 然后运行`npm run dev`，发现浏览器可以正常跳转，即使手动更改呢地址为 `http:localhost:8080/list`也会显示 `List page` 内容
+
+#### 4.5.3 historyApiFallback 还可以配置其他的内容
+
+1. 出了上边配置一个布尔类型的值以外，它还可以配置一个 `rewrites`规则，比如像下边这样的配置，意思就是吗，如果发现访问的是`abc.html`那么就让页面展示`index.html`
+
+   ```javascript
+   devServer: {
+     ...
+     historyApiFallback: {
+   			rewrites: [
+   				{
+   					form: '/abc.html',
+   					to: '/index.html',
+   				},
+   			],
+   		},
+   },
+   ```
+
+2. 我们把配置修改为，当我们访问`abc.html`,页面展示 `index.html`，我们的目录里是有这个文件的。会展示吗？重启后，发现也没有展示，但是查看网页源代码时发现`index.html`内容展示出来了；之所以会这样，是因为 index.html 里有我们的业务代码，而我们的业务代码里，没有写如果访问`abc.html`就显示其他的内容的逻辑
+
+3. 实际上，当我们配置了`historyApiFallback: true`的时候，就相当于这样配置；访问任何内容都会展示 index.html
+
+> 注意因为`historyApiFallback`是`devServer`的配置，所以只在开发环境下有效。一旦到了线上环境，就可能出现页面找不到的情况，因为我们在开发环境，通过`historyApiFallback`配置了跳转的规则，但是后端的服务器很有可能没有配置跳转的规则，这个问题，前端是解决不了的，需要后端的小伙伴去`nginx 或者 apache`上仿照`webpack-dev-server`的一些配置，去在他的对应的服务器上去做同样的配置，这样才可以在前端使用路由不会有问题；
+
+#### 4.5.4 参考文档
+
+[WebpackDevServer 解决单页面应用路](https://www.jianshu.com/p/e84ac9f97063)
