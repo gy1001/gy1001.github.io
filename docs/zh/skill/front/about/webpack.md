@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-      
+
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -2495,7 +2495,7 @@ module.exports = {
 
    ```javascript
    const { optimize } = require('webpack')
-   
+
    plugins: [
      ...,
      new optimize.CommonsChunkPlugin({
@@ -2543,7 +2543,7 @@ module.exports = {
    ```javascript
    const path = require('path')
    const webpack = require('webpack')
-   
+
    module.exports = {
    	mode: 'development',
    	entry: path.resolve(__dirname, 'src/index.js'),
@@ -4228,10 +4228,10 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    ```javascript
    // list.js
    import React, { Component } from 'react'
-   
+
    class List extends Component {
    	componentDidMount() {}
-   
+
    	render() {
    		return <div>List Page</div>
    	}
@@ -4333,7 +4333,7 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
 ### 4.6 EsLint 在 Webpack 中的配置
 
-#### 4.6.1 使用编辑器结合eslint插件规范代码 
+#### 4.6.1 使用编辑器结合 eslint 插件规范代码
 
 1. 安装 `eslint`
 
@@ -4350,7 +4350,7 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
 3. 安装后根据 eslint 错误提示进行更改相关语法错误
 
-4. 这样的配置结合 vscode 的 eslint插件时候是会进行报错提示的
+4. 这样的配置结合 vscode 的 eslint 插件时候是会进行报错提示的
 
 #### 4.6.2 不依赖插件时候如何处理
 
@@ -4372,7 +4372,7 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```javascript
    const ESLintPlugin = require('eslint-webpack-plugin');
-   
+
    module.exports = {
      ...
      module: {
@@ -4384,7 +4384,7 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    			},
        ]
      },
-     plugins:[ 
+     plugins:[
        ....
        new ESLintPlugin(options)
      ],
@@ -4401,68 +4401,283 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 1. 使用 loader plugins 都可以在打包运行时候进行规范处理
 2. 还可以通过 git 的钩子函数，在提交时候做一些校验处理
 
-### 4.7  webpack 性能优化
+### 4.7 webpack 性能优化
 
-#### 4.7.1 提升 webpack 打包速度的方法
+#### 4.7.1 跟上技术的迭代(node、npm、 yarn)
 
-1. 跟上技术的迭代(node、npm、 yarn)
+> 新版本的 webpack 在性能上肯定会有所提升，相应的底层使用的是 node，相应的也会提高
 
-2. 在尽可能少的模块上使用 loader
+#### 4.7.2 在尽可能少的模块上使用 loader
+
+```javascript
+// webpack.config.js 中不使用非必要的 loader
+{
+	module: {
+		rules: [
+			{
+				test: /\.js$/,
+				exclude: /node_modules/, // 排除不必要的模块
+			},
+		]
+	}
+}
+```
+
+#### 4.7.3 Plugin 尽可能精简并确保可靠
+
+> 合理得在相应环境下使用插件，不使用冗余的没有必要的插件，尽可能使用官方推荐的或者社区推荐的(官方推荐的，性能上，兼容性会相对来说好一些)
+>
+> 比如：开发环境下不需要压缩，
+
+#### 4.7.4 `webpack.config.js`中 `resolve` 参数合理配置
+
+- extensions`选项配置要合理，不要试图配置所有的类型
+
+- `mainFiles`: 当查找某一个文件夹下的文件时，尝试查找的文件名字
+- `alias`: 配置别名，来简化引入路径
+- 等等
+
+```javascript
+module.exports = {
+	mode: 'production',
+	resolve: {
+		extensions: ['.js', '.jsx'],
+    mainFiles：["index", "other"],
+  	alias: {
+			'@': path.resolve(__dirname, 'src'),
+			'@components': path.resolve(__dirname, 'src/components'),
+			'@utilities': path.resolve(__dirname, 'src/utilities'),
+		},
+	},
+}
+```
+
+#### 4.7.5 使用`DllPlugin`提高打包速度
+
+> 目标：依赖的第三方模块只打包一次
+>
+> 步骤：
+>
+> 1. 对第三方模块进行打包：因为三方依赖包轻易不会有变化
+> 2. 引入第三方模块的时候，要去使用 Dll 文件引入
+
+1. 新建 `webpack.dll.js` 文件，内容如下
+
+   > 此文件用来把相关依赖提前打包
+
    ```javascript
-   // webpack.config.js 中不使用非必要的 loader
-   {
-     	module: {
-   		rules: [
-         {
-           test: /\.js$/,
-           exclude: /node_modules/, // 排除不必要的模块
-         }
-       ]
-     }
-   }
-   ```
+   const path = require('path')
 
-3.  Plugin 尽可能精简并确保可靠
-
-   > 合理得在相应环境下使用插件，不使用冗余的没有必要的插件，尽可能使用官方推荐的或者社区推荐的(官方推荐的，性能上，兼容性会相对来说好一些)
-   >
-   > 比如：开发环境下不需要压缩，
-
-4. `webpack.config.js`中 `resolve` 参数合理配置
-
-   * extensions`选项配置要合理，不要试图配置所有的类型
-
-   * `mainFiles`: 当查找某一个文件夹下的文件时，尝试查找的文件名字
-   * `alias`: 配置别名，来简化引入路径
-   * 等等
-
-   ```javascript
    module.exports = {
    	mode: 'production',
-   	resolve: {
-   		extensions: ['.js', '.jsx'],
-       mainFiles：["index", "other"],
-     	alias: {
-   			'@': path.resolve(__dirname, 'src'),
-   			'@components': path.resolve(__dirname, 'src/components'),
-   			'@utilities': path.resolve(__dirname, 'src/utilities'),
-   		},
+   	entry: {
+   		vendors: ['react', 'react-dom', 'lodash'], // 此处为所依赖的第三方包，根据自己的需要进行设置
+   	},
+   	output: {
+   		path: path.resolve(__dirname, 'dll'),
+   		filename: '[name].dll.js',
+   		library: '[name]', // 这里暴露为一个全局变量
    	},
    }
    ```
 
-5. 使用`DllPlugin`提高打包速度
+2. 修改 `package.json`文件，添加如下打包脚本
 
-   > 目标：依赖的第三方模块只打包一次
-   >
-   > 步骤：
-   >
-   > 1. 对第三方模块进行打包
-   > 2. 引入第三方模块的时候，要去使用 Dll 文件引入
+   ```javascript
+   {
+       "scripts": {
+         "start": "http-server ./bundle",
+         "dev": "webpack server --config webpack.common.js",
+         "dev-build": "webpack --config webpack.common.js",
+         "prod-build": "webpack --env production --config webpack.common.js",
+          // 此处为新增
+         "build:dll": "webpack --config webpack.dll.js"
+       },
+   }
+   ```
 
-   
+3. 运行`npm run build:dll` 命令，打包三方依赖文件，`dll`文件中会产生相应的`xx.dll.js`文件
 
+4. 这时候如果在 `index.html`中引入相应的`xx.dll.js`文件，就可以在控制台中访问到 `vendors（对应上述webpack.dll.js中配置名字）` 这个全局变量，以下步骤进行验证
 
+   1. 安装依赖
 
+      ```shell
+      npm install add-asset-html-webpack-plugin --save-dev
+      ```
 
+   2. `webpack.common.js`中增加相应配置
 
+      ```javascript
+      const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin')
+
+      module.exports = {
+          ...
+          plugins: [
+            ...
+            	new AddAssetHtmlWebpackPlugin({
+              		filepath: path.resolve(__dirname, './dll/vendors.dll.js'),
+            	}),
+          ]
+      }
+      ```
+
+   3. 执行`npm run dev` 命令，查看页面引用文件，可以看出 页面中引用了`vendors.dll.js`文件，在控制台中输入 `vendors` 也可以看到打印结果
+
+5. 使用插件，为 `dll` 文件建立引用关系, 更改`webpack.dll.js`文件内容如下
+
+   ```javascript
+   const path = require('path')
+   // 新增
+   const { DllPlugin } = require('webpack')
+
+   module.exports = {
+   	mode: 'production',
+   	entry: {
+   		vendors: ['react', 'react-dom', 'lodash'],
+   	},
+   	output: {
+   		path: path.resolve(__dirname, 'dll'),
+   		filename: '[name].dll.js',
+   		library: '[name]',
+   	},
+   	// 新增
+   	plugins: [
+   		new DllPlugin({
+   			name: '[name]',
+   			path: path.resolve(__dirname, './dll/[name].manifest.json'),
+   		}),
+   	],
+   }
+   ```
+
+6. 再次运行`npm run build:dll` 命令，打包三方依赖文件，`dll`文件中会产生相应的`xx.dll.js`和`xx.manifest.json`文件
+
+7. 修改`webpack.common.js`文件，增加插件引入依赖关系
+
+   ```javascript
+   const { DllReferencePlugin } = require('webpack')
+
+   module.exports = {
+     ...
+     plugins: [
+       	...
+       	new DllReferencePlugin({
+          	 manifest: path.resolve(__dirname, "./dll/vendors.manifest.json")
+         })
+     ]
+   }
+   ```
+
+8. 这样进行打包就可以适当的减少打包时间
+
+#### 4.7.6 使用 `DllPlugin` 打包过程优化扩展
+
+1. 可以继续拆分，修改 webpack.dll.js 文件
+
+   ```javascript
+   const path = require('path')
+   const path = require('path')
+   const { DllPlugin } = require('webpack')
+
+   module.exports = {
+   	mode: 'production',
+   	entry: {
+   		// 这里进行修改
+   		vendors: ['lodash'],
+   		react: ['react', 'react-dom'],
+   		axios: ['axios'],
+   	},
+   	output: {
+   		path: path.resolve(__dirname, 'dll'),
+   		filename: '[name].dll.js',
+   		library: '[name]',
+   	},
+   	plugins: [
+   		new DllPlugin({
+   			name: '[name]',
+   			path: path.resolve(__dirname, './dll/[name].manifest.json'),
+   		}),
+   	],
+   }
+   ```
+
+2. 上述拆分后，需要重新执行`npm run build:dll`命令进行打包处理，结果是，出现了多个`xx.dll.js` 以及 多个 `xx.mainfest.json` 文件
+
+3. 这样同样需要修改`webpack.common.js`中的插件`plugins` 选项去进行相应引用，
+
+   ```javascript
+   module.exports = {
+   	plugins: [
+   		new AddAssetHtmlWebpackPlugin({
+   			filepath: path.resolve(__dirname, './dll/vendors.dll.js'),
+   		}),
+   		new AddAssetHtmlWebpackPlugin({
+   			filepath: path.resolve(__dirname, './dll/axios.dll.js'),
+   		}),
+   		new AddAssetHtmlWebpackPlugin({
+   			filepath: path.resolve(__dirname, './dll/react.dll.js'),
+   		}),
+   		new DllReferencePlugin({
+   			manifest: path.resolve(__dirname, './dll/vendors.manifest.json'),
+   		}),
+   		new DllReferencePlugin({
+   			manifest: path.resolve(__dirname, './dll/axios.manifest.json'),
+   		}),
+   		new DllReferencePlugin({
+   			manifest: path.resolve(__dirname, './dll/react.manifest.json'),
+   		}),
+   	],
+   }
+   ```
+
+4. 然后运行`npm run prod-build` 进行打包处理，部署相关服务器后，结果仍然是可以正常运行
+
+5. 这还只是拆分了两个第三方模块，就要一个个配置过去，有没有什么办法能简便一点呢? 有，这里使用 node 的 api，fs 模块来读取文件夹里的内容，创建一个 plugins 数组用来存放公共的插件
+
+6. 继续优化, 修改`webpack.common.js`文件如下
+
+   ```javascript
+   const fs = require('fs')
+   // 存放公共插件
+   const plugins = [
+     	// 开发环境和生产环境二者均需要的插件
+     	new MiniCssExtractPlugin({
+         filename: 'css/[name].[hash:3].css', // 此选项决定了输出的每个 CSS 文件的名称。机制类似于 output.filename。
+         chunkFilename: 'css/[name].[hash:3].css', // 此选项决定了非入口的 chunk 文件名称机制类似于 output.chunkFilename
+      }),
+      new HtmlWebpackPlugin({
+         template: './index.html',
+      }),
+      new CleanWebpackPlugin(),
+   ]
+
+   // 自动引入 dll 中的文件
+   const files = fs.readdirSync(path.resolve(__dirname, './dll'))
+   files.forEach(file => {
+     if (/.*\.dll.js/.test(file)) {
+       plugins.push(
+         new AddAssetHtmlWebpackPlugin({
+           filepath: path.resolve(__dirname, './dll', file)
+         })
+       )
+     }
+     if (/.*\.manifest.json/.test(file)) {
+       plugins.push(
+         new webpack.DllReferencePlugin({
+           manifest: path.resolve(__dirname, './dll', file)
+         })
+       )
+     }
+   })
+   module.exports = {
+     ...
+   	plugins: plugins
+   }
+   ```
+
+7. 使用 `npm run dev` 打开网页也没有问题了，这样自动注入 dll 文件也搞定了，之后还要再打包第三方库只要添加到 **webpack.dll.js** 里面的 `entry` 属性中就可以了
+
+#### 4.7.8 参考文档
+
+[24 个实例入门并掌握「Webpack4」(三)之使用 DLLPlugin 加快打包速度](https://segmentfault.com/a/1190000019132719)
