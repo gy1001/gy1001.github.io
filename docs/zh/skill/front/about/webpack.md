@@ -4678,6 +4678,160 @@ module.exports = {
 
 7. 使用 `npm run dev` 打开网页也没有问题了，这样自动注入 dll 文件也搞定了，之后还要再打包第三方库只要添加到 **webpack.dll.js** 里面的 `entry` 属性中就可以了
 
-#### 4.7.8 参考文档
+#### 4.7.7 控制包文件大小
+
+#### 4.7.8 thread-loader, parallel-webpack, happypack 多进程打包
+
+#### 4.7.9 合理使用 sourceMap
+
+> 详细的 sourceMap 也会影响打包速度，所以相应的环境要配置合理的 sourceMap
+
+#### 4.7.10 结合 stats 分析打包结果
+
+#### 4.7.11 开发环境内存编译
+
+> Webpack-dev-server
+
+#### 4.7.12 开发环境无用插件剔除
+
+#### 4.7.13 参考文档
 
 [24 个实例入门并掌握「Webpack4」(三)之使用 DLLPlugin 加快打包速度](https://segmentfault.com/a/1190000019132719)
+
+### 4.8 多页面打包配置
+
+> 我想打包出 **index.html** 和 **list.html** 两个页面，并且在 index.html 中引入 **app.js**，在 list.html 中引入 **list.js**，该怎么做?
+
+1.  新建`list.js`文件，内容如下
+
+```javascript
+import React, { Component } from 'react'
+import { createRoot } from 'react-dom/client'
+
+class List extends Component {
+	componentDidMount() {}
+
+	render() {
+		return <div>This is List Page</div>
+	}
+}
+
+const root = createRoot(document.getElementById('root'))
+root.render(<App />)
+
+// index.js 内容如下
+import React, { Component } from 'react'
+import { createRoot } from 'react-dom/client'
+
+class App extends Component {
+	componentDidMount() {}
+
+	render() {
+		return <div>I am Home Page</div>
+	}
+}
+const root = createRoot(document.getElementById('root'))
+root.render(<App />)
+```
+
+2. 在 `webpack.common.js` 中配置 `entry`，配置两个入口
+
+   ```javascript
+   module.exports = {
+     entry: {
+       main './src/index.js',
+       list: './src/list.js'
+     }
+   }
+   ```
+
+3. 如果现在我们直接 `npm run build` 打包，在打包自动生成的 index.html 文件中会发现 list.js 也被引入了，说明多入口打包成功，但并没有实现**多个页面**的打包，该怎么做?
+
+4. 打开 `webpack.common.js` 文件，将 `HtmlWebpackPlugin` 拷贝一份，使用 `chunks` 属性，将需要打包的模块对应写入
+
+   ```javascript
+   // 存放公共插件
+   const plugins = [
+     new HtmlWebpackPlugin({
+       template: './index.html',
+       filename: 'index.html',
+       chunks: ['vendors', 'axios', 'react', 'main'], // 注意公共的模块和自由模块
+     }),
+     new HtmlWebpackPlugin({
+       template: './index.html',
+       filename: 'list.html',
+       chunks: ['vendors', 'axios', 'react', 'list'], // 注意公共的模块和自由模块
+     }),
+     new CleanWebpackPlugin(),
+     ...
+   ]
+   ```
+
+5. 运行`npm run prod-build`命令，进行打包，发现文件夹中有 `index.html`和`list.html`，运行起来可以在浏览器中看到想要的结果：打开 index.html 可以看到引入的是 main.js，而 list.html 引入的是 list.js，这就是 `HtmlWebpackPlugin` 插件的 `chunks` 属性，自定义引入的 js
+
+6. 如果要打包三个页面，再去 copy `HtmlWebpackPlugin`，通过在 entry 中配置，如果有四个，五个，这样手动的复制就比较麻烦了，可以写个方法自动生成 `HtmlWebpackPlugin` 配置:修改 `webpack.common.js`
+
+   ```javascript
+   ...
+   const configs = {
+     entry: {
+       index: './src/app.js',
+       list: './src/list.js'
+     },
+     ...
+   }
+
+   const makePlugins = (configs) => {
+   	// 基础插件
+   	// 存放公共插件
+   	const plugins = [
+   		// 开发环境和生产环境二者均需要的插件
+   		new MiniCssExtractPlugin({
+   			filename: 'css/[name].[hash:3].css', // 此选项决定了输出的每个 CSS 文件的名称。机制类似于 output.filename。
+   			chunkFilename: 'css/[name].[hash:3].css', // 此选项决定了非入口的 chunk 文件名称机制类似于 output.chunkFilename
+   		}),
+   		new CleanWebpackPlugin(),
+   	]
+
+   	// 根据 entry 自动生成 HtmlWebpackPlugin 配置，配置多页面
+   	Object.keys(configs.entry).forEach((item) => {
+   		plugins.push(
+   			new HtmlWebpackPlugin({
+   				title: '多页面配置',
+   				template: path.resolve(__dirname, './index.html'),
+   				filename: `${item === 'main' ? 'index' : item}.html`,
+   				chunks: [item, 'vendors', 'axios', 'react'],
+   			})
+   		)
+   	})
+
+   	// 自动引入 dll 中的文件
+   	const files = fs.readdirSync(path.resolve(__dirname, './dll'))
+   	files.forEach((file) => {
+   		if (/.*\.dll.js/.test(file)) {
+   			plugins.push(
+   				new AddAssetHtmlWebpackPlugin({
+   					filepath: path.resolve(__dirname, './dll', file),
+   				})
+   			)
+   		}
+   		if (/.*\.manifest.json/.test(file)) {
+   			plugins.push(
+   				new DllReferencePlugin({
+   					manifest: path.resolve(__dirname, './dll', file),
+   				})
+   			)
+   		}
+   	})
+
+   	return plugins
+   }
+
+   configs.plugins = makePlugins(configs)
+
+   module.exports = configs
+   ```
+
+7. 这时候就实现根据配置`entry` 自动实现多入口文件的处理了
+
+## 5 xx
