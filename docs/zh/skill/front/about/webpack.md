@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-
+   
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -2495,7 +2495,7 @@ module.exports = {
 
    ```javascript
    const { optimize } = require('webpack')
-
+   
    plugins: [
      ...,
      new optimize.CommonsChunkPlugin({
@@ -2543,7 +2543,7 @@ module.exports = {
    ```javascript
    const path = require('path')
    const webpack = require('webpack')
-
+   
    module.exports = {
    	mode: 'development',
    	entry: path.resolve(__dirname, 'src/index.js'),
@@ -4228,10 +4228,10 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    ```javascript
    // list.js
    import React, { Component } from 'react'
-
+   
    class List extends Component {
    	componentDidMount() {}
-
+   
    	render() {
    		return <div>List Page</div>
    	}
@@ -4330,3 +4330,86 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 #### 4.5.4 参考文档
 
 [WebpackDevServer 解决单页面应用路](https://www.jianshu.com/p/e84ac9f97063)
+
+### 4.6 EsLint 在 Webpack 中的配置
+
+#### 4.6.1 使用编辑器结合eslint插件规范代码 
+
+1. 安装 `eslint`
+
+   ```shell
+   npm i eslint -D
+   ```
+
+2. 并创建配置文件
+
+   ```shell
+   npx eslint --init
+   // 然后根据提示进行一步步操作
+   ```
+
+3. 安装后根据 eslint 错误提示进行更改相关语法错误
+
+4. 这样的配置结合 vscode 的 eslint插件时候是会进行报错提示的
+
+#### 4.6.2 不依赖插件时候如何处理
+
+> 多人协作时候，往往个人喜欢不一样，编辑器不一样，可能编辑器不支持插件安装，那该怎么处理风格统一呢：
+>
+> 当然可以使用命令行实施检查：npx eslint src 然后根据提示进行修改，这样做略显麻烦
+>
+> 还有以下方式
+
+1. 安装依赖`eslint-webpack-plugin`
+
+   > eslint-loader: This loader has been deprecated. Please use eslint-webpack-plugin
+
+   ```javascript
+   npm install eslint-webpack-plugin --save-dev
+   ```
+
+2. `webpack.common.js` 中做如下更改
+
+   ```javascript
+   const ESLintPlugin = require('eslint-webpack-plugin');
+   
+   module.exports = {
+     ...
+     module: {
+       rules: [
+         {
+   				test: /\.m?js$/,
+   				exclude: /node_modules/,
+   				use: ['bable-loader'], // 注意：这里 loader 的执行顺序是从前
+   			},
+       ]
+     },
+     plugins:[ 
+       ....
+       new ESLintPlugin(options)
+     ],
+     devServer: {
+       client: {
+   			overlay: true, // 报错信息会出现在浏览器显示界面中
+   		},
+     }
+   }
+   ```
+
+#### 4.6.3 其他方式
+
+1. 使用 loader plugins 都可以在打包运行时候进行规范处理
+2. 还可以通过 git 的钩子函数，在提交时候做一些校验处理
+
+### 4.7  webpack 性能优化
+
+#### 4.7.1 提升 webpack 打包速度的方法
+
+1. 跟上技术的迭代(node、npm、 yarn)
+2. 配置上的小细节
+   * 
+
+
+
+
+
