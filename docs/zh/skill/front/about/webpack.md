@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-   
+      
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -4406,8 +4406,61 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 #### 4.7.1 提升 webpack 打包速度的方法
 
 1. 跟上技术的迭代(node、npm、 yarn)
-2. 配置上的小细节
-   * 
+
+2. 在尽可能少的模块上使用 loader
+   ```javascript
+   // webpack.config.js 中不使用非必要的 loader
+   {
+     	module: {
+   		rules: [
+         {
+           test: /\.js$/,
+           exclude: /node_modules/, // 排除不必要的模块
+         }
+       ]
+     }
+   }
+   ```
+
+3.  Plugin 尽可能精简并确保可靠
+
+   > 合理得在相应环境下使用插件，不使用冗余的没有必要的插件，尽可能使用官方推荐的或者社区推荐的(官方推荐的，性能上，兼容性会相对来说好一些)
+   >
+   > 比如：开发环境下不需要压缩，
+
+4. `webpack.config.js`中 `resolve` 参数合理配置
+
+   * extensions`选项配置要合理，不要试图配置所有的类型
+
+   * `mainFiles`: 当查找某一个文件夹下的文件时，尝试查找的文件名字
+   * `alias`: 配置别名，来简化引入路径
+   * 等等
+
+   ```javascript
+   module.exports = {
+   	mode: 'production',
+   	resolve: {
+   		extensions: ['.js', '.jsx'],
+       mainFiles：["index", "other"],
+     	alias: {
+   			'@': path.resolve(__dirname, 'src'),
+   			'@components': path.resolve(__dirname, 'src/components'),
+   			'@utilities': path.resolve(__dirname, 'src/utilities'),
+   		},
+   	},
+   }
+   ```
+
+5. 使用`DllPlugin`提高打包速度
+
+   > 目标：依赖的第三方模块只打包一次
+   >
+   > 步骤：
+   >
+   > 1. 对第三方模块进行打包
+   > 2. 引入第三方模块的时候，要去使用 Dll 文件引入
+
+   
 
 
 
