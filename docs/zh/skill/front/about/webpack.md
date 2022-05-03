@@ -4835,3 +4835,276 @@ root.render(<App />)
 7. 这时候就实现根据配置`entry` 自动实现多入口文件的处理了
 
 ## 5 Webpack 底层原理及脚手架工具分析
+
+### 5.1 如何编写一个 loader
+
+#### 5.1.1 loader 基础入门
+
+1. 新建项目文件夹`webpack-loader-demo`, 并进行初始化，安装相关依赖
+
+   ```javascript
+   npm init -y
+   npm install webpack webpack-cli --save-dev
+   ```
+
+2. 新建`loader`文件夹，新建`replaceLoader.js`文件, 内容如下
+
+   ```javascript
+   module.exports = function (source) {
+   	return source.replace('world', 'loader')
+   }
+   ```
+
+3. 新建`src/index.js`文件，内容如下
+
+   ```javascript
+   console.log('hello world')
+   ```
+
+4. 新建 `webpack.config.js`, 内容如下
+
+   ```javascript
+   const path = require('path')
+
+   module.exports = {
+   	mode: 'development',
+   	entry: {
+   		main: './src/index.js',
+   	},
+   	module: {
+   		rules: [
+   			{
+   				test: /.js/,
+   				use: [path.resolve(__dirname, './loaders/replaceLoader.js')], // 引入自定义 loader
+   			},
+   		],
+   	},
+   	output: {
+   		path: path.resolve(__dirname, 'dist'),
+   		filename: '[name].js',
+   	},
+   }
+   ```
+
+5. `package.json`文件中增加打包脚本，内容如下
+
+   ```javascript
+   {
+       "scripts": {
+         "build": "webpack"
+       },
+   }
+   ```
+
+6. 运行命令`npm run build`, 查看打包后的文件，会发现`hello world`已经替换为`hello loader`, 基础的`loader` 编写就实现了
+
+#### 5.1.2 使用 options 传递并接受参数
+
+1. 修改`webpack.config.js`文件内容，修改如下
+
+   ```javascript
+   const path = require('path')
+
+   module.exports = {
+   	mode: 'development',
+   	entry: {
+   		main: './src/index.js',
+   	},
+   	module: {
+   		rules: [
+   			{
+   				test: /.js/,
+   				use: [
+   					{
+   						loader: path.resolve(__dirname, './loaders/replaceLoader.js'),
+   						options: {
+   							name: 'xh',
+   						},
+   					},
+   				],
+   			},
+   		],
+   	},
+   	output: {
+   		path: path.resolve(__dirname, 'dist'),
+   		filename: '[name].js',
+   	},
+   }
+   ```
+
+2. 修改 `index.js`
+
+   ```javascript
+   module.exports = function (source) {
+   	console.log(this.query)
+   	return source.replace('world', this.query.name)
+   }
+   ```
+
+3. 再次执行命令`npm run build`,可以在终端中看到，`this.query`的内容就是传递的`options`选项参数，并且在打包结果中，可以看到 打包结果也被替换为了自定义`loader`中传递的`options` 选项中相应的内容
+
+#### 5.1.3 处理 options 其他类型
+
+> 如果你的 options 不是一个对象，而是按字符串形式写的话，可能会有一些问题，这里官方推荐使用 [loader-utils](https://link.segmentfault.com/?enc=G%2Fz9EPDlb7ueDt%2BsD6pISg%3D%3D.H16nevWOj1WpMY2UKgMzwm%2F8Tqt6Wx42VpeHNIVjQkORptvQvTXQ85rz79zYdnpCQ3QILEHujEEbFvG4HP5rcA%3D%3D) 来获取 options 中的内容
+
+1. 安装 `npm i loader-utils -D`
+
+   ```shell
+   npm install --save-dev loader-utils@1.0.4 // 新版本会报错：getOptions is not a function
+   ```
+
+2. 修改 replaceLoader.js
+
+   ```javascript
+   const loaderUtils = require('loader-utils')
+
+   module.exports = function (source) {
+   	const options = loaderUtils.getOptions(this) // 这里使用新版本会报错
+   	console.log(options)
+   	return source.replace('world', options.name)
+   }
+   ```
+
+3. 执行打包命令
+
+#### 5.1.4 利用 callback 传递额外信息
+
+> 如果你想传递额外的信息出去，return 就不好用了，官网给我们提供了 [this.callback](https://link.segmentfault.com/?enc=0XgdwfGWngh59Qy54sfwhg%3D%3D.fHDM74uUOUdnHJywZTAVm5BYYsxyx6Pib9aIchLdVl4V%2BzO3rYqPZWooC11kL41WaUM0Mwq2LUkMNaRa8%2FC3Hg%3D%3D) API，用法如下
+>
+> ```javascript
+> this.callback(
+>   err: Error | null,
+>   content: string | Buffer,
+>   sourceMap?: SourceMap,
+>   meta?: any
+> )
+> ```
+
+1. 修改 `replaceLoader.js`
+
+   ```javascript
+   const loaderUtils = require('loader-utils')
+
+   module.exports = function (source) {
+   	const options = loaderUtils.getOptions(this)
+   	const result = source.replace('world', options.name)
+   	this.callback(null, result)
+   }
+   ```
+
+   > 目前没有用到 sourceMap(必须是此模块可解析的源映射)、meta(可以是任何内容(例如一些元数据)) 这两个可选参数，只将 result 返回回去，保存重新打包后，效果和 return 是一样的
+
+#### 5.1.5 如何在 loader 中书写异步代码
+
+> 这里需要使用 [this.async](https://link.segmentfault.com/?enc=uJYTi2PHr70YMo2N5rSsZg%3D%3D.6LmXnCA3ISuOIOyVLj5VOhWwFicgpb2mGXcU2unhsOQhpPcwbUwMuJW3cqqzmf5f) 来写异步代码
+
+1. 修改`replaceLoader.js`文件，内容如下
+
+   ```javascript
+   const loaderUtils = require('loader-utils')
+   module.exports = function (source) {
+   	const options = loaderUtils.getOptions(this)
+   	const callback = this.async()
+   	// 注意：不用 this.async，仅仅延迟返回会提示失败
+   	setTimeout(() => {
+   		const result = source.replace('world', options.name)
+   		callback(null, result)
+   	}, 1000)
+   }
+   ```
+
+2. 重新运行打包命令即可看到效果
+
+#### 5.1.6 模拟多个 loader 时候
+
+1. 新建一个 `replaceLoaderAsync.js` 文件，将之前写的异步代码放入，修改 `replaceLoader.js` 为同步代码
+
+   ```javascript
+   // replaceLoaderAsync.js
+
+   const loaderUtils = require('loader-utils')
+   module.exports = function (source) {
+   	const options = loaderUtils.getOptions(this)
+   	const callback = this.async()
+   	setTimeout(() => {
+   		const result = source.replace('world', options.name)
+   		callback(null, result)
+   	}, 1000)
+   }
+
+   // replaceLoader.js
+   module.exports = function (source) {
+   	return source.replace('xh', 'world')
+   }
+   ```
+
+2. 修改 `webpack.config.js`，loader 的执行顺序是从下到上，先执行异步代码，将 world 改为 xh，再执行同步代码，将 xh 改为 world
+
+   ```javascript
+   module: {
+   	rules: [
+   		{
+   			test: /.js/,
+   			use: [
+   				{
+   					loader: path.resolve(__dirname, './loaders/replaceLoader.js'),
+   				},
+   				{
+   					loader: path.resolve(__dirname, './loaders/replaceLoaderAsync.js'),
+   					options: {
+   						name: 'xh',
+   					},
+   				},
+   			],
+   		},
+   	]
+   }
+   ```
+
+3. 保存后打包，在 mian.js 中可以看到已经改为了 `hello world`，使用多个 loader 也完成了
+
+#### 5.1.7 使用 `resolveLoader` 简化加载路径
+
+> 如果有多个自定义 loader，每次都通过 `path.resolve(__dirname, xxx)` 这种方式去写，有没有更好的方法？
+>
+> 使用 `resolveLoader`，定义 modules，当你使用 loader 的时候，会先去 `node_modules` 中去找，如果没找到就会去 `./loaders` 中找
+
+修改 `webpack.config.js`，内容如下
+
+```javascript
+const path = require('path')
+
+module.exports = {
+	mode: 'development',
+	entry: {
+		main: './src/index.js',
+	},
+	resolveLoader: {
+		modules: ['node_modules', './loaders'],
+	},
+	module: {
+		rules: [
+			{
+				test: /.js/,
+				use: [
+					{
+						loader: 'replaceLoader.js',
+					},
+					{
+						loader: 'replaceLoaderAsync.js',
+						options: {
+							name: 'xh',
+						},
+					},
+				],
+			},
+		],
+	},
+	output: {
+		path: path.resolve(__dirname, 'dist'),
+		filename: '[name].js',
+	},
+}
+```
+
+### 5.2 编写一个 plugin
