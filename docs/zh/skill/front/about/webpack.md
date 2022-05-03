@@ -5108,3 +5108,196 @@ module.exports = {
 ```
 
 ### 5.2 编写一个 plugin
+
+> 相对于 loader 转换指定类型的模块功能，plugins 能够被用于执行更广泛的任务比如打包优化、文件管理、环境注入等……
+>
+> Loader: 是文件加载器，能够加载资源文件，并对这些文件进行一些处理，诸如编译、压缩等，最终一起打包到指定的文件中
+>
+> plugin: 在 webpack 运行的生命周期中会广播出许多事件，plugin 可以监听这些事件，在合适的时机通过 webpack 提供的 API 改变输出结果。
+>
+> 两者在运行时机上的区别：loader 运行在打包文件之前, plugins 在整个编译周期都起作用
+
+#### 5.2.1 自定义插件 plugin
+
+1. 新建文件夹`plugin-demo`，并安装`webpack`相关依赖
+
+   ```shell
+   mkdir plugin-demo
+   cd plugin-demo
+   npm init -y
+   ```
+
+2. 新建 `src/index.js`文件
+
+   ```javascript
+   console.log('hello world')
+   ```
+
+3. 新建`plugins`文件夹，新建`copyright-webpack-plugin.js`文件
+
+   ```javascript
+   class CopyrightWebpackPlugin {
+   	constructor() {
+   		console.log('插件被使用了')
+   	}
+   	apply(compiler) {}
+   }
+
+   module.exports = CopyrightWebpackPlugin
+   ```
+
+4. 新建`webpack.config.js`文件，写入以下内容
+
+   ```javascript
+   const path = require('path')
+   const CopyrightWebpackPlugin = require('./plugins/copyright-webpack-plugin')
+
+   module.exports = {
+   	mode: 'development',
+   	entry: {
+   		main: './src/index.js',
+   	},
+   	output: {
+   		path: path.resolve(__dirname, 'dist'),
+   		filename: '[name].js',
+   	},
+   	plugins: [new CopyrightWebpackPlugin()],
+   }
+   ```
+
+5. 修改`package.json`文件，添加以下脚本
+
+   ```javascript
+   {
+      "scripts": {
+       	"build": "webpack build",
+     },
+   }
+   ```
+
+6. 运行脚本`npm run build`，即可在终端中看到`插件被使用了`字样
+
+#### 5.2.2 插件传递参数
+
+1. 修改`webpack.config.js`, 更改以下内容
+
+   ```javascript
+   const path = require('path')
+   const CopyrightWebpackPlugin = require('./plugins/copyright-webpack-plugin')
+
+   module.exports = {
+   	mode: 'development',
+   	entry: {
+   		main: './src/index.js',
+   	},
+   	output: {
+   		path: path.resolve(__dirname, 'dist'),
+   		filename: '[name].js',
+   	},
+   	plugins: [
+   		new CopyrightWebpackPlugin({
+   			name: 'xh',
+   		}),
+   	],
+   }
+   ```
+
+2. 修改 `copyright-webpack-plugin.js` 文件，修改如下
+
+   ```javascript
+   class CopyrightWebpackPlugin {
+   	constructor(options) {
+   		console.log('插件被使用了')
+   		console.log('options = ', options)
+   	}
+   	apply(compiler) {}
+   }
+
+   module.exports = CopyrightWebpackPlugin
+   ```
+
+3. 再次执行`npm run build`，即可在终端中看到输出的参数部分
+
+#### 5.2.3 apply(compiler) 有什么作用
+
+> `apply(compiler) {}` compiler 可以看作是 webpack 的实例，具体见官网 [compiler-hooks](https://link.segmentfault.com/?enc=GsnRa1I%2B0qeRewA3vzip6A%3D%3D.KuN6VW4dfRXWYcjcQppdiClQV6d%2FEGlGCJ9Yzs4DqRTR2aSY4zgZ9IxWMOGbeMDQ),
+>
+> 有一个属性名为 `hooks`，hooks 是钩子，像 vue、react 的生命周期一样，找到 `emit` 这个时刻，将打包结果放入 dist 目录前执行，这里是个 `AsyncSeriesHook` 异步方法
+
+1. 使用异步函数，并进行回调
+
+   > 因为 **emit** 是**异步**的，可以通过 **tapAsync** 来写，当要把代码放入到 dist 目录之前，就会触发这个钩子，走到我们定义的函数里，如果你用 **tapAsync** 函数，记得最后要用 **cb()** ，tapAsync 要传递两个参数，第一个参数传递我们定义的插件名称
+
+   ```javascript
+   //  copyright-webpack-plugin.js
+   class CopyrightWebpackPlugin {
+   	constructor(options) {
+   		console.log(options)
+   		console.log('插件被使用了')
+   	}
+   	apply(compiler) {
+   		compiler.hooks.emit.tapAsync('CopyrightWebpackPlugin', (compilation, cb) => {
+   			// compilation 这个参数里存放了这次打包的所有内容，
+   			// 返回结果是一个对象，比如结果中：main.js 是 key，也就是打包后生成的文件名及文件后缀，我们可以来仿照一下
+   			compilation.assets['copyRight.txt'] = {
+   				// 生成一个 copyright.txt 文件, 内容、大小如下
+   				source: function () {
+   					return 'copyright by gy'
+   				},
+   				size: function () {
+   					return 21 // 上面 source 返回的字符长度
+   				},
+   			}
+   			console.log(compilation.assets)
+   			cb()
+   		})
+   	}
+   }
+   module.exports = CopyrightWebpackPlugin
+   ```
+
+2. 再次执行`npm run build`，就可以在终端中看到输出文件多了一个 txt 文件，以及大小信息
+
+3. 之前介绍的是异步钩子，现在使用同步钩子
+
+   ```javascript
+   //  copyright-webpack-plugin.js
+
+   class CopyrightWebpackPlugin {
+   	apply(compiler) {
+   		// 同步钩子
+   		compiler.hooks.compile.tap('CopyrightWebpackPlugin', (compilation) => {
+   			console.log('compile')
+   		})
+
+   		// 异步钩子
+   		compiler.hooks.emit.tapAsync('CopyrightWebpackPlugin', (compilation, cb) => {
+   			compilation.assets['copyright.txt'] = {
+   				source: function () {
+   					return 'copyright by xh'
+   				},
+   				size: function () {
+   					return 15 // 字符长度
+   				},
+   			}
+   			console.log('compilation.assets = ', compilation.assets)
+   			cb()
+   		})
+   	}
+   }
+   ```
+
+#### 5.2.4 使用调试工具进行调试
+
+1. 修改`package.json`文件，添加调试脚本命令
+
+   ```javascript
+   {
+      "scripts": {
+         "build": "webpack build",
+         "debug": "node --inspect-brk ../node_modules/webpack/bin/webpack.js"
+     },
+   }
+   ```
+
+2. 运行脚本`npm run debug`,可以在浏览器控制台看到 断点标志，即可进行调试查看，相关参数具有哪些属性
