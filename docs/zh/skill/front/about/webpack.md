@@ -5320,7 +5320,8 @@ module.exports = {
 
    // message.js
    import { word } from './word.js'
-   export default const message = `say ${word}`
+   const message = `say ${word}`
+   export default message
 
    // index.js
    import message from './message.js'
@@ -5477,3 +5478,207 @@ module.exports = {
 
    moduleAnalyser('./src/index.js')
    ```
+
+#### 5.3.2 依赖图谱(Dependencies Graph)
+
+1. 上述步骤只是分析出了入口文件的依赖分析 ，那还有它依赖的文件的依赖也同样需要分析，一层一层分析，最终实现整个项目的全部模块分析
+
+2. 定义一个新函数
+
+   ```JavaScript
+   const fs = require('fs')
+   const BabelParser = require('@babel/parser')
+   const BabelTraverse = require('@babel/traverse').default
+   const path = require('path')
+   const BabelCore = require('@babel/core')
+
+   const moduleAnalyser = (fileName) => {
+   	const content = fs.readFileSync(fileName, 'utf-8')
+   	const astResult = BabelParser.parse(content, {
+   		sourceType: 'module',
+   	})
+   	const dependencies = {}
+   	BabelTraverse(astResult, {
+   		ImportDeclaration({ node }) {
+   			const dirname = path.dirname(fileName)
+   			// console.log(dirname) // ./src
+   			// 获取相对根目录的路径
+   			const newFile = './' + path.join(dirname, node.source.value)
+   			// console.log(newFile) // ./src/message.js
+   			dependencies[node.source.value] = newFile
+   		},
+   	})
+
+   	const code = BabelCore.transformFromAst(astResult, null, {
+   		presets: ['@babel/preset-env'],
+   	})
+   	return {
+   		fileName,
+   		code,
+   		dependencies,
+   	}
+   }
+
+   const makeDependenciesGraph = (entry) => {
+   	const entryModule = moduleAnalyser(entry)
+   	const graphArray = [entryModule]
+   	for (let index = 0; index < graphArray.length; index++) {
+   		const { dependencies } = graphArray[index]
+   		if (dependencies) {
+   			for (let key in dependencies) {
+   				graphArray.push(moduleAnalyser(dependencies[key]))
+           console.log(graphArray) // 获取相关依赖
+   			}
+   		}
+   	}
+   }
+
+   const graphInfo = makeDependenciesGraph('./src/index.js')
+   ```
+
+3. 继续将依赖图谱展开
+
+   ```javascript
+   const fs = require('fs')
+   const BabelParser = require('@babel/parser')
+   const BabelTraverse = require('@babel/traverse').default
+   const path = require('path')
+   const BabelCore = require('@babel/core')
+
+   const moduleAnalyser = (fileName) => {
+   	const content = fs.readFileSync(fileName, 'utf-8')
+   	const astResult = BabelParser.parse(content, {
+   		sourceType: 'module',
+   	})
+   	const dependencies = {}
+   	BabelTraverse(astResult, {
+   		ImportDeclaration({ node }) {
+   			const dirname = path.dirname(fileName)
+   			// console.log(dirname) // ./src
+   			// 获取相对根目录的路径
+   			const newFile = './' + path.join(dirname, node.source.value)
+   			// console.log(newFile) // ./src/message.js
+   			dependencies[node.source.value] = newFile
+   		},
+   	})
+
+   	const { code } = BabelCore.transformFromAst(astResult, null, {
+   		presets: ['@babel/preset-env'],
+   	})
+   	return {
+   		fileName,
+   		code,
+   		dependencies,
+   	}
+   }
+
+   const makeDependenciesGraph = (entry) => {
+   	const entryModule = moduleAnalyser(entry)
+   	const graphArray = [entryModule]
+   	for (let index = 0; index < graphArray.length; index++) {
+   		const { dependencies } = graphArray[index]
+   		if (dependencies) {
+   			for (let key in dependencies) {
+   				graphArray.push(moduleAnalyser(dependencies[key]))
+   			}
+   		}
+   	}
+   	// 依赖图对象
+   	const graph = {}
+   	graphArray.forEach((graphItem) => {
+   		graph[graphItem.fileName] = {
+   			dependencies: graphItem.dependencies,
+   			code: graphItem.code,
+   		}
+   	})
+   	return graph
+   }
+
+   const graphInfo = makeDependenciesGraph('./src/index.js')
+   console.log(graphInfo)
+   ```
+
+#### 5.3.3 根据依赖图谱，继续生产代码
+
+1. 继续修改
+
+   ```javascript
+   const fs = require('fs')
+   const BabelParser = require('@babel/parser')
+   const BabelTraverse = require('@babel/traverse').default
+   const path = require('path')
+   const BabelCore = require('@babel/core')
+
+   const moduleAnalyser = (fileName) => {
+   	const content = fs.readFileSync(fileName, 'utf-8')
+   	const astResult = BabelParser.parse(content, {
+   		sourceType: 'module',
+   	})
+   	const dependencies = {}
+   	BabelTraverse(astResult, {
+   		ImportDeclaration({ node }) {
+   			const dirname = path.dirname(fileName)
+   			// console.log(dirname) // ./src
+   			// 获取相对根目录的路径
+   			const newFile = './' + path.join(dirname, node.source.value)
+   			// console.log(newFile) // ./src/message.js
+   			dependencies[node.source.value] = newFile
+   		},
+   	})
+
+   	const { code } = BabelCore.transformFromAst(astResult, null, {
+   		presets: ['@babel/preset-env'],
+   	})
+   	return {
+   		fileName,
+   		code,
+   		dependencies,
+   	}
+   }
+
+   const makeDependenciesGraph = (entry) => {
+   	const entryModule = moduleAnalyser(entry)
+   	const graphArray = [entryModule]
+   	for (let index = 0; index < graphArray.length; index++) {
+   		const { dependencies } = graphArray[index]
+   		if (dependencies) {
+   			for (let key in dependencies) {
+   				graphArray.push(moduleAnalyser(dependencies[key]))
+   			}
+   		}
+   	}
+   	const graph = {}
+   	graphArray.forEach((graphItem) => {
+   		graph[graphItem.fileName] = {
+   			dependencies: graphItem.dependencies,
+   			code: graphItem.code,
+   		}
+   	})
+   	return graph
+   }
+
+   const generateCode = (entry) => {
+   	const graph = JSON.stringify(makeDependenciesGraph(entry))
+   	return `
+     (function(graph){
+   		function require(module){
+   			function localRequire(relativePath){
+   				return require(graph[module].dependencies[relativePath])
+         }
+   			var exports = {};
+   			(function(require, exports, code){
+   				eval(code)
+   			})(localRequire, exports, graph[module].code);
+   			return exports
+       };
+       require('${entry}')
+   
+     })(${graph})
+     `
+   }
+
+   const graphInfo = generateCode('./src/index.js')
+   console.log(graphInfo)
+   ```
+
+2. 运行命令`node bundler.js`, 将终端中最后的输出，复制到浏览器控制台中，就可以看到输出的结果
