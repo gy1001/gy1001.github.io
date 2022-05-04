@@ -5301,3 +5301,179 @@ module.exports = {
    ```
 
 2. 运行脚本`npm run debug`,可以在浏览器控制台看到 断点标志，即可进行调试查看，相关参数具有哪些属性
+
+#### 5.2.5 参考文档
+
+[24 个实例入门并掌握「Webpack4」(三)](https://segmentfault.com/a/1190000019132719)
+
+### 5.3 Bundler 源码编写
+
+#### 5.3.1 模块分析
+
+##### 5.3.1 基础读取入口文件内容
+
+1. 新建文件夹`bundler-demo`, 新建`src/index.js`、 `src/message.js`、 `src/word.js`, 内容如下
+
+   ```javascript
+   // word.js
+   export const word = 'hello'
+
+   // message.js
+   import { word } from './word.js'
+   export default const message = `say ${word}`
+
+   // index.js
+   import message from './message.js'
+   console.log(message)
+   ```
+
+2. 在根目录下新建`bundler.js`文件，这是我们模拟的打包编译处理文件
+
+   ```javascript
+   const fs = require('fs')
+   const moduleAnalyser = (fileName) => {
+   	const content = fs.readFileSync(fileName, 'utf-8') // 读取入口文件内容
+   	console.log(content)
+   }
+
+   moduleAnalyser('./src/index.js') // 配置入口文件
+   ```
+
+3. 此时在控制台运行`node bundler.js`，可以在终端中看到打印出来了文件内容
+
+##### 5.3.2 引入三方模块进行依赖分析
+
+> 如果使用字符串截取，某种程度也可以，但是较为繁琐，这里使用 @babel/parser 来代替
+
+1. 安装相关依赖
+
+   ```shell
+   npm install @babel/parser --save-dev
+   ```
+
+2. 修改`bundler.js`文件，内容如下
+
+   ```javascript
+   const fs = require('fs')
+   const BabelParser = require('@babel/parser')
+
+   const moduleAnalyser = (fileName) => {
+   	const content = fs.readFileSync(fileName, 'utf-8')
+   	// 获取抽象语法树
+   	const astResult = BabelParser.parse(content, {
+   		sourceType: 'module', // index.js中引入方式是 es module
+   	})
+   	console.log(astResult.program.body) // 这里可以查看到相应节点的type: ImportDeclaration/ExpressionStatement/
+   }
+
+   moduleAnalyser('./src/index.js')
+   ```
+
+3. 此时在控制台运行`node bundler.js`, 可以看到相应的结果
+
+4. 根据以上获取的类型进行遍历，然后处理，这里我们采用另一个依赖模块`@babel/traverse`
+
+   ```shell
+   npm install @babel/traverse --save-dev
+   ```
+
+5. 修改`bundler.js`, 引入相关依赖并处理
+
+   ```javascript
+   const fs = require('fs')
+   const BabelParser = require('@babel/parser')
+   const BabelTraverse = require('@babel/traverse').default
+
+   const moduleAnalyser = (fileName) => {
+   	const content = fs.readFileSync(fileName, 'utf-8')
+   	const astResult = BabelParser.parse(content, {
+   		sourceType: 'module',
+   	})
+   	const dependencies = []
+   	BabelTraverse(astResult, {
+   		ImportDeclaration({ node }) {
+   			dependencies.push(node.source.value)
+   		},
+   	})
+   	console.log(dependencies) // 收集相关依赖
+   }
+
+   moduleAnalyser('./src/index.js')
+   ```
+
+6. 此时在控制台运行`node bundler.js`, 可以看到相应的结果
+
+7. 以上步骤可以看出，收集的依赖的路径为相对路径，是相对于当前入口文件的路径，而获取依赖路径时候最好使用而应该是**根目录的相对路径**（或者说是**绝对路径**），所以`bundler.js`需做如下更改
+
+   ```javascript
+   const fs = require('fs')
+   const BabelParser = require('@babel/parser')
+   const BabelTraverse = require('@babel/traverse').default
+   const path = require('path')
+
+   const moduleAnalyser = (fileName) => {
+   	const content = fs.readFileSync(fileName, 'utf-8')
+   	const astResult = BabelParser.parse(content, {
+   		sourceType: 'module',
+   	})
+   	const dependencies = {}
+   	BabelTraverse(astResult, {
+   		ImportDeclaration({ node }) {
+   			const dirname = path.dirname(fileName)
+   			// console.log(dirname) // ./src
+   			// 获取相对根目录的路径
+   			const newFile = './' + path.join(dirname, node.source.value)
+   			// console.log(newFile) // ./src/message.js
+   			dependencies[node.source.value] = newFile // 既存一个相对路径，又存一个绝对路径
+   		},
+   	})
+   	console.log(dependencies)
+   }
+   moduleAnalyser('./src/index.js')
+   ```
+
+8. 因为我们使用的是 ES6 Module 的方法，所以我们需要安装相关依赖包进行转换处理
+
+   ```shell
+   npm i @babel/core @babel/preset-env --save
+   ```
+
+9. 修改`bundler.js`, 引入相关依赖并处理
+
+   ```javascript
+   const fs = require('fs')
+   const BabelParser = require('@babel/parser')
+   const BabelTraverse = require('@babel/traverse').default
+   const path = require('path')
+   const BabelCore = require('@babel/core')
+
+   const moduleAnalyser = (fileName) => {
+   	const content = fs.readFileSync(fileName, 'utf-8')
+   	const astResult = BabelParser.parse(content, {
+   		sourceType: 'module',
+   	})
+   	const dependencies = {}
+   	BabelTraverse(astResult, {
+   		ImportDeclaration({ node }) {
+   			const dirname = path.dirname(fileName)
+   			// console.log(dirname) // ./src
+   			// 获取相对根目录的路径
+   			const newFile = './' + path.join(dirname, node.source.value)
+   			// console.log(newFile) // ./src/message.js
+   			dependencies[node.source.value] = newFile
+   		},
+   	})
+   	// 根据 presets 规则转换 ES6 语法
+   	const code = BabelCore.transformFromAst(astResult, null, {
+   		presets: ['@babel/preset-env'],
+   	})
+   	console.log(code, dependencies)
+   	return {
+   		fileName,
+   		code,
+   		dependencies,
+   	}
+   }
+
+   moduleAnalyser('./src/index.js')
+   ```
