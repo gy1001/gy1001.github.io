@@ -5682,3 +5682,21 @@ module.exports = {
    ```
 
 2. 运行命令`node bundler.js`, 将终端中最后的输出，复制到浏览器控制台中，就可以看到输出的结果
+
+## 6. Create-React-App 和 Vue-Cli 3.0 脚手架工具配置分析
+
+### 6.1 通过 CreateReactApp 深入学习 Webpack 配置
+
+> [Create-react-app 安装地址](https://create-react-app.dev/docs/getting-started)
+
+1. 执行命令
+
+   ```shell
+   npx create-react-app my-app
+   cd my-app
+   npm start
+   ```
+
+2. 执行完毕后，可以看到这是 react 默认的一些配置，与我们学过的是不太一样的，因为它隐藏了起来。 我们可以通过执行脚本`npm run eject` 来显示这些隐藏的配置，注意：这个操作是不可恢复的
+
+3. 我们可以通过参考它的配置来学习一些经典的优秀的配置
