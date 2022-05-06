@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-
+   
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -2495,7 +2495,7 @@ module.exports = {
 
    ```javascript
    const { optimize } = require('webpack')
-
+   
    plugins: [
      ...,
      new optimize.CommonsChunkPlugin({
@@ -2543,7 +2543,7 @@ module.exports = {
    ```javascript
    const path = require('path')
    const webpack = require('webpack')
-
+   
    module.exports = {
    	mode: 'development',
    	entry: path.resolve(__dirname, 'src/index.js'),
@@ -4228,10 +4228,10 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    ```javascript
    // list.js
    import React, { Component } from 'react'
-
+   
    class List extends Component {
    	componentDidMount() {}
-
+   
    	render() {
    		return <div>List Page</div>
    	}
@@ -4372,7 +4372,7 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```javascript
    const ESLintPlugin = require('eslint-webpack-plugin');
-
+   
    module.exports = {
      ...
      module: {
@@ -4984,7 +4984,7 @@ root.render(<App />)
 
    ```javascript
    const loaderUtils = require('loader-utils')
-
+   
    module.exports = function (source) {
    	const options = loaderUtils.getOptions(this)
    	const result = source.replace('world', options.name)
@@ -5262,14 +5262,14 @@ module.exports = {
 
    ```javascript
    //  copyright-webpack-plugin.js
-
+   
    class CopyrightWebpackPlugin {
    	apply(compiler) {
    		// 同步钩子
    		compiler.hooks.compile.tap('CopyrightWebpackPlugin', (compilation) => {
    			console.log('compile')
    		})
-
+   
    		// 异步钩子
    		compiler.hooks.emit.tapAsync('CopyrightWebpackPlugin', (compilation, cb) => {
    			compilation.assets['copyright.txt'] = {
@@ -5447,7 +5447,7 @@ module.exports = {
    const BabelTraverse = require('@babel/traverse').default
    const path = require('path')
    const BabelCore = require('@babel/core')
-
+   
    const moduleAnalyser = (fileName) => {
    	const content = fs.readFileSync(fileName, 'utf-8')
    	const astResult = BabelParser.parse(content, {
@@ -5475,7 +5475,7 @@ module.exports = {
    		dependencies,
    	}
    }
-
+   
    moduleAnalyser('./src/index.js')
    ```
 
@@ -5544,7 +5544,7 @@ module.exports = {
    const BabelTraverse = require('@babel/traverse').default
    const path = require('path')
    const BabelCore = require('@babel/core')
-
+   
    const moduleAnalyser = (fileName) => {
    	const content = fs.readFileSync(fileName, 'utf-8')
    	const astResult = BabelParser.parse(content, {
@@ -5561,7 +5561,7 @@ module.exports = {
    			dependencies[node.source.value] = newFile
    		},
    	})
-
+   
    	const { code } = BabelCore.transformFromAst(astResult, null, {
    		presets: ['@babel/preset-env'],
    	})
@@ -5571,7 +5571,7 @@ module.exports = {
    		dependencies,
    	}
    }
-
+   
    const makeDependenciesGraph = (entry) => {
    	const entryModule = moduleAnalyser(entry)
    	const graphArray = [entryModule]
@@ -5593,7 +5593,7 @@ module.exports = {
    	})
    	return graph
    }
-
+   
    const graphInfo = makeDependenciesGraph('./src/index.js')
    console.log(graphInfo)
    ```
@@ -5700,3 +5700,26 @@ module.exports = {
 2. 执行完毕后，可以看到这是 react 默认的一些配置，与我们学过的是不太一样的，因为它隐藏了起来。 我们可以通过执行脚本`npm run eject` 来显示这些隐藏的配置，注意：这个操作是不可恢复的
 
 3. 我们可以通过参考它的配置来学习一些经典的优秀的配置
+
+### 6.2 Vue-Cli脚手架工具
+
+> [vue-cli](https://cli.vuejs.org/zh/guide/)
+
+1. 执行命令
+
+   ```javascript
+   // 使用下列任一命令安装这个新的包：
+   npm install -g @vue/cli
+   # OR
+   yarn global add @vue/cli
+   
+   // 创建一个项目
+   vue create hello-world
+   ```
+
+2. `vue.config.js`配置信息参考[地址]()https://cli.vuejs.org/zh/config/
+
+   
+
+   
+
