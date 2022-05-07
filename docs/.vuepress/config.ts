@@ -1,14 +1,12 @@
 import { defineUserConfig } from 'vuepress'
 import type { DefaultThemeOptions } from 'vuepress'
 import { sidebarZh, sidebarEn } from '../.vuepress/configs/siderbar/zh'
-import { copyCode } from "vuepress-plugin-copy-code2";
-import { comment } from "vuepress-plugin-comment2";
+import { copyCode } from 'vuepress-plugin-copy-code2'
+import { comment } from 'vuepress-plugin-comment2'
 
 export default defineUserConfig<DefaultThemeOptions>({
 	base: '/',
-	head: [
-		['meta', { name: 'referrer', content: 'no-referrer' }],
-	],
+	head: [['meta', { name: 'referrer', content: 'no-referrer' }]],
 	locales: {
 		'/': {
 			lang: 'en-US',
@@ -30,7 +28,7 @@ export default defineUserConfig<DefaultThemeOptions>({
 		locales: {
 			'/': {
 				sidebar: sidebarEn,
-				navbar: []
+				navbar: [],
 			},
 			'/zh/': {
 				sidebar: sidebarZh,
@@ -54,23 +52,16 @@ export default defineUserConfig<DefaultThemeOptions>({
 								text: '更新日志',
 								link: 'https://github.com/vuepress/vuepress-next/blob/main/CHANGELOG.md',
 							},
-						]
-					}
+						],
+					},
 				],
 
 				// 404 page
-				notFound: [
-					'这里什么都没有',
-					'我们怎么到这来了？',
-					'这是一个 404 页面',
-					'看起来我们进入了错误的链接',
-				],
+				notFound: ['这里什么都没有', '我们怎么到这来了？', '这是一个 404 页面', '看起来我们进入了错误的链接'],
 				backToHome: '返回首页',
-
 				selectLanguageName: '简体中文',
 				selectLanguageText: '选择语言',
 				selectLanguageAriaLabel: '选择语言',
-
 			},
 		},
 	},
@@ -82,17 +73,17 @@ export default defineUserConfig<DefaultThemeOptions>({
 			pure: false,
 			locales: {
 				'/zh/': {
-					copy: "复制成功 🎉",
-					hint: "复制代码",
-				}
-			}
+					copy: '复制成功 🎉',
+					hint: '复制代码',
+				},
+			},
 		}),
 		comment({
-			type: "waline",
+			type: 'waline',
 			comment: true,
 			login: 'disable',
 			serverURL: 'https://gyfly-top-b3bn289s5-mineminego.vercel.app/',
 			wordLimit: 100,
-		})
-	]
+		}),
+	],
 })
