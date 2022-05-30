@@ -94,6 +94,7 @@ export const sidebarZh: SidebarConfig = {
       children: [
         '/zh/other/class/program-basic',
         '/zh/other/class/linear-algebra',
+        '/zh/other/class/vue3-learn-practice',
       ],
     },
   ],
