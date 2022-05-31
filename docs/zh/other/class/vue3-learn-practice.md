@@ -38,3 +38,7 @@
 ### 1.4 编写 TodoList 小功能，了解循环和双向绑定
 
 具体内容查看相应代码: [点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/03-Todo-List.html)
+
+## 1.5 组件概念初探，对 TodoList 进行组件代码拆分
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/04-todo-list-optimize.html)
