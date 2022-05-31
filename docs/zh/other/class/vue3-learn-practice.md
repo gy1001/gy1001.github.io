@@ -48,3 +48,7 @@
 ### 2.1 Vue 中应用和组件的基础概念
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/05-basic-api.html)
+
+### 2.2 理解 Vue 中的生命周期函数
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/06-life-cycle.html)
