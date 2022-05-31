@@ -39,6 +39,12 @@
 
 具体内容查看相应代码: [点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/03-Todo-List.html)
 
-## 1.5 组件概念初探，对 TodoList 进行组件代码拆分
+### 1.5 组件概念初探，对 TodoList 进行组件代码拆分
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/04-todo-list-optimize.html)
+
+## 2 Vue 基础语法
+
+### 2.1 Vue 中应用和组件的基础概念
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/05-basic-api.html)
