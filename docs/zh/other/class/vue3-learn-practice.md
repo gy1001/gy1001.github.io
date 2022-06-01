@@ -56,3 +56,12 @@
 ### 2.3 常用模版语法讲解
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/07-common-template-syntax.html)
+
+### 2.4 数据，方法，计算属性和侦听器
+
+- computed:当计算属性依赖的内容发生变化时。才会重新执行
+- methods: 主要页面重新渲染，才会重新计算
+- computed 和 methods 都能实现的功能，建议使用 computed, 因为 computed 有缓存优化
+- computed 和 watch 都能实现的功能，建议使用 computed，因为 computed 更加简洁
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/08-data-computed-watch.html)
