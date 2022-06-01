@@ -108,3 +108,21 @@ v-show
    为了给 Vue 一个提示，以便它可以跟踪每个节点的标识，从而重用和重新排序现有的元素，你需要为每个项目提供一个唯一的 `key` attribute：
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/11-list-rendering.html)
+
+### 2.8 事件处理
+
+1. 绑定事件
+
+- @click="handleClick" 默认参数为 event
+- @click="handleClick(2)" 传递参数 2
+- @click="handleClick(2, $event)" 传递参数 2 和 event
+- @click="handleClick(2, $event), handleClickTwo($event)" 绑定多个点击事件并传递参数
+
+2. 修饰符
+
+- 事件修饰符:.stop、.prevent、.self、.capture、.once、.passive
+- 按键修饰符：.enter、.tab、.esc、.space、.up、.down、.left、.right
+- 鼠标修饰符： left、right、middle
+- 精确修饰符：exact
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/12-event-handling.html)
