@@ -168,3 +168,14 @@ v-show
    - 局部组件使用时，要做一个名字和组件之间的映射对象
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/14-component-registration.html)
+
+### 3.2 组件间传值及传值校验
+
+1. 组件间传值用 props
+2. props 校验
+   - type 可以是下列这些原生构造器： String、Number、Boolean、Array、Object、Date、Function、Symbol、
+   - required: true/false 可以声明属性非（必）需传
+   - default: '' 可以声明属性默认值, 也可以用一个函数表达式进行返回
+   - validator: 支持检验函数
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/15-component-props.html)
