@@ -54,3 +54,5 @@
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/06-life-cycle.html)
 
 ### 2.3 常用模版语法讲解
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/07-common-template-syntax.html)
