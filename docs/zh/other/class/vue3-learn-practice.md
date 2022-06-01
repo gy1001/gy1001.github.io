@@ -81,3 +81,30 @@ v-else
 v-show
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/10-conditional-rendering.html)
+
+### 2.7 列表渲染
+
+1. v-for
+
+- 可以循环数组：v-for="(item, itemIndex) in listArray" :key="item"
+  - 更改数组的方法
+    - 使用数组的变更函数 push、pop、shift、unshift、splice、sort、reverse
+    - 还可以直接改变数组 ：this.listArray = ['bey', 'world']
+    - 直接更新数组的某一项内容（新版本支持，旧版本不支持如此）： this.listArray[0] = '唐三藏'
+- 可以循环对象：v-for="(value, key) in listObject" :key="key"
+- 循环一个数字： v-for="item in 10" :key="item"
+
+2. v-for 与 v-if
+
+   - 同时使用 `v-if` 和 `v-for` 是**不推荐的**，因为这样二者的优先级不明显
+   - 当它们同时存在于一个节点上时，`v-if` 比 `v-for` 的优先级更高。这意味着 `v-if` 的条件将无法访问到 `v-for` 作用域内定义的变量别名：
+
+3. 通过 key 管理状态
+
+   Vue 默认按照“就地更新”的策略来更新通过 `v-for` 渲染的元素列表。当数据项的顺序改变时，Vue 不会随之移动 DOM 元素的顺序，而是就地更新每个元素，确保它们在原本指定的索引位置上渲染。
+
+   默认模式是高效的，但**只适用于列表渲染输出不依赖子组件状态或者临时 DOM 状态 (例如表单输入值)**。
+
+   为了给 Vue 一个提示，以便它可以跟踪每个节点的标识，从而重用和重新排序现有的元素，你需要为每个项目提供一个唯一的 `key` attribute：
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/11-list-rendering.html)
