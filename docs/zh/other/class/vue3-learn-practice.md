@@ -43,7 +43,7 @@
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/04-todo-list-optimize.html)
 
-## 2 Vue 基础语法
+## 2. Vue 基础语法
 
 ### 2.1 Vue 中应用和组件的基础概念
 
@@ -156,3 +156,15 @@ v-show
    ```
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/13-form-input-binding.html)
+
+## 3. 探索组件的理念
+
+### 3.1 组件的定义及复用性，局部组件和全局组件
+
+1. 全局注册： app.component()
+   - 定义了以后，处处可以使用，性能不高，但是使用方便，名字建议 小写字母，中间用 - 链接
+2. 局部注册：：components: { ComponentA }
+   - 定义了以后，要注册以后才能使用，性能比较高，使用起来稍微麻烦点，建议大写驼峰式命名
+   - 局部组件使用时，要做一个名字和组件之间的映射对象
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/14-component-registration.html)
