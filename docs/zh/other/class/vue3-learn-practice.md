@@ -126,3 +126,33 @@ v-show
 - 精确修饰符：exact
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/12-event-handling.html)
+
+### 2.9 表单输入绑定
+
+1. v-model 还可以用于各种不同类型的输入，**textarea**、**select** 元素。它会根据所使用的元素自动扩展到不同的 DOM 属性和事件组合：
+
+2. 单选框 input type="radio"
+
+3. 复选框 input type="checkbox"
+
+4. 选择器 select
+
+   - 单个选择器
+   - 多个选择器（值绑定到一个数组）
+
+5. 对于复选框 type="checkbox" 还可以使用 true-value 和 false-value。 它们 是 Vue 特有的 attributes 且仅会在 v-model 存在时工作。
+
+   ```html
+   <input type="checkbox" v-model="toggle" true-value="yes" false-value="no" />
+   ```
+
+6. 选择器选项：v-model 同样也支持非字符串类型的值绑定！在上面这个例子中，当某个选项被选中，selected 会被设为该对象字面量值 { number: 123 }
+
+   ```html
+   <select v-model="selected">
+     <!-- 内联对象字面量 -->
+     <option :value="{ number: 123 }">123</option>
+   </select>
+   ```
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/13-form-input-binding.html)
