@@ -65,3 +65,9 @@
 - computed 和 watch 都能实现的功能，建议使用 computed，因为 computed 更加简洁
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/08-data-computed-watch.html)
+
+### 2.5 样式绑定语法
+
+支持 变量字符串、变量对象、变量数组、行内样式等
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/09-class-style.html)
