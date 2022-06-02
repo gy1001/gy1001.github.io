@@ -283,3 +283,11 @@ v-show
 2. 异步组件： defineAsyncComponent 方法接收一个返回 Promise 的加载函数。这个 Promise 的 resolve 回调方法应该在从服务器获得组件定义时调用。
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/22-component-async-dynamic.html)
+
+### 3.10 基础语法知识点查缺补漏
+
+1. v-once: 只渲染一次，即使数据发生变化
+2. ref: 实际上是获取 DOM 节点的一个语法, 还可以获取组件的引用
+3. provide/inject
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/23-component-add.html)
