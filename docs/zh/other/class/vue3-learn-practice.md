@@ -179,3 +179,14 @@ v-show
    - validator: 支持检验函数
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/15-component-props.html)
+
+### 3.3 单项数据流的理解
+
+> 所有的 prop 都遵循着单向绑定原则，prop 因父组件的更新而变化，自然地将新的状态向下流往子组件，而不会逆向传递。这避免了子组件意外修改了父组件的状态，不然应用的数据流就会变得难以理解了。
+
+1. 传递多个属性值时候可以用 v-bind
+2. 组件属性名字过长时候，用-连接，但是组件内部需要用驼峰法来接入
+3. 单向数据流：
+   - 想要更改 prop 通常都符合以下两种场景： - prop 被用于传入初始值；而子组件想在之后将其作为一个局部数据属性。在这种情况下，最好是新定义一个局部数据属性，从 prop 上获取初始值即可： - prop 以原始的形式传入，但还需作转换。在这种情况中，最好是基于该 prop 值定义一个计算属性：
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/16-component-props-one-way-flow.html)
