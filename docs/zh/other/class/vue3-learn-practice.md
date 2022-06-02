@@ -199,3 +199,15 @@ v-show
 2. 在子组件中增加属性 inheritAttrs:false，Non-Props 属性 就不会渲染到最外层标签了
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/17-component-props-non-props.html)
+
+### 3.5 父子组件间如何通过事件进行通信
+
+1. 子组件中通过使用 $emit 函数触发自定义事件，支持 @ 缩写，也支持.once 修饰符
+2. 另外 像组件与 prop 一样，事件的名字也提供了自动的转换。请注意，我们触发了一个以 camelCase 形式命名的事件，但在父组件中可以使用 kebab-case 形式来监听。与 prop 大小写格式一样，在模板中我们也推荐使用 kebab-case 形式来编写监听器。
+3. 可以给 $emit 提供一个值作为额外的参数来传递参数
+4. emits 可以声明 触发的事件，也可以通过设置为函数对其进行校验
+5. 组件上的 v-model
+   - 默认属性名为 modelValue, 触发的事件名为 update:modelValue
+   * 也支持自定义，比如 v-model:app , 则子组件中需要接收的属性名为 app, 需要触发的事件名字为 update:app
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/18-component-events.html)
