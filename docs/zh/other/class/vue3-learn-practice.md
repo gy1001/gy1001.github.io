@@ -211,3 +211,25 @@ v-show
    * 也支持自定义，比如 v-model:app , 则子组件中需要接收的属性名为 app, 需要触发的事件名字为 update:app
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/18-component-events.html)
+
+### 3.6 组件间双向绑定高级内容
+
+1. 多个 v-model 的绑定
+
+2. v-model 的参数
+   - 默认情况下，v-model 在组件上都是使用 modelValue 作为 prop，以 update:modelValue 作为对应的事件。我们可以通过给 v-model 指定一个参数来更改这些名字： v-model:title="bookTitle"，在这个例子中，子组件应该有一个 title prop，并通过触发 update:title 事件更新父组件值：
+3. 处理 v-model 修饰符
+
+   - v-model.capitalize="myText"： 要给组件的 v-model 添加修饰符，都可以通过 modelModifiers prop 在组件内访问到。在下面的例子中，我们会创建一个包含 modelModifiers prop 的组件，它的默认值是一个空对象：
+
+   - 对于又有参数又有修饰符的 v-model 绑定，生成的 prop 名将是 arg + "Modifiers"。举个例子：
+
+     ```javascript
+     v-model:title.capitalize="myText"
+
+     // console.log(props.titleModifiers) // { capitalize: true }
+     // 触发事件 emit("update:title")
+     // props: ['title', 'titleModifiers']
+     ```
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/19-component-events-add.html)
