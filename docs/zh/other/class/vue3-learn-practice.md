@@ -233,3 +233,17 @@ v-show
      ```
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/19-component-events-add.html)
+
+### 3.7 使用插槽和具名插槽解决组件内容传递问题
+
+> 我们已经学习过组件能够接收任意类型的 JavaScript 值作为 props，但组件要如何接收模板内容呢？在某些场景中，我们可能想要为子组件传递一些模板片段，让子组件在它们的组件中渲染这些片段。这里就需要用到本节的插槽 slot 来完成
+
+> 通过使用插槽， 组件更加灵活和具有可复用性。现在组件可以用在不同的地方渲染各异的内容，但同时还保证都具有相同的样式。
+
+1. 作用域规则：任何父组件模板中的东西都只被编译到父组件的作用域中；而任何子组件模板中的东西都只被编译到子组件的作用域中。
+2. 插槽也可以设置默认内容： 在外部没有提供任何内容的情况下，为插槽指定默认内容用于渲染是很有用的。
+3. 具名插槽：有时在一个组件中包含多个插槽的插口是很有用的。对于这种场景，slot 元素可以有一个特殊的 attribute name，用来给各个插槽分配唯一的 ID，以确定每一处要渲染的内容：
+   - 要为具名插槽传入内容，我们需要使用一个含 v-slot 指令的 template 元素，并将目标插槽的名字传给该指令： template v-slot:header
+   * v-slot 有对应的简写 #，因此 template v-slot:header 可以简写为 template #header 其意思就是“将这部分模板片段传入子组件的 header 插槽中”
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/20-component-slots.html)
