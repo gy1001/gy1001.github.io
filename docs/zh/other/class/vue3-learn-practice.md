@@ -197,3 +197,5 @@ v-show
 
 1. 父组件传递子组件属性值，子组件却没有使用，也没有声明 props, 最后渲染时，会把传递的属性比如 message = "hello" 原封不动的渲染到了 比如 test 子组件的最外层标签上
 2. 在子组件中增加属性 inheritAttrs:false，Non-Props 属性 就不会渲染到最外层标签了
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/17-component-props-non-props.html)
