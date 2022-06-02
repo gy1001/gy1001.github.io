@@ -190,3 +190,10 @@ v-show
    - 想要更改 prop 通常都符合以下两种场景： - prop 被用于传入初始值；而子组件想在之后将其作为一个局部数据属性。在这种情况下，最好是新定义一个局部数据属性，从 prop 上获取初始值即可： - prop 以原始的形式传入，但还需作转换。在这种情况中，最好是基于该 prop 值定义一个计算属性：
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/16-component-props-one-way-flow.html)
+
+### 3.4 Non-Props 属性是什么
+
+> 其实很简单，之前讲的组件传参，子组件会使用 props:[''] 的方式接收父组件传递的参数，如果子组件不使用 props:[''] 接收参数，那这个参数就是一个 Non-Props 属性。
+
+1. 父组件传递子组件属性值，子组件却没有使用，也没有声明 props, 最后渲染时，会把传递的属性比如 message = "hello" 原封不动的渲染到了 比如 test 子组件的最外层标签上
+2. 在子组件中增加属性 inheritAttrs:false，Non-Props 属性 就不会渲染到最外层标签了
