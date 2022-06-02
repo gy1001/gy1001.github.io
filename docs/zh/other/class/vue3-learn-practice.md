@@ -276,3 +276,10 @@ v-show
       ```
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/21-component-scoped-slots.html)
+
+### 3.9 动态组件和异步组件
+
+1. 动态组件： 根据数据的变化，结合 component 这个标签，来随时动态切换组件的显示
+2. 异步组件： defineAsyncComponent 方法接收一个返回 Promise 的加载函数。这个 Promise 的 resolve 回调方法应该在从服务器获得组件定义时调用。
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/22-component-async-dynamic.html)
