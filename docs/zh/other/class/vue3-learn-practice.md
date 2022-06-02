@@ -247,3 +247,32 @@ v-show
    * v-slot 有对应的简写 #，因此 template v-slot:header 可以简写为 template #header 其意思就是“将这部分模板片段传入子组件的 header 插槽中”
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/20-component-slots.html)
+
+### 3.8 作用域插槽
+
+> 在默认插槽和具名插槽中，插槽的内容无法访问到子组件的状态
+> 然而在某些场景下插槽的内容可能想要同时使用父组件域内和子组件域内的数据。要做到这一点，我们需要一种方法来让子组件在渲染时将一部分数据提供给插槽。
+
+1.  我门可以像对组件传递 prop 那样，向一个插槽的插口上传递 attribute
+
+2.  子组件传入插槽的 props 作为了 v-slot 指令的值 比如 v-slot="slotProps"，可以在插槽内的表达式中访问。你可以将作用域插槽类比为一个传入子组件的函数。子组件会将相应的 prop 作为参数去调用它
+
+3.  具名作用域插槽
+
+    - 向具名插槽中传入 props：
+
+      > 注意: 如下代码中，插槽上的 name 是由 Vue 保留的，不会作为 props 传递给插槽。 因此最终 headerProps 的结果是 { message: 'hello' }
+
+      ```html
+      <slot name="header" message="hello"></slot> // MyComponent.vue
+      ```
+
+    - 具名作用域插槽的工作方式也是类似的，插槽 props 可以作为 `v-slot` 指令的值被访问到：`v-slot:name="slotProps"`
+
+      ```html
+      <MyComponent>
+        <template #header="headerProps"> {{ headerProps }} </template>
+      </MyComponent>
+      ```
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/21-component-scoped-slots.html)
