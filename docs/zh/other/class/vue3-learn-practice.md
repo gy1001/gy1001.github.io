@@ -291,3 +291,13 @@ v-show
 3. provide/inject
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/23-component-add.html)
+
+## 4. Vue 中的动画
+
+### 4.1 使用 Vue 实现基础的 CSS 过渡与动画效果
+
+1. 基础的 过渡或者动画可以实现的方式
+   - class 样式
+   - 行内 style 样式
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/24-transition-animation.html)
