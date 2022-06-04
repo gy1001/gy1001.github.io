@@ -325,3 +325,16 @@ v-show
      ```
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/25-transition.html)
+
+### 4.3 组件和元素切换动画的实现
+
+1.  多个元素之间的切换
+    - 可以通过 appear attribute 设置节点在初始渲染的过渡
+    - 有时候我们正在处理更复杂的动作，需要协调进入和离开的状态，所以 Vue 提供了一个非常有用的工具，称之为**过渡模式**：
+      - in-out: 新元素先进行进入过渡，完成之后当前元素过渡离开。
+      - out-in: 当前元素先进行离开过渡，完成之后新元素过渡进入
+2.  多个组件之间的切换
+    - 使用以上配置也同样适用
+    - 多个单组件之间的切换也同样可以用动态组件来实现
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/26-transition-between-components.html)
