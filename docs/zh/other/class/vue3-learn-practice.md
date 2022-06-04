@@ -301,3 +301,27 @@ v-show
    - 行内 style 样式
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/24-transition-animation.html)
+
+### 4.2 使用 transition 标签实现单元素组件的过渡和动画效果
+
+1. 初步使用 transition 实现 入场 和 出场动画
+   - 需要配合使用相应的 css 样式：v-enter-from v-enter-to v-enter-active v-leave-from v-leave-active v-leave-to
+2. 可以使用 transition 和 name 属性实现自定义 class 名的 入场 和 出场动画（假设 name 属性值为 hello）
+   - 需要配合使用相应的 css 样式：hello-enter-from hello-enter-to hello-enter-active hello-leave-from hello-leave-active hello-leave-to
+3. 支持自定义 class 类名：
+   - enter-from-class、enter-active-class、enter-to-class、leave-from-class、leave-active-class、leave-to-class
+4. 支持自定义 js 钩子函数
+
+   - 这些钩子函数可以结合 CSS transitions/animations 使用，也可以单独使用。
+
+   - 当只用 JavaScript 过渡的时候，在 enter 和 leave 钩子中必须使用 done 进行回调。否则，它们将被同步调用，过渡会立即完成。添加 :css="false" 也会让 Vue 会跳过 CSS 的检测，除了性能略高之外，这也可以避免过渡过程中受到 CSS 规则的意外影响。
+
+   - 支持的事件如下:
+
+     ```html
+     @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter"
+     @enter-cancelled="enterCancelled" @before-leave="beforeLeave"
+     @leave="leave" @after-leave="afterLeave" @leave-cancelled="leaveCancelled"
+     ```
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/25-transition.html)
