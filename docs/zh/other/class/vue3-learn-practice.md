@@ -338,3 +338,16 @@ v-show
     - 多个单组件之间的切换也同样可以用动态组件来实现
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/26-transition-between-components.html)
+
+### 4.4 列表动画
+
+> 使用 v-for 的场景下，我们会使用 transition-group 组件
+
+1. 关于这个组件的几个特点：
+   - 默认情况下，它不会渲染一个包裹元素，但是你可以通过 tag attribute 指定渲染一个元素
+   - 过渡模式不可用，因为我们不再相互切换特有的元素
+   - 内部元素总是需要提供唯一的 key attribute 值
+   - CSS 过渡的类将会应用在内部的元素中，而不是这个组/容器本身
+2. transition-group 组件还有一个特殊之处。除了进入和离开，它还可以为定位的改变添加动画。只需了解新增的 v-move 类就可以使用这个新功能，它会应用在元素改变定位的过程中。像之前的类名一样，它的前缀可以通过 name attribute 来自定义，也可以通过 move-class attribute 手动设置。
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/27-transition-group.html)
