@@ -357,3 +357,24 @@ v-show
 Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和列表的动效，那么对于数据元素本身的动效呢？比如：数字和运算、颜色的显示、SVG 节点的位置、元素的大小和其他的 property
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/28-transition-state.html)
+
+## 5. Vue 中的高级语法
+
+### 5.1 Mixin 混入的基础语法
+
+1.  mixin 混入
+    - 组件 data 优先级高于 mixin data 优先级
+    - 生命周期函数：先执行 mixin 里面的，在执行组件内的
+    - 自定义属性例如 methods 中的方法：组件种的属性优先级高于 mixin 属性的优先级
+    - mixin 也分为局部的 mixin 和 全局的 mixin
+2.  自定义选项合并策略
+
+- 自定义选项在合并时，默认策略为简单地覆盖已有值。如果想让某个自定义选项以自定义逻辑进行合并，可以在 `app.config.optionMergeStrategies` 中添加一个函数：
+
+3.  不足：在 Vue 2 中，mixin 是将部分组件逻辑抽象成可重用块的主要工具。但是，他们有几个问题：
+
+- Mixin 很容易发生冲突：因为每个 mixin 的 property 都被合并到同一个组件中，所以为了避免 property 名冲突，你仍然需要了解其他每个特性。
+- 可重用性是有限的：我们不能向 mixin 传递任何参数来改变它的逻辑，这降低了它们在抽象逻辑方面的灵活性。
+- 建议使用 [组合式 API](https://v3.cn.vuejs.org/guide/composition-api-introduction.html)。
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/29-mixin.html)
