@@ -446,3 +446,18 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
 ### 5.4 更加底层的 render 函数
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/32-render.html)
+
+### 5.5 插件的定义和使用
+
+> 插件是一种能为 Vue 添加全局功能的工具代码。
+
+1. 它可以是一个拥有 install() 方法的对象，或者就简单地只是一个函数，它自己就是安装函数。安装函数接收应用实例和传递给 app.use() 的额外选项：
+
+2. 插件没有严格定义的使用范围，但是插件发挥作用的常见场景主要包括以下几种：
+
+   - 通过 [`app.component()`](https://staging-cn.vuejs.org/api/application.html#app-component) 和 [`app.directive()`](https://staging-cn.vuejs.org/api/application.html#app-directive) 注册一到多个全局组件或自定义指令。
+   - 通过 [`app.provide()`](https://staging-cn.vuejs.org/api/application.html#app-provide) 使一个资源[可被注入](https://staging-cn.vuejs.org/guide/components/provide-inject.html)进整个应用。
+   - 向 [`app.config.globalProperties`](https://staging-cn.vuejs.org/api/application.html#app-config-globalproperties) 中添加一些全局实例属性或方法
+   - 一个可能上述三种都包含了的功能库 (例如 [vue-router](https://github.com/vuejs/vue-router-next))。
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/33-plugins.html)
