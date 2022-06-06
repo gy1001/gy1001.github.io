@@ -465,3 +465,14 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
 ### 5.6 数据校验插件开发实例
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/34-plugins-validator.html)
+
+## 6. Composition API
+
+### 6.1 setup 函数的使用
+
+1. setup 函数会在 created 实例被完全初始化之前
+2. 参数为
+   - props:一个 setup 函数的 props 是响应式的，并且会在传入新的 prop 时同步更新。但是，props 解构出的变量将会丢失响应性,因此我们推荐通过 props.xxx 的形式来使用其中的 prop 或者 使用 toRefs() 和 toRef() 这两个工具 API
+   - context: { attrs, slots, emit, expose }
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/35-composition-api-setup.html)
