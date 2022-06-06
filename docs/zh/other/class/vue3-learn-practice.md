@@ -476,3 +476,19 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
    - context: { attrs, slots, emit, expose }
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/35-composition-api-setup.html)
+
+### 6.2 ref，reactive 响应式引用的用法和原理
+
+1. ref/reactive 响应式:
+   - 原理： 通过 Proxy 对数据进行封装，当数据变化时，触发模板等内容的更新
+2. reactive: 返回一个对象的响应式代理
+3. readonly：接受一个对象 (不论是响应式还是一般的) 或是一个 ref，返回一个原值的只读代理。
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/35-composition-api-setup.html)
+
+### 6.3 toRef 以及 context 参数
+
+1. toRefs、toRef 实现结构后的数据保持响应式
+2. context: { attrs, slots, emit, expose }
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/37-composition-api-toref-context.html)
