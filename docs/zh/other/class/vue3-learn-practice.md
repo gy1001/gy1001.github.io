@@ -461,3 +461,7 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
    - 一个可能上述三种都包含了的功能库 (例如 [vue-router](https://github.com/vuejs/vue-router-next))。
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/33-plugins.html)
+
+### 5.6 数据校验插件开发实例
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/34-plugins-validator.html)
