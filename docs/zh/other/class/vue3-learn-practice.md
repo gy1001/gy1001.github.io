@@ -414,3 +414,31 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
 3. 局部注册指令
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/30-custom-direcitves.html)
+
+### 5.3 teleport 传送门功能
+
+> Teleport 是一个内置组件，使我们可以将一个组件的一部分模板“传送”到该组件的 DOM 层次结构之外的 DOM 节点中。
+
+1. Teleport 挂载时，传送门的 to 目标必须是已经存在于 DOM 之中
+2. 也可以禁用 teleport :disabled="isMobile" 这里的 isMobile 状态可以根据媒体查询的不同结果动态地更新
+3. 同一目标上多个传送门
+
+   ```html
+   <Teleport to="#modals">
+     <div>A</div>
+   </Teleport>
+   <Teleport to="#modals">
+     <div>B</div>
+   </Teleport>
+   ```
+
+   渲染的结果为：
+
+   ```html
+   <div id="modals">
+     <div>A</div>
+     <div>B</div>
+   </div>
+   ```
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/31-teleport.html)
