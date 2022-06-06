@@ -442,3 +442,7 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
    ```
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/31-teleport.html)
+
+### 5.4 更加底层的 render 函数
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/32-render.html)
