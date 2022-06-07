@@ -505,3 +505,43 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
 注意： 当 computed 接收参数为一个函数时候，它是只读的
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/39-composition-api-computed.html)
+
+### 6.6 watch 和 watchEffect 的使用和差异性
+
+1. watch: 侦听一个或多个响应式数据源，并在数据源变化时调用所给的回调函数。
+
+   - watch() 默认是懒侦听的，即仅在侦听源发生变化时才执行回调函数
+   - 参数详解
+     - 第一个参数是侦听器的**源**。这个来源可以是以下几种：
+       - 一个函数，返回一个值
+       - 一个 ref
+       - 一个响应式对象
+       - ...或是由以上类型的值组成的数组
+     - 第二个参数是在发生变化时要调用的回调函数。这个回调函数接受三个参数：新值、旧值，以及一个用于注册副作用清理的回调函数。该回调函数会在副作用下一次重新执行前调用，可以用来清除无效的副作用，例如等待中的异步请求。注意：**当侦听多个来源时，回调函数接受两个数组，分别对应来源数组中的新值和旧值。**
+     - 第三个可选的参数是一个对象，支持以下这些选项
+       - **`immediate`**：在侦听器创建时立即触发回调。第一次调用时旧值是 `undefined`。
+       - **`deep`**：如果源是对象，强制深度遍历，以便在深层级变更时启动回调。参考[深层侦听器](https://staging-cn.vuejs.org/guide/essentials/watchers.html#deep-watchers)一节。
+       - **`flush`**：调整回调函数的刷新时机。参考[回调的刷新时机](https://staging-cn.vuejs.org/guide/essentials/watchers.html#callback-flush-timing)一节。
+       - **`onTrack / onTrigger`**：调试侦听器的依赖。参考[调试侦听器](https://staging-cn.vuejs.org/guide/extras/reactivity-in-depth.html#watcher-debugging)一节。
+
+2. watchEffect: 立即运行一个函数，同时响应式地追踪其依赖，并在依赖更改时重新执行。
+
+3. 区别：
+
+   - 与 [`watchEffect()`](https://staging-cn.vuejs.org/api/reactivity-core.html#watcheffect) 相比，`watch()` 使我们可以：
+
+     - 懒执行副作用；
+
+     - 更加明确是应该由哪个状态触发侦听器重新执行；
+
+     - 可以访问所侦听状态的前一个值和当前值。
+
+   - 与 watch 相比，watchEffect 可以使我们
+
+     - 立即执行，没有惰性
+     - 不需要传递你要侦听的内容，自动感知依赖, 不需要传递很多参数，只需要传递一个回调函数即可
+     - 不过不能获取之前数据的值
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/39-composition-api-computed.html)
+
+​
