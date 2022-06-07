@@ -566,3 +566,32 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
 ### 6.12 Provide,Inject,模版 Ref 的用法
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/42-composition-api-provide-inject.html)
+
+## 7. Vue 项目开发配套工具讲解
+
+### 7.1 VueCLI 的使用和单文件组件
+
+1. 下载安装 node：[官网](https://nodejs.org/)
+
+   ```shell
+   node -v
+   npm -v
+   npm install nrm -g // 切换 npm 源
+   nrm ls
+   ```
+
+2. 安装 vue-cli
+
+   ```shell
+   npm install -g @vue/cli
+   # OR
+   yarn global add @vue/cli
+   ```
+
+3. 创建一个项目
+
+   ```shell
+   vue create vue3-demo // vue-demo 项目名字，可以自定义，然后选择相应的配置（默认配置 或者 手动选择）
+   ```
+
+   具体内容查看相应代码提交历史：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/commit/ebd3f506b0866506432fad907c2a198258bbdbb4)
