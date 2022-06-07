@@ -496,3 +496,12 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
 ### 6.4 使用 Composition API 开发 TodoList
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/38-composition-api-todolist.html)
+
+### 6.5 computed 方法生成计算属性
+
+1. 接受一个 getter 函数，返回一个只读的响应式 ref 对象，即 getter 函数的返回值。
+2. 它也可以接受一个带有 get 和 set 函数的对象来创建一个可写的 ref 对象。
+
+注意： 当 computed 接收参数为一个函数时候，它是只读的
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/39-composition-api-computed.html)
