@@ -544,4 +544,21 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/40-composition-api-watch-watcheffect.html)
 
-​
+### 6.7 生命周期函数的新写法
+
+> 所有罗列在本页的 API 都应该在组件的 setup() 阶段被同步调用
+
+- onMounted: 注册一个回调函数，在组件挂载完成后执行。
+- onUpdated: 注册一个回调函数，在组件因为响应式状态变更而更新其 DOM 树之后调用。
+- onUnmounted: 注册一个回调函数，在组件实例被卸载之后调用。
+- onBeforeMount: 注册一个钩子，在组件被挂载之前被调用。
+- onBeforeUpdate: 注册一个钩子，在组件即将因为响应式状态变更而更新其 DOM 树之前调用。
+- onBeforeUnmount: 注册一个钩子，在组件实例被卸载之前调用。
+- onErrorCaptured: 注册一个钩子，在捕获了后代组件传递的错误时调用。
+- onRenderTracked（Dev only）: 注册一个调试钩子，当响应式依赖被组件的渲染作用追踪后调用。
+- onRenderTriggered（Dev only）: 注册一个调试钩子，当响应式依赖触发了组件渲染作用的运行之后调用。
+- onActivated: 注册一个回调函数，若组件实例是 KeepAlive 缓存树的一部分，当组件被插入到 DOM 中时调用。
+- onDeactivated: 注册一个回调函数，若组件实例是 KeepAlive 缓存树的一部分，当组件从 DOM 中被移除时调用。
+- onServerPrefetch（SSR only）: 注册一个异步函数，在组件实例在服务器上被渲染之前调用。
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/41-composition-api-lifecycle.html)
