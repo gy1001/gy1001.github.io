@@ -562,3 +562,7 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
 - onServerPrefetch（SSR only）: 注册一个异步函数，在组件实例在服务器上被渲染之前调用。
 
 具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/41-composition-api-lifecycle.html)
+
+### 6.12 Provide,Inject,模版 Ref 的用法
+
+具体内容查看相应代码：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/blob/master/vue3-learn-practice-demo/42-composition-api-provide-inject.html)
