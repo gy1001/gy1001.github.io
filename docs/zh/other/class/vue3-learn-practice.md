@@ -629,3 +629,10 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
 ### 7.5 compositionAPI 中如何使用 VueX
 
 具体内容查看相应代码提交历史：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/commit/33d548f94fb0769ea9f0b99232124d911eea9854)
+
+### 7.6 使用 axios 发送 ajax 请求
+
+1. 安装 axios 依赖包
+   ```shell
+      npm install axios --save
+   ```
