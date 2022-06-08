@@ -625,3 +625,7 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
 具体内容查看相应代码提交历史：
 [vue3+vuex 项目初始化](https://github.com/mineMineGo/Vue-Related/commit/1e0c7e4abcbc0b09b7bccf88ba0088ab3725aa16)
 [vuex 数据状态的保持以及更改操作](https://github.com/mineMineGo/Vue-Related/commit/634b0a0f8d7230eda99615eadbda5d5452833aab)
+
+### 7.5 compositionAPI 中如何使用 VueX
+
+具体内容查看相应代码提交历史：[点击跳转 github](https://github.com/mineMineGo/Vue-Related/commit/33d548f94fb0769ea9f0b99232124d911eea9854)
