@@ -633,6 +633,11 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
 ### 7.6 使用 axios 发送 ajax 请求
 
 1. 安装 axios 依赖包
+
    ```shell
       npm install axios --save
    ```
+
+具体内容查看相应代码提交历史：[安装引入相关依赖](https://github.com/mineMineGo/Vue-Related/commit/991a334e62746d8d7e5f5a3f262635874228a26f)
+
+[模拟请求接口](https://github.com/mineMineGo/Vue-Related/commit/d7a7a2a8aa3230e207e6cd29ed6f2af7842e4941)
