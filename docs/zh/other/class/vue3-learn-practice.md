@@ -677,3 +677,30 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
 
 - package-lock.json
   - 锁定依赖包版本号
+
+### 8.3 基础样式集成及开发模拟器的使用
+
+1. 安装 normalize.css 来抹平相同标签在不同浏览器之间的表现差异
+
+   ```shell
+   npm install normalize.css --save
+   ```
+
+2. `main.js` 引入
+
+   ```javascript
+   import 'normalize.css'
+   ```
+
+3. 创建 `style` 文件夹，并创建 `style/base.scss`
+
+   ```javascript
+   html{
+     font-size: 20px;
+     color: red;
+   }
+
+   import './style/base.scss'
+   ```
+
+具体内容查看相应代码提交历史：[基础样式集成](https://github.com/mineMineGo/Vue-Related/commit/37feadd40ec2249dc2079e9076a79b2f4afe69af)
