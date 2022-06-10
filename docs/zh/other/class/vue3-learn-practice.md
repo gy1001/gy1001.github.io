@@ -704,3 +704,7 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
    ```
 
 具体内容查看相应代码提交历史：[基础样式集成](https://github.com/mineMineGo/Vue-Related/commit/37feadd40ec2249dc2079e9076a79b2f4afe69af)
+
+### 8.4 flex + iconfont 完成首页 docker 样式编写
+
+具体内容查看相应代码：[底部 docker](https://github.com/mineMineGo/Vue-Related/commit/bec236e9ee3b1495c8e8b09f7459f5e46c81fde2)
