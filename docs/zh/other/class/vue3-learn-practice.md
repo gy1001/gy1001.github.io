@@ -647,3 +647,33 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
 ### 8.1 工程初始化
 
 具体内容查看相应代码提交历史：[京东项目初始化](https://github.com/mineMineGo/Vue-Related/commit/e3e5d8875a5bf339031af800c1bde1c250b16a34)
+
+### 8.2 工程目录代码简介及整理
+
+- node_modules 存放第三方的一些依赖模块
+- public
+
+  - index.html 入口 html 文件
+  - favicon.ico 浏览器标签小 icon
+
+- src
+
+  - main.js 文件入口，引用 vue 组件等产生实例并挂载
+
+  * App.vue 根组件
+  * assets：静态文件夹
+  * components：公用组件
+  * router：路由文件
+  * store：状态管理文件
+  * views：视图组件
+
+- babel.config.js
+
+  - babel 配置文件
+
+- package.json
+
+  - browserslist: >1% 表示支持全球使用量超过 1%的浏览器，last 2 versions 支持最后两个版本
+
+- package-lock.json
+  - 锁定依赖包版本号
