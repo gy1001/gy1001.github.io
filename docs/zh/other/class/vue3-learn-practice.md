@@ -708,3 +708,7 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
 ### 8.4 flex + iconfont 完成首页 docker 样式编写
 
 具体内容查看相应代码：[底部 docker](https://github.com/mineMineGo/Vue-Related/commit/bec236e9ee3b1495c8e8b09f7459f5e46c81fde2)
+
+### 8.5 使用 Scss 组织地址区域布局
+
+具体内容查看相应代码：[点击跳转](https://github.com/mineMineGo/Vue-Related/commit/8db3d42d1cd3733ba57a263c650e3a814634e8f4)
