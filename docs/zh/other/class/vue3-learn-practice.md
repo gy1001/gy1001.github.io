@@ -828,3 +828,5 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
 具体内容查看相应代码：[结算页面布局](https://github.com/mineMineGo/Vue-Related/commit/885b39e7b59780b20cb58fa70b8e93410994e012)
 
 [商品列表数据获取与展示](https://github.com/mineMineGo/Vue-Related/commit/7518926605caa77516e0d43116f46669df6f72b4)
+
+[提交订单弹框](https://github.com/mineMineGo/Vue-Related/commit/2e8a3bc6cb377fda22cd9ff0e8318fb8a2393ed5)
