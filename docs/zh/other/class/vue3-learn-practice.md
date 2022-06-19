@@ -810,3 +810,7 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
 ### 11.7 商家详情页面代码优化
 
 具体内容查看相应代码：[点击跳转](https://github.com/mineMineGo/Vue-Related/commit/dd3f58a99c9fd595526f484408b194d419abc64a)
+
+### 11.8 购物车数据结构的变更
+
+### 11.9 通过 LocalStorage 实现购物车信息持久存储
