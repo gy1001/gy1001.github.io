@@ -829,4 +829,6 @@ Vue 的过渡系统提供了非常多简单的方法来设置进入、离开和�
 
 [商品列表数据获取与展示](https://github.com/mineMineGo/Vue-Related/commit/7518926605caa77516e0d43116f46669df6f72b4)
 
-[提交订单弹框](https://github.com/mineMineGo/Vue-Related/commit/2e8a3bc6cb377fda22cd9ff0e8318fb8a2393ed5)
+[提交订单弹框布局](https://github.com/mineMineGo/Vue-Related/commit/2e8a3bc6cb377fda22cd9ff0e8318fb8a2393ed5)
+
+[提交订单弹框逻辑](https://github.com/mineMineGo/Vue-Related/commit/27b402c66f7d1fda6fd734a97a1ab14c46e8c384)
