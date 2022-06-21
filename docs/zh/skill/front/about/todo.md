@@ -16,10 +16,6 @@ ES6
 
 grunt
 
-typeScript
-
-webpack
-
 http
 
 加密
