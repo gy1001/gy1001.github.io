@@ -35,6 +35,10 @@ export const sidebarZh: SidebarConfig = {
       children: ['/zh/skill/front/mini-frame/mini-vue.md'],
     },
     {
+      text: '源码解读',
+      children: ['/zh/skill/front/source/axios.md'],
+    },
+    {
       text: '一些翻译',
       children: ['/zh/skill/front/translate/require-js.md'],
     },
