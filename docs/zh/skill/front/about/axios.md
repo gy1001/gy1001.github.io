@@ -305,3 +305,237 @@ const instance = axios.create({
     })
 }
 ```
+
+### 2.7 响应结构
+
+```javascript
+{
+  // data 由服务器提供的响应
+  data: {},
+  // status 来自服务器响应的 http 状态码
+  status: 200,
+  // statusText 来自服务器响应的 http 状态信息
+  statusText: "OK",
+  // headers 服务器响应头
+  headers: {},
+  // config 是为请求提供的配置信息
+  config: {},
+  // 'request'
+  // `request` is the request that generated this response
+  // It is the last ClientRequest instance in node.js (in redirects)
+  // and an XMLHttpRequest instance the browser
+  request: {}
+}
+```
+
+使用 then 时候，你将接收到下面这样的响应
+
+```javascript
+axios.get('/user/12345').then(function (response) {
+  console.log(response.data)
+  console.log(response.status)
+  console.log(response.statusText)
+  console.log(response.headers)
+  console.log(response.config)
+})
+```
+
+在使用 catch 时，或者传递 rejection callback 作为 then 第二个参数时，响应可以通过 error 对象可被使用，正如在[处理错误](https://www.kancloud.cn/yunye/axios/234845#handling-errors)这节所讲
+
+```javascript
+axios.get('/user/12345').catch(function (error) {
+  if (error.response) {
+    // 请求已发出，但服务器响应的状态码不在 2xx 范围内
+    console.log(error.response.data)
+    console.log(error.response.status)
+    console.log(error.response.headers)
+  } else {
+    // Something happened in setting up the request that triggered an Error
+    console.log('Error', error.message)
+  }
+  console.log(error.config)
+})
+```
+
+也可以使用 validateStatus 配置选项定义一个自定义 http 状态码的错误范围
+
+```javascript
+axios.get('/user/12345', {
+  validateStatus: function (status) {
+    return status < 500 // 状态码在大于或等于500时才会 reject
+  },
+})
+```
+
+### 2.8 配置默认项
+
+> 你可以指定将被用在各个请求的配置默认值
+
+#### 2.8.1 全局的 axios 默认值
+
+```javascript
+axios.defaults.baseURL = 'https://api.example.com'
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN
+axios.defaults.headers.post['Content-Type'] =
+  'application/x-www-form-urlencoded'
+```
+
+#### 2.8.2 自定义实例默认值
+
+```javascript
+// set config defaults when creating the instance
+const instance = axios.create({
+  baseURL: 'http://api.example.com',
+})
+// alter defaults after instance has been created
+instance.defaults.headers.common['Authorization'] = AUTH_TOKEN
+```
+
+#### 2.8.3 配置的优先顺序
+
+配置会以一个优先顺序进行合并，这个顺序是在 `lib/defaults.js` 找到的库的默认值，然后是实例的 `defaults` 属性，最后是请求的`config` 参数，后者将优先于前者，这里是一个例子
+
+```javascript
+// 使用由库提供的配置的默认值来创建实例
+// 此时超时配置的默认值是 0
+const instance = axios.create()
+
+// 覆写库的超时默认值，
+// 现在 在超时前，所有请求都会等待 2.5 秒
+instance.defaults.timeout = 2500
+
+// 为已知需要花费很长时间的请求覆写超时设置
+instance.get('/longRequest', {
+  timeout: 5000,
+})
+```
+
+### 2.9 拦截器
+
+> 在请求或者响应被 then 或者 catch 处理前拦截它们
+
+```javascript
+// 添加请求拦截器
+axios.interceptors.request.use(
+  function (config) {
+    // 在发送请求之前做些什么
+    return config
+  },
+  function (error) {
+    // 对请求错误做些什么
+    return Promise.reject(error)
+  }
+)
+
+// 添加响应拦截器
+axios.interceptors.response.use(
+  function (response) {
+    // 对响应数据做点什么
+    return response
+  },
+  function (error) {
+    // 对响应错误做点什么
+    return Promise.reject(error)
+  }
+)
+```
+
+如果你想在稍后移除拦截器，可以这样
+
+```javascript
+const myInterceptor = axios.interceptors.request.use(function () {})
+axios.interceptors.request.eject(myInterceptor)
+```
+
+也可以为自定义 axios 实例添加拦截器
+
+```javascript
+const instance = axios.create()
+instance.interceptors.request.use(function () {})
+```
+
+### 2.10 错误处理
+
+```javascript
+axios.get('/user/12345').catch(function (error) {
+  if (error.response) {
+    // The request was made and the server responded with a status code
+    // that falls out of the range of 2xx
+    console.log(error.response.data)
+    console.log(error.response.status)
+    console.log(error.response.headers)
+  } else if (error.request) {
+    // The request was made but no response was received
+    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+    // http.ClientRequest in node.js
+    console.log(error.request)
+  } else {
+    // Something happened in setting up the request that triggered an Error
+    console.log('Error', error.message)
+  }
+  console.log(error.config)
+})
+```
+
+也可以使用 validateStatus 配置选型定义一个自定义 http 状态码的错误范围
+
+```javascript
+axios.get('/user/12345', {
+  validateStatus: function (status) {
+    return status < 500 // Reject only if the status code is greater than or equal to 500
+  },
+})
+```
+
+### 2.11 取消
+
+> 使用 _cancel token_ 取消请求
+
+可以使用 `CancelToken.source` 工厂方法创建 cancel token，像这样：
+
+```javascript
+//注意： 此 API 从 v0.22.0 开始已被弃用，不应在新项目中使用。
+const CancelToken = axios.CancelToken
+const source = CancelToken.source()
+
+axios
+  .get('/user/12345', {
+    cancelToken: source.token,
+  })
+  .catch(function (thrown) {
+    if (axios.isCancel(thrown)) {
+      console.log('Request Canceled', thrown.message)
+    } else {
+      // 处理错误
+    }
+  })
+axios.post(
+  '/user/12345',
+  {
+    name: 'new name',
+  },
+  {
+    cancelToken: source.token,
+  }
+)
+// 取消请求, message 参数是可选的
+source.cencel('Operation canceled by the user')
+```
+
+还可以通过传递一个 executor 函数到 CancelToken 的构造函数来创建 cancel token：
+
+```javascript
+const CancelToken = axios.CancelToken
+let cancel
+
+axios.get('/user/12345', {
+  cancelToken: new CancelToken(function executor(c) {
+    // executor 函数接收一个 cancel 函数作为参数
+    cancel = c
+  }),
+})
+// cancel the request
+cancel()
+```
+
+**注意： 可以使用同一个 canel token 取消多个请求**
