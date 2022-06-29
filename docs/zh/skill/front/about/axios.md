@@ -302,7 +302,10 @@ const instance = axios.create({
     // `cancelToken` 指定用于取消请求的 cancel token
     // （查看后面的 Cancellation 这节了解更多）
     cancelToken: new CancelToken(function (cancel) {
-    })
+    }),
+    // `decompress` 指示是否应该对响应体进行自动解压。如果设置为 `true` 也将删除掉所有来自被解压的响应对象的'content-encoding'请求头
+    // 仅限Node.js（XHR 无法关闭自动解压）
+    decompress: true // 默认值
 }
 ```
 
@@ -316,14 +319,15 @@ const instance = axios.create({
   status: 200,
   // statusText 来自服务器响应的 http 状态信息
   statusText: "OK",
-  // headers 服务器响应头
+  // `headers` 是服务器 HTTP 响应的响应头
+  // 所有的 header 名都是小写，而且可以使用方括号语法访问
+  // 例如: `response.headers['content-type']`
   headers: {},
   // config 是为请求提供的配置信息
   config: {},
-  // 'request'
-  // `request` is the request that generated this response
-  // It is the last ClientRequest instance in node.js (in redirects)
-  // and an XMLHttpRequest instance the browser
+  // `request` 是生成此响应的请求
+  // 在 node.js 中它是最后一个 ClientRequest 实例 (in redirects)，
+  // 在浏览器中则是 XMLHttpRequest 实例
   request: {}
 }
 ```
@@ -538,4 +542,115 @@ axios.get('/user/12345', {
 cancel()
 ```
 
-**注意： 可以使用同一个 canel token 取消多个请求**
+**注意： 可以使用同一个 canel token 取消多个请求**，如果在发送 Axios 请求时已经取消了cancel token，则该请求会立即取消，而不会尝试发出任何实际请求。
+
+### 2.12 请求编码体
+
+默认情况下，axios 将 JavaScript 对象序列化为 `JSON` 格式 。 如果要换成`application/x-www-form-urlencoded`格式发送数据，可以使用以下选项之一。
+
+#### 2.12.1 浏览器
+
+在浏览器中，可以使用 [URLSearchParams](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams) API， 如下所示
+
+```javascript
+const params = new URLSearchParams();
+params.append('param1', 'value1');
+params.append('param2', 'value2');
+axios.post('/foo', params);
+```
+
+> 注意：不是所有的浏览器都支持(参见[can i use](http://www.caniuse.com/#feat=urlsearchparams))  都支持 `URLSearchParams` ， 但是可以使用 polyfill (确保 polyfill 在全局环境生效)
+
+或者可以使用 qs 库编码数据
+
+```javascript
+const qs = require('qs');
+axios.post('/foo', qs.stringify({ 'bar': 123 }));
+```
+
+或者用另一种方式 (ES6)
+
+```javascript
+import qs from 'qs';
+const data = { 'bar': 123 };
+const options = {
+  method: 'POST',
+  headers: { 'content-type': 'application/x-www-form-urlencoded' },
+  data: qs.stringify(data),
+  url,
+};
+axios(options);
+```
+
+#### 2.12.2  Node.js
+
+##### 2.12.2.1 Query String
+
+在node.js 中，可以使用`querystring` 模块，如下所示
+
+```javascript
+const querystring = require('querystring');
+axios.post('http://something.com/', querystring.stringify({ foo: 'bar' }));
+```
+
+或者 从 url 模块 中 使用`URLSearchParams`, 如下所示
+
+```javascript
+const url = require('url');
+const params = new url.URLSearchParams({ foo: 'bar' });
+axios.post('http://something.com/', params.toString());
+```
+
+也可以使用 `qs`库
+
+##### 2.12.2.2  Form Data
+
+在`node.js`可以使用`form-data`库，如下所示
+
+```javascript
+const FormData = require('form-data');
+ 
+const form = new FormData();
+form.append('my_field', 'my value');
+form.append('my_buffer', new Buffer(10));
+form.append('my_file', fs.createReadStream('/foo/bar.jpg'));
+
+axios.post('https://example.com', form, { headers: form.getHeaders() })
+```
+
+或者使用一个拦截器
+
+```javascript
+axios.interceptors.request.use(config => {
+  if (config.data instanceof FormData) {
+    Object.assign(config.headers, config.data.getHeaders());
+  }
+  return config;
+});
+```
+
+### 2.13  Promises
+
+Axios 依赖于原生的 ES6 Promise 实现支持，如果你的环境不支持ES6 promise, 可以使用 polyfill 来兼容
+
+### 2.14 TypeScript
+
+axios 包含了 TypeScript 类型定义和 axios errors 的类型守卫
+
+```java
+let user: User = null;
+try {
+  const { data } = await axios.get('/user?ID=12345');
+  user = data.userDetails;
+} catch (error) {
+  if (axios.isAxiosError(error)) {
+    handleAxiosError(error);
+  } else {
+    handleUnexpectedError(error);
+  }
+}
+```
+
+### 3. 参考文献
+
+[Axios源码解析（零）：文档翻译](https://linjingyi.cn/posts/27da006f.html)
