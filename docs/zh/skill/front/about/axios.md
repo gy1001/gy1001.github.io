@@ -1,8 +1,8 @@
-# Axios
+# axios
 
-## 1. Axios 的基础知识
+## 1. axios 的基础知识
 
-### 1.1 什么是 Axios
+### 1.1 什么是 axios
 
 > Axios 是一个前端流行的网络请求库，它是一个基于 promise 的 HTTP 库，可以在 浏览器 和 node.js 中使用
 
@@ -37,7 +37,7 @@ brower install axios
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 ```
 
-## 2. Axios 的 基本使用
+## 2. axios 的 基本使用
 
 ### 2.1 案例
 
@@ -96,7 +96,7 @@ axios.all([getUserAccount(), getUserPermissions()]).then(
 )
 ```
 
-#### 2.1.4 Axios API
+#### 2.1.4 axios API
 
 可以通过向 `axios` 传递相关配置来创建请求
 
@@ -414,6 +414,75 @@ instance.get('/longRequest', {
 })
 ```
 
+注意：这里需要注意 headers 的合并处理规则
+
+```javascript
+// axios-0.x版本时候
+// headers.common 优先级 < headers[相应method] 中的 < headers 中的
+config.headers = utils.merge(
+  config.headers.common || {},
+  config.headers[config.method] || {},
+  config.headers
+);
+
+utils.forEach(['delete', 'get', 'head', 'post', 'put', 'patch', 'common'], function cleanHeaderConfig(method) {
+    delete config.headers[method];
+  }
+);
+
+// axios-1.x版本时候
+// headers.common 优先级 < headers[相应method] 中的 < headers 中的
+// Flatten headers
+const defaultHeaders = config.headers && utils.merge(config.headers.common, config.headers[config.method])
+
+defaultHeaders &&
+  utils.forEach(
+  ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'],
+  function cleanHeaderConfig(method) {
+    delete config.headers[method]
+  }
+)
+
+config.headers = new AxiosHeaders(config.headers, defaultHeaders)
+
+function AxiosHeaders(headers, defaults) {
+  headers && this.set(headers);
+  this[$defaults] = defaults || null;
+}
+
+Axios.prototype.set = function(){
+  // 这里把 属性 展开并设置到 this 上
+  ...
+}
+
+Axios.prototype.toJSON = function(){
+  const obj = Object.create(null);
+  // 这里可以看到 this 身上同名属性会覆盖前者，所以优先级没有变化
+  utils.forEach(Object.assign({}, this[$defaults] || null, this), (value, header) => {
+    if (value == null || value === false) return;
+    obj[header] = utils.isArray(value) ? value.join(', ') : value;
+  });
+  return obj;
+}
+```
+
+例子：
+
+```javascript
+axios.get('http://localhost:3000/posts', {
+  headers: {
+    common: {
+      Authorization: 'test-data',
+    },
+    get: {
+      Authorization: 'test-data-get',
+    },
+    Authorization: 'test-data-01222',
+  },
+})
+// 这里最后请求时候，可以在控制台中看到，请求头部信息中 Authorization 值为：'test-data-01222'
+```
+
 ### 2.9 拦截器
 
 > 在请求或者响应被 then 或者 catch 处理前拦截它们
@@ -481,7 +550,7 @@ axios.get('/user/12345').catch(function (error) {
 })
 ```
 
-也可以使用 validateStatus 配置选型定义一个自定义 http 状态码的错误范围
+也可以使用 `validateStatus` 配置选型定义一个自定义 http 状态码的错误范围
 
 ```javascript
 axios.get('/user/12345', {
@@ -491,7 +560,7 @@ axios.get('/user/12345', {
 })
 ```
 
-### 2.11 取消
+### 2.11 取消请求
 
 > 使用 _cancel token_ 取消请求
 
@@ -542,7 +611,95 @@ axios.get('/user/12345', {
 cancel()
 ```
 
-**注意： 可以使用同一个 canel token 取消多个请求**，如果在发送 Axios 请求时已经取消了cancel token，则该请求会立即取消，而不会尝试发出任何实际请求。
+**注意： 可以使用同一个 canel token 取消多个请求**，如果在发送 Axios 请求时已经取消了 cancel token，则该请求会立即取消，而不会尝试发出任何实际请求。
+
+一个例子: 取消重复请求示例
+
+```html
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Axios 取消重复请求示例</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/qs/6.9.6/qs.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.21.1/axios.min.js"></script>
+  </head>
+  <body>
+    <h3>Axios 取消重复请求示例</h3>
+    <button onclick="sendRequest()">发起请求</button>
+    <script>
+      // 创建请求队列 map
+      const pendingRequest = new Map()
+      // 根据 配置中的请求方式、请求地址、请求参数等格式化产生一个唯一的键来区分是否是同一个请求
+      function generateReqKey(config) {
+        const { method, url, params, data } = config
+        return [method, url, Qs.stringify(params), Qs.stringify(data)].join('&')
+      }
+      // 添加请求到 请求队列中
+      function addPendingRequest(config) {
+        const requestKey = generateReqKey(config)
+        config.cancelToken =
+          config.cancelToken ||
+          new axios.CancelToken((cancel) => {
+            if (!pendingRequest.has(requestKey)) {
+              pendingRequest.set(requestKey, cancel)
+            }
+          })
+      }
+      // 从请求队列中移除 相应的请求
+      function removePendingRequest(config) {
+        const requestKey = generateReqKey(config)
+        if (pendingRequest.has(requestKey)) {
+          const cancel = pendingRequest.get(requestKey)
+          cancel(requestKey)
+          pendingRequest.delete(requestKey)
+        }
+      }
+      // 请求拦截器中需要处理请求队列：添加新的，移除重复的
+      axios.interceptors.request.use(
+        function (config) {
+          removePendingRequest(config) // 检查是否存在重复请求，若存在则取消已发的请求
+          addPendingRequest(config) // 把当前请求添加到pendingRequest对象中
+          return config
+        },
+        (error) => {
+          return Promise.reject(error)
+        }
+      )
+      // 	相应拦截器中需要从请求队列中移除相应的请求
+      axios.interceptors.response.use(
+        (response) => {
+          removePendingRequest(response.config) // 从pendingRequest对象中移除请求
+          return response
+        },
+        (error) => {
+          removePendingRequest(error.config || {}) // 从pendingRequest对象中移除请求
+          if (axios.isCancel(error)) {
+            // console.log('已取消的重复请求：' + error.message)
+          } else {
+            // 添加异常处理
+          }
+          return Promise.reject(error)
+        }
+      )
+      // 发送请求函数
+      async function sendRequest() {
+        const response = await axios
+          .get(
+            'https://jsonplaceholder.typicode.com/todos/1'
+            //   "https://localhost:3000/todos/1"
+          )
+          .catch((err) => {
+            console.log(err)
+          })
+        // console.log(response.data)
+      }
+    </script>
+  </body>
+</html>
+```
 
 ### 2.12 请求编码体
 
@@ -553,67 +710,67 @@ cancel()
 在浏览器中，可以使用 [URLSearchParams](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams) API， 如下所示
 
 ```javascript
-const params = new URLSearchParams();
-params.append('param1', 'value1');
-params.append('param2', 'value2');
-axios.post('/foo', params);
+const params = new URLSearchParams()
+params.append('param1', 'value1')
+params.append('param2', 'value2')
+axios.post('/foo', params)
 ```
 
-> 注意：不是所有的浏览器都支持(参见[can i use](http://www.caniuse.com/#feat=urlsearchparams))  都支持 `URLSearchParams` ， 但是可以使用 polyfill (确保 polyfill 在全局环境生效)
+> 注意：不是所有的浏览器都支持(参见[can i use](http://www.caniuse.com/#feat=urlsearchparams)) 都支持 `URLSearchParams` ， 但是可以使用 polyfill (确保 polyfill 在全局环境生效)
 
 或者可以使用 qs 库编码数据
 
 ```javascript
-const qs = require('qs');
-axios.post('/foo', qs.stringify({ 'bar': 123 }));
+const qs = require('qs')
+axios.post('/foo', qs.stringify({ bar: 123 }))
 ```
 
 或者用另一种方式 (ES6)
 
 ```javascript
-import qs from 'qs';
-const data = { 'bar': 123 };
+import qs from 'qs'
+const data = { bar: 123 }
 const options = {
   method: 'POST',
   headers: { 'content-type': 'application/x-www-form-urlencoded' },
   data: qs.stringify(data),
   url,
-};
-axios(options);
+}
+axios(options)
 ```
 
-#### 2.12.2  Node.js
+#### 2.12.2 Node.js
 
 ##### 2.12.2.1 Query String
 
-在node.js 中，可以使用`querystring` 模块，如下所示
+在 node.js 中，可以使用`querystring` 模块，如下所示
 
 ```javascript
-const querystring = require('querystring');
-axios.post('http://something.com/', querystring.stringify({ foo: 'bar' }));
+const querystring = require('querystring')
+axios.post('http://something.com/', querystring.stringify({ foo: 'bar' }))
 ```
 
 或者 从 url 模块 中 使用`URLSearchParams`, 如下所示
 
 ```javascript
-const url = require('url');
-const params = new url.URLSearchParams({ foo: 'bar' });
-axios.post('http://something.com/', params.toString());
+const url = require('url')
+const params = new url.URLSearchParams({ foo: 'bar' })
+axios.post('http://something.com/', params.toString())
 ```
 
 也可以使用 `qs`库
 
-##### 2.12.2.2  Form Data
+##### 2.12.2.2 Form Data
 
 在`node.js`可以使用`form-data`库，如下所示
 
 ```javascript
-const FormData = require('form-data');
- 
-const form = new FormData();
-form.append('my_field', 'my value');
-form.append('my_buffer', new Buffer(10));
-form.append('my_file', fs.createReadStream('/foo/bar.jpg'));
+const FormData = require('form-data')
+
+const form = new FormData()
+form.append('my_field', 'my value')
+form.append('my_buffer', new Buffer(10))
+form.append('my_file', fs.createReadStream('/foo/bar.jpg'))
 
 axios.post('https://example.com', form, { headers: form.getHeaders() })
 ```
@@ -621,17 +778,17 @@ axios.post('https://example.com', form, { headers: form.getHeaders() })
 或者使用一个拦截器
 
 ```javascript
-axios.interceptors.request.use(config => {
+axios.interceptors.request.use((config) => {
   if (config.data instanceof FormData) {
-    Object.assign(config.headers, config.data.getHeaders());
+    Object.assign(config.headers, config.data.getHeaders())
   }
-  return config;
-});
+  return config
+})
 ```
 
-### 2.13  Promises
+### 2.13 Promises
 
-Axios 依赖于原生的 ES6 Promise 实现支持，如果你的环境不支持ES6 promise, 可以使用 polyfill 来兼容
+Axios 依赖于原生的 ES6 Promise 实现支持，如果你的环境不支持 ES6 promise, 可以使用 polyfill 来兼容
 
 ### 2.14 TypeScript
 
@@ -653,4 +810,4 @@ try {
 
 ### 3. 参考文献
 
-[Axios源码解析（零）：文档翻译](https://linjingyi.cn/posts/27da006f.html)
+[Axios 源码解析（零）：文档翻译](https://linjingyi.cn/posts/27da006f.html)
