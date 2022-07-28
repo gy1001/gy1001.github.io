@@ -1,6 +1,6 @@
-# Webpack
+# webpack
 
-## 1. webpack 初探
+## 1、 webpack 初探
 
 ### 1.1 webpack 究竟是什么
 
@@ -45,7 +45,7 @@ index2.js 文件内容如下
 
 ```javascript
 export default function add(a, b) {
-	return a + b
+  return a + b
 }
 ```
 
@@ -69,15 +69,15 @@ index.html 文件内容如下
 ```html
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Document</title>
-	</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
 
-	<body></body>
-	<script src="./dist/main.js"></script>
+  <body></body>
+  <script src="./dist/main.js"></script>
 </html>
 ```
 
@@ -99,7 +99,7 @@ index2.js 内容更改如下
 
 ```javascript
 function add(a, b) {
-	return a + b
+  return a + b
 }
 module.exports = add
 ```
@@ -172,12 +172,12 @@ npx webpack ./index.js --mode development
    import path from 'path'
 
    module.exports = {
-   	entry: './index.js', // 入口文件
-   	output: {
-   		// 打包后的文件配置
-   		filename: 'bundle.js', // 文件名
-   		path: path.resolve(__dirname, 'bundle'), // 文件所在路径配置，
-   	},
+     entry: './index.js', // 入口文件
+     output: {
+       // 打包后的文件配置
+       filename: 'bundle.js', // 文件名
+       path: path.resolve(__dirname, 'bundle'), // 文件所在路径配置，
+     },
    }
    ```
 
@@ -305,7 +305,7 @@ npx webpack ./index.js --mode development
 - 模块是什么
 - Webpack 配置文件的作用是什么，以及基本的配置信息
 
-## 2. webpack 的核心观念
+## 2、 核心观念
 
 ### 2.1 什么是 loader
 
@@ -341,25 +341,25 @@ Loader 就是一个打包方案，
     ```javascript
     const path = require('path')
     module.exports = {
-    	mode: 'development',
-    	entry: './src/js/index.js',
-    	output: {
-    		filename: 'bundle.js',
-    		path: path.resolve(__dirname, 'bundle'),
-    	},
-    	module: {
-    		rules: [
-    			{
-    				test: /\.jpeg$/, // 这里注意同上面图片类型保持一致
-    				use: {
-    					loader: 'file-loader',
-    					options: {
-    						esModule: false, // file-loader在新版本中esModule默认为true，因此手动设置为false
-    					},
-    				},
-    			},
-    		],
-    	},
+      mode: 'development',
+      entry: './src/js/index.js',
+      output: {
+        filename: 'bundle.js',
+        path: path.resolve(__dirname, 'bundle'),
+      },
+      module: {
+        rules: [
+          {
+            test: /\.jpeg$/, // 这里注意同上面图片类型保持一致
+            use: {
+              loader: 'file-loader',
+              options: {
+                esModule: false, // file-loader在新版本中esModule默认为true，因此手动设置为false
+              },
+            },
+          },
+        ],
+      },
     }
     ```
 
@@ -379,29 +379,29 @@ webpack 4 中 webpack.config.js 文件中内容配置如下
 ```javascript
 const path = require('path')
 module.exports = {
-	mode: 'development',
-	entry: './src/js/index.js',
-	output: {
-		filename: 'bundle.js',
-		path: path.resolve(__dirname, 'bundle'),
-	},
-	module: {
-		rules: [
-			{
-				test: /\.(jpg|png|gif|jpeg)$/,
-				use: {
-					loader: 'file-loader',
-					options: {
-						esModule: false,
-						// placeholder 占位符
-						name: '[name].[ext]',
-						// 设置打包后的文件夹
-						outputPath: 'images/',
-					},
-				},
-			},
-		],
-	},
+  mode: 'development',
+  entry: './src/js/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'bundle'),
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(jpg|png|gif|jpeg)$/,
+        use: {
+          loader: 'file-loader',
+          options: {
+            esModule: false,
+            // placeholder 占位符
+            name: '[name].[ext]',
+            // 设置打包后的文件夹
+            outputPath: 'images/',
+          },
+        },
+      },
+    ],
+  },
 }
 ```
 
@@ -415,25 +415,25 @@ webpack 5 中的 webpack.config.js 文件中内容配置如下
 const path = require('path')
 
 module.exports = {
-	mode: 'development',
-	entry: './src/js/index.js',
-	output: {
-		filename: 'bundle.js',
-		path: path.resolve(__dirname, 'bundle'),
-		// 通过这里也可以设置, webpack5中不用加.
-		// assetModuleFilename: 'images/[name][ext]',
-	},
-	module: {
-		rules: [
-			{
-				test: /\.(jpg|png|gif|jpeg)$/,
-				type: 'asset/resource',
-				generator: {
-					filename: 'images/[name][ext]',
-				},
-			},
-		],
-	},
+  mode: 'development',
+  entry: './src/js/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'bundle'),
+    // 通过这里也可以设置, webpack5中不用加.
+    // assetModuleFilename: 'images/[name][ext]',
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(jpg|png|gif|jpeg)$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'images/[name][ext]',
+        },
+      },
+    ],
+  },
 }
 ```
 
@@ -473,11 +473,11 @@ module.exports = {
 
    ```css
    html {
-   	.el-img {
-   		width: 100px;
-   		transform: translate(100px, 100px) // 这里属于新特性，某些浏览需要增加相应前缀才会识别，postcss-loader 可以解决这个问题，自动增加前缀
+     .el-img {
+       width: 100px;
+       transform: translate(100px, 100px) // 这里属于新特性，某些浏览需要增加相应前缀才会识别，postcss-loader 可以解决这个问题，自动增加前缀
    ;
-   	}
+     }
    }
    ```
 
@@ -508,7 +508,7 @@ module.exports = {
       ...
       // 当使用 modules: true 模块化配置时候如此引人，是作为局部样式引入，并不影响其他文件中同名样式的元素
       import styles from '../css/index.css'
-   
+
       const img = require('../math.jpeg')
       const imgEl = document.getElementById('img')
       imgEl.classList.add(styles['el-img'])
@@ -817,13 +817,13 @@ devtool: 'cheap-module-source-map'
    const compiler = webpack(config)
    const app = express()
    app.use(
-   	webpackDevMiddleware(compiler, {
-   		// 相应的webpack.config.js中的output需要进行设置，也可以简单设置如下为"/", 或不设置
-   		publicPath: config.output.publicPath,
-   	})
+     webpackDevMiddleware(compiler, {
+       // 相应的webpack.config.js中的output需要进行设置，也可以简单设置如下为"/", 或不设置
+       publicPath: config.output.publicPath,
+     })
    )
    app.listen(3000, () => {
-   	console.log('server is running')
+     console.log('server is running')
    })
    ```
 
@@ -884,10 +884,10 @@ devtool: 'cheap-module-source-map'
 
    ```css
    .test-btn:nth-child(2n) {
-   	background-color: lightblue;
+     background-color: lightblue;
    }
    .test-btn:nth-child(2n + 1) {
-   	background-color: lightgreen;
+     background-color: lightgreen;
    }
    ```
 
@@ -907,13 +907,13 @@ devtool: 'cheap-module-source-map'
 
    ```javascript
    function counter() {
-   	var div = document.createElement('div')
-   	div.innerHTML = 1
-   	div.setAttribute('id', 'counter')
-   	div.onclick = function () {
-   		div.innerHTML = parseInt(div.innerHTML) + 1
-   	}
-   	document.body.appendChild(div)
+     var div = document.createElement('div')
+     div.innerHTML = 1
+     div.setAttribute('id', 'counter')
+     div.onclick = function () {
+       div.innerHTML = parseInt(div.innerHTML) + 1
+     }
+     document.body.appendChild(div)
    }
 
    export default counter
@@ -923,10 +923,10 @@ devtool: 'cheap-module-source-map'
 
    ```javascript
    function number() {
-   	var div = document.createElement('div')
-   	div.innerHTML = 1000
-   	div.setAttribute('id', 'number')
-   	document.body.appendChild(div)
+     var div = document.createElement('div')
+     div.innerHTML = 1000
+     div.setAttribute('id', 'number')
+     document.body.appendChild(div)
    }
 
    export default number
@@ -966,10 +966,10 @@ devtool: 'cheap-module-source-map'
    ```javascript
    // 代表 当 number.js 文件发生变化时候，执行后面的回调函数
    if (module.hot) {
-   	module.hot.accept('./number.js', () => {
-   		document.body.removeChild(document.getElementById('number'))
-   		number()
-   	})
+     module.hot.accept('./number.js', () => {
+       document.body.removeChild(document.getElementById('number'))
+       number()
+     })
    }
    ```
 
@@ -1001,7 +1001,7 @@ devtool: 'cheap-module-source-map'
    const arr = [new Promise(() => {}), new Promise(() => {})]
 
    arr.map((item) => {
-   	console.log(item)
+     console.log(item)
    })
    ```
 
@@ -1055,20 +1055,20 @@ devtool: 'cheap-module-source-map'
 
    ```javascript
    {
-   	module: {
-   		rules: [
-   			{
-   				test: /\.m?js$/,
-   				exclude: /node_modules/,
-   				use: {
-   					loader: 'babel-loader',
-   					options: {
-   						presets: ['@babel/preset-env'],
-   					},
-   				},
-   			},
-   		]
-   	}
+     module: {
+       rules: [
+         {
+           test: /\.m?js$/,
+           exclude: /node_modules/,
+           use: {
+             loader: 'babel-loader',
+             options: {
+               presets: ['@babel/preset-env'],
+             },
+           },
+         },
+       ]
+     }
    }
    ```
 
@@ -1470,13 +1470,13 @@ devtool: 'cheap-module-source-map'
    ```javascript
    const arr = [new Promise(() => {}), new Promise(() => {})]
    arr.map((item) => {
-   	console.log(item)
+     console.log(item)
    })
 
    class Person {
-   	sayname() {
-   		return 'name'
-   	}
+     sayname() {
+       return 'name'
+     }
    }
    var john = new Person()
    console.log(john)
@@ -1543,26 +1543,26 @@ devtool: 'cheap-module-source-map'
 
    ```javascript
    module.exports = {
-   	presets: [
-   		[
-   			'@babel/preset-env',
-   			{
-   				useBuiltIns: 'usage',
-   				corejs: {
-   					version: 3,
-   					proposals: true,
-   				},
-   				// 需要支持的目标浏览器版本，如果目标浏览器版本支持语法，就会略过转换处理
-   				targets: {
-   					// edge: '17',
-   					// firefox: '60',
-   					// chrome: '67',
-   					// safari: '11.1',
-   				},
-   			},
-   		],
-   	],
-   	plugins: ['@babel/plugin-transform-runtime'],
+     presets: [
+       [
+         '@babel/preset-env',
+         {
+           useBuiltIns: 'usage',
+           corejs: {
+             version: 3,
+             proposals: true,
+           },
+           // 需要支持的目标浏览器版本，如果目标浏览器版本支持语法，就会略过转换处理
+           targets: {
+             // edge: '17',
+             // firefox: '60',
+             // chrome: '67',
+             // safari: '11.1',
+           },
+         },
+       ],
+     ],
+     plugins: ['@babel/plugin-transform-runtime'],
    }
    ```
 
@@ -1688,9 +1688,9 @@ devtool: 'cheap-module-source-map'
    import React, { Component } from 'react'
    import ReactDom from 'react-dom/client'
    class App extends Component {
-   	render() {
-   		return <div>Hello World</div>
-   	}
+     render() {
+       return <div>Hello World</div>
+     }
    }
    // 注意 index.html 中保证有元素id 为 root
    const root = ReactDom.createRoot(document.getElementById('root'))
@@ -1721,7 +1721,7 @@ devtool: 'cheap-module-source-map'
 
 [@babel/preset-env 与@babel/plugin-transform-runtime 使用及场景区别](https://blog.csdn.net/m0_37846579/article/details/103379084?spm=1001.2101.3001.6661.1&utm_medium=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1.pc_relevant_aa&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1.pc_relevant_aa&utm_relevant_index=1)
 
-## 3 Webpack 的高级概念
+## 3、高级概念
 
 ### 3.1 Tree Shaking 概念详解
 
@@ -1747,13 +1747,13 @@ devtool: 'cheap-module-source-map'
 
    ```javascript
    export const add = (a, b) => {
-   	console.log('add')
-   	return a + b
+     console.log('add')
+     return a + b
    }
 
    export const minus = (a, b) => {
-   	console.log('minus')
-   	return a - b
+     console.log('minus')
+     return a - b
    }
    ```
 
@@ -1769,27 +1769,27 @@ devtool: 'cheap-module-source-map'
 
    ```javascript
    module.exports = {
-   	// presets 执行顺序是从后往前执行
-   	presets: [
-   		[
-   			'@babel/preset-env',
-   			{
-   				useBuiltIns: 'usage',
-   				corejs: {
-   					version: 3,
-   					proposals: true,
-   				},
-   				// 	// 需要支持的目标浏览器版本，如果目标浏览器版本支持语法，就会略过转换处理
-   				targets: {
-   					ie: '8',
-   					// 		// edge: '17',
-   					// 		// firefox: '60',
-   					// 		// chrome: '67',
-   					// 		// safari: '11.1',
-   				},
-   			},
-   		],
-   	],
+     // presets 执行顺序是从后往前执行
+     presets: [
+       [
+         '@babel/preset-env',
+         {
+           useBuiltIns: 'usage',
+           corejs: {
+             version: 3,
+             proposals: true,
+           },
+           // 	// 需要支持的目标浏览器版本，如果目标浏览器版本支持语法，就会略过转换处理
+           targets: {
+             ie: '8',
+             // 		// edge: '17',
+             // 		// firefox: '60',
+             // 		// chrome: '67',
+             // 		// safari: '11.1',
+           },
+         },
+       ],
+     ],
    }
    ```
 
@@ -1806,86 +1806,86 @@ devtool: 'cheap-module-source-map'
    const { HotModuleReplacementPlugin } = require('webpack')
 
    module.exports = {
-   	mode: 'development',
-   	entry: {
-   		bundle: './src/js/index.js',
-   	},
-   	output: {
-   		publicPath: '/',
-   		filename: '[name].js',
-   		path: path.resolve(__dirname, 'bundle'),
-   	},
-   	optimization: {
-   		usedExports: true, // 过标记某些函数是否被使用，之后通过Terser来进行优化的
-   	},
-   	module: {
-   		rules: [
-   			{
-   				test: /\.(jpg|png|gif|jpeg)$/,
-   				type: 'asset/resource',
-   			},
-   			{
-   				test: /\.ts$/,
-   				use: {
-   					loader: 'ts-loader',
-   				},
-   			},
-   			{
-   				test: /\.css$/,
-   				use: [
-   					'style-loader',
-   					{
-   						loader: 'css-loader',
-   						options: {},
-   					},
-   					'less-loader',
-   				],
-   			},
-   			{
-   				test: /\.less$/,
-   				use: [
-   					'style-loader',
-   					{
-   						loader: 'css-loader',
-   						options: {
-   							// 通过import 加载的less文件也需要执行前两个loader
-   							importLoaders: 2,
-   							modules: true,
-   						},
-   					},
-   					'less-loader',
-   					{
-   						loader: 'postcss-loader',
-   						//  或者使用 PostCSS 本身的 配置文件：postcss.config.js
-   						options: {
-   							postcssOptions: {
-   								plugins: [require('autoprefixer')()],
-   							},
-   						},
-   					},
-   				],
-   			},
-   			{
-   				test: /\.m?js$/,
-   				exclude: /node_modules/,
-   				use: {
-   					loader: 'babel-loader',
-   				},
-   			},
-   		],
-   	},
-   	// plugin 会在webpack运行到某些时机的时候，处理一些事情
-   	plugins: [
-   		new HtmlWebpackPlugin({
-   			template: './index.html',
-   		}),
-   		new CleanWebpackPlugin(),
-   		new HotModuleReplacementPlugin(),
-   	],
-   	devServer: {
-   		open: true,
-   		hot: 'only',
-   	},
+     mode: 'development',
+     entry: {
+       bundle: './src/js/index.js',
+     },
+     output: {
+       publicPath: '/',
+       filename: '[name].js',
+       path: path.resolve(__dirname, 'bundle'),
+     },
+     optimization: {
+       usedExports: true, // 过标记某些函数是否被使用，之后通过Terser来进行优化的
+     },
+     module: {
+       rules: [
+         {
+           test: /\.(jpg|png|gif|jpeg)$/,
+           type: 'asset/resource',
+         },
+         {
+           test: /\.ts$/,
+           use: {
+             loader: 'ts-loader',
+           },
+         },
+         {
+           test: /\.css$/,
+           use: [
+             'style-loader',
+             {
+               loader: 'css-loader',
+               options: {},
+             },
+             'less-loader',
+           ],
+         },
+         {
+           test: /\.less$/,
+           use: [
+             'style-loader',
+             {
+               loader: 'css-loader',
+               options: {
+                 // 通过import 加载的less文件也需要执行前两个loader
+                 importLoaders: 2,
+                 modules: true,
+               },
+             },
+             'less-loader',
+             {
+               loader: 'postcss-loader',
+               //  或者使用 PostCSS 本身的 配置文件：postcss.config.js
+               options: {
+                 postcssOptions: {
+                   plugins: [require('autoprefixer')()],
+                 },
+               },
+             },
+           ],
+         },
+         {
+           test: /\.m?js$/,
+           exclude: /node_modules/,
+           use: {
+             loader: 'babel-loader',
+           },
+         },
+       ],
+     },
+     // plugin 会在webpack运行到某些时机的时候，处理一些事情
+     plugins: [
+       new HtmlWebpackPlugin({
+         template: './index.html',
+       }),
+       new CleanWebpackPlugin(),
+       new HotModuleReplacementPlugin(),
+     ],
+     devServer: {
+       open: true,
+       hot: 'only',
+     },
    }
    ```
 
@@ -1918,83 +1918,83 @@ devtool: 'cheap-module-source-map'
    const { HotModuleReplacementPlugin } = require('webpack')
 
    module.exports = {
-   	mode: 'production',
-   	entry: {
-   		bundle: './src/js/index.js',
-   	},
-   	output: {
-   		publicPath: '/',
-   		filename: '[name].js',
-   		path: path.resolve(__dirname, 'bundle'),
-   	},
-   	module: {
-   		rules: [
-   			{
-   				test: /\.(jpg|png|gif|jpeg)$/,
-   				type: 'asset/resource',
-   			},
-   			{
-   				test: /\.ts$/,
-   				use: {
-   					loader: 'ts-loader',
-   				},
-   			},
-   			{
-   				test: /\.css$/,
-   				use: [
-   					'style-loader',
-   					{
-   						loader: 'css-loader',
-   						options: {},
-   					},
-   					'less-loader',
-   				],
-   			},
-   			{
-   				test: /\.less$/,
-   				use: [
-   					'style-loader',
-   					{
-   						loader: 'css-loader',
-   						options: {
-   							// 通过import 加载的less文件也需要执行前两个loader
-   							importLoaders: 2,
-   							modules: true,
-   						},
-   					},
-   					'less-loader',
-   					{
-   						loader: 'postcss-loader',
-   						//  或者使用 PostCSS 本身的 配置文件：postcss.config.js
-   						options: {
-   							postcssOptions: {
-   								plugins: [require('autoprefixer')()],
-   							},
-   						},
-   					},
-   				],
-   			},
-   			{
-   				test: /\.m?js$/,
-   				exclude: /node_modules/,
-   				use: {
-   					loader: 'babel-loader',
-   				},
-   			},
-   		],
-   	},
-   	// plugin 会在webpack运行到某些时机的时候，处理一些事情
-   	plugins: [
-   		new HtmlWebpackPlugin({
-   			template: './index.html',
-   		}),
-   		new CleanWebpackPlugin(),
-   		new HotModuleReplacementPlugin(),
-   	],
-   	devServer: {
-   		open: true,
-   		hot: 'only',
-   	},
+     mode: 'production',
+     entry: {
+       bundle: './src/js/index.js',
+     },
+     output: {
+       publicPath: '/',
+       filename: '[name].js',
+       path: path.resolve(__dirname, 'bundle'),
+     },
+     module: {
+       rules: [
+         {
+           test: /\.(jpg|png|gif|jpeg)$/,
+           type: 'asset/resource',
+         },
+         {
+           test: /\.ts$/,
+           use: {
+             loader: 'ts-loader',
+           },
+         },
+         {
+           test: /\.css$/,
+           use: [
+             'style-loader',
+             {
+               loader: 'css-loader',
+               options: {},
+             },
+             'less-loader',
+           ],
+         },
+         {
+           test: /\.less$/,
+           use: [
+             'style-loader',
+             {
+               loader: 'css-loader',
+               options: {
+                 // 通过import 加载的less文件也需要执行前两个loader
+                 importLoaders: 2,
+                 modules: true,
+               },
+             },
+             'less-loader',
+             {
+               loader: 'postcss-loader',
+               //  或者使用 PostCSS 本身的 配置文件：postcss.config.js
+               options: {
+                 postcssOptions: {
+                   plugins: [require('autoprefixer')()],
+                 },
+               },
+             },
+           ],
+         },
+         {
+           test: /\.m?js$/,
+           exclude: /node_modules/,
+           use: {
+             loader: 'babel-loader',
+           },
+         },
+       ],
+     },
+     // plugin 会在webpack运行到某些时机的时候，处理一些事情
+     plugins: [
+       new HtmlWebpackPlugin({
+         template: './index.html',
+       }),
+       new CleanWebpackPlugin(),
+       new HotModuleReplacementPlugin(),
+     ],
+     devServer: {
+       open: true,
+       hot: 'only',
+     },
    }
    ```
 
@@ -2079,92 +2079,92 @@ devtool: 'cheap-module-source-map'
    const { HotModuleReplacementPlugin } = require('webpack')
 
    module.exports = {
-   	// development 默认没有 tree shaking
-   	mode: 'development',
-   	devtool: 'eval-cheap-module-source-map',
-   	entry: {
-   		bundle: './src/js/index.js',
-   	},
-   	output: {
-   		publicPath: '/',
-   		// publicPath: 'https://xxcdn.com/',
-   		filename: '[name].js',
-   		path: path.resolve(__dirname, 'bundle'),
-   	},
-   	optimization: {
-   		usedExports: true,
-   	},
-   	module: {
-   		rules: [
-   			{
-   				test: /\.(jpg|png|gif|jpeg)$/,
-   				type: 'asset/resource',
-   			},
-   			{
-   				test: /\.ts$/,
-   				use: {
-   					loader: 'ts-loader',
-   				},
-   			},
-   			{
-   				test: /\.css$/,
-   				use: [
-   					'style-loader',
-   					{
-   						loader: 'css-loader',
-   						options: {
-   							// 引入模块化，
-   							// modules: true,
-   						},
-   					},
-   					'less-loader',
-   				],
-   			},
-   			{
-   				test: /\.less$/,
-   				use: [
-   					'style-loader',
-   					{
-   						loader: 'css-loader',
-   						options: {
-   							// 通过import 加载的less文件也需要执行前两个loader
-   							importLoaders: 2,
-   							modules: true,
-   						},
-   					},
-   					'less-loader',
-   					{
-   						loader: 'postcss-loader',
-   						//  或者使用 PostCSS 本身的 配置文件：postcss.config.js
-   						options: {
-   							postcssOptions: {
-   								plugins: [require('autoprefixer')()],
-   							},
-   						},
-   					},
-   				],
-   			},
-   			{
-   				test: /\.m?js$/,
-   				exclude: /node_modules/,
-   				use: {
-   					loader: 'babel-loader',
-   				},
-   			},
-   		],
-   	},
-   	// plugin 会在webpack运行到某些时机的时候，处理一些事情
-   	plugins: [
-   		new HtmlWebpackPlugin({
-   			template: './index.html',
-   		}),
-   		new CleanWebpackPlugin(),
-   		new HotModuleReplacementPlugin(),
-   	],
-   	devServer: {
-   		open: true,
-   		hot: 'only',
-   	},
+     // development 默认没有 tree shaking
+     mode: 'development',
+     devtool: 'eval-cheap-module-source-map',
+     entry: {
+       bundle: './src/js/index.js',
+     },
+     output: {
+       publicPath: '/',
+       // publicPath: 'https://xxcdn.com/',
+       filename: '[name].js',
+       path: path.resolve(__dirname, 'bundle'),
+     },
+     optimization: {
+       usedExports: true,
+     },
+     module: {
+       rules: [
+         {
+           test: /\.(jpg|png|gif|jpeg)$/,
+           type: 'asset/resource',
+         },
+         {
+           test: /\.ts$/,
+           use: {
+             loader: 'ts-loader',
+           },
+         },
+         {
+           test: /\.css$/,
+           use: [
+             'style-loader',
+             {
+               loader: 'css-loader',
+               options: {
+                 // 引入模块化，
+                 // modules: true,
+               },
+             },
+             'less-loader',
+           ],
+         },
+         {
+           test: /\.less$/,
+           use: [
+             'style-loader',
+             {
+               loader: 'css-loader',
+               options: {
+                 // 通过import 加载的less文件也需要执行前两个loader
+                 importLoaders: 2,
+                 modules: true,
+               },
+             },
+             'less-loader',
+             {
+               loader: 'postcss-loader',
+               //  或者使用 PostCSS 本身的 配置文件：postcss.config.js
+               options: {
+                 postcssOptions: {
+                   plugins: [require('autoprefixer')()],
+                 },
+               },
+             },
+           ],
+         },
+         {
+           test: /\.m?js$/,
+           exclude: /node_modules/,
+           use: {
+             loader: 'babel-loader',
+           },
+         },
+       ],
+     },
+     // plugin 会在webpack运行到某些时机的时候，处理一些事情
+     plugins: [
+       new HtmlWebpackPlugin({
+         template: './index.html',
+       }),
+       new CleanWebpackPlugin(),
+       new HotModuleReplacementPlugin(),
+     ],
+     devServer: {
+       open: true,
+       hot: 'only',
+     },
    }
    ```
 
@@ -2177,97 +2177,97 @@ devtool: 'cheap-module-source-map'
    const { HotModuleReplacementPlugin } = require('webpack')
 
    module.exports = {
-   	mode: 'production',
-   	devtool: 'nosources-source-map',
-   	entry: {
-   		bundle: './src/js/index.js',
-   	},
-   	output: {
-   		publicPath: '/',
-   		// publicPath: 'https://xxcdn.com/',
-   		// filename: 'bundle.js',
-   		filename: '[name].js',
-   		path: path.resolve(__dirname, 'bundle'),
-   	},
-   	module: {
-   		rules: [
-   			{
-   				test: /\.(jpg|png|gif|jpeg)$/,
-   				type: 'asset/resource',
-   				// generator: {
-   				// 	filename: 'images/[name][ext]',
-   				// },
-   				// use: {
-   				// 	loader: 'file-loader',
-   				// 	options: {
-   				// 		esModule: false,
-   				// 		// placeholder 占位符
-   				// 		name: '[name].[ext]',
-   				// 		// 设置打包后的文件夹
-   				// 		outputPath: 'images/',
-   				// 	},
-   				// },
-   			},
-   			{
-   				test: /\.ts$/,
-   				use: {
-   					loader: 'ts-loader',
-   				},
-   			},
-   			{
-   				test: /\.css$/,
-   				use: [
-   					'style-loader',
-   					{
-   						loader: 'css-loader',
-   						options: {
-   							// 引入模块化，
-   							// modules: true,
-   						},
-   					},
-   					'less-loader',
-   				],
-   			},
-   			{
-   				test: /\.less$/,
-   				use: [
-   					'style-loader',
-   					{
-   						loader: 'css-loader',
-   						options: {
-   							// 通过import 加载的less文件也需要执行前两个loader
-   							importLoaders: 2,
-   							modules: true,
-   						},
-   					},
-   					'less-loader',
-   					{
-   						loader: 'postcss-loader',
-   						//  或者使用 PostCSS 本身的 配置文件：postcss.config.js
-   						options: {
-   							postcssOptions: {
-   								plugins: [require('autoprefixer')()],
-   							},
-   						},
-   					},
-   				],
-   			},
-   			{
-   				test: /\.m?js$/,
-   				exclude: /node_modules/,
-   				use: {
-   					loader: 'babel-loader',
-   				},
-   			},
-   		],
-   	},
-   	// plugin 会在webpack运行到某些时机的时候，处理一些事情
-   	plugins: [
-   		new HtmlWebpackPlugin({
-   			template: './index.html',
-   		}),
-   		new CleanWebpackPlugin(),
-   	],
+     mode: 'production',
+     devtool: 'nosources-source-map',
+     entry: {
+       bundle: './src/js/index.js',
+     },
+     output: {
+       publicPath: '/',
+       // publicPath: 'https://xxcdn.com/',
+       // filename: 'bundle.js',
+       filename: '[name].js',
+       path: path.resolve(__dirname, 'bundle'),
+     },
+     module: {
+       rules: [
+         {
+           test: /\.(jpg|png|gif|jpeg)$/,
+           type: 'asset/resource',
+           // generator: {
+           // 	filename: 'images/[name][ext]',
+           // },
+           // use: {
+           // 	loader: 'file-loader',
+           // 	options: {
+           // 		esModule: false,
+           // 		// placeholder 占位符
+           // 		name: '[name].[ext]',
+           // 		// 设置打包后的文件夹
+           // 		outputPath: 'images/',
+           // 	},
+           // },
+         },
+         {
+           test: /\.ts$/,
+           use: {
+             loader: 'ts-loader',
+           },
+         },
+         {
+           test: /\.css$/,
+           use: [
+             'style-loader',
+             {
+               loader: 'css-loader',
+               options: {
+                 // 引入模块化，
+                 // modules: true,
+               },
+             },
+             'less-loader',
+           ],
+         },
+         {
+           test: /\.less$/,
+           use: [
+             'style-loader',
+             {
+               loader: 'css-loader',
+               options: {
+                 // 通过import 加载的less文件也需要执行前两个loader
+                 importLoaders: 2,
+                 modules: true,
+               },
+             },
+             'less-loader',
+             {
+               loader: 'postcss-loader',
+               //  或者使用 PostCSS 本身的 配置文件：postcss.config.js
+               options: {
+                 postcssOptions: {
+                   plugins: [require('autoprefixer')()],
+                 },
+               },
+             },
+           ],
+         },
+         {
+           test: /\.m?js$/,
+           exclude: /node_modules/,
+           use: {
+             loader: 'babel-loader',
+           },
+         },
+       ],
+     },
+     // plugin 会在webpack运行到某些时机的时候，处理一些事情
+     plugins: [
+       new HtmlWebpackPlugin({
+         template: './index.html',
+       }),
+       new CleanWebpackPlugin(),
+     ],
    }
    ```
 
@@ -2294,94 +2294,94 @@ devtool: 'cheap-module-source-map'
    const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
    module.exports = {
-   	entry: {
-   		bundle: './src/js/index.js',
-   	},
-   	output: {
-   		publicPath: './',
-   		filename: '[name].js',
-   		path: path.resolve(__dirname, 'bundle'),
-   		assetModuleFilename: 'images/[name][ext]',
-   	},
-   	module: {
-   		rules: [
-   			{
-   				test: /\.(jpg|png|gif|jpeg)$/,
-   				type: 'asset/resource',
-   				// generator: {
-   				// 	filename: 'images/[name][ext]',
-   				// },
-   				// use: {
-   				// 	loader: 'file-loader',
-   				// 	options: {
-   				// 		esModule: false,
-   				// 		// placeholder 占位符
-   				// 		name: '[name].[ext]',
-   				// 		// 设置打包后的文件夹
-   				// 		outputPath: 'images/',
-   				// 	},
-   				// },
-   			},
-   			{
-   				test: /\.ts$/,
-   				use: {
-   					loader: 'ts-loader',
-   				},
-   			},
-   			{
-   				test: /\.css$/,
-   				use: [
-   					'style-loader',
-   					{
-   						loader: 'css-loader',
-   						options: {
-   							// 引入模块化，
-   							// modules: true,
-   						},
-   					},
-   					'less-loader',
-   				],
-   			},
-   			{
-   				test: /\.less$/,
-   				use: [
-   					'style-loader',
-   					{
-   						loader: 'css-loader',
-   						options: {
-   							// 通过import 加载的less文件也需要执行前两个loader
-   							importLoaders: 2,
-   							modules: true,
-   						},
-   					},
-   					'less-loader',
-   					{
-   						loader: 'postcss-loader',
-   						//  或者使用 PostCSS 本身的 配置文件：postcss.config.js
-   						options: {
-   							postcssOptions: {
-   								plugins: [require('autoprefixer')()],
-   							},
-   						},
-   					},
-   				],
-   			},
-   			{
-   				test: /\.m?js$/,
-   				exclude: /node_modules/,
-   				use: {
-   					loader: 'babel-loader',
-   				},
-   			},
-   		],
-   	},
-   	// plugin 会在webpack运行到某些时机的时候，处理一些事情
-   	plugins: [
-   		new HtmlWebpackPlugin({
-   			template: './index.html',
-   		}),
-   		new CleanWebpackPlugin(),
-   	],
+     entry: {
+       bundle: './src/js/index.js',
+     },
+     output: {
+       publicPath: './',
+       filename: '[name].js',
+       path: path.resolve(__dirname, 'bundle'),
+       assetModuleFilename: 'images/[name][ext]',
+     },
+     module: {
+       rules: [
+         {
+           test: /\.(jpg|png|gif|jpeg)$/,
+           type: 'asset/resource',
+           // generator: {
+           // 	filename: 'images/[name][ext]',
+           // },
+           // use: {
+           // 	loader: 'file-loader',
+           // 	options: {
+           // 		esModule: false,
+           // 		// placeholder 占位符
+           // 		name: '[name].[ext]',
+           // 		// 设置打包后的文件夹
+           // 		outputPath: 'images/',
+           // 	},
+           // },
+         },
+         {
+           test: /\.ts$/,
+           use: {
+             loader: 'ts-loader',
+           },
+         },
+         {
+           test: /\.css$/,
+           use: [
+             'style-loader',
+             {
+               loader: 'css-loader',
+               options: {
+                 // 引入模块化，
+                 // modules: true,
+               },
+             },
+             'less-loader',
+           ],
+         },
+         {
+           test: /\.less$/,
+           use: [
+             'style-loader',
+             {
+               loader: 'css-loader',
+               options: {
+                 // 通过import 加载的less文件也需要执行前两个loader
+                 importLoaders: 2,
+                 modules: true,
+               },
+             },
+             'less-loader',
+             {
+               loader: 'postcss-loader',
+               //  或者使用 PostCSS 本身的 配置文件：postcss.config.js
+               options: {
+                 postcssOptions: {
+                   plugins: [require('autoprefixer')()],
+                 },
+               },
+             },
+           ],
+         },
+         {
+           test: /\.m?js$/,
+           exclude: /node_modules/,
+           use: {
+             loader: 'babel-loader',
+           },
+         },
+       ],
+     },
+     // plugin 会在webpack运行到某些时机的时候，处理一些事情
+     plugins: [
+       new HtmlWebpackPlugin({
+         template: './index.html',
+       }),
+       new CleanWebpackPlugin(),
+     ],
    }
    ```
 
@@ -2392,17 +2392,17 @@ devtool: 'cheap-module-source-map'
    const { merge } = require('webpack-merge')
    const commonConfig = require('./webpack.common.js')
    const devConfig = {
-   	mode: 'development',
-   	devtool: 'eval-cheap-module-source-map',
-   	optimization: {
-   		usedExports: true,
-   	},
-   	// plugin 会在webpack运行到某些时机的时候，处理一些事情
-   	plugins: [new HotModuleReplacementPlugin()],
-   	devServer: {
-   		open: true,
-   		hot: 'only',
-   	},
+     mode: 'development',
+     devtool: 'eval-cheap-module-source-map',
+     optimization: {
+       usedExports: true,
+     },
+     // plugin 会在webpack运行到某些时机的时候，处理一些事情
+     plugins: [new HotModuleReplacementPlugin()],
+     devServer: {
+       open: true,
+       hot: 'only',
+     },
    }
    module.exports = merge(commonConfig, devConfig)
    ```
@@ -2445,10 +2445,10 @@ devtool: 'cheap-module-source-map'
 ```javascript
 // webpack.config.js
 module.exports = {
-	entry: {
-		main: './src/index.js',
-		vendor: ['vue', 'axios', 'element-ui', 'jquery'],
-	},
+  entry: {
+    main: './src/index.js',
+    vendor: ['vue', 'axios', 'element-ui', 'jquery'],
+  },
 }
 ```
 
@@ -2495,7 +2495,7 @@ module.exports = {
 
    ```javascript
    const { optimize } = require('webpack')
-   
+
    plugins: [
      ...,
      new optimize.CommonsChunkPlugin({
@@ -2518,9 +2518,9 @@ module.exports = {
    const { optimize } = require('webpack')
 
    plugins: [
-   	...new optimize.SplitChunksPlugin({
-   		name: 'vendor',
-   	}),
+     ...new optimize.SplitChunksPlugin({
+       name: 'vendor',
+     }),
    ]
    ```
 
@@ -2543,36 +2543,38 @@ module.exports = {
    ```javascript
    const path = require('path')
    const webpack = require('webpack')
-   
+
    module.exports = {
-   	mode: 'development',
-   	entry: path.resolve(__dirname, 'src/index.js'),
-   	plugins: [
-   		new webpack.ids.HashedModuleIdsPlugin(), // 根据模块的相对路径生成 HASH 作为模块 ID
-   	],
-   	output: {
-   		path: path.resolve(__dirname, 'dist'),
-   		filename: '[name].[contenthash].js',
-   	},
-   	optimization: {
-   		runtimeChunk: 'single',
-   		splitChunks: {
-   			chunks: 'all', // 默认 async 可选值 all 和 initial
-   			maxInitialRequests: Infinity, // 一个入口最大的并行请求数
-   			minSize: 0, // 避免模块体积过小而被忽略
-   			minChunks: 1, // 默认也是一表示最小引用次数
-   			cacheGroups: {
-   				vendor: {
-   					test: /[\\/]node_modules[\\/]/, // 如果需要的依赖特别小，可以直接设置成需要打包的依赖名称
-   					name(module, chunks, chcheGroupKey) {
-   						// 可提供布尔值、字符串和函数，如果是函数，可编写自定义返回值
-   						const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1] // 获取模块名称
-   						return `npm.${packageName.replace('@', '')}` // 可选，一般情况下不需要将模块名称 @ 符号去除
-   					},
-   				},
-   			},
-   		},
-   	},
+     mode: 'development',
+     entry: path.resolve(__dirname, 'src/index.js'),
+     plugins: [
+       new webpack.ids.HashedModuleIdsPlugin(), // 根据模块的相对路径生成 HASH 作为模块 ID
+     ],
+     output: {
+       path: path.resolve(__dirname, 'dist'),
+       filename: '[name].[contenthash].js',
+     },
+     optimization: {
+       runtimeChunk: 'single',
+       splitChunks: {
+         chunks: 'all', // 默认 async 可选值 all 和 initial
+         maxInitialRequests: Infinity, // 一个入口最大的并行请求数
+         minSize: 0, // 避免模块体积过小而被忽略
+         minChunks: 1, // 默认也是一表示最小引用次数
+         cacheGroups: {
+           vendor: {
+             test: /[\\/]node_modules[\\/]/, // 如果需要的依赖特别小，可以直接设置成需要打包的依赖名称
+             name(module, chunks, chcheGroupKey) {
+               // 可提供布尔值、字符串和函数，如果是函数，可编写自定义返回值
+               const packageName = module.context.match(
+                 /[\\/]node_modules[\\/](.*?)([\\/]|$)/
+               )[1] // 获取模块名称
+               return `npm.${packageName.replace('@', '')}` // 可选，一般情况下不需要将模块名称 @ 符号去除
+             },
+           },
+         },
+       },
+     },
    }
    ```
 
@@ -2674,13 +2676,13 @@ module.exports = {
    console.log(add(1, 2))
 
    function getVueComponent() {
-   	return import(/*webpackChunkName:"vue"*/ 'vue').then((vue) => {
-   		console.log(vue)
-   	})
+     return import(/*webpackChunkName:"vue"*/ 'vue').then((vue) => {
+       console.log(vue)
+     })
    }
 
    setTimeout(() => {
-   	getVueComponent()
+     getVueComponent()
    }, 3000)
    ```
 
@@ -2739,10 +2741,10 @@ module.exports = {
 
 ```javascript
 document.body.addEventListener('click', () => {
-	import(/* webpackPrefetch: true */ './footer.js').then((module) => {
-		console.log(module)
-		module.createFooter()
-	})
+  import(/* webpackPrefetch: true */ './footer.js').then((module) => {
+    console.log(module)
+    module.createFooter()
+  })
 })
 ```
 
@@ -2750,10 +2752,10 @@ document.body.addEventListener('click', () => {
 
 ```javascript
 document.body.addEventListener('click', () => {
-	import(/* webpackPreload: true */ './footer.js').then((module) => {
-		console.log(module)
-		module.createFooter()
-	})
+  import(/* webpackPreload: true */ './footer.js').then((module) => {
+    console.log(module)
+    module.createFooter()
+  })
 })
 ```
 
@@ -2787,7 +2789,7 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```css
    body {
-   	background: green;
+     background: green;
    }
    ```
 
@@ -2797,15 +2799,15 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
    module.exports = {
-   	plugins: [new MiniCssExtractPlugin()],
-   	module: {
-   		rules: [
-   			{
-   				test: /\.css$/i,
-   				use: [MiniCssExtractPlugin.loader, 'css-loader'],
-   			},
-   		],
-   	},
+     plugins: [new MiniCssExtractPlugin()],
+     module: {
+       rules: [
+         {
+           test: /\.css$/i,
+           use: [MiniCssExtractPlugin.loader, 'css-loader'],
+         },
+       ],
+     },
    }
    ```
 
@@ -2836,22 +2838,22 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 
    module.exports = {
-   	module: {
-   		rules: [
-   			{
-   				test: /.s?css$/,
-   				use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
-   			},
-   		],
-   	},
-   	optimization: {
-   		minimizer: [
-   			// For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
-   			// `...`,
-   			new CssMinimizerPlugin(),
-   		],
-   	},
-   	plugins: [new MiniCssExtractPlugin()],
+     module: {
+       rules: [
+         {
+           test: /.s?css$/,
+           use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+         },
+       ],
+     },
+     optimization: {
+       minimizer: [
+         // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
+         // `...`,
+         new CssMinimizerPlugin(),
+       ],
+     },
+     plugins: [new MiniCssExtractPlugin()],
    }
    ```
 
@@ -2860,10 +2862,10 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    ```javascript
    // [...]
    module.exports = {
-   	optimization: {
-   		// [...]
-   		minimize: true,
-   	},
+     optimization: {
+       // [...]
+       minimize: true,
+     },
    }
    ```
 
@@ -2968,9 +2970,9 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    ```javascript
    // 注意：这里没有写：import _ from "lodash"
    function component() {
-   	var element = document.createElement('div')
-   	element.innerHTML = _.join(['hello', 'webpack'], ' ')
-   	return element
+     var element = document.createElement('div')
+     element.innerHTML = _.join(['hello', 'webpack'], ' ')
+     return element
    }
    document.body.appendChild(component())
    ```
@@ -2979,9 +2981,9 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```javascript
    plugins: [
-   	new webpack.ProvidePlugin({
-   		_: 'lodash',
-   	}),
+     new webpack.ProvidePlugin({
+       _: 'lodash',
+     }),
    ]
    ```
 
@@ -2995,9 +2997,9 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```javascript
    function component() {
-   	var element = document.createElement('div')
-   	element.innerHTML = join(['hello', 'webpack'], ' ')
-   	return element
+     var element = document.createElement('div')
+     element.innerHTML = join(['hello', 'webpack'], ' ')
+     return element
    }
    document.body.appendChild(component())
    ```
@@ -3007,15 +3009,15 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    ```javascript
    // webpack.common.js 更改如下
    plugins: [
-   	new CleanWebpackPlugin(),
-   	new HtmlWebpackPlugin({
-   		title: 'shimming',
-   	}),
-   	// 参照官网使用 webpack.ProvidePlugin 的 treeshaking 写法无效: join: ['lodash', 'join']
-   	// 更改为如下有效
-   	new webpack.ProvidePlugin({
-   		join: 'lodash-es/join',
-   	}),
+     new CleanWebpackPlugin(),
+     new HtmlWebpackPlugin({
+       title: 'shimming',
+     }),
+     // 参照官网使用 webpack.ProvidePlugin 的 treeshaking 写法无效: join: ['lodash', 'join']
+     // 更改为如下有效
+     new webpack.ProvidePlugin({
+       join: 'lodash-es/join',
+     }),
    ]
    ```
 
@@ -3063,14 +3065,14 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    >
    > ```json
    > {
-   > 	"presets": [
-   > 		[
-   > 			"env",
-   > 			{
-   > 				"modules": false
-   > 			}
-   > 		]
-   > 	]
+   >   "presets": [
+   >     [
+   >       "env",
+   >       {
+   >         "modules": false
+   >       }
+   >     ]
+   >   ]
    > }
    > ```
    >
@@ -3097,10 +3099,10 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```javascript
    function component() {
-   	var element = document.createElement('div')
-   	element.innerHTML = join(['hello', 'webpack'], ' ')
-   	this.alert('test hahaha')
-   	return element
+     var element = document.createElement('div')
+     element.innerHTML = join(['hello', 'webpack'], ' ')
+     this.alert('test hahaha')
+     return element
    }
    document.body.appendChild(component())
    ```
@@ -3109,12 +3111,12 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```javascript
    module: {
-   	rules: [
-   		{
-   			test: require.resolve('./src/index.js'),
-   			use: 'imports-loader?wrapper=window',
-   		},
-   	]
+     rules: [
+       {
+         test: require.resolve('./src/index.js'),
+         use: 'imports-loader?wrapper=window',
+       },
+     ]
    }
    ```
 
@@ -3137,12 +3139,12 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    ```javascript
    const file = 'blah.txt'
    const helpers = {
-   	test: function () {
-   		console.log('test something')
-   	},
-   	parse: function () {
-   		console.log('parse something')
-   	},
+     test: function () {
+       console.log('test something')
+     },
+     parse: function () {
+       console.log('parse something')
+     },
    }
    ```
 
@@ -3150,12 +3152,12 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```javascript
    module: {
-   	rules: [
-   		{
-   			test: require.resolve('./src/global.js'),
-   			use: 'exports-loader?type=commonjs&exports=file,multiple|helpers.parse|parse',
-   		},
-   	]
+     rules: [
+       {
+         test: require.resolve('./src/global.js'),
+         use: 'exports-loader?type=commonjs&exports=file,multiple|helpers.parse|parse',
+       },
+     ]
    }
    ```
 
@@ -3249,7 +3251,7 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
 [webpack 使用环境变量](https://webpack.js.org/guides/environment-variables/)
 
-## 4. Webpack 实战配置案例讲解
+## 4、实战配置案例讲解
 
 ### 4.1 Library 的打包
 
@@ -3280,24 +3282,24 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    // math.js
    export function add(a, b) {
-   	return a + b
+     return a + b
    }
 
    export function minus(a, b) {
-   	return a - b
+     return a - b
    }
 
    export function multiply(a, b) {
-   	return a * b
+     return a * b
    }
 
    export function division(a, b) {
-   	return a / b
+     return a / b
    }
 
    // string.js
    export function join(a, b) {
-   	return a + '' + b
+     return a + '' + b
    }
    ```
 
@@ -3307,12 +3309,12 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    const path = require('path')
 
    module.exports = {
-   	mode: 'production',
-   	entry: './src/index.js',
-   	output: {
-   		filename: 'library.js',
-   		path: path.resolve(__dirname, 'dist'),
-   	},
+     mode: 'production',
+     entry: './src/index.js',
+     output: {
+       filename: 'library.js',
+       path: path.resolve(__dirname, 'dist'),
+     },
    }
    ```
 
@@ -3391,7 +3393,7 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    ```javascript
    import _ from 'lodash'
    export function join(a, b) {
-   	return _.join(a, b)
+     return _.join(a, b)
    }
    ```
 
@@ -3410,7 +3412,7 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    ```javascript
    import _ from 'lodash1'
    export function join(a, b) {
-   	return _.join(a, b)
+     return _.join(a, b)
    }
    ```
 
@@ -3418,10 +3420,10 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```javascript
    module.exports = {
-   	//...
-   	externals: {
-   		lodash1: 'lodash',
-   	},
+     //...
+     externals: {
+       lodash1: 'lodash',
+     },
    }
    ```
 
@@ -3549,46 +3551,46 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    const webpack = require('webpack')
 
    const commonConfig = {
-   	entry: {
-   		bundle: '/src/js/index.js',
-   	},
+     entry: {
+       bundle: '/src/js/index.js',
+     },
 
-   	output: {
-   		publicPath: '/',
-   		filename: '[name].js',
-   		path: path.resolve(__dirname, 'bundle'),
-   		assetModuleFilename: 'images/[name][ext]',
-   	},
-   	module: {
-   		rules: [
-   			{
-   				test: /\.(jpg|png|gif|jpeg)$/,
-   				type: 'asset/resource',
-   			},
-   			{
-   				test: /\.css$/,
-   				use: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader'],
-   			},
-   		],
-   	},
-   	// plugin 会在webpack运行到某些时机的时候，处理一些事情
-   	plugins: [
-   		new MiniCssExtractPlugin({
-   			filename: 'css/[name].[hash:3].css', // 此选项决定了输出的每个 CSS 文件的名称。机制类似于 output.filename。
-   			chunkFilename: 'css/[name].[hash:3].css', // 此选项决定了非入口的 chunk 文件名称机制类似于 output.chunkFilename
-   		}),
-   		new HtmlWebpackPlugin({
-   			template: './index.html',
-   		}),
-   		new CleanWebpackPlugin(),
-   	],
+     output: {
+       publicPath: '/',
+       filename: '[name].js',
+       path: path.resolve(__dirname, 'bundle'),
+       assetModuleFilename: 'images/[name][ext]',
+     },
+     module: {
+       rules: [
+         {
+           test: /\.(jpg|png|gif|jpeg)$/,
+           type: 'asset/resource',
+         },
+         {
+           test: /\.css$/,
+           use: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader'],
+         },
+       ],
+     },
+     // plugin 会在webpack运行到某些时机的时候，处理一些事情
+     plugins: [
+       new MiniCssExtractPlugin({
+         filename: 'css/[name].[hash:3].css', // 此选项决定了输出的每个 CSS 文件的名称。机制类似于 output.filename。
+         chunkFilename: 'css/[name].[hash:3].css', // 此选项决定了非入口的 chunk 文件名称机制类似于 output.chunkFilename
+       }),
+       new HtmlWebpackPlugin({
+         template: './index.html',
+       }),
+       new CleanWebpackPlugin(),
+     ],
    }
 
    module.exports = (env) => {
-   	if (env && env.production) {
-   		return merge(commonConfig, prodConfig)
-   	}
-   	return merge(commonConfig, devConfig)
+     if (env && env.production) {
+       return merge(commonConfig, prodConfig)
+     }
+     return merge(commonConfig, devConfig)
    }
    ```
 
@@ -3601,21 +3603,21 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
    const prodConfig = {
-   	mode: 'production',
-   	output: {
-   		publicPath: '/',
-   		filename: '[name].[contenthash].js',
-   	},
-   	devtool: 'nosources-source-map',
-   	module: {},
-   	optimization: {
-   		minimizer: [
-   			// For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
-   			// `...`,
-   			new CssMinimizerPlugin(),
-   		],
-   	},
-   	plugins: [new MiniCssExtractPlugin()],
+     mode: 'production',
+     output: {
+       publicPath: '/',
+       filename: '[name].[contenthash].js',
+     },
+     devtool: 'nosources-source-map',
+     module: {},
+     optimization: {
+       minimizer: [
+         // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
+         // `...`,
+         new CssMinimizerPlugin(),
+       ],
+     },
+     plugins: [new MiniCssExtractPlugin()],
    }
 
    module.exports = merge(CommonConfig, prodConfig)
@@ -3680,16 +3682,16 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    // 添加如下代码
    if ('serviceWorker' in navigator) {
-   	window.addEventListener('load', () => {
-   		navigator.serviceWorker
-   			.register('./service-worker.js')
-   			.then((registration) => {
-   				console.log('service-worker registered')
-   			})
-   			.catch((error) => {
-   				console.log('service-worker registered error')
-   			})
-   	})
+     window.addEventListener('load', () => {
+       navigator.serviceWorker
+         .register('./service-worker.js')
+         .then((registration) => {
+           console.log('service-worker registered')
+         })
+         .catch((error) => {
+           console.log('service-worker registered error')
+         })
+     })
    }
    ```
 
@@ -3725,13 +3727,13 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```javascript
    class Greeter {
-   	greeting: string
-   	constructor(message: string) {
-   		this.greeting = message
-   	}
-   	greet() {
-   		return 'Hello, ' + this.greeting
-   	}
+     greeting: string
+     constructor(message: string) {
+       this.greeting = message
+     }
+     greet() {
+       return 'Hello, ' + this.greeting
+     }
    }
 
    let greeter = new Greeter('world')
@@ -3745,21 +3747,21 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    const path = require('path')
 
    module.exports = {
-   	mode: 'production',
-   	entry: './src/index.ts',
-   	module: {
-   		rules: [
-   			{
-   				test: /\.ts?$/,
-   				use: 'ts-loader',
-   				exclude: /node_modules/,
-   			},
-   		],
-   	},
-   	output: {
-   		filename: 'bundle.js',
-   		path: path.resolve(__dirname, 'dist'),
-   	},
+     mode: 'production',
+     entry: './src/index.ts',
+     module: {
+       rules: [
+         {
+           test: /\.ts?$/,
+           use: 'ts-loader',
+           exclude: /node_modules/,
+         },
+       ],
+     },
+     output: {
+       filename: 'bundle.js',
+       path: path.resolve(__dirname, 'dist'),
+     },
    }
    ```
 
@@ -3810,14 +3812,14 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    import _ from 'lodash'
 
    class Greeter {
-   	greeting: string
-   	constructor(message: string) {
-   		this.greeting = message
-   	}
-   	greet() {
-   		return _.join(['Hello', '', this.greeting], ' ')
-   		// return 'Hello, ' + this.greeting
-   	}
+     greeting: string
+     constructor(message: string) {
+       this.greeting = message
+     }
+     greet() {
+       return _.join(['Hello', '', this.greeting], ' ')
+       // return 'Hello, ' + this.greeting
+     }
    }
    let greeter = new Greeter('world')
    alert(greeter.greet())
@@ -3841,20 +3843,20 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    import * as _ from 'lodash'
 
    class Greeter {
-   	greeting: string
-   	constructor(message: string) {
-   		this.greeting = message
-   	}
-   	greet() {
-   		// 这样写会进行类型检查，会提示报错：应有 1-2 个参数，但获得 0 个
-   		// return _.join()
+     greeting: string
+     constructor(message: string) {
+       this.greeting = message
+     }
+     greet() {
+       // 这样写会进行类型检查，会提示报错：应有 1-2 个参数，但获得 0 个
+       // return _.join()
 
-   		// 这样写也会报错：类型“number”的参数不能赋给类型“List<any>”的参数。
-   		// return _.join(1)
+       // 这样写也会报错：类型“number”的参数不能赋给类型“List<any>”的参数。
+       // return _.join(1)
 
-   		// 正确的写法
-   		return _.join(['Hello', '', this.greeting], ' ')
-   	}
+       // 正确的写法
+       return _.join(['Hello', '', this.greeting], ' ')
+     }
    }
 
    let greeter = new Greeter('world')
@@ -3891,15 +3893,15 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    import axios from 'axios'
 
    axios
-   	.get('https://api.apiopen.top/api/getHaoKanVideo', {
-   		data: {
-   			page: 0,
-   			size: 10,
-   		},
-   	})
-   	.then((res) => {
-   		console.log(res)
-   	})
+     .get('https://api.apiopen.top/api/getHaoKanVideo', {
+       data: {
+         page: 0,
+         size: 10,
+       },
+     })
+     .then((res) => {
+       console.log(res)
+     })
    ```
 
 4. 此时`package.json`中的脚本命令如下
@@ -3943,12 +3945,12 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```javascript
    module.exports = {
-   	//...
-   	devServer: {
-   		proxy: {
-   			'/api': 'http://localhost:3000',
-   		},
-   	},
+     //...
+     devServer: {
+       proxy: {
+         '/api': 'http://localhost:3000',
+       },
+     },
    }
    ```
 
@@ -3958,15 +3960,15 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```javascript
    module.exports = {
-   	//...
-   	devServer: {
-   		proxy: [
-   			{
-   				context: ['/auth', '/api'],
-   				target: 'http://localhost:3000',
-   			},
-   		],
-   	},
+     //...
+     devServer: {
+       proxy: [
+         {
+           context: ['/auth', '/api'],
+           target: 'http://localhost:3000',
+         },
+       ],
+     },
    }
    ```
 
@@ -3978,15 +3980,15 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```javascript
    module.exports = {
-   	//...
-   	devServer: {
-   		proxy: {
-   			'/api': {
-   				target: 'http://localhost:3000',
-   				pathRewrite: { '^/api': '' },
-   			},
-   		},
-   	},
+     //...
+     devServer: {
+       proxy: {
+         '/api': {
+           target: 'http://localhost:3000',
+           pathRewrite: { '^/api': '' },
+         },
+       },
+     },
    }
    ```
 
@@ -3996,15 +3998,15 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```javascript
    module.exports = {
-   	//...
-   	devServer: {
-   		proxy: {
-   			'/api': {
-   				target: 'https://other-server.example.com',
-   				secure: false,
-   			},
-   		},
-   	},
+     //...
+     devServer: {
+       proxy: {
+         '/api': {
+           target: 'https://other-server.example.com',
+           secure: false,
+         },
+       },
+     },
    }
    ```
 
@@ -4017,21 +4019,21 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```javascript
    module.exports = {
-   	//...
-   	devServer: {
-   		proxy: {
-   			'/api': {
-   				target: 'http://localhost:3000',
-   				bypass: function (req, res, proxyOptions) {
-   					if (req.headers.accept.indexOf('html') !== -1) {
-   						console.log('Skipping proxy for browser request.')
-   						// 也可以通过 return false 来跳过代理
-   						return '/index.html'
-   					}
-   				},
-   			},
-   		},
-   	},
+     //...
+     devServer: {
+       proxy: {
+         '/api': {
+           target: 'http://localhost:3000',
+           bypass: function (req, res, proxyOptions) {
+             if (req.headers.accept.indexOf('html') !== -1) {
+               console.log('Skipping proxy for browser request.')
+               // 也可以通过 return false 来跳过代理
+               return '/index.html'
+             }
+           },
+         },
+       },
+     },
    }
    ```
 
@@ -4126,53 +4128,53 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    const webpack = require('webpack')
 
    const commonConfig = {
-   	entry: {
-   		bundle: '/src/js/index.js',
-   	},
+     entry: {
+       bundle: '/src/js/index.js',
+     },
 
-   	output: {
-   		publicPath: '/',
-   		filename: '[name].js',
-   		path: path.resolve(__dirname, 'bundle'),
-   		assetModuleFilename: 'images/[name][ext]',
-   	},
-   	module: {
-   		rules: [
-   			{
-   				test: /\.(jpg|png|gif|jpeg)$/,
-   				type: 'asset/resource',
-   			},
-   			{
-   				test: /\.css$/,
-   				use: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader'],
-   			},
-   			{
-   				test: /\.m?js$/,
-   				exclude: /node_modules/,
-   				use: {
-   					loader: 'babel-loader',
-   				},
-   			},
-   		],
-   	},
-   	// plugin 会在webpack运行到某些时机的时候，处理一些事情
-   	plugins: [
-   		new MiniCssExtractPlugin({
-   			filename: 'css/[name].[hash:3].css', // 此选项决定了输出的每个 CSS 文件的名称。机制类似于 output.filename。
-   			chunkFilename: 'css/[name].[hash:3].css', // 此选项决定了非入口的 chunk 文件名称机制类似于 output.chunkFilename
-   		}),
-   		new HtmlWebpackPlugin({
-   			template: './index.html',
-   		}),
-   		new CleanWebpackPlugin(),
-   	],
+     output: {
+       publicPath: '/',
+       filename: '[name].js',
+       path: path.resolve(__dirname, 'bundle'),
+       assetModuleFilename: 'images/[name][ext]',
+     },
+     module: {
+       rules: [
+         {
+           test: /\.(jpg|png|gif|jpeg)$/,
+           type: 'asset/resource',
+         },
+         {
+           test: /\.css$/,
+           use: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader'],
+         },
+         {
+           test: /\.m?js$/,
+           exclude: /node_modules/,
+           use: {
+             loader: 'babel-loader',
+           },
+         },
+       ],
+     },
+     // plugin 会在webpack运行到某些时机的时候，处理一些事情
+     plugins: [
+       new MiniCssExtractPlugin({
+         filename: 'css/[name].[hash:3].css', // 此选项决定了输出的每个 CSS 文件的名称。机制类似于 output.filename。
+         chunkFilename: 'css/[name].[hash:3].css', // 此选项决定了非入口的 chunk 文件名称机制类似于 output.chunkFilename
+       }),
+       new HtmlWebpackPlugin({
+         template: './index.html',
+       }),
+       new CleanWebpackPlugin(),
+     ],
    }
 
    module.exports = (env) => {
-   	if (env && env.production) {
-   		return merge(commonConfig, prodConfig)
-   	}
-   	return merge(commonConfig, devConfig)
+     if (env && env.production) {
+       return merge(commonConfig, prodConfig)
+     }
+     return merge(commonConfig, devConfig)
    }
    ```
 
@@ -4180,24 +4182,24 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```javascript
    module.exports = {
-   	// presets 执行顺序是从后往前执行
-   	presets: [
-   		[
-   			'@babel/preset-env',
-   			{
-   				useBuiltIns: 'usage',
-   				corejs: {
-   					version: 3,
-   					proposals: true,
-   				},
-   				// 需要支持的目标浏览器版本，如果目标浏览器版本支持语法，就会略过转换处理
-   				targets: {
-   					ie: '8',
-   				},
-   			},
-   		],
-   		'@babel/preset-react',
-   	],
+     // presets 执行顺序是从后往前执行
+     presets: [
+       [
+         '@babel/preset-env',
+         {
+           useBuiltIns: 'usage',
+           corejs: {
+             version: 3,
+             proposals: true,
+           },
+           // 需要支持的目标浏览器版本，如果目标浏览器版本支持语法，就会略过转换处理
+           targets: {
+             ie: '8',
+           },
+         },
+       ],
+       '@babel/preset-react',
+     ],
    }
    ```
 
@@ -4213,11 +4215,11 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    import List from './list'
 
    class App extends Component {
-   	componentDidMount() {}
+     componentDidMount() {}
 
-   	render() {
-   		return <div>hello i am test</div>
-   	}
+     render() {
+       return <div>hello i am test</div>
+     }
    }
    const root = createRoot(document.getElementById('root'))
    root.render(<App />)
@@ -4228,10 +4230,10 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    ```javascript
    // list.js
    import React, { Component } from 'react'
-   
+
    class List extends Component {
    	componentDidMount() {}
-   
+
    	render() {
    		return <div>List Page</div>
    	}
@@ -4275,18 +4277,18 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
    import List from './list'
 
    class App extends Component {
-   	componentDidMount() {}
+     componentDidMount() {}
 
-   	render() {
-   		return (
-   			<BrowserRouter>
-   				<Routes>
-   					<Route path='/' exact element={<Home />}></Route>
-   					<Route path='/list' element={<List />}></Route>
-   				</Routes>
-   			</BrowserRouter>
-   		)
-   	}
+     render() {
+       return (
+         <BrowserRouter>
+           <Routes>
+             <Route path='/' exact element={<Home />}></Route>
+             <Route path='/list' element={<List />}></Route>
+           </Routes>
+         </BrowserRouter>
+       )
+     }
    }
    const root = createRoot(document.getElementById('root'))
    root.render(<App />)
@@ -4372,7 +4374,7 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 
    ```javascript
    const ESLintPlugin = require('eslint-webpack-plugin');
-   
+
    module.exports = {
      ...
      module: {
@@ -4412,14 +4414,14 @@ Preloading 什么时候用呢？比如说，你页面中的很多组件都用到
 ```javascript
 // webpack.config.js 中不使用非必要的 loader
 {
-	module: {
-		rules: [
-			{
-				test: /\.js$/,
-				exclude: /node_modules/, // 排除不必要的模块
-			},
-		]
-	}
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/, // 排除不必要的模块
+      },
+    ]
+  }
 }
 ```
 
@@ -4469,15 +4471,15 @@ module.exports = {
    const path = require('path')
 
    module.exports = {
-   	mode: 'production',
-   	entry: {
-   		vendors: ['react', 'react-dom', 'lodash'], // 此处为所依赖的第三方包，根据自己的需要进行设置
-   	},
-   	output: {
-   		path: path.resolve(__dirname, 'dll'),
-   		filename: '[name].dll.js',
-   		library: '[name]', // 这里暴露为一个全局变量
-   	},
+     mode: 'production',
+     entry: {
+       vendors: ['react', 'react-dom', 'lodash'], // 此处为所依赖的第三方包，根据自己的需要进行设置
+     },
+     output: {
+       path: path.resolve(__dirname, 'dll'),
+       filename: '[name].dll.js',
+       library: '[name]', // 这里暴露为一个全局变量
+     },
    }
    ```
 
@@ -4532,22 +4534,22 @@ module.exports = {
    const { DllPlugin } = require('webpack')
 
    module.exports = {
-   	mode: 'production',
-   	entry: {
-   		vendors: ['react', 'react-dom', 'lodash'],
-   	},
-   	output: {
-   		path: path.resolve(__dirname, 'dll'),
-   		filename: '[name].dll.js',
-   		library: '[name]',
-   	},
-   	// 新增
-   	plugins: [
-   		new DllPlugin({
-   			name: '[name]',
-   			path: path.resolve(__dirname, './dll/[name].manifest.json'),
-   		}),
-   	],
+     mode: 'production',
+     entry: {
+       vendors: ['react', 'react-dom', 'lodash'],
+     },
+     output: {
+       path: path.resolve(__dirname, 'dll'),
+       filename: '[name].dll.js',
+       library: '[name]',
+     },
+     // 新增
+     plugins: [
+       new DllPlugin({
+         name: '[name]',
+         path: path.resolve(__dirname, './dll/[name].manifest.json'),
+       }),
+     ],
    }
    ```
 
@@ -4581,24 +4583,24 @@ module.exports = {
    const { DllPlugin } = require('webpack')
 
    module.exports = {
-   	mode: 'production',
-   	entry: {
-   		// 这里进行修改
-   		vendors: ['lodash'],
-   		react: ['react', 'react-dom'],
-   		axios: ['axios'],
-   	},
-   	output: {
-   		path: path.resolve(__dirname, 'dll'),
-   		filename: '[name].dll.js',
-   		library: '[name]',
-   	},
-   	plugins: [
-   		new DllPlugin({
-   			name: '[name]',
-   			path: path.resolve(__dirname, './dll/[name].manifest.json'),
-   		}),
-   	],
+     mode: 'production',
+     entry: {
+       // 这里进行修改
+       vendors: ['lodash'],
+       react: ['react', 'react-dom'],
+       axios: ['axios'],
+     },
+     output: {
+       path: path.resolve(__dirname, 'dll'),
+       filename: '[name].dll.js',
+       library: '[name]',
+     },
+     plugins: [
+       new DllPlugin({
+         name: '[name]',
+         path: path.resolve(__dirname, './dll/[name].manifest.json'),
+       }),
+     ],
    }
    ```
 
@@ -4608,26 +4610,26 @@ module.exports = {
 
    ```javascript
    module.exports = {
-   	plugins: [
-   		new AddAssetHtmlWebpackPlugin({
-   			filepath: path.resolve(__dirname, './dll/vendors.dll.js'),
-   		}),
-   		new AddAssetHtmlWebpackPlugin({
-   			filepath: path.resolve(__dirname, './dll/axios.dll.js'),
-   		}),
-   		new AddAssetHtmlWebpackPlugin({
-   			filepath: path.resolve(__dirname, './dll/react.dll.js'),
-   		}),
-   		new DllReferencePlugin({
-   			manifest: path.resolve(__dirname, './dll/vendors.manifest.json'),
-   		}),
-   		new DllReferencePlugin({
-   			manifest: path.resolve(__dirname, './dll/axios.manifest.json'),
-   		}),
-   		new DllReferencePlugin({
-   			manifest: path.resolve(__dirname, './dll/react.manifest.json'),
-   		}),
-   	],
+     plugins: [
+       new AddAssetHtmlWebpackPlugin({
+         filepath: path.resolve(__dirname, './dll/vendors.dll.js'),
+       }),
+       new AddAssetHtmlWebpackPlugin({
+         filepath: path.resolve(__dirname, './dll/axios.dll.js'),
+       }),
+       new AddAssetHtmlWebpackPlugin({
+         filepath: path.resolve(__dirname, './dll/react.dll.js'),
+       }),
+       new DllReferencePlugin({
+         manifest: path.resolve(__dirname, './dll/vendors.manifest.json'),
+       }),
+       new DllReferencePlugin({
+         manifest: path.resolve(__dirname, './dll/axios.manifest.json'),
+       }),
+       new DllReferencePlugin({
+         manifest: path.resolve(__dirname, './dll/react.manifest.json'),
+       }),
+     ],
    }
    ```
 
@@ -4709,11 +4711,11 @@ import React, { Component } from 'react'
 import { createRoot } from 'react-dom/client'
 
 class List extends Component {
-	componentDidMount() {}
+  componentDidMount() {}
 
-	render() {
-		return <div>This is List Page</div>
-	}
+  render() {
+    return <div>This is List Page</div>
+  }
 }
 
 const root = createRoot(document.getElementById('root'))
@@ -4724,11 +4726,11 @@ import React, { Component } from 'react'
 import { createRoot } from 'react-dom/client'
 
 class App extends Component {
-	componentDidMount() {}
+  componentDidMount() {}
 
-	render() {
-		return <div>I am Home Page</div>
-	}
+  render() {
+    return <div>I am Home Page</div>
+  }
 }
 const root = createRoot(document.getElementById('root'))
 root.render(<App />)
@@ -4834,7 +4836,7 @@ root.render(<App />)
 
 7. 这时候就实现根据配置`entry` 自动实现多入口文件的处理了
 
-## 5 Webpack 底层原理及脚手架工具分析
+## 5、底层原理及脚手架工具分析
 
 ### 5.1 如何编写一个 loader
 
@@ -4851,7 +4853,7 @@ root.render(<App />)
 
    ```javascript
    module.exports = function (source) {
-   	return source.replace('world', 'loader')
+     return source.replace('world', 'loader')
    }
    ```
 
@@ -4867,22 +4869,22 @@ root.render(<App />)
    const path = require('path')
 
    module.exports = {
-   	mode: 'development',
-   	entry: {
-   		main: './src/index.js',
-   	},
-   	module: {
-   		rules: [
-   			{
-   				test: /.js/,
-   				use: [path.resolve(__dirname, './loaders/replaceLoader.js')], // 引入自定义 loader
-   			},
-   		],
-   	},
-   	output: {
-   		path: path.resolve(__dirname, 'dist'),
-   		filename: '[name].js',
-   	},
+     mode: 'development',
+     entry: {
+       main: './src/index.js',
+     },
+     module: {
+       rules: [
+         {
+           test: /.js/,
+           use: [path.resolve(__dirname, './loaders/replaceLoader.js')], // 引入自定义 loader
+         },
+       ],
+     },
+     output: {
+       path: path.resolve(__dirname, 'dist'),
+       filename: '[name].js',
+     },
    }
    ```
 
@@ -4906,29 +4908,29 @@ root.render(<App />)
    const path = require('path')
 
    module.exports = {
-   	mode: 'development',
-   	entry: {
-   		main: './src/index.js',
-   	},
-   	module: {
-   		rules: [
-   			{
-   				test: /.js/,
-   				use: [
-   					{
-   						loader: path.resolve(__dirname, './loaders/replaceLoader.js'),
-   						options: {
-   							name: 'xh',
-   						},
-   					},
-   				],
-   			},
-   		],
-   	},
-   	output: {
-   		path: path.resolve(__dirname, 'dist'),
-   		filename: '[name].js',
-   	},
+     mode: 'development',
+     entry: {
+       main: './src/index.js',
+     },
+     module: {
+       rules: [
+         {
+           test: /.js/,
+           use: [
+             {
+               loader: path.resolve(__dirname, './loaders/replaceLoader.js'),
+               options: {
+                 name: 'xh',
+               },
+             },
+           ],
+         },
+       ],
+     },
+     output: {
+       path: path.resolve(__dirname, 'dist'),
+       filename: '[name].js',
+     },
    }
    ```
 
@@ -4936,8 +4938,8 @@ root.render(<App />)
 
    ```javascript
    module.exports = function (source) {
-   	console.log(this.query)
-   	return source.replace('world', this.query.name)
+     console.log(this.query)
+     return source.replace('world', this.query.name)
    }
    ```
 
@@ -4959,9 +4961,9 @@ root.render(<App />)
    const loaderUtils = require('loader-utils')
 
    module.exports = function (source) {
-   	const options = loaderUtils.getOptions(this) // 这里使用新版本会报错
-   	console.log(options)
-   	return source.replace('world', options.name)
+     const options = loaderUtils.getOptions(this) // 这里使用新版本会报错
+     console.log(options)
+     return source.replace('world', options.name)
    }
    ```
 
@@ -4984,11 +4986,11 @@ root.render(<App />)
 
    ```javascript
    const loaderUtils = require('loader-utils')
-   
+
    module.exports = function (source) {
-   	const options = loaderUtils.getOptions(this)
-   	const result = source.replace('world', options.name)
-   	this.callback(null, result)
+     const options = loaderUtils.getOptions(this)
+     const result = source.replace('world', options.name)
+     this.callback(null, result)
    }
    ```
 
@@ -5003,13 +5005,13 @@ root.render(<App />)
    ```javascript
    const loaderUtils = require('loader-utils')
    module.exports = function (source) {
-   	const options = loaderUtils.getOptions(this)
-   	const callback = this.async()
-   	// 注意：不用 this.async，仅仅延迟返回会提示失败
-   	setTimeout(() => {
-   		const result = source.replace('world', options.name)
-   		callback(null, result)
-   	}, 1000)
+     const options = loaderUtils.getOptions(this)
+     const callback = this.async()
+     // 注意：不用 this.async，仅仅延迟返回会提示失败
+     setTimeout(() => {
+       const result = source.replace('world', options.name)
+       callback(null, result)
+     }, 1000)
    }
    ```
 
@@ -5024,17 +5026,17 @@ root.render(<App />)
 
    const loaderUtils = require('loader-utils')
    module.exports = function (source) {
-   	const options = loaderUtils.getOptions(this)
-   	const callback = this.async()
-   	setTimeout(() => {
-   		const result = source.replace('world', options.name)
-   		callback(null, result)
-   	}, 1000)
+     const options = loaderUtils.getOptions(this)
+     const callback = this.async()
+     setTimeout(() => {
+       const result = source.replace('world', options.name)
+       callback(null, result)
+     }, 1000)
    }
 
    // replaceLoader.js
    module.exports = function (source) {
-   	return source.replace('xh', 'world')
+     return source.replace('xh', 'world')
    }
    ```
 
@@ -5042,22 +5044,22 @@ root.render(<App />)
 
    ```javascript
    module: {
-   	rules: [
-   		{
-   			test: /.js/,
-   			use: [
-   				{
-   					loader: path.resolve(__dirname, './loaders/replaceLoader.js'),
-   				},
-   				{
-   					loader: path.resolve(__dirname, './loaders/replaceLoaderAsync.js'),
-   					options: {
-   						name: 'xh',
-   					},
-   				},
-   			],
-   		},
-   	]
+     rules: [
+       {
+         test: /.js/,
+         use: [
+           {
+             loader: path.resolve(__dirname, './loaders/replaceLoader.js'),
+           },
+           {
+             loader: path.resolve(__dirname, './loaders/replaceLoaderAsync.js'),
+             options: {
+               name: 'xh',
+             },
+           },
+         ],
+       },
+     ]
    }
    ```
 
@@ -5075,35 +5077,35 @@ root.render(<App />)
 const path = require('path')
 
 module.exports = {
-	mode: 'development',
-	entry: {
-		main: './src/index.js',
-	},
-	resolveLoader: {
-		modules: ['node_modules', './loaders'],
-	},
-	module: {
-		rules: [
-			{
-				test: /.js/,
-				use: [
-					{
-						loader: 'replaceLoader.js',
-					},
-					{
-						loader: 'replaceLoaderAsync.js',
-						options: {
-							name: 'xh',
-						},
-					},
-				],
-			},
-		],
-	},
-	output: {
-		path: path.resolve(__dirname, 'dist'),
-		filename: '[name].js',
-	},
+  mode: 'development',
+  entry: {
+    main: './src/index.js',
+  },
+  resolveLoader: {
+    modules: ['node_modules', './loaders'],
+  },
+  module: {
+    rules: [
+      {
+        test: /.js/,
+        use: [
+          {
+            loader: 'replaceLoader.js',
+          },
+          {
+            loader: 'replaceLoaderAsync.js',
+            options: {
+              name: 'xh',
+            },
+          },
+        ],
+      },
+    ],
+  },
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: '[name].js',
+  },
 }
 ```
 
@@ -5137,10 +5139,10 @@ module.exports = {
 
    ```javascript
    class CopyrightWebpackPlugin {
-   	constructor() {
-   		console.log('插件被使用了')
-   	}
-   	apply(compiler) {}
+     constructor() {
+       console.log('插件被使用了')
+     }
+     apply(compiler) {}
    }
 
    module.exports = CopyrightWebpackPlugin
@@ -5153,15 +5155,15 @@ module.exports = {
    const CopyrightWebpackPlugin = require('./plugins/copyright-webpack-plugin')
 
    module.exports = {
-   	mode: 'development',
-   	entry: {
-   		main: './src/index.js',
-   	},
-   	output: {
-   		path: path.resolve(__dirname, 'dist'),
-   		filename: '[name].js',
-   	},
-   	plugins: [new CopyrightWebpackPlugin()],
+     mode: 'development',
+     entry: {
+       main: './src/index.js',
+     },
+     output: {
+       path: path.resolve(__dirname, 'dist'),
+       filename: '[name].js',
+     },
+     plugins: [new CopyrightWebpackPlugin()],
    }
    ```
 
@@ -5186,19 +5188,19 @@ module.exports = {
    const CopyrightWebpackPlugin = require('./plugins/copyright-webpack-plugin')
 
    module.exports = {
-   	mode: 'development',
-   	entry: {
-   		main: './src/index.js',
-   	},
-   	output: {
-   		path: path.resolve(__dirname, 'dist'),
-   		filename: '[name].js',
-   	},
-   	plugins: [
-   		new CopyrightWebpackPlugin({
-   			name: 'xh',
-   		}),
-   	],
+     mode: 'development',
+     entry: {
+       main: './src/index.js',
+     },
+     output: {
+       path: path.resolve(__dirname, 'dist'),
+       filename: '[name].js',
+     },
+     plugins: [
+       new CopyrightWebpackPlugin({
+         name: 'xh',
+       }),
+     ],
    }
    ```
 
@@ -5206,11 +5208,11 @@ module.exports = {
 
    ```javascript
    class CopyrightWebpackPlugin {
-   	constructor(options) {
-   		console.log('插件被使用了')
-   		console.log('options = ', options)
-   	}
-   	apply(compiler) {}
+     constructor(options) {
+       console.log('插件被使用了')
+       console.log('options = ', options)
+     }
+     apply(compiler) {}
    }
 
    module.exports = CopyrightWebpackPlugin
@@ -5231,27 +5233,30 @@ module.exports = {
    ```javascript
    //  copyright-webpack-plugin.js
    class CopyrightWebpackPlugin {
-   	constructor(options) {
-   		console.log(options)
-   		console.log('插件被使用了')
-   	}
-   	apply(compiler) {
-   		compiler.hooks.emit.tapAsync('CopyrightWebpackPlugin', (compilation, cb) => {
-   			// compilation 这个参数里存放了这次打包的所有内容，
-   			// 返回结果是一个对象，比如结果中：main.js 是 key，也就是打包后生成的文件名及文件后缀，我们可以来仿照一下
-   			compilation.assets['copyRight.txt'] = {
-   				// 生成一个 copyright.txt 文件, 内容、大小如下
-   				source: function () {
-   					return 'copyright by gy'
-   				},
-   				size: function () {
-   					return 21 // 上面 source 返回的字符长度
-   				},
-   			}
-   			console.log(compilation.assets)
-   			cb()
-   		})
-   	}
+     constructor(options) {
+       console.log(options)
+       console.log('插件被使用了')
+     }
+     apply(compiler) {
+       compiler.hooks.emit.tapAsync(
+         'CopyrightWebpackPlugin',
+         (compilation, cb) => {
+           // compilation 这个参数里存放了这次打包的所有内容，
+           // 返回结果是一个对象，比如结果中：main.js 是 key，也就是打包后生成的文件名及文件后缀，我们可以来仿照一下
+           compilation.assets['copyRight.txt'] = {
+             // 生成一个 copyright.txt 文件, 内容、大小如下
+             source: function () {
+               return 'copyright by gy'
+             },
+             size: function () {
+               return 21 // 上面 source 返回的字符长度
+             },
+           }
+           console.log(compilation.assets)
+           cb()
+         }
+       )
+     }
    }
    module.exports = CopyrightWebpackPlugin
    ```
@@ -5262,28 +5267,31 @@ module.exports = {
 
    ```javascript
    //  copyright-webpack-plugin.js
-   
+
    class CopyrightWebpackPlugin {
-   	apply(compiler) {
-   		// 同步钩子
-   		compiler.hooks.compile.tap('CopyrightWebpackPlugin', (compilation) => {
-   			console.log('compile')
-   		})
-   
-   		// 异步钩子
-   		compiler.hooks.emit.tapAsync('CopyrightWebpackPlugin', (compilation, cb) => {
-   			compilation.assets['copyright.txt'] = {
-   				source: function () {
-   					return 'copyright by xh'
-   				},
-   				size: function () {
-   					return 15 // 字符长度
-   				},
-   			}
-   			console.log('compilation.assets = ', compilation.assets)
-   			cb()
-   		})
-   	}
+     apply(compiler) {
+       // 同步钩子
+       compiler.hooks.compile.tap('CopyrightWebpackPlugin', (compilation) => {
+         console.log('compile')
+       })
+
+       // 异步钩子
+       compiler.hooks.emit.tapAsync(
+         'CopyrightWebpackPlugin',
+         (compilation, cb) => {
+           compilation.assets['copyright.txt'] = {
+             source: function () {
+               return 'copyright by xh'
+             },
+             size: function () {
+               return 15 // 字符长度
+             },
+           }
+           console.log('compilation.assets = ', compilation.assets)
+           cb()
+         }
+       )
+     }
    }
    ```
 
@@ -5333,8 +5341,8 @@ module.exports = {
    ```javascript
    const fs = require('fs')
    const moduleAnalyser = (fileName) => {
-   	const content = fs.readFileSync(fileName, 'utf-8') // 读取入口文件内容
-   	console.log(content)
+     const content = fs.readFileSync(fileName, 'utf-8') // 读取入口文件内容
+     console.log(content)
    }
 
    moduleAnalyser('./src/index.js') // 配置入口文件
@@ -5359,12 +5367,12 @@ module.exports = {
    const BabelParser = require('@babel/parser')
 
    const moduleAnalyser = (fileName) => {
-   	const content = fs.readFileSync(fileName, 'utf-8')
-   	// 获取抽象语法树
-   	const astResult = BabelParser.parse(content, {
-   		sourceType: 'module', // index.js中引入方式是 es module
-   	})
-   	console.log(astResult.program.body) // 这里可以查看到相应节点的type: ImportDeclaration/ExpressionStatement/
+     const content = fs.readFileSync(fileName, 'utf-8')
+     // 获取抽象语法树
+     const astResult = BabelParser.parse(content, {
+       sourceType: 'module', // index.js中引入方式是 es module
+     })
+     console.log(astResult.program.body) // 这里可以查看到相应节点的type: ImportDeclaration/ExpressionStatement/
    }
 
    moduleAnalyser('./src/index.js')
@@ -5386,17 +5394,17 @@ module.exports = {
    const BabelTraverse = require('@babel/traverse').default
 
    const moduleAnalyser = (fileName) => {
-   	const content = fs.readFileSync(fileName, 'utf-8')
-   	const astResult = BabelParser.parse(content, {
-   		sourceType: 'module',
-   	})
-   	const dependencies = []
-   	BabelTraverse(astResult, {
-   		ImportDeclaration({ node }) {
-   			dependencies.push(node.source.value)
-   		},
-   	})
-   	console.log(dependencies) // 收集相关依赖
+     const content = fs.readFileSync(fileName, 'utf-8')
+     const astResult = BabelParser.parse(content, {
+       sourceType: 'module',
+     })
+     const dependencies = []
+     BabelTraverse(astResult, {
+       ImportDeclaration({ node }) {
+         dependencies.push(node.source.value)
+       },
+     })
+     console.log(dependencies) // 收集相关依赖
    }
 
    moduleAnalyser('./src/index.js')
@@ -5413,22 +5421,22 @@ module.exports = {
    const path = require('path')
 
    const moduleAnalyser = (fileName) => {
-   	const content = fs.readFileSync(fileName, 'utf-8')
-   	const astResult = BabelParser.parse(content, {
-   		sourceType: 'module',
-   	})
-   	const dependencies = {}
-   	BabelTraverse(astResult, {
-   		ImportDeclaration({ node }) {
-   			const dirname = path.dirname(fileName)
-   			// console.log(dirname) // ./src
-   			// 获取相对根目录的路径
-   			const newFile = './' + path.join(dirname, node.source.value)
-   			// console.log(newFile) // ./src/message.js
-   			dependencies[node.source.value] = newFile // 既存一个相对路径，又存一个绝对路径
-   		},
-   	})
-   	console.log(dependencies)
+     const content = fs.readFileSync(fileName, 'utf-8')
+     const astResult = BabelParser.parse(content, {
+       sourceType: 'module',
+     })
+     const dependencies = {}
+     BabelTraverse(astResult, {
+       ImportDeclaration({ node }) {
+         const dirname = path.dirname(fileName)
+         // console.log(dirname) // ./src
+         // 获取相对根目录的路径
+         const newFile = './' + path.join(dirname, node.source.value)
+         // console.log(newFile) // ./src/message.js
+         dependencies[node.source.value] = newFile // 既存一个相对路径，又存一个绝对路径
+       },
+     })
+     console.log(dependencies)
    }
    moduleAnalyser('./src/index.js')
    ```
@@ -5447,35 +5455,35 @@ module.exports = {
    const BabelTraverse = require('@babel/traverse').default
    const path = require('path')
    const BabelCore = require('@babel/core')
-   
+
    const moduleAnalyser = (fileName) => {
-   	const content = fs.readFileSync(fileName, 'utf-8')
-   	const astResult = BabelParser.parse(content, {
-   		sourceType: 'module',
-   	})
-   	const dependencies = {}
-   	BabelTraverse(astResult, {
-   		ImportDeclaration({ node }) {
-   			const dirname = path.dirname(fileName)
-   			// console.log(dirname) // ./src
-   			// 获取相对根目录的路径
-   			const newFile = './' + path.join(dirname, node.source.value)
-   			// console.log(newFile) // ./src/message.js
-   			dependencies[node.source.value] = newFile
-   		},
-   	})
-   	// 根据 presets 规则转换 ES6 语法
-   	const code = BabelCore.transformFromAst(astResult, null, {
-   		presets: ['@babel/preset-env'],
-   	})
-   	console.log(code, dependencies)
-   	return {
-   		fileName,
-   		code,
-   		dependencies,
-   	}
+     const content = fs.readFileSync(fileName, 'utf-8')
+     const astResult = BabelParser.parse(content, {
+       sourceType: 'module',
+     })
+     const dependencies = {}
+     BabelTraverse(astResult, {
+       ImportDeclaration({ node }) {
+         const dirname = path.dirname(fileName)
+         // console.log(dirname) // ./src
+         // 获取相对根目录的路径
+         const newFile = './' + path.join(dirname, node.source.value)
+         // console.log(newFile) // ./src/message.js
+         dependencies[node.source.value] = newFile
+       },
+     })
+     // 根据 presets 规则转换 ES6 语法
+     const code = BabelCore.transformFromAst(astResult, null, {
+       presets: ['@babel/preset-env'],
+     })
+     console.log(code, dependencies)
+     return {
+       fileName,
+       code,
+       dependencies,
+     }
    }
-   
+
    moduleAnalyser('./src/index.js')
    ```
 
@@ -5544,56 +5552,56 @@ module.exports = {
    const BabelTraverse = require('@babel/traverse').default
    const path = require('path')
    const BabelCore = require('@babel/core')
-   
+
    const moduleAnalyser = (fileName) => {
-   	const content = fs.readFileSync(fileName, 'utf-8')
-   	const astResult = BabelParser.parse(content, {
-   		sourceType: 'module',
-   	})
-   	const dependencies = {}
-   	BabelTraverse(astResult, {
-   		ImportDeclaration({ node }) {
-   			const dirname = path.dirname(fileName)
-   			// console.log(dirname) // ./src
-   			// 获取相对根目录的路径
-   			const newFile = './' + path.join(dirname, node.source.value)
-   			// console.log(newFile) // ./src/message.js
-   			dependencies[node.source.value] = newFile
-   		},
-   	})
-   
-   	const { code } = BabelCore.transformFromAst(astResult, null, {
-   		presets: ['@babel/preset-env'],
-   	})
-   	return {
-   		fileName,
-   		code,
-   		dependencies,
-   	}
+     const content = fs.readFileSync(fileName, 'utf-8')
+     const astResult = BabelParser.parse(content, {
+       sourceType: 'module',
+     })
+     const dependencies = {}
+     BabelTraverse(astResult, {
+       ImportDeclaration({ node }) {
+         const dirname = path.dirname(fileName)
+         // console.log(dirname) // ./src
+         // 获取相对根目录的路径
+         const newFile = './' + path.join(dirname, node.source.value)
+         // console.log(newFile) // ./src/message.js
+         dependencies[node.source.value] = newFile
+       },
+     })
+
+     const { code } = BabelCore.transformFromAst(astResult, null, {
+       presets: ['@babel/preset-env'],
+     })
+     return {
+       fileName,
+       code,
+       dependencies,
+     }
    }
-   
+
    const makeDependenciesGraph = (entry) => {
-   	const entryModule = moduleAnalyser(entry)
-   	const graphArray = [entryModule]
-   	for (let index = 0; index < graphArray.length; index++) {
-   		const { dependencies } = graphArray[index]
-   		if (dependencies) {
-   			for (let key in dependencies) {
-   				graphArray.push(moduleAnalyser(dependencies[key]))
-   			}
-   		}
-   	}
-   	// 依赖图对象
-   	const graph = {}
-   	graphArray.forEach((graphItem) => {
-   		graph[graphItem.fileName] = {
-   			dependencies: graphItem.dependencies,
-   			code: graphItem.code,
-   		}
-   	})
-   	return graph
+     const entryModule = moduleAnalyser(entry)
+     const graphArray = [entryModule]
+     for (let index = 0; index < graphArray.length; index++) {
+       const { dependencies } = graphArray[index]
+       if (dependencies) {
+         for (let key in dependencies) {
+           graphArray.push(moduleAnalyser(dependencies[key]))
+         }
+       }
+     }
+     // 依赖图对象
+     const graph = {}
+     graphArray.forEach((graphItem) => {
+       graph[graphItem.fileName] = {
+         dependencies: graphItem.dependencies,
+         code: graphItem.code,
+       }
+     })
+     return graph
    }
-   
+
    const graphInfo = makeDependenciesGraph('./src/index.js')
    console.log(graphInfo)
    ```
@@ -5610,56 +5618,56 @@ module.exports = {
    const BabelCore = require('@babel/core')
 
    const moduleAnalyser = (fileName) => {
-   	const content = fs.readFileSync(fileName, 'utf-8')
-   	const astResult = BabelParser.parse(content, {
-   		sourceType: 'module',
-   	})
-   	const dependencies = {}
-   	BabelTraverse(astResult, {
-   		ImportDeclaration({ node }) {
-   			const dirname = path.dirname(fileName)
-   			// console.log(dirname) // ./src
-   			// 获取相对根目录的路径
-   			const newFile = './' + path.join(dirname, node.source.value)
-   			// console.log(newFile) // ./src/message.js
-   			dependencies[node.source.value] = newFile
-   		},
-   	})
+     const content = fs.readFileSync(fileName, 'utf-8')
+     const astResult = BabelParser.parse(content, {
+       sourceType: 'module',
+     })
+     const dependencies = {}
+     BabelTraverse(astResult, {
+       ImportDeclaration({ node }) {
+         const dirname = path.dirname(fileName)
+         // console.log(dirname) // ./src
+         // 获取相对根目录的路径
+         const newFile = './' + path.join(dirname, node.source.value)
+         // console.log(newFile) // ./src/message.js
+         dependencies[node.source.value] = newFile
+       },
+     })
 
-   	const { code } = BabelCore.transformFromAst(astResult, null, {
-   		presets: ['@babel/preset-env'],
-   	})
-   	return {
-   		fileName,
-   		code,
-   		dependencies,
-   	}
+     const { code } = BabelCore.transformFromAst(astResult, null, {
+       presets: ['@babel/preset-env'],
+     })
+     return {
+       fileName,
+       code,
+       dependencies,
+     }
    }
 
    const makeDependenciesGraph = (entry) => {
-   	const entryModule = moduleAnalyser(entry)
-   	const graphArray = [entryModule]
-   	for (let index = 0; index < graphArray.length; index++) {
-   		const { dependencies } = graphArray[index]
-   		if (dependencies) {
-   			for (let key in dependencies) {
-   				graphArray.push(moduleAnalyser(dependencies[key]))
-   			}
-   		}
-   	}
-   	const graph = {}
-   	graphArray.forEach((graphItem) => {
-   		graph[graphItem.fileName] = {
-   			dependencies: graphItem.dependencies,
-   			code: graphItem.code,
-   		}
-   	})
-   	return graph
+     const entryModule = moduleAnalyser(entry)
+     const graphArray = [entryModule]
+     for (let index = 0; index < graphArray.length; index++) {
+       const { dependencies } = graphArray[index]
+       if (dependencies) {
+         for (let key in dependencies) {
+           graphArray.push(moduleAnalyser(dependencies[key]))
+         }
+       }
+     }
+     const graph = {}
+     graphArray.forEach((graphItem) => {
+       graph[graphItem.fileName] = {
+         dependencies: graphItem.dependencies,
+         code: graphItem.code,
+       }
+     })
+     return graph
    }
 
    const generateCode = (entry) => {
-   	const graph = JSON.stringify(makeDependenciesGraph(entry))
-   	return `
+     const graph = JSON.stringify(makeDependenciesGraph(entry))
+     return `
      (function(graph){
    		function require(module){
    			function localRequire(relativePath){
@@ -5683,9 +5691,9 @@ module.exports = {
 
 2. 运行命令`node bundler.js`, 将终端中最后的输出，复制到浏览器控制台中，就可以看到输出的结果
 
-## 6. Create-React-App 和 Vue-Cli 3.0 脚手架工具配置分析
+## 6、CRA 和 VCli 3.0 脚手架配置分析
 
-### 6.1 通过 CreateReactApp 深入学习 Webpack 配置
+### 6.1 通过 CRA 深入 Webpack 配置
 
 > [Create-react-app 安装地址](https://create-react-app.dev/docs/getting-started)
 
@@ -5701,7 +5709,7 @@ module.exports = {
 
 3. 我们可以通过参考它的配置来学习一些经典的优秀的配置
 
-### 6.2 Vue-Cli脚手架工具
+### 6.2 Vue-Cli 脚手架工具
 
 > [vue-cli](https://cli.vuejs.org/zh/guide/)
 
@@ -5712,14 +5720,9 @@ module.exports = {
    npm install -g @vue/cli
    # OR
    yarn global add @vue/cli
-   
+
    // 创建一个项目
    vue create hello-world
    ```
 
 2. `vue.config.js`配置信息参考[地址]()https://cli.vuejs.org/zh/config/
-
-   
-
-   
-
