@@ -40,6 +40,7 @@ export const sidebarZh: SidebarConfig = {
       children: [
         '/zh/skill/front/source/axios.md',
         '/zh/skill/front/source/promise.md',
+        '/zh/skill/front/source/utils.md',
       ],
     },
     {
