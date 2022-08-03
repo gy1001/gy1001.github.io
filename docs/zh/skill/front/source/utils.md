@@ -1488,3 +1488,69 @@ setTimeout(() => {
   console.log(callbacksObj)
 }, 4000)
 ```
+
+## 8、手写 Ajax (模拟 axios)
+
+```javascript
+// 手写 ajax 函数，模拟 axios
+function myAxios({ url, method = 'GEY', params = {}, data = {} }) {
+  // 返回一个 promise
+  return new Promise((resolve, reject) => {
+    // 处理method(转为大写)
+    method = method.toUpperCase()
+    // 处理 queryString
+    let queryString = ''
+    Object.keys(params).forEach((key) => {
+      queryString += `${key}=${params[key]}&`
+    })
+    if (queryString) {
+      // 去除最后一位的 &
+      queryString = queryString.slice(0, -1)
+      url += '?' + queryString
+    }
+    const request = new XMLHttpRequest()
+    // 打开链接（初始化请求）
+    request.open(method, url, true)
+    if (method === 'GET') {
+      request.send()
+    } else if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
+      // 告诉服务器请求体的格式是 json
+      request.setRequestHeader('Content-type', 'application/json;charset=utf-8')
+      // 发送json 格式请求体参数
+      request.send(JSON.stringify(data))
+    }
+
+    request.onreadystatechange = function () {
+      // 如果请求没有结束
+      if (request.readyState !== 4) {
+        return
+      }
+      const { status, statusText } = request
+      if ((status >= 200) & (status < 300)) {
+        const response = {
+          data: JSON.parse(request.response),
+          status,
+          statusText,
+        }
+        resolve(response)
+      } else {
+        reject(new Error('request error status is ' + status))
+      }
+    }
+  })
+}
+
+/* 发送特定请求的静态方法 */
+myAxios.get = function (url, options) {
+  return myAxios(Object.assign(options, { url, method: 'GET' }))
+}
+myAxios.delete = function (url, options) {
+  return myAxios(Object.assign(options, { url, method: 'DELETE' }))
+}
+myAxios.post = function (url, data, options) {
+  return myAxios(Object.assign(options, { url, data, method: 'POST' }))
+}
+myAxios.put = function (url, data, options) {
+  return myAxios(Object.assign(options, { url, data, method: 'PUT' }))
+}
+```
