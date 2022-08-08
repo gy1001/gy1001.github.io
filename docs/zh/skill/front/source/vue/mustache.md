@@ -223,7 +223,7 @@ Vue 的解决方法：
 
 #### 2.2.1 循环对象数组
 
-> 在 mustache 中可以循环时候必须要 `有{{#}}` 开始符号和 `{{/}}` 结束符号。
+> 在 mustache 中可以循环时候必须要 `{ { # } }` 开始符号和 `{ { / } }` 结束符号
 
 - 示例代码
 
@@ -275,7 +275,7 @@ Vue 的解决方法：
       console.log(html)
     </script>
   </html>
-  
+
   // 输入结果如下
   <ul>
     <li>
@@ -444,7 +444,7 @@ Vue 的解决方法：
 <h3>青峰</h3>
 ```
 
-以上就是 mustache 的基本用法，我们发现，除了不循环，其他的用法需要使用 `{{#}}` 开始符号和 `{{/}}` 结束符号。
+以上就是 mustache 的基本用法，我们发现，除了不循环，其他的用法需要使用 `{ { # } }`开始符号和 `{ { / } }` 结束符号。
 
 ## 3、mustache 的底层核心机理
 
@@ -605,18 +605,18 @@ var domHtml = renderTemplate(tokens, data)
 
    ```javascript
    // 先进行一个简单的字符串处理，后续再进行复杂的循环模板处理
-   
+
    import MyMustache from './my-mustache/index.js'
-   
+
    var templateStr = `我买了一个{{thing}},好{{mood}}啊`
    var data = {
      thing: '华为手机',
      mood: '开心',
    }
-   
+
    const result = MyMustache.render(templateStr, data)
    ```
-   
+
 5. 在`src` 目录下 新建`my-mustache/index.js`文件，内容如下
 
    ```javascript
@@ -642,9 +642,9 @@ var domHtml = renderTemplate(tokens, data)
    const parseTemplateToTokens = (templateStr) => {
      console.log(templateStr)
    }
-   
+
    export default parseTemplateToTokens
-   
+
    // renderTemplate.js
    const renderTemplate = () => {}
    export default renderTemplate
@@ -656,8 +656,8 @@ var domHtml = renderTemplate(tokens, data)
 
 书写一个扫描类，遍历字符串模板，里面有两个方法，一个是开始扫描，一个是扫描截止
 
-1. 跳过某个字符的扫描方法： 接受一个参数，当剩余字符串是以这个 参数 为标准来处理更新当前指针和剩余字符串模板，比如 参数为 {{ , 就需要把当前指针向后移动两位({{的长度)，并且 剩余字符串 也要进行相应截取
-2. 扫描截止方法：接受一个字符串参数，进行循环，当循环到 该参数字符串 时候，就停止，并且返回开始循环到停止循环时中间的字符串。 例如当第一次扫描到 {{  时，返回从开始位置到当前位置之间的字符串；接着扫描指针移动 {{ 的位置，再次调用，遇到 }}，返回当前扫描指针到 }} 的字符，那就是{{ 和 }} 中间的变量
+1. 跳过某个字符的扫描方法： 接受一个参数，当剩余字符串是以这个 参数 为标准来处理更新当前指针和剩余字符串模板，比如 参数为 \{ \{ , 就需要把当前指针向后移动两位( \{ \{ 的长度 )，并且 剩余字符串 也要进行相应截取
+2. 扫描截止方法：接受一个字符串参数，进行循环，当循环到 该参数字符串 时候，就停止，并且返回开始循环到停止循环时中间的字符串。 例如当第一次扫描到 \{ \{ 时，返回从开始位置到当前位置之间的字符串；接着扫描指针移动 \{ \{ 的位置，再次调用，遇到 \} \}，返回当前扫描指针到 \} \} 的字符，那就是 \{ \{ 和 \} \} 中间的变量
 3. 再加一个方法：指针位置是否已经到最后了，返回值是一个布尔值
 
 ##### 4.3.2.2 代码实现
@@ -674,7 +674,7 @@ var domHtml = renderTemplate(tokens, data)
        // 要遍历的字符串
        this.templateStr = templateStr
      }
-   
+
      scan(tag) {
        if (this.tail.indexOf(tag) === 0) {
          // tag 有多长，比如 {{ 长度是2，就让指针后移动几位
@@ -682,7 +682,7 @@ var domHtml = renderTemplate(tokens, data)
          this.tail = this.templateStr.substring(this.pos)
        }
      }
-   
+
      // 让指针进行扫描 直到遇到指定内容结束，并且能够返回结束之前路过的文字
      scanUtil(stopTag) {
        // 记录一下当前开始的位置
@@ -696,13 +696,13 @@ var domHtml = renderTemplate(tokens, data)
        // 返回当前截取到的字符串
        return this.templateStr.substring(POS_BACKUP, this.pos)
      }
-   
+
      // 指针是否到头，返回布尔值
      eos() {
        return this.pos >= this.templateStr.length
      }
    }
-   
+
    export default Scanner
    ```
 
@@ -710,7 +710,7 @@ var domHtml = renderTemplate(tokens, data)
 
    ```javascript
    import Scanner from './Scanner'
-   
+
    const parseTemplateToTokens = (templateStr) => {
      const scanner = new Scanner(templateStr)
      // 遍历当前字符串模板
@@ -723,11 +723,8 @@ var domHtml = renderTemplate(tokens, data)
        scanner.scan('}}')
      }
    }
-   
+
    export default parseTemplateToTokens
-   
+
    // 可以在控制台中看到截取的相应字符串
    ```
-
-   
-
