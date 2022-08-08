@@ -555,3 +555,49 @@ console.log(dom1)  // <h3>姓名：青峰,年龄：18</h3>
 
 ## 4、带你手写实现 mustache 库
 
+### 4.1 使用 webpack 和 webpack-dev-server 构建
+
+* 模块化打包工具有 webpack（webpack-dev-server）、rollup、Parcel 等
+* mustache **官方库使用 rollup 进行 模块化打包**，而我们今天使用 webpack（webpack-dev-server） 进行模块化打包，这是因为 webpack（webpack-dev-server） 能让我们更方便地在浏览器中(而不是nodejs环境中)实时调用程序，相比 nodejs 控制台，浏览器控制台更好用，比如能够点击展开数组的每项
+* 生成库是 umd 的，这意味着它可以同时在nodejs 环境中使用，也可以在浏览器环境中使用。实现 umd不难，只需要一个 "通用头"即可
+
+### 4.2 代码实现
+
+#### 4.2.1 初步搭建环境
+
+1. 创建一个文件夹 `vue-mustache`, 并进行项目初始化
+
+   ```shell
+   mkdir vue-mustache
+   cd vue-mustache
+   npm init -y
+   ```
+
+2. 安装相关依赖
+
+   ```shell
+   npm install webpack webpack-cli webpack-dev-server --save-dev
+   npm install html-webpack-plugin --save
+   ```
+
+3. 创建 `webpack.config.js` 并写入如下内容
+
+   ```javascript
+   const HtmlWebpackPlugin = require('html-webpack-plugin')
+   const path = require('path')
+   module.exports = {
+     mode: 'development',
+     entry: './src/index.js',
+     output: {
+       filename: 'bundle.js',
+       path: path.resolve(__dirname, './dist'),
+     },
+     plugins: [
+       new HtmlWebpackPlugin({
+         template: './src/index.html',
+       }),
+     ],
+   }
+   ```
+
+#### 4.2.2
