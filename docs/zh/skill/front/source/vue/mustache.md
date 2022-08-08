@@ -447,5 +447,111 @@ console.log(dom)
 
 ## 3、mustache 的底层核心机理
 
+经过上述示例的代码，我们的第一想法很可能就是说它的实现思路是利用了**正则表达式**。 实际上，**mustache库不能用简单的正则表达式思路实现**
+
+* 在较为简单的示例情况下，可以用正则表达式来实现
+* 但是，一些复杂的情况下，正则表达式的思路就不行了，例如循环嵌套
+
+### 3.1 replace 方法
+
+在实现之前，我们先了解一下正则表达式中的 replace 方法是如何使用的
+
+使用 replace  方法用来匹配正则表达式，参数解释如下
+
+* 第一个参数：**要匹配的正则**
+* 第二个参数：**可以是替换的字符串，也可以是一个函数**
+* 第三个参数是函数的形式：第一个参数表示**匹配到的正则部分**，第二个参数表示**匹配到的字符**，第三个表示**匹配到的字符所在位置**，第四个表示**需要匹配的字符串**。一般来说第二个参数是我们想要的数据
+
+代码示例
+
+```javascript
+const data1 = { name: '青峰', age: 18 }
+var templateStr = `<h3>姓名：{{name}},年龄：{{age}}</h3>`
+// 正则里面()表示捕获里面的字母数据
+let dom1 = templateStr.replace(/\{\{(\w+)\}\}/g, (...args) => data1[args[1]])
+console.log(dom1)  // <h3>姓名：青峰,年龄：18</h3>
+```
+
+>  一个最简单的模板引擎的实现机理就写好了，利用的是正则表达式中的`replace（）方法`。`replace（）方法`的第二个参数可以是一个函数，这个函数提供捕获的东西的参数，再结合data对象，即可进行智能的替换。
+
+### 3.2 底层 tokens 思想
+
+<img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c7aa2b534b3d4246bdb17f0d82e217c5~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp?" alt="image.png" style="zoom:100%;float:left;" />
+
+上述图片的基本流程：先将`模板字符串`编译为`tokens`, tokens 当做中间的过渡形态，然后`再将数据与tokens结合`，并`解析为DOM字符串`。
+
+> tokens 是一个`JS嵌套的数组`，说白了，就是`模板字符串的JS表示`
+
+它是 **抽象语法树**、**虚拟节点**等等的开山鼻祖
+
+#### 3.2.1 简单的 tokens
+
+示例代码：
+
+```javascript
+// 模板字符串
+<h1>我买了一个{{thing}},好{{mood}}啊</h1>
+// tokens
+[
+  ["text", "<h1>我买了个一个"],
+  ["name", "thing"],
+  ["text", "好"],
+  ["name", "mood"]，
+  ["text", "啊</h1>"]
+]
+```
+
+#### 3.2.2 循环嵌套的 tokens
+
+示例代码
+
+```html
+// 模板字符串
+<ul>
+   {{#array}}
+   <li>
+     {{name}}的爱好
+     <ol>
+       {{#hobbies}}
+       <li>{{.}}</li>
+       {{/hobbies}}    
+     </ol>
+   </li>
+   {{/array}}
+</ul>
+
+// 相应的tokens
+[
+      ['text', '<ul>'],
+      [
+        '#',
+        'array',
+        [
+          ['text', '<li>'],
+          ['name', 'name'],
+          ['text', '的爱好<ol>'],
+          [
+            '#',
+            'hobbies',
+            [
+              ['text', '<li>'],
+              ['name', '.'],
+              ['text', '</li>'],
+            ],
+          ],
+          ['text', '</ol></li>'],
+        ],
+      ],
+      ['text', '</ul>'],
+]
+```
+
+> 当循环是双重时候，那么 tokens 会更深一层
+
+实现 mustache 库底层重点要做两个事情
+
+* 将模板字符串编译为 tokens 形式
+* 将 tokens 结合数据，解析为 dom 字符串
+
 ## 4、带你手写实现 mustache 库
 
