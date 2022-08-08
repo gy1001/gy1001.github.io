@@ -604,36 +604,19 @@ var domHtml = renderTemplate(tokens, data)
 4. 新建`src/index.js`入口文件，写入内容如下
 
    ```javascript
+   // 先进行一个简单的字符串处理，后续再进行复杂的循环模板处理
+   
    import MyMustache from './my-mustache/index.js'
-
-   var templateStr = `
-       <div>
-         <div class="mine">{{name}}</div>
-         <ol id="me" style="color: red">
-           {{#students}}
-             <li>
-               学生{{name}}的爱好是
-               <ol>
-                 {{#hobbies}}
-                   <li>{{.}}</li>
-                 {{/hobbies}}
-               </ol>
-             </li>
-           {{/students}}
-         </ol>
-       </div>
-     `
+   
+   var templateStr = `我买了一个{{thing}},好{{mood}}啊`
    var data = {
-     name: '齐天大圣',
-     students: [
-       { name: '小明', hobbies: ['游泳', '健身'] },
-       { name: '小红', hobbies: ['足球', '篮球', '羽毛球'] },
-       { name: '小强', hobbies: ['吃饭', '睡觉'] },
-     ],
+     thing: '华为手机',
+     mood: '开心',
    }
+   
    const result = MyMustache.render(templateStr, data)
    ```
-
+   
 5. 在`src` 目录下 新建`my-mustache/index.js`文件，内容如下
 
    ```javascript
@@ -678,3 +661,73 @@ var domHtml = renderTemplate(tokens, data)
 3. 再加一个方法：指针位置是否已经到最后了，返回值是一个布尔值
 
 ##### 4.3.2.2 代码实现
+
+1. 新建`src/my-mustache/Scanner.js`文件，内容如下
+
+   ```javascript
+   class Scanner {
+     constructor(templateStr) {
+       // 指针
+       this.pos = 0
+       // 未遍历的字符串，一开始就是模板字符串原文
+       this.tail = templateStr
+       // 要遍历的字符串
+       this.templateStr = templateStr
+     }
+   
+     scan(tag) {
+       if (this.tail.indexOf(tag) === 0) {
+         // tag 有多长，比如 {{ 长度是2，就让指针后移动几位
+         this.pos += tag.length
+         this.tail = this.templateStr.substring(this.pos)
+       }
+     }
+   
+     // 让指针进行扫描 直到遇到指定内容结束，并且能够返回结束之前路过的文字
+     scanUtil(stopTag) {
+       // 记录一下当前开始的位置
+       var POS_BACKUP = this.pos
+       // 当 未遍历的字符串不是以 stopTag 开头的时候，说明没有遍历到相应位置，就继续遍历
+       while (!this.eos() && this.tail.indexOf(stopTag) !== 0) {
+         this.pos++
+         // 改变剩余字符串,从当前指针这个字符开始到最后的全部字符
+         this.tail = this.templateStr.substring(this.pos)
+       }
+       // 返回当前截取到的字符串
+       return this.templateStr.substring(POS_BACKUP, this.pos)
+     }
+   
+     // 指针是否到头，返回布尔值
+     eos() {
+       return this.pos >= this.templateStr.length
+     }
+   }
+   
+   export default Scanner
+   ```
+
+2. 修改`parseTemplateToToken.js`文件，如下
+
+   ```javascript
+   import Scanner from './Scanner'
+   
+   const parseTemplateToTokens = (templateStr) => {
+     const scanner = new Scanner(templateStr)
+     // 遍历当前字符串模板
+     while (scanner.pos !== templateStr.length) {
+       const str1 = scanner.scanUtil('{{')
+       console.log(str1)
+       scanner.scan('{{')
+       const str2 = scanner.scanUtil('}}')
+       console.log(str2)
+       scanner.scan('}}')
+     }
+   }
+   
+   export default parseTemplateToTokens
+   
+   // 可以在控制台中看到截取的相应字符串
+   ```
+
+   
+
