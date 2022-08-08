@@ -34,7 +34,10 @@ export const sidebarZh: SidebarConfig = {
     },
     {
       text: 'mini-前端框架',
-      children: ['/zh/skill/front/mini-frame/mini-vue.md'],
+      children: [
+        '/zh/skill/front/mini-frame/mini-vue.md',
+        '/zh/skill/front/mini-frame/mini-webpack.md',
+      ],
     },
     {
       text: '源码解读',
