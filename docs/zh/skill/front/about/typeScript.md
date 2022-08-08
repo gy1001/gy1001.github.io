@@ -1129,3 +1129,7 @@ console.log(dog2)
   }
   const mc = new MyClass<string>('孙悟空')
   ```
+
+## 实战练习：TS 版本贪吃蛇
+
+[项目地址](https://github.com/mineMineGo/Javascript/tree/main/Typescript/%E5%B0%9A%E7%A1%85%E8%B0%B7-ts/snake-ts)
