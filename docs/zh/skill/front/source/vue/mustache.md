@@ -1222,5 +1222,9 @@ var domHtml = renderTemplate(tokens, data)
     export default parseTemplateToTokens
     ```
 
-    
+## 5、 课程总结
+
+* **Mustache 底层太美了！** tokens 的意义也不言自明了，如果没有 token, 那么数组的循环形式，就很难处理。 这里只是简化的版本处理
+
+* 在*Mustache* 源码中，还有 *Context* 和 *Write* 类。，如果你有精力，可以再做深入研究
 
