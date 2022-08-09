@@ -729,5 +729,145 @@ var domHtml = renderTemplate(tokens, data)
    // 可以在控制台中看到截取的相应字符串
    ```
 
-   
+3. 上面代码可以看到初步实现了`scanner` 类的编写，下面进行 `parseTemplateToToken.js` 的完善，修改为如下内容
 
+   ```javascript
+   import Scanner from './Scanner'
+   
+   const parseTemplateToTokens = (templateStr) => {
+     // 实例化一个扫描器，构造时候提供一个参数，这个参数就是模板字符串，
+     // 也就是这个扫描器是针对这个模板字符串工作的
+     const scanner = new Scanner(templateStr)
+     const tokens = []
+     let words
+     // 当这个 scanner 没有到头时候
+     while (!scanner.eos()) {
+       words = scanner.scanUtil('{{')
+       if (words) {
+         tokens.push(['text', words])
+       }
+       // 过 双大括号
+       scanner.scan('{{')
+       words = scanner.scanUtil('}}')
+       if (words) {
+         tokens.push(['name', words])
+       }
+       // 过 双大括号
+       scanner.scan('}}')
+     }
+     console.log(tokens)
+   }
+   
+   export default parseTemplateToTokens
+   
+   // 对于简单的一维模板字符串
+   var templateStr = `我买了一个{{thing}},好{{mood}}啊`
+   // 上述代码生成的 tokens 是
+   [ ['text', '我买了一个'], ['name', 'thing'], ['text', ',好'],  ['name', 'mood'], ['text', '啊']]
+   ```
+
+4. 但是假如对于二维及以上模板字符串，上述代码就不适应了
+
+   ```javascript
+   // 多维的模板字符串
+   var templateStr = `
+     <div>
+         <div class="mine">{{name}}</div>
+         <ol id="me" style="color: red">
+           {{#students}}
+             <li>
+               学生{{name}}的爱好是
+               <ol>
+                 {{#hobbies}}
+                   <li>{{.}}</li>
+                 {{/hobbies}}
+               </ol>
+             </li>
+           {{/students}}
+         </ol>
+       </div>
+     `
+   // 生成的 tokens 为
+   [
+    		['text', '\n  <div>\n      <div class="mine">'],
+      	['name', 'name'],
+   		['text', '</div>\n      <ol id="me" style="color: red">\n        '],
+   		['name', '#students'],
+   		['text', '\n          <li>\n            学生'],
+   		['name', 'name']
+   		['text', '的爱好是\n            <ol>\n              '],
+   		['name', '#hobbies'],
+   		['text', '\n                <li>'],
+   		['name', '.'],
+   		['text', '</li>\n              '],
+   		['name', '/hobbies'],
+   		['text', '\n            </ol>\n          </li>\n        '],
+   		['name', '/students'],
+   		['text', '\n      </ol>\n    </div>\n  '],
+   ]
+   ```
+
+5. 要对`parseTemplateToTokens.js` 遍历时候进行修改判断处理(处理开头为\#或者/的字符)，结果如下
+
+   ```javascript
+   import Scanner from './Scanner'
+   
+   const parseTemplateToTokens = (templateStr) => {
+     // 实例化一个扫描器，构造时候提供一个参数，这个参数就是模板字符串，
+     // 也就是这个扫描器是针对这个模板字符串工作的
+     const scanner = new Scanner(templateStr)
+     const tokens = []
+     let words
+     // 当这个 scanner 没有到头时候
+     while (!scanner.eos()) {
+       words = scanner.scanUtil('{{')
+       if (words) {
+         tokens.push(['text', words])
+       }
+       // 过 双大括号
+       scanner.scan('{{')
+       words = scanner.scanUtil('}}')
+       if (words) {
+         // 这个words 存在首字符是 # 或者 / 或者都不是的情况,需要做特殊处理
+         if (words.indexOf('#') === 0) {
+           tokens.push(['#', words.slice(1)])
+         } else if (words.indexOf('/') === 0) {
+           tokens.push(['/', words.slice(1)])
+         } else {
+           tokens.push(['name', words])
+         }
+       }
+       // 过 双大括号
+       scanner.scan('}}')
+     }
+     console.log(tokens)
+   }
+   
+   export default parseTemplateToTokens
+   // 可以看到对于上述多维模板字符串的结果已经变为
+   [
+     ['text', '\n  <div>\n      <div class="mine">']
+   	['name', 'name']
+   	['text', '</div>\n      <ol id="me" style="color: red">\n        ']
+   	['#', 'students']
+   	['text', '\n          <li>\n            学生'],
+   	['name', 'name'],
+   	['text', '的爱好是\n            <ol>\n              '],
+   	['#', 'hobbies'],
+   	['text', '\n                <li>'],
+   	['name', '.'],
+   	['text', '</li>\n              '],
+   	['/', 'hobbies'],
+   	['text', '\n            </ol>\n          </li>\n        '],
+   	['/', 'students'],
+   	['text', '\n      </ol>\n    </div>\n  '],
+   ]
+   // 显然下一步只要把 # 和 / 之间的数据放到，对应的数组 第三个位置上即可（当做某个数组的一个子项）
+   ```
+
+6. 接下来：将零散的 `tokens` 嵌套起来
+
+   ```javascript
+   ```
+
+   
