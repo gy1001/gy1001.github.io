@@ -275,7 +275,7 @@ Vue 的解决方法：
       console.log(html)
     </script>
   </html>
-
+  
   // 输入结果如下
   <ul>
     <li>
@@ -642,9 +642,9 @@ var domHtml = renderTemplate(tokens, data)
    const parseTemplateToTokens = (templateStr) => {
      console.log(templateStr)
    }
-
+   
    export default parseTemplateToTokens
-
+   
    // renderTemplate.js
    const renderTemplate = () => {}
    export default renderTemplate
@@ -674,7 +674,7 @@ var domHtml = renderTemplate(tokens, data)
        // 要遍历的字符串
        this.templateStr = templateStr
      }
-
+   
      scan(tag) {
        if (this.tail.indexOf(tag) === 0) {
          // tag 有多长，比如 {{ 长度是2，就让指针后移动几位
@@ -682,7 +682,7 @@ var domHtml = renderTemplate(tokens, data)
          this.tail = this.templateStr.substring(this.pos)
        }
      }
-
+   
      // 让指针进行扫描 直到遇到指定内容结束，并且能够返回结束之前路过的文字
      scanUtil(stopTag) {
        // 记录一下当前开始的位置
@@ -696,13 +696,13 @@ var domHtml = renderTemplate(tokens, data)
        // 返回当前截取到的字符串
        return this.templateStr.substring(POS_BACKUP, this.pos)
      }
-
+   
      // 指针是否到头，返回布尔值
      eos() {
        return this.pos >= this.templateStr.length
      }
    }
-
+   
    export default Scanner
    ```
 
@@ -710,7 +710,7 @@ var domHtml = renderTemplate(tokens, data)
 
    ```javascript
    import Scanner from './Scanner'
-
+   
    const parseTemplateToTokens = (templateStr) => {
      const scanner = new Scanner(templateStr)
      // 遍历当前字符串模板
@@ -723,9 +723,9 @@ var domHtml = renderTemplate(tokens, data)
        scanner.scan('}}')
      }
    }
-
+   
    export default parseTemplateToTokens
-
+   
    // 可以在控制台中看到截取的相应字符串
    ```
 
@@ -733,7 +733,7 @@ var domHtml = renderTemplate(tokens, data)
 
    ```javascript
    import Scanner from './Scanner'
-
+   
    const parseTemplateToTokens = (templateStr) => {
      // 实例化一个扫描器，构造时候提供一个参数，这个参数就是模板字符串，
      // 也就是这个扫描器是针对这个模板字符串工作的
@@ -757,12 +757,12 @@ var domHtml = renderTemplate(tokens, data)
      }
      console.log(tokens)
    }
-
+   
    export default parseTemplateToTokens
-
+   
    // 对于简单的一维模板字符串
    var templateStr = `我买了一个{{thing}},好{{mood}}啊`
-
+   
    // 上述代码生成的 tokens 是
    [
      ['text', '我买了一个'],
@@ -818,7 +818,7 @@ var domHtml = renderTemplate(tokens, data)
 
    ```javascript
    import Scanner from './Scanner'
-
+   
    const parseTemplateToTokens = (templateStr) => {
      // 实例化一个扫描器，构造时候提供一个参数，这个参数就是模板字符串，
      // 也就是这个扫描器是针对这个模板字符串工作的
@@ -849,7 +849,7 @@ var domHtml = renderTemplate(tokens, data)
      }
      console.log(tokens)
    }
-
+   
    export default parseTemplateToTokens
    // 可以看到对于上述多维模板字符串的结果已经变为
    [
@@ -874,6 +874,67 @@ var domHtml = renderTemplate(tokens, data)
 
 6. 接下来：将零散的 `tokens` 嵌套起来
 
-   ```javascript
+   > 上一节中最后我们提到需要对 结果 tokens进行在嵌套处理即可，这里我们新建一个 nestTokens.js 方法来进行处理
 
+   ```javascript
+   // parseTemplateToTokens.js 修改如下
+   import nestTokens from './nestTokens'
+   。。。
+   
+   const parseTemplateToTokens = function (templateStr){
+   	....
+     const tokens = []
+     while(){
+         // 中间遍历不变
+     }
+    	// 最终结果返回经过 nestTokens 处理过的结果
+     return nestToken(tokens)
+   }
    ```
+
+   `nestTokens.js`内容修改如下：
+
+   注意：下面代码 **最精妙** 的地方就是声明了一个 **收集器 collector 数组**，
+
+   <font size="4" color=#FF000> 当遇到 # 的时候，收集器要指向当前项目的下标为2的一项并且设置为空数组，此后遍历的 token项是 被收集到收集器中，也就是在 token[2] 中变为子项，并且有一个数组 sections (模拟栈结构) push 当前token项；当遇到到 / 时候，对 sections 进行弹栈处理，并且进行判断处理，如果之前已经有过了 # (sections数组length还不为0)，那么收集器就指向sections栈顶的那一项的下标为2的数组，否则就代表是最外层 nestTokens </font>
+
+   ```javascript
+   // nestTokens.js 内容如下
+   export default function nestTokens(tokens) {
+     // 结果数组
+     const nestTokens = []
+     // 收集器，收集子元素或者孙元素等,天生指向 nestTokens 数组，引用类型值，所以指向的是同一个数组
+     // 收集器的指向会发生变化。当遇见 # 时候，收集器会遇到 当前token 的下标为2的新数组，
+     let collector = nestTokens
+     // 栈结构，存放小tokens, 栈顶(靠近端口的，最新进入的)tokens数组中前操作的这个tokens小数组
+     const sections = []
+     for (let index = 0; index < tokens.length; index++) {
+       const token = tokens[index]
+       switch (token[0]) {
+         case '#':
+           // 收集器放入这个token
+           collector.push(token)
+           // 入栈
+           sections.push(token)
+           // 收集器要换人了, 给token 添加下标为2的项目，并让收集器指向它
+           collector = token[2] = []
+           break
+         case '/':
+           // 出栈 pop 会返回刚刚弹出的项
+           sections.pop()
+           // 改变收集器为栈结构队尾(队尾就是栈顶) 那项下标为2的数组
+           collector =
+             sections.length > 0 ? sections[sections.length - 1][2] : nestTokens
+           break
+         default:
+           // 不管当前收集器是什么，都往收集器中 push 当前项
+           collector.push(token)
+           break
+       }
+     }
+     return nestTokens
+   }
+   // 修改后再次查看结果，就可以看到正确的结果了
+   ```
+
+   
