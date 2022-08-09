@@ -937,4 +937,227 @@ var domHtml = renderTemplate(tokens, data)
    // 修改后再次查看结果，就可以看到正确的结果了
    ```
 
-   
+7. 接下来就是：将 `tokens` 注入数据，就是完成 `renderTemplate.js` 文件的内容；这里我们先使用简单的模板字符串进行处理，然后在替换为复杂的模板字符串
+
+8. 先使用简单的模板字符串，如下
+
+   * `index.js`  中的数据如下
+
+     ```javascript
+     import MyMustache from './my-mustache/index.js'
+     
+     var templateStr = `我买了一个{{thing}},好{{mood}}啊`
+     var data = {
+       thing: '华为手机',
+       mood: '开心',
+     }
+     
+     const result = MyMustache.render(templateStr, data)
+     ```
+
+   * `renderTemplate.js` 内容修改如下
+
+     ```javascript
+     const renderTemplate = (tokens, data) => {
+       let htmlStr = ''
+       for (let index = 0; index < tokens.length; index++) {
+         const token = tokens[index]
+         if (token[0] === 'text') {
+           htmlStr += token[1]
+         } else if (token[0] === 'name') {
+           htmlStr += data[token[1]]
+         }
+       }
+       return htmlStr
+     }
+     
+     export default renderTemplate
+     ```
+
+   * 最终的字符串结果为
+
+     ```html
+     我买了一个华为手机,好开心啊
+     ```
+
+9. 现在切回复杂的多维字符串模板中，
+
+   * `index.js`中的数据如下
+
+     ```javascript
+     import MyMustache from './my-mustache/index.js'
+     
+     var templateStr = `
+       <div>
+           <div class="mine">{{name}}</div>
+           <ol id="me" style="color: red">
+             {{#students}}
+               <li>
+                 学生{{name}}的爱好是
+                 <ol>
+                   {{#hobbies}}
+                     <li>{{.}}</li>
+                   {{/hobbies}}
+                 </ol>
+               </li>
+             {{/students}}
+           </ol>
+         </div>
+       `
+     var data = {
+       name: '我是三年二班',
+       students: [
+         { name: '小明', hobbies: ['游泳', '健身'] },
+         { name: '小哄', hobbies: ['足球', '篮球', '羽毛球'] },
+         { name: '小强', hobbies: ['吃饭', '睡觉', '打豆豆'] },
+       ],
+     }
+     const result = MyMustache.render(templateStr, data)
+     ```
+
+   * `renderTemplate.js` 内容修改如下
+
+     ```javascript
+     /**
+      * 处理数组，结合 renderTemplate 实现递归，
+      * 注意：这里函数接受的参数是 token 而不是 tokens
+      * token 就类似于一个简单的 ['#', "students", [ ...]] 中的 第 2 个索引的值
+      *
+      * @param {*} token  []
+      * @param {*} array []
+      */
+     function parseArray(token, array) {
+       let htmlStr = ''
+       array.forEach((item) => {
+         htmlStr += renderTemplate(token, { ...item, '.': item })
+       })
+       return htmlStr
+     }
+     
+     const renderTemplate = (tokens, data) => {
+       let htmlStr = ''
+       for (let index = 0; index < tokens.length; index++) {
+         const token = tokens[index]
+         switch (token[0]) {
+           case 'text':
+             htmlStr += token[1]
+             break
+           case 'name':
+             // 这里存在多个 . 的情况，暂不处理
+             htmlStr += data[token[1]]
+             break
+           case '#':
+             // ['#',"students", [...]]
+             htmlStr += parseArray(token[2], data[token[1]])
+             break
+           default:
+             break
+         }
+       }
+       return htmlStr
+     }
+     
+     export default renderTemplate
+     ```
+
+   * 输出的结果如下
+
+     ```html
+     <div>
+       <div class="mine">我是三年二班</div>
+       <ol id="me" style="color: red">
+         <li>
+           学生小明的爱好是
+           <ol>
+             <li>游泳</li>
+             <li>健身</li>
+           </ol>
+         </li>
+         <li>
+           学生小哄的爱好是
+           <ol>
+             <li>足球</li>
+             <li>篮球</li>
+             <li>羽毛球</li>
+           </ol>
+         </li>
+         <li>
+           学生小强的爱好是
+           <ol>
+             <li>吃饭</li>
+             <li>睡觉</li>
+             <li>打豆豆</li>
+           </ol>
+         </li>
+       </ol>
+     </div>
+     ```
+
+10. 上面的代码没有处理字符串模板中存在多个`.`的情况，现在进行如下优化
+
+    * `index.js`中的数据如下
+
+      ```javascript
+      import MyMustache from './my-mustache/index.js'
+      
+      var templateStr = `
+        <div>
+            <div class="mine">{{name}}</div>
+            <div >总成绩为：{{a.b.c}}分</div>
+            <ol id="me" style="color: red">
+              {{#students}}
+                <li>
+                  学生{{name}}的爱好是
+                  <ol>
+                    {{#hobbies}}
+                      <li>{{.}}</li>
+                    {{/hobbies}}
+                  </ol>
+                </li>
+              {{/students}}
+            </ol>
+          </div>
+        `
+      var data = {
+        name: '我是三年二班',
+        a: { b: { c: 1000 } }, // 增加一个多层次的对象数据
+        students: [
+          { name: '小明', hobbies: ['游泳', '健身'] },
+          { name: '小哄', hobbies: ['足球', '篮球', '羽毛球'] },
+          { name: '小强', hobbies: ['吃饭', '睡觉', '打豆豆'] },
+        ],
+      }
+      const result = MyMustache.render(templateStr, data)
+      ```
+
+    * `renderTemplate.js` 内容修改如下
+
+      ```javascript
+      //  case :"name" 那一段代码要进行特殊处理
+      ...
+      case 'name:
+          htmlStr += lookUp(token[1], data)
+          break
+      ...
+      
+      /**
+       * 功能是可以在 dataObj 对象中，寻找用连续点符号的 keyName 属性
+       * 比如 dataObj是 {a:{b:{c:100}}}
+       * 那么 lookUp('a.b.c', dataObj) 结果就是100
+       */
+      function lookUp(keyName, data) {
+        if (keyName !== '.' && keyName.indexOf('.') !== -1) {
+          // 处理含有多个 . 的字符串
+          let temp = data
+          const keysArr = keyName.split('.')
+          keysArr.forEach((key) => {
+            temp = temp[key]
+          })
+          return temp
+        }
+        return data[keyName]
+      }
+      ```
+
+      
+
