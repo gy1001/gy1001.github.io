@@ -1,4 +1,4 @@
-# Vue 源码之 Mustache
+# 源码探秘之 Mustache
 
 ## 前言：为什么要学习 Vue 源码
 
@@ -275,7 +275,7 @@ Vue 的解决方法：
       console.log(html)
     </script>
   </html>
-  
+
   // 输入结果如下
   <ul>
     <li>
@@ -642,9 +642,9 @@ var domHtml = renderTemplate(tokens, data)
    const parseTemplateToTokens = (templateStr) => {
      console.log(templateStr)
    }
-   
+
    export default parseTemplateToTokens
-   
+
    // renderTemplate.js
    const renderTemplate = () => {}
    export default renderTemplate
@@ -674,7 +674,7 @@ var domHtml = renderTemplate(tokens, data)
        // 要遍历的字符串
        this.templateStr = templateStr
      }
-   
+
      scan(tag) {
        if (this.tail.indexOf(tag) === 0) {
          // tag 有多长，比如 {{ 长度是2，就让指针后移动几位
@@ -682,7 +682,7 @@ var domHtml = renderTemplate(tokens, data)
          this.tail = this.templateStr.substring(this.pos)
        }
      }
-   
+
      // 让指针进行扫描 直到遇到指定内容结束，并且能够返回结束之前路过的文字
      scanUtil(stopTag) {
        // 记录一下当前开始的位置
@@ -696,13 +696,13 @@ var domHtml = renderTemplate(tokens, data)
        // 返回当前截取到的字符串
        return this.templateStr.substring(POS_BACKUP, this.pos)
      }
-   
+
      // 指针是否到头，返回布尔值
      eos() {
        return this.pos >= this.templateStr.length
      }
    }
-   
+
    export default Scanner
    ```
 
@@ -710,7 +710,7 @@ var domHtml = renderTemplate(tokens, data)
 
    ```javascript
    import Scanner from './Scanner'
-   
+
    const parseTemplateToTokens = (templateStr) => {
      const scanner = new Scanner(templateStr)
      // 遍历当前字符串模板
@@ -723,9 +723,9 @@ var domHtml = renderTemplate(tokens, data)
        scanner.scan('}}')
      }
    }
-   
+
    export default parseTemplateToTokens
-   
+
    // 可以在控制台中看到截取的相应字符串
    ```
 
@@ -733,7 +733,7 @@ var domHtml = renderTemplate(tokens, data)
 
    ```javascript
    import Scanner from './Scanner'
-   
+
    const parseTemplateToTokens = (templateStr) => {
      // 实例化一个扫描器，构造时候提供一个参数，这个参数就是模板字符串，
      // 也就是这个扫描器是针对这个模板字符串工作的
@@ -757,12 +757,12 @@ var domHtml = renderTemplate(tokens, data)
      }
      console.log(tokens)
    }
-   
+
    export default parseTemplateToTokens
-   
+
    // 对于简单的一维模板字符串
    var templateStr = `我买了一个{{thing}},好{{mood}}啊`
-   
+
    // 上述代码生成的 tokens 是
    [
      ['text', '我买了一个'],
@@ -818,7 +818,7 @@ var domHtml = renderTemplate(tokens, data)
 
    ```javascript
    import Scanner from './Scanner'
-   
+
    const parseTemplateToTokens = (templateStr) => {
      // 实例化一个扫描器，构造时候提供一个参数，这个参数就是模板字符串，
      // 也就是这个扫描器是针对这个模板字符串工作的
@@ -849,7 +849,7 @@ var domHtml = renderTemplate(tokens, data)
      }
      console.log(tokens)
    }
-   
+
    export default parseTemplateToTokens
    // 可以看到对于上述多维模板字符串的结果已经变为
    [
@@ -874,13 +874,13 @@ var domHtml = renderTemplate(tokens, data)
 
 6. 接下来：将零散的 `tokens` 嵌套起来
 
-   > 上一节中最后我们提到需要对 结果 tokens进行在嵌套处理即可，这里我们新建一个 nestTokens.js 方法来进行处理
+   > 上一节中最后我们提到需要对 结果 tokens 进行在嵌套处理即可，这里我们新建一个 nestTokens.js 方法来进行处理
 
    ```javascript
    // parseTemplateToTokens.js 修改如下
    import nestTokens from './nestTokens'
    。。。
-   
+
    const parseTemplateToTokens = function (templateStr){
    	....
      const tokens = []
@@ -896,7 +896,7 @@ var domHtml = renderTemplate(tokens, data)
 
    注意：下面代码 **最精妙** 的地方就是声明了一个 **收集器 collector 数组**，
 
-   <font size="4" color=#FF000> 当遇到 # 的时候，收集器要指向当前项目的下标为2的一项并且设置为空数组，此后遍历的 token项是 被收集到收集器中，也就是在 token[2] 中变为子项，并且有一个数组 sections (模拟栈结构) push 当前token项；当遇到到 / 时候，对 sections 进行弹栈处理，并且进行判断处理，如果之前已经有过了 # (sections数组length还不为0)，那么收集器就指向sections栈顶的那一项的下标为2的数组，否则就代表是最外层 nestTokens </font>
+   <font size="4" color=#FF000> 当遇到 # 的时候，收集器要指向当前项目的下标为 2 的一项并且设置为空数组，此后遍历的 token 项是 被收集到收集器中，也就是在 token[2] 中变为子项，并且有一个数组 sections (模拟栈结构) push 当前 token 项；当遇到到 / 时候，对 sections 进行弹栈处理，并且进行判断处理，如果之前已经有过了 # (sections 数组 length 还不为 0)，那么收集器就指向 sections 栈顶的那一项的下标为 2 的数组，否则就代表是最外层 nestTokens </font>
 
    ```javascript
    // nestTokens.js 内容如下
@@ -941,21 +941,21 @@ var domHtml = renderTemplate(tokens, data)
 
 8. 先使用简单的模板字符串，如下
 
-   * `index.js`  中的数据如下
+   - `index.js` 中的数据如下
 
      ```javascript
      import MyMustache from './my-mustache/index.js'
-     
+
      var templateStr = `我买了一个{{thing}},好{{mood}}啊`
      var data = {
        thing: '华为手机',
        mood: '开心',
      }
-     
+
      const result = MyMustache.render(templateStr, data)
      ```
 
-   * `renderTemplate.js` 内容修改如下
+   - `renderTemplate.js` 内容修改如下
 
      ```javascript
      const renderTemplate = (tokens, data) => {
@@ -970,11 +970,11 @@ var domHtml = renderTemplate(tokens, data)
        }
        return htmlStr
      }
-     
+
      export default renderTemplate
      ```
 
-   * 最终的字符串结果为
+   - 最终的字符串结果为
 
      ```html
      我买了一个华为手机,好开心啊
@@ -982,11 +982,11 @@ var domHtml = renderTemplate(tokens, data)
 
 9. 现在切回复杂的多维字符串模板中，
 
-   * `index.js`中的数据如下
+   - `index.js`中的数据如下
 
      ```javascript
      import MyMustache from './my-mustache/index.js'
-     
+
      var templateStr = `
        <div>
            <div class="mine">{{name}}</div>
@@ -1015,7 +1015,7 @@ var domHtml = renderTemplate(tokens, data)
      const result = MyMustache.render(templateStr, data)
      ```
 
-   * `renderTemplate.js` 内容修改如下
+   - `renderTemplate.js` 内容修改如下
 
      ```javascript
      /**
@@ -1033,7 +1033,7 @@ var domHtml = renderTemplate(tokens, data)
        })
        return htmlStr
      }
-     
+
      const renderTemplate = (tokens, data) => {
        let htmlStr = ''
        for (let index = 0; index < tokens.length; index++) {
@@ -1056,11 +1056,11 @@ var domHtml = renderTemplate(tokens, data)
        }
        return htmlStr
      }
-     
+
      export default renderTemplate
      ```
 
-   * 输出的结果如下
+   - 输出的结果如下
 
      ```html
      <div>
@@ -1095,11 +1095,11 @@ var domHtml = renderTemplate(tokens, data)
 
 10. 上面的代码没有处理字符串模板中存在多个`.`的情况，现在进行如下优化
 
-    * `index.js`中的数据如下
+    - `index.js`中的数据如下
 
       ```javascript
       import MyMustache from './my-mustache/index.js'
-      
+
       var templateStr = `
         <div>
             <div class="mine">{{name}}</div>
@@ -1130,7 +1130,7 @@ var domHtml = renderTemplate(tokens, data)
       const result = MyMustache.render(templateStr, data)
       ```
 
-    * `renderTemplate.js` 内容修改如下
+    - `renderTemplate.js` 内容修改如下
 
       ```javascript
       //  case :"name" 那一段代码要进行特殊处理
@@ -1139,7 +1139,7 @@ var domHtml = renderTemplate(tokens, data)
           htmlStr += lookUp(token[1], data)
           break
       ...
-      
+
       /**
        * 功能是可以在 dataObj 对象中，寻找用连续点符号的 keyName 属性
        * 比如 dataObj是 {a:{b:{c:100}}}
@@ -1161,12 +1161,12 @@ var domHtml = renderTemplate(tokens, data)
 
 11. 大体上完成了目前的代码的处理，如果想处理 类型为`text` 的 字符串 之间的存在空格处理，可以进行如下优化
 
-    > 这里要进行特殊处里：标签内的空格不做处理，例如  \<div class="mine"\> 之类的
+    > 这里要进行特殊处里：标签内的空格不做处理，例如 \<div class="mine"\> 之类的
 
     ```javascript
     import nestTokens from './nestTokens'
     import Scanner from './Scanner'
-    
+
     const parseTemplateToTokens = (templateStr) => {
       // 实例化一个扫描器，构造时候提供一个参数，这个参数就是模板字符串，
       // 也就是这个扫描器是针对这个模板字符串工作的
@@ -1218,13 +1218,12 @@ var domHtml = renderTemplate(tokens, data)
       }
       return nestTokens(tokens)
     }
-    
+
     export default parseTemplateToTokens
     ```
 
 ## 5、 课程总结
 
-* **Mustache 底层太美了！** tokens 的意义也不言自明了，如果没有 token, 那么数组的循环形式，就很难处理。 这里只是简化的版本处理
+- **Mustache 底层太美了！** tokens 的意义也不言自明了，如果没有 token, 那么数组的循环形式，就很难处理。 这里只是简化的版本处理
 
-* 在*Mustache* 源码中，还有 *Context* 和 *Write* 类。，如果你有精力，可以再做深入研究
-
+- 在*Mustache* 源码中，还有 _Context_ 和 _Write_ 类。，如果你有精力，可以再做深入研究

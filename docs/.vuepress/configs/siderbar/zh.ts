@@ -48,10 +48,11 @@ export const sidebarZh: SidebarConfig = {
         {
           text: 'Vue源码',
           children: [
-            '/zh/skill/front/source/vue/direct-method.md',
             '/zh/skill/front/source/vue/mustache.md',
-            '/zh/skill/front/source/vue/ast.md',
+            '/zh/skill/front/source/vue/diff.md',
             '/zh/skill/front/source/vue/reactivity.md',
+            '/zh/skill/front/source/vue/ast.md',
+            '/zh/skill/front/source/vue/direct-method.md',
           ],
         },
       ],
