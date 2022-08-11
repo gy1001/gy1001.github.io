@@ -328,7 +328,24 @@
   </div>
   ```
 
-  
+## 4、 diff 处理新旧节点不是同一个节点时
+
+diff流程如下图
+
+![img](https://pic3.zhimg.com/80/v2-ee74e6328d07def8d55d954cc9946a92_720w.jpeg)
+
+### 4.1 代码示例
+
+```javascript
+function sameVnode(vnode1,vnode2){
+  return vnode1.key === vnode2.key && vnode1.sel === vnode2.sel
+}
+```
+
+### 4.2 结论
+
+* 旧节点的 `key`  和 新节点的 `key` 相同
+* **并且**， 旧节点的选择器要和新节点的选择器相同 
 
 
 
