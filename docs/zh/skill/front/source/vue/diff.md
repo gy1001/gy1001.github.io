@@ -328,7 +328,7 @@
   </div>
   ```
 
-## 4、 diff 处理新旧节点不是同一个节点时
+##   4、 diff 处理新旧节点不是同一个节点时
 
 diff流程如下图
 
@@ -346,6 +346,83 @@ function sameVnode(vnode1,vnode2){
 
 * 旧节点的 `key`  和 新节点的 `key` 相同
 * **并且**， 旧节点的选择器要和新节点的选择器相同 
+
+## 5、手写第一次渲染到页面时的逻辑
+
+1. `index.js` 中的内容进行如下修改
+
+   ```javascript
+   import { h } from 'snabbdom'
+   import patch from './patch'
+   const container = document.getElementById('container')
+   
+   const vnode1 = h('h1', {}, 'hello world')
+   // 这里对 vnode1 进行处理渲染
+   patch(container, vnode1)
+   ```
+
+2. 新建 `patch.js` 文件，内容如下
+
+   ```javascript
+   import createElement from './createElement'
+   import vNode from './vnode'
+   
+   function patch(oldVNode, newVNode) {
+     // 判断第一个参数 oldVNode 是虚拟节点还是 DOM 节点
+     if (oldVNode.sel === '' || oldVNode.sel === undefined) {
+       // 是空，说明是 DOM 节点，需要包装为空的虚拟节点
+       oldVNode = vNode(oldVNode.tagName.toLowerCase(), {}, [], undefined, oldVNode )
+     }
+     // 判断 oldVNode 和 newVNode 是不是同一个节点
+     if (oldVNode.key === newVNode.key && oldVNode.sel === newVNode.sel) {
+       console.log('是同一个节点，需要做精细化比较')
+     } else {
+       console.log('不是同一个节点，暴力插入新的，删除旧的')
+       createElement(newVNode, oldVNode.elm)
+     }
+   }
+   
+   export default patch
+   ```
+
+3. 上述代码中用到了两个函数， 创建虚拟节点函数的 `vnode.js` 、以及 创建真实元素并挂载的 `createELement.js`
+
+   ```javascript
+   // createElement.js
+   /**
+    * 真正 创建节点，将 vNode 创建为dom，并插入到 pivot 这个元素之前
+    * @param {*} vNode
+    * @param {*} pivot
+    */
+   export default function createElement(vNode, pivot) {
+     console.log('目的是把虚拟节点', vNode, '插入到标杆', pivot, '前')
+     let domNode = document.createElement(vNode.sel)
+     // 判断有子节点还是有文本
+     if (
+       (vNode.text !== '') &
+       (vNode.children === undefined || vNode.children.length === 0)
+     ) {
+       // 它的内部是文字
+       domNode.innerText = vNode.text
+       console.log(domNode)
+       // 将孤儿节点 插入到 元素前:让标杆节点的父元素调用 insertBefore 方法，插入到标签节点之前
+       pivot.parentNode.insertBefore(domNode, pivot)
+     } else if (Array.isArray(vNode.children) && vNode.children.length > 0) {
+       console.log('这里进行处理多个子节点的循环处理')
+     }
+   }
+   
+   // 创建虚拟节点函数
+   export default function vNode(sel, data, children, text, elm) {
+     return { sel, data, children, text, elm }
+   }
+   ```
+
+4. 运行代码后，可以在页面中看到  `const vnode1 = h('h1', {}, 'hello world')` 元素被渲染为 html，并挂载到 `const container = document.getElementById('container')` 的父级元素内部
+
+5. 当前这里没有处理 **多个子节点** 的情况，也就是 `createElement.js` 中  `else if ` 判断没有做更改，下一节进行完善
+
+## 6、手写递归创建子节点
 
 
 
