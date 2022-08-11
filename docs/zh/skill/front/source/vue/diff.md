@@ -210,9 +210,127 @@
      }
      ```
 
-## 3、Diff 算法原理
+## 3、感受 diff 算法
+
+### 3.1 代码示例展示
+
+1. `index.js` 内容修改为如下
+
+   ```javascript
+   import {
+     init,
+     classModule,
+     propsModule,
+     styleModule,
+     eventListenersModule,
+     h,
+   } from 'snabbdom'
+   
+   const patch = init([
+     // Init patch function with chosen modules
+     classModule, // makes it easy to toggle classes
+     propsModule, // for setting properties on DOM elements
+     styleModule, // handles styling on elements with support for animations
+     eventListenersModule, // attaches event listeners
+   ])
+   
+   const container = document.getElementById('container')
+   
+   const vnode1 = h('ul', {}, [
+     h('li', {}, 'A'),
+     h('li', {}, 'B'),
+     h('li', {}, 'C'),
+     h('li', {}, 'D'),
+   ])
+   
+   patch(container, vnode1)
+   
+   const vnode2 = h('ul', {}, [
+     h('li', {}, 'F'),
+     h('li', {}, 'A'),
+     h('li', {}, 'B'),
+     h('li', {}, 'C'),
+     h('li', {}, 'D'),
+     h('li', {}, 'E'),
+   ])
+   
+   const btn = document.createElement('button')
+   btn.innerHTML = '点击我更改内容'
+   btn.addEventListener('click', function () {
+     patch(vnode1, vnode2)
+   })
+   
+   document.body.appendChild(btn)
+   ```
+
+2. 点击后，发现试图进行了变更。但是又如何判断是最小更新了，而不是全部推到重新渲染的呢，可以进行如下操作，
+
+   > 此时在页面中打开浏览器控制台，把 第一个元素的内的 A 内容进行替换 , 比如替换为 “A被改变了”。再次点击按钮，就会发现页面视图被全部替换为 F、A、B、C、D、E。显然这不是最小更新，而是全部删除重建。为什么呢？？？
+
+   **因为少了一个key的属性，上述示例是全部删除重新渲染的操作，这时候体现了key属性的重要性**。
+
+3. 下面对 `index.js`中的数据进行更新处理(添 加 `key` 属性) ，变为如下结果
+
+   ```javascript
+   const vnode1 = h('ul', {}, [
+     h('li', { key: 'A' }, 'A'),
+     h('li', { key: 'B' }, 'B'),
+     h('li', { key: 'C' }, 'C'),
+     h('li', { key: 'D' }, 'D'),
+   ])
+   
+   
+   const vnode2 = h('ul', {}, [
+     h('li', { key: 'F' }, 'F'),
+     h('li', { key: 'A' }, 'A'),
+     h('li', { key: 'B' }, 'B'),
+     h('li', { key: 'C' }, 'C'),
+     h('li', { key: 'D' }, 'D'),
+     h('li', { key: 'E' }, 'E'),
+   ])
+   // 其余的保持不变，
+   ```
+
+4. 结果：再次进行控制台的修改，把 第一个元素的内的 A 内容进行替换 , 比如替换为 “A被改变了”（其他几个也可以进行类似操作）。然后点击按钮，就会发现 把A修改为 "A被改变了"这个字符串进行了保留，而前面增加了 F ，说明 **相同的节点定是没有做任何处理的**，只对新增的 F、E 节点做了新增处理。这样就体现了 diff 算法的应用。
+
+   Tips: 如果不在乎性能，当然可以全部清空，然后用新的数据重新渲染。
+
+5. 具体操作可以参考下图
+
+   [https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/76f3c164a16f4dabbf0c7f33829029d1~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/76f3c164a16f4dabbf0c7f33829029d1~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
 
 
 
-## 4、手写 Diff 算法
+### 3.2 感受 DIff 算法的心得
+
+* 最小量更新太厉害啦！真的是最小量更新！**当然，key很重要**
+
+* **只有是同一个虚拟节点，才进行精细化比较，**否则就是暴力删除旧的、插入新的。
+
+  * **延伸问题：如何定义是同一个虚拟节点：答：选择器相同且key相同**
+
+* **只进行同层比较，不会进行跨层比较。** 即使是同一片虚拟节点，但是跨层了，对不起，精细化比较不 diff 你。而是暴力删除旧的、然后插入新的。
+
+  <font color="red">diff 并不是那么那么“无微不至”啊！ 真的影响效率吗？<br/>答: 上面的操作在实际 Vue 开发中，基本不会遇见，所以这是合理的优化机制。</font>
+
+  比如一般没有人会写如下的代码片段
+
+  ```html
+  <div>
+    <section v-if="isFlag">
+      <p>A</p>
+      <p>B</p>
+      <p>C</p>
+    </section>
+    <p v-if="!isFlag">A</p>
+    <p v-if="!isFlag">B</p>
+    <p v-if="!isFlag">C</p>
+  </div>
+  ```
+
+  
+
+
+
+
 
