@@ -469,10 +469,78 @@ function sameVnode(vnode1,vnode2){
        //--------这是我改变的---------------------
        console.log('不是同一个节点，暴力插入新的，删除旧的')
        const newVNodeElm = createElement(newVNode)
-       oldVNode.elm.parentNode.insertBefore(newVNodeElm, oldVNode.elm)
+        if (oldVNode.elm.parentNode && newVNodeElm) {
+         oldVNode.elm.parentNode.insertBefore(newVNodeElm, oldVNode.elm)
+       }
+       // 删除 老节点
+       oldVNode.elm.parentNode.removeChild(oldVNode.elm)
        //-----------------------------
      }
    }
+   ```
+
+3. 接下来我们更改`index.js` 文件中的 虚拟节点内容，使其拥有多个子节点，例如
+
+   ```javascript
+   ...
+   const vnode1 = h('h1', {}, [
+     h('h2', {}, 'hello world'),
+     h('h2', {}, 'hello world'),
+     h('h4', {}, 'hello world'),
+     h('h5', {}, 'hello world'),
+     h('h6', {}, 'hello world'),
+     h('h7', {}, [
+       h('ul', {}, [
+         h('li', {}, 'hello world1'),
+         h('li', {}, 'hello world2'),
+         h('li', {}, 'hello world3'),
+       ]),
+     ]),
+   ])
+   ...
+   ```
+
+4. `createElement.js` 内容就要用做如下更改
+
+   ```javascript
+   export default function createElement(vNode) {
+   	...
+     if (
+       (vNode.text !== '') &
+       (vNode.children === undefined || vNode.children.length === 0)
+     ) {
+       ...
+     } else if(Array.isArray(vNode.children) && vNode.children.length > 0){
+       console.log('这里进行处理多个子节点的循环处理')
+       // 它内部是子节点，需要进行 递归创建子节点
+       for (let index = 0; index < vNode.children.length; index++) {
+         const node = vNode.children[index]
+         let nodeDOM = createElement(node)
+         domNode.appendChild(nodeDOM)
+       }
+       vNode.elm = domNode
+     }
+     // 返回 vNode.elm，是一个纯 DOM 节点
+     return vNode.elm
+   }
+   ```
+
+5. 这里其实就完成了 **不是同一个虚拟节点**  以后进行的 **暴力删除旧的，新建新的(创建子节点时，所有子节点需要递归列出来的)** 这个分支的流程，可以进行如下代码测试
+
+   ```javascript
+   // 对于不同的节点
+   const vnode2 = h('div', {}, [
+     h('h1', {}, '我是新的H1'),
+     h('h2', {}, '我是新的H2'),
+   ])
+   const btn = document.createElement('button')
+   btn.innerText = '点击我进行内容更新'
+   btn.addEventListener('click', function () {
+     patch(vnode1, vnode2)
+   })
+   document.body.appendChild(btn)
+   
+   // 点击按钮后可以看到 页面内容 由虚拟节点 vnode1 产生的 DOM 换成了 由 vnode2 产生的 DOM
    ```
 
    
