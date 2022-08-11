@@ -424,7 +424,58 @@ function sameVnode(vnode1,vnode2){
 
 ## 6、手写递归创建子节点
 
+1. 这里就会遇到一个问题，当对虚拟节点中的子节点（存在多个时）进行递归调用时候，会发现要调用`createElement.js` 中`createElement`的方法，可是`createElement` 是有两个参数的，而第二个参数 是要指定一个标杆节点，而对于子节点来说，当然没有标杆节点，这就产生了矛盾，所以要对`createElement` 函数以及涉及到的其他函数进行修改
 
+2. 修改情况如下
+
+   ```javascript
+   // createElement.js
+   /**
+    * 真正 创建节点，将 vNode 创建为dom，是孤儿节点，不进行插入，因为子节点需要递归，而子节点有没有标杆
+    * @param {*} vNode
+    * @param {*} pivot
+    */
+   export default function createElement(vNode) {
+     const domNode = document.createElement(vNode.sel)
+     // 判断有子节点还是有文本
+     if (
+       (vNode.text !== '') &
+       (vNode.children === undefined || vNode.children.length === 0)
+     ) {
+       // 它的内部是文字
+       domNode.innerText = vNode.text
+       //--------这是新增的---------------------
+       // 补充 elm 属性
+       vNode.elm = domNode
+       //-----------------------------
+     } else if (Array.isArray(vNode.children) && vNode.children.length > 0) {
+       console.log('这里进行处理多个子节点的循环处理')
+       // 它内部是子节点，需要进行 递归创建子节点
+     }
+   
+     //--------这是新增的---------------------
+     // 返回 elm，是一个纯 DOM 节点
+     return vNode.elm
+     //-----------------------------
+   }
+   
+   
+   // patch.js
+   function patch(oldVNode, newVNode) {
+   	...
+     if (oldVNode.key === newVNode.key && oldVNode.sel === newVNode.sel) {
+       console.log('是同一个节点，需要做精细化比较')
+     } else {
+       //--------这是我改变的---------------------
+       console.log('不是同一个节点，暴力插入新的，删除旧的')
+       const newVNodeElm = createElement(newVNode)
+       oldVNode.elm.parentNode.insertBefore(newVNodeElm, oldVNode.elm)
+       //-----------------------------
+     }
+   }
+   ```
+
+   
 
 
 
