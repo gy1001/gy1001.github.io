@@ -349,12 +349,12 @@
    - 有`text`属性，说明没有`children`
      - 在判断 `newVNode`和 `oldVNode`的`text`属性是否相同
        - 如果相同，什么都不做，直接返回
-       - 如果不同，把 `oldVnode.elm` 中的`text` 变为 `newVnode中的text`(即使`oldVnode`有`children`属性，`innerText`一旦改变后，老`children`也就没了)，然后结束
+       - 如果不同，把 `oldVNode.elm` 中的`text` 变为 `newVNode中的text`(即使`oldVNode`有`children`属性，`innerText`一旦改变后，老`children`也就没了)，然后结束
    - 没有`text`属性，说明有`children`属性，进行下一步判断
 
 5. 判断`oldVNode`有没有`children`属性（参考第 8 节）
 
-   - 如果没有，也也就是`oldVNode`没有`children`属性，而`newVNode`有`children`属性，那么就**清空老节点的内容，并把 newVnode 的 children 添加到 DOM 中**
+   - 如果没有，也也就是`oldVNode`没有`children`属性，而`newVNode`有`children`属性，那么就**清空老节点的内容，并把 newVNode 的 children 添加到 DOM 中**
    - 如果有，就需要进行下一步判断(此种情况只最复杂的情况，也是**diff 的重点**)
 
 6. `newVNode`和`oldVNode`均有`children`（参考第 9 节）
@@ -364,7 +364,7 @@
 ### 5.1 代码示例
 
 ```javascript
-function sameVnode(vnode1, vnode2) {
+function sameVNode(vnode1, vnode2) {
   return vnode1.key === vnode2.key && vnode1.sel === vnode2.sel
 }
 ```
@@ -654,7 +654,7 @@ function sameVnode(vnode1, vnode2) {
 
 这里就需要提到四中命中查找了。**newVNode 的头和尾 ：新前和新后，oldVNode 的头和尾：旧前和旧后。** 为什么这种算法优秀，因为它符合人们的编程习惯。
 
-定义四个指针 **newStartIndex, newEndIndex, oldStartIndex, oldEndIndex**, 同时四个指针对应四个节点：**newStartNode,、newEndNode、oldStartNode、oldEndNode**; 当 <font color="red">oldStartIndex<=oldEndIndex && newStartIndex <= newEndIndex</font> 时候就进行 while 循环。循环结束后，就可以根据判断，新的节点是要插入节点还是删除节点，做最后的删除或者新增操作。
+定义四个指针 **newStartIndex, newEndIndex, oldStartIndex, oldEndIndex**, 同时四个指针对应四个节点：**newStartNode,、newEndNode、oldStartNode、oldEndNode**; 当 <span style="color:red">oldStartIndex<=oldEndIndex && newStartIndex <= newEndIndex</span> 时候就进行 while 循环。循环结束后，就可以根据判断，新的节点是要插入节点还是删除节点，做最后的删除或者新增操作。
 
 四种命名查找：
 
