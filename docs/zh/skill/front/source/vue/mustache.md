@@ -896,7 +896,7 @@ var domHtml = renderTemplate(tokens, data)
 
    注意：下面代码 **最精妙** 的地方就是声明了一个 **收集器 collector 数组**，
 
-   <font size="4" color=#FF000> 当遇到 # 的时候，收集器要指向当前项目的下标为 2 的一项并且设置为空数组，此后遍历的 token 项是 被收集到收集器中，也就是在 token[2] 中变为子项，并且有一个数组 sections (模拟栈结构) push 当前 token 项；当遇到到 / 时候，对 sections 进行弹栈处理，并且进行判断处理，如果之前已经有过了 # (sections 数组 length 还不为 0)，那么收集器就指向 sections 栈顶的那一项的下标为 2 的数组，否则就代表是最外层 nestTokens </font>
+   <div style="color:red;">当遇到 # 的时候，收集器要指向当前项目的下标为 2 的一项并且设置为空数组，此后遍历的 token 项是 被收集到收集器中，也就是在 token[2] 中变为子项，并且有一个数组 sections (模拟栈结构) push 当前 token 项；当遇到到 / 时候，对 sections 进行弹栈处理，并且进行判断处理，如果之前已经有过了 # (sections 数组 length 还不为 0)，那么收集器就指向 sections 栈顶的那一项的下标为 2 的数组，否则就代表是最外层 nestToken</div>
 
    ```javascript
    // nestTokens.js 内容如下

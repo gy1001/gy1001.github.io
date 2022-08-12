@@ -89,10 +89,17 @@
 
    ```javascript
    // index.html， 页面内容基本通用即可，不过要创建一个 <div id="container"></div
-   
+
    // index.js
-   import { init, classModule, propsModule, styleModule, eventListenersModule, h } from 'snabbdom'
-   
+   import {
+     init,
+     classModule,
+     propsModule,
+     styleModule,
+     eventListenersModule,
+     h,
+   } from 'snabbdom'
+
    const patch = init([
      // Init patch function with chosen modules
      classModule, // makes it easy to toggle classes
@@ -100,9 +107,9 @@
      styleModule, // handles styling on elements with support for animations
      eventListenersModule, // attaches event listeners
    ])
-   
+
    const container = document.getElementById('container')
-   
+
    const vnode = h(
      'div#container.two.classes',
      {
@@ -120,7 +127,7 @@
    )
    // Patch into empty DOM element – this modifies the DOM as a side effect
    patch(container, vnode)
-   
+
    const newVnode = h(
      'div#container.two.classes',
      {
@@ -210,8 +217,15 @@
 1. `index.js` 内容修改为如下
 
    ```javascript
-   import { init, classModule, propsModule, styleModule, eventListenersModule, h } from 'snabbdom'
-   
+   import {
+     init,
+     classModule,
+     propsModule,
+     styleModule,
+     eventListenersModule,
+     h,
+   } from 'snabbdom'
+
    const patch = init([
      // Init patch function with chosen modules
      classModule, // makes it easy to toggle classes
@@ -219,18 +233,18 @@
      styleModule, // handles styling on elements with support for animations
      eventListenersModule, // attaches event listeners
    ])
-   
+
    const container = document.getElementById('container')
-   
+
    const vnode1 = h('ul', {}, [
      h('li', {}, 'A'),
      h('li', {}, 'B'),
      h('li', {}, 'C'),
      h('li', {}, 'D'),
    ])
-   
+
    patch(container, vnode1)
-   
+
    const vnode2 = h('ul', {}, [
      h('li', {}, 'F'),
      h('li', {}, 'A'),
@@ -239,16 +253,16 @@
      h('li', {}, 'D'),
      h('li', {}, 'E'),
    ])
-   
+
    const btn = document.createElement('button')
    btn.innerHTML = '点击我更改内容'
    btn.addEventListener('click', function () {
      patch(vnode1, vnode2)
    })
-   
+
    document.body.appendChild(btn)
    ```
-   
+
 2. 点击后，发现试图进行了变更。但是又如何判断是最小更新了，而不是全部推到重新渲染的呢，可以进行如下操作，
 
    > 此时在页面中打开浏览器控制台，把 第一个元素的内的 A 内容进行替换 , 比如替换为 “A 被改变了”。再次点击按钮，就会发现页面视图被全部替换为 F、A、B、C、D、E。显然这不是最小更新，而是全部删除重建。为什么呢？？？
@@ -294,7 +308,7 @@
 
 - **只进行同层比较，不会进行跨层比较。** 即使是同一片虚拟节点，但是跨层了，对不起，精细化比较不 diff 你。而是暴力删除旧的、然后插入新的。
 
-  <font color="red">diff 并不是那么那么“无微不至”啊！ 真的影响效率吗？<br/>答: 上面的操作在实际 Vue 开发中，基本不会遇见，所以这是合理的优化机制。</font>
+  <div style="color:red;">diff 并不是那么那么“无微不至”啊！ 真的影响效率吗？<br/>答: 上面的操作在实际 Vue 开发中，基本不会遇见，所以这是合理的优化机制。</div>
 
   比如一般没有人会写如下的代码片段
 
@@ -552,7 +566,7 @@ function sameVnode(vnode1, vnode2) {
      patch(vnode1, vnode2)
    })
    document.body.appendChild(btn)
-   
+
    // 点击按钮后可以看到 页面内容 由虚拟节点 vnode1 产生的 DOM 换成了 由 vnode2 产生的 DOM
    ```
 
@@ -589,7 +603,7 @@ function sameVnode(vnode1, vnode2) {
          // 判断 oldVNode 有没有 children
          if (oldVNode.children !== undefined && oldVNode.children.length > 0) {
            // 老的节点有 children，此时是最复杂的情况，就是新老节点都有 children
-   
+
          } else {
            // 老的没有 children 新的有 children
            oldVNode.elm.innerText = ''
@@ -638,15 +652,15 @@ function sameVnode(vnode1, vnode2) {
 
 ### 9.1 经典的 Diff 算法优化策略
 
-这里就需要提到四中命中查找了。**newVNode 的头和尾 ：新前和新后，oldVNode的头和尾：旧前和旧后。** 为什么这种算法优秀，因为它符合人们的编程习惯。
+这里就需要提到四中命中查找了。**newVNode 的头和尾 ：新前和新后，oldVNode 的头和尾：旧前和旧后。** 为什么这种算法优秀，因为它符合人们的编程习惯。
 
-定义四个指针 **newStartIndex,  newEndIndex, oldStartIndex, oldEndIndex**, 同时四个指针对应四个节点：**newStartNode,、newEndNode、oldStartNode、oldEndNode**; 当  <font color="red">oldStartIndex<=oldEndIndex && newStartIndex <= newEndIndex</font>  时候就进行while循环。循环结束后，就可以根据判断，新的节点是要插入节点还是删除节点，做最后的删除或者新增操作。
+定义四个指针 **newStartIndex, newEndIndex, oldStartIndex, oldEndIndex**, 同时四个指针对应四个节点：**newStartNode,、newEndNode、oldStartNode、oldEndNode**; 当 <font color="red">oldStartIndex<=oldEndIndex && newStartIndex <= newEndIndex</font> 时候就进行 while 循环。循环结束后，就可以根据判断，新的节点是要插入节点还是删除节点，做最后的删除或者新增操作。
 
 四种命名查找：
 
-* 新前与旧前
-* 新后与旧后
-* 新后与旧前
-* 新前与旧后
+- 新前与旧前
+- 新后与旧后
+- 新后与旧前
+- 新前与旧后
 
 **命中其中一种就不就行其它三种的判断了**，如果都没有命中，就需要用循环来寻找了。

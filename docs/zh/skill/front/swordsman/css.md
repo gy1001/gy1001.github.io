@@ -17,9 +17,11 @@ CSS 是开放网络的核心语言之一，由 W3C 规范 实现跨浏览器的�
 
 ```html
 <multicol COLS="3" GUTTER="25">
-	<p>
-		<font size="4" color="RED"> This would be some font broken up into columns </font>
-	</p>
+  <p>
+    <div style="color:red;">
+      This would be some font broken up into columns
+    </div>
+  </p>
 </multicol>
 ```
 
@@ -41,11 +43,11 @@ h1.font.size =  20pt 80%
 
 ```css
 html {
-	margin-left: 2cm;
-	font-family: 'Times', serif;
+  margin-left: 2cm;
+  font-family: 'Times', serif;
 }
 h1 {
-	font-size: 20px;
+  font-size: 20px;
 }
 ```
 
@@ -139,9 +141,9 @@ float 浮动属性最早是为了实现图片的文字环绕效果，允许的�
 
 ```css
 @media only screen and (min-width: 768px) {
-	header {
-		font-size: 1.2em;
-	}
+  header {
+    font-size: 1.2em;
+  }
 }
 ```
 
