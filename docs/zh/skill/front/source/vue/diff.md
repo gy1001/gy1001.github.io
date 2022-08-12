@@ -89,7 +89,7 @@
 
    ```javascript
    // index.html， 页面内容基本通用即可，不过要创建一个 <div id="container"></div
-
+   
    // index.js
    import {
      init,
@@ -99,7 +99,7 @@
      eventListenersModule,
      h,
    } from 'snabbdom'
-
+   
    const patch = init([
      // Init patch function with chosen modules
      classModule, // makes it easy to toggle classes
@@ -107,9 +107,9 @@
      styleModule, // handles styling on elements with support for animations
      eventListenersModule, // attaches event listeners
    ])
-
+   
    const container = document.getElementById('container')
-
+   
    const vnode = h(
      'div#container.two.classes',
      {
@@ -127,7 +127,7 @@
    )
    // Patch into empty DOM element – this modifies the DOM as a side effect
    patch(container, vnode)
-
+   
    const newVnode = h(
      'div#container.two.classes',
      {
@@ -566,7 +566,7 @@ function sameVNode(vnode1, vnode2) {
      patch(vnode1, vnode2)
    })
    document.body.appendChild(btn)
-
+   
    // 点击按钮后可以看到 页面内容 由虚拟节点 vnode1 产生的 DOM 换成了 由 vnode2 产生的 DOM
    ```
 
@@ -664,3 +664,68 @@ function sameVNode(vnode1, vnode2) {
 - 新前与旧后
 
 **命中其中一种就不就行其它三种的判断了**，如果都没有命中，就需要用循环来寻找了。
+
+### 9.2 代码实现
+
+1. 把`patch.js`中关于`精细化比较`的代码移动到新文件`patchVNode.js`中 
+
+   ```javascript
+   ...
+   import patchVNode from './patchVNode'
+   
+   // 老的节点有 children，此时是最复杂的情况，就是新老节点都有 children
+   function patch(oldVNode, newVNode) {
+   	...
+      // 判断 oldVNode 和 newVNode 是不是同一个节点
+     if (oldVNode.key === newVNode.key && oldVNode.sel === newVNode.sel) {
+       // '是同一个节点，需要做精细化比较'
+       patchVNode(oldVNode, newVNode)
+     } else {
+     	...
+     }
+   }
+   
+   ```
+
+2. 新建`patchVnode.js`，内容如下
+
+   ```javascript
+   import updateChildren from './updateChildren'
+   
+   export default function patchVNode(oldVNode, newVNode) {
+     // 在内存中是不是同一个节点
+     if (oldVNode === newVNode) {
+       return
+     }
+     if ( newVNode.text !== undefined && (newVNode.children === undefined || newVNode.children.length === 0)) {
+       console.log('判断 newVNode 有 text 属性')
+       if (newVNode.text !== oldVNode.text) {
+         // 把 oldVNode.elm 中的text 变为 newVNode 中的text(即使 oldVNode 有children属性，innerText一旦改变后，老children也就没了)
+         oldVNode.elm.innerText = newVNode.text
+         return
+       }
+     } else {
+       console.log('newVNode 没有 text 属性')
+       // 判断 oldVNode 有没有 children
+       if (oldVNode.children !== undefined && oldVNode.children.length > 0) {
+         // 老的节点有 children，此时是最复杂的情况，就是新老节点都有 children
+         console.log('最复杂')
+         updateChildren(oldVNode.elm, oldVNode.children, newVNode.children)
+       } else {
+         // 老的没有 children 新的有 children
+         oldVNode.elm.innerText = ''
+         newVNode.children.forEach((node) => {
+           const newNodeDom = createElement(node)
+           oldVNode.elm.appendChild(newNodeDom)
+         })
+       }
+     }
+   }
+   ```
+
+3. 新建`updateChildren.js`，文件内容如下
+
+   ```javascript
+   ```
+
+   
