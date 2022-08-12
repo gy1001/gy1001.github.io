@@ -634,5 +634,19 @@ function sameVnode(vnode1, vnode2) {
    ])
    ```
 
-## 9、
+## 9、Diff 算法的字节点更新策略
 
+### 9.1 经典的 Diff 算法优化策略
+
+这里就需要提到四中命中查找了。**newVNode 的头和尾 ：新前和新后，oldVNode的头和尾：旧前和旧后。** 为什么这种算法优秀，因为它符合人们的编程习惯。
+
+定义四个指针 **newStartIndex,  newEndIndex, oldStartIndex, oldEndIndex**, 同时四个指针对应四个节点：**newStartNode,、newEndNode、oldStartNode、oldEndNode**; 当  <font color="red">oldStartIndex<=oldEndIndex && newStartIndex <= newEndIndex</font>  时候就进行while循环。循环结束后，就可以根据判断，新的节点是要插入节点还是删除节点，做最后的删除或者新增操作。
+
+四种命名查找：
+
+* 新前与旧前
+* 新后与旧后
+* 新后与旧前
+* 新前与旧后
+
+**命中其中一种就不就行其它三种的判断了**，如果都没有命中，就需要用循环来寻找了。
