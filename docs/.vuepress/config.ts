@@ -5,6 +5,7 @@ import { copyCode } from 'vuepress-plugin-copy-code2'
 import { comment } from 'vuepress-plugin-comment2'
 
 export default defineUserConfig<DefaultThemeOptions>({
+  dest: './dist',
   base: '/',
   head: [['meta', { name: 'referrer', content: 'no-referrer' }]],
   locales: {
