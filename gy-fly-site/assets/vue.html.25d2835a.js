@@ -1,1 +1,0 @@
-const e={key:"v-2107b241",path:"/zh/skill/front/frame/vue.html",title:"Vue",lang:"zh-CN",frontmatter:{},excerpt:"",headers:[],git:{updatedTime:1647518299e3},filePathRelative:"zh/skill/front/frame/vue.md"};export{e as data};

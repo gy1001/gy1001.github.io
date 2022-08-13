@@ -1,1 +1,0 @@
-const t={key:"v-b97823b0",path:"/zh/skill/front/source/vue/ast.html",title:"\u6E90\u7801\u63A2\u79D8\u4E4B AST \u62BD\u8C61\u8BED\u6CD5\u6811",lang:"zh-CN",frontmatter:{},excerpt:"",headers:[],git:{updatedTime:1660113946e3},filePathRelative:"zh/skill/front/source/vue/ast.md"};export{t as data};

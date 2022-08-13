@@ -1,1 +1,0 @@
-const e={key:"v-4160dbf6",path:"/zh/skill/front/source/vue/direct-method.html",title:"\u6E90\u7801\u63A2\u79D8\u4E4B\u6307\u4EE4\u548C\u751F\u547D\u5468\u671F",lang:"zh-CN",frontmatter:{},excerpt:"",headers:[],git:{updatedTime:1660113946e3},filePathRelative:"zh/skill/front/source/vue/direct-method.md"};export{e as data};

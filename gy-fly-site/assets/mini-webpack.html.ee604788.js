@@ -1,1 +1,0 @@
-import{o as e,c as a,a as t,d as c}from"./app.5054972b.js";import{_ as o}from"./plugin-vue_export-helper.21dcd24c.js";const r={},s={id:"mine-webpack",tabindex:"-1"},n=t("a",{class:"header-anchor",href:"#mine-webpack","aria-hidden":"true"},"#",-1),_=c(" mine-webpack"),i=[n,_];function d(h,m){return e(),a("h1",s,i)}var k=o(r,[["render",d]]);export{k as default};
