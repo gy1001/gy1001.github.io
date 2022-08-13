@@ -1,0 +1,1 @@
+const t={key:"v-7c35d5f6",path:"/zh/skill/front/about/todo.html",title:"TODO",lang:"zh-CN",frontmatter:{},excerpt:"",headers:[],git:{updatedTime:16558091e5},filePathRelative:"zh/skill/front/about/todo.md"};export{t as data};

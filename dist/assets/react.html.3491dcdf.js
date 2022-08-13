@@ -1,0 +1,1 @@
+const t={key:"v-4d3aa268",path:"/zh/skill/front/frame/react.html",title:"React",lang:"zh-CN",frontmatter:{},excerpt:"",headers:[],git:{updatedTime:1647518299e3},filePathRelative:"zh/skill/front/frame/react.md"};export{t as data};

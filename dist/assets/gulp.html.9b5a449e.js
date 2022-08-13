@@ -1,0 +1,1 @@
+const t={key:"v-529931d9",path:"/zh/skill/front/about/gulp.html",title:"Gulp",lang:"zh-CN",frontmatter:{},excerpt:"",headers:[],git:{updatedTime:1659671062e3},filePathRelative:"zh/skill/front/about/gulp.md"};export{t as data};
