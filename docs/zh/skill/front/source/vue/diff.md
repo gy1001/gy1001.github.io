@@ -590,6 +590,7 @@ function sameVNode(vnode1, vnode2) {
        if (oldVNode === newVNode) {
          return
        }
+       newVNode.elm = oldVNode.elm
        // 判断 newVNode 有没有 text 属性
        if (newVNode.text !== undefined && (newVNode.children === undefined || newVNode.children.length === 0)) {
          console.log('判断 newVNode 有 text 属性')
@@ -603,7 +604,7 @@ function sameVNode(vnode1, vnode2) {
          // 判断 oldVNode 有没有 children
          if (oldVNode.children !== undefined && oldVNode.children.length > 0) {
            // 老的节点有 children，此时是最复杂的情况，就是新老节点都有 children
-
+   
          } else {
            // 老的没有 children 新的有 children
            oldVNode.elm.innerText = ''
@@ -648,7 +649,7 @@ function sameVNode(vnode1, vnode2) {
    ])
    ```
 
-## 9、Diff 算法的字节点更新策略
+## 9、Diff 算法的字节点更新策略（前篇）
 
 ### 9.1 经典的 Diff 算法优化策略
 
@@ -697,6 +698,8 @@ function sameVNode(vnode1, vnode2) {
      if (oldVNode === newVNode) {
        return
      }
+     newVNode.elm = oldVNode.elm
+     // 判断 newVNode 有没有 text 属性
      if ( newVNode.text !== undefined && (newVNode.children === undefined || newVNode.children.length === 0)) {
        console.log('判断 newVNode 有 text 属性')
        if (newVNode.text !== oldVNode.text) {
@@ -783,4 +786,9 @@ function sameVNode(vnode1, vnode2) {
    }
    ```
 
-   
+
+## 10. 手写字节点更新策略（中篇）
+
+本章节用来完成 `while循环`后的处理
+
+1. 
