@@ -1,0 +1,1 @@
+const t={key:"v-36b5f5a6",path:"/zh/skill/front/about/jquery.html",title:"jQuery",lang:"zh-CN",frontmatter:{},excerpt:"",headers:[],git:{updatedTime:1647518299e3},filePathRelative:"zh/skill/front/about/jquery.md"};export{t as data};
