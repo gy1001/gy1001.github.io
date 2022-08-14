@@ -65,6 +65,41 @@
      // 17 'd'
      ```
 
+## 2、算法相关储备-递归深入
+
+1. 递归题目1：试输出斐波那契数列的前10项，即 1、1、2、3、5、8、13、21、34、55。然后请思考，代码中是否有大量重复的计算，如何解决重算计算的问题？
+
+   * 逻辑原理：加入缓存对象，缓存之前已经计算的结果，后续直接使用那个，避免重复计算
+
+   * 代码实现
+
+     ```javascript
+     // 试着输出斐波那契额数列中的前10项，即 1、1、2、3、5、8、13、21、34、55
+     // 创建一个函数，功能是返回下标为n的这项的数字
+     // function fib(n) {
+     //   if (n === 0 || n === 1) {
+     //     return 1
+     //   }
+     //   return fib(n - 2) + fib(n - 1)
+     // }
+     
+     // 优化方案
+     // 缓存对象
+     const cacheObj = {}
+     function fib(n) {
+       if (cacheObj.hasOwnProperty(n)) {
+         return cacheObj[n]
+       }
+       const result = n === 0 || n === 1 ? 1 : fib(n - 2) + fib(n - 1)
+       cacheObj[n] = result
+       return result
+     }
+     
+     for (let index = 0; index < 10; index++) {
+       console.log(fib(index))
+     }
+     ```
+
      
 
 ## 参考文章
