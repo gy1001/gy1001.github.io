@@ -100,6 +100,66 @@
      }
      ```
 
+2. 递归题目2：试将高伪数组 [1,2,[3,[4,5],6],7,[8],9]变为如下的结构
+
+   > 小技巧：只要出现了规则重复，就要想到用递归。
+
+   ```javascript
+   {
+     children: [
+       { value: 1 },
+       { value: 2 },
+       {
+         children: [
+           { value: 3 },
+           { children: [{ value: 4 }, { value: 5 }] },
+           { value: 6 },
+         ],
+       },
+       { value: 7 },
+       {
+         children: [{ value: 8 }],
+       },
+       { value: 9 },
+     ],
+   }
+   ```
+
+   * 逻辑原理:
+
+   * 代码实现：
+
+     ```javascript
+     var a = [1, 2, [3, [4, 5], 6], 7, [8], 9]
+     
+     function convert(arr) {
+       // 准备一个结果数组
+       const resultArr = []
+     
+       arr.forEach((item) => {
+         if (typeof item === 'number') {
+           resultArr.push({
+             value: item,
+           })
+         } else if (Array.isArray(item)) {
+           resultArr.push({ children: convert(item) })
+         }
+       })
+       return resultArr
+     }
+     
+     // 优化写法
+     function convert2(item) {
+       if (typeof item === 'number') {
+         return { value: item }
+       } else if (Array.isArray(item)) {
+         return { children: item.map((_item) => convert2(_item)) }
+       }
+     }
+     console.log(convert(a))
+     console.log(convert2(a))
+     ```
+
      
 
 ## 参考文章
