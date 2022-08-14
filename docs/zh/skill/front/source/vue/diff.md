@@ -761,7 +761,6 @@ function sameVNode(vnode1, vnode2) {
      let newStartNode = newChildren[newStartIndex]
      let newEndNode = newChildren[newEndIndex]
      while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
-       console.log(oldStartNode, newStartNode)
        if (checkSameVNode(oldStartNode, newStartNode)) {
          console.log('1旧前与新前相同')
          //  比较新旧节点
@@ -802,7 +801,43 @@ function sameVNode(vnode1, vnode2) {
 
 本章节来完成 四中方式 均没有命中时候的处理
 
-理论要点：当之前四中比较逻辑都没有命中时候，就需要拿新子节点的子项，直接取旧子节点中遍历，如果有一样的子节点，就进行移动操作（把原）
+理论要点：当之前四中比较逻辑都没有命中时候，就需要拿新子节点的子项，直接取旧子节点中遍历，如果有一样的子节点，就进行移动操作，否则就进行新增处理（添加到所有未处理节点的前面）
+
+代码展示如下:
+
+```javascript
+let keyMap;
+if(){
+ ... 
+}else {
+  console.log('四种方式均没有命中')
+  if (!keyMap) {
+    keyMap = {}
+    for (let index = oldStartIndex; index < oldEndNode; index++) {
+      const key = oldChildren[index].key
+      if (key !== undefined) {
+        keyMap[key] = index
+      }
+    }
+  }
+  // 寻找当期这项（newStartIndex）在keyMap中映射的位置序号
+  const indexInOld = keyMap[newStartNode.key]
+  if (!indexInOld) {
+    console.log('我是新增的')
+    // 如果不存在，说明 当前项目是全新的项,插在未处理节点 oldStartNode 的前面
+    parentElm.insertBefore(createElement(newStartNode), oldStartNode.elm)
+  } else {
+    console.log('如果不是 undefined 说明不是全新的项目，需要移动')
+    const elmToMove = oldChildren[indexInOld]
+    patchVNode(elmToMove, newStartNode)
+    // 把这项设置为 undefined， 表示已经处理完这项，所以while循环之前的处理也要做判断，因为节点有可能被置为 undefined
+    oldChildren[indexInOld] = undefined
+    // 调用 insertBefore 把它移动到 oldStartNode 前面
+    parentElm.insertBefore(elmToMove.elm, oldStartNode.elm)
+  }
+  newStartNode = newChildren[++newStartIndex]
+}
+```
 
 ## 11、 手写字节点更新策略（下篇）
 
@@ -812,12 +847,12 @@ function sameVNode(vnode1, vnode2) {
 
    * 说明 新字节点遍历完毕，旧子节点可能还有剩余，所以我们要对可能剩下的旧子节点进行批量删除，就是**遍历剩下的节点，逐个删除DOM**
 
-   * 代码展示就是
+   * 代码展示：
 
      ```javascript
      for (let index = oldStartIndex; oldStartIndex <= oldEndIndex; ++index) {
-       // 主要这里 oldChildren[index] 有可能也会是 undefinded, 后续会做解释以及做兼容处理
-        oldChildren[index].parentNode.removeChild(oldChildren[index].elm);
+       // 主要这里 oldChildren[index] 有可能也会是 undefinded, 上节中写到
+       oldChildren[index] && oldChildren[index].parentNode.removeChild(oldChildren[index].elm);
      }
      ```
 
@@ -825,4 +860,293 @@ function sameVNode(vnode1, vnode2) {
 
    * 说明 旧子节点遍历完毕，新子节点可能有剩余，所以要对剩余的新子节点处理，很明显，剩余的新子节点不存在旧子节点中
 
+   * 代码展示：
+
+     ```javascript
+     console.log('新节点有剩余的，需要新增')
+     const before = newChildren[newEndIndex + 1] ? newChildren[newEndIndex + 1].elm : null
+     for (let index = newStartIndex; index <= newEndIndex; index++) {
+       // 如果引用节点为 null，则将指定的节点添加到指定父节点的子节点列表的末尾。
+       parentElm.insertBefore(createElement(newChildren[index]), before)
+     }
+     ```
+
+## 12、完整的 diff 代码
+
+1. `index.js`文件
+
+   ```javascript
+   import { h } from 'snabbdom'
+   import patch from './patch'
+   const container = document.getElementById('container')
    
+   const vnode1 = h('ul', {}, [
+     h('li', { key: 'A' }, 'A'),
+     h('li', { key: 'B' }, 'B'),
+     h('li', { key: 'D' }, 'D'),
+     h('li', { key: 'E' }, 'E'),
+   ])
+   patch(container, vnode1)
+   
+   // 对于不同的节点
+   const vnode2 = h('ul', {}, [
+     h('li', { key: 'A' }, 'A'),
+     h('li', { key: 'D' }, 'D'),
+     h('li', { key: 'E' }, 'E'),
+     h('li', { key: 'F' }, 'FF'),
+     h('li', { key: 'G' }, 'GG'),
+     h('li', { key: 'C' }, 'C'),
+   ])
+   // const vnode2 = h('h1', { key: 'first' }, 'hello world12222')
+   const btn = document.createElement('button')
+   btn.innerText = '点击我进行内容更新'
+   btn.addEventListener('click', function () {
+     patch(vnode1, vnode2)
+   })
+   document.body.appendChild(btn)
+   ```
+
+2. `patch.js`文件
+
+   ```javascript
+   import createElement from './createElement'
+   import patchVNode from './patchVNode'
+   import vNode from './vnode'
+   
+   function patch(oldVNode, newVNode) {
+     // 判断第一个参数 oldVNode 是虚拟节点还是 DOM 节点
+     if (oldVNode.sel === '' || oldVNode.sel === undefined) {
+       // 是空，说明是 DOM 节点，需要包装为空的虚拟节点
+       oldVNode = vNode(
+         oldVNode.tagName.toLowerCase(),
+         {},
+         [],
+         undefined,
+         oldVNode
+       )
+     }
+     // 判断 oldVNode 和 newVNode 是不是同一个节点
+     if (oldVNode.key === newVNode.key && oldVNode.sel === newVNode.sel) {
+       // '是同一个节点，需要做精细化比较'
+       patchVNode(oldVNode, newVNode)
+     } else {
+       console.log('不是同一个节点，暴力插入新的，删除旧的')
+       const newVNodeElm = createElement(newVNode)
+       if (oldVNode.elm.parentNode && newVNodeElm) {
+         oldVNode.elm.parentNode.insertBefore(newVNodeElm, oldVNode.elm)
+       }
+       // 删除 老节点
+       oldVNode.elm.parentNode.removeChild(oldVNode.elm)
+     }
+   }
+   
+   export default patch
+   ```
+
+3. `vnode.js`
+
+   ```javascript
+   export default function vNode(sel, data, children, text, elm) {
+     return {
+       sel,
+       data,
+       key: data.key,
+       children,
+       text,
+       elm,
+     }
+   }
+   ```
+
+4. `createElement.js`
+
+   ```javascript
+   /**
+    * 真正 创建节点，将 vNode 创建为dom，是孤儿节点，不进行插入，因为子节点需要递归，而子节点有没有标杆
+    * @param {*} vNode
+    * @param {*} pivot
+    */
+   export default function createElement(vNode) {
+     const domNode = document.createElement(vNode.sel)
+     // 判断有子节点还是有文本
+     if (
+       vNode.text !== '' &&
+       (vNode.children === undefined || vNode.children.length === 0)
+     ) {
+       // 它的内部是文字
+       domNode.innerText = vNode.text
+       // 补充 elm 属性
+       vNode.elm = domNode
+     } else if (Array.isArray(vNode.children) && vNode.children.length > 0) {
+       // '这里进行处理多个子节点的循环处理'
+       // 它内部是子节点，需要进行 递归创建子节点
+       for (let index = 0; index < vNode.children.length; index++) {
+         const node = vNode.children[index]
+         let nodeDOM = createElement(node)
+         domNode.appendChild(nodeDOM)
+       }
+       vNode.elm = domNode
+     }
+   
+     // 返回 elm，是一个纯 DOM 节点
+     return vNode.elm
+   }
+   ```
+
+5. `patchVNode.js`
+
+   ```javascript
+   import updateChildren from './updateChildren'
+   
+   export default function patchVNode(oldVNode, newVNode) {
+     // 在内存中是不是同一个节点
+     if (oldVNode === newVNode) {
+       return
+     }
+     newVNode.elm = oldVNode.elm
+     if (
+       newVNode.text !== undefined &&
+       (newVNode.children === undefined || newVNode.children.length === 0)
+     ) {
+       console.log('判断 newVNode 有 text 属性')
+       if (newVNode.text !== oldVNode.text) {
+         // 把 oldVNode.elm 中的text 变为 newVNode 中的text(即使 oldVNode 有children属性，innerText一旦改变后，老children也就没了)
+         oldVNode.elm.innerText = newVNode.text
+         return
+       }
+     } else {
+       console.log('newVNode 没有 text 属性')
+       // 判断 oldVNode 有没有 children
+       if (oldVNode.children !== undefined && oldVNode.children.length > 0) {
+         // 老的节点有 children，此时是最复杂的情况，就是新老节点都有 children
+         console.log('最复杂')
+         updateChildren(oldVNode.elm, oldVNode.children, newVNode.children)
+       } else {
+         // 老的没有 children 新的有 children
+         oldVNode.elm.innerText = ''
+         newVNode.children.forEach((node) => {
+           const newNodeDom = createElement(node)
+           oldVNode.elm.appendChild(newNodeDom)
+         })
+       }
+     }
+   }
+   ```
+
+6. `updateChildren.js`
+
+   ```javascript
+   import createElement from './createElement'
+   import patchVNode from './patchVNode'
+   
+   function checkSameVNode(vNode1, vNode2) {
+     return vNode1.sel === vNode2.sel && vNode1.key === vNode2.key
+   }
+   
+   export default function updateChildren(parentElm, oldChildren, newChildren) {
+     oldChildren.children = oldChildren.children || []
+     newChildren.children = newChildren.children || []
+     // 旧前、旧后、新前、新后
+     let oldStartIndex = 0
+     let oldEndIndex = oldChildren.length - 1
+     let newStartIndex = 0
+     let newEndIndex = newChildren.length - 1
+     // 老节点中的key集合
+     let keyMap
+     // 旧前节点、旧后节点、新前节点、新后节点
+     let oldStartNode = oldChildren[oldStartIndex]
+     let oldEndNode = oldChildren[oldEndIndex]
+     let newStartNode = newChildren[newStartIndex]
+     let newEndNode = newChildren[newEndIndex]
+     while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
+       // 如果旧的开始节点不存在，也就是之前设置了 undefined
+       if (oldStartNode == null) {
+         // 注意 undefined == null  为true
+         oldStartNode = oldChildren[++oldStartIndex]
+       } else if (oldEndNode == null) {
+         oldEndNode = oldChildren[--oldEndIndex]
+       } else if (newStartNode == null) {
+         newStartNode = newChildren[++newStartIndex]
+       } else if (newEndNode == null) {
+         newEndNode = newChildren[--newEndIndex]
+       }
+       if (checkSameVNode(oldStartNode, newStartNode)) {
+         console.log('1旧前与新前相同')
+         //  比较新旧节点
+         patchVNode(oldStartNode, newStartNode)
+         oldStartNode = oldChildren[++oldStartIndex]
+         newStartNode = newChildren[++newStartIndex]
+       } else if (checkSameVNode(oldEndNode, newEndNode)) {
+         // 比较 旧后与新后
+         console.log('2旧后与新后相同')
+         patchVNode(oldEndNode, newEndNode)
+         oldEndNode = oldChildren[--oldEndIndex]
+         newEndNode = newChildren[--newEndIndex]
+       } else if (checkSameVNode(oldStartNode, newEndNode)) {
+         // 旧前与新后
+         console.log('3新后与旧前相同')
+         // 当新后与旧前命中的时候，此时需要移动节点，移动 新后 指向的这个节点到老节点的旧后的后面
+         patchVNode(oldStartNode, newEndNode)
+         parentElm.insertBefore(oldStartNode.elm, oldEndNode.elm.nextSibling)
+         oldStartNode = oldChildren[++oldStartIndex]
+         newEndNode = newChildren[--newEndIndex]
+       } else if (checkSameVNode(oldEndNode, newStartNode)) {
+         // 旧后与新前
+         console.log('4旧后与新前相同')
+         // 此时要移动节点，移动 新前 节点到老节点的旧前的前面
+         patchVNode(oldEndNode, newStartNode)
+         parentElm.insertBefore(oldEndNode.elm, oldStartNode.elm)
+         oldEndNode = oldChildren[--oldEndIndex]
+         newStartNode = newChildren[++newStartIndex]
+       } else {
+         console.log('四种方式均没有命中')
+         if (!keyMap) {
+           keyMap = {}
+           for (let index = oldStartIndex; index < oldEndNode; index++) {
+             const key = oldChildren[index].key
+             if (key !== undefined) {
+               keyMap[key] = index
+             }
+           }
+         }
+         // 寻找当期这项（newStartIndex）在keyMap中映射的位置序号
+         const indexInOld = keyMap[newStartNode.key]
+         if (!indexInOld) {
+           console.log('我是新增的')
+           // 如果不存在，说明 当前项目是全新的项,插在未处理节点 oldStartNode 的前面
+           parentElm.insertBefore(createElement(newStartNode), oldStartNode.elm)
+         } else {
+           console.log('如果不是 undefined 说明不是全新的项目，需要移动')
+           const elmToMove = oldChildren[indexInOld]
+           patchVNode(elmToMove, newStartNode)
+           // 把这项设置为 undefined， 表示已经处理完这项
+           oldChildren[indexInOld] = undefined
+           // 调用 insertBefore 把它移动到 oldStartNode 前面
+           parentElm.insertBefore(elmToMove.elm, oldStartNode.elm)
+         }
+         newStartNode = newChildren[++newStartIndex]
+       }
+     }
+     console.log('while循环结束')
+     // 这里要做删除，<或者新增剩余节点
+     if (newStartIndex <= newEndIndex) {
+       console.log('新节点有剩余的，需要新增')
+       const before = newChildren[newEndIndex + 1]
+         ? newChildren[newEndIndex + 1].elm
+         : null
+       for (let index = newStartIndex; index <= newEndIndex; index++) {
+         // 如果引用节点为 null，则将指定的节点添加到指定父节点的子节点列表的末尾。
+         parentElm.insertBefore(createElement(newChildren[index]), before)
+       }
+     } else if (oldStartIndex <= oldEndIndex) {
+       // 循环结束了，oldStartIndex 还是小于 oldEndIndex
+       // 批量删除 oldStartIndex 和 oldEndIndex 之间的项
+       for (let index = oldStartIndex; index <= oldEndIndex; index++) {
+         parentElm.removeChild(oldChildren[index].elm)
+       }
+     }
+   }
+   ```
+
+   
+
