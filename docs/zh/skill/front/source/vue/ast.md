@@ -160,6 +160,83 @@
      console.log(convert2(a))
      ```
 
+## 3、算法相关储备：栈
+
+### 3.1 栈的定义
+
+* 栈（stack）又名堆栈，它是一种运算受限的线性表，**仅在表尾能进行插入和删除操作**。这一端被称为**栈顶**，把另一端常伟**栈底**
+* 向一个栈插入新元素又称为**进栈、入栈或者压栈**；从一个栈删除元素又被称作**出栈或退栈**
+* **后进先出(LFIO)特点**：栈中的元素，最先进栈的必定是最后出栈，后进栈的一定会先出栈
+* 在JavaScript中，栈可以用**数组模拟**。需要限制只能适用 push 和 pop, 不能使用 unshift 和 shift。即**数组尾是栈顶**。
+* 当然，可以用面向对象等手段，将栈封装的更好。
+
+### 3.2 利用栈的题目
+
+1. 试着编写，”只能重复“ smartRepeat 函数， 实现
+
+   * 以下效果
+
+     * 将 3[a,b,c] 变为 abcabcabc
+     * 将3[2[a]2[b]]变为aabbaabbaabb
+     * 将2[1[a]3[b]2[3[c]4[d]]]变为 abbcccdddcccddddabbcccdddcccdddd
+     * 不用考虑输入字符时非法的情况，比如
+       * 2[a3[b]]是错误的，应该补一个1，即2[1[a]3[b]]
+       * [abc]使错误的，应该补一个1，即1[abc]
+
+   * 难点：我们需要分辨 ] 和前面的哪一个 [ 是一对的，所以用栈的思想更好处理
+
+   * 逻辑原理：
+
+     * 准备两个数组（模拟栈），一个用来存放数字，一个用来存放字符串。接着，遍历每一个字符
+     * 如果这个字符是数字，那么就把数字压栈，把空字符串压栈
+     * 如果这个字符是字母，那么就把栈顶这项改为这个字母
+     * 如果这个字符是 ],那么将数字弹栈，并把字符串的栈顶元素重复刚刚的这个次数弹栈，然后拼接到字符串的新栈顶上
+
+   * 代码展示
+
+     ```javascript
+     function smartRepeat(templateStr) {
+       // 指针
+       let index = 0
+       // 两个栈
+       const stackNumber = []
+       const stackString = []
+       // 剩余部分
+       let restString = templateStr
+       while (index < templateStr.length - 1) {
+         // 剩余部分
+         rest = templateStr.substring(index)
+         // 判断剩余部分是不是以数字和【开头
+         if (/^\d+\[/.test(rest)) {
+           console.log('以数字开头')
+           // 得到这个数字
+           const number = Number(rest.match(/^(\d+)\[/)[1])
+           stackNumber.push(number)
+           stackString.push('')
+           index += number.toString().length
+         } else if (/^\w+\]/.test(rest)) {
+           console.log('以字母开头')
+           const word = rest.match(/^(\w+)\]/)[1]
+           stackString[stackString.length - 1] = word
+           index += word.length
+         } else {
+           if (/^\]/.test(rest)) {
+             console.log(rest, '以]开头')
+             const number = stackNumber.pop()
+             const word = stackString.pop()
+             // console.log(word, number)
+             stackString[stackString.length - 1] += word.repeat(number)
+           }
+           index++
+         }
+       }
+       return stackString[0].repeat(stackNumber[0])
+     }
+     // const string = '2[3[abc]]'
+     const string = '2[1[abc]3[bef]]'
+     console.log(smartRepeat(string))
+     ```
+
      
 
 ## 参考文章
