@@ -237,7 +237,56 @@
      console.log(smartRepeat(string))
      ```
 
-     
+## 4、AST 实现原理
+
+### 4.1 搭建基本环境
+
+1. 执行以下命令
+
+   ```shell
+   mkdir vue-ast
+   cd vue-ast
+   npm init -y
+   npm install webpack webpack-cli webpack-dev-server --save-dev
+   npm install html-webpack-plugin --save
+   ```
+
+2. 新建`webpack.config.js`，内容如下
+
+   ```javascript
+   const HtmlWebpackPlugin = require('html-webpack-plugin')
+   const path = require('path')
+   module.exports = {
+     mode: 'development',
+     entry: './src/index.js',
+     output: {
+       filename: 'bundle.js',
+       path: path.resolve(__dirname, 'dist'),
+     },
+     plugins: [new HtmlWebpackPlugin({
+       template:"./src/index.html"
+     })],
+   }
+   ```
+
+3. `package.json`中增加以下脚本
+
+   ```javascript
+   {
+     ...
+     "scripts": {
+       "dev": "webpack server"
+     },
+   }
+   ```
+
+4. 新建`src/index.html`、`src/index.js`文件，写入需要的内容
+
+5. 运行命令`npm run dev`，打开`http://localhost:8080`就可以看到运行的效果
+
+### 4.2、手写 AST 原理
+
+
 
 ## 参考文章
 
