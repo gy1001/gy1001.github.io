@@ -113,6 +113,11 @@ export const sidebarZh: SidebarConfig = {
       children: ['/zh/other/', '/zh/other/video'],
     },
     {
+      text: '常用快捷键',
+      collapsible: false,
+      children: ['/zh/other/hotkey/vscode.md'],
+    },
+    {
       text: '课程笔记',
       collapsible: false,
       children: [
