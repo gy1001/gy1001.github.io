@@ -367,6 +367,126 @@
    }
    ```
 
+
+## 5、识别 attrs
+
+上述代码没有处理标签内部含有属性的情况，例如，对于下例模板字符串进行解析处理时就会报错
+
+```javascript
+// index.js
+import parse from './parse'
+
+var templateString = `
+  <div class="mine your" id="box" data-color="red">
+    <h3>
+      <span class="text">你好</span>
+      <span>我是我 我是</span>
+    </h3>
+    <ul>
+      <li>A</li>
+      <li>B</li>
+      <li>C</li>
+    </ul>
+  </div>
+`
+const ast = parse(templateString.trim())
+console.log(ast)
+```
+
+1. 逻辑分析：其实就是要更改上一节中的`startRegexp` 正则表达式需要进行更改，并且压入的内容也要进行更改，把类似属性`class="mine your" id="box" data-set="red"`变为`[ { name:"class", value:"mine your" }, { name: "id", value: "box" }, { name:"data-color", value: "red" } ]`
+
+2. 代码实现
+
+   ```javascript
+   // parse.js
+   export default function parse(templateString) {
+     // 指针
+     let index = 0
+     // 开始标记
+     // 更改了 startRegexp， 兼容属性的处理方式
+     const startRegexp = /^\<([a-z]+[0-9]?)(\s[^\<]+)?\>/
+     const endRegexp = /^\<\/([a-z]+[0-9]?)\>/
+     // 因为它是在 跳过开始标签 、结束标签之后的文字进行匹配，只需要判断不是以 \< 开头即可，
+     const wordRegexp = /^([^\<]+)\<\/([a-z]+[0-9]?)\>/
+     const stack1 = []
+     const stack2 = []
+     while (index < templateString.length - 1) {
+       const restString = templateString.substring(index)
+       // 判断这个字符是不是一个开始标签
+       if (startRegexp.test(restString)) {
+         const tag = restString.match(startRegexp)[1]
+         const attrs = restString.match(startRegexp)[2]
+         console.log('检测到开始标记<' + tag)
+         // 将开始标记推入stack1中
+         stack1.push(tag)
+         // 将数组对象推入 stack2 中，新增加了属性 attrs 的兼容处理
+         const parseAttrsArr = attrs ? parseAttrs(attrs) : []
+         stack2.push({ tag: tag, type: 2, attrs: parseAttrsArr })
+         // 这里要 +2 因为<> 也占用两个位置
+         const attrsLength = attrs ? attrs.length : 0
+         index += tag.length + 2 + attrsLength
+       } else if (endRegexp.test(restString)) {
+         // 判断这个字符是不是一个结束标签
+         const tag = restString.match(endRegexp)[1]
+         console.log('检测到结束标记</' + tag)
+         if (tag === stack1[stack1.length - 1]) {
+           stack1.pop()
+           // 最后一项不能弹栈
+           if (stack2.length <= 1) {
+             break
+           }
+           const pop_obj = stack2.pop()
+           if (!stack2[stack2.length - 1].children) {
+             stack2[stack2.length - 1].children = []
+           }
+           stack2[stack2.length - 1].children.push(pop_obj)
+         } else {
+           throw new Error(stack1[stack1.length - 1] + '标签没有封闭!!!')
+         }
+         index += tag.length + 3
+       } else if (wordRegexp.test(restString)) {
+         const word = restString.match(wordRegexp)[1]
+         if (word.trim()) {
+           console.log('监测到文本:' + word)
+           stack2[stack2.length - 1].text = word
+           stack2[stack2.length - 1].type = 3
+         }
+         index += word.length
+       } else {
+         index++
+       }
+     }
+     return stack2[0]
+   }
+   
+   // 新增：属性处理函数：
+   function parseAttrs(attrStr) {
+     const attrsArr = []
+     // 当前是否在引号内部
+     let isInQuote = false
+     let point = 0
+     for (let index = 0; index < attrStr.length; index++) {
+       const currentChar = attrStr[index]
+       if (currentChar === '"' && isInQuote === false) {
+         isInQuote = true
+       } else if (currentChar === '"' && isInQuote === true) {
+         // 这里利用正则表达式去除前后引号 "
+         const result = attrStr
+           .substring(point, index + 1)
+           .trim()
+           .match(/^(.+)="(.+)"$/)
+         attrsArr.push({
+           name: result[1],
+           value: result[2],
+         })
+         point = index + 1
+         isInQuote = false
+       }
+     }
+     return attrsArr
+   }
+   ```
+
    
 
 ## 参考文章
