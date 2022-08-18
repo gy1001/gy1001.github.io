@@ -132,3 +132,150 @@ console.log(object1.property1)
      })
    }
    ```
+
+## 3、递归侦测对象全部属性
+
+### 3.1 搭建基本环境
+
+1. 执行以下命令
+
+   ```shell
+   mkdir vue-reactivity
+   cd vue-reactivity
+   npm init -y
+   npm install webpack webpack-dev-server webpack-cli --save-dev
+   npm install html-webpack-plugin --save
+   ```
+
+2. 新建`webpack.config.js`，写入以下内容
+
+   ```javascript
+   const HtmlWebpackPlugin = require('html-webpack-plugin')
+   const path = require('path')
+   
+   module.exports = {
+     mode: 'development',
+     entry: './src/index.js',
+     output: {
+       path: path.resolve(__dirname, 'dist'),
+       filename: 'bundle.js',
+     },
+     plugins: [
+       new HtmlWebpackPlugin({
+         template: './src/index.html',
+       }),
+     ],
+   }
+   ```
+
+3. `package.json`中增加以下脚本
+
+   ```javascript
+   {
+     ...
+     "scripts": {
+       "dev": "webpack serve"
+     }
+   }
+   ```
+
+4. 新建`src/index.html`、`src/index.js`文件，并写入想要的内容
+
+5. 运行命令`npm run dev`，打开浏览器，输入相应地址就可以看到效果。至此，基本环境搭建完成
+
+### 3.2 书写代码
+
+涉及到以下类
+
+**Observer**：将一个正常的 object 转换为每个层级的属性都是响应式（可以被侦测）的 object
+
+1. `index.js`中 写入以下内容
+
+   ```javascript
+   import observe from './observe'
+   const obj = {
+     a: {
+       m: {
+         n: 5,
+       },
+     },
+     b: 9,
+   }
+   
+   observe(obj)
+   obj.a.m.n = 8
+   obj.b = 10
+   console.log(obj.a.m.n)
+   console.log(obj.b)
+   ```
+
+2. 新建`observe.js`,写入以下内容
+
+   ```javascript
+   import Observer from './Observer'
+   
+   // 创建 observe 函数
+   export default function observe(value) {
+     if (typeof value !== 'object') {
+       return
+     }
+     var ob
+     if (typeof value.__ob__ !== 'undefined') {
+       ob = value.__ob__
+     } else {
+       ob = new Observer(value)
+     }
+     return ob
+   }
+   ```
+
+3. 新建`Observer.js`,写入以下内容
+
+   ```javascript
+   import defineReactive from './defineReactive'
+   import { def } from './utis'
+   
+   export default class Observer {
+     constructor(value) {
+       // 给实例(this,一定要注意，构造函数中的this不是类本身，而是表示实例)添加了 __ob__属性，值是这次new的实例
+       def(value, '__ob__', this, false)
+       this.walk(value)
+     }
+     // 遍历
+     walk(value) {
+       for (const key in value) {
+         defineReactive(value, key, value[key])
+       }
+     }
+   }
+   ```
+
+4. 新建`defineReactive.js`，写入以下内容
+
+   ```javascript
+   import observe from './observe'
+   
+   export default function defineReactive(data, key, val) {
+     // value 可能也是对象，所以也要进行做处理
+     observe(val)
+     Object.defineProperty(data, key, {
+       get() {
+         console.log('获取' + key + '属性')
+         return val
+       },
+       set(newVal) {
+         console.log('设置' + key + '属性', newVal)
+         if (newVal === val) {
+           return
+         }
+         // 当设置了新值，新值也要被 observe
+         observe(newVal)
+         val = newVal
+         return newVal
+       },
+     })
+   }
+   ```
+
+   
+
