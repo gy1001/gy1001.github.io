@@ -277,5 +277,102 @@ console.log(object1.property1)
    }
    ```
 
+## 4、数组的响应式处理
+
+> push、pop、shift、unshift、splice、sort、reverse 这七种方法被改写了
+
+### 4.1 对数组的 API 进行做拦截处理
+
+1. 逻辑分析：
+
+   * 对于数组，通过`Object.defineProperty`并不能获得setter 和 getter 的响应。我们只能通过对它的原型链上做拦截处理。在日常使用中，`vue`对我们常用的一些数组处理方式做了拦截处理，保留了原有的功能，并增加了响应的拦截处理（比如：触发依赖收集、更新，以及对新添加的数据进行响应式处理）
+
+2. 代码实现(这里先做对数组的API拦截处理部分)
+
+   * 对`Observer.js`进行修改，判断数据类型为数组时候做单独处理
+
+     ```javascript
+     import defineReactive from './defineReactive'
+     import { def } from './utis'
+     import { arrayMethods } from './array'
+     
+     export default class Observer {
+       constructor(value) {
+      		
+         // 新增加
+         // 如果类型是数组，要讲这个数组的原型指向新创建的 arrayMethods
+         if(Array.isArray(value)){
+            handleWithArray(value)
+         }else{
+         	this.walk(value)  
+         }
+         
+       }
+       // 遍历
+       walk(value) {
+         //...
+       }
+     }
+       
+     function handleWithArray(value) {
+       // 实际上直接替换即可，但是源码中做了一个兼容处理。某些浏览器可能不支持 __proto__
+       // value.__proto__ = arrayMethods
+       // 以下代码为兼容处理
+       const augment = hasProto ? protoAugment : copyAugment
+       augment(value, arrayMethods, arrayKeys)
+     }
+     
+     // 把数组的原型链指向 我们新创建的函数
+     function protoAugment(target, src) {
+       target.__proto__ = src
+     }
+     
+     // 遇见不兼容时候，则调用copyAugment函数将拦截器中的方法挂载到value上
+     function copyAugment(target, src, keys) {
+       for (let index = 0; index < keys.length; index++) {
+         const key = keys[index]
+         def(target, key, src[key])
+       }
+     }
+     ```
+
+   * 创建`array.js`,内容如下
+
+     ```javascript
+     import { def } from './utils'
+     
+     const arrayProperty = Array.prototype
+     // 新创建原型并暴露
+     export const arrayMethods = Object.create(arrayProperty)
+     
+     const needChangeMethods = [
+       'push',
+       'pop',
+       'shift',
+       'unshift',
+       'splice',
+       'sort',
+       'reverse',
+     ]
+     
+     needChangeMethods.forEach((methodName) => {
+       // 备份原来的方法
+       const original = arrayProperty[methodName]
+       // 定义新的方法
+       def(
+         arrayMethods,
+         methodName,
+         function () {
+           const result = original.apply(this, arguments)
+           console.warn('数组拦截器被拦截了', methodName, result)
+           return result
+         },
+         false
+       )
+     })
+     ```
+
+     
+
    
 
