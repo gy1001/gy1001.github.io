@@ -12,7 +12,7 @@
 
    模板：
 
-   ```html 
+   ```html
    <p>我{{age}}岁了</p>
    ```
 
@@ -29,14 +29,14 @@
    `Vue数据变化`： 非侵入式
 
    ```javascript
-   this.a +++ 
+   this.a +++
    ```
 
    `React数据变化`：侵入式
 
    ```javascript
    this.setState({
-     a: this.state.a + 1
+     a: this.state.a + 1,
    })
    ```
 
@@ -44,7 +44,7 @@
 
    ```javascript
    this.setData({
-     a: this.data.a + 1
+     a: this.data.a + 1,
    })
    ```
 
@@ -54,30 +54,81 @@
 
 利用 JavaScript 引擎赋予的功能，检测对象属性的变化，仅有"上帝的钥匙"不够，还需要设计一套精密的系统。
 
-## 1. Object.defineProperty
+## 1、Object.defineProperty
 
 > Object.defineProperty()方法会直接在一个对象上定义一个新属性，或者修改一个对象的原有属性，并返回此对象。
 
-* 可以通过它设置一些额外隐藏的属性
-* get/set：getter 和 setter 函数
+- 可以通过它设置一些额外隐藏的属性
+- get/set：getter 和 setter 函数
 
 代码示例
 
 ```javascript
-const object1 = {};
+const object1 = {}
 
 Object.defineProperty(object1, 'property1', {
   value: 42,
   // 是否可写
   writable: false,
   // 是否可以被枚举
-  enumerable: false
-});
+  enumerable: false,
+})
 
-object1.property1 = 77;
+object1.property1 = 77
 // throws an error in strict mode
 
-console.log(object1.property1);
+console.log(object1.property1)
 // expected output: 42
 ```
 
+## 2、defineReactive 函数
+
+1. getter/setter 需要变量周转才可以成功
+
+   代码示例
+
+   ```javascript
+   let temp
+   const obj = {}
+
+   Object.defineProperty(obj, 'a', {
+     //getter
+     get() {
+       console.log('你试图访问obj的a属性')
+       return temp
+     },
+     set(newValue) {
+       console.log('你试图设置obj的a属性', newValue)
+       temp = newValue
+     },
+   })
+   console.log(obj.a)
+   obj.a = 9
+   console.log(obj.a)
+   ```
+
+2. 上述代码实现方式不够优雅，可以利用闭包特性来进一步优化实现
+
+   代码示例
+
+   ```javascript
+   function defineReactive(data, key, val) {
+     Object.defineProperty(data, key, {
+       // 可枚举
+       enumerable: true,
+       // 可以被配置，比如可以被 delete
+       configurable: true,
+       get() {
+         console.log('你试图访问obj的a属性')
+         return val
+       },
+       set(newValue) {
+         if (newValue === val) {
+           return
+         }
+         console.log('你试图设置obj的a属性', newValue)
+         val = newValue
+       },
+     })
+   }
+   ```
