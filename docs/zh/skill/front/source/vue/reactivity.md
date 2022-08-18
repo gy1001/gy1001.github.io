@@ -59,7 +59,7 @@
 > Object.defineProperty()方法会直接在一个对象上定义一个新属性，或者修改一个对象的原有属性，并返回此对象。
 
 - 可以通过它设置一些额外隐藏的属性
-- get/set：getter 和 setter 函数
+- get/set：getter 和 setter 函数, **其中在 `get` 和 `set` 方法中，`this` 指向某个被访问和修改属性的对象。**
 
 代码示例
 
@@ -189,6 +189,14 @@ console.log(object1.property1)
 
 **Observer**：将一个正常的 object 转换为每个层级的属性都是响应式（可以被侦测）的 object
 
+**注意**：<u>这里添加了一个不可枚举的`__ob__`属性,这个属性值是当前 Observer 的实例。 这样我们就可以通过数组数据的 `__ob__` 属性拿到 Observer
+ 实例，然后就可以拿到 `__ob__`上的dep啦</u>
+
+添加`__ob__`的作用：
+
+* **为了在拦截器中访问Observer实例**
+* **还可以用来标记当前 value 是否已经被 Observer 转换成了响应式数据**
+
 1. `index.js`中 写入以下内容
 
    ```javascript
@@ -298,7 +306,8 @@ console.log(object1.property1)
      
      export default class Observer {
        constructor(value) {
-      		
+         // 给实例(this,一定要注意，构造函数中的this不是类本身，而是表示实例)添加了 __ob__属性，值是这次new的实例
+         def(value, '__ob__', this, false)
          // 新增加
          // 如果类型是数组，要讲这个数组的原型指向新创建的 arrayMethods
          if(Array.isArray(value)){
@@ -306,7 +315,6 @@ console.log(object1.property1)
          }else{
          	this.walk(value)  
          }
-         
        }
        // 遍历
        walk(value) {
@@ -372,7 +380,87 @@ console.log(object1.property1)
      })
      ```
 
-     
+### 4.2 响应式处理数组中的元素
+
+1. 遗留问题：上一节中对数组的原型链进行了处理，相当于增加了一层拦截器。但是并没有对数组中的元素进行响应式处理。
+
+2. 逻辑分析：在`Observer.js`判断数据类型为 数组时，在处理数组拦截器后，还要对数组进行遍历，使其子项处理为响应式
+
+3. 代码实现
+
+   修改`Observer.js`,判断数据类型为数组时候继续新增加遍历处理部分
+
+   ```javascript
+   import observe from './observe'
+   
+   export default class Observer {
+     constructor(){
+       // 给实例(this,一定要注意，构造函数中的this不是类本身，而是表示实例)添加了 __ob__属性，值是这次new的实例
+       def(value, '__ob__', this, false)
+       if(Array.isArray(value)){
+         handleWithArray(value)
+         // 新增加
+         this.observeArray(value)
+       }else{
+         this.walk(value)  
+       }
+     }
+   
+     // 侦测数组中的每一项
+     observeArray(items) {
+       for (let index = 0, l = items.length; index < l; index++) {
+         observe(items[index])
+       }
+     }
+   }
+   ```
+
+### 4.3 对数组拦截器的API做处理
+
+> 对于push、splice 等方法，涉及到新增加元素，这个元素也要实现响应式处理
+
+1. 逻辑分析：针对需要处理的不同方法，把各自新增的元素提取处理，然后处理为响应式
+
+   注意：这里用到了 3.2 章节中新增加的 `__ob__`属性，因为这里要调用 `Observer`中的`observerArray`方法来处理新项
 
    
+
+2. 代码实现
+
+   * 修改`array.js`,内容如下
+
+     ```javascript
+     needChangeMethods.forEach((methodName) => {
+       // 备份原来的方法
+       const original = arrayProperty[methodName]
+       // 定义新的方法
+       def(
+         arrayMethods,
+         methodName,
+         function (...args) {
+           const result = original.apply(this, arguments)
+           console.warn('数组拦截器被拦截了', methodName, result)
+       		// 新增加(注意第1节中说的，在 get 和 set 中 this指向某个被访问和修改属性的对象。)
+           const ob = this.__ob__
+           let insertedItems
+           switch (methodName) {
+             case 'push':
+             case 'unshift':
+               insertedItems = args
+               break
+             case 'splice':
+               insertedItems = args.slice(2)
+               break
+           }
+           if (insertedItems) ob.observeArray(insertedItems)
+           return result
+         },
+         false
+       )
+     })
+     ```
+
+     
+
+
 
