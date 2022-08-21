@@ -45,6 +45,7 @@ export const sidebarZh: SidebarConfig = {
         '/zh/skill/front/source/axios.md',
         '/zh/skill/front/source/promise.md',
         '/zh/skill/front/source/utils.md',
+        '/zh/skill/front/source/jquery.md',
         {
           text: 'Vue源码',
           children: [
