@@ -70,4 +70,20 @@
    * (10763, 10878) offset() position() offsetParent()
    * (11016, 11037) bind() unbind() delegate() undelegate() hover()
 
+
+## 2、其中的一些注释
+
+1. 为什么里面使用`use strict`
+
+   >Edge <= 12 - 13+, Firefox <=18 - 45+, IE 10 - 11, Safari 5.1 - 9+, iOS 6 - 9.1 throw exceptions when non-strict code (e.g., ASP.NET 4.5) accesses strict mode arguments.callee.caller (trac-13335). But as of jQuery 3.0 (2016), strict mode should be common enough that all such attempts are guarded in a try block.
+   >
+   >
+   >
+   >Edge<=12-13+、Firefox<=18-45+、IE 10-11、Safari 5.1-9+、iOS 6-9.1当非严格代码（例如ASP.NET 4.5）访问严格模式时引发异常
+   >
+   >arguments.callee。呼叫者（trac-13335）。但从jQuery 3.0（2016）开始，严格模式应该是常见的足以使所有此类尝试在try块中受到保护。
+
    
+
+
+
