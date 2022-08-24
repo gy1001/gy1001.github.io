@@ -83,7 +83,29 @@
    >
    >arguments.callee。呼叫者（trac-13335）。但从jQuery 3.0（2016）开始，严格模式应该是常见的足以使所有此类尝试在try块中受到保护。
 
+
+## 3、一些神奇的代码片段
+
+1. 逻辑分析：这里 `jQuery`函数返回器原型上的`prototype.init()`，同时`jQuery.prototype.init.prototype = jQuery.prototype`,这样就可以保证`jQuery()`身上拥有其原型上的方法。也就是其中的`css`方法等，这里算是一个利用原型设计的一个巧妙之处。
+
+   ```javascript
+   function jQuery() {
+     return new jQuery.prototype.init()
+   }
+   jQuery.prototype.init = function () {
+     console.log('我是init 初始化')
+   }
+   jQuery.prototype.css = function () {
+     console.log('我是css方法')
+   }
+   jQuery.prototype.init.prototype = jQuery.prototype
    
+   jQuery().css()
+   ```
+
+2. 
+
+
 
 
 
