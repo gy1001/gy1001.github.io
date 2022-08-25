@@ -136,6 +136,10 @@ export const sidebarZh: SidebarConfig = {
       children: ['/zh/other/hotkey/vscode.md'],
     },
     {
+      text: '折腾笔记',
+      children: ['/zh/other/toss/mac-in-windows.md'],
+    },
+    {
       text: '课程笔记',
       collapsible: false,
       children: [
