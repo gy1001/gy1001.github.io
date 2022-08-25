@@ -256,3 +256,7 @@
    // 初始化rootjQuery
    rootjQuery = jQuery(document)
    ```
+
+   参考链接:
+
+   [jQuery 源码之构造 jQuery 对象——jQuery.fn.init(selector, context, root)](https://blog.csdn.net/chunchun1230/article/details/104123590)
