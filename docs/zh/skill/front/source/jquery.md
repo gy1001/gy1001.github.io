@@ -121,7 +121,6 @@
        }
        // 重置root：rootjQuery包含了document对象的jQuery对象，以此支持jquery.sub
        root = root || rootjQuery
-
        // 处理HTML字符串参数
        // $('#div1') $(".box") $("div") $("#div div.box")
        // $("<li>") $("<li>hello") $("<li>1</li><li>2</li>")
@@ -176,7 +175,6 @@
                  true
                )
              )
-
              // HANDLE: $(html, props)
              // 解析$(HTML, props)格式
              // 如果正则rsingleTag验证"match[1]"是否是一个单独的标签，且context是一个纯粹的对象条件成立。循环这个json对象，并判断json里的属性是否是jq自带的方法，如果是，则直接调用方法，否则，用jq的attr方法为这个标签加一个“match”属性。
@@ -185,16 +183,13 @@
                  // Properties of context are called as methods if possible
                  if (isFunction(this[match])) {
                    this[match](context[match])
-
                    // ...and otherwise set as attributes
                  } else {
                    this.attr(match, context[match])
                  }
                }
              }
-
              return this
-
              // HANDLE: $(#id)
            } else {
              // 判断字符串是ID且未指定参数
@@ -209,7 +204,6 @@
              // 返回当前对象
              return this
            }
-
            // HANDLE: $(expr, $(...))
            // 判断字符串是选择器表达式
          } else if (!context || context.jquery) {
@@ -223,7 +217,6 @@
            // 即先创建一个包含了context的jQuery对象，然后在该对象上调用find()方法。
            return this.constructor(context).find(selector)
          }
-
          // HANDLE: $(DOMElement)
          // 如果参数selector含有属性nodeType，则认为selector是DOM元素，设置第一个元素指向该DOM元素、属性length为1，然后返回包含了改DOM元素引用的jQuery对象。nodeType声明了文档树中节点的类型，例如，element节点的该属性值是1，text节点是3，comment是9，document是9, documentfragment节点是11。
          // 参数selector是节点，设置第一个元素、属性length，并返回当前对象。
@@ -231,7 +224,6 @@
          this[0] = selector
          this.length = 1
          return this
-
          // HANDLE: $(function)
          // Shortcut for document ready
          // 参数selector是函数
@@ -247,16 +239,14 @@
        // 参数selector是任意值，如果selector是数组或伪数组（如jQuery对象），则都添加到当前jQuery对象中；
        return jQuery.makeArray(selector, this)
      })
-
    // Give the init function the jQuery prototype for later instantiation
    // 通过 init.prototype = jQuery.fn; 用jQuery()原型对象覆盖了jQuery.fn.init()的原型对象。
    init.prototype = jQuery.fn
-
    // Initialize central reference
    // 初始化rootjQuery
    rootjQuery = jQuery(document)
    ```
-
+   
    参考链接:
-
+   
    [jQuery 源码之构造 jQuery 对象——jQuery.fn.init(selector, context, root)](https://blog.csdn.net/chunchun1230/article/details/104123590)
