@@ -90,11 +90,11 @@ JavaScript 是轻量级解释型语言。浏览器接受到 JavaScript 代码，
 ```html
 <button onclick="createParagraph()">点我呀</button>
 <script>
-	function createParagraph() {
-		const para = document.createElement('p')
-		para.textContent = '你点击了这个按钮！'
-		document.body.appendChild(para)
-	}
+  function createParagraph() {
+    const para = document.createElement('p')
+    para.textContent = '你点击了这个按钮！'
+    document.body.appendChild(para)
+  }
 </script>
 ```
 
@@ -295,5 +295,3 @@ JavaScript 伴随着互联网的发展一起发展。互联网周边技术的快
 [MDN-JavaScript](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript)
 
 [JavaScript 语言的历史](https://wangdoc.com/javascript/basic/history.html)
-
-<CommentService />

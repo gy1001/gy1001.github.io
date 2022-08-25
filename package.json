@@ -3,17 +3,15 @@
   "version": "1.0.0",
   "description": "个人网站",
   "main": "index.js",
-  "repository": "https://github.com/mineMineGo/gy-fly.git",
+  "repository": "https://github.com/gy1001/gy1001.github.io.git",
   "author": "gaoyuan <gaoyuan_flying@163.com>",
   "license": "MIT",
-  "devDependencies": {
-    "vuepress": "^2.0.0-beta.36",
-    "vuepress-plugin-comment2": "^2.0.0-beta.5",
-    "vuepress-plugin-copy-code2": "^2.0.0-beta.5"
-  },
   "scripts": {
     "dev": "vuepress dev docs",
     "build": "vuepress build docs"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "vuepress": "^2.0.0-beta.50"
+  }
 }

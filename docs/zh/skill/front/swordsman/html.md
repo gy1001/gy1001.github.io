@@ -75,11 +75,13 @@ HTML 标记包含一些特殊“元素”如
 4. bdi 标签是 HTML5 中的新标签。
 
 ```html
-// 比如我们设置了文字方向是从右向左的，但是姓名是从左到右。 // 有三个值可以选择: rtl ltr auto
+// 比如我们设置了文字方向是从右向左的，但是姓名是从左到右。 // 有三个值可以选择:
+rtl ltr auto
 
 <bdo dir="rtl"><bdi style="color:red">李四：</bdi>大家好我是李四！！！</bdo>
 
-效果：（在发布用户评论或其他您无法完全控制的内容时，该标签很有用） !!!四李：大家好我是李四！！！
+效果：（在发布用户评论或其他您无法完全控制的内容时，该标签很有用）
+!!!四李：大家好我是李四！！！
 ```
 
 ### details
@@ -92,11 +94,12 @@ HTML 标记包含一些特殊“元素”如
 
 ```html
 <details>
-	<summary>Epcot Center</summary>
-	<p>
-		Epcot is a theme park at Walt Disney World Resort featuring exciting attractions, international pavilions,
-		award-winning fireworks and seasonal special events.
-	</p>
+  <summary>Epcot Center</summary>
+  <p>
+    Epcot is a theme park at Walt Disney World Resort featuring exciting
+    attractions, international pavilions, award-winning fireworks and seasonal
+    special events.
+  </p>
 </details>
 ```
 
@@ -108,7 +111,7 @@ HTML 标记包含一些特殊“元素”如
 
 ```html
 <dialog open>
-	<p>Greetings, one and all!</p>
+  <p>Greetings, one and all!</p>
 </dialog>
 ```
 
@@ -118,11 +121,11 @@ figure 元素代表一段独立的内容，经常与说明（caption）figcaptio
 
 ```html
 <figure>
-	<img
-		src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/elephant-660-480.jpg"
-		alt="Elephant at sunset"
-	/>
-	<figcaption>An elephant at sunset</figcaption>
+  <img
+    src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/elephant-660-480.jpg"
+    alt="Elephant at sunset"
+  />
+  <figcaption>An elephant at sunset</figcaption>
 </figure>
 ```
 
@@ -185,7 +188,9 @@ section 或 document 的页脚。
 **HTML `<ruby>` 元素**的意思是旁註標記。旁註標記用於標示東亞文字的發音。
 
 ```html
-<ruby> 漢 <rp>(</rp><rt>Kan</rt><rp>)</rp> 字 <rp>(</rp><rt>ji</rt><rp>)</rp> </ruby>
+<ruby>
+  漢 <rp>(</rp><rt>Kan</rt><rp>)</rp> 字 <rp>(</rp><rt>ji</rt><rp>)</rp>
+</ruby>
 ```
 
 ### rt
@@ -231,5 +236,3 @@ HTML _time_ 标签 (`<time>`) 用来表示 24 小时制时间或者[公历日期
 [前端面试题-HTML 语义化标签](https://segmentfault.com/a/1190000013901244)
 
 [MDN-HTML](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element)
-
-<CommentService />

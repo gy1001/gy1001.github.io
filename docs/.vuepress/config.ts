@@ -1,10 +1,7 @@
-import { defineUserConfig } from 'vuepress'
-import type { DefaultThemeOptions } from 'vuepress'
+import { defineUserConfig, defaultTheme } from 'vuepress'
 import { sidebarZh, sidebarEn } from '../.vuepress/configs/siderbar/zh'
-import { copyCode } from 'vuepress-plugin-copy-code2'
-import { comment } from 'vuepress-plugin-comment2'
 
-export default defineUserConfig<DefaultThemeOptions>({
+export default defineUserConfig({
   base: '/',
   head: [['meta', { name: 'referrer', content: 'no-referrer' }]],
   locales: {
@@ -19,8 +16,7 @@ export default defineUserConfig<DefaultThemeOptions>({
   lang: 'zh-CN',
   title: 'gyfly.top',
   description: '随便写写',
-  theme: '@vuepress/theme-default',
-  themeConfig: {
+  theme: defaultTheme({
     contributors: false,
     lastUpdated: true,
     lastUpdatedText: '上次更新',
@@ -69,24 +65,6 @@ export default defineUserConfig<DefaultThemeOptions>({
         selectLanguageAriaLabel: '选择语言',
       },
     },
-  },
-  plugins: [
-    copyCode({
-      showInMobile: true,
-      pure: false,
-      locales: {
-        '/zh/': {
-          copy: '复制成功 🎉',
-          hint: '复制代码',
-        },
-      },
-    }),
-    comment({
-      type: 'waline',
-      comment: true,
-      login: 'disable',
-      serverURL: 'https://gyfly-top-b3bn289s5-mineminego.vercel.app/',
-      wordLimit: 100,
-    }),
-  ],
+  }),
+  plugins: [],
 })

@@ -14,10 +14,10 @@ JavaScript 语言诞生至今，模块规范化之路曲曲折折。社区先后
 
 ```html
 <script>
-	function add(a, b) {
-		return a + b
-	}
-	add(1, 2)
+  function add(a, b) {
+    return a + b
+  }
+  add(1, 2)
 </script>
 ```
 
@@ -36,7 +36,7 @@ JavaScript 语言诞生至今，模块规范化之路曲曲折折。社区先后
 ```javascript
 var namespace = {}
 namespace.add = function (a, b) {
-	return a + b
+  return a + b
 }
 namespace.add(1, 2)
 ```
@@ -50,7 +50,8 @@ namespace.add(1, 2)
 ```html
 <script src="./jquery.js"></script>
 <script src="./utils.js"></script>
-// 如果 utils.js 依赖于 jquery.js， 那么引用顺序就必须是 jquery 在前面，否则就会报错
+// 如果 utils.js 依赖于 jquery.js， 那么引用顺序就必须是 jquery
+在前面，否则就会报错
 ```
 
 ###### 外部可以随意修改内部成员
@@ -68,11 +69,11 @@ utils.add = 100
 ```javascript
 // IIEF
 var utils = (function () {
-	var module = {}
-	module.add = function (a, b) {
-		return a + b
-	}
-	return module
+  var module = {}
+  module.add = function (a, b) {
+    return a + b
+  }
+  return module
 })()
 utils.add(1, 2)
 ```
@@ -83,13 +84,13 @@ utils.add(1, 2)
 
 ```javascript
 var Module = (function ($) {
-	var _$body = $('body')
-	var foo = function () {
-		console.log(_$body)
-	}
-	return {
-		foo: foo,
-	}
+  var _$body = $('body')
+  var foo = function () {
+    console.log(_$body)
+  }
+  return {
+    foo: foo,
+  }
 })(jQuery)
 Module.foo()
 ```
@@ -163,7 +164,7 @@ Module.foo()
 ```javascript
 // utils.js文件
 function add(a, b) {
-	return a + b
+  return a + b
 }
 module.exports = { add }
 
@@ -289,25 +290,25 @@ UMD 先判断是否支持 Node.js 的模块（exports）是否存在，存在则
 
 ```javascript
 ;(function (root, factory) {
-	if (typeof module === 'object' && typeof module.exports === 'object') {
-		console.log('是commonjs模块规范，nodejs环境')
-		module.exports = factory()
-	} else if (typeof define === 'function' && define.amd) {
-		console.log('是AMD模块规范，如require.js')
-		define(factory())
-	} else if (typeof define === 'function' && define.cmd) {
-		console.log('是CMD模块规范，如sea.js')
-		define(function (require, exports, module) {
-			module.exports = factory()
-		})
-	} else {
-		console.log('没有模块环境，直接挂载在全局对象上')
-		root.umdModule = factory()
-	}
+  if (typeof module === 'object' && typeof module.exports === 'object') {
+    console.log('是commonjs模块规范，nodejs环境')
+    module.exports = factory()
+  } else if (typeof define === 'function' && define.amd) {
+    console.log('是AMD模块规范，如require.js')
+    define(factory())
+  } else if (typeof define === 'function' && define.cmd) {
+    console.log('是CMD模块规范，如sea.js')
+    define(function (require, exports, module) {
+      module.exports = factory()
+    })
+  } else {
+    console.log('没有模块环境，直接挂载在全局对象上')
+    root.umdModule = factory()
+  }
 })(this, function () {
-	return {
-		name: '我是一个umd模块',
-	}
+  return {
+    name: '我是一个umd模块',
+  }
 })
 ```
 
@@ -321,17 +322,17 @@ import { age } from './b.js'
 
 console.log(age)
 setTimeout(() => {
-	console.log(age)
-	import('./b.js').then(({ age }) => {
-		console.log(age)
-	})
+  console.log(age)
+  import('./b.js').then(({ age }) => {
+    console.log(age)
+  })
 }, 100)
 
 // b.js
 export let age = 1
 
 setTimeout(() => {
-	age = 2
+  age = 2
 }, 10)
 // 打开 index.html 引用的是 a.js
 // 执行结果：
@@ -408,5 +409,3 @@ import { stat, exists, readFile } from 'fs'
 ## 视频链接
 
 [尚硅谷 JS 模块化教程(js 模块化精讲含 commonjs、AMD、ES6、](https://www.bilibili.com/video/BV18s411E7Tj?spm_id_from=333.999.0.0)
-
-<CommentService />
