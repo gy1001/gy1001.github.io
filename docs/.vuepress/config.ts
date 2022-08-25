@@ -34,6 +34,10 @@ export default defineUserConfig({
             link: '/zh/skill/front/',
           },
           {
+            text: '面试相关',
+            link: '/zh/interview',
+          },
+          {
             text: '美文推荐',
             link: '/zh/collect',
           },
@@ -51,7 +55,6 @@ export default defineUserConfig({
             ],
           },
         ],
-
         // 404 page
         notFound: [
           '这里什么都没有',

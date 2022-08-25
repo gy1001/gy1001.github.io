@@ -63,7 +63,24 @@ export const sidebarZh: SidebarConfig = {
       children: ['/zh/skill/front/translate/require-js.md'],
     },
   ],
-
+  '/zh/interview': [
+    {
+      text: 'JavaScript相关',
+      children: ['/zh/interview', '/zh/interview/javascript/index.md'],
+    },
+    {
+      text: 'HTML相关',
+      children: ['/zh/interview/html/html.md'],
+    },
+    {
+      text: 'CSS相关',
+      children: ['/zh/interview/css/css.md'],
+    },
+    {
+      text: 'WEBPACK相关',
+      children: ['/zh/interview/webpack/webpack.md'],
+    },
+  ],
   '/zh/collect': [
     {
       text: '技术相关',
@@ -107,7 +124,7 @@ export const sidebarZh: SidebarConfig = {
       ],
     },
   ],
-  '/zh/other/': [
+  '/zh/other': [
     {
       text: '其他推荐',
       collapsible: false,
