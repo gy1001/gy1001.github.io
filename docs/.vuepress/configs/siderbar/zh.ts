@@ -121,6 +121,14 @@ export const sidebarZh: SidebarConfig = {
           text: '掘金',
           children: [],
         },
+        {
+          text: '历史书籍',
+          children: [],
+        },
+        {
+          text: '编程相关',
+          children: [],
+        },
       ],
     },
   ],
