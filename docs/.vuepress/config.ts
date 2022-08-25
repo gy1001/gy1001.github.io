@@ -71,8 +71,6 @@ export default defineUserConfig<DefaultThemeOptions>({
     },
   },
   plugins: [
-    ['@vuepress/nprogress', true],
-    ['@vuepress/back-to-top', true],
     copyCode({
       showInMobile: true,
       pure: false,
