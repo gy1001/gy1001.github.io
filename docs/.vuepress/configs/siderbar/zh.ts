@@ -66,7 +66,11 @@ export const sidebarZh: SidebarConfig = {
   '/zh/interview': [
     {
       text: 'JavaScript相关',
-      children: ['/zh/interview', '/zh/interview/javascript/new.md'],
+      children: [
+        '/zh/interview',
+        '/zh/interview/javascript/new.md',
+        '/zh/interview/javascript/this.md',
+      ],
     },
     {
       text: 'HTML相关',
