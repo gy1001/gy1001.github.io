@@ -125,6 +125,10 @@ export const sidebarZh: SidebarConfig = {
           text: '掘金',
           children: [],
         },
+        {
+          text: '编程相关',
+          children: ['/zh/collect/books/你不知道的JavaScript.md'],
+        },
       ],
     },
   ],
