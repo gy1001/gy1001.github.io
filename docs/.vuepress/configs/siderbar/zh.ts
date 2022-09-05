@@ -127,7 +127,10 @@ export const sidebarZh: SidebarConfig = {
         },
         {
           text: '编程相关',
-          children: ['/zh/collect/books/你不知道的JavaScript.md'],
+          children: [
+            '/zh/collect/books/你不知道的JavaScript.md',
+            '/zh/collect/books/JavaScript高级程序设计.md',
+          ],
         },
       ],
     },
