@@ -148,7 +148,10 @@ export const sidebarZh: SidebarConfig = {
     },
     {
       text: '折腾笔记',
-      children: ['/zh/other/toss/mac-in-windows.md'],
+      children: [
+        '/zh/other/toss/mac-in-windows.md',
+        '/zh/other/toss/deepin.md',
+      ],
     },
     {
       text: '课程笔记',
