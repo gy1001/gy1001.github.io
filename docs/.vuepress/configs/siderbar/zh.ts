@@ -154,6 +154,10 @@ export const sidebarZh: SidebarConfig = {
       ],
     },
     {
+      text: '问题合集',
+      children: ['/zh/other/question/work-list.md'],
+    },
+    {
       text: '课程笔记',
       collapsible: false,
       children: [
