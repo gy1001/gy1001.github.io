@@ -78,7 +78,7 @@ export const sidebarZh: SidebarConfig = {
     },
     {
       text: 'CSS相关',
-      children: ['/zh/interview/css/css.md'],
+      children: ['/zh/interview/css/css.md', '/zh/interview/css/css-layout.md'],
     },
     {
       text: 'WEBPACK相关',
