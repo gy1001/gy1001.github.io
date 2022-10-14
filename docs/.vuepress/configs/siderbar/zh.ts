@@ -54,6 +54,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/skill/front/source/vue/reactivity.md',
             '/zh/skill/front/source/vue/ast.md',
             '/zh/skill/front/source/vue/direct-method.md',
+            '/zh/skill/front/source/vue/vue-question.md',
           ],
         },
       ],
