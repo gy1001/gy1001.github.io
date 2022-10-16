@@ -165,6 +165,7 @@ export const sidebarZh: SidebarConfig = {
         '/zh/other/class/program-basic',
         '/zh/other/class/linear-algebra',
         '/zh/other/class/vue3-learn-practice',
+        '/zh/other/class/interview-front',
       ],
     },
   ],
