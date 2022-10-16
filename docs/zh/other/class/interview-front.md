@@ -343,6 +343,75 @@
 
 - flex 实现一个三点的色子
 
+* 常用语法回顾
+  - flex-direction
+  - justify-content
+  - align-items
+  - flex-wrap
+  - align-self
+
+```css
+/* flex 画三个点的色子 */
+.box {
+  display: flex; /* flex 布局*/
+  justify-content: space-between; /* 两端对齐*/
+}
+.item {
+  /* 背景色 大小 边框 */
+}
+.item:nth-child(2) {
+  align-self: center; /* 第二项居中对齐 */
+}
+.item:nth-child(3) {
+  align-self: flex-end; /* 第三项尾对齐*/
+}
+```
+
+整体代码
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>flex实现一个三点的色子</title>
+  </head>
+  <style>
+    .box {
+      width: 200px;
+      height: 200px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .item {
+      display: block;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #666;
+    }
+    .item:nth-child(2) {
+      align-self: center;
+    }
+    .item:nth-child(3) {
+      align-self: flex-end;
+    }
+  </style>
+  <body>
+    <div class="box">
+      <span class="item"></span>
+      <span class="item"></span>
+      <span class="item"></span>
+    </div>
+  </body>
+</html>
+```
+
 ### 定位：
 
 1. absolute 和 relative 分别依赖什么定位
