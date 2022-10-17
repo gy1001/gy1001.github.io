@@ -553,4 +553,43 @@
 1.关于 css3 动画
 
 - 并不是 面试的重点，除非你面试的是一个专门做动画的职位
--
+
+## JS 面试题
+
+### 变量类型和计算
+
+> 知识点：值类型 vs 引用类型，typeof 运算符，深拷贝
+
+```javascript
+// 值类型
+let a = 100
+let b = a
+a = 200
+console.log(b) // 100
+// 引用类型
+let a = { age: 20 }
+let b = a
+b.age = 21
+console.log(a.age) // 21
+```
+
+深入分析：基本类型的值是存放在 栈区 的，即内存中的栈内存，引用类型的值是同时保存在 栈内存和堆内存 的
+(这么做是为了性能)
+[相关阅读](https://learnku.com/articles/38192)
+
+- **常见值类型：undefined string number null symbol undefined boolean**
+- **常见引用类型：Array Function Object Date RegExp 等**（注意：Function 是一个特殊引用类型，但不用于存储数据，所以没有拷贝、复制函数这一说）
+
+#### 1. typeof 能判断哪些类型
+
+#### 2. 何时使用 === 何时使用 ==
+
+#### 3. 值类型和引用类型的区别
+
+#### 4. 手写深拷贝
+
+### 原型和原型链
+
+### 作用域和闭包
+
+### 异步
