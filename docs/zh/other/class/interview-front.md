@@ -1028,6 +1028,64 @@ print(fn) // 100
 
 3. this
 
+> this 取什么值，是在函数执行时确认的，不是在函数定义的时候
+
+- 作为普通函数调用
+- 使用 call apply bind 被调用
+- 作为对象方法被调用
+- 在 class 方法中调用
+- 箭头函数
+
+```javascript
+function fn1() {
+  console.log(this)
+}
+fn1() // window
+fn1().call({ x: 100 }) // { x:100 }
+const fn2 = fn1.bind({ x: 200 })
+fn2() // { x:200 }
+
+const zhangSan = {
+  name: '张三',
+  sayHi() {
+    // this 即当前对象
+    console.log(this)
+  },
+  wait() {
+    setTimeout(function () {
+      // this === window
+      console.log(this)
+    })
+  },
+}
+const liSi = {
+  name: '李四',
+  sayHi() {
+    // this 即当前对象
+    console.log(this)
+  },
+  wait() {
+    // 箭头函数中的this取的是它的上一级的作用域的 this 值
+    setTimeout(() => {
+      // this 即当前对象
+      console.log(this)
+    })
+  },
+}
+
+class People {
+  constructor(name) {
+    this.name = name
+    this.age = 20
+  }
+  sayHi() {
+    console.log(this)
+  }
+}
+const people = new People('张三')
+people.sayHi() // people 对象
+```
+
 #### 问题
 
 1. this 的不同应用场景下，如何取值
