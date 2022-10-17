@@ -582,11 +582,88 @@ console.log(a.age) // 21
 
 #### 1. typeof 能判断哪些类型
 
+- 识别所有值类型
+
+```javascript
+let a
+console.log(typeof a) // "undefined"
+const str = 'abc'
+console.log(typeof str) // "string"
+const n = 100
+console.log(typeof n) // "number"
+const b = true
+console.log(typeof b) // "boolean"
+const s = Symbol('s')
+console.log(typeof s) // "symbol"
+console.log(typeof console.log) // "function"
+console.log(typeof function () {}) // "function"
+// 能识别引用类型（但是不能在细分）
+typeof null // "object"
+typeof ['a', 'b'] //"object"
+typeof { x: 100 } // "object"
+```
+
+- 识别函数
+- 判断是否是引用类型（不可再细分是哪种引用类型）
+
 #### 2. 何时使用 === 何时使用 ==
 
 #### 3. 值类型和引用类型的区别
 
 #### 4. 手写深拷贝
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>js -深拷贝</title>
+  </head>
+  <body></body>
+  <script>
+    /*
+     * 深拷贝
+     * obj: 要拷贝的对象
+     */
+    function deepClone(obj) {
+      // obj 是null 或者 不是数组和对象，就直接返回
+      if (typeof obj !== 'object' || obj === null) {
+        return obj
+      }
+      // 初始化返回结果
+      let result
+      if (obj instanceof Array) {
+        result = []
+      } else {
+        result = {}
+      }
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          // 保证key不是原型的属性
+          // 递归调用
+          result[key] = deepClone(obj[key])
+        }
+      }
+      return result
+    }
+    const objA = {
+      age: 20,
+      name: '孙悟空',
+      address: {
+        city: '北京',
+      },
+      arr: ['a', 'b', 'c'],
+    }
+    const objB = deepClone(objA)
+    const objC = objA
+    objA.address.city = '北京市朝阳区'
+    console.log(objB.address.city) // 北京
+    console.log(objC.address.city) // 北京市朝阳区
+  </script>
+</html>
+```
 
 ### 原型和原型链
 
