@@ -1115,11 +1115,45 @@ Function.prototype.bind1 = function () {
 
 3. 实际开发中闭包的应用场景，举例说明
 
+- 隐藏数据
+- 做一个简单的 cache 工具
+
+```javascript
+// 闭包隐藏数据，只提供 API
+function createCache() {
+  const data = {} // 闭包中的数据，被隐藏，不能被外界访问
+  return {
+    set: function (key, val) {
+      data[key] = val
+    },
+    get: function (key) {
+      return data[key]
+    },
+  }
+}
+const c = createCache()
+c.set('a', 100)
+console.log(c.get('a'))
+```
+
 4. 创建 10 个 a 标签,点击的时候弹出对应的序号
 
 ```javascript
 let i, a
-for (i = o; i < 10; i++) {
+for (i = 0; i < 10; i++) {
+  a = document.createElement('a')
+  a.innerHTML = i + '<br/>'
+  a.addEventListener('click', function (e) {
+    e.preventDefault()
+    alert(i)
+  })
+  document.body.appendChild(a)
+}
+// 上述代码执行后，进行点击，弹出的始终是 10
+// 优化后的代码:
+let a
+for (let i = 0; i < 10; i++) {
+  // 因为这里使用let ,就产生了一个块级作用域
   a = document.createElement('a')
   a.innerHTML = i + '<br/>'
   a.addEventListener('click', function (e) {
