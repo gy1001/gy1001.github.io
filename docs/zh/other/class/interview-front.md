@@ -615,6 +615,8 @@ console.log(a.age) // 21
 #### 1. typeof 能判断哪些类型
 
 - 识别所有值类型
+- 识别函数
+- 能识别引用类型（但是不能在细分）
 
 ```javascript
 let a
@@ -652,7 +654,20 @@ if (obj.a == null) {
 
 #### 3. 值类型和引用类型的区别
 
+```javascript
+const obj1 = { x: 100, y: 200 }
+const obj2 = obj1
+let x1 = obj1.x
+obj2.x = 101
+x1 = 102
+console.log(obj1) // { x: 101, y: 200 }
+```
+
 #### 4. 手写深拷贝
+
+- 注意判断值类型和引用类型
+- 注意判断是数组还是对象
+- 递归
 
 ```html
 <!DOCTYPE html>
