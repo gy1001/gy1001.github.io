@@ -996,7 +996,36 @@ console.log(People.prototype === Student.prototype.__proto__)
   - 向上级作用域，一层一层依次寻找，直到找到为止
   - 如果找到全局作用域都没有找到，则报错 `xxx is not defined`
 
-2. 闭包
+2. 闭包(closure)
+
+- 作用域应用的特殊情况，有两种表现
+  - 函数作为参数被传递
+  - 函数作为返回值被返回
+- **所有的自由变量的查找，是在函数定义到地方，向上级作用域查找，不是在执行的地方**
+
+```javascript
+// 函数作为返回值
+function create() {
+  let a = 100
+  return function () {
+    console.log(a)
+  }
+}
+let fn = create()
+let a = 200
+fn() // 100
+// 函数作为参数
+function print(fn) {
+  let a = 20
+  fn()
+}
+let a = 100
+function fn() {
+  console.log(a)
+}
+print(fn) // 100
+```
+
 3. this
 
 #### 问题
