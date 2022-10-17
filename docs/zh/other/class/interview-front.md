@@ -873,9 +873,86 @@ console.log(People.prototype === Student.prototype.__proto__)
 
 1. 如何准确判断一个变量是不是数组？
 
+- a instanceof Array
+
 2. 手写一个简易的 jQuery， 考虑插件和扩展性
 
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>简易jQuery</title>
+  </head>
+  <body>
+    <p>1</p>
+    <p>2</p>
+    <p>3</p>
+  </body>
+  <script>
+    class jQuery {
+      constructor(selector) {
+        const result = document.querySelectorAll(selector)
+        const length = result.length
+        for (let index = 0; index < length; index++) {
+          this[index] = result[index]
+        }
+        this.length = length
+      }
+      get(index) {
+        return this[index]
+      }
+      each(fn) {
+        for (let index = 0; index < this.length; index++) {
+          const el = this[index]
+          fn(el)
+        }
+      }
+      on(type, fn) {
+        return this.each((elem) => {
+          elem.addEventListener(type, fn)
+        })
+      }
+      // 扩展更多 DOM API
+    }
+
+    // 插件形式
+    jQuery.prototype.dialog = function (info) {
+      alert(info)
+    }
+    // 复写机制（“造轮子”）
+    class MyJquery extends jQuery {
+      constructor(selector) {
+        super(selector)
+      }
+      // 扩展自己的方法
+      addClass(className) {
+        console.log('我是添加class')
+      }
+      // 等等
+    }
+
+    const $p = new jQuery('p')
+    console.log($p.get(1))
+    $p.each((elem) => {
+      console.log(elem.nodeName)
+    })
+    $p.on('click', () => {
+      alert('click')
+    })
+
+    $p.dialog('abc')
+  </script>
+</html>
+```
+
 3. class 的原型本质，怎么理解？
+
+- 原型本质：
+  - 原型和原型链的图示
+  - 属性和方法的执行规则
 
 ### 作用域和闭包
 
