@@ -579,6 +579,38 @@ console.log(a.age) // 21
 
 - **常见值类型：undefined string number null symbol undefined boolean**
 - **常见引用类型：Array Function Object Date RegExp 等**（注意：Function 是一个特殊引用类型，但不用于存储数据，所以没有拷贝、复制函数这一说）
+- **类型转换**
+  - 字符串拼接
+    ```javascript
+    const a = 100 + 10 // 110
+    const b = 100 + '10' // "10010"
+    const c = true + '10' // "true10"
+    ```
+  - ==
+    ```javascript
+    100 == '100' // true
+    0 == '' // true
+    0 == false // true
+    false == '' // true
+    null == undefined // true
+    ```
+  - if 语句和逻辑运算
+    - truly 变量：!!a === true 的变量
+    - falsely 变量：!!a === false 的变量
+    ```javascript
+    // 以下是 falsely 变量，除此之外都是 truly 变量
+    !!0 === false
+    !!NaN === false
+    !!'' === false
+    !!null === false
+    !!undefined === false
+    !!false === false
+    // 逻辑判断
+    console.log(10 && 0) // 0
+    console.log('' || 'abc') // "abc"
+    console.log(!window.abc) // true
+    // 等等
+    ```
 
 #### 1. typeof 能判断哪些类型
 
@@ -607,6 +639,16 @@ typeof { x: 100 } // "object"
 - 判断是否是引用类型（不可再细分是哪种引用类型）
 
 #### 2. 何时使用 === 何时使用 ==
+
+> 除了 == null 之外，其他都一律用 === 例如
+
+```javascript
+const obj = { x: 100 }
+if (obj.a == null) {
+}
+// 相当于
+// if (obj.a === null || obj.a === undefined) { }
+```
 
 #### 3. 值类型和引用类型的区别
 
