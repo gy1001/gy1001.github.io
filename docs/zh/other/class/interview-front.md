@@ -724,6 +724,159 @@ console.log(obj1) // { x: 101, y: 200 }
 
 ### 原型和原型链
 
+#### 知识点总结
+
+1. class 和 继承
+
+- class
+  - constructor
+  - 属性
+  - 方法
+  ```html
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>class-demo</title>
+    </head>
+    <body></body>
+    <script>
+      class Student {
+        constructor(name, number) {
+          this.name = name
+          this.number = number
+        }
+        sayHi() {
+          console.log(`姓名${this.name},学号${this.number}`)
+        }
+        study() {
+          console.log('study')
+        }
+      }
+      // 通过类可以声明一个实例
+      const xiaLuo = new Student('夏洛', 100)
+      console.log(xiaLuo.name) // 夏洛
+      console.log(xiaLuo.number) // 100
+      console.log(xiaLuo.sayHi()) // 姓名夏洛,学号100  undefined
+    </script>
+  </html>
+  ```
+- 继承
+
+  - extends
+  - super
+  - 扩展或者重写方法
+
+  ```html
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>class-extends</title>
+    </head>
+    <body></body>
+    <script>
+      class People {
+        constructor(name) {
+          this.name = name
+        }
+        eat() {
+          console.log(`${this.name} eat something`)
+        }
+      }
+      // 子类
+      class Student extends People {
+        constructor(name, number) {
+          super(name)
+          this.number = number
+        }
+        sayHi() {
+          console.log(`姓名${this.name},学号${this.number}`)
+        }
+      }
+      // 子类
+      class Teacher extends People {
+        constructor(name, major) {
+          super(name)
+          this.major = major
+        }
+        teach() {
+          console.log(`${this.name} 教授 ${this.major}`)
+        }
+      }
+      // student 实例
+      const xiaLuo = new Student('夏洛', 100)
+      console.log(xiaLuo.name) // 夏洛
+      console.log(xiaLuo.eat()) // 夏洛 eat something   undefined
+      // teacher 实例
+      const wangLaoShi = new Teacher('王老师', '语文')
+      console.log(wangLaoShi.name) // 王老师
+      console.log(wangLaoShi.teach()) // 王老师 教授 语文  undefined
+      console.log(wangLaoShi.eat()) // 王老师 eat something  undefined
+    </script>
+  </html>
+  ```
+
+2. 类型判断 instanceof
+
+```javascript
+console.log(xiaLuo instanceof Student) // true
+console.log(xiaLuo instanceof People) // true
+console.log(xiaLuo instanceof Object) // true
+console.log([] instanceof Array) // true
+console.log([] instanceof Object) // true
+console.log({} instanceof Object) // true
+```
+
+3. 原型和原型链
+
+> class 实际上是函数，可见是语法糖
+
+```javascript
+typeof People // "function"
+typeof Student // "function"
+
+// 隐式原型和显式原型
+console.log(xiaLuo.__proto__)
+console.log(Student.prototype)
+console.log(xiaLuo.__proto__ === Student.prototype)
+```
+
+- **原型关系**
+  - 每个 class 都有显式原型 prototype
+  - 每个实例都有隐式原型 \_\_proto\_\_
+  - 实例的 \_\_proto\_\_ 指向对应 class 的 prototype
+- **基于原型的执行规则**
+
+  - 获取属性 xiaLuo.name 或者 执行 xiaLuo.sayHi()时
+  - 先在自身属性和方法寻找
+  - 如果找不到则自动去 \_\_proto\_\_ 中查找
+
+- **原型链**
+
+```javascript
+console.log(Student.prototype.__proto__)
+console.log(People.prototype)
+console.log(People.prototype === Student.prototype.__proto__)
+```
+
+- **重要提示**
+  - class 是 ES6 语法规范，由 ECMA 委员会发布
+  - ECMA 只规定语法规则，即我们代码的书写规范，不规定如何实现
+  - 以上实现方式都是 V8 引擎的实现方式，也是主流的
+
+#### 问题
+
+1. 如何准确判断一个变量是不是数组？
+
+2. 手写一个简易的 jQuery， 考虑插件和扩展性
+
+3. class 的原型本质，怎么理解？
+
 ### 作用域和闭包
 
 ### 异步
