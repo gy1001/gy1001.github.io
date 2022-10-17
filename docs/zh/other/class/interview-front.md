@@ -1089,8 +1089,32 @@ people.sayHi() // people 对象
 #### 问题
 
 1. this 的不同应用场景下，如何取值
+
+- 作为普通函数调用：**指向 window**
+- 使用 call apply bind 被调用: **指向传入绑定的值**
+- 作为对象方法被调用：**指向对象本身**
+- 在 class 方法中调用：**当前实例本身**
+- 箭头函数：**上一级作用域的 this 值**
+
 2. 手写 bind 函数
+
+```javascript
+Function.prototype.bind1 = function () {
+  // 将参数解析为数组
+  const args = Array.prototype.slice.call(arguments)
+  // 获取 this（取出数组第一项，数组剩余的就是传递的参数）
+  const t = args.shift()
+  const self = this // 当前函数
+  // 返回一个函数
+  return function () {
+    // 执行原函数，并返回结果
+    return self.apply(t, args)
+  }
+}
+```
+
 3. 实际开发中闭包的应用场景，举例说明
+
 4. 创建 10 个 a 标签,点击的时候弹出对应的序号
 
 ```javascript
