@@ -956,4 +956,67 @@ console.log(People.prototype === Student.prototype.__proto__)
 
 ### 作用域和闭包
 
+#### 知识点
+
+1. 作用域和自由变量
+
+- **作用域**
+
+  - 全局作用域
+  - 函数作用域
+  - 块级作用域（ES6 新增）
+
+  ```javascript
+  // ES6块级作用域
+  if (true) {
+    let x = 100
+  }
+  console.log(x) // 会报错
+  ```
+
+  ```javascript
+  let a = 0
+  function fn1() {
+    let a1 = 100
+    function fn2() {
+      let a2 = 200
+      function fn3() {
+        let a3 = 300
+        return a1 + a2 + a3
+      }
+      fn3()
+    }
+    fn2()
+  }
+  fn1()
+  ```
+
+- **自由变量**
+  - 一个变量在当前作用域没有定义，但是被使用了
+  - 向上级作用域，一层一层依次寻找，直到找到为止
+  - 如果找到全局作用域都没有找到，则报错 `xxx is not defined`
+
+2. 闭包
+3. this
+
+#### 问题
+
+1. this 的不同应用场景下，如何取值
+2. 手写 bind 函数
+3. 实际开发中闭包的应用场景，举例说明
+4. 创建 10 个 a 标签,点击的时候弹出对应的序号
+
+```javascript
+let i, a
+for (i = o; i < 10; i++) {
+  a = document.createElement('a')
+  a.innerHTML = i + '<br/>'
+  a.addEventListener('click', function (e) {
+    e.preventDefault()
+    alert(i)
+  })
+  document.body.appendChild(a)
+}
+```
+
 ### 异步
