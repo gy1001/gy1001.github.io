@@ -654,6 +654,15 @@ if (obj.a == null) {
 
 #### 3. 值类型和引用类型的区别
 
+- 存储位置不一样
+  - 值类型的变量会保存在栈内存中。
+  - 引用类型的变量名会保存在栈内存中，但是变量值会存储在堆内存中。
+- 复制方式不一样
+  - 值类型的变量直接赋值就是深复制。
+  - 引用类型的变量直接赋值实际上是传递引用，只是浅复制。
+- 值类型无法添加属性和方法，引用类型可以添加属性和方法
+- 值类型的比较是值的比较，引用类型的比较是引用地址的比较
+
 ```javascript
 const obj1 = { x: 100, y: 200 }
 const obj2 = obj1
@@ -873,7 +882,17 @@ console.log(People.prototype === Student.prototype.__proto__)
 
 1. 如何准确判断一个变量是不是数组？
 
-- a instanceof Array
+- a instanceof Array(也是不太靠谱,具体参考延伸阅读链接)
+- Array.isArray(a)
+- Object.prototype.toString.call(a)=='[object Array]'
+
+**延伸阅读：如何判断一个数据数据类型是数组**
+
+[javascript 判断变量是否是数组](https://segmentfault.com/a/1190000004479306)
+
+[推荐：如何判断一个对象是不是数组？](https://blog.51cto.com/u_15219964/5502978?from_wecom=1)
+
+[其他](https://github.com/wengjq/Basics/issues/36?from_wecom=1)
 
 2. 手写一个简易的 jQuery， 考虑插件和扩展性
 
@@ -953,6 +972,8 @@ console.log(People.prototype === Student.prototype.__proto__)
 - 原型本质：
   - 原型和原型链的图示
   - 属性和方法的执行规则
+
+[参考链接](https://www.jianshu.com/p/b1cd77511ea7)
 
 ### 作用域和闭包
 
@@ -1164,4 +1185,188 @@ for (let i = 0; i < 10; i++) {
 }
 ```
 
-### 异步
+### 异步和单线程
+
+#### 知识点
+
+1. 单线程和异步
+
+2. 应用场景
+
+- 网络请求，如 ajax、图片加载
+- 定时任务，如 setTimeout
+
+```javascript
+// ajax
+console.log('start')
+$.get('./data1.json', function (data1) {
+  console.log(data1)
+})
+console.log('end')
+// 图片加载
+console.log('start')
+let img = document.createElement('img')
+img.onload = function () {
+  console.log('loaded')
+}
+img.src = 'xxx.png'
+console.log('end')
+// 定时任务
+// setTimeout
+console.log(100)
+setTimeout(function () {
+  console.log(200)
+}, 1000)
+console.log(300)
+// setInterval
+console.log(100)
+setInterval(function () {
+  console.log(200)
+}, 1000)
+console.log(300)
+```
+
+3. callback hell 和 Promise
+
+- callback hell
+
+```javascript
+// 获取第一份数据
+$.get(url, (data1) => {
+  console.log(data1)
+  // 获取第二份数据
+  $.get(url2, (data2) => {
+    // 获取第三份数据
+    $.get(url3, (data3) => {
+      console.log(data3)
+      // 还有可能获取更多的数据
+    })
+  })
+})
+```
+
+- Promise
+
+```javascript
+function getData(url) {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url,
+      success(data) {
+        resolve(data)
+      },
+      error(err) {
+        reject(err)
+      },
+    })
+  })
+}
+const url1 = '/data1.json'
+const url2 = '/data2.json'
+const url3 = '/data3.json'
+getData(url1)
+  .then((data1) => {
+    console.log(data1)
+    return getData(url2)
+  })
+  .then((data2) => {
+    console.log(data2)
+    return getData(url3)
+  })
+  .then((data3) => {
+    console.log(data3)
+  })
+  .catch((err) => {
+    console.log(err)
+  })
+```
+
+4. JS 是单线程语言，只能同时做一件事
+
+5. 浏览器和 node.js 已经支持 JS 启动**进程**，如 Web Worker
+
+6. JS 和 DOM 渲染共用一个进程，因为 JS 可修改 DOM 结构
+
+7. 遇到等待（网络请求，定时任务）不能卡住
+
+8. 需要异步
+
+9. 回调 callback 函数形式
+
+10. 异步和同步
+
+- 基于 JS 是单线程语言
+- 异步不会阻塞指向代码
+- 同步会阻塞代码执行
+
+```javascript
+// 异步
+console.log(100)
+setTimeout(function () {
+  console.log(200)
+}, 1000)
+console.log(300)
+
+// 同步
+console.log(100)
+alert(200)
+console.log(300)
+```
+
+#### 问题
+
+1. 同步和异步的区别
+
+- 异步是基于 JS 是单线程语言
+- 异步不会阻塞代码执行
+- 同步会阻塞代码执行
+
+2. 手写 Promise 加载一张图片
+
+```javascript
+const imgUrl = 'http://xxxx.xxx.com/xxx.png'
+function loadImg(imgSrc) {
+  return new Promise((resolve, reject) => {
+    const img = document.createElement('img')
+    img.onload = function () {
+      resolve(img)
+    }
+    img.onerror = function () {
+      reject(new Error('图片加载失败'))
+    }
+    img.src = imgSrc
+  })
+}
+loadImg(imgUrl)
+  .then((img) => {
+    console.log(img.width)
+    return img
+  })
+  .then((img) => {
+    console.log(img.height)
+  })
+  .catch((err) => {
+    console.log(err)
+  })
+```
+
+3. 前端使用异步的场景有哪些
+
+- 网络请求，如 ajax, 图片加载
+- 定时任务，如 setTimeout
+
+4. 场景题
+
+```javascript
+// setTimeout 笔试题
+console.log(1)
+setTimeout(function () {
+  console.log(2)
+}, 1000)
+console.log(3)
+setTimeout(function () {
+  console.log(4)
+}, 0)
+console.log(5)
+// 1, 3, 5, 4, 2
+```
