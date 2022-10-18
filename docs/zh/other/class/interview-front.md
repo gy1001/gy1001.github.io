@@ -970,7 +970,9 @@ console.log(People.prototype === Student.prototype.__proto__)
 3. class 的原型本质，怎么理解？
 
 - 原型本质：
+
   - 原型和原型链的图示
+
   - 属性和方法的执行规则
 
 [参考链接](https://www.jianshu.com/p/b1cd77511ea7)
@@ -984,7 +986,9 @@ console.log(People.prototype === Student.prototype.__proto__)
 - **作用域**
 
   - 全局作用域
+
   - 函数作用域
+
   - 块级作用域（ES6 新增）
 
   ```javascript
@@ -1013,15 +1017,21 @@ console.log(People.prototype === Student.prototype.__proto__)
   ```
 
 - **自由变量**
+
   - 一个变量在当前作用域没有定义，但是被使用了
+
   - 向上级作用域，一层一层依次寻找，直到找到为止
+
   - 如果找到全局作用域都没有找到，则报错 `xxx is not defined`
 
 2. 闭包(closure)
 
 - 作用域应用的特殊情况，有两种表现
+
   - 函数作为参数被传递
+
   - 函数作为返回值被返回
+
 - **所有的自由变量的查找，是在函数定义到地方，向上级作用域查找，不是在执行的地方**
 
 ```javascript
@@ -1052,9 +1062,13 @@ print(fn) // 100
 > this 取什么值，是在函数执行时确认的，不是在函数定义的时候
 
 - 作为普通函数调用
+
 - 使用 call apply bind 被调用
+
 - 作为对象方法被调用
+
 - 在 class 方法中调用
+
 - 箭头函数
 
 ```javascript
@@ -1112,9 +1126,13 @@ people.sayHi() // people 对象
 1. this 的不同应用场景下，如何取值
 
 - 作为普通函数调用：**指向 window**
+
 - 使用 call apply bind 被调用: **指向传入绑定的值**
+
 - 作为对象方法被调用：**指向对象本身**
+
 - 在 class 方法中调用：**当前实例本身**
+
 - 箭头函数：**上一级作用域的 this 值**
 
 2. 手写 bind 函数
@@ -1194,6 +1212,7 @@ for (let i = 0; i < 10; i++) {
 2. 应用场景
 
 - 网络请求，如 ajax、图片加载
+
 - 定时任务，如 setTimeout
 
 ```javascript
@@ -1296,7 +1315,9 @@ getData(url1)
 10. 异步和同步
 
 - 基于 JS 是单线程语言
+
 - 异步不会阻塞指向代码
+
 - 同步会阻塞代码执行
 
 ```javascript
@@ -1318,7 +1339,9 @@ console.log(300)
 1. 同步和异步的区别
 
 - 异步是基于 JS 是单线程语言
+
 - 异步不会阻塞代码执行
+
 - 同步会阻塞代码执行
 
 2. 手写 Promise 加载一张图片
@@ -1376,8 +1399,48 @@ console.log(5)
 #### 知识点
 
 - event loop
+
 - promise 进阶
+
 - async/await
+
+- 异步的本质
+
+  - async/await 是消灭异步回调的终极武器
+
+  - JS 还是单线程，还得是有异步，还得是基于 event loop
+
+  - async/await 只是一个语法糖，但是这颗糖真香！
+
+- for ... of
+
+  - for...in(以及 forEach for) 是常规的同步遍历
+
+  - **for...of 常用于异步的遍历**
+
+  ```javascript
+  function muti(num) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(num * num)
+      }, 1000)
+    })
+  }
+  const nums = [1, 2, 3]
+  nums.forEach(async (i) => {
+    const res = await muti(i)
+    console.log(res)
+  })
+  // 1s 后结果全部出来，1, 4, 9
+  // 使用 for..of 的代码
+  ;(async function () {
+    for (let i of nums) {
+      const res = await muti(i)
+      console.log(res)
+    }
+  })()
+  ```
+
 - 微任务/宏任务
 
 #### 面试题
@@ -1385,22 +1448,39 @@ console.log(5)
 1. 请描述 Event Loop(事件循环/事件轮询)的机制，可画图
 
 - js 是单线程进行的
+
 - 异步要基于回调来实现
+
 - Event Loop 就是异步回调的实现原理
+
 - JS 如何执行
+
   - 从前到后，一行一行执行
+
   - 如果某一行执行报错，则停止下面代码的执行
+
   - 先把同步代码执行完，再去执行异步
+
 - 总结下 event loop 过程
+
   - 同步代码，一行一行放在 Call Stack 执行
+
   - 遇到异步，会先"记录"下来，等待时机（定时、网络请求等）
+
   - 时机到了，就移动到 Callback Queue
+
   - 如果 Call Stack 为空（即同步代码执行完毕）Event Loop 开始工作
+
   - 轮询查找 Callback Queue，如果有移动到 Call Stack 就执行
+
   - 然后继续轮询查找（永动机一样）
+
 - DOM 事件和 Event Loop
+
   - JS 是单线程的
+
   - 异步（setTimeout, ajax 等）使用回调，基于 event loop
+
   - DOM 事件也适用回调，基于 Event Loop
 
 ```html
@@ -1415,23 +1495,42 @@ console.log(5)
 </script>
 ```
 
-**相关阅读**
+**相关阅读：**
 
 [阮一峰：JavaScript 运行机制详解：再谈 Event Loop](https://www.ruanyifeng.com/blog/2014/10/event-loop.html)
 
 2. 什么是宏任务和微任务，两者有什么区别
 
+> 宏任务和微任务都是异步任务
+
+- 宏任务一般是：包括整体代码 script，setTimeout，setInterval、I/O、UI render。
+
+- 微任务主要是：Promise.then、Object.observe、MutationObserver。
+
+- **相关阅读**:
+
+[宏任务和微任务都是异步任务](https://juejin.cn/post/6880787856353132552#comment)
+
 3. Promise 有哪三种状态，如何变化
 
 - 三种状态：pending resolved rejected
+
 - 状态的表现和变化:
+
   - pending => resolved 或者 pending => rejected
+
   - 变化不可逆
+
   - pending 状态,不会触发 then 和 catch
+
   - resolve 状态，会触发后续的 then 回调函数
+
   - reject 状态，会触发后续的 catch 回调函数
+
 - then 和 catch 对状态的影响
+
   - then 正常返回 resolved, 里面有报错则返回 rejected
+
   - catch 正常返回 resolved, 里面有报错则返回 rejected
 
 4. Promise then 和 catch 的连接的问题
@@ -1482,6 +1581,12 @@ Promise.resolve()
 
 5. async/await 语法
 
+- 异步回调 callback hell
+
+- Promise then catch 链式调用，但也是基于回调函数
+
+- async/await 是同步函数，彻底消灭回调函数
+
 ```javascript
 // 第一题
 async function fn() {
@@ -1506,7 +1611,21 @@ async function fn() {
 })()
 ```
 
-6. Promise 和 setTimeout 的顺序问题
+6. async/await 和 Promise 的关系
+
+- async/await 是消灭异步回调的终极武器
+
+- 但和 Promise 并不互斥
+
+- 反而，两者相辅相成
+
+  - 执行 async 函数，返回的是 Promise 对象
+
+  - await 相当于 Promise 的 then
+
+  - try...catch 可捕获异常，代替了 Promise 的 catch
+
+7. Promise 和 setTimeout 的顺序问题
 
 ```javascript
 console.log(100)
@@ -1520,7 +1639,7 @@ console.log(400)
 // 100 400 300 200
 ```
 
-7. 外加 async/await 的顺序问题
+8. 外加 async/await 的顺序问题
 
 > await 后面的函数执行完毕时，await 会产生一个微任务(Promise.then 是微任务)。但是我们要注意这个微任务产生的时机，它是执行完 await 之后，直接跳出 async 函数，执行其他代码(此处就是协程的运作，A 暂停执行，控制权交给 B)。其他代码执行完毕后，再回到 async 函数去执行剩下的代码，然后把 await 后面的代码注册到微任务队列当中。
 
