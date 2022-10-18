@@ -1370,3 +1370,200 @@ setTimeout(function () {
 console.log(5)
 // 1, 3, 5, 4, 2
 ```
+
+### 异步进阶
+
+#### 知识点
+
+- event loop
+- promise 进阶
+- async/await
+- 微任务/宏任务
+
+#### 面试题
+
+1. 请描述 Event Loop(事件循环/事件轮询)的机制，可画图
+
+- js 是单线程进行的
+- 异步要基于回调来实现
+- Event Loop 就是异步回调的实现原理
+- JS 如何执行
+  - 从前到后，一行一行执行
+  - 如果某一行执行报错，则停止下面代码的执行
+  - 先把同步代码执行完，再去执行异步
+- 总结下 event loop 过程
+  - 同步代码，一行一行放在 Call Stack 执行
+  - 遇到异步，会先"记录"下来，等待时机（定时、网络请求等）
+  - 时机到了，就移动到 Callback Queue
+  - 如果 Call Stack 为空（即同步代码执行完毕）Event Loop 开始工作
+  - 轮询查找 Callback Queue，如果有移动到 Call Stack 就执行
+  - 然后继续轮询查找（永动机一样）
+- DOM 事件和 Event Loop
+  - JS 是单线程的
+  - 异步（setTimeout, ajax 等）使用回调，基于 event loop
+  - DOM 事件也适用回调，基于 Event Loop
+
+```html
+// dom 事件
+<button id="btn1">提交</button>
+<script>
+  console.log('hi')
+  $('#btn1').click(function () {
+    console.log('button clicked')
+  })
+  console.log('Bye')
+</script>
+```
+
+**相关阅读**
+
+[阮一峰：JavaScript 运行机制详解：再谈 Event Loop](https://www.ruanyifeng.com/blog/2014/10/event-loop.html)
+
+2. 什么是宏任务和微任务，两者有什么区别
+
+3. Promise 有哪三种状态，如何变化
+
+- 三种状态：pending resolved rejected
+- 状态的表现和变化:
+  - pending => resolved 或者 pending => rejected
+  - 变化不可逆
+  - pending 状态,不会触发 then 和 catch
+  - resolve 状态，会触发后续的 then 回调函数
+  - reject 状态，会触发后续的 catch 回调函数
+- then 和 catch 对状态的影响
+  - then 正常返回 resolved, 里面有报错则返回 rejected
+  - catch 正常返回 resolved, 里面有报错则返回 rejected
+
+4. Promise then 和 catch 的连接的问题
+
+```javascript
+// 第一题
+Promise.resolve()
+  .then(() => {
+    console.log(1)
+  })
+  .catch(() => {
+    console.log(2)
+  })
+  .then(() => {
+    console.log(3)
+  })
+//  答案：1 3
+
+// 第二题
+Promise.resolve()
+  .then(() => {
+    console.log(1)
+    throw new Error('error1')
+  })
+  .catch(() => {
+    console.log(2)
+  })
+  .then(() => {
+    console.log(3)
+  })
+//  答案：1 2 3
+
+// 第三题
+Promise.resolve()
+  .then(() => {
+    console.log(1)
+    throw new Error('error1')
+  })
+  .catch(() => {
+    console.log(2)
+  })
+  .catch(() => {
+    // 注意：这里是catch
+    console.log(3)
+  })
+//  答案：1 2
+```
+
+5. async/await 语法
+
+```javascript
+// 第一题
+async function fn() {
+  return 100
+}
+;(async function () {
+  const a = fn()
+  console.log('a', a) // a Promise{<fulfilled>: 100}
+  const b = await fn()
+  console.log('b', b) // b 100 Promise {<fulfilled>: undefined}
+})()
+// 第二题
+;(async function () {
+  console.log('start') // start
+  const a = await 100
+  console.log('a', a) // a 100
+  const b = await Promise.resolve(200)
+  console.log('b', b) // b 200
+  const c = await Promise.reject(300)
+  console.log('c', c) //
+  console.log('end')
+})()
+```
+
+6. Promise 和 setTimeout 的顺序问题
+
+```javascript
+console.log(100)
+setTimeout(() => {
+  console.log(200)
+})
+Promise.resolve().then(() => {
+  console.log(300)
+})
+console.log(400)
+// 100 400 300 200
+```
+
+7. 外加 async/await 的顺序问题
+
+> await 后面的函数执行完毕时，await 会产生一个微任务(Promise.then 是微任务)。但是我们要注意这个微任务产生的时机，它是执行完 await 之后，直接跳出 async 函数，执行其他代码(此处就是协程的运作，A 暂停执行，控制权交给 B)。其他代码执行完毕后，再回到 async 函数去执行剩下的代码，然后把 await 后面的代码注册到微任务队列当中。
+
+```javascript
+// 据说是该题来自 头条
+async function async1() {
+  console.log('async1 start')
+  await async2()
+  await async3()
+  console.log('async1 end')
+}
+async function async2() {
+  console.log('async2')
+}
+async function async3() {
+  console.log('async3')
+}
+console.log('script start')
+setTimeout(function () {
+  console.log('setTimeout')
+}, 0)
+
+async1()
+new Promise(function (resolve) {
+  console.log('promise1')
+  resolve()
+}).then(function () {
+  console.log('promise2')
+})
+console.log('script end')
+/**
+ *  script start
+ *  async1 start
+ *  async2
+ *
+ *  promise1
+ *  script end
+ *  async3
+ *
+ *  promise2
+ *  async1 end
+ *  setTimeout
+ */
+```
+
+[相关阅读:async/await 原理及执行顺序分析](https://juejin.cn/post/6844903988584775693)
