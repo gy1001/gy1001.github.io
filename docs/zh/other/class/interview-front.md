@@ -1961,6 +1961,44 @@ history.forward()
 
 ##### 3. 事件绑定
 
+**知识点**
+
+1. 事件绑定
+
+```javascript
+const btn = document.getElementById('btn1')
+btn.addEventListener('click', (event) => {
+  console.log('clicked')
+})
+
+// 通用事件绑定
+function bindEvent(elem, type, fn) {
+  elem.addEventListener(type, fn)
+}
+const a = document.getElementById('link1')
+bindEvent(a, 'click', (e) => {
+  e.preventDefault() // 阻止默认行为
+  // e.stopPropagation() // 阻止冒泡
+  alert('clicked')
+})
+```
+
+2. 事件冒泡
+
+```javascript
+
+```
+
+3. 事件委托
+
+**面试题**
+
+1. 编写一个通用的事件监听函数
+
+2. 描述时间冒泡的流程
+
+3. 无限下拉的图片列表，如何监听每个图片的点击？
+
 ##### 4. Ajax
 
 ##### 5. 存储
