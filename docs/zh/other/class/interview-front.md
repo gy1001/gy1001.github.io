@@ -1718,3 +1718,113 @@ console.log('script end')
 ```
 
 [相关阅读:async/await 原理及执行顺序分析](https://juejin.cn/post/6844903988584775693)
+
+### JS-WEB-API-DOM
+
+- JS 基础知识，规定语法（ECMA 262 标准）
+- JS WEB API 网页操作的 API（W3C 标准）
+- 前者是后者的基础，两者结合才能真正实际应用
+
+#### 前言
+
+- Vue 和 React 框架应用广泛，封装了 DOM 操作
+- 但是 DOM 操作一直都是前端工程师的基础、必备知识
+- 只会 Vue 而不懂 DOM 操作的程序员，不会长久
+
+#### 知识点
+
+##### 1. DOM
+
+> Document Object Model
+
+**题目**
+
+1. DOM 是那种数据结构
+
+2. DOM 操作的常用 API
+
+3. Attr 和 Props 的区别
+
+4. 一次性插入多个 DOM 节点，考虑性能
+
+**知识点**
+
+1. DOM 本质
+
+> 一句话解释 DOM: DOM 即我们所看到的网页，其在浏览器背后的文档（树状分支结构），涵盖了每一个节点（称之为对象），可以通过 JS 等语言去操作改变每一个节点，达到我们想要呈现的效果。
+> DOM 实际上是以面向对象方式描述的文档模型
+
+可以简单的理解为：从 HTML 语言或者文件解析出来的一棵树
+
+参考文献
+
+[DOM 的本质 和 方法](https://www.cnblogs.com/nosink/p/12361674.html)
+
+2. DOM 节点操作
+
+- 获取 DOM 节点
+
+```javascript
+const div1 = document.getElementById('div1') // 元素
+const divList = document.getElementsByTagName('div') // 元素集合
+console.log(divList.length)
+console.log(divList[0])
+
+const containerList = document.getElementsByClassName('container') // 集合
+const pList = document.querySelectorAll('p') // 集合
+```
+
+- Attribute
+
+```javascript
+const pList = document.querySelectorAll('p')
+const p0 = pList[0]
+p0.getAttribute('data-name')
+p0.setAttribute('data-name', 'imooc')
+p0.getAttribute('style')
+p0.setAttribute('style', 'font-size:30px;')
+```
+
+- Property
+
+```javascript
+const pList = document.querySelectorAll('p')
+const p0 = pList[0]
+p0.style.width = '100px'
+console.log(p0.style.width)
+p0.className = 'red'
+console.log(p0.className)
+
+console.log(p0.nodeName)
+console.log(p0.nodeType)
+```
+
+- Attribute 和 Property 的区别
+
+  - attribute（特性），是我们赋予某个事物的特质或对象。
+
+  - property（属性），是早已存在的不需要外界赋予的特质。
+
+  - property: 修改对象属性，不会体现在 html 结构中的
+
+  - attribute: 修改 html 属性，会改变 html 结构
+
+  - 两者都有可能引起 DOM 重新渲染
+
+[相关阅读：](https://cloud.tencent.com/developer/article/1344995)
+
+[attribute 和 property 区别](https://github.com/cy0707/Learn_JavaScript/issues/32)
+
+3. DOM 结构操作
+
+4. DOM 性能
+
+##### 2. BOM
+
+##### 3. 事件绑定
+
+##### 4. Ajax
+
+##### 5. 存储
+
+#### 面试题
