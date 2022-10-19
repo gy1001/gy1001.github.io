@@ -2011,7 +2011,33 @@ bindEvent(a, 'click', (e) => {
 </script>
 ```
 
-3. 事件委托
+3. 事件委托（事件代理）
+
+- 代码简洁
+
+- 减少浏览器内存占用
+
+- 但是，不要滥用
+
+```html
+<div id="div1">
+  <p id="p1">p1</p>
+  <p id="p2">p2</p>
+  <p id="p3">p3</p>
+  <p id="p4">p4</p>
+  <button>点击增加一个p标签</button>
+</div>
+
+<script>
+  const div1 = document.getElementById('#div1')
+  div1.addEventListener('click', (e) => {
+    const target = e.target
+    if (e.nodeName === 'P') {
+      alert(target.innerHTML)
+    }
+  })
+</script>
+```
 
 **面试题**
 
