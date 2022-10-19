@@ -1985,8 +1985,30 @@ bindEvent(a, 'click', (e) => {
 
 2. 事件冒泡
 
-```javascript
-
+```html
+<body>
+  <div id="div1">
+    <p id="p1">激活</p>
+    <p id="p2">取消</p>
+    <p id="p3">取消</p>
+    <p id="p4">取消</p>
+  </div>
+  <div id="div2">
+    <p id="p5">取消</p>
+    <p id="p6">取消</p>
+  </div>
+</body>
+<script>
+  const p1 = document.getElementById('p1')
+  const body = document.body
+  bindEvent(p1, 'click', function (e) {
+    e.stopPropagation() // 注释这一行，来体会事件冒泡
+    alert('激活')
+  })
+  bindEvent(body, 'click', function (e) {
+    alert('取消')
+  })
+</script>
 ```
 
 3. 事件委托
