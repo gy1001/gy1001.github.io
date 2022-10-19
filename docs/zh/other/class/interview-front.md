@@ -1852,6 +1852,66 @@ div1.removeChild(child[0])
 
 4. DOM 性能
 
+- DOM 操作非常“昂贵”，避免频繁的 DOM 操作
+
+- 对 DOM 查询做缓存
+
+```javascript
+// 不缓存 DOM 查询结果
+for (let i = 0; i < document.getElementsByTagName('p').length; i++) {
+  // 每次循环，都会计算 length，导致频繁进行 DOM 的查询
+}
+// 缓存 DOM 查询结果
+const pList = document.getElementsByTagName('p')
+const length = pList.length
+for (let i = 0; i < length; i++) {
+  // 缓存 length，只进行一次 DOM 查询
+}
+```
+
+- 将频繁操作改为一次性操作
+
+```javascript
+// 将频繁操作改为一次性操作
+const listNode = document.getElementById('list')
+// 创建一个文档片段，此时还没有插入到 DOM 树中
+const frag = document.createDocumentFragment()
+// 执行插入
+for (let x = 0; x < 10; x++) {
+  const li = document.createElement('li')
+  li.innerHTML = 'List item ' + x
+  frag.appendChild(li)
+}
+// 都完成之后，再插入到 DOM 树中
+listNode.appendChild(frag)
+```
+
+**面试题**
+
+1. DOM 是那种数据结构
+
+- 树（DOM 树）
+
+2. DOM 常用 API
+
+- DOM 节点操作
+
+- DOM 结构操作
+
+- Attribute 和 Property 的操作
+
+3. Attribute 和 Property 的区别
+
+- property: 修改对象属性，不会体现在 html 结构中的
+
+- attribute: 修改 html 属性，会改变 html 结构
+
+- 两者都有可能引起 DOM 重新渲染（尽量使用 property）
+
+4. 一次性插入多个节点，考虑性能
+
+> 通过 fragment 来进行操作, 代码如上
+
 ##### 2. BOM
 
 ##### 3. 事件绑定
