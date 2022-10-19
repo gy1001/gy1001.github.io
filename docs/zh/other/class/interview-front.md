@@ -2036,6 +2036,45 @@ bindEvent(a, 'click', (e) => {
       alert(target.innerHTML)
     }
   })
+
+  // 通用事件绑定
+  function bindEvent(elem, type, fn) {
+    elem.addEventListener(type, fn)
+  }
+
+  // 使用通用函数来进行绑定
+  bindEvent(div1, 'click', (e) => {
+    const target = e.target
+    if (e.nodeName === 'P') {
+      alert(target.innerHTML)
+    }
+  })
+  // 代理绑定
+  function bindAgentEvent(elem, type, selector, fn) {
+    // 如果传递了三个参数
+    if (fn === null || fn === undefined) {
+      fn = selector
+      selector = null
+    }
+    elem.addEventListener(type, (event) => {
+      let target = event.target
+      if (selector) {
+        // 代理时
+        if (target.matches(selector)) {
+          fn.call(target, event)
+        }
+      } else {
+        // 普通绑定
+        fn.call(target, event)
+      }
+    })
+  }
+  // 使用代理绑定函数来进行处理
+  bindAgentEvent(div1, 'click', p, function (e) {
+    e.preventDefault()
+    // 注意：这里用 this 不能用 箭头函数
+    alert(this.innerHTML)
+  })
 </script>
 ```
 
