@@ -1398,54 +1398,7 @@ console.log(5)
 
 #### 知识点
 
-- event loop
-
-- promise 进阶
-
-- async/await
-
-- 异步的本质
-
-  - async/await 是消灭异步回调的终极武器
-
-  - JS 还是单线程，还得是有异步，还得是基于 event loop
-
-  - async/await 只是一个语法糖，但是这颗糖真香！
-
-- for ... of
-
-  - for...in(以及 forEach for) 是常规的同步遍历
-
-  - **for...of 常用于异步的遍历**
-
-  ```javascript
-  function muti(num) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(num * num)
-      }, 1000)
-    })
-  }
-  const nums = [1, 2, 3]
-  nums.forEach(async (i) => {
-    const res = await muti(i)
-    console.log(res)
-  })
-  // 1s 后结果全部出来，1, 4, 9
-  // 使用 for..of 的代码
-  ;(async function () {
-    for (let i of nums) {
-      const res = await muti(i)
-      console.log(res)
-    }
-  })()
-  ```
-
-- 微任务/宏任务
-
-#### 面试题
-
-1. 请描述 Event Loop(事件循环/事件轮询)的机制，可画图
+1. event loop
 
 - js 是单线程进行的
 
@@ -1499,17 +1452,96 @@ console.log(5)
 
 [阮一峰：JavaScript 运行机制详解：再谈 Event Loop](https://www.ruanyifeng.com/blog/2014/10/event-loop.html)
 
-2. 什么是宏任务和微任务，两者有什么区别
+2. promise 进阶
+
+3. async/await
+
+4. 异步的本质
+
+- async/await 是消灭异步回调的终极武器
+
+- JS 还是单线程，还得是有异步，还得是基于 event loop
+
+- async/await 只是一个语法糖，但是这颗糖真香！
+
+5. for ... of
+
+- for...in(以及 forEach for) 是常规的同步遍历
+
+- **for...of 常用于异步的遍历**
+
+```javascript
+function muti(num) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(num * num)
+    }, 1000)
+  })
+}
+const nums = [1, 2, 3]
+nums.forEach(async (i) => {
+  const res = await muti(i)
+  console.log(res)
+})
+// 1s 后结果全部出来，1, 4, 9
+// 使用 for..of 的代码
+;(async function () {
+  for (let i of nums) {
+    const res = await muti(i)
+    console.log(res)
+  }
+})()
+```
+
+6. 微任务/宏任务
 
 > 宏任务和微任务都是异步任务
 
 - 宏任务一般是：包括整体代码 script，setTimeout，setInterval、I/O、UI render。
 
+  - **DOM 渲染后触发**,如 SetTimeout
+
 - 微任务主要是：Promise.then、Object.observe、MutationObserver。
+
+  - **DOM 渲染前触发**，如 Promise
+
+- 微任务执行时机比宏任务要早(先记住)
+
+- Event Loop 和 DOM 渲染
+
+  - JS 是单线程的，而且和 DOM 渲染共用一个线程
+
+  - JS 执行的时候，得留一些时间供 DOM 渲染
+
+- Event Loop（增加 DOM 渲染过程）
+
+  - 1. Call Stack 空闲：每次 Call Stack 清空（即每次轮询结束），即同步任务执行完毕
+
+  - 2. 执行当前的微任务
+
+  - 3. 尝试 DOM 渲染：都是 DOM 重新渲染的机会，DOM 结构如有改变则重新渲染
+
+  - 4. 触发 Event Loop：然后再去触发下一次 Event Loop
+
+- 从 Event Loop 解释，为什么微任务执行更早
+
+  - 为什么？
+
+    - 微任务是 ES6 语法规定的
+
+    - 宏任务是浏览器规定的
 
 - **相关阅读**:
 
 [宏任务和微任务都是异步任务](https://juejin.cn/post/6880787856353132552#comment)
+
+[深入解析你不知道的 EventLoop 和浏览器渲染、帧动画、空闲回调（动图演示）](https://juejin.cn/post/6844904165462769678)
+
+#### 面试题
+
+1. 请描述 Event Loop(事件循环/事件轮询)的机制，可画图
+
+2. 什么是宏任务和微任务，两者有什么区别
 
 3. Promise 有哪三种状态，如何变化
 
