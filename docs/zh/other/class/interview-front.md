@@ -1914,6 +1914,51 @@ listNode.appendChild(frag)
 
 ##### 2. BOM
 
+> BOM 操作：Browser Object Model
+
+**题目**
+
+1. 如何识别浏览器的类型
+2. 分析拆解 url 各个部分
+
+**知识点**
+
+1. navigator
+
+```javascript
+// navigator
+const ua = navigator.userAgent
+const isChrome = ua.indexOf('Chrome')
+console.log(isChrome)
+```
+
+2. screen
+
+```javascript
+console.log(screen.width)
+console.log(screen.height)
+// 等等
+```
+
+3. location
+
+```javascript
+console.log(location.href)
+console.log(location.protocol)
+console.log(location.host)
+console.log(location.search)
+console.log(location.hash)
+console.log(location.pathname)
+// 等等
+```
+
+4. history
+
+```javascript
+history.back()
+history.forward()
+```
+
 ##### 3. 事件绑定
 
 ##### 4. Ajax
