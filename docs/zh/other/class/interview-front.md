@@ -1817,6 +1817,39 @@ console.log(p0.nodeType)
 
 3. DOM 结构操作
 
+- 新增/插入节点
+
+```javascript
+const div1 = document.getElementById('div1')
+// 添加新节点
+const p1 = document.createElement('p')
+p1.innerHTML = 'this is p1'
+div1.appendChild(p1) // 添加新创建的元素
+// 移动已有节点，注意是移动
+const p2 = document.getElementById('p2')
+div1.appendChild(p2)
+```
+
+- 获取子节点列表，获取父元素
+
+```javascript
+// 获取子元素列表
+const div1 = document.getElementById('div1')
+const child = div1.childNodes
+
+// 获取父元素
+const div1 = document.getElementById('div1')
+const parent = div1.parentNode
+```
+
+- 删除子节点
+
+```javascript
+const div1 = document.getElementById('div1')
+const child = div1.childNodes
+div1.removeChild(child[0])
+```
+
 4. DOM 性能
 
 ##### 2. BOM
