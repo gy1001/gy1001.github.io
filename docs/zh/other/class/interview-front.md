@@ -2104,32 +2104,11 @@ bindEvent(a, 'click', (e) => {
 
 1. XMLHttpRequest
 
-**`xhr.readyState`**
-
-- 0：未初始化，还没有调用 send 方法
-
-- 1：载入，已调用 send 方法，正在发送请求
-
-- 2：载入完成，send 方法执行完成，已经接收到全部响应内容
-
-- 3：交互，正在解析响应内容
-
-- 4：完成，响应内容解析完成，可以在客户端调用
-
-**`xhr.status`**
-
-- 2xx：表示成功处理请求，如 200
-
-- 3xx：需要重定向，浏览器直接跳转，如 301 302 304
-
-- 4xx: 客户端请求错误，如 404 403 405
-
-- 5xx：服务器端错误，如 500
-
 ```javascript
 // get 请求
 const xhr = new XMLHttpRequest()
-xhr.open('GET', '/api', false)
+// 第三个参数：一个可选的布尔参数，表示是否异步执行操作，默认为 true。如果值为 false，send() 方法直到收到答复前不会返回。
+xhr.open('GET', '/api', true)
 xhr.onreadystatechange = function () {
   // 这里的异步执行，可参考之前 JS 基础中的异步模块
   if (xhr.readyState === 4) {
@@ -2142,7 +2121,7 @@ xhr.send(null)
 
 // post 请求
 const xhr = new XMLHttpRequest()
-xhr.open('POST', '/login', false)
+xhr.open('POST', '/login', true)
 xhr.onreadystatechange = function () {
   if (xhr.readyState === 4) {
     if (xhr.status === 200) {
@@ -2159,18 +2138,192 @@ xhr.send(JSON.stringify(postData))
 
 2. 状态码
 
+**`xhr.readyState`**
+
+- 0：UNSENT，还没有调用 send 方法
+
+- 1：OPENED，已调用 send 方法，正在发送请求
+
+- 2：HEADERS_RECEIVED，send 方法执行完成，已经接收到全部响应内容
+
+- 3：LOADING，正在解析响应内容
+
+- 4：DONE，响应内容解析完成，可以在客户端调用
+
+**`xhr.status`**
+
+- 2xx：表示成功处理请求，如 200
+
+- 3xx：需要重定向，浏览器直接跳转，如 301 302 304
+
+- 4xx: 客户端请求错误，如 404 403 405
+
+- 5xx：服务器端错误，如 500
+
 3. 跨域：同源策略，跨域解决方案
+
+**`什么是跨域（同源策略）`**
+
+- ajax 请求时，浏览器要求当前网页和 server 必须同源(安全)
+
+- 同源：协议、域名、端口，三者必须一致
+
+- 前端：http://a.com:8080 , server: https://b.com/api/xxx
+
+- 加载图片 css js 可以无视同源策略
+
+  - img 可以用于统计打点，可用于第三方统计服务
+
+  - link script 可以使用 CDN，CDN 一般都是外域
+
+  - script 可以 实现 JSONP
+
+  - 所有的跨域，都必须通过 server 端允许和配合
+
+  - 未经 server 端允许就实现跨域，说明浏览器有漏洞，危险信号
+
+  ```html
+  <!-- 图片可能存在防盗链限制，需要在html 头部添加规则处理 -->
+  <img src="跨域的图片地址" />
+  <link href="跨域的css地址" />
+  <script src="跨域的js地址"></script>
+  ```
+
+**`JSONP`**
+
+- 访问 https://imooc.com/ 服务端一定返回一个 html 文件吗？
+
+- 服务器可以任意动态拼接数据返回，只要符合 html 格式要求
+
+- 同理于 `<script scr="https://imooc.com/getData.js"></script>`
+
+- script 可以绕过跨域限制
+
+- 服务端可以任意动态拼接参数数据返回
+
+- 所以，script 就可以获得跨域的数据，只要服务端愿意返回
+
+```html
+<script>
+  window.callback = function (data) {
+    // 这里我们得到跨域信息
+    console.log(data)
+  }
+</script>
+<script src="http://imooc.com/getData.js"></script>
+<!-- 上面的文件，将返回 callback({ x: 100, y: 200 }) -->
+```
+
+**`CORS（服务端支持）`**
+
+> 服务端设置 http server
+
+```javascript
+// 第二个参数填写允许跨域的域名城，不建议直接写 *
+response.setHeader('Access-Control-Allow-Origin', 'http://localhost:8011')
+response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With')
+response.setHeader(
+  'Access-Control-Allow-Methods',
+  'PUT,POST,GET,DELETE,OPTIONS'
+)
+// 接收跨域的cookie
+response.setHeader('Access-Control-Allow-Credentials', 'true')
+```
 
 **题目**
 
 1. 手写一个简单的 ajax
 
 ```javascript
+// 简易版
+function ajax(url, successFn) {
+  const xhr = new XMLHttpRequest()
+  xhr.open('GET', url, true)
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        successFn(xhr.responseText)
+      }
+    }
+  }
+  xhr.send(null)
+}
 
+// 带 promise 的 ajax
+function ajaxPromise() {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('GET', url, true)
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          resolve(xhr.responseText)
+        } else if (xhr.status === 404) {
+          reject(new Error('404 Not Found'))
+        }
+      }
+    }
+    xhr.send(null)
+  })
+}
+const url = '/getUseInfo'
+ajaxPromise(url)
+  .then((res) => {
+    console.log(res)
+  })
+  .catch((err) => {
+    console.err(err)
+  })
 ```
 
 2. 跨域的常用实现方式
 
+- JSONP
+
+- CORS
+
 ##### 5. 存储
 
-#### 面试题
+**知识点**
+
+1. `Cookie`
+
+- 本身用于浏览器和 server 通讯
+
+- 被“借用”到本地存储来
+
+- 使用 document.cookie = "xxxxxx" 来进行修改
+
+- Cookie 的缺点
+
+  - 存储大小，最大 4KB
+
+  - http 请求时候需要发送到服务器，增加请求数据量
+
+  - 只能用 document.cookie="xxxx" 来修改，太过简陋
+
+2. `localStorage SessionStorage`
+
+- HTML5 专门为存储而设计，最大可存 5M
+
+- API 简单易用 setItem getItem
+
+- 不会随着 http 请求发送出去
+
+- **区别**
+
+  - localStorage 数据会永久删除，除非代码或者手动删除
+
+  - sessionStorage 数据只会存在于当前会话，浏览器关闭则清空
+
+  - 一般用 localStorage 会更多一点
+
+**题目**
+
+1. 描述 cookie localStorage SessionStorage 区别
+
+- 容量的区别
+
+- API 易用性的区别
+
+- 是否跟随 http 请求发送出去
