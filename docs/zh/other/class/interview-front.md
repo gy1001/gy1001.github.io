@@ -2327,3 +2327,133 @@ ajaxPromise(url)
 - API 易用性的区别
 
 - 是否跟随 http 请求发送出去
+
+## HTTP
+
+- 前端工程师开发界面
+
+- 需要调用后端的接口，提交/获取 数据 --- http 协议
+
+- 要求事先掌握好 ajax
+
+### http 状态码
+
+- 状态码分类
+
+  - 1xx: 服务器收到请求
+
+  - 2xx: 请求成功，如 200
+
+  - 3xx: 重定向，如 302
+
+  - 4xx: 客户端错误，如 404
+
+  - 5xx: 服务端错误，如 500
+
+- 常见状态码
+
+  - 200 成功
+
+  - 301 永久重定向（配合 location,浏览器自动处理）
+
+  - 302 临时重定向（配合 location,浏览器自动处理）
+
+  - 304 资源未被修改
+
+  - 404 资源未找到
+
+  - 403 没有权限
+
+  - 500 服务器错误
+
+  - 504 网关超时
+
+- 关于协议和规范
+
+  - 就是一个约定
+
+  - 要求大家都跟着执行
+
+  - 不要违反规范，例如 IE 浏览器
+
+### http Method
+
+#### 传统的 methods
+
+- get 获取服务器的数据
+
+- post 向服务器提交数据
+
+- 简单的网页操作，就这两个操作
+
+#### 现在的 methods
+
+- get 获取数据
+
+- post 新建数据
+
+- patch/put 更新数据
+
+- delete 删除数据
+
+### Restful API
+
+- 一种新的 API 设计方法（早已推广使用）
+
+- 传统 API 设计：把每个 URL 当做一个功能
+
+- Restful API 设计：把每个 URL 当做一个唯一的资源
+
+**如何设计成一个资源？？？**
+
+- 尽量不用 url 参数
+
+  - 传统 API 设计：/api/list?pageIndex=2: (这里可以把`？`前面`/api/list`看做一个函数方法，后面的是参数)
+
+  - Restful API 设计: /api/list/2
+
+- 用 method 表示操作类型
+
+  - 传统 API 设计
+
+    - post 请求：/api/create-blog
+
+    - post 请求：/api/update-blog?i=100
+
+    - get 请求： /api/get-blog?id=100
+
+  - Restful API 设计
+
+    - post 请求： /api/blog
+
+    - patch 请求：/api/blog/100
+
+    - get 请求：/api/blog/100
+
+### http Headers
+
+#### Request Headers
+
+- Accept:浏览器可接收的数据格式 如：`text/css`，`application/json`，`text/html`
+
+- Accept-Encoding: 浏览器可接收的压缩算法：如 `gzip`
+
+- Accept-Language: 浏览器可接收的语言：如 `zh-CN`
+
+- Connection: keep-alive 一次 TCP 链接可以重复使用
+
+#### Response Headers
+
+<!-- #### 常见的 Request Headers
+
+#### 常见的 Response Headers -->
+
+**相关题目**
+
+- http 常见状态码有哪些
+
+- http 常见的 header 有哪些
+
+- 什么是 RestFul API
+
+- 描述一下 http 缓存机制（非常重要）
