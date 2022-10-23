@@ -2442,7 +2442,50 @@ ajaxPromise(url)
 
 - Connection: keep-alive 一次 TCP 链接可以重复使用
 
+- cookie 
+
+- host 
+
+- User-Agent(简称 UA) 浏览器信息
+
+- Content-type 发送数据的格式，如 application/json
+
 #### Response Headers
+
+- Content-type 返回数据的格式，如`application/json`
+
+- Content-length  返回数据的大小，多少字节
+
+- Content-Encoding 返回数据的压缩算法，如 `gzip`
+
+- Set-Cookie 
+
+- 自定义 header
+
+  `参考链接：https://axios-http.com/zh/docs/req_config`
+  - headers: {'x-Request-With': 'XMLHttpRequest' }
+
+- 缓存相关的 headers
+
+  - Cache-Control  Expires
+
+  - Last-Modified If-Modified-Since
+
+  - Etag  If-None_match
+
+#### http 缓存
+
+1. 关于缓存的介绍
+
+- 什么是缓存
+  
+- 为什么需要缓存
+
+- 哪些资源是可以被缓存？---静态资源（js,css,img）
+
+2. http 缓存策略(强制缓存 + 协商缓存)
+
+3. 刷新操作方式，对缓存的影响
 
 <!-- #### 常见的 Request Headers
 
