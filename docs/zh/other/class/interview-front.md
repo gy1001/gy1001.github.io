@@ -2328,7 +2328,7 @@ ajaxPromise(url)
 
 - 是否跟随 http 请求发送出去
 
-## HTTP
+## HTTP 面试题
 
 - 前端工程师开发界面
 
@@ -2478,18 +2478,78 @@ ajaxPromise(url)
 1. 关于缓存的介绍
 
 - 什么是缓存
+  - 缓存是指浏览器（客户端）在本地磁盘中对访问过的资源保存的副本文件
   
 - 为什么需要缓存
+  - 减少重复数据请求，避免通过网络再次加载资源，节省流量。
 
-- 哪些资源是可以被缓存？---静态资源（js,css,img）
+  - 降低服务器的压力，提升网站性能。
+  - 加快客户端加载网页的速度， 提升用户体验。
+
+- 哪些资源是可以被缓存？
+  - 静态资源（js,css,img）
+
 
 2. http 缓存策略(强制缓存 + 协商缓存)
 
+- **强制缓存**
+
+  - Cache-Control 
+
+    - 在 Response Headers 中，服务端来进行控制
+    - 控制强制缓存的逻辑
+    - 例如 Cache-Control: max-age=31536000 (单位是秒)
+    - <img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy81MjQyMTI1LTA2YWMyNTFlMTUwOTk5NDkucG5n?x-oss-process=image/format,png" alt="img"  align="left" style="zoom:67%;" />
+    - Cache-Control 的值可以分为以下集中
+      - max-age:  设置缓存的最大过期时间
+      - no-cache: 有本地缓存，不用强制缓存，向服务端请求
+      - no-store: 不让服务端做缓存，完全不缓存
+      - private: 发起请求的浏览器才能使用返回数据的缓存
+      - public: 这个HTTP请求它返回的内容所经过的任何路径中，包括中间的一些HTTP 代理服务器以及发出请求的客户端浏览器，都可以进行对返回内容的缓存操作
+  - 关于 Expires
+    - 同在 Respinse Headers 中
+    - 同为控制缓存过期
+    - 已被Cache-Control 代替
+
+- **协商缓存**
+
+  - 服务端缓存策略
+  - 服务端潘达判断客户端资源，是否和服务端资源一样
+  - 判断一致则返回304，否则返回200和最新的资源
+  - <img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4d9460548b8248a0aad44849eb494156~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.image?" align="left" alt="image" style="zoom:67%;" />
+  - 资源标识
+    - 在 `Response Headers` 中，有两种
+      - `Last-Modofied` 资源的最后修改时间
+      - `Etag` 资源的唯一标识（一个字符串，类似人类的指纹）
+  - `Last-Modified` 和 `Etag`
+    - 会优先使用 `Etag`
+    - `Last-Modified` 只能精确到秒级别
+    - 如果资源被重复生成，但是内容不变，则 `Etag` 更精确
+  - http 1.0
+    - <img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/250bdae9421f4a238f8300e8042a7ce7~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.image?" alt="协商缓存之last-Modified" align="left" style="zoom:67%;" />
+  - http 1.1
+    - <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/099ff22bbcb141a5b48301a319c516a5~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.image?" alt="协商缓存之Etag" align="left" style="zoom:67%;" />
+
+- **http 缓存流程图**
+
+  <img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy81MjQyMTI1LWQ1YTUxYTI0ZjlkNjlkMGQucG5n?x-oss-process=image/format,png" alt=" http缓存流程" />
+
+
+[http面试必会的：强制缓存和协商缓存:评论有用](https://juejin.cn/post/6844903838768431118)
+
+[http缓存详解:多图](https://blog.csdn.net/express_yourself/article/details/107230954)
+
+[浏览器的强缓存和协商缓存](https://segmentfault.com/a/1190000021661656)
+
+[强烈推荐：一文彻底搞懂http缓存，图文解说+实战应用](https://juejin.cn/post/7051552782486077471)
+
 3. 刷新操作方式，对缓存的影响
 
-<!-- #### 常见的 Request Headers
-
-#### 常见的 Response Headers -->
+  | 操作方式 | 场景                                                     | 强制缓存 | 协商缓存 |
+  | -------- | -------------------------------------------------------- | -------- | -------- |
+  | 正常操作 | 地址栏输入 url, 跳转链接，前进后退等                     | 有效     | 有效     |
+  | 手动刷新 | F5，点击刷新按钮，右击菜单刷新（Mac快捷键：command + R） | 失效     | 有效     |
+  | 强制刷新 | ctrl + F5 （Mac快捷键：shift + command + R）             | 失效     | 失效     |
 
 **相关题目**
 
@@ -2500,3 +2560,38 @@ ajaxPromise(url)
 - 什么是 RestFul API
 
 - 描述一下 http 缓存机制（非常重要）
+
+## 开发环境
+
+> * 面试官想通过开发环境了解候选人的实际工作情况
+> * 开发环境的工具，能体现工作产生的效率
+> * 会以聊天的形式为主，不会问具体的问题
+
+### Git
+
+* 最常用的代码版本管理工具
+* 大型项目需要多人协作开发，必须熟练使用 `git`
+* Mac OS 自带 git 命令，windows 可去官网下载安装
+* git 服务端常见的有 github、coding.net(码云) 等
+* 大公司会搭建自己的内网 git 服务
+* 常用的 git 命令
+  * git status
+  * git add .
+  * git checkout xxx
+  * git commit -m xxx
+  * git push origin master
+  * git pull origin master
+  * git branch 
+  * git checkout -b xxx / git checkout xx
+  * git merge xx
+
+### 调试工具	
+
+### 抓包
+
+### webpack babel
+
+### linux 常用命令
+
+
+
