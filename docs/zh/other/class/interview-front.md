@@ -2576,6 +2576,7 @@ ajaxPromise(url)
 * 大公司会搭建自己的内网 git 服务
 * 常用的 git 命令
   * git status
+  * git diff
   * git add .
   * git checkout xxx
   * git commit -m xxx
@@ -2584,12 +2585,38 @@ ajaxPromise(url)
   * git branch 
   * git checkout -b xxx / git checkout xx
   * git merge xx
+  * git stash 
+  * git stash pop
 
-### 调试工具	
+### 调试工具
+
+* chrome 调试工具
+  * Elements
+  * Console
+  * debugger
+  * Network
+  * Application
 
 ### 抓包
 
+> * 移动端 H5 页面，查看页面请求，需要用抓包工具
+> * windows 一般使用 fiddler
+> * Mac OS 一般使用 charles
+
+* 手机和电脑连接同一局域网
+* 将手机代理到电脑上
+* 手机浏览网页，即可抓包
+* 查看网络请求
+* 网址代理
+* https如何处理
+
 ### webpack babel
+
+> * ES6 模块化，浏览器不支持
+> * ES6 语法，浏览器并不完全支持
+> * 压缩代码，整合代码，以让网页加载更快
+
+
 
 ### linux 常用命令
 
