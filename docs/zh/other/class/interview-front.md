@@ -2442,9 +2442,9 @@ ajaxPromise(url)
 
 - Connection: keep-alive 一次 TCP 链接可以重复使用
 
-- cookie 
+- cookie
 
-- host 
+- host
 
 - User-Agent(简称 UA) 浏览器信息
 
@@ -2454,24 +2454,25 @@ ajaxPromise(url)
 
 - Content-type 返回数据的格式，如`application/json`
 
-- Content-length  返回数据的大小，多少字节
+- Content-length 返回数据的大小，多少字节
 
 - Content-Encoding 返回数据的压缩算法，如 `gzip`
 
-- Set-Cookie 
+- Set-Cookie
 
 - 自定义 header
 
   `参考链接：https://axios-http.com/zh/docs/req_config`
+
   - headers: {'x-Request-With': 'XMLHttpRequest' }
 
 - 缓存相关的 headers
 
-  - Cache-Control  Expires
+  - Cache-Control Expires
 
   - Last-Modified If-Modified-Since
 
-  - Etag  If-None_match
+  - Etag If-None_match
 
 #### http 缓存
 
@@ -2479,8 +2480,8 @@ ajaxPromise(url)
 
 - 什么是缓存
   - 缓存是指浏览器（客户端）在本地磁盘中对访问过的资源保存的副本文件
-  
 - 为什么需要缓存
+
   - 减少重复数据请求，避免通过网络再次加载资源，节省流量。
 
   - 降低服务器的压力，提升网站性能。
@@ -2489,33 +2490,33 @@ ajaxPromise(url)
 - 哪些资源是可以被缓存？
   - 静态资源（js,css,img）
 
-
 2. http 缓存策略(强制缓存 + 协商缓存)
 
 - **强制缓存**
 
-  - Cache-Control 
+  - Cache-Control
 
     - 在 Response Headers 中，服务端来进行控制
     - 控制强制缓存的逻辑
     - 例如 Cache-Control: max-age=31536000 (单位是秒)
     - <img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy81MjQyMTI1LTA2YWMyNTFlMTUwOTk5NDkucG5n?x-oss-process=image/format,png" alt="img"  align="left" style="zoom:67%;" />
     - Cache-Control 的值可以分为以下集中
-      - max-age:  设置缓存的最大过期时间
+      - max-age: 设置缓存的最大过期时间
       - no-cache: 有本地缓存，不用强制缓存，向服务端请求
       - no-store: 不让服务端做缓存，完全不缓存
       - private: 发起请求的浏览器才能使用返回数据的缓存
-      - public: 这个HTTP请求它返回的内容所经过的任何路径中，包括中间的一些HTTP 代理服务器以及发出请求的客户端浏览器，都可以进行对返回内容的缓存操作
+      - public: 这个 HTTP 请求它返回的内容所经过的任何路径中，包括中间的一些 HTTP 代理服务器以及发出请求的客户端浏览器，都可以进行对返回内容的缓存操作
+
   - 关于 Expires
     - 同在 Respinse Headers 中
     - 同为控制缓存过期
-    - 已被Cache-Control 代替
+    - 已被 Cache-Control 代替
 
 - **协商缓存**
 
   - 服务端缓存策略
   - 服务端潘达判断客户端资源，是否和服务端资源一样
-  - 判断一致则返回304，否则返回200和最新的资源
+  - 判断一致则返回 304，否则返回 200 和最新的资源
   - <img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4d9460548b8248a0aad44849eb494156~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.image?" align="left" alt="image" style="zoom:67%;" />
   - 资源标识
     - 在 `Response Headers` 中，有两种
@@ -2534,22 +2535,21 @@ ajaxPromise(url)
 
   <img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy81MjQyMTI1LWQ1YTUxYTI0ZjlkNjlkMGQucG5n?x-oss-process=image/format,png" alt=" http缓存流程" />
 
+[http 面试必会的：强制缓存和协商缓存:评论有用](https://juejin.cn/post/6844903838768431118)
 
-[http面试必会的：强制缓存和协商缓存:评论有用](https://juejin.cn/post/6844903838768431118)
-
-[http缓存详解:多图](https://blog.csdn.net/express_yourself/article/details/107230954)
+[http 缓存详解:多图](https://blog.csdn.net/express_yourself/article/details/107230954)
 
 [浏览器的强缓存和协商缓存](https://segmentfault.com/a/1190000021661656)
 
-[强烈推荐：一文彻底搞懂http缓存，图文解说+实战应用](https://juejin.cn/post/7051552782486077471)
+[强烈推荐：一文彻底搞懂 http 缓存，图文解说+实战应用](https://juejin.cn/post/7051552782486077471)
 
 3. 刷新操作方式，对缓存的影响
 
-  | 操作方式 | 场景                                                     | 强制缓存 | 协商缓存 |
-  | -------- | -------------------------------------------------------- | -------- | -------- |
-  | 正常操作 | 地址栏输入 url, 跳转链接，前进后退等                     | 有效     | 有效     |
-  | 手动刷新 | F5，点击刷新按钮，右击菜单刷新（Mac快捷键：command + R） | 失效     | 有效     |
-  | 强制刷新 | ctrl + F5 （Mac快捷键：shift + command + R）             | 失效     | 失效     |
+| 操作方式 | 场景                                                      | 强制缓存 | 协商缓存 |
+| -------- | --------------------------------------------------------- | -------- | -------- |
+| 正常操作 | 地址栏输入 url, 跳转链接，前进后退等                      | 有效     | 有效     |
+| 手动刷新 | F5，点击刷新按钮，右击菜单刷新（Mac 快捷键：command + R） | 失效     | 有效     |
+| 强制刷新 | ctrl + F5 （Mac 快捷键：shift + command + R）             | 失效     | 失效     |
 
 **相关题目**
 
@@ -2563,121 +2563,182 @@ ajaxPromise(url)
 
 ## 开发环境
 
-> * 面试官想通过开发环境了解候选人的实际工作情况
-> * 开发环境的工具，能体现工作产生的效率
-> * 会以聊天的形式为主，不会问具体的问题
+> - 面试官想通过开发环境了解候选人的实际工作情况
+> - 开发环境的工具，能体现工作产生的效率
+> - 会以聊天的形式为主，不会问具体的问题
 
 ### Git
 
-* 最常用的代码版本管理工具
-* 大型项目需要多人协作开发，必须熟练使用 `git`
-* Mac OS 自带 git 命令，windows 可去官网下载安装
-* git 服务端常见的有 github、coding.net(码云) 等
-* 大公司会搭建自己的内网 git 服务
-* 常用的 git 命令
-  * git status
-  * git diff
-  * git add .
-  * git checkout xxx
-  * git commit -m xxx
-  * git push origin master
-  * git pull origin master
-  * git branch 
-  * git checkout -b xxx / git checkout xx
-  * git merge xx
-  * git stash 
-  * git stash pop
+- 最常用的代码版本管理工具
+- 大型项目需要多人协作开发，必须熟练使用 `git`
+- Mac OS 自带 git 命令，windows 可去官网下载安装
+- git 服务端常见的有 github、coding.net(码云) 等
+- 大公司会搭建自己的内网 git 服务
+- 常用的 git 命令
+  - git status
+  - git diff
+  - git add .
+  - git checkout xxx
+  - git commit -m xxx
+  - git push origin master
+  - git pull origin master
+  - git branch
+  - git checkout -b xxx / git checkout xx
+  - git merge xx
+  - git stash
+  - git stash pop
 
 ### 调试工具
 
-* chrome 调试工具
-  * Elements
-  * Console
-  * debugger
-  * Network
-  * Application
+- chrome 调试工具
+  - Elements
+  - Console
+  - debugger
+  - Network
+  - Application
 
 ### 抓包
 
-> * 移动端 H5 页面，查看页面请求，需要用抓包工具
-> * windows 一般使用 fiddler
-> * Mac OS 一般使用 charles
+> - 移动端 H5 页面，查看页面请求，需要用抓包工具
+> - windows 一般使用 fiddler
+> - Mac OS 一般使用 charles
 
-* 手机和电脑连接同一局域网
-* 将手机代理到电脑上
-* 手机浏览网页，即可抓包
-* 查看网络请求
-* 网址代理
-* https如何处理
+- 手机和电脑连接同一局域网
+- 将手机代理到电脑上
+- 手机浏览网页，即可抓包
+- 查看网络请求
+- 网址代理
+- https 如何处理
 
 ### webpack babel
 
-> * ES6 模块化，浏览器不支持
-> * ES6 语法，浏览器并不完全支持
-> * 压缩代码，整合代码，以让网页加载更快
+> - ES6 模块化，浏览器不支持
+> - ES6 语法，浏览器并不完全支持
+> - 压缩代码，整合代码，以让网页加载更快
 
 ### linux 常用命令
 
-> * 公司的线上机器一般都是Linux（参考阿里云）
-> * 测试机也需要保持一致，用 Linux
-> * 测试机或者线上机出了问题，本地又不能复现，需要去排查
+> - 公司的线上机器一般都是 Linux（参考阿里云）
+> - 测试机也需要保持一致，用 Linux
+> - 测试机或者线上机出了问题，本地又不能复现，需要去排查
 
 ## 运行环境
 
-> * 运行环境即浏览器（serve端有 nodejs）
-> * 下载网页代码，渲染出页面，期间会执行若干 JS
-> * 要保证代码在浏览器中：稳定且高效
+> - 运行环境即浏览器（serve 端有 nodejs）
+> - 下载网页代码，渲染出页面，期间会执行若干 JS
+> - 要保证代码在浏览器中：稳定且高效
 
 ### 网页加载过程
 
-* 题目
-  * 从输入 url 到渲染出页面的整个过程
-    * 下载资源：各个资源类型、下载过程
-    * 渲染页面：结合 html css JavaScript 图片等
-  * window.onload 和 DOMContentLoaded 的区别
-    * window.onload:`页面的全部资源加载完成才会执行，包括图片、视频`
-    * DOMContentLoaded:`DOM渲染完即可执行，此时图片、视频可能还没有加载完`
-* 知识点
-  * 加载资源的形式
-    * html 代码
-    * 媒体文件，如图片、视频等
-    * JavaScript Css
-  * 加载资源的过程
-    * DNS 解析：域名 => IP 地址
-    * 浏览器根据 IP 地址向服务器发起 http 请求
-    * 服务端处理 http 请求，并返回给浏览器
-  * 渲染页面的过程
-    * 根据 HTML 代码生成 DOM Tree
-    * 根据 CSS 代码生成 CSSOM
-    * 将 DOM Tree 和 CSSOM 整合行成 Render Tree
-    * 根据 Render Tree 渲染页面
-    * 遇到 script 则暂停渲染，优先加载并执行 JS 代码，完成再继续
+- 题目
+  - 从输入 url 到渲染出页面的整个过程
+    - 下载资源：各个资源类型、下载过程
+    - 渲染页面：结合 html css JavaScript 图片等
+  - window.onload 和 DOMContentLoaded 的区别
+    - window.onload:`页面的全部资源加载完成才会执行，包括图片、视频`
+    - DOMContentLoaded:`DOM渲染完即可执行，此时图片、视频可能还没有加载完`
+- 知识点
+  - 加载资源的形式
+    - html 代码
+    - 媒体文件，如图片、视频等
+    - JavaScript Css
+  - 加载资源的过程
+    - DNS 解析：域名 => IP 地址
+    - 浏览器根据 IP 地址向服务器发起 http 请求
+    - 服务端处理 http 请求，并返回给浏览器
+  - 渲染页面的过程
+    - 根据 HTML 代码生成 DOM Tree
+    - 根据 CSS 代码生成 CSSOM
+    - 将 DOM Tree 和 CSSOM 整合行成 Render Tree
+    - 根据 Render Tree 渲染页面
+    - 遇到 script 则暂停渲染，优先加载并执行 JS 代码，完成再继续
 
 ### 性能优化（包括体验优化）
 
-> * 是一个综合性问题，没有标准答案，但要求尽量全面
-> * 某些细节问题可能会单独提问：手写防抖、节流
-> * 只关注核心点，针对面试
+> - 是一个综合性问题，没有标准答案，但要求尽量全面
+> - 某些细节问题可能会单独提问：手写防抖、节流
+> - 只关注核心点，针对面试
 
 #### 性能优化原则
 
-* 多使用内存、缓存或其他方法
-* 减少CPU计算量，减少网络加载耗时
-* 适用于所有编程的性能优化-----空间换时间
+- 多使用内存、缓存或其他方法
+- 减少 CPU 计算量，减少网络加载耗时
+- 适用于所有编程的性能优化-----空间换时间
 
 #### 从何入手
 
-* 让加载更快
-  * 减少资源体积：压缩代码
-  * 减少访问次数：合并代码，SSR服务端渲染，缓存
-  * 使用更快的网络：CDN
-* 让渲染更快
-  * CSS放在head，JS放在 body 最下面
-  * 尽早开始执行 JS，用 DOMContentLoaded 触发
-  * 懒加载（图片懒加载，上滑加载更多）
-  * 对 DOM 查询进行缓存
-  * 频繁 DOM 操作，合并到一起插入 DOM 结构
-  * 节流 throttel 防抖 debounce 
+- 让加载更快
+  - 减少资源体积：压缩代码
+  - 减少访问次数：合并代码，SSR 服务端渲染，缓存
+    - 缓存
+      - 静态资源加 `hash` 后缀，根据文件内容计算 `hash`
+      - 文件内容不变，则 `hash` 不变，则 `url` 不变
+      - `url` 和 `文件`不变，则会自动触发 `http` 缓存机制，返回`304`
+    - SSR 服务端渲染
+      - 服务端渲染：将网页和数据一起加载，一起渲染
+      - 非 SSR(前后端分离)：先加载网页，再加载数据，再渲染数据
+      - 早先的 JSP、ASP、PHP，现在的 Vue React SSR
+  - 使用更快的网络：`CDN`
+  
+- 让渲染更快
+
+  - CSS 放在 head，JS 放在 body 最下面
+
+  - 尽早开始执行 JS，用 `DOMContentLoaded` 触发
+
+    ```javascript
+    window.addEventListener("load", function(){
+     	// 页面的全部资源加载完才会执行，包括图片、视频 
+    })
+    document.addEventListener("DOMContentLoaded", function(){
+      // DOM 渲染完即可执行，此时图片、视频可能还没有加载完
+    })
+    ```
+  
+    
+  
+  - 懒加载（图片懒加载，上滑加载更多）
+  
+    ```html
+    <img id="img1" scr="preview.png" data-real-src="abc.png" />
+    <script type="text/javascript">
+      var img1 = document.getElementById('img1')
+      img1.scr = img1.getAttribute('data-real-src')
+    </script>
+    ```
+  
+  - 对 DOM 查询进行缓存
+  
+    ```javascript
+    // 不缓存 DOM 查询结果
+    for (let i = 0; i < document.getElementsByTagName('p').length; i++) {
+      // 每次循环，都会计算 length, 频繁进行 DOM 查询
+    }
+    // 缓存  DOM 查询结果
+    const pList = document.getElementsByTagName('p')
+    const length = pList.length
+    for (let i = 0; i < legnth; i++) {
+      // 缓存 length, 只进行一次 DOM 查询
+    }
+    ```
+  
+  - 频繁 DOM 操作，合并到一起插入 DOM 结构
+  
+    ```javascript
+    // 将频繁操作改为一次性操作
+    const listNode = document.getElementById('list')
+    // 创建一个文档片段，此时还没有插入到 DOM 树中
+    const frag = document.createDocumentFragment()
+    // 执行插入
+    for (let x = 0; x < 10; x++) {
+      const li = document.createElement('li')
+      li.innerHTML = 'List item ' + x
+      frag.appendChild(li)
+    }
+    // 都完成之后，再插入到 DOM 树中
+    listNode.appendChild(frag)
+    ```
+  
+  - 节流 throttel 防抖 debounce
 
 ### 安全
-
