@@ -2740,5 +2740,141 @@ ajaxPromise(url)
     ```
   
   - 节流 throttel 防抖 debounce
+  
+    - 防抖
+  
+      - 监听一个输入框的，文字变化后触发 `change` 事件
+  
+      - 直接用 keyup 事件，则会频繁触发 `change`事件
+  
+      - 防抖：用户输入结束或者暂停时，才会触发`change`事件
+  
+      - ```html
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Document</title>
+          </head>
+          <body>
+            <input type="text" id="input" />
+          </body>
+          <script>
+            const input1 = document.getElementById('input')
+            // 未使用防抖，会频繁触发
+            input1.addEventListener('keyup', function (event) {
+              console.log(event.target.value)
+            })
+          </script>
+          <script>
+            // 优化一下
+            const input2 = document.getElementById('input')
+            let timer = null
+            input2.addEventListener('keyup', function () {
+              if (timer) {
+                clearTimeout(timer)
+              }
+              timer = setTimeout(() => {
+                console.log(input2.value, '我是简单优化后的函数')
+              }, 1000)
+            })
+          </script>
+        
+          <script>
+            // 封装函数 debounce
+            function debounce(fn, delay = 500) {
+              // 这个 timer 是在 闭包 中的
+              let timer = null
+        
+              return function () {
+                if (timer) {
+                  clearTimeout(timer)
+                }
+                timer = setTimeout(() => {
+                  fn.apply(this, arguments)
+                  timer = null
+                }, delay)
+              }
+            }
+            const debounceFunc = debounce((event) => {
+              //  如果想用 this， 这里不能用箭头函数
+              console.log(event.target.value, '我是封装的debounce函数')
+            }, 600)
+            input2.addEventListener('keyup', debounceFunc)
+          </script>
+        </html>
+        ```
+  
+    - 节流 throttle
+  
+      - 拖拽一个元素时，要随时拿到该元素被拖拽的位置
+  
+      - 直接用 drag 事件，则会频繁触发，很容易导致卡顿
+  
+      - 节流：无论拖拽速度多快，都会每隔 xxx ms 触发一次
+  
+      - ```html
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>throttle 演示</title>
+          </head>
+          <style>
+            #div1 {
+              border: solid 1px #ccc;
+              width: 200px;
+              height: 100px;
+            }
+          </style>
+          <body>
+            <div id="div1" draggable="true">可拖拽</div>
+          </body>
+          <script>
+            const div1 = document.getElementById('div1')
+            div1.addEventListener('drag', function (e) {
+              console.log(e.offsetX, e.offsetY)
+            })
+          </script>
+          <script>
+            // 优化一下
+            let timer = null
+            div1.addEventListener('drag', function (e) {
+              if (timer) {
+                return
+              }
+              timer = setTimeout(() => {
+                console.log(e.offsetX, e.offsetY, '简单优化后的拖拽函数')
+                timer = null
+              }, 500)
+            })
+          </script>
+          <script>
+            function throttle(fn, delay) {
+              let throttleTimer = null
+              return function () {
+                if (throttleTimer) {
+                  return
+                }
+                throttleTimer = setTimeout(() => {
+                  fn.apply(this, arguments)
+                  throttleTimer = null
+                }, delay)
+              }
+            }
+            const throttleFunc = throttle(function (e) {
+              console.log(e.offsetX, e.offsetY, '使用 throttle 优化后的拖拽函数')
+            }, 600)
+        
+            div1.addEventListener('drag', throttleFunc)
+          </script>
+        </html>
+        ```
+  
+    
 
 ### 安全
