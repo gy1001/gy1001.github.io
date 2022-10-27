@@ -693,7 +693,7 @@ console.log(obj1) // { x: 101, y: 200 }
      * 深拷贝
      * obj: 要拷贝的对象
      */
-    function deepClone(obj) {
+    function deepClone (obj) {
       // obj 是null 或者 不是数组和对象，就直接返回
       if (typeof obj !== 'object' || obj === null) {
         return obj
@@ -718,9 +718,9 @@ console.log(obj1) // { x: 101, y: 200 }
       age: 20,
       name: '孙悟空',
       address: {
-        city: '北京',
+        city: '北京'
       },
-      arr: ['a', 'b', 'c'],
+      arr: ['a', 'b', 'c']
     }
     const objB = deepClone(objA)
     const objC = objA
@@ -753,14 +753,14 @@ console.log(obj1) // { x: 101, y: 200 }
     <body></body>
     <script>
       class Student {
-        constructor(name, number) {
+        constructor (name, number) {
           this.name = name
           this.number = number
         }
-        sayHi() {
+        sayHi () {
           console.log(`姓名${this.name},学号${this.number}`)
         }
-        study() {
+        study () {
           console.log('study')
         }
       }
@@ -790,30 +790,30 @@ console.log(obj1) // { x: 101, y: 200 }
     <body></body>
     <script>
       class People {
-        constructor(name) {
+        constructor (name) {
           this.name = name
         }
-        eat() {
+        eat () {
           console.log(`${this.name} eat something`)
         }
       }
       // 子类
       class Student extends People {
-        constructor(name, number) {
+        constructor (name, number) {
           super(name)
           this.number = number
         }
-        sayHi() {
+        sayHi () {
           console.log(`姓名${this.name},学号${this.number}`)
         }
       }
       // 子类
       class Teacher extends People {
-        constructor(name, major) {
+        constructor (name, major) {
           super(name)
           this.major = major
         }
-        teach() {
+        teach () {
           console.log(`${this.name} 教授 ${this.major}`)
         }
       }
@@ -912,7 +912,7 @@ console.log(People.prototype === Student.prototype.__proto__)
   </body>
   <script>
     class jQuery {
-      constructor(selector) {
+      constructor (selector) {
         const result = document.querySelectorAll(selector)
         const length = result.length
         for (let index = 0; index < length; index++) {
@@ -920,17 +920,17 @@ console.log(People.prototype === Student.prototype.__proto__)
         }
         this.length = length
       }
-      get(index) {
+      get (index) {
         return this[index]
       }
-      each(fn) {
+      each (fn) {
         for (let index = 0; index < this.length; index++) {
           const el = this[index]
           fn(el)
         }
       }
-      on(type, fn) {
-        return this.each((elem) => {
+      on (type, fn) {
+        return this.each(elem => {
           elem.addEventListener(type, fn)
         })
       }
@@ -943,11 +943,11 @@ console.log(People.prototype === Student.prototype.__proto__)
     }
     // 复写机制（“造轮子”）
     class MyJquery extends jQuery {
-      constructor(selector) {
+      constructor (selector) {
         super(selector)
       }
       // 扩展自己的方法
-      addClass(className) {
+      addClass (className) {
         console.log('我是添加class')
       }
       // 等等
@@ -955,7 +955,7 @@ console.log(People.prototype === Student.prototype.__proto__)
 
     const $p = new jQuery('p')
     console.log($p.get(1))
-    $p.each((elem) => {
+    $p.each(elem => {
       console.log(elem.nodeName)
     })
     $p.on('click', () => {
@@ -1001,11 +1001,11 @@ console.log(People.prototype === Student.prototype.__proto__)
 
   ```javascript
   let a = 0
-  function fn1() {
+  function fn1 () {
     let a1 = 100
-    function fn2() {
+    function fn2 () {
       let a2 = 200
-      function fn3() {
+      function fn3 () {
         let a3 = 300
         return a1 + a2 + a3
       }
@@ -1036,7 +1036,7 @@ console.log(People.prototype === Student.prototype.__proto__)
 
 ```javascript
 // 函数作为返回值
-function create() {
+function create () {
   let a = 100
   return function () {
     console.log(a)
@@ -1046,12 +1046,12 @@ let fn = create()
 let a = 200
 fn() // 100
 // 函数作为参数
-function print(fn) {
+function print (fn) {
   let a = 20
   fn()
 }
 let a = 100
-function fn() {
+function fn () {
   console.log(a)
 }
 print(fn) // 100
@@ -1072,7 +1072,7 @@ print(fn) // 100
 - 箭头函数
 
 ```javascript
-function fn1() {
+function fn1 () {
   console.log(this)
 }
 fn1() // window
@@ -1082,38 +1082,38 @@ fn2() // { x:200 }
 
 const zhangSan = {
   name: '张三',
-  sayHi() {
+  sayHi () {
     // this 即当前对象
     console.log(this)
   },
-  wait() {
+  wait () {
     setTimeout(function () {
       // this === window
       console.log(this)
     })
-  },
+  }
 }
 const liSi = {
   name: '李四',
-  sayHi() {
+  sayHi () {
     // this 即当前对象
     console.log(this)
   },
-  wait() {
+  wait () {
     // 箭头函数中的this取的是它的上一级的作用域的 this 值
     setTimeout(() => {
       // this 即当前对象
       console.log(this)
     })
-  },
+  }
 }
 
 class People {
-  constructor(name) {
+  constructor (name) {
     this.name = name
     this.age = 20
   }
-  sayHi() {
+  sayHi () {
     console.log(this)
   }
 }
@@ -1159,7 +1159,7 @@ Function.prototype.bind1 = function () {
 
 ```javascript
 // 闭包隐藏数据，只提供 API
-function createCache() {
+function createCache () {
   const data = {} // 闭包中的数据，被隐藏，不能被外界访问
   return {
     set: function (key, val) {
@@ -1167,7 +1167,7 @@ function createCache() {
     },
     get: function (key) {
       return data[key]
-    },
+    }
   }
 }
 const c = createCache()
@@ -1251,12 +1251,12 @@ console.log(300)
 
 ```javascript
 // 获取第一份数据
-$.get(url, (data1) => {
+$.get(url, data1 => {
   console.log(data1)
   // 获取第二份数据
-  $.get(url2, (data2) => {
+  $.get(url2, data2 => {
     // 获取第三份数据
-    $.get(url3, (data3) => {
+    $.get(url3, data3 => {
       console.log(data3)
       // 还有可能获取更多的数据
     })
@@ -1267,16 +1267,16 @@ $.get(url, (data1) => {
 - Promise
 
 ```javascript
-function getData(url) {
+function getData (url) {
   return new Promise((resolve, reject) => {
     $.ajax({
       url,
-      success(data) {
+      success (data) {
         resolve(data)
       },
-      error(err) {
+      error (err) {
         reject(err)
-      },
+      }
     })
   })
 }
@@ -1284,18 +1284,18 @@ const url1 = '/data1.json'
 const url2 = '/data2.json'
 const url3 = '/data3.json'
 getData(url1)
-  .then((data1) => {
+  .then(data1 => {
     console.log(data1)
     return getData(url2)
   })
-  .then((data2) => {
+  .then(data2 => {
     console.log(data2)
     return getData(url3)
   })
-  .then((data3) => {
+  .then(data3 => {
     console.log(data3)
   })
-  .catch((err) => {
+  .catch(err => {
     console.log(err)
   })
 ```
@@ -1348,7 +1348,7 @@ console.log(300)
 
 ```javascript
 const imgUrl = 'http://xxxx.xxx.com/xxx.png'
-function loadImg(imgSrc) {
+function loadImg (imgSrc) {
   return new Promise((resolve, reject) => {
     const img = document.createElement('img')
     img.onload = function () {
@@ -1361,14 +1361,14 @@ function loadImg(imgSrc) {
   })
 }
 loadImg(imgUrl)
-  .then((img) => {
+  .then(img => {
     console.log(img.width)
     return img
   })
-  .then((img) => {
+  .then(img => {
     console.log(img.height)
   })
-  .catch((err) => {
+  .catch(err => {
     console.log(err)
   })
 ```
@@ -1471,15 +1471,15 @@ console.log(5)
 - **for...of 常用于异步的遍历**
 
 ```javascript
-function muti(num) {
-  return new Promise((resolve) => {
+function muti (num) {
+  return new Promise(resolve => {
     setTimeout(() => {
       resolve(num * num)
     }, 1000)
   })
 }
 const nums = [1, 2, 3]
-nums.forEach(async (i) => {
+nums.forEach(async i => {
   const res = await muti(i)
   console.log(res)
 })
@@ -1621,7 +1621,7 @@ Promise.resolve()
 
 ```javascript
 // 第一题
-async function fn() {
+async function fn () {
   return 100
 }
 ;(async function () {
@@ -1677,16 +1677,16 @@ console.log(400)
 
 ```javascript
 // 据说是该题来自 头条
-async function async1() {
+async function async1 () {
   console.log('async1 start')
   await async2()
   await async3()
   console.log('async1 end')
 }
-async function async2() {
+async function async2 () {
   console.log('async2')
 }
-async function async3() {
+async function async3 () {
   console.log('async3')
 }
 console.log('script start')
@@ -1967,16 +1967,16 @@ history.forward()
 
 ```javascript
 const btn = document.getElementById('btn1')
-btn.addEventListener('click', (event) => {
+btn.addEventListener('click', event => {
   console.log('clicked')
 })
 
 // 通用事件绑定
-function bindEvent(elem, type, fn) {
+function bindEvent (elem, type, fn) {
   elem.addEventListener(type, fn)
 }
 const a = document.getElementById('link1')
-bindEvent(a, 'click', (e) => {
+bindEvent(a, 'click', e => {
   e.preventDefault() // 阻止默认行为
   // e.stopPropagation() // 阻止冒泡
   alert('clicked')
@@ -2030,7 +2030,7 @@ bindEvent(a, 'click', (e) => {
 
 <script>
   const div1 = document.getElementById('#div1')
-  div1.addEventListener('click', (e) => {
+  div1.addEventListener('click', e => {
     const target = e.target
     if (e.nodeName === 'P') {
       alert(target.innerHTML)
@@ -2038,25 +2038,25 @@ bindEvent(a, 'click', (e) => {
   })
 
   // 通用事件绑定
-  function bindEvent(elem, type, fn) {
+  function bindEvent (elem, type, fn) {
     elem.addEventListener(type, fn)
   }
 
   // 使用通用函数来进行绑定
-  bindEvent(div1, 'click', (e) => {
+  bindEvent(div1, 'click', e => {
     const target = e.target
     if (e.nodeName === 'P') {
       alert(target.innerHTML)
     }
   })
   // 代理绑定
-  function bindAgentEvent(elem, type, selector, fn) {
+  function bindAgentEvent (elem, type, selector, fn) {
     // 如果传递了三个参数
     if (fn === null || fn === undefined) {
       fn = selector
       selector = null
     }
-    elem.addEventListener(type, (event) => {
+    elem.addEventListener(type, event => {
       let target = event.target
       if (selector) {
         // 代理时
@@ -2131,7 +2131,7 @@ xhr.onreadystatechange = function () {
 }
 const postData = {
   userName: 'zhangsan',
-  password: 'xxx',
+  password: 'xxx'
 }
 xhr.send(JSON.stringify(postData))
 ```
@@ -2236,7 +2236,7 @@ response.setHeader('Access-Control-Allow-Credentials', 'true')
 
 ```javascript
 // 简易版
-function ajax(url, successFn) {
+function ajax (url, successFn) {
   const xhr = new XMLHttpRequest()
   xhr.open('GET', url, true)
   xhr.onreadystatechange = function () {
@@ -2250,7 +2250,7 @@ function ajax(url, successFn) {
 }
 
 // 带 promise 的 ajax
-function ajaxPromise() {
+function ajaxPromise () {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
     xhr.open('GET', url, true)
@@ -2268,10 +2268,10 @@ function ajaxPromise() {
 }
 const url = '/getUseInfo'
 ajaxPromise(url)
-  .then((res) => {
+  .then(res => {
     console.log(res)
   })
-  .catch((err) => {
+  .catch(err => {
     console.err(err)
   })
 ```
@@ -2507,10 +2507,11 @@ ajaxPromise(url)
       - private: 发起请求的浏览器才能使用返回数据的缓存
       - public: 这个 HTTP 请求它返回的内容所经过的任何路径中，包括中间的一些 HTTP 代理服务器以及发出请求的客户端浏览器，都可以进行对返回内容的缓存操作
 
-  - 关于 Expires
-    - 同在 Respinse Headers 中
-    - 同为控制缓存过期
-    - 已被 Cache-Control 代替
+- 关于 Expires
+
+  - 同在 Respinse Headers 中
+  - 同为控制缓存过期
+  - 已被 Cache-Control 代替
 
 - **协商缓存**
 
@@ -2518,22 +2519,27 @@ ajaxPromise(url)
   - 服务端潘达判断客户端资源，是否和服务端资源一样
   - 判断一致则返回 304，否则返回 200 和最新的资源
   - <img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4d9460548b8248a0aad44849eb494156~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.image?" align="left" alt="image" style="zoom:67%;" />
+
   - 资源标识
     - 在 `Response Headers` 中，有两种
       - `Last-Modofied` 资源的最后修改时间
       - `Etag` 资源的唯一标识（一个字符串，类似人类的指纹）
   - `Last-Modified` 和 `Etag`
+
     - 会优先使用 `Etag`
     - `Last-Modified` 只能精确到秒级别
     - 如果资源被重复生成，但是内容不变，则 `Etag` 更精确
+
   - http 1.0
+
     - <img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/250bdae9421f4a238f8300e8042a7ce7~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.image?" alt="协商缓存之last-Modified" align="left" style="zoom:67%;" />
+
   - http 1.1
     - <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/099ff22bbcb141a5b48301a319c516a5~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.image?" alt="协商缓存之Etag" align="left" style="zoom:67%;" />
 
 - **http 缓存流程图**
 
-  <img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy81MjQyMTI1LWQ1YTUxYTI0ZjlkNjlkMGQucG5n?x-oss-process=image/format,png" alt=" http缓存流程" />
+  <img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy81MjQyMTI1LWQ1YTUxYTI0ZjlkNjlkMGQucG5n?x-oss-process=image/format,png" alt=" http缓存流程" style="zoom:67%;" />
 
 [http 面试必会的：强制缓存和协商缓存:评论有用](https://juejin.cn/post/6844903838768431118)
 
@@ -2668,6 +2674,7 @@ ajaxPromise(url)
 #### 从何入手
 
 - 让加载更快
+
   - 减少资源体积：压缩代码
   - 减少访问次数：合并代码，SSR 服务端渲染，缓存
     - 缓存
@@ -2679,26 +2686,21 @@ ajaxPromise(url)
       - 非 SSR(前后端分离)：先加载网页，再加载数据，再渲染数据
       - 早先的 JSP、ASP、PHP，现在的 Vue React SSR
   - 使用更快的网络：`CDN`
-  
+
 - 让渲染更快
 
   - CSS 放在 head，JS 放在 body 最下面
-
   - 尽早开始执行 JS，用 `DOMContentLoaded` 触发
-
     ```javascript
-    window.addEventListener("load", function(){
-     	// 页面的全部资源加载完才会执行，包括图片、视频 
+    window.addEventListener('load', function () {
+      // 页面的全部资源加载完才会执行，包括图片、视频
     })
-    document.addEventListener("DOMContentLoaded", function(){
+    document.addEventListener('DOMContentLoaded', function () {
       // DOM 渲染完即可执行，此时图片、视频可能还没有加载完
     })
     ```
-  
-    
-  
   - 懒加载（图片懒加载，上滑加载更多）
-  
+
     ```html
     <img id="img1" scr="preview.png" data-real-src="abc.png" />
     <script type="text/javascript">
@@ -2706,9 +2708,9 @@ ajaxPromise(url)
       img1.scr = img1.getAttribute('data-real-src')
     </script>
     ```
-  
+
   - 对 DOM 查询进行缓存
-  
+
     ```javascript
     // 不缓存 DOM 查询结果
     for (let i = 0; i < document.getElementsByTagName('p').length; i++) {
@@ -2721,9 +2723,9 @@ ajaxPromise(url)
       // 缓存 length, 只进行一次 DOM 查询
     }
     ```
-  
+
   - 频繁 DOM 操作，合并到一起插入 DOM 结构
-  
+
     ```javascript
     // 将频繁操作改为一次性操作
     const listNode = document.getElementById('list')
@@ -2738,24 +2740,24 @@ ajaxPromise(url)
     // 都完成之后，再插入到 DOM 树中
     listNode.appendChild(frag)
     ```
-  
+
   - 节流 throttel 防抖 debounce
-  
+
     - 防抖
-  
+
       - 监听一个输入框的，文字变化后触发 `change` 事件
-  
       - 直接用 keyup 事件，则会频繁触发 `change`事件
-  
       - 防抖：用户输入结束或者暂停时，才会触发`change`事件
-  
       - ```html
         <!DOCTYPE html>
         <html lang="en">
           <head>
             <meta charset="UTF-8" />
             <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1.0"
+            />
             <title>Document</title>
           </head>
           <body>
@@ -2781,13 +2783,13 @@ ajaxPromise(url)
               }, 1000)
             })
           </script>
-        
+      
           <script>
             // 封装函数 debounce
-            function debounce(fn, delay = 500) {
+            function debounce (fn, delay = 500) {
               // 这个 timer 是在 闭包 中的
               let timer = null
-        
+      
               return function () {
                 if (timer) {
                   clearTimeout(timer)
@@ -2798,7 +2800,7 @@ ajaxPromise(url)
                 }, delay)
               }
             }
-            const debounceFunc = debounce((event) => {
+            const debounceFunc = debounce(event => {
               //  如果想用 this， 这里不能用箭头函数
               console.log(event.target.value, '我是封装的debounce函数')
             }, 600)
@@ -2806,22 +2808,22 @@ ajaxPromise(url)
           </script>
         </html>
         ```
-  
+
     - 节流 throttle
-  
+
       - 拖拽一个元素时，要随时拿到该元素被拖拽的位置
-  
       - 直接用 drag 事件，则会频繁触发，很容易导致卡顿
-  
       - 节流：无论拖拽速度多快，都会每隔 xxx ms 触发一次
-  
       - ```html
         <!DOCTYPE html>
         <html lang="en">
           <head>
             <meta charset="UTF-8" />
             <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1.0"
+            />
             <title>throttle 演示</title>
           </head>
           <style>
@@ -2854,7 +2856,7 @@ ajaxPromise(url)
             })
           </script>
           <script>
-            function throttle(fn, delay) {
+            function throttle (fn, delay) {
               let throttleTimer = null
               return function () {
                 if (throttleTimer) {
@@ -2867,14 +2869,43 @@ ajaxPromise(url)
               }
             }
             const throttleFunc = throttle(function (e) {
-              console.log(e.offsetX, e.offsetY, '使用 throttle 优化后的拖拽函数')
+              console.log(
+                e.offsetX,
+                e.offsetY,
+                '使用 throttle 优化后的拖拽函数'
+              )
             }, 600)
         
             div1.addEventListener('drag', throttleFunc)
           </script>
         </html>
         ```
-  
-    
 
 ### 安全
+
+> 问题：常见的 web 前端攻击公式有哪些？
+
+#### XSS 跨站请求攻击
+
+- 攻击方式
+  - 一个博客网站，我发表一篇博客，其中嵌入 script 脚本
+  - 脚本内容：获取 cookie（可能有客户的敏感信息），发送到我的服务器(服务器配合跨域)
+  - 发布这篇博客，有人查看它，轻松收割访问者的 cookie
+- XSS 预防
+  - 替换特殊字符，如 `<` 变为`&lt;`, `>`变为`&gt;`
+  - `<script>` 变为 `&lt;script&lg;` 直接显示，而不会作为脚本执行
+  - 前端要替换，后端也要替换，都做总不会有错
+
+#### XSRF
+
+- XSRF 攻击 - 1
+  - 你正在购物，看中了某个商品，商品 id 是 100
+  - 付费接口是 xxx.com/pay?id=100 ，但是没有任何验证
+  - 我是攻击者，我看中了一个商品，id 是 200
+- XSRF 攻击 - 2
+  - 我向你发送了一封电子邮件，邮件标题很吸引人
+  - 但是邮件正文隐藏着 `<img src="xxx.com/pay?id=200" />`
+  - 你一查看邮件，就帮我购买了 id 是 200 的商品
+- XSRF 预防
+  - 使用 post 接口
+  - 增加验证，例如密码、短信验证码、指纹等
