@@ -96,13 +96,13 @@ window.location.href = this.phoneIos() ? this.iosUrl : this.androidUrl
 
 ## 使用 `webpack-theme-color-replacer` 来实现主题切换不生效
 
-#### 问题描述：
+### 问题描述：
 
 1.  使用 [d2Admin 框架](https://d2.pub/d2-admin-start-kit/preview/#/index)
 2.  原项目 `router` 使用 `hash` 模式可以实现主题色的切换作用
 3.  本地项目 clone 后使用 `history` 模式发现 刷新后 主题色切换失灵
 
-#### 解决办法
+### 解决办法
 
 1. 可以使用 `hash`模式即可
 
@@ -136,3 +136,22 @@ new ThemeColorReplacer({
 [webpack-theme-color-replacer 插件，实现自定义主题色](https://www.jianshu.com/p/2d39c26c4e9a)
 
 [npm: webpack-theme-color-replacer](https://www.npmjs.com/package/webpack-theme-color-replacer)
+
+## 前端复制方案复盘
+
+> 同事做的已经很全面很详细了，在此借用一下
+
+### 参考链接
+
+[前端复制的三种主流方案，附真机验证和生产代码](https://www.yuque.com/docs/share/22e14fdb-7122-42af-80fe-064f324298b2?#)
+
+## 三方图片资源 403
+
+### 问题描述
+
+1. 直接使用一个三方图片链接，发现显示 403
+2. 富文本中引用一个 三方图片链接，渲染时候图片不显示
+
+### 问题原因
+
+1.
