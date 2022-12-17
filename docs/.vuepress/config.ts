@@ -1,5 +1,8 @@
 import { defineUserConfig, defaultTheme } from 'vuepress'
 import { sidebarZh, sidebarEn } from '../.vuepress/configs/siderbar/zh'
+import { searchPlugin } from '@vuepress/plugin-search'
+import { copyCodePlugin } from "vuepress-plugin-copy-code2";
+import { photoSwipePlugin } from "vuepress-plugin-photo-swipe";
 
 export default defineUserConfig({
   base: '/',
@@ -69,5 +72,20 @@ export default defineUserConfig({
       },
     },
   }),
-  plugins: [],
+  plugins: [
+    searchPlugin({
+      locales: {
+        '/': {
+          placeholder: 'Search',
+        },
+        '/zh/': {
+          placeholder: '搜索',
+        },
+      },
+    }),
+    copyCodePlugin({
+      // 插件选项
+    }),
+    photoSwipePlugin({}),
+  ],
 })
