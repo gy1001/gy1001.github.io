@@ -83,6 +83,7 @@ export const sidebarZh: SidebarConfig = {
         '/zh/interview/css/css-layout.md',
         '/zh/interview/css/css-position.md',
         '/zh/interview/css/css-graphics.md',
+        '/zh/interview/css/css-reactive.md',
       ],
     },
     {

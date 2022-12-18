@@ -11,6 +11,6 @@
   - absolute 元素：`left: 50% + margin-left 负值自身宽度的一半`
 - 垂直居中
   - inline 元素： `line-height 的值等于 height 值`
-  - absolute 元素：`top: 50% + margin-top 负值自身高度的一半 + left: 50% + margin-left 负值自身宽度的一半`
-  - absolute 元素：`top:50% + left: 50% + transform: translate(-50%, -50%)`
+  - absolute 元素：`top: 50% + margin-top 负值自身高度的一半`
+  - absolute 元素：`transform: translate(-50%, -50%)`
   - absolute 元素：`top,left,right,bottom=0 + margin: auto`
