@@ -79,7 +79,11 @@ export const sidebarZh: SidebarConfig = {
     },
     {
       text: 'CSS相关',
-      children: ['/zh/interview/css/css.md','/zh/interview/css/css-layout.md'],
+      children: [
+        '/zh/interview/css/css-layout.md',
+        '/zh/interview/css/css-position.md',
+        '/zh/interview/css/css-graphics.md',
+      ],
     },
     {
       text: 'WEBPACK相关',
@@ -140,7 +144,7 @@ export const sidebarZh: SidebarConfig = {
     {
       text: '其他推荐',
       collapsible: false,
-      children: ['/zh/other/','/zh/other/video'],
+      children: ['/zh/other/', '/zh/other/video'],
     },
     {
       text: '常用快捷键',

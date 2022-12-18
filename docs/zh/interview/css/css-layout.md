@@ -1,4 +1,26 @@
-# 页面布局
+# CSS-布局
+
+## 盒模型的宽度如何计算
+
+```html
+<!-- 请问如下代码中，div1 的 offsetWidth 是多大？ -->
+<style>
+  #div1 {
+    width: 100px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin: 10px;
+  }
+</style>
+<div id="div1"></div>
+```
+
+- offsetWidth = (内容宽度+内边距+边框)，无外边距
+- 因此，**答案是 122px**
+
+* 补充：如果让 offsetWidth 等于 100px 该怎么做
+  增加样式属性：`box-sizing: border-box;`
+
 
 题目：
 假设高度已知，请写出三栏布局，其中左栏、右栏目宽度各位 300px, 中间自适应
