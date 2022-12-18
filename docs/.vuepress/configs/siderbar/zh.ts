@@ -66,14 +66,6 @@ export const sidebarZh: SidebarConfig = {
   ],
   '/zh/interview': [
     {
-      text: 'JavaScript相关',
-      children: [
-        '/zh/interview',
-        '/zh/interview/javascript/new.md',
-        '/zh/interview/javascript/this.md',
-      ],
-    },
-    {
       text: 'HTML相关',
       children: ['/zh/interview/html/html.md'],
     },
@@ -84,6 +76,14 @@ export const sidebarZh: SidebarConfig = {
         '/zh/interview/css/css-position.md',
         '/zh/interview/css/css-graphics.md',
         '/zh/interview/css/css-reactive.md',
+      ],
+    },
+    {
+      text: 'JavaScript相关',
+      children: [
+        '/zh/interview',
+        '/zh/interview/javascript/new.md',
+        '/zh/interview/javascript/this.md',
       ],
     },
     {
