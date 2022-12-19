@@ -81,7 +81,11 @@ export const sidebarZh: SidebarConfig = {
     {
       text: 'JavaScript相关',
       children: [
-        '/zh/interview',
+        '/zh/interview/javascript/basci-01.md',
+        '/zh/interview/javascript/basci-02.md',
+        '/zh/interview/javascript/basci-03.md',
+        '/zh/interview/javascript/basci-04.md',
+        '/zh/interview/javascript/basci-05.md',
         '/zh/interview/javascript/new.md',
         '/zh/interview/javascript/this.md',
       ],
