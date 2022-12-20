@@ -66,11 +66,11 @@ export const sidebarZh: SidebarConfig = {
   ],
   '/zh/interview': [
     {
-      text: 'HTML相关',
+      text: 'Html 相关',
       children: ['/zh/interview/html/html.md'],
     },
     {
-      text: 'CSS相关',
+      text: 'Css 相关',
       children: [
         '/zh/interview/css/css-layout.md',
         '/zh/interview/css/css-position.md',
@@ -79,7 +79,7 @@ export const sidebarZh: SidebarConfig = {
       ],
     },
     {
-      text: 'JavaScript相关',
+      text: 'JavaScript 相关',
       children: [
         '/zh/interview/javascript/basci-01.md',
         '/zh/interview/javascript/basci-02.md',
@@ -91,8 +91,24 @@ export const sidebarZh: SidebarConfig = {
       ],
     },
     {
-      text: 'WEBPACK相关',
+      text: 'Webpack 相关',
       children: ['/zh/interview/webpack/webpack.md'],
+    },
+    {
+      text: 'Vue 相关',
+      children: ['/zh/interview/vue/vue-01.md'],
+    },
+    {
+      text: 'React 相关',
+      children: ['/zh/interview/react/react-01.md'],
+    },
+    {
+      text: 'Http 相关',
+      children: ['/zh/interview/http/http-01.md'],
+    },
+    {
+      text: 'Node 相关',
+      children: ['/zh/interview/node/node-01.md'],
     },
   ],
   '/zh/collect': [
