@@ -2059,3 +2059,6 @@ Axios 涉及到的设计模式就有：**单例模式**、**工厂模式**、**�
 [Axios 源码解析（二）：通用工具方法](https://linjingyi.cn/posts/fe9fb5af.html)
 
 [Axios 源码解读看这一篇就够了](https://i-fanr.com/2022/03/22/axios-resource/)
+
+
+<CommentService />

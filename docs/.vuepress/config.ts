@@ -3,6 +3,7 @@ import { sidebarZh, sidebarEn } from '../.vuepress/configs/siderbar/zh'
 import { searchPlugin } from '@vuepress/plugin-search'
 import { copyCodePlugin } from "vuepress-plugin-copy-code2";
 import { photoSwipePlugin } from "vuepress-plugin-photo-swipe";
+import { commentPlugin } from "vuepress-plugin-comment2";
 
 export default defineUserConfig({
   base: '/',
@@ -87,5 +88,11 @@ export default defineUserConfig({
       // 插件选项
     }),
     photoSwipePlugin({}),
+    commentPlugin({
+      provider: 'Waline',
+      serverURL: "https://gy1001-comment.vercel.app",
+      dark: 'auto',
+      login: 'enable'
+    })
   ],
 })
