@@ -113,6 +113,13 @@ export const sidebarZh: SidebarConfig = {
   ],
   '/zh/collect': [
     {
+      text: 'Github大佬',
+      collapsible: false,
+      children: [
+        '/zh/collect/github/github.md'
+      ]
+    },
+    {
       text: '技术相关',
       collapsible: false,
       children: [
@@ -164,7 +171,6 @@ export const sidebarZh: SidebarConfig = {
   '/zh/other': [
     {
       text: '其他推荐',
-      collapsible: false,
       children: ['/zh/other/', '/zh/other/video'],
     },
     {
