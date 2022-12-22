@@ -1397,41 +1397,23 @@ console.log(5)
 #### 知识点
 
 1. event loop
-
 - js 是单线程进行的
-
 - 异步要基于回调来实现
-
 - Event Loop 就是异步回调的实现原理
-
 - JS 如何执行
-
   - 从前到后，一行一行执行
-
   - 如果某一行执行报错，则停止下面代码的执行
-
   - 先把同步代码执行完，再去执行异步
-
 - 总结下 event loop 过程
-
   - 同步代码，一行一行放在 Call Stack 执行
-
   - 遇到异步，会先"记录"下来，等待时机（定时、网络请求等）
-
   - 时机到了，就移动到 Callback Queue
-
   - 如果 Call Stack 为空（即同步代码执行完毕）Event Loop 开始工作
-
   - 轮询查找 Callback Queue，如果有移动到 Call Stack 就执行
-
   - 然后继续轮询查找（永动机一样）
-
 - DOM 事件和 Event Loop
-
   - JS 是单线程的
-
   - 异步（setTimeout, ajax 等）使用回调，基于 event loop
-
   - DOM 事件也适用回调，基于 Event Loop
 
 ```html
@@ -1451,21 +1433,13 @@ console.log(5)
 [阮一峰：JavaScript 运行机制详解：再谈 Event Loop](https://www.ruanyifeng.com/blog/2014/10/event-loop.html)
 
 2. promise 进阶
-
 3. async/await
-
 4. 异步的本质
-
 - async/await 是消灭异步回调的终极武器
-
 - JS 还是单线程，还得是有异步，还得是基于 event loop
-
 - async/await 只是一个语法糖，但是这颗糖真香！
-
 5. for ... of
-
 - for...in(以及 forEach for) 是常规的同步遍历
-
 - **for...of 常用于异步的遍历**
 
 ```javascript
