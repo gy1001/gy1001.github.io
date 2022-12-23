@@ -238,7 +238,7 @@ function loadImg (imgSrc) {
   console.log(img2.height, img2.width)
 })()
 ```
-### 3.1 async/await 和 Promise 的关系
+### 3.1 async/await 和 Promise 的关系（重要）
 * async/await 是消灭异步回调的终极武器
 * 但和 Promise 并不排斥
 * 反而，两者是相辅相成
@@ -342,3 +342,116 @@ console.log("script end")
 执行顺序：
 "script start" => "async1 start" => "async2" => "script end" => "asyn1 end" => "async3" => "async1 end2"
 ```
+
+[相关阅读:async/await 原理及执行顺序分析](https://juejin.cn/post/6844903988584775693)
+
+## 4. for...of 异步遍历
+* for...in（以及forEach for）是常规的同步遍历
+* for...of 常用于异步的遍历
+
+```javascript
+function muti(num) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(num * num)
+    }, 1000)
+  })
+}
+
+const nums = [1,2,3]
+nums.forEach(async num => {
+  const result = await muti(num)
+  console.log(result)
+})
+
+// 等待 1s 后，结果一次性全部打印出来，1,4,9
+// 因为 forEach 是一个同步遍历，一瞬间全部遍历完
+```
+
+如果想实现，依次打印，该怎么实现呢
+```javascript
+!(async function(){
+  for(let index of nums) { 
+    const result = await muti(index)
+    console.log(result)
+  }
+})()
+// 打印结果
+// 依次性，每隔 1s 后，打印出来结果
+//  1s 后，打印 1
+// 再过 1s 后，打印 4
+// 再过 1s 后，打印 9
+```
+## 5. 宏任务 和 微任务
+```javascript
+console.log(100)
+setTimeout(() => {
+  console.log(200)
+})
+Promise.resolve().then(() => {
+  console.log(300)
+})
+console.log(400)
+// 执行顺序：100 =>  400 => 300 => 200
+```
+### 5.1 什么是宏任务(Macro Task),什么是微任务(Micro Task)
+* 宏任务：setTimeout、setInterval, Ajax，DOM事件
+* 微任务：Promise async/await
+* 微任务的执行时机比宏任务要早(重点)
+
+### 5.2 Event Loop 和 DOM 渲染
+* 再次回归一下 Event Loop 的过程
+* JS 是单线程的，而且和 DOM 渲染公用一个线程
+* JS 执行的时候，得留一些时机提供 DOM 渲染
+
+- Event Loop（**增加 DOM 渲染过程，注意这里不是最终的**）
+  - 1. Call Stack 空闲：每次 Call Stack 清空（即每次轮询结束），即同步任务执行完毕
+  - 2. 都是 DOM 重新渲染的机会，DOM 结构如有改变则重新渲染
+  - 3. 然后再去触发下一次 Event Loop
+```html
+<div id="container"></div>
+
+const $p1 = $("<p>一段文字</p>")
+const $p2 = $("<p>一段文字</p>")
+const $p3 = $("<p>一段文字</p>")
+$("#container").append($p1).append($p2).append($p3)
+console.log("length", $("#container").children().length) // 3
+alert("本次 call stack 结束，DOM 结构已经更新，但是尚未触发渲染")
+// alert 会阻断 JS 执行，也会阻断 DOM 渲染，便于查看效果
+```
+### 5.2 微任务和宏任务的区别
+* 宏任务：DOM 渲染后触发，如 SetTimeout
+* 微任务：DOM 渲染前触发，如 Promise
+* 为什么呢 ？
+
+```html
+
+<div id="container"></div>
+
+const $p1 = $("<p>一段文字</p>")
+const $p2 = $("<p>一段文字</p>")
+const $p3 = $("<p>一段文字</p>")
+$("#container").append($p1).append($p2).append($p3)
+
+// 测试 微任务在 DOM 渲染前触发
+Promise.resolve().then(() => {
+  console.log("length1", $("#container").children().length) // 3
+  alert('Promise then 执行完毕') // DOM 渲染了吗？？？---还没有
+})
+
+// 宏任务：DOM 渲染后触发，如 SetTimeout
+setTimeout(() => {
+  console.log("length2", $("#container").children().length) // 3
+  alert('setTimout 执行完毕') // DOM 渲染了吗？？？---已经渲染染了
+})
+```
+#### 5.2.1 从 `Event Loop` 解释，为什么微任务执行更早
+* 微任务是 ES6 语法规定的
+* 宏任务是浏览器规定的
+* Event Loop（**增加 DOM 渲染过程，注意这里与上面的区别**）
+  - 1. Call Stack 空闲：每次 Call Stack 清空（即每次轮询结束），即同步任务执行完毕
+  - 2. 执行当前的微任务（Micro Task Queue）
+  - 3. 尝试 DOM 渲染：都是 DOM 重新渲染的机会，DOM 结构如有改变则重新渲染
+  - 4. 触发 Event Loop：然后再去触发下一次 Event Loop
+
+![img](https://upload-images.jianshu.io/upload_images/18747821-6e2e861f85a40176.png?imageMogr2/auto-orient/strip|imageView2/2/format/webp)
