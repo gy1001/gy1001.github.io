@@ -81,11 +81,11 @@ export const sidebarZh: SidebarConfig = {
     {
       text: 'JavaScript 相关',
       children: [
-        '/zh/interview/javascript/basci-01.md',
-        '/zh/interview/javascript/basci-02.md',
-        '/zh/interview/javascript/basci-03.md',
-        '/zh/interview/javascript/basci-04.md',
-        '/zh/interview/javascript/basci-05.md',
+        '/zh/interview/javascript/basic-01.md',
+        '/zh/interview/javascript/basic-02.md',
+        '/zh/interview/javascript/basic-03.md',
+        '/zh/interview/javascript/basic-04.md',
+        '/zh/interview/javascript/basic-05.md',
         '/zh/interview/javascript/new.md',
         '/zh/interview/javascript/this.md',
       ],
