@@ -411,13 +411,15 @@ console.log(400)
 ```html
 <div id="container"></div>
 
-const $p1 = $("<p>一段文字</p>")
-const $p2 = $("<p>一段文字</p>")
-const $p3 = $("<p>一段文字</p>")
-$("#container").append($p1).append($p2).append($p3)
-console.log("length", $("#container").children().length) // 3
-alert("本次 call stack 结束，DOM 结构已经更新，但是尚未触发渲染")
-// alert 会阻断 JS 执行，也会阻断 DOM 渲染，便于查看效果
+<script>
+  const $p1 = $("<p>一段文字</p>")
+  const $p2 = $("<p>一段文字</p>")
+  const $p3 = $("<p>一段文字</p>")
+  $("#container").append($p1).append($p2).append($p3)
+  console.log("length", $("#container").children().length) // 3
+  alert("本次 call stack 结束，DOM 结构已经更新，但是尚未触发渲染")
+  // alert 会阻断 JS 执行，也会阻断 DOM 渲染，便于查看效果
+</script>
 ```
 ### 5.2 微任务和宏任务的区别
 * 宏任务：DOM 渲染后触发，如 SetTimeout
@@ -425,25 +427,26 @@ alert("本次 call stack 结束，DOM 结构已经更新，但是尚未触发渲
 * 为什么呢 ？
 
 ```html
-
 <div id="container"></div>
 
-const $p1 = $("<p>一段文字</p>")
-const $p2 = $("<p>一段文字</p>")
-const $p3 = $("<p>一段文字</p>")
-$("#container").append($p1).append($p2).append($p3)
+<script>
+  const $p1 = $("<p>一段文字</p>")
+  const $p2 = $("<p>一段文字</p>")
+  const $p3 = $("<p>一段文字</p>")
+  $("#container").append($p1).append($p2).append($p3)
 
-// 测试 微任务在 DOM 渲染前触发
-Promise.resolve().then(() => {
-  console.log("length1", $("#container").children().length) // 3
-  alert('Promise then 执行完毕') // DOM 渲染了吗？？？---还没有
-})
+  // 测试 微任务在 DOM 渲染前触发
+  Promise.resolve().then(() => {
+    console.log("length1", $("#container").children().length) // 3
+    alert('Promise then 执行完毕') // DOM 渲染了吗？？？---还没有
+  })
 
-// 宏任务：DOM 渲染后触发，如 SetTimeout
-setTimeout(() => {
-  console.log("length2", $("#container").children().length) // 3
-  alert('setTimout 执行完毕') // DOM 渲染了吗？？？---已经渲染染了
-})
+  // 宏任务：DOM 渲染后触发，如 SetTimeout
+  setTimeout(() => {
+    console.log("length2", $("#container").children().length) // 3
+    alert('setTimout 执行完毕') // DOM 渲染了吗？？？---已经渲染染了
+  })
+</script>
 ```
 #### 5.2.1 从 `Event Loop` 解释，为什么微任务执行更早
 * 微任务是 ES6 语法规定的
@@ -455,3 +458,99 @@ setTimeout(() => {
   - 4. 触发 Event Loop：然后再去触发下一次 Event Loop
 
 ![img](https://upload-images.jianshu.io/upload_images/18747821-6e2e861f85a40176.png?imageMogr2/auto-orient/strip|imageView2/2/format/webp)
+
+## 问题
+### 1. 描述 Event Loop 机制(可以画图)
+* 回顾Event Loop 的过程
+* 注意和 DOM 渲染的关系
+* 微任务和宏任务在 Event Loop 过程中的不同处理
+### 2. 什么是宏任务和微任务，两者区别
+* 宏任务：setTimeout、setInterval, Ajax，DOM事件
+* 微任务：Promise async/await
+* 微任务的执行时机比宏任务要早(重点)
+
+### 3. Promise 的三种状态，如何变化
+- 三种状态：pending fulfilled rejected
+- 状态的表现和变化:
+  - pending => fulfilled 或者 pending => rejected
+  - 变化不可逆
+  - pending 状态,不会触发 then 和 catch
+  - fulfilled 状态，会触发后续的 then 回调函数
+  - reject 状态，会触发后续的 catch 回调函数
+- then 和 catch 对状态的影响
+  - then 正常返回 fulfilled, 里面有报错则返回 rejected
+  - catch 正常返回 fulfilled, 里面有报错则返回 rejected
+
+### 4. async/await 语法
+```javascript
+async function fn(){
+  return 100
+}
+(async function(){
+  const a = fn()
+  const b = await fn()
+  console.log(a) // Promise {<fulfilled>: 100}
+  console.log(b) // 100
+})()
+```
+
+```javascript
+(async function (){
+  console.log('start') // 会执行
+  const a = await 100
+  console.log("a", a) // 会执行，"a" 100
+  const b = await Promise.resolve(200)
+  console.log("b", b) // 会执行，"b" 200
+  const c = await Promise.reject(300)
+  console.log('c', c) // 报错，不会执行
+  console.log("end")  // 报错，不会执行
+})()
+// 执行完毕，打印那些内容？？？
+```
+### 5. Promise 和 setTimeout 的顺序
+```javascript
+console.log(100)
+setTimeout(() => {
+  console.log(200)
+})
+Promise.resolve().then(() => {
+  console.log(300)
+})
+console.log(400)
+// 执行顺序： 100 400 300 200 
+```
+### 6. 外加 async/await 的顺序问题
+```javascript
+async function async1(){
+  console.log("async1 start")
+  await async2()
+  console.log("async1 end")
+}
+async function async2(){
+  console.log("async2")
+}
+console.log("script start")
+
+setTimeout(function (){
+  console.log("setTimeout")
+}, 0)
+async1()
+
+new Promise(function (resolve){
+  console.log("promise1") 
+  resolve()
+}).then(function() {
+  console.log("promise2")
+})
+console.log("script end")
+
+// 执行顺序
+"script start"
+"async1 start"
+"async2"
+"promise1"
+"script end"
+"async1 end"
+"promise2"
+"setTimeout"
+```
