@@ -208,3 +208,137 @@ Promise.resolve().then(() => {
 })
 // 执行结果 1, 2
 ```
+## 3. async/await
+* 异步基于 callback hell
+* Promise then catch 是链式调用，但也是基于回调函数
+* async/await 是同步语法，彻底消灭回调函数
+
+```javascript
+const imgUrl1 = 'https://openfile.meizu.com/group1/M00/08/C8/Cgbj0GFESx-Adgf7AAJAq28ULxM401.png680x680.jpg'
+const imgUrl2 = 'https://openfile.meizu.com/group1/M00/08/C9/Cgbj0GFESyOAaGwwAAJmcofys_E532.png680x680.jpg'
+function loadImg (imgSrc) {
+  return new Promise((resolve, reject) => {
+    const img = document.createElement('img')
+    img.onload = function () {
+      resolve(img)
+    }
+    img.onerror = function () {
+      reject(new Error('图片加载失败'))
+    }
+    img.src = imgSrc
+  })
+}
+(async function(){
+  // img1
+  const img1 = await loadImg(imgUrl1)
+  console.log(img1.height, img1.width)
+
+  // img2
+  const img2 = await loadImg(imgUrl2)
+  console.log(img2.height, img2.width)
+})()
+```
+### 3.1 async/await 和 Promise 的关系
+* async/await 是消灭异步回调的终极武器
+* 但和 Promise 并不排斥
+* 反而，两者是相辅相成
+* 执行 async 函数，返回的是 Promise 对象
+* await 相当于 Promise 的 then
+* try...catch 可以捕获异常，代替了 Promise 的 catch
+
+```javascript
+async function fn1(){
+  // return 100 // 在 await 中这里相当于 return Promise.resolve(100)
+  return Promise.resolve(200)
+}
+const res1 = fn1() //  执行 async 函数，返回的是一个 Promise 对象
+// 执行 async 函数返回的是一个 Promise 对象
+console.log(res1) // Promise {<fulfilled>: 200}
+res1.then(data => {
+  console.log(data) // 200
+})
+
+
+!(async function(){
+  const p1 = Promise.resolve(300)
+  const data = await p1 // await 相当于 Promise then 
+  console.log(data) // 300
+})()
+
+!(async function(){
+  const data1 = await 400 // 相当于 Promise.resolve(400)
+  console.log(data1) // 400
+})()
+
+!(async function(){
+  const data2 = await fn1()
+  console.log(data2) // 200
+})()
+
+
+!(async function(){
+  const data3 = Promise.reject("error")
+  try{
+    const result = await data3
+    console.log(result, 111) // 不会执行打印
+  }catch(err){
+    console.log(err) //  try catch 相当于 promise catch
+  }
+})()
+
+!(async function(){
+  const data4 = Promise.reject("error")
+  const result = await data4
+  console.log(result) // 不会执行打印
+})()
+```
+
+### 3.2 异步的本质
+* async/await 是消灭异步回调的终极武器
+* JS 还是单线程，还得是有异步，还得是基于 Event Loop
+* async/await 知识一个语法糖，但这颗糖真香  
+```javascript
+async function async1(){
+  console.log("async1 start") //2
+  await async2() 
+  console.log("asyn1 end") // 5
+}
+
+async function async2(){
+  console.log('async2') //3
+}
+
+console.log("script start")// 1 
+async1()
+console.log("script end") // 4
+
+执行顺序：
+"script start" => "async1 start" => "async2" => "script end" => "asyn1 end"
+```
+
+基于上面代码的一个变种
+
+```javascript
+async function async1(){
+  console.log("async1 start") 
+  await async2() 
+  console.log("asyn1 end") 
+  await async3()
+  console.log("async1 end2")
+}
+
+async function async2(){
+  console.log('async2') 
+}
+
+async function async3(){
+  console.log('async3') 
+}
+
+console.log("script start")
+async1()
+console.log("script end")
+
+执行顺序：
+"script start" => "async1 start" => "async2" => "script end" => "asyn1 end" => "async3" => "async1 end2"
+```
