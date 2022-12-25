@@ -1,5 +1,4 @@
-# JS API
-
+# JS-Web-API-DOM
 ## 1. 从 JS 基础知识到 JS Web Api
 * JS 基础知识，规定语法（ECMA 262 标准）
 * JS Web Api, 网页操作的Api (W3C 标准)

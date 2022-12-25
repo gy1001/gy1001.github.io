@@ -1,4 +1,4 @@
-# BOM操作
+# JS-Web-API-BOM操作
 > BOM: Browser Object Model
 
 ## 1. 知识点
