@@ -86,6 +86,7 @@ export const sidebarZh: SidebarConfig = {
         '/zh/interview/javascript/basic-03.md',
         '/zh/interview/javascript/basic-04.md',
         '/zh/interview/javascript/basic-05.md',
+        '/zh/interview/javascript/basic-06.md',
         '/zh/interview/javascript/new.md',
         '/zh/interview/javascript/this.md',
       ],
