@@ -192,7 +192,7 @@ export const sidebarZh: SidebarConfig = {
     },
     {
       text: '问题合集',
-      children: ['/zh/other/question/work-list.md'],
+      children: ['/zh/other/question/bug-list-01.md'],
     },
     {
       text: '课程笔记',
