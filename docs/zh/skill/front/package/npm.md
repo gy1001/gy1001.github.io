@@ -38,16 +38,29 @@ npm inint
 ### 3.2 安装依赖包
 
 ```shell
+# 本地安装
 npm install xxx
+# 全局安装
+$ sudo npm install -global <package name>
+$ sudo npm install -g <package name>
+# 强制重新安装
+$ npm install <packageName> --force
+# 如果你希望，所有模块都要强制重新安装，那就删除node_modules目录，重新执行npm install
+$ rm -rf node_modules
+$ npm install
+# 也支持直接输入Github代码库地址
+$ npm install git://github.com/package/path.git
+$ npm install git://github.com/package/path.git#0.1.0
 ```
 例如：我需要安装 express 可以使用如下命令
 ```shell
 npm install express --save
 ```
-安装后，项目中会产生一个 node_modules 文件夹，里面是从 npm 官网 下载复制了一份 express 的整体文件到本地。截图如下
+安装后，项目中会产生一个 node_modules 文件夹，里面是从 npm 官网 下载复制了一份 express 的整体文件到本地
 
 **注意：**
 这里不同版本的 npm 使用不同的一个处理方式，这个后续我们会通过 和 yarn、pnpm作比较时候细细道来,先有个初步了解
+(**旧版本使用循环嵌套的处理，新版本做了一些扁平化的一些处理**)
 1. 使用 如下版本安装
 
 ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/970b9f02cd134165a8709ff10ebe1b5e~tplv-k3u1fbpfcp-watermark.image?)
@@ -65,6 +78,172 @@ npm install express --save
 ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ce0af0ff100e4f8e944018fe92f74d92~tplv-k3u1fbpfcp-watermark.image?)
 
 ### 3.3 删除依赖包
+删除后从 node_modules 中删除相关库文件，以及 package.json 中删除掉相关依赖项
+
 ```shell
-npm uninstall xxx
+$ npm uninstall [package name]
+
+# 卸载全局模块
+$ npm uninstall [package name] -global
 ```
+### 3.4 更新依赖包
+npm update命令可以更新本地安装的模块
+```shell
+# 升级当前项目的指定模块
+$ npm update [package name]
+# 升级全局安装的模块
+$ npm update -global [package name]
+```
+## 4. 其他
+### 4.1 npm set 设置环境变量
+```shell
+npm set init-author-name 'Your name'
+npm set init-author-email 'Your email'
+npm set init-author-url 'http://yourdomain.com'
+npm set init-license 'MIT'
+```
+上面命令等于为npm init设置了默认值，以后执行npm init的时候，package.json的作者姓名、邮件、主页、许可证字段就会自动写入预设的值。这些信息会存放在用户主目录的~/.npmrc文件，使得用户不用每个项目都输入。如果某个项目有不同的设置，可以针对该项目运行npm config。
+```shell
+npm set save-exact true
+```
+上面命令设置加入模块时，package.json将记录模块的确切版本，而不是一个可选的版本范围。
+### 4.2 npm info
+> npm info命令可以查看每个模块的具体信息
+```shell
+npm info underscore
+npm info underscore description
+npm info underscore homepage
+npm info underscore version
+```
+### 4.3 npm search
+npm search命令用于搜索npm仓库，它后面可以跟字符串，也可以跟正则表达式
+```shell
+npm search <搜索词>
+```
+### 4.4 npm list
+npm list命令以树型结构列出当前项目安装的所有模块，以及它们依赖的模块。
+```shell 
+npm list
+npm list -global
+npm list vue
+```
+加上global参数，会列出全局安装的模块。
+### 4.5 npm run 
+* npm 不仅可以用于模块管理，还可以用于执行脚本。package.json 文件有一个 scripts 字段，可以用于指定脚本命令，供npm直接调用。
+* npm run 命令会自动在环境变量 $PATH 添加 node_modules/.bin 目录，所以 scripts 字段里面调用命令时不用加上路径，这就避免了全局安装 NPM 模块。
+* npm run 如果不加任何参数，直接运行，会列出 package.json 里面所有可以执行的脚本命令。
+* npm 内置了两个命令简写，npm test 等同于执行 npm run test，npm start 等同于执行 npm run start。
+```json
+// paackage.json 中的 script 脚本命令
+{
+  "scripts": {
+    "dev": "vuepress dev docs",
+    "build": "vuepress build docs"
+  },
+}
+
+```
+## 5. 其他工具
+### 5.1 npx
+> npx 只是一个临时的使用方案。 npm5.2 之后产生的
+* npx和script一致可以帮我们直接运行 .bin目录下的内容
+* 如果.bin目录下存在 会执行对应脚本，如果不存在会下载运行
+### 5.2 nrm
+> nrm(npm registry manager )是npm的镜像源管理工具，有时候国外资源太慢，使用这个就可以快速地在 npm 源间切换
+
+1. 安装命令
+```shell
+npm install nrm -g
+```
+2. nrm ls 查看可选的源
+```shell
+nrm ls
+# 执行后结果如下，其中，带*的是当前使用的源，
+* npm -------- https://registry.npmjs.org/
+yarn ------- https://registry.yarnpkg.com/
+cnpm ------- http://r.cnpmjs.org/
+taobao ----- https://registry.npm.taobao.org/
+nj --------- https://registry.nodejitsu.com/
+npmMirror -- https://skimdb.npmjs.com/registry/
+edunpm ----- http://registry.enpmjs.org/
+```
+3. nrm use 切换源
+```shell
+# 切换到taobao源
+nrm use taobao 
+# 执行后会出现如下结果
+Registry has been set to: https://registry.npm.taobao.org/
+```
+4. nrm add 增加定制的源
+> 你可以增加定制的源，特别适用于添加企业内部的私有源，执行命令 `nrm add registry url`，其中reigstry为源名，url为源的路径。
+```shell
+# 比如增加公司的私有源，私服地址为：http://public.npmjs.gyinner/
+# 可以执行如下命令
+nrm add gy http://public.npmjs.gyinner/
+# 在执行 nrm ls 后就可以在列表最后查看到最后添加的 gy 源
+```
+5. nrm del 删除源
+> 执行命令`nrm del registry`删除对应的源。
+```shell 
+# 删除上述添加的 gy 源
+nrm del gy
+```
+6. nrm test 测试源的速度
+```shell
+# 测试 npm 源的响应时间
+nrm test npm 
+```
+### 5.3 nvm 
+> nvm全英文也叫node.js version management，是一个nodejs的版本管理工具。nvm和n都是node.js版本管理工具，为了解决node.js各种版本存在不兼容现象可以通过它可以**安装和切换不同版本的node.js**。
+
+[nvm 官网地址](https://nvm.uihtm.com/)
+
+**目前推荐使用 n 模块来管理**
+### 5.4 n 版本管理工具
+1. 安装命令
+```shell
+npm install -g n
+```
+2. 查看已经安装的node版本列表
+```shell
+n ls
+```
+![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ad32c051eccb41dba0481c1517cb0b21~tplv-k3u1fbpfcp-watermark.image?)
+
+3. 利用 n 下载所需版本的 node
+```shell
+# 下载最新版本
+sudo n latest
+# 下载指定版本
+sudo n 版本号 
+# 下载最新稳定版
+sudo n stable
+```
+4. 删除某个版本
+```shell 
+n rm 10.24.0 
+```
+5. 切换版本
+```shell 
+sudo n
+# 输入后会列举出已安装的所有版本，通过上下箭头可以进行选择，回车后确定选择
+  node/10.11.0
+ο node/12.14.0
+  node/14.15.5
+```
+### 5.5 fnm: Fast Node Manager
+无意间看到这个，看了一眼，没有仔细深入这个包管理工具，目前我倾向于使用 n 来管理版本。这个就作为延伸阅读
+### 5.6 nvs: Node Version Switcher
+同上
+## 参考链接
+[npm 超详细教程](https://zhuanlan.zhihu.com/p/258080852)
+
+[nrm安装与配置](https://www.jianshu.com/p/94d084ce6834)
+
+[管理 node 版本，选择 nvm 还是 n？](https://blog.csdn.net/G_eorge/article/details/51379347)
+
+[node版本管理选 n 还是 nvm？我选 fnm](https://juejin.cn/post/7080414800274489351)
+
+[NVS —— js 实现的node版本管理工具](https://juejin.cn/post/6961679951925870623)
+
+<CommentService />
