@@ -31,6 +31,7 @@ export const sidebarZh: SidebarConfig = {
         '/zh/skill/front/package/npm.md',
         '/zh/skill/front/package/yarn.md',
         '/zh/skill/front/package/pnpm.md',
+        '/zh/skill/front/package/npm-yarn-pnpm.md',
       ],
     },
     {
