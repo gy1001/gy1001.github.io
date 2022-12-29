@@ -26,6 +26,14 @@ export const sidebarZh: SidebarConfig = {
       ],
     },
     {
+      text: '包管理相关',
+      children: [
+        '/zh/skill/front/package/npm.md',
+        '/zh/skill/front/package/yarn.md',
+        '/zh/skill/front/package/pnpm.md',
+      ],
+    },
+    {
       text: '前端框架',
       children: [
         '/zh/skill/front/frame/vue.md',
