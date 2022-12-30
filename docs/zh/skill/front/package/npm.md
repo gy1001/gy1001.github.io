@@ -94,7 +94,7 @@ $ npm update [package name]
 # 升级全局安装的模块
 $ npm update -global [package name]
 ```
-## 4. 其他
+## 4. 其他命令
 ### 4.1 npm set 设置环境变量
 ```shell
 npm set init-author-name 'Your name'
@@ -143,7 +143,7 @@ npm list vue
 }
 
 ```
-## 5. 其他工具
+## 5. 其他管理工具
 ### 5.1 npx
 > npx 只是一个临时的使用方案。 npm5.2 之后产生的
 * npx和script一致可以帮我们直接运行 .bin目录下的内容
@@ -235,7 +235,59 @@ sudo n
 无意间看到这个，看了一眼，没有仔细深入这个包管理工具，目前我倾向于使用 n 来管理版本。这个就作为延伸阅读
 ### 5.6 nvs: Node Version Switcher
 同上
+
+## 6. 关于依赖管理
+### 6.1 dependencies 和 devDependencies
+1. 假设我们有项目 a，其 package.json 结构如下：
+```javascript
+{
+  "name": "a",
+  "dependencies": {
+    "b": "^1.0.0"
+  },
+  "devDependencies": {
+    "c": "^1.0.0"
+  }
+}
+```
+2. a 的依赖 b 和 c 的依赖信息如下：
+```javascript
+// node_modules/b/package.json
+{
+  "name": "b",
+  "dependencies": {
+    "d": "^1.0.0"
+  },
+  "devDependencies": {
+    "e": "^1.0.0"
+  }
+}
+// node_modules/c/package.json
+{
+  "name": "c",
+  "dependencies": {
+    "f": "^1.0.0"
+  },
+  "devDependencies": {
+    "g": "^1.0.0"
+  }
+}
+```
+3. 执行 npm install 后，a 的 node_modules 目录最终内容如下
+```javascript
+node_modules
+├── b       // a 的 dependencies
+├── c       // a 的 devDependencies   
+├── d       // b 的 dependencies    
+└── f       // c 的 dependencies
+```
+* 包管理器将以项目的 package.json 为起点，安装所有 dependencies 与 devDependencies 中声明的依赖。 
+* 但是对于这些一级依赖项具有的更深层级依赖，在深度遍历的过程中，只会安装 dependencies 中的依赖，忽略 devDependencies 中的依赖。 
+* 因此，b 和 c 的 devDependencies —— e 和 g 被忽略， 而它们的 dependencies —— d 和 f 被安装。
+
 ## 参考链接
+[新一代包管理工具 pnpm 使用心得](https://zhuanlan.zhihu.com/p/546400909)
+
 [npm 超详细教程](https://zhuanlan.zhihu.com/p/258080852)
 
 [nrm安装与配置](https://www.jianshu.com/p/94d084ce6834)
