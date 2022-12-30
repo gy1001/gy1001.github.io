@@ -124,6 +124,10 @@ export const sidebarZh: SidebarConfig = {
       text: 'Node 相关',
       children: ['/zh/interview/node/node-01.md'],
     },
+    {
+      text: '开发环境',
+      children: ['/zh/interview/environment/development/01.md'],
+    },
   ],
   '/zh/collect': [
     {
