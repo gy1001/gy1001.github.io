@@ -49,15 +49,15 @@ To take full advantage of the optimization tool, it is suggested that you keep a
 ```html
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>My Sample Project</title>
-		<!-- data-main attribute tells require.js to load
+  <head>
+    <title>My Sample Project</title>
+    <!-- data-main attribute tells require.js to load
              scripts/main.js after require.js loads. -->
-		<script data-main="scripts/main" src="scripts/require.js"></script>
-	</head>
-	<body>
-		<h1>My Sample Project</h1>
-	</body>
+    <script data-main="scripts/main" src="scripts/require.js"></script>
+  </head>
+  <body>
+    <h1>My Sample Project</h1>
+  </body>
 </html>
 ```
 
@@ -71,10 +71,10 @@ Inside of main.js, you can use requirejs() to load any other scripts you need to
 
 ```javascript
 requirejs(['helper/util'], function (util) {
-	//This function is called when scripts/helper/util.js is loaded.
-	//If util.js calls define(), then this function is not fired until
-	//util's dependencies have loaded, and the util argument will hold
-	//the module value for "helper/util".
+  //This function is called when scripts/helper/util.js is loaded.
+  //If util.js calls define(), then this function is not fired until
+  //util's dependencies have loaded, and the util argument will hold
+  //the module value for "helper/util".
 })
 ```
 
@@ -160,22 +160,22 @@ and in app.js:
 
 ```javascript
 requirejs.config({
-	//By default load any module IDs from js/lib
-	baseUrl: 'js/lib',
-	//except, if the module ID starts with "app",
-	//load it from the js/app directory. paths
-	//config is relative to the baseUrl, and
-	//never includes a ".js" extension since
-	//the paths config could be for a directory.
-	paths: {
-		app: '../app',
-	},
+  //By default load any module IDs from js/lib
+  baseUrl: 'js/lib',
+  //except, if the module ID starts with "app",
+  //load it from the js/app directory. paths
+  //config is relative to the baseUrl, and
+  //never includes a ".js" extension since
+  //the paths config could be for a directory.
+  paths: {
+    app: '../app',
+  },
 })
 
 // Start the main app logic.
 requirejs(['jquery', 'canvas', 'app/sub'], function ($, canvas, sub) {
-	//jQuery, canvas and the app/sub module are all
-	//loaded and can be used here now.
+  //jQuery, canvas and the app/sub module are all
+  //loaded and can be used here now.
 })
 ```
 
@@ -222,9 +222,9 @@ For example, this arrangement will fail randomly when the require.config path fo
 ```javascript
 // contents of main.js:
 require.config({
-	paths: {
-		foo: 'libs/foo-1.1.3',
-	},
+  paths: {
+    foo: 'libs/foo-1.1.3',
+  },
 })
 ```
 
@@ -281,8 +281,8 @@ If the module does not have any dependencies, and it is just a collection of nam
 ```javascript
 // Inside file my/shirt.js:
 define({
-	color: 'black',
-	size: 'unisize',
+  color: 'black',
+  size: 'unisize',
 })
 ```
 
@@ -296,12 +296,12 @@ If the module does not have dependencies, but needs to use a function to do some
 //my/shirt.js now does setup work
 //before returning its module definition.
 define(function () {
-	//Do setup work here
+  //Do setup work here
 
-	return {
-		color: 'black',
-		size: 'unisize',
-	}
+  return {
+    color: 'black',
+    size: 'unisize',
+  }
 })
 ```
 
@@ -315,15 +315,15 @@ If the module has dependencies, the first argument should be an array of depende
 //my/shirt.js now has some dependencies, a cart and inventory
 //module in the same directory as shirt.js
 define(['./cart', './inventory'], function (cart, inventory) {
-	//return an object to define the "my/shirt" module.
-	return {
-		color: 'blue',
-		size: 'large',
-		addToCart: function () {
-			inventory.decrement(this)
-			cart.add(this)
-		},
-	}
+  //return an object to define the "my/shirt" module.
+  return {
+    color: 'blue',
+    size: 'large',
+    addToCart: function () {
+      inventory.decrement(this)
+      cart.add(this)
+    },
+  }
 })
 ```
 
@@ -368,11 +368,13 @@ Modules do not have to return objects. Any valid return value from a function is
 //to any directory, but by default, it is assumed to be a
 //sibling to the "foo" directory.
 define(['my/cart', 'my/inventory'], function (cart, inventory) {
-	//return a function to define "foo/title".
-	//It gets or sets the window title.
-	return function (title) {
-		return title ? (window.title = title) : inventory.storeName + ' ' + cart.name
-	}
+  //return a function to define "foo/title".
+  //It gets or sets the window title.
+  return function (title) {
+    return title
+      ? (window.title = title)
+      : inventory.storeName + ' ' + cart.name
+  }
 })
 ```
 
@@ -384,11 +386,11 @@ If you wish to reuse some code that was written in the traditional CommonJS modu
 
 ```javascript
 define(function (require, exports, module) {
-	var a = require('a'),
-		b = require('b')
+  var a = require('a'),
+    b = require('b')
 
-	//Return the module value
-	return function () {}
+  //Return the module value
+  return function () {}
 })
 ```
 
@@ -409,7 +411,7 @@ You may encounter some define() calls that include a name for the module as the 
 ```javascript
 //Explicitly defines the "foo/title" module:
 define('foo/title', ['my/cart', 'my/inventory'], function (cart, inventory) {
-	//Define foo/title object in here.
+  //Define foo/title object in here.
 })
 ```
 
@@ -429,7 +431,7 @@ These are normally generated by the optimization tool. You can explicitly name m
 
 ```javascript
 define(['require', './relative/name'], function (require) {
-	var mod = require('./relative/name')
+  var mod = require('./relative/name')
 })
 ```
 
@@ -439,7 +441,7 @@ Or better yet, use the shortened syntax that is available for use with translati
 
 ```javascript
 define(function (require) {
-	var mod = require('./relative/name')
+  var mod = require('./relative/name')
 })
 ```
 
@@ -468,7 +470,7 @@ main.js 模块如下所示：
 
 ```javascript
 define(['./extras'], function (extras) {
-	//Uses extras in here.
+  //Uses extras in here.
 })
 ```
 
@@ -478,10 +480,10 @@ If this was the paths config:
 
 ```javascript
 require.config({
-	baseUrl: 'lib',
-	paths: {
-		compute: 'compute/main',
-	},
+  baseUrl: 'lib',
+  paths: {
+    compute: 'compute/main',
+  },
 })
 ```
 
@@ -507,7 +509,7 @@ Generate URLs relative to module: You may need to generate an URL that is relati
 
 ```javascript
 define(['require'], function (require) {
-	var cssUrl = require.toUrl('./style.css')
+  var cssUrl = require.toUrl('./style.css')
 })
 ```
 
@@ -532,11 +534,11 @@ If you define a circular dependency ("a" needs "b" and "b" needs "a"), then in t
 ```javascript
 //Inside b.js:
 define(['require', 'a'], function (require, a) {
-	//"a" in this case will be null if "a" also asked for "b",
-	//a circular dependency.
-	return function (title) {
-		return require('a').doSomething()
-	}
+  //"a" in this case will be null if "a" also asked for "b",
+  //a circular dependency.
+  return function (title) {
+    return require('a').doSomething()
+  }
 })
 ```
 
@@ -551,14 +553,14 @@ If you are familiar with CommonJS modules, you could instead use exports to crea
 ```javascript
 //Inside b.js:
 define(function (require, exports, module) {
-	//If "a" has used exports, then we have a real
-	//object reference here. However, we cannot use
-	//any of "a"'s properties until after "b" returns a value.
-	var a = require('a')
+  //If "a" has used exports, then we have a real
+  //object reference here. However, we cannot use
+  //any of "a"'s properties until after "b" returns a value.
+  var a = require('a')
 
-	exports.foo = function () {
-		return a.bar()
-	}
+  exports.foo = function () {
+    return a.bar()
+  }
 })
 ```
 
@@ -569,13 +571,13 @@ Or, if you are using the dependency array approach, ask for the special 'exports
 ```javascript
 //Inside b.js:
 define(['a', 'exports'], function (a, exports) {
-	//If "a" has used exports, then we have a real
-	//object reference here. However, we cannot use
-	//any of "a"'s properties until after "b" returns a value.
+  //If "a" has used exports, then we have a real
+  //object reference here. However, we cannot use
+  //any of "a"'s properties until after "b" returns a value.
 
-	exports.foo = function () {
-		return a.bar()
-	}
+  exports.foo = function () {
+    return a.bar()
+  }
 })
 ```
 
@@ -595,9 +597,9 @@ Here is an example that calls a JSONP API endpoint. In this example, the JSONP c
 
 ```javascript
 require(['http://example.com/api/data.json?callback=define'], function (data) {
-	//The data object will be the API response for the
-	//JSONP data call.
-	console.log(data)
+  //The data object will be the API response for the
+  //JSONP data call.
+  console.log(data)
 })
 ```
 
@@ -742,16 +744,16 @@ When run in a browser, paths fallbacks can be specified, to allow trying a load 
 
 ```javascript
 requirejs.config({
-	bundles: {
-		primary: ['main', 'util', 'text', 'text!template.html'],
-		secondary: ['text!secondary.html'],
-	},
+  bundles: {
+    primary: ['main', 'util', 'text', 'text!template.html'],
+    secondary: ['text!secondary.html'],
+  },
 })
 
 require(['util', 'text'], function (util, text) {
-	//The script for module ID 'primary' was loaded,
-	//and that script included the define()'d
-	//modules for 'util' and 'text'
+  //The script for module ID 'primary' was loaded,
+  //and that script included the define()'d
+  //modules for 'util' and 'text'
 })
 ```
 
@@ -785,43 +787,43 @@ Here is an example. It requires RequireJS 2.1.0+, and assumes backbone.js, under
 
 ```javascript
 requirejs.config({
-	//Remember: only use shim config for non-AMD scripts,
-	//scripts that do not already call define(). The shim
-	//config will not work correctly if used on AMD scripts,
-	//in particular, the exports and init config will not
-	//be triggered, and the deps config will be confusing
-	//for those cases.
-	shim: {
-		backbone: {
-			//These script dependencies should be loaded before loading
-			//backbone.js
-			deps: ['underscore', 'jquery'],
-			//Once loaded, use the global 'Backbone' as the
-			//module value.
-			exports: 'Backbone',
-		},
-		underscore: {
-			exports: '_',
-		},
-		foo: {
-			deps: ['bar'],
-			exports: 'Foo',
-			init: function (bar) {
-				//Using a function allows you to call noConflict for
-				//libraries that support it, and do other cleanup.
-				//However, plugins for those libraries may still want
-				//a global. "this" for the function will be the global
-				//object. The dependencies will be passed in as
-				//function arguments. If this function returns a value,
-				//then that value is used as the module export value
-				//instead of the object found via the 'exports' string.
-				//Note: jQuery registers as an AMD module via define(),
-				//so this will not work for jQuery. See notes section
-				//below for an approach for jQuery.
-				return this.Foo.noConflict()
-			},
-		},
-	},
+  //Remember: only use shim config for non-AMD scripts,
+  //scripts that do not already call define(). The shim
+  //config will not work correctly if used on AMD scripts,
+  //in particular, the exports and init config will not
+  //be triggered, and the deps config will be confusing
+  //for those cases.
+  shim: {
+    backbone: {
+      //These script dependencies should be loaded before loading
+      //backbone.js
+      deps: ['underscore', 'jquery'],
+      //Once loaded, use the global 'Backbone' as the
+      //module value.
+      exports: 'Backbone',
+    },
+    underscore: {
+      exports: '_',
+    },
+    foo: {
+      deps: ['bar'],
+      exports: 'Foo',
+      init: function (bar) {
+        //Using a function allows you to call noConflict for
+        //libraries that support it, and do other cleanup.
+        //However, plugins for those libraries may still want
+        //a global. "this" for the function will be the global
+        //object. The dependencies will be passed in as
+        //function arguments. If this function returns a value,
+        //then that value is used as the module export value
+        //instead of the object found via the 'exports' string.
+        //Note: jQuery registers as an AMD module via define(),
+        //so this will not work for jQuery. See notes section
+        //below for an approach for jQuery.
+        return this.Foo.noConflict()
+      },
+    },
+  },
 })
 
 //Then, later in a separate file, call it 'MyModel.js', a module is
@@ -830,7 +832,7 @@ requirejs.config({
 //reference to this module. The global Backbone will still exist on
 //the page too.
 define(['backbone'], function (Backbone) {
-	return Backbone.Model.extend({})
+  return Backbone.Model.extend({})
 })
 ```
 
@@ -844,11 +846,11 @@ For "modules" that are just jQuery or Backbone plugins that do not need to expor
 
 ```javascript
 requirejs.config({
-	shim: {
-		'jquery.colorize': ['jquery'],
-		'jquery.scroll': ['jquery'],
-		'backbone.layoutmanager': ['backbone'],
-	},
+  shim: {
+    'jquery.colorize': ['jquery'],
+    'jquery.scroll': ['jquery'],
+    'backbone.layoutmanager': ['backbone'],
+  },
 })
 ```
 
@@ -936,14 +938,14 @@ map example:
 
 ```javascript
 requirejs.config({
-	map: {
-		'some/newmodule': {
-			foo: 'foo1.2',
-		},
-		'some/oldmodule': {
-			foo: 'foo1.0',
-		},
-	},
+  map: {
+    'some/newmodule': {
+      foo: 'foo1.2',
+    },
+    'some/oldmodule': {
+      foo: 'foo1.0',
+    },
+  },
 })
 ```
 
@@ -974,14 +976,14 @@ There is also support for a "\*" map value which means "for all modules loaded, 
 
 ```javascript
 requirejs.config({
-	map: {
-		'*': {
-			foo: 'foo1.2',
-		},
-		'some/oldmodule': {
-			foo: 'foo1.0',
-		},
-	},
+  map: {
+    '*': {
+      foo: 'foo1.2',
+    },
+    'some/oldmodule': {
+      foo: 'foo1.0',
+    },
+  },
 })
 ```
 
@@ -999,29 +1001,29 @@ config：通常需要将配置信息传递给模块。该配置信息通常被�
 
 ```javascript
 requirejs.config({
-	config: {
-		bar: {
-			size: 'large',
-		},
-		baz: {
-			color: 'blue',
-		},
-	},
+  config: {
+    bar: {
+      size: 'large',
+    },
+    baz: {
+      color: 'blue',
+    },
+  },
 })
 
 //bar.js, which uses simplified CJS wrapping:
 //https://requirejs.org/docs/whyamd.html#sugar
 define(function (require, exports, module) {
-	//Will be the value 'large'
-	var size = module.config().size
+  //Will be the value 'large'
+  var size = module.config().size
 })
 
 //baz.js which uses a dependency array,
 //it asks for the special module ID, 'module':
 //https://github.com/requirejs/requirejs/wiki/Differences-between-the-simplified-CommonJS-wrapper-and-standard-AMD-define#wiki-magic
 define(['module'], function (module) {
-	//Will be the value 'blue'
-	var color = module.config().color
+  //Will be the value 'blue'
+  var color = module.config().color
 })
 ```
 
@@ -1031,21 +1033,21 @@ For passing config to a package, target the main module in the package, not the 
 
 ```javascript
 requirejs.config({
-	//Pass an API key for use in the pixie package's
-	//main module.
-	config: {
-		'pixie/index': {
-			apiKey: 'XJKDLNS',
-		},
-	},
-	//Set up config for the "pixie" package, whose main
-	//module is the index.js file in the pixie folder.
-	packages: [
-		{
-			name: 'pixie',
-			main: 'index',
-		},
-	],
+  //Pass an API key for use in the pixie package's
+  //main module.
+  config: {
+    'pixie/index': {
+      apiKey: 'XJKDLNS',
+    },
+  },
+  //Set up config for the "pixie" package, whose main
+  //module is the index.js file in the pixie folder.
+  packages: [
+    {
+      name: 'pixie',
+      main: 'index',
+    },
+  ],
 })
 ```
 
@@ -1095,14 +1097,14 @@ As of RequireJS 2.2.0, urlArgs can be a function. If a function, it will receive
 
 ```javascript
 requirejs.config({
-	urlArgs: function (id, url) {
-		var args = 'v=1'
-		if (url.indexOf('view.html') !== -1) {
-			args = 'v=2'
-		}
+  urlArgs: function (id, url) {
+    var args = 'v=1'
+    if (url.indexOf('view.html') !== -1) {
+      args = 'v=2'
+    }
 
-		return (url.indexOf('?') === -1 ? '?' : '&') + args
-	},
+    return (url.indexOf('?') === -1 ? '?' : '&') + args
+  },
 })
 ```
 
@@ -1179,7 +1181,7 @@ project-directory/
 project.html will have a script tag like this:
 
 ```javascript
-<script data-main='scripts/main' src='scripts/require.js'></script>
+<script data-main="scripts/main" src="scripts/require.js"></script>
 ```
 
 This will instruct require.js to load scripts/main.js. main.js uses the "packages" config to set up packages that are relative to require.js, which in this case are the source packages "cart" and "store":
@@ -1190,11 +1192,11 @@ This will instruct require.js to load scripts/main.js. main.js uses the "package
 //main.js contents
 //Pass a config object to require
 require.config({
-	packages: ['cart', 'store'],
+  packages: ['cart', 'store'],
 })
 
 require(['cart', 'store', 'store/util'], function (cart, store, util) {
-	//use the modules as usual.
+  //use the modules as usual.
 })
 ```
 
@@ -1227,13 +1229,13 @@ Then the RequireJS configuration would look like so:
 
 ```javascript
 require.config({
-	packages: [
-		'cart',
-		{
-			name: 'store',
-			main: 'store',
-		},
-	],
+  packages: [
+    'cart',
+    {
+      name: 'store',
+      main: 'store',
+    },
+  ],
 })
 ```
 
@@ -1392,41 +1394,41 @@ A common use case for this is to use a CDN-hosted version of a library, but if t
 
 ```javascript
 requirejs.config({
-	enforceDefine: true,
-	paths: {
-		jquery: 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min',
-	},
+  enforceDefine: true,
+  paths: {
+    jquery: 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min',
+  },
 })
 
 //Later
 require(['jquery'], function ($) {
-	//Do something with $ here
+  //Do something with $ here
 }, function (err) {
-	//The errback, error callback
-	//The error has a list of modules that failed
-	var failedId = err.requireModules && err.requireModules[0]
-	if (failedId === 'jquery') {
-		//undef is function only on the global requirejs object.
-		//Use it to clear internal knowledge of jQuery. Any modules
-		//that were dependent on jQuery and in the middle of loading
-		//will not be loaded yet, they will wait until a valid jQuery
-		//does load.
-		requirejs.undef(failedId)
+  //The errback, error callback
+  //The error has a list of modules that failed
+  var failedId = err.requireModules && err.requireModules[0]
+  if (failedId === 'jquery') {
+    //undef is function only on the global requirejs object.
+    //Use it to clear internal knowledge of jQuery. Any modules
+    //that were dependent on jQuery and in the middle of loading
+    //will not be loaded yet, they will wait until a valid jQuery
+    //does load.
+    requirejs.undef(failedId)
 
-		//Set the path to jQuery to local path
-		requirejs.config({
-			paths: {
-				jquery: 'local/jquery',
-			},
-		})
+    //Set the path to jQuery to local path
+    requirejs.config({
+      paths: {
+        jquery: 'local/jquery',
+      },
+    })
 
-		//Try again. Note that the above require callback
-		//with the "Do something with $ here" comment will
-		//be called if this new attempt to load jQuery succeeds.
-		require(['jquery'], function () {})
-	} else {
-		//Some other error. Maybe show message to the user.
-	}
+    //Try again. Note that the above require callback
+    //with the "Do something with $ here" comment will
+    //be called if this new attempt to load jQuery succeeds.
+    require(['jquery'], function () {})
+  } else {
+    //Some other error. Maybe show message to the user.
+  }
 })
 ```
 
@@ -1446,15 +1448,15 @@ The above pattern for detecting a load failure, undef()ing a module, modifying p
 
 ```javascript
 requirejs.config({
-	//To get timely, correct error triggers in IE, force a define/shim exports check.
-	enforceDefine: true,
-	paths: {
-		jquery: [
-			'http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min',
-			//If the CDN location fails, load from this location
-			'lib/jquery',
-		],
-	},
+  //To get timely, correct error triggers in IE, force a define/shim exports check.
+  enforceDefine: true,
+  paths: {
+    jquery: [
+      'http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min',
+      //If the CDN location fails, load from this location
+      'lib/jquery',
+    ],
+  },
 })
 
 //Later
@@ -1477,12 +1479,12 @@ To detect errors that are not caught by local errbacks, you can override require
 
 ```javascript
 requirejs.onError = function (err) {
-	console.log(err.requireType)
-	if (err.requireType === 'timeout') {
-		console.log('modules: ' + err.requireModules)
-	}
+  console.log(err.requireType)
+  if (err.requireType === 'timeout') {
+    console.log('modules: ' + err.requireModules)
+  }
 
-	throw err
+  throw err
 }
 ```
 
@@ -1514,11 +1516,11 @@ However, not all browsers in use support DOMContentLoaded. The domReady module i
 
 ```javascript
 require(['domReady'], function (domReady) {
-	domReady(function () {
-		//This function is called once the DOM is ready.
-		//It will be safe to query the DOM and manipulate
-		//DOM nodes in this function.
-	})
+  domReady(function () {
+    //This function is called once the DOM is ready.
+    //It will be safe to query the DOM and manipulate
+    //DOM nodes in this function.
+  })
 })
 ```
 
@@ -1536,9 +1538,9 @@ will return the current document when used as a loader plugin:
 
 ```javascript
 require(['domReady!'], function (doc) {
-	//This function is called once the DOM is ready,
-	//notice the value for 'domReady!' is the current
-	//document.
+  //This function is called once the DOM is ready,
+  //notice the value for 'domReady!' is the current
+  //document.
 })
 ```
 
@@ -1573,11 +1575,11 @@ The contents of that file should look like so:
 ```javascript
 //my/nls/colors.js contents:
 define({
-	root: {
-		red: 'red',
-		blue: 'blue',
-		green: 'green',
-	},
+  root: {
+    red: 'red',
+    blue: 'blue',
+    green: 'green',
+  },
 })
 ```
 
@@ -1592,9 +1594,9 @@ You can then use the above module in another module, say, in a my/lamps.js file:
 ```javascript
 //Contents of my/lamps.js
 define(['i18n!my/nls/colors'], function (colors) {
-	return {
-		testMessage: 'The name for red in this locale is: ' + colors.red,
-	}
+  return {
+    testMessage: 'The name for red in this locale is: ' + colors.red,
+  }
 })
 ```
 
@@ -1609,12 +1611,12 @@ my/lamps 模块具有一个名为"testMessage"的属性，该属性使用 colors
 ```javascript
 //Contents of my/nls/colors.js
 define({
-	root: {
-		red: 'red',
-		blue: 'blue',
-		green: 'green',
-	},
-	'fr-fr': true,
+  root: {
+    red: 'red',
+    blue: 'blue',
+    green: 'green',
+  },
+  'fr-fr': true,
 })
 ```
 
@@ -1625,9 +1627,9 @@ Then define a file at my/nls/fr-fr/colors.js that has the following contents:
 ```javascript
 //Contents of my/nls/fr-fr/colors.js
 define({
-	red: 'rouge',
-	blue: 'bleu',
-	green: 'vert',
+  red: 'rouge',
+  blue: 'bleu',
+  green: 'vert',
 })
 ```
 
@@ -1637,13 +1639,13 @@ RequireJS 将使用浏览器的 navigator.languages，navigator.language 或 nav
 
 ```javascript
 requirejs.config({
-	config: {
-		//Set the config for the i18n
-		//module ID
-		i18n: {
-			locale: 'fr-fr',
-		},
-	},
+  config: {
+    //Set the config for the i18n
+    //module ID
+    i18n: {
+      locale: 'fr-fr',
+    },
+  },
 })
 ```
 
@@ -1662,8 +1664,8 @@ RequireJS 还将捆绑包合并在一起，因此，例如，如果法式捆绑�
 ```javascript
 //Contents of my/nls/fr-fr/colors.js
 define({
-	blue: 'bleu',
-	green: 'vert',
+  blue: 'bleu',
+  green: 'vert',
 })
 ```
 
@@ -1683,9 +1685,9 @@ If you prefer to not include the root bundle in the top level module, you can de
 ```javascript
 //my/nls/colors.js contents:
 define({
-	root: true,
-	'fr-fr': true,
-	'fr-fr-paris': true,
+  root: true,
+  'fr-fr': true,
+  'fr-fr-paris': true,
 })
 ```
 
@@ -1696,9 +1698,9 @@ and the root bundle would look like:
 ```javascript
 //Contents of my/nls/root/colors.js
 define({
-	red: 'red',
-	blue: 'blue',
-	green: 'green',
+  red: 'red',
+  blue: 'blue',
+  green: 'green',
 })
 ```
 
@@ -1842,14 +1844,14 @@ main.html 具有 require.js 的脚本标签，并通过 require 调用加载 mai
 ```html
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>My App</title>
-		<link rel="stylesheet" type="text/css" href="css/main.css" />
-		<script data-main="scripts/main" src="scripts/require.js"></script>
-	</head>
-	<body>
-		<h1>My App</h1>
-	</body>
+  <head>
+    <title>My App</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <script data-main="scripts/main" src="scripts/require.js"></script>
+  </head>
+  <body>
+    <h1>My App</h1>
+  </body>
 </html>
 ```
 
@@ -1868,7 +1870,7 @@ main.css 的内容如下：
 ```css
 @import url('common.css');
 .app {
-	background: transparent url(../../img/app.png);
+  background: transparent url(../../img/app.png);
 }
 ```
 
@@ -1892,12 +1894,12 @@ or in a build profile. In a build.js, the same command line arguments can be spe
 
 ```javascript
 ;({
-	baseUrl: '.',
-	paths: {
-		jquery: 'some/other/jquery',
-	},
-	name: 'main',
-	out: 'main-built.js',
+  baseUrl: '.',
+  paths: {
+    jquery: 'some/other/jquery',
+  },
+  name: 'main',
+  out: 'main-built.js',
 })
 ```
 
@@ -2050,24 +2052,24 @@ Then configure the HTML page to load the main-built.js file instead of main.js b
 ```html
 !DOCTYPE html>
 <html>
-	<head>
-		<title>My App</title>
-		<link rel="stylesheet" type="text/css" href="css/main.css" />
-		<script src="scripts/require.js"></script>
-		<script>
-			require.config({
-				paths: {
-					//Comment out this line to go back to loading
-					//the non-optimized main.js source file.
-					main: 'main-built',
-				},
-			})
-			require(['main'])
-		</script>
-	</head>
-	<body>
-		<h1>My App</h1>
-	</body>
+  <head>
+    <title>My App</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <script src="scripts/require.js"></script>
+    <script>
+      require.config({
+        paths: {
+          //Comment out this line to go back to loading
+          //the non-optimized main.js source file.
+          main: 'main-built',
+        },
+      })
+      require(['main'])
+    </script>
+  </head>
+  <body>
+    <h1>My App</h1>
+  </body>
 </html>
 ```
 
@@ -2095,9 +2097,9 @@ In your main.js file, create a paths config that gives the script a module name.
 
 ```javascript
 requirejs.config({
-	paths: {
-		jquery: 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min',
-	},
+  paths: {
+    jquery: 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min',
+  },
 })
 
 require(['jquery'], function ($) {})
@@ -2235,9 +2237,9 @@ If your code uses tests like the following:
 
 ```javascript
 if (has('someThing')) {
-	//use native someThing
+  //use native someThing
 } else {
-	//do some workaround
+  //do some workaround
 }
 ```
 
@@ -2266,9 +2268,9 @@ Then the optimizer will transform the above code sample to:
 
 ```javascript
 if (true) {
-	//use native someThing
+  //use native someThing
 } else {
-	//do some workaround
+  //do some workaround
 }
 ```
 
@@ -2376,18 +2378,18 @@ jQuery 在检测到 AMD/RequireJS 时定义了命名为 AMD 的模块 "jquery"(�
 
 ```javascript
 requirejs.config({
-	baseUrl: 'js/lib',
-	paths: {
-		// the left side is the module ID,
-		// the right side is the path to
-		// the jQuery file, relative to baseUrl.
-		// Also, the path should NOT include
-		// the '.js' file extension. This example
-		// is using jQuery 1.9.0 located at
-		// js/lib/jquery-1.9.0.js, relative to
-		// the HTML page.
-		jquery: 'jquery-1.9.0',
-	},
+  baseUrl: 'js/lib',
+  paths: {
+    // the left side is the module ID,
+    // the right side is the path to
+    // the jQuery file, relative to baseUrl.
+    // Also, the path should NOT include
+    // the '.js' file extension. This example
+    // is using jQuery 1.9.0 located at
+    // js/lib/jquery-1.9.0.js, relative to
+    // the HTML page.
+    jquery: 'jquery-1.9.0',
+  },
 })
 ```
 
@@ -2440,24 +2442,24 @@ You can use this example with the CDN example above -- the shim example will not
 
 ```javascript
 requirejs.config({
-	// Add this map config in addition to any baseUrl or
-	// paths config you may already have in the project.
-	map: {
-		// '*' means all modules will get 'jquery-private'
-		// for their 'jquery' dependency.
-		'*': { jquery: 'jquery-private' },
+  // Add this map config in addition to any baseUrl or
+  // paths config you may already have in the project.
+  map: {
+    // '*' means all modules will get 'jquery-private'
+    // for their 'jquery' dependency.
+    '*': { jquery: 'jquery-private' },
 
-		// 'jquery-private' wants the real jQuery module
-		// though. If this line was not here, there would
-		// be an unresolvable cyclic dependency.
-		'jquery-private': { jquery: 'jquery' },
-	},
+    // 'jquery-private' wants the real jQuery module
+    // though. If this line was not here, there would
+    // be an unresolvable cyclic dependency.
+    'jquery-private': { jquery: 'jquery' },
+  },
 })
 
 // and the 'jquery-private' module, in the
 // jquery-private.js file:
 define(['jquery'], function (jq) {
-	return jq.noConflict(true)
+  return jq.noConflict(true)
 })
 ```
 
@@ -2467,15 +2469,15 @@ This means that any module which uses jQuery will need to use the AMD return val
 
 ```javascript
 requirejs(['jquery'], function ($) {
-	console.log($) // OK
+  console.log($) // OK
 })
 
 requirejs(['jquery'], function (jq) {
-	console.log(jq) // OK
+  console.log(jq) // OK
 })
 
 requirejs(['jquery'], function () {
-	console.log($) // UNDEFINED!
+  console.log($) // UNDEFINED!
 })
 ```
 
@@ -2563,16 +2565,16 @@ These instructions assume an npm installation of 'requirejs'. If you are using t
 var requirejs = require('requirejs')
 
 requirejs.config({
-	//Pass the top-level main.js/index.js require
-	//function to requirejs so that node modules
-	//are loaded relative to the top-level JS file.
-	nodeRequire: require,
+  //Pass the top-level main.js/index.js require
+  //function to requirejs so that node modules
+  //are loaded relative to the top-level JS file.
+  nodeRequire: require,
 })
 
 requirejs(['foo', 'bar'], function (foo, bar) {
-	//foo and bar are loaded according to requirejs
-	//config, but if not found, then node's require
-	//is used to load the module.
+  //foo and bar are loaded according to requirejs
+  //config, but if not found, then node's require
+  //is used to load the module.
 })
 ```
 
@@ -2601,15 +2603,15 @@ If you want to code a module so that it works with RequireJS and in Node, withou
 
 ```javascript
 if (typeof define !== 'function') {
-	var define = require('amdefine')(module)
+  var define = require('amdefine')(module)
 }
 
 define(function (require) {
-	var dep = require('dependency')
+  var dep = require('dependency')
 
-	//The value returned from the function is
-	//used as the module export visible to Node.
-	return function () {}
+  //The value returned from the function is
+  //used as the module export visible to Node.
+  return function () {}
 })
 ```
 
@@ -2629,17 +2631,17 @@ It is best to set the baseUrl specifically to the directory containing the modul
 var requirejs = require('requirejs')
 
 requirejs.config({
-	//Use node's special variable __dirname to
-	//get the directory containing this file.
-	//Useful if building a library that will
-	//be used in node but does not require the
-	//use of node outside
-	baseUrl: __dirname,
+  //Use node's special variable __dirname to
+  //get the directory containing this file.
+  //Useful if building a library that will
+  //be used in node but does not require the
+  //use of node outside
+  baseUrl: __dirname,
 
-	//Pass the top-level main.js/index.js require
-	//function to requirejs so that node modules
-	//are loaded relative to the top-level JS file.
-	nodeRequire: require,
+  //Pass the top-level main.js/index.js require
+  //function to requirejs so that node modules
+  //are loaded relative to the top-level JS file.
+  nodeRequire: require,
 })
 
 //foo and bar are loaded according to requirejs
@@ -2666,22 +2668,22 @@ Node 模块也暴露了 RequireJS 优化为优化用于使用该方法 RequireJS
 var requirejs = require('requirejs')
 
 var config = {
-	baseUrl: '../appDir/scripts',
-	name: 'main',
-	out: '../build/main-built.js',
+  baseUrl: '../appDir/scripts',
+  name: 'main',
+  out: '../build/main-built.js',
 }
 
 requirejs.optimize(
-	config,
-	function (buildResponse) {
-		//buildResponse is just a text output of the modules
-		//included. Load the built file for the contents.
-		//Use config.out to get the optimized file contents.
-		var contents = fs.readFileSync(config.out, 'utf8')
-	},
-	function (err) {
-		//optimization err callback
-	}
+  config,
+  function (buildResponse) {
+    //buildResponse is just a text output of the modules
+    //included. Load the built file for the contents.
+    //Use config.out to get the optimized file contents.
+    var contents = fs.readFileSync(config.out, 'utf8')
+  },
+  function (err) {
+    //optimization err callback
+  }
 )
 ```
 
@@ -2723,7 +2725,7 @@ If you just have a few modules to convert, then all you need to do is wrap the m
 
 ```javascript
 define(function (require, exports, module) {
-	//Put traditional CommonJS module content here
+  //Put traditional CommonJS module content here
 })
 ```
 
@@ -2753,12 +2755,12 @@ There are some CommonJS systems, mainly Node, that allow setting the exported va
 
 ```javascript
 define(function (require) {
-	var foo = require('foo')
+  var foo = require('foo')
 
-	//Define this module as exporting a function
-	return function () {
-		foo.doSomething()
-	}
+  //Define this module as exporting a function
+  return function () {
+    foo.doSomething()
+  }
 })
 ```
 
@@ -2774,9 +2776,9 @@ Instead of using require() to get dependencies inside the function passed to def
 
 ```javascript
 define(['foo'], function (foo) {
-	return function () {
-		foo.doSomething()
-	}
+  return function () {
+    foo.doSomething()
+  }
 })
 ```
 
@@ -2875,7 +2877,7 @@ If the error message includes Use require([]), then it was a top-level require c
 //DO NOT use require('foo'), but use the async
 //callback version:
 require(['foo'], function (foo) {
-	//foo is now loaded.
+  //foo is now loaded.
 })
 ```
 
@@ -2885,7 +2887,7 @@ If you are using the simplified define wrapper, make sure you have require as th
 
 ```javascript
 define(function (require) {
-	var namedModule = require('name')
+  var namedModule = require('name')
 })
 ```
 
@@ -2895,7 +2897,7 @@ If you are listing dependencies in the dependency array, make sure that require 
 
 ```javascript
 define(['require', 'name'], function (require) {
-	var namedModule = require('name')
+  var namedModule = require('name')
 })
 ```
 
@@ -2906,7 +2908,7 @@ In particular, the following will not work:
 ```javascript
 //THIS WILL FAIL
 define(['require'], function (require) {
-	var namedModule = require('name')
+  var namedModule = require('name')
 })
 ```
 
@@ -2920,7 +2922,7 @@ If part of a require() callback, all the dependencies need to be listed in the a
 
 ```javascript
 require(['require', 'name'], function (require) {
-	var namedModule = require('name')
+  var namedModule = require('name')
 })
 ```
 
@@ -2934,8 +2936,8 @@ In the RequreJS 1.0.x releases, there is a bug with having a space between the r
 
 ```javascript
 define(function (require) {
-	//Notice the space between require and the arguments.
-	var namedModule = require('name')
+  //Notice the space between require and the arguments.
+  var namedModule = require('name')
 })
 ```
 
@@ -3041,13 +3043,15 @@ Make sure you reference the network dependency as a module name, not as a full U
 
 ```javascript
 //DO NOT DO THIS
-require(['http://some.domain.dom/path/to/dependency.js'], function (dependency) {})
+require(['http://some.domain.dom/path/to/dependency.js'], function (
+  dependency
+) {})
 
 //Rather, do this:
 require.config({
-	paths: {
-		dependency: 'http://some.domain.dom/path/to/dependency',
-	},
+  paths: {
+    dependency: 'http://some.domain.dom/path/to/dependency',
+  },
 })
 ```
 
