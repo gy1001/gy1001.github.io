@@ -128,6 +128,10 @@ export const sidebarZh: SidebarConfig = {
       text: '开发环境',
       children: ['/zh/interview/environment/development/01.md'],
     },
+    {
+      text: '运行环境',
+      children: ['/zh/interview/environment/production/01.md'],
+    },
   ],
   '/zh/collect': [
     {
