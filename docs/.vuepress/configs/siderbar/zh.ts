@@ -132,6 +132,10 @@ export const sidebarZh: SidebarConfig = {
       text: '运行环境',
       children: ['/zh/interview/environment/production/01.md'],
     },
+    {
+      text: '面试真题',
+      children: ['/zh/interview/questions/01.md'],
+    },
   ],
   '/zh/collect': [
     {
