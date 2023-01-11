@@ -42,6 +42,8 @@
 
 [坚果云: 智能同步文件神器](https://www.jianguoyun.com/s/downloads)
 
+[Alist:网盘本地化](https://alist.nn.ci/zh/)
+
 ## Ubuntu 端
 
 [Free Download Manager: 強大又現代的下載加速組織器。](https://www.freedownloadmanager.org/zh/)
