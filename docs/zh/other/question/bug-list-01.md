@@ -181,3 +181,168 @@ new ThemeColorReplacer({
 
 ### 参考链接
 [JavaScript中的“null”与“undefined“在进行数值比较时，当作0处理?null == 0?](https://blog.csdn.net/gdutRex/article/details/111322781)
+
+## 6. CSS 中的 last-child 和 last-of-type 
+### 6.1 last-child
+#### 6.1.1 问题描述
+> 遇到下面的层级关系，我想实现最后一个的 `demo`类样式特殊设置，比如：实现 第三个 p.demo 为 蓝色,如下写，发现没有生效
+```html
+<style>
+  .demo:last-child{
+    color: blue
+  }
+</style>
+<div>
+  <p class="demo">1</p>
+  <p class="demo">2</p>
+  <p class="demo">3</p>
+  <p class="demo1">4</p>
+</div>
+```
+#### 6.1.2 问题分析
+* .demo:last-child 选择属于其父元素最后一个子元素每个 .demo 元素。看着很懵逼,费解
+* .demo:last-child 可以如下理解：选择父节点最后一个子节点，并且与选择器进行匹配， 父节点div的最后一个节点是.demo1，而匹配的选择器是.demo,两者不对应所以匹配不上。
+#### 6.1.3 解决办法
+1. 把想要使用的类放在父元素的最后一项,结构变为如下
+```html
+<style>
+  .demo:last-child{
+    color: blue
+  }
+</style>
+<div>
+  <p class="demo">1</p>
+  <p class="demo">2</p>
+  <p class="demo">3</p>
+</div>
+<p class="demo1">4</p>
+```
+2. 如果知道 .demo 节点的长度，可以使用精准匹配
+```html
+<style>
+  .demo:nth-child(3) {
+    color: blue
+  }
+</style>
+<div>
+  <p class="demo">1</p>
+  <p class="demo">2</p>
+  <p class="demo">3</p>
+  <p class="demo1">4</p>
+</div>
+```
+#### 6.1.4 扩展
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    http-equiv="X-UA-Compatible"
+    content="IE=edge"
+  >
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <title>last-child</title>
+</head>
+<style>
+  .demo:last-child {
+    color: blue;
+  }
+</style>
+
+<body>
+  <h1>last-child</h1>
+  <div class="last-child-container">
+    <div class="demo1">
+      <p class="demo">我是 demo1-1</p>
+      <div class="other-demo">我是other-demo-1</div>
+    </div>
+    <div class="demo2">
+      <p class="demo">我是 demo2-1</p>
+      <p class="demo">我是 demo2-2-我是蓝色</p>
+    </div>
+    <div class="demo3">
+      <p class="demo">我是 demo3-1</p>
+      <p class="demo">我是 demo3-2</p>
+      <span class="demo">我是 demo3-3-我是蓝色</span>
+    </div>
+  </div>
+  <div>
+    <p class="demo">1</p>
+    <p class="demo">2</p>
+    <p class="demo">3-我是蓝色</p>
+  </div>
+  <p class="demo1">4</p>
+</body>
+
+</html>
+```
+### 6.2 last-of-type
+> .demo:last-of-type 选择属于其父元素的最后 .demo 元素的每个 .demo 元素。
+1. 可以如下理解
+:last-of-type是从父节点的子节点中寻找最后一个与选择器相同的子节点，也就是说，这次寻找的并不是最后一个节点，而是每种类型的最后一个元素节点是不是 .demo 
+2. 注意：这里的选择的是`每种类型的最后一个元素`
+3. 例如下面的例子
+```html
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    http-equiv="X-UA-Compatible"
+    content="IE=edge"
+  >
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <title>last-of-type</title>
+</head>
+<style>
+  .demo:last-child {
+    color: blue;
+  }
+
+  .demo:nth-child(3) {
+    color: red
+  }
+
+  .demo:last-of-type {
+    color: blue;
+  }
+</style>
+
+<body>
+  <h1>last-of-type</h1>
+  <div class="last-of-type-container">
+    <div class="demo1">
+      <p class="demo">我是 demo1-1</p>
+      <p class="demo">我是 demo1-2</p>
+      <p class="demo">我是 demo1-3:我是蓝色</p>
+      <div class="demo">我是other-demo-1</div>
+      <div class="demo">我是other-demo-2：我是蓝色</div>
+      <span class="demo">我是span.demo-1：我是蓝色</span>
+    </div>
+    <div class="demo2">
+      <p class="demo">我是 demo2-1</p>
+      <p class="demo">我是 demo2-2：我是蓝色</p>
+    </div>
+    <div class="demo3">
+      <p class="demo">我是 demo3-1</p>
+      <p class="demo">我是 demo3-2：我是蓝色</p>
+      <span class="demo">我是 demo3-3：我是蓝色</span>
+    </div>
+  </div>
+</body>
+```
+### 6.3 总结
+* :last-child 就像w3c描述的一样他侧重的是最后一个元素
+* :last-of-type 侧重的是与之选择器匹配的相同的类型的最后一个
+
+[掘金：:last-child与:last-of-type区别](https://juejin.cn/post/7036556924736765983)
