@@ -223,7 +223,13 @@ export const sidebarZh: SidebarConfig = {
         '/zh/other/class/linear-algebra',
         '/zh/other/class/vue3-learn-practice',
         '/zh/other/class/interview-front',
-        '/zh/other/class/ts+axios'
+        '/zh/other/class/ts-axios',
+        {
+          text:"从0到1开发一款IOS APP",
+          children: [
+            '/zh/other/class/ios-development/01'
+          ]
+        }
       ],
     },
   ],
