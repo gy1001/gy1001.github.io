@@ -217,7 +217,7 @@ export const sidebarZh: SidebarConfig = {
     },
     {
       text: '课程笔记',
-      collapsible: false,
+      collapsible: true,
       children: [
         '/zh/other/class/program-basic',
         '/zh/other/class/linear-algebra',
@@ -225,9 +225,16 @@ export const sidebarZh: SidebarConfig = {
         '/zh/other/class/interview-front',
         '/zh/other/class/ts-axios',
         {
-          text:"从0到1开发一款IOS APP",
+          text: "从0到1开发一款IOS APP",
           children: [
             '/zh/other/class/ios-development/01'
+          ]
+        },
+        {
+          text: "Vue3 源码解析，打造自己的 Vue3 框架，领悟尤大思维精髓",
+          collapsible: true,
+          children: [
+            '/zh/other/class/vue3-learn/index-01.md'
           ]
         }
       ],
