@@ -234,7 +234,8 @@ export const sidebarZh: SidebarConfig = {
           text: "Vue3 源码解析，打造自己的 Vue3 框架，领悟尤大思维精髓",
           collapsible: true,
           children: [
-            '/zh/other/class/vue3-learn/index-01.md'
+            '/zh/other/class/vue3-learn/index-01.md',
+            '/zh/other/class/vue3-learn/index-02.md'
           ]
         }
       ],
