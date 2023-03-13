@@ -1,4 +1,4 @@
-# 02：Vue3 源码结构-搭建框架雏形
+# 02-Vue3 源码结构-搭建框架雏形
 
 ## 01：前言
 
@@ -9,7 +9,7 @@
 所以本章的内容将会分为两个大的部分
 
 1. **vue 源码解析**：在这部分，我们需要下载 vue 的源代码，同事对它进行 debugger 和 源码阅读
-2. **构建vue-next-mini**: 在这部分，我们会参考 vue 源代码的基本结构，来创建我们的`vue-next-mini`
+2. **构建 vue-next-mini**: 在这部分，我们会参考 vue 源代码的基本结构，来创建我们的`vue-next-mini`
 
 那么明确好以上内容之后，接下来就让我们开始本章节的学习吧
 
@@ -24,7 +24,7 @@
 
 大家可以点击[这里](https://github.com/vuejs/core/releases/tag/v3.2.37)进入 vue3 的源代码的 github 仓库
 
-或者点击[这里](https://github.com/lgd8981289/vue-next-3.2.37)下载老师fork的仓库
+或者点击[这里](https://github.com/lgd8981289/vue-next-3.2.37)下载老师 fork 的仓库
 
 ### vue 源码结构
 
@@ -67,9 +67,7 @@
     |-- pnpm-lock.yaml  // 使用 pnpm 下载的依赖包版本
 ```
 
-
-
-## 03：创建测试实例：在Vue源码中运行测试实例
+## 03：创建测试实例：在 Vue 源码中运行测试实例
 
 现在我们已经大概了解了 vue 源代码的基本结构，那么接下来我们来看下，如何在 vue3 中运行测试实例，并进行 debugger
 
@@ -135,7 +133,7 @@
        // 声明响应式数据 obj
        const obj = reactive({
          name: '孙悟空',
-         age: 500
+         age: 500,
        })
        // 调用 effect 方法
        effect(() => {
@@ -153,11 +151,11 @@
 
 ## 04:跟踪解析运行行为：为 Vue 开启 sourceMap
 
-此时，我们已经成功的运行了一个测试实例代码，但是在这样的一个测试实例代码中，Vue内部是如何执行的呢？
+此时，我们已经成功的运行了一个测试实例代码，但是在这样的一个测试实例代码中，Vue 内部是如何执行的呢？
 
 如果想要知道这个，那么我们需要对`vue`代码进行`debugger`来操作`vue`代码的执行
 
-那么问题来了，**如何对 Vue进行 debugger 操作呢？**
+那么问题来了，**如何对 Vue 进行 debugger 操作呢？**
 
 如果想要对`Vue`进行`debugger`操作，那么我们必须开启 vue 的 `source-map`功能
 
@@ -173,38 +171,38 @@
 
    ```javascript
    const args = require('minimist')(process.argv.slice(2))
-   
+
    const sourceMap = args.sourcemap || args.s
-   
+
    await execa(
-       'rollup',
-     	[
-         '-c',
-         '--environment',
-       	[
-           `COMMIT:${commit}`,
-           `NODE_ENV:${env}`,
-           `TARGET:${target}`,
-           formats ? `FORMATS:${formats}` : ``,
-           buildTypes ? `TYPES:true` : ``,
-           prodOnly ? `PROD_ONLY:true` : ``,
-           sourceMap ? `SOURCE_MAP:true` : `` // sourceMap 配置项
-       	]
-           .filter(Boolean)
-           .join(',')
-     	],
-      { stdio: 'inherit' }
+     'rollup',
+     [
+       '-c',
+       '--environment',
+       [
+         `COMMIT:${commit}`,
+         `NODE_ENV:${env}`,
+         `TARGET:${target}`,
+         formats ? `FORMATS:${formats}` : ``,
+         buildTypes ? `TYPES:true` : ``,
+         prodOnly ? `PROD_ONLY:true` : ``,
+         sourceMap ? `SOURCE_MAP:true` : ``, // sourceMap 配置项
+       ]
+         .filter(Boolean)
+         .join(','),
+     ],
+     { stdio: 'inherit' }
    )
    ```
 
 4. 上面的`sourceMap`相关的配置最终会被 `rollup`读取
 
-5. 而根据[**minimist包文档**](https://www.npmjs.com/package/minimist)实例，可以看出，它是获取运行参数的，官网示例如下
+5. 而根据[**minimist 包文档**](https://www.npmjs.com/package/minimist)实例，可以看出，它是获取运行参数的，官网示例如下
 
    ```javascript
    var argv = require('minimist')(process.argv.slice(2));
    console.log(argv);
-   
+
    node example/parse.js -x 3 -y 4 -n5 -abc --beep=boop foo bar baz
    {
    	_: ['foo', 'bar', 'baz'],
@@ -228,7 +226,7 @@
 
 8. 如此，我们就为 vue 开启了 sourceMap
 
-## 05: 授人以鱼：如何针对源码进行 debugger 
+## 05: 授人以鱼：如何针对源码进行 debugger
 
 此时我们已经成功的开启了`sourceMap`，那么开启了`SourceMap`之后有什么变化呢？
 
@@ -240,7 +238,7 @@
 
 其中左侧展示的，就是当期使用的 vue 源代码了。
 
-那么我们知道此时我们是使用了`reactive`方法声明的响应式数据，`reactive`方法对应的代码位置在`packages/reactivity/src/reactive.ts`中的第90行
+那么我们知道此时我们是使用了`reactive`方法声明的响应式数据，`reactive`方法对应的代码位置在`packages/reactivity/src/reactive.ts`中的第 90 行
 
 ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2ad84efa8b8c4b658ca961f908f4eb0c~tplv-k3u1fbpfcp-watermark.image?)
 
@@ -306,7 +304,7 @@
 ```javascript
 // 声明响应式数据 obj
 const obj = reactive({
-  name: '张三'
+  name: '张三',
 })
 ```
 
@@ -340,7 +338,7 @@ const obj = reactive({
      baseHandlers: ProxyHandler<any>,
      collectionHandlers: ProxyHandler<any>,
      proxyMap: WeakMap<Target, any>){
-     
+
     	...
      const proxy = new Proxy(
        target,
@@ -361,13 +359,13 @@ const obj = reactive({
 
 当然，我们这里只是通过一个简单的方式来进行了举例，在大家实际阅读的过程之中，肯定还会遇到很多的困难的，不过好在，在这个过程中，我们会一起进行阅读
 
-## 07: 开始搭建自己的框架：创建vue-next-mini
+## 07: 开始搭建自己的框架：创建 vue-next-mini
 
 那么经过我们现在的学习，我们大概已经了解了 `vue` 源码中的一些大概模块，并且也知道了如何对`vue` 的代码进行实例测试、代码追踪与代码阅读
 
 那么明确好了这些之后，接下来我们就可以创建自己的 vue 框架项目：`vue-next-mini`
 
-创建`vue-next-mini`与我们之前创建项目不同，不可以再借助`vue-cli`或者`vite`等脚手架工具快速生成`vue`项目基本架构了，所以我们需要从0 来搭建这样一个项目
+创建`vue-next-mini`与我们之前创建项目不同，不可以再借助`vue-cli`或者`vite`等脚手架工具快速生成`vue`项目基本架构了，所以我们需要从 0 来搭建这样一个项目
 
 1. 创建`vue-next-mini`文件夹
 
@@ -427,7 +425,7 @@ const obj = reactive({
        "strict": true,
        // 指定类型脚本如何从给定的模块说明符查找文件
        "moduleResolution": "node",
-       "esModuleInterop": true,                             
+       "esModuleInterop": true,
        // js 语言版本
        "target": "es5",
        // 允许未读取局部变量
@@ -436,8 +434,8 @@ const obj = reactive({
        "noUnusedParameters": false,
        // 允许解析 json
        "resolveJsonModule": true,
-        // 支持语法迭代
-       "downlevelIteration": true, 
+       // 支持语法迭代
+       "downlevelIteration": true,
        // 允许使用隐式的any 类型（有助于我们简化 ts 的复杂度，从而更加专注于逻辑本身）
        "noImplicitAny": false,
        // 模块化
@@ -449,9 +447,7 @@ const obj = reactive({
        "lib": ["esnext", "dom"]
      },
      // 入口
-     "include": [
-       "packages/*/src"
-     ]
+     "include": ["packages/*/src"]
    }
    ```
 
@@ -498,7 +494,7 @@ const obj = reactive({
 
 所以我们需要一个**小而美**的模块打包器，这就是`rollup`
 
-> Rollup 是一个 JavaScript 模块打包器，可以将小块代码编译成大块复杂的代码，如 library或者应用程序
+> Rollup 是一个 JavaScript 模块打包器，可以将小块代码编译成大块复杂的代码，如 library 或者应用程序
 
 因为 rollup 并不是咱们课程的重点，所以我们不会花费大量的篇幅来讲解 rollup 的概念，只会讲解`rollup`的一些基础概念，能够满足我们当前的使用即可。大家可以把 `rollup`理解为一个`打包库`的模块打包器，而在应用程序的打包中选择 `webpack`
 
@@ -507,40 +503,40 @@ const obj = reactive({
 我们可以在项目根目录下，创建`rollup.config.js`文件作为`rollup`的配置文件(就像`webpack.config.js`一样)
 
 ```js
-import resolve from "@rollup/plugin-node-resolve"
-import commonjs from "@rollup/plugin-commonjs"
-import typescript from "@rollup/plugin-typescript"
+import resolve from '@rollup/plugin-node-resolve'
+import commonjs from '@rollup/plugin-commonjs'
+import typescript from '@rollup/plugin-typescript'
 // 默认导出一个数组，数组的每一个对象都是一个单独的导出文件配置，
 // 详细可查： https://www.rollupjs.com/guide/big-list-of-options
 export default [
   {
     // 入口文件
-    input: "packages/vue/src/index.ts",
+    input: 'packages/vue/src/index.ts',
     // 打包出口
     output: [
       // 导出 iife 模式的包
-     	{
-        // 开启 sourceMap 
+      {
+        // 开启 sourceMap
         sourcemap: true,
         // 导出文件地址
-        file: "./packages/vue/dist/vue.js",
+        file: './packages/vue/dist/vue.js',
         // 生成包的格式
-        format: "iife",
+        format: 'iife',
         // 变量名
-        name: "Vue"
-      }
+        name: 'Vue',
+      },
     ],
     // 插件
-  	plugins: [
+    plugins: [
       // ts 支持
       typescript({
-        sourceMap: true
+        sourceMap: true,
       }),
       // 模块导入的路径补全
       resolve(),
       // 将 commonjs 转换为 ESM
-      commonjs()
-    ]
+      commonjs(),
+    ],
   },
 ]
 ```
@@ -560,7 +556,7 @@ export default [
 然后我们可以在`input`路径下创建对应的`index.ts`，冰鞋去初始化代码
 
 ```js
-console.log("hello vue-next-mini")
+console.log('hello vue-next-mini')
 ```
 
 同时因为我们使用的是 ts ，所以还需要安装 `tslib` `typescript`
@@ -580,12 +576,11 @@ npm install --save-dev tslib@2.4.0 typescript@4.7.4
 执行 `npm run build`可以看到 `packages/vue/dist/vue.js`产生了，内容如下
 
 ```js
-(function () {
-	'use strict';
+;(function () {
+  'use strict'
 
-	console.log("hello ");
-
-})();
+  console.log('hello ')
+})()
 //# sourceMappingURL=vue.js.map
 ```
 
@@ -601,7 +596,7 @@ export const isArray = Array.isArray
 那么这个方法可能会在多项目的多个地方被使用，所以我们可能会经常使用到如下代码`packages/vue/src/index.ts`
 
 ```javascript
-import { isArray } from "@vue/shared"
+import { isArray } from '@vue/shared'
 console.log(isArray([]))
 ```
 
@@ -614,13 +609,11 @@ console.log(isArray([]))
 ```json
 {
   // 编辑器配置
-  compilerOptions: {
+  "compilerOptions": {
     // 设置快捷导入
     "baseUrl": ".",
     "paths": {
-      "@vue/*": [
-        "packages/*/src"
-      ]
+      "@vue/*": ["packages/*/src"]
     }
   }
 }
@@ -640,4 +633,3 @@ console.log(isArray([]))
 那么做完了这些之后，从下一章节开始我们就要开始逐步的接触到`vue`的核心代码和设计内容了，并且逐步实现`vue-next-mini`了
 
 那么让我们拭目以待吧
-

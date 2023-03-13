@@ -3,9 +3,23 @@
     float: unset;
   }
 }
-body {
---content-width: 1200px;
-}
+// .sidebar{
+//   width: 300px;
+// }
+// body {
+// --content-width: 1200px;
+// }
 .waline-wrapper {
   padding: 0 !important;
+}
+.sidebar-items{
+  p,a {
+    overflow: hidden;
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+.sidebar-item-children .sidebar-item-children .sidebar-item:not(.sidebar-heading){
+  padding: 0;
 }

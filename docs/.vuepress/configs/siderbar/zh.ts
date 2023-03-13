@@ -235,7 +235,8 @@ export const sidebarZh: SidebarConfig = {
           collapsible: true,
           children: [
             '/zh/other/class/vue3-learn/index-01.md',
-            '/zh/other/class/vue3-learn/index-02.md'
+            '/zh/other/class/vue3-learn/index-02.md',
+            '/zh/other/class/vue3-learn/index-03.md',
           ]
         }
       ],
