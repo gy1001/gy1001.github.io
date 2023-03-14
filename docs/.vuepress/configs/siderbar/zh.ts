@@ -217,7 +217,7 @@ export const sidebarZh: SidebarConfig = {
     },
     {
       text: '课程笔记',
-      collapsible: true,
+      collapsible: false,
       children: [
         '/zh/other/class/program-basic',
         '/zh/other/class/linear-algebra',
@@ -232,7 +232,7 @@ export const sidebarZh: SidebarConfig = {
         },
         {
           text: "Vue3 源码解析，打造自己的 Vue3 框架，领悟尤大思维精髓",
-          collapsible: true,
+          collapsible: false,
           children: [
             '/zh/other/class/vue3-learn/index-01.md',
             '/zh/other/class/vue3-learn/index-02.md',
