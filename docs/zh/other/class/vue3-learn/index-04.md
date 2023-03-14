@@ -622,11 +622,189 @@ export const reactiveMap = new WeakMap<object, any>()
 
 ## 09： 框架实现：构建 track 依赖收集函数
 
+那么这本小节，我们就来实现`track`函数，明确一下最终的目标，我们期望最终是`weackMap`中可以保存一下数据结构
 
+`WeakMap`:
 
+1. Key: 响应性对象
+2. Value: Map 对象
+   1. Key: 响应性对象的指定对象属性
+   2. value：指定对象的指定属性的执行函数
 
+在`packages/reactivity/src/effect.ts`写入如下代码
 
+```typescript
+type KeyToDepMap = Map<any, ReactiveEffect>
+/**
+ * 收集所有依赖的 weakMap 实例：
+ * 1. key: 响应性对象
+ * 2. value: map 对象
+ *    1. key: 响应性对象的指定属性
+ *    2. value: 指定对象的指定属性的 执行函数
+ */
+const targetMap = new WeakMap<any, KeyToDepMap>()
+/**
+ * 用于收集依赖的方法
+ * @param target WeakMap 中的 key
+ * @param key 代理对象的 key, 当依赖被触发时，需要根据该 key  获取
+ * @returns 
+ */
+export function track(target: object, key: unknown) {
+  // 如果不存在执行函数，则直接 return 
+  if (!activeEffect) {
+    return
+  }
+  // 尝试从 taregtMap 中，根据 target 获取 map
+  let depsMap = targetMap.get(target)
+  if (!depsMap) {
+    // 如果获取不到，则生成 新的 map 对象，并把该对象赋值给对应的 value
+    targetMap.set(target, depsMap = new Map())
+  }
+  // 为指定 map, 指定 key 设计回调函数
+  depsMap.set(key, activeEffect)
+  // 临时打印
+  console.log(targetMap, "targetMap")
+}
+```
 
+此时运行测试函数，查看打印的`depsMap`，得到以下数据
 
+![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e45ae0abc5df494b8e29f77951cd9e84~tplv-k3u1fbpfcp-watermark.image?)
 
+## 10： 框架实现：构建 trigger 触发依赖
 
+在上一小节中，我们已经成功保存依赖到`WeakMap`中了，那么接下里我们就可以在`setter`的时候触发保存的依赖，以此来达到**响应行**数据的效果了
+
+在`packages/reactivity/src/effects.ts`中
+
+```typescript
+/**
+ * 触发依赖的方法
+ * @param target WeakMap 的 key
+ * @param key 代理对象的 key，当依赖被触发时，需要根据该 key 获取
+ * @returns 
+ */
+export function trigger(target: object, key: unknown) {
+  console.log("依赖触发了")
+  // 依据 target 获取存储的 map 实例
+  const depsMap = targetMap.get(target)
+  // 如果 depsMap 不存在，则直接 return 
+  if (!depsMap) {
+    return
+  }
+  // 依据key, 从 depsMap 中取出 value，该 value 是一个 ReactiveEffect 类型的数据
+  const effect = depsMap.get(key) as ReactiveEffect
+  // 如果 effect 不存在，则直接 return 
+  if (!effect) {
+    return
+  }
+  //  执行 effect 中保存的 fn 函数
+  console.log("依赖触发了")
+  effect.fn()
+}
+```
+
+此时我们就可以触发 `setter` 时，执行保存的 `fn` 函数了
+
+修改我们的测试代码`packages/vue/example/reactive/index.html`,修改代码内容如下
+
+```javascript
+const { reactive, effect } = Vue
+const obj = reactive({
+  name: '孙悟空',
+  age: 80
+})
+effect(() => {
+  document.getElementById('app').innerText = obj.name
+})
+
+setTimeout(() => {
+  obj.name = '猪八戒'
+}, 2000)
+```
+
+此时我们在`Live Server`打开的页面控制台中可以看到如下效果：页面中的内容 2s 后发生了改变
+
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e081a67f62d047ac822fb9557d71ef71~tplv-k3u1fbpfcp-watermark.image?)
+
+那么证明，此时：**指定对象的指定属性对应的 fn **已经成功的保存到了 `WeakMap` 中了
+
+## 11： 总结：单一依赖的 reactive
+
+通过以上的努力，我们目前已经构建了一个简单的`reactive`函数，使用`reactive`函数，配合`effect`可以实现在一个**响应式数据渲染功能跟**，那么这一小节，我们把整个的流程做一个总结
+
+1. 首先我们在`packages/reactivity/src/reactive.ts`中，创建了一个`reactive`函数，该函数可以帮助我们生成一个`proxy`实例对象
+2. 通过该`proxy`实例的`handler`可以监听到对应的`getter`和`setter`
+3. 然后我们在`packages/reactivity/src/effects.ts`中，创建了一个`effect`函数，通过该函数可以创建一个`ReactiveEffect`的实例，该实例的构造函数可以接收传入的回调函数`fn`，并且提供了一个`run`方法
+4. 触发`run`可以为`activeEffect`进行赋值，并且执行`fn`函数
+5. 我们需要再`fn`函数中触发`proxy`的`getter`,以此来激活`handler`的`get`函数
+6. 在`handler`的`get`函数中，我们通过`WeakMap`收集了**指定对象，指定属性**的`fn`，这样的一步操作，我们把它叫做**依赖收集**
+7. 最后我们可以在**任意时刻**，修改`proxy`的数据，这样会触发`handler`的`setter`
+8. 在`handlder`的`setter`中，我们会根据**指定对象**的`target`的**指定属性key** 来获取到保存的**依赖**，然后我们只需要触发依赖，即可达到修改数据的效果
+
+## 12 ：功能升级：响应数据对应多个 effect
+
+在我们之前的实现中，还存在一个小的问题，那就是**每一个响应性数据属性只能对应一个 effect 回调**
+
+我们来看下面这个例子，`packages/vue/examples/reactivity/reactive-dep.html`
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      <div id="p1"></div>
+      <div id="p2"></div>
+    </div>
+  </body>
+  <script src="../../dist/vue.js"></script>
+  <script>
+    const { reactive, effect } = Vue
+    const obj = reactive({
+      name: '孙悟空',
+      age: 80
+    })
+    effect(() => {
+      document.querySelector('#p1').innerText = obj.name
+    })
+    effect(() => {
+      document.querySelector('#p2').innerText = obj.name
+    })
+    setTimeout(() => {
+      obj.name = '猪八戒'
+    }, 2000)
+  </script>
+</html>
+```
+
+在以上的代码中，我们新增了一个`effect`函数，即：**name属性对应两个 DOM 的变化**
+
+但是当我们运行代码的时候发现，`p1`的更新渲染是无效的
+
+那么这是为什么呢？
+
+查看我们的代码可以发现，我们在构建`keyToDepMap`对象时，它的`value`只能是一个`ReactiveEffect`，所以就导致了**一个 key 只能对应一个有效的 effect 函数**
+
+那么假如我们期望：一个 `key`可以对应**多个**有效的`effect`函数的话，那么应该怎么做呢？
+
+可能有些同学已经想到了，我们只需要**keyToDepMap 的 Value 可以对应一个数组**不就可以了吗？
+
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cbe31417028d4013bf1f4306ebce6107~tplv-k3u1fbpfcp-watermark.image?)
+
+如上图所示，我们可以构建一个`Set`（set 是一个“数组”，值不会重复）类型的对象，作为 `Map`的 `Value`
+
+我们可以把它叫做`Dep`,通过 `Dep`来保存**指定 key 的所有依赖**
+
+那么明确好了这样的概念之后，接下来我们到项目中，进行一个对应的实现
+
+## 13: 框架实现：构建 Dep 模块，处理一对多的依赖关系
+
+## 14：reactive 函数的局限性
+
+## 15：总结
