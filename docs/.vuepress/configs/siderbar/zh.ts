@@ -238,6 +238,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/vue3-learn/index-02.md',
             '/zh/other/class/vue3-learn/index-03.md',
             '/zh/other/class/vue3-learn/index-04.md',
+            '/zh/other/class/vue3-learn/index-05.md',
           ]
         }
       ],
