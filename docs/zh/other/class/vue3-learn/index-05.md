@@ -214,91 +214,110 @@ value.name = "猪八戒"
 3. 无论我们执行`obj.value.name`还是`obj.value.name = xx`本质上都是触发了`get value`
 4. 之所以会进行**响应性**是因为`obj.value`是一个`reactive`函数生成的`proxy`
 
-## 03: 框架实现：ref 函数 - 构建复杂数据类型的响应性
+## 03: 框架实现：ref 函数-构建复杂数据类型的响应性
 
 在上一小节中，我们已经查看了`vue3`中的`ref`函数针对复杂数据类型的执行逻辑，那么这一小节，我们就来进行代码的实现
 
-在`vue-next-mini`项目中，新建`packages/reactivity/src/ref.ts`文件
+1. 在`vue-next-mini`项目中，新建`packages/reactivity/src/ref.ts`文件
+
+```typescript
+import { createDep, Dep } from "./dep"
+import { trackEffects } from './effects'
+import { toReactive } from './reactive'
+
+export function ref(value: unknown) {
+  return createRef(value, false)
+}
+
+export function createRef(rawValue: unknown, isShallow: boolean) {
+  if (isRef(rawValue)) {
+    return rawValue
+  }
+  return new RefElmp(rawValue, isShallow)
+}
+// 判断是否属于 RefElmp 实例
+export function isRef(r: any): r is Ref {
+  return !!(r && r.__v_isRef === true)
+}
+
+export class RefElmp<T> {
+  private _value: T
+  public readonly __v_isRef = true
+  public dep?: Dep = undefined
+  constructor(value: T, public readonly __v_isShallow: boolean) {
+    this._value = __v_isShallow ? value : toReactive(value)
+  }
+
+  get value() {
+    trackRefValue(this)
+    return this._value
+  }
+}
+
+export function trackRefValue(ref) {
+  trackEffects(ref.dep || (ref.dep = createDep()))
+}
+```
+
+2. 在`reactive.ts`中新增加`toReactive`函数
+
+```typescript
+import { isObject } from '@vue/shared'
+
+// 如果是对象，就进行响应性处理，如果不是不做处理返回
+export const toReactive = <T extends unknown>(value: T): T => isObject(value) ? reactive(value as object) : value
+```
+
+3. 在`packages/shared/src/index.ts`中增加`isObejct`函数
+
+```typescript
+export const isObject = (value: unknown) => value !== null && typeof value === "object"
+```
+
+4. 接着进行一些导出
+
+   1. 在`packages/reactivity/src/index.ts`中导出`ref`,增加如下代码
+
+      ```typescript
+      export { ref } from "./ref"
+      ```
+
+   2. 在`packages/vue/src/index.ts`中导出`ref`,代码如下
+
+      ```typescript
+      export { reactive, effect, ref } from "@vue/reactivity"
+      ```
+
+5. 新建测试示例`packages/vue/example/reactive/ref.html`,内容如下
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="UTF-8" />
+       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <title>ref</title>
+     </head>
+     <body>
+       <div id="app"></div>
+     </body>
+     <script src="../../dist/vue.js"></script>
+     <script>
+       const { ref, effect } = Vue
+       const obj = ref({
+         name: '孙悟空',
+         age: 80
+       })
+   
+       effect(() => {
+         document.querySelector('#app').innerText = obj.value.name
+       })
+       setTimeout(() => {
+         obj.value.name = '猪八戒'
+       }, 2000)
+     </script>
+   </html>
+   ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+6. 运行打开页面，就可以看到页面数据的渲染，以及 2s  后页面视图的更新
