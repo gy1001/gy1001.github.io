@@ -805,6 +805,186 @@ setTimeout(() => {
 
 ## 13: 框架实现：构建 Dep 模块，处理一对多的依赖关系
 
+通过上一节的学习，我们知道对于我们`effect.ts`中的`keyToDepMap`而言，它的一个 value  不能再是一个简单的`ReacticveEffect`了，而需要是一个集合(使用 Set 类型)
+
+1. 我们新建`reactivity/src/dep.ts`文件, 内容如下
+
+   ```typescript
+   import { ReactiveEffect } from './effect'
+   // 声明一个 Set 合集，值为 ReactiveEffect 类型
+   export type Dep = Set<ReactiveEffect>
+   // 创建一个集合并返回，解构
+   export const createDep = (effects?: ReactiveEffect[]) => {
+     const deps = new Set<ReactiveEffect>(effects) as Dep
+     return deps
+   }
+   ```
+
+2. 然后我们修改`reactivity/src/reactive.ts`文件中的**收集依赖 track**和**触发依赖函数 trigger**
+
+   ```typescript
+   import { isArray } from '@vue/shared'
+   export function track(target: object, key: unknown) {
+     console.log("track:收集依赖")
+     if (!activeEffect) {
+       return
+     }
+     let depsMap = targetMap.get(target)
+     if (!depsMap) {
+       targetMap.set(target, depsMap = new Map())
+     }
+     //  ------------------start:  以下为修改 --------------- 
+     // 根据 指定属性获取 依赖集合
+     let deps = depsMap.get(key)
+     if (!deps) {
+       // 如果没有，就创建
+       depsMap.set(key, deps = createDep())
+     }
+     trackEffects(deps)
+     //  ------------------ end ---------------
+   }
+   
+   /**
+    * 利用 dep 依次追踪指定 key 的所有 effect
+    * @param dep 
+    */
+   export function trackEffects(deps: Dep) {
+     if (activeEffect) {
+       // 添加 包含当前依赖项函数 实例
+       deps.add(activeEffect)
+     }
+   }
+   
+   // 触发依赖函数
+   export function trigger(target: object, key: unknown, newValue: unknown) {
+     console.log("trigger:触发依赖")
+     const desMap = targetMap.get(target)
+     if (!desMap) { return }
+     //  ------------------start:  以下为修改 --------------- 
+     // 从当前依赖集合中获取指定属性的所有依赖实例
+     const deps: Dep | undefined = desMap.get(key)
+     if (!deps) return
+     // 如果有就依次执行 
+     triggerEffets(deps)
+     //  ------------------ end ---------------
+   }
+   
+   /**
+    *  依次触发 dep 中 保存的依赖
+    * @param deps 
+    */
+   export function triggerEffets(deps: Dep) {
+     // 依赖项目集合是否是数组，不是就变为一个数据，
+     const effects = isArray(deps) ? deps : [...deps]
+     effects.forEach(effect => {
+       triggerEffect(effect)
+     })
+   }
+   
+   export function triggerEffect(effect: ReactiveEffect) {
+     effect.fn()
+   }
+   ```
+
+3. 然后再次执行测试示例`packages/vue/examples/reactivity/reactive-dep.html`,可以看到 2s 后，视图均发生了变化
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6921a3f34de841f880d35fa54f486d09~tplv-k3u1fbpfcp-watermark.image?)
+
 ## 14：reactive 函数的局限性
 
+那么此时我们就已经完成了相对完善的`reactive`函数，但是它依然还是有很多局限性的。
+
+有哪些局限性呢，我们可以思考以下两个问题：
+
+1. 对于目前的`reactive`函数而言，它支持 简单数据类型吗？
+2. 当我们对`reactive`返回值进行**解构**之后，那么它还具备响应性吗？
+
+### 对于目前的`reactive`函数而言，它支持 简单数据类型吗？
+
+创建文件`packages/vue/examples/reactivity/reactive-test.html`,内容如下
+
+```html
+<script>
+  const { reactive, effect } = Vue
+  const obj = reactive('孙悟空')
+  console.log(obj)
+</script>
+```
+
+打开浏览器，会发现控制台报错，信息如下
+
+> Uncaught TypeError: Cannot create proxy with a non-object as target or handler
+
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/954f151841844402b36576ebda23b05b~tplv-k3u1fbpfcp-watermark.image?)
+
+为什么会抛出这样一个错误呢？因为我们知道我目前的`createReactiveOject`函数中的最终生成  proxy  实例调用的是
+
+```javascript
+const proxy = new Proxy(target, baseHandlers) // target 即为 reactive 函数的参数
+```
+
+而`new Proxy`的第一个参数官方文档原话如下：**target: 要使用 `Proxy` 包装的目标对象（可以是任何类型的对象，包括原生数组，函数，甚至另一个代理）**，所以会抛出一个错误
+
+### 当我们对`reactive`返回值进行**解构**之后，那么它还具备响应性吗？
+
+> 答案：不具备了
+
+修改文件`packages/vue/examples/reactivity/reactive-test.html`,内容如下
+
+```javascript
+const { reactive, effect } = Vue
+const obj = reactive({
+  name: '孙悟空',
+  age: 500
+})
+const { name } = obj
+effect(() => {
+  document.querySelector('#app').innerText = name
+})
+setTimeout(() => {
+  name = '猪八戒'
+}, 2000)
+```
+
+打开浏览器，看到如下结果
+
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ee2b939e154748ee82af157523475cd0~tplv-k3u1fbpfcp-watermark.image?)
+
+可以看出来，2s 后，数据发生了变化，但是视图没有发生变化；由此可见：响应性数据经过解构后，会失去了响应性
+
+为什么呢？
+
+因为我们触发 `getter`和`setter`行为的核心在于数据需要是`proxy`类型的，而经过解构以后的属性就是一个普通的数据类型，自然就不会触发`setter`和`getter`行为的监听。
+
+### vue3 的处理
+
+对于第一个问题，我们知道 `vue3`提供了一个`ref`函数来实现简单数据类型的响应性呢？
+
+对于第二个问题，`vue3`提供了`toRef`以及`toRefs`来保持数据解构后的一个响应性
+
+那么他们分别是怎么做的呢，后续继续讲解
+
 ## 15：总结
+
+在本章，我们初次解除了`reactivity`模块，并且在模块中构建了`reactive`响应性函数
+
+对于`reactive`的响应性函数而言，我们知道它：
+
+1. 是通过`proxy`的`setter`和`gsetter`来实现的数据监听
+2. 是需要通过配合 `effect` 函数进行使用的
+3. 基于`WeakMap`完成的依赖收集和处理
+4. 可以存在一对多的依赖关系
+
+同时我们有也了解了`reactiv`函数的不足：
+
+1. `reactive`只能对**复杂数据**类型进行使用
+2. `reactive`的响应性数据，不可进行解构
+
+因为`reactive`的不足，所以`vue3`又为我们提供了`ref`函数构建响应性，那么
+
+1. `ref`函数的内容是如何进行实现的呢 ？
+2. `ref`可以构建简单数据类型的响应性吗 ？
+3. 为什么`ref`类型的数据，必须要通过 `.value`访问值呢？
+
+带着以上三个问题，我们来看下一章节 **ref的响应性**
+
