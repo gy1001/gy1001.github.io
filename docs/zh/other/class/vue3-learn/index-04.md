@@ -14,7 +14,7 @@
 
 那么明确好了这些内容之后，接下来就让我们进入到响应式的实现之中吧
 
-## 02：源码阅读：reacitve 的响应性，跟踪 Vue3源码实现逻辑
+## 02：源码阅读：reacitve 的响应性，跟踪 Vue3 源码实现逻辑
 
 我们知道在`vue`中想要实现响应式是数据，拥有两种方式：
 
@@ -56,7 +56,7 @@
 
 那么接下来我们分析`effect`
 
-1. 在`packages/reactivty/src/effect.ts`第170行可以找到`effect`方法，在这里给一个断点
+1. 在`packages/reactivty/src/effect.ts`第 170 行可以找到`effect`方法，在这里给一个断点
 
 2. 执行`new ReactiveEffect(fn)`,而其中的`fn`就是我们传入的匿名函数
 
@@ -77,7 +77,7 @@
    3. 我们知道`fn`函数其实就是**传入的匿名函数**，所以
 
       ```javascript
-      document.querySelector("#app").innerText = obj.name
+      document.querySelector('#app').innerText = obj.name
       ```
 
 5. 但是大家不要忘记，`obj`是一个`proxy`，`obj.name`会触发`getter`,所以接下来我们就会进入到`mutableHandlers`的`createGetter`中
@@ -85,7 +85,7 @@
    1. 在该代码中，触发了该方法`const res = Reflect.get(target, key, receiver)`
    2. 此时的`res`为张三
    3. 注意：接下来触发了`track`函数，该函数是一个重点函数，track 在此为**追踪**的意思，我们来看它内部都做了什么
-      1. 在4-1步，为`activeEffect`进行了赋值，我们知道`activeEffect`代表的就是`fn函数`
+      1. 在 4-1 步，为`activeEffect`进行了赋值，我们知道`activeEffect`代表的就是`fn函数`
       2. 执行代码可知，`track`内部主要做了两件事情
          1. 为`targetMap`进行赋值，`targetMap`的组成比较复杂
             1. Key: target
@@ -99,7 +99,7 @@
             2. 为`activeEffect`函数的`静态属性`deps，增加了一个值`dep`
             3. 即：**建立起了 dep 和 activeEffect 的联系**
          4. 那么至此，整个`track`的核心逻辑执行完成
-         5. 我们可以把整个`track`的核心逻辑说成：**收集了activeEffect(即：fn)**
+         5. 我们可以把整个`track`的核心逻辑说成：**收集了 activeEffect(即：fn)**
          6. 最后在`createGetter`函数返回了`res`（即：张三）
          7. 至此，整个`effct`执行完成
 
@@ -184,7 +184,7 @@
 
    ```javascript
    import { mutableHandlers } from "./baseHandlers"
-   
+
    /**
     * 响应性 Map 缓存对象
     * key: target
@@ -196,7 +196,7 @@
     * @param target  被代理对象
     * @param baseHandlers handlder
     * @param proxyMap 代理对象
-    * @returns 
+    * @returns
     */
    function createReactiveOject(target: object, baseHandlers: ProxyHandler<any>, proxyMap: WeakMap<object, any>) {
      // 如果该实例已经被代理，则直接读取即可
@@ -210,7 +210,7 @@
      proxyMap.set(target, proxy)
      return proxy
    }
-   
+
    /**
     * 为复杂数据类型，创建响应性对象
     * @param target 被代理对象
@@ -227,9 +227,7 @@
    /**
     * 响应性的 handler
     */
-   export const mutableHandlers: ProxyHandler<object> = {
-   
-   }
+   export const mutableHandlers: ProxyHandler<object> = {}
    ```
 
 3. 那么此时我们就已经构建了一个基本的`reactive`方法，接下来我们可以通过**测试案例**测试一下
@@ -237,13 +235,13 @@
 4. 创建`packages/reactivity/src/index.ts`模块，作为`reactivity`的入口模块
 
    ```javascript
-   export { reactive } from "./reactive"
+   export { reactive } from './reactive'
    ```
 
 5. 在`packages/vue/src/inedx.ts`中，导入`reactive`模块
 
    ```javascript
-   export { reactive } from "@vue/reactivity"
+   export { reactive } from '@vue/reactivity'
    ```
 
 6. 执行`npm run build`进行打包，生成`vue.js`
@@ -264,7 +262,7 @@
      <script>
        const { reactive } = Vue
        const obj = reactive({
-         name: '张三'
+         name: '张三',
        })
        console.log(obj)
      </script>
@@ -288,7 +286,7 @@
 但是对于`WeakMap`而言，它却存在两个不同的地方
 
 1. `key`必须是对象
-2.  `key`是弱引用的
+2. `key`是弱引用的
 
 其中第一个不同点比较好理解，但是第二个不同点是什么意思呢？那么我们本小节就来看一下这个**弱引用**指的是什么
 
@@ -343,7 +341,7 @@ obj = null
 
 ### 好文推荐
 
-[JS WeakMap应该什么时候使用](https://www.zhangxinxu.com/wordpress/2021/08/js-weakmap-es6/)
+[JS WeakMap 应该什么时候使用](https://www.zhangxinxu.com/wordpress/2021/08/js-weakmap-es6/)
 
 ## 05: 框架实现：CreateGetter && createSetter
 
@@ -352,7 +350,7 @@ obj = null
    ```javascript
    export const mutableHandlers: ProxyHandler<object> = {
      set,
-     get
+     get,
    }
    ```
 
@@ -362,9 +360,13 @@ obj = null
 
    ```javascript
    const get = createGetter()
-   
+
    function createGetter() {
-     return function get(target: object, key: string | symbol, receiver: object) {
+     return function get(
+       target: object,
+       key: string | symbol,
+       receiver: object
+     ) {
        const res = Reflect.get(target, key, receiver)
        // 这里进行依赖收集
        track(target, key)
@@ -377,11 +379,16 @@ obj = null
 
    ```javascript
    const set = createSetter()
-   
+
    function createSetter() {
-     return function set(target: object, key: string | symbol, newValue: unknown, receiver: object) {
+     return function set(
+       target: object,
+       key: string | symbol,
+       newValue: unknown,
+       receiver: object
+     ) {
        const result = Reflect.set(target, key, newValue, receiver)
-   	  // 触发依赖
+       // 触发依赖
        trigger(target, key, newValue)
        return result
      }
@@ -394,18 +401,18 @@ obj = null
 
    ```javascript
    export function track(target: object, key: unknown) {
-     console.log("track:收集依赖")
+     console.log('track:收集依赖')
    }
-   
+
    export function trigger(target: object, key: unknown, newValue: unknown) {
-     console.log("trigger:触发依赖")
+     console.log('trigger:触发依赖')
    }
    ```
 
 7. 接着，我们在`baseHandlers.ts`代码中，引入`track`、`trigger`,至此，我们就实现了`CreateGetter && createSetter`的大概逻辑
 
    ```javascript
-   import { track, trigger } from "./effect"
+   import { track, trigger } from './effect'
    ```
 
 8. 我们需要对以上代码进行一个测试，修改`packages/vue/examples/reactivity/reactive.html`,修改后的代码如下
@@ -457,8 +464,8 @@ obj = null
 {
   "scripts": {
     "build": "rollup -c",
-    "dev" :"rollup -c -w" // 新增
-  },
+    "dev": "rollup -c -w" // 新增
+  }
 }
 ```
 
@@ -490,7 +497,7 @@ export function trigger(target: object, key: unknown, newValue: unknown) {
 ```javascript
 // 调用 effect 方法
 effect(() => {
-  document.querySelector("#app").innerText = obj.name
+  document.querySelector('#app').innerText = obj.name
 })
 ```
 
@@ -504,8 +511,8 @@ effect(() => {
 
    ```javascript
    // 表示当前被激活的 ReactiveEffect 实例
-   export let activeEffect: ReactiveEffect | undefined 
-   
+   export let activeEffect: ReactiveEffect | undefined
+
    /**
     * effect 函数
     * @param fn 执行方法
@@ -514,9 +521,9 @@ effect(() => {
    export function effect<T = any>(fn: () => T) {
      // 生成 ReactiveEffect 函数
      const _effect = new ReactiveEffect(fn)
-     _effect.run() 
+     _effect.run()
    }
-   
+
    export class ReactiveEffect<T = any> {
      constructor(public fn: () => T) {
        this.fn = fn
@@ -531,13 +538,13 @@ effect(() => {
 2. 然后在`packages/reactivity/src/index.ts`中进行导出
 
    ```javascript
-   export { effect } from "./effect"
+   export { effect } from './effect'
    ```
 
 3. 在`packages/vue/src/index.ts`中进行导出
 
    ```javascript
-   export { reactive, effect } from "@vue/reactivity"
+   export { reactive, effect } from '@vue/reactivity'
    ```
 
 4. 修改测试用例代码
@@ -558,7 +565,7 @@ effect(() => {
      <script>
        const { reactive, effect } = Vue
        const obj = reactive({
-         name: '张三'
+         name: '张三',
        })
        effect(() => {
          document.querySelector('#app').innerText = obj.name
@@ -618,7 +625,7 @@ export const reactiveMap = new WeakMap<object, any>()
 
 ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/579143b2e7d9416691230e9d9143830b~tplv-k3u1fbpfcp-watermark.image?)
 
-那么这样我们就可以关联上**指定对象的指定属性**与**执行函数 fn**之间的关系，当触发 `setter` 时执行执行**对应对象的指定属性的fn** 即可
+那么这样我们就可以关联上**指定对象的指定属性**与**执行函数 fn**之间的关系，当触发 `setter` 时执行执行**对应对象的指定属性的 fn** 即可
 
 ## 09： 框架实现：构建 track 依赖收集函数
 
@@ -647,10 +654,10 @@ const targetMap = new WeakMap<any, KeyToDepMap>()
  * 用于收集依赖的方法
  * @param target WeakMap 中的 key
  * @param key 代理对象的 key, 当依赖被触发时，需要根据该 key  获取
- * @returns 
+ * @returns
  */
 export function track(target: object, key: unknown) {
-  // 如果不存在执行函数，则直接 return 
+  // 如果不存在执行函数，则直接 return
   if (!activeEffect) {
     return
   }
@@ -658,12 +665,12 @@ export function track(target: object, key: unknown) {
   let depsMap = targetMap.get(target)
   if (!depsMap) {
     // 如果获取不到，则生成 新的 map 对象，并把该对象赋值给对应的 value
-    targetMap.set(target, depsMap = new Map())
+    targetMap.set(target, (depsMap = new Map()))
   }
   // 为指定 map, 指定 key 设计回调函数
   depsMap.set(key, activeEffect)
   // 临时打印
-  console.log(targetMap, "targetMap")
+  console.log(targetMap, 'targetMap')
 }
 ```
 
@@ -682,24 +689,24 @@ export function track(target: object, key: unknown) {
  * 触发依赖的方法
  * @param target WeakMap 的 key
  * @param key 代理对象的 key，当依赖被触发时，需要根据该 key 获取
- * @returns 
+ * @returns
  */
 export function trigger(target: object, key: unknown) {
-  console.log("依赖触发了")
+  console.log('依赖触发了')
   // 依据 target 获取存储的 map 实例
   const depsMap = targetMap.get(target)
-  // 如果 depsMap 不存在，则直接 return 
+  // 如果 depsMap 不存在，则直接 return
   if (!depsMap) {
     return
   }
   // 依据key, 从 depsMap 中取出 value，该 value 是一个 ReactiveEffect 类型的数据
   const effect = depsMap.get(key) as ReactiveEffect
-  // 如果 effect 不存在，则直接 return 
+  // 如果 effect 不存在，则直接 return
   if (!effect) {
     return
   }
   //  执行 effect 中保存的 fn 函数
-  console.log("依赖触发了")
+  console.log('依赖触发了')
   effect.fn()
 }
 ```
@@ -712,7 +719,7 @@ export function trigger(target: object, key: unknown) {
 const { reactive, effect } = Vue
 const obj = reactive({
   name: '孙悟空',
-  age: 80
+  age: 80,
 })
 effect(() => {
   document.getElementById('app').innerText = obj.name
@@ -740,7 +747,7 @@ setTimeout(() => {
 5. 我们需要再`fn`函数中触发`proxy`的`getter`,以此来激活`handler`的`get`函数
 6. 在`handler`的`get`函数中，我们通过`WeakMap`收集了**指定对象，指定属性**的`fn`，这样的一步操作，我们把它叫做**依赖收集**
 7. 最后我们可以在**任意时刻**，修改`proxy`的数据，这样会触发`handler`的`setter`
-8. 在`handlder`的`setter`中，我们会根据**指定对象**的`target`的**指定属性key** 来获取到保存的**依赖**，然后我们只需要触发依赖，即可达到修改数据的效果
+8. 在`handlder`的`setter`中，我们会根据**指定对象**的`target`的**指定属性 key** 来获取到保存的**依赖**，然后我们只需要触发依赖，即可达到修改数据的效果
 
 ## 12 ：功能升级：响应数据对应多个 effect
 
@@ -768,7 +775,7 @@ setTimeout(() => {
     const { reactive, effect } = Vue
     const obj = reactive({
       name: '孙悟空',
-      age: 80
+      age: 80,
     })
     effect(() => {
       document.querySelector('#p1').innerText = obj.name
@@ -783,7 +790,7 @@ setTimeout(() => {
 </html>
 ```
 
-在以上的代码中，我们新增了一个`effect`函数，即：**name属性对应两个 DOM 的变化**
+在以上的代码中，我们新增了一个`effect`函数，即：**name 属性对应两个 DOM 的变化**
 
 但是当我们运行代码的时候发现，`p1`的更新渲染是无效的
 
@@ -805,12 +812,18 @@ setTimeout(() => {
 
 ## 13: 框架实现：构建 Dep 模块，处理一对多的依赖关系
 
-通过上一节的学习，我们知道对于我们`effect.ts`中的`keyToDepMap`而言，它的一个 value  不能再是一个简单的`ReacticveEffect`了，而需要是一个集合(使用 Set 类型)
+通过上一节的学习，我们知道对于我们`effect.ts`中的`keyToDepMap`而言，它的一个 value 不能再是一个简单的`ReacticveEffect`了，而需要是一个集合(使用 Set 类型)
 
-1. 我们新建`reactivity/src/dep.ts`文件, 内容如下
+1. 修改`effect.ts`
 
    ```typescript
-   import { ReactiveEffect } from './effect'
+   type KeyToDepMap = Map<any, Dep>
+   ```
+
+2. 我们新建`reactivity/src/dep.ts`文件, 内容如下
+
+   ```typescript
+   import { ReactiveEffect } from './effects'
    // 声明一个 Set 合集，值为 ReactiveEffect 类型
    export type Dep = Set<ReactiveEffect>
    // 创建一个集合并返回，解构
@@ -820,33 +833,33 @@ setTimeout(() => {
    }
    ```
 
-2. 然后我们修改`reactivity/src/reactive.ts`文件中的**收集依赖 track**和**触发依赖函数 trigger**
+3. 然后我们修改`reactivity/src/reactive.ts`文件中的**收集依赖 track**和**触发依赖函数 trigger**
 
    ```typescript
    import { isArray } from '@vue/shared'
    export function track(target: object, key: unknown) {
-     console.log("track:收集依赖")
+     console.log('track:收集依赖')
      if (!activeEffect) {
        return
      }
      let depsMap = targetMap.get(target)
      if (!depsMap) {
-       targetMap.set(target, depsMap = new Map())
+       targetMap.set(target, (depsMap = new Map()))
      }
-     //  ------------------start:  以下为修改 --------------- 
+     //  ------------------start:  以下为修改 ---------------
      // 根据 指定属性获取 依赖集合
      let deps = depsMap.get(key)
      if (!deps) {
        // 如果没有，就创建
-       depsMap.set(key, deps = createDep())
+       depsMap.set(key, (deps = createDep()))
      }
      trackEffects(deps)
      //  ------------------ end ---------------
    }
-   
+
    /**
     * 利用 dep 依次追踪指定 key 的所有 effect
-    * @param dep 
+    * @param dep
     */
    export function trackEffects(deps: Dep) {
      if (activeEffect) {
@@ -854,39 +867,41 @@ setTimeout(() => {
        deps.add(activeEffect)
      }
    }
-   
+
    // 触发依赖函数
    export function trigger(target: object, key: unknown, newValue: unknown) {
-     console.log("trigger:触发依赖")
-     const desMap = targetMap.get(target)
-     if (!desMap) { return }
-     //  ------------------start:  以下为修改 --------------- 
+     console.log('trigger:触发依赖')
+     const depsMap = targetMap.get(target)
+     if (!depsMap) {
+       return
+     }
+     //  ------------------start:  以下为修改 ---------------
      // 从当前依赖集合中获取指定属性的所有依赖实例
-     const deps: Dep | undefined = desMap.get(key)
+     const deps: Dep | undefined = depsMap.get(key)
      if (!deps) return
-     // 如果有就依次执行 
+     // 如果有就依次执行
      triggerEffets(deps)
      //  ------------------ end ---------------
    }
-   
+
    /**
     *  依次触发 dep 中 保存的依赖
-    * @param deps 
+    * @param deps
     */
    export function triggerEffets(deps: Dep) {
      // 依赖项目集合是否是数组，不是就变为一个数据，
      const effects = isArray(deps) ? deps : [...deps]
-     effects.forEach(effect => {
+     effects.forEach((effect) => {
        triggerEffect(effect)
      })
    }
-   
+
    export function triggerEffect(effect: ReactiveEffect) {
      effect.fn()
    }
    ```
 
-3. 然后再次执行测试示例`packages/vue/examples/reactivity/reactive-dep.html`,可以看到 2s 后，视图均发生了变化
+4. 然后再次执行测试示例`packages/vue/examples/reactivity/reactive-dep.html`,可以看到 2s 后，视图均发生了变化
 
    ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6921a3f34de841f880d35fa54f486d09~tplv-k3u1fbpfcp-watermark.image?)
 
@@ -917,7 +932,7 @@ setTimeout(() => {
 
 ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/954f151841844402b36576ebda23b05b~tplv-k3u1fbpfcp-watermark.image?)
 
-为什么会抛出这样一个错误呢？因为我们知道我目前的`createReactiveOject`函数中的最终生成  proxy  实例调用的是
+为什么会抛出这样一个错误呢？因为我们知道我目前的`createReactiveOject`函数中的最终生成 proxy 实例调用的是
 
 ```javascript
 const proxy = new Proxy(target, baseHandlers) // target 即为 reactive 函数的参数
@@ -935,7 +950,7 @@ const proxy = new Proxy(target, baseHandlers) // target 即为 reactive 函数�
 const { reactive, effect } = Vue
 const obj = reactive({
   name: '孙悟空',
-  age: 500
+  age: 500,
 })
 const { name } = obj
 effect(() => {
@@ -986,5 +1001,4 @@ setTimeout(() => {
 2. `ref`可以构建简单数据类型的响应性吗 ？
 3. 为什么`ref`类型的数据，必须要通过 `.value`访问值呢？
 
-带着以上三个问题，我们来看下一章节 **ref的响应性**
-
+带着以上三个问题，我们来看下一章节 **ref 的响应性**
