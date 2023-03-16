@@ -222,11 +222,15 @@ value.name = "猪八戒"
 
 ```typescript
 import { createDep, Dep } from "./dep"
-import { trackEffects } from './effects'
+import { trackEffects } from './effect'
 import { toReactive } from './reactive'
 
-export function ref(value: unknown) {
+export function ref(value?: unknown) {
   return createRef(value, false)
+}
+
+export interface Ref<T = any> {
+  value: T
 }
 
 export function createRef(rawValue: unknown, isShallow: boolean) {
@@ -244,8 +248,8 @@ export class RefElmp<T> {
   private _value: T
   public readonly __v_isRef = true
   public dep?: Dep = undefined
-  constructor(value: T, public readonly __v_isShallow: boolean) {
-    this._value = __v_isShallow ? value : toReactive(value)
+  constructor(value: T, public readonly __v_is_Shallow: boolean) {
+    this._value = __v_is_Shallow ? value : toReactive(value)
   }
 
   get value() {
@@ -321,3 +325,315 @@ export const isObject = (value: unknown) => value !== null && typeof value === "
    ```
 
 6. 运行打开页面，就可以看到页面数据的渲染，以及 2s  后页面视图的更新
+
+## 04：总结：ref 复杂数据类型的响应性
+
+根据以上代码实现我们知道，针对于`ref`的复杂数据类型而言，它的响应性本身其实也是利用`reactive`函数来进行实现的,即
+
+```javascript
+const obj = ref({ name: "张三" })
+const obj = reacetive({ name: "张三" })
+```
+
+本质上的实现方案其实是完全相同的，都是利用`reactive`函数，返回了一个`proxy`实例，监听`proxy`的`getter`、`setter`函数进行了**依赖收集**、**依赖触发**。
+
+但是呢，他们中间也是存在一些不同的点的，比如
+
+1. 对于`ref`而言，
+   1. `ref`本质上返回的是一个`RefImpl`类型的数据
+   2. 如果我们想要访问它的真实数据，也就是它的属性`_value`,我们必须要通过`.value`的形式类触发`get value()`函数。通过`get value()`函数的触发，我们将得到它的`_value`(经过 `toRective`后的数据)，也就是通过`reactive`函数转换后的一个`proxy`代理实例对象
+2. 而对于`reactive`而言，它本质上就是返回了一个`proxy`的实例，不需要通过`.value`的形式就可以得到了
+3. 同时，我们也知道，`reactive`是**不具备**简单数据类型的响应性处理的，而`ref`是可以的
+
+那么`ref`是如何具备的呢？
+
+接下来，就让我们继续学习`ref`对简单数据类型的响应性的处理吧
+
+## 05：源码阅读：ref 简单数据类型的响应性
+
+首先，我们在`vue-next-3.2.37`项目中，创建`packages/vue/examples/mine/ref.html`文件
+
+```html
+  <script>
+    // 简单数据类型的处理
+    const { ref, effect } = Vue
+    const name = ref('张三')
+    effect(() => {
+      document.querySelector('#app').innerText = name.value
+    })
+    setTimeout(() => {
+      name.value = '猪八戒'
+    }, 2000)
+  </script>
+```
+
+接下来进行测试，我们在浏览器中看到：先显示张三，然后 2s 后，视图被更新为 猪八戒
+
+1. 在`reactivity/src/ref.ts`中打一下断点
+
+   ```typescript
+   export function ref(value?: unknown) {
+     return createRef(value, false) // 此处增加断点
+   }
+   ```
+
+2. 进入`createRef`函数内部，同样此时参数`rawValue`也不是`ref`类型，接着调用`new RefImpl`
+
+   ```typescript
+   function createRef(rawValue: unknown, shallow: boolean) {
+     if (isRef(rawValue)) {
+       return rawValue
+     }
+     return new RefImpl(rawValue, shallow)
+   }
+   ```
+
+3. 进入`RefImpl`类的内部，里面的逻辑和之间复杂数据类型的一样
+
+   1. 先声明属性`dep`、`__v_isRef`、`_value`等
+
+      ```typescript
+      class RefImpl<T> {
+        private _value: T
+        private _rawValue: T
+      
+        public dep?: Dep = undefined
+        public readonly __v_isRef = true
+      
+        constructor(value: T, public readonly __v_isShallow: boolean) {
+          this._rawValue = __v_isShallow ? value : toRaw(value)
+          // 注意这里有所变化, 因为不是复杂数据类型，toReactive函数会直接返回原参数
+          this._value = __v_isShallow ? value : toReactive(value) 
+        }
+      
+        get value() {
+          trackRefValue(this)
+          return this._value
+        }
+      
+        set value(newVal) {
+          const useDirectValue =
+            this.__v_isShallow || isShallow(newVal) || isReadonly(newVal)
+          newVal = useDirectValue ? newVal : toRaw(newVal)
+          if (hasChanged(newVal, this._rawValue)) {
+            this._rawValue = newVal
+            this._value = useDirectValue ? newVal : toReactive(newVal) 
+            triggerRefValue(this, newVal)
+          }
+        }
+      }
+      ```
+
+   2. 这里是简单数据类型，所以`toReactive`函数并不会做处理
+
+      ```typescript
+      export const toReactive = <T extends unknown>(value: T): T =>
+        isObject(value) ? reactive(value) : value
+      ```
+
+4. 接着进入`effect`函数的调用
+
+   ```typescript
+   effect(() => {
+     document.querySelector('#app').innerText = name.value
+   })
+   ```
+
+5. 在`effect.ts`文件的`effect`函数中接续增加断点，会继续调用`ReactiveEffect`函数，生成实例`_effect`,然后调用其`run`方法
+
+   ```typescript
+   export function effect<T = any>(
+     fn: () => T,
+     options?: ReactiveEffectOptions
+   ): ReactiveEffectRunner {
+     if ((fn as ReactiveEffectRunner).effect) {
+       fn = (fn as ReactiveEffectRunner).effect.fn
+     }
+   	// 会生成一个 ReactiveEffect 函数的实例 _effect
+     const _effect = new ReactiveEffect(fn) 
+     if (options) {
+       extend(_effect, options)
+       if (options.scope) recordEffectScope(_effect, options.scope)
+     }
+    	// 执行生成实例 _effect 的 run 函数
+     if (!options || !options.lazy) {
+       _effect.run() 
+     }
+     const runner = _effect.run.bind(_effect) as ReactiveEffectRunner
+     runner.effect = _effect
+     return runner
+   }
+   
+   
+   export class ReactiveEffect<T = any> {
+     active = true
+     deps: Dep[] = []
+     parent: ReactiveEffect | undefined = undefined
+     computed?: ComputedRefImpl<T>
+     allowRecurse?: boolean
+     private deferStop?: boolean
+     onStop?: () => void
+     // dev only
+     onTrack?: (event: DebuggerEvent) => void
+     // dev only
+     onTrigger?: (event: DebuggerEvent) => void
+     // 构造函数
+     constructor{
+       public fn: () => T,
+       public scheduler: EffectScheduler | null = null,
+       scope?: EffectScope
+     ) {
+       recordEffectScope(this, scope)
+     }
+   
+     run() {
+       if (!this.active) {
+         return this.fn()
+       }
+       let parent: ReactiveEffect | undefined = activeEffect
+       let lastShouldTrack = shouldTrack
+       while (parent) {
+         if (parent === this) {
+           return
+         }
+         parent = parent.parent
+       }
+       try {
+         this.parent = activeEffect
+         activeEffect = this
+         shouldTrack = true
+   
+         trackOpBit = 1 << ++effectTrackDepth
+   
+         if (effectTrackDepth <= maxMarkerBits) {
+           initDepMarkers(this)
+         } else {
+           cleanupEffect(this)
+         }
+         return this.fn()
+       } finally {
+         if (effectTrackDepth <= maxMarkerBits) {
+           finalizeDepMarkers(this)
+         }
+   
+         trackOpBit = 1 << --effectTrackDepth
+   
+         activeEffect = this.parent
+         shouldTrack = lastShouldTrack
+         this.parent = undefined
+   
+         if (this.deferStop) {
+           this.stop()
+         }
+       }
+     }
+   
+     stop() {
+       // stopped while running itself - defer the cleanup
+       if (activeEffect === this) {
+         this.deferStop = true
+       } else if (this.active) {
+         cleanupEffect(this)
+         if (this.onStop) {
+           this.onStop()
+         }
+         this.active = false
+       }
+     }
+   }
+   ```
+
+6. 接着就会执行`name.value`，触发`RefImpl`中的`get value()`函数的触发，在这里会触发`trackRefValue`函数
+
+   ```typescript
+     get value() {
+       trackRefValue(this)
+       return this._value
+     }
+   ```
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 06：框架实现：ref 函数-构建简单数据类型的响应性
+
+测试成功，表示代码完成
+
+## 07：总结：ref 简单数据类型响应性
+
+那么到这里我们实现了`ref`简单数据类型的响应性处理
+
+在这样的代码情况下，我们需要知道的最重要的一点是：**简单数据类型，不具备数据监听的概念**，即本身并不是响应性的
+
+只是因为`vue`通过`set value()`的语法，把**函数调用变成了属性调用的形式**，让我们通过主动调用该函数，来完成了一个“类似于”响应性的结果
+
+## 08：总结
+
+那么到这里我们已经完成了`ref`响应性函数的构建，那么大家还记不记得开篇时所问的三个问题
+
+1. `ref`函数是如何进行实现的呢？
+2. `ref`可以构建简单数据类型的响应性吗？
+3. 为什么`ref`类型的数据，必须要通过`.value`访问值呢？
+
+大家现在再次面对这三个问题，是否能够回答出来呢？
+
+1. 问题一：`ref`函数是如何实现的呢？
+
+   > ref 函数本质上就是生成了一个 RefImpl 类型的实例对象，通过 get 和 set 标记处理了 value 函数
+
+2. 问题二: `ref`可以构建简单数据类型的响应性吗？
+
+   > 是的，`ref`可以构建简单数据类型的响应性
+
+3. 问题三：为什么`ref`类型的数据，必须要通过`.value`访问值呢？
+
+   1. 因为`ref`需要处理简单数据类型的响应性，但是对于简单数据类型而言，它无法通过`proxy`建立代理
+   2. 所以`vue`通过`get value()`和`set value()`定义了两个属性函数，通过**主动**触发这两个函数（属性调用）的形式来进行**依赖收集**和**触发依赖**
+   3. 所以我们必须通过`.value`来保证响应性
