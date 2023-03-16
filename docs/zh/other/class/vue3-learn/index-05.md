@@ -14,7 +14,7 @@
 
 接下来准备好了吗？我们开始吧
 
-## 02：源码阅读：ref  复杂数据类型的响应性
+## 02：源码阅读：ref 复杂数据类型的响应性
 
 和学习`reactive`的时候一样，我们首先来看一下`ref`函数下，`vue3`的源码执行过程
 
@@ -36,7 +36,7 @@
      <script>
        const { ref, effect } = Vue
        const obj = ref({
-         name: '张三'
+         name: '张三',
        })
        effect(() => {
          document.querySelector('#app').innerText = obj.value.name
@@ -62,9 +62,7 @@
    }
    ```
 
-   
-
-2. 在`createRef`中，进行了判断如果当前如果已经是一个`ref`类型数据则直接返回，否则就**返回 RefImpl类型的实例**
+2. 在`createRef`中，进行了判断如果当前如果已经是一个`ref`类型数据则直接返回，否则就**返回 RefImpl 类型的实例**
 
    ```javascript
    export function isRef(r: any): r is Ref {
@@ -133,7 +131,7 @@
 
 当 `ref`函数执行完毕之后，测试用例开始执行`effect`函数
 
-`effect`函数我们之前已经跟踪过她的执行流程，我们知道整个`effect`主要做了3件事情
+`effect`函数我们之前已经跟踪过她的执行流程，我们知道整个`effect`主要做了 3 件事情
 
 1. 生成`ReactiveEffect`实例
 2. **触发 fn 方法，从而激活 getter**
@@ -155,7 +153,7 @@
       trackEffects(ref.dep || (ref.dep = createDep()), {
         target: ref,
         type: TrackOpTypes.GET,
-        key: 'value'
+        key: 'value',
       })
       ```
 
@@ -183,7 +181,7 @@ setTimeout(() => {
 
 ```javascript
 const value = obj.value
-value.name = "猪八戒"
+value.name = '猪八戒'
 ```
 
 那么通过以上代码我们清晰可知，其实触发的应该是`get value`函数
@@ -221,7 +219,7 @@ value.name = "猪八戒"
 1. 在`vue-next-mini`项目中，新建`packages/reactivity/src/ref.ts`文件
 
 ```typescript
-import { createDep, Dep } from "./dep"
+import { createDep, Dep } from './dep'
 import { trackEffects } from './effect'
 import { toReactive } from './reactive'
 
@@ -269,13 +267,15 @@ export function trackRefValue(ref) {
 import { isObject } from '@vue/shared'
 
 // 如果是对象，就进行响应性处理，如果不是不做处理返回
-export const toReactive = <T extends unknown>(value: T): T => isObject(value) ? reactive(value as object) : value
+export const toReactive = <T extends unknown>(value: T): T =>
+  isObject(value) ? reactive(value as object) : value
 ```
 
 3. 在`packages/shared/src/index.ts`中增加`isObejct`函数
 
 ```typescript
-export const isObject = (value: unknown) => value !== null && typeof value === "object"
+export const isObject = (value: unknown) =>
+  value !== null && typeof value === 'object'
 ```
 
 4. 接着进行一些导出
@@ -283,13 +283,13 @@ export const isObject = (value: unknown) => value !== null && typeof value === "
    1. 在`packages/reactivity/src/index.ts`中导出`ref`,增加如下代码
 
       ```typescript
-      export { ref } from "./ref"
+      export { ref } from './ref'
       ```
 
    2. 在`packages/vue/src/index.ts`中导出`ref`,代码如下
 
       ```typescript
-      export { reactive, effect, ref } from "@vue/reactivity"
+      export { reactive, effect, ref } from '@vue/reactivity'
       ```
 
 5. 新建测试示例`packages/vue/example/reactive/ref.html`,内容如下
@@ -311,9 +311,9 @@ export const isObject = (value: unknown) => value !== null && typeof value === "
        const { ref, effect } = Vue
        const obj = ref({
          name: '孙悟空',
-         age: 80
+         age: 80,
        })
-   
+
        effect(() => {
          document.querySelector('#app').innerText = obj.value.name
        })
@@ -324,15 +324,15 @@ export const isObject = (value: unknown) => value !== null && typeof value === "
    </html>
    ```
 
-6. 运行打开页面，就可以看到页面数据的渲染，以及 2s  后页面视图的更新
+6. 运行打开页面，就可以看到页面数据的渲染，以及 2s 后页面视图的更新
 
 ## 04：总结：ref 复杂数据类型的响应性
 
 根据以上代码实现我们知道，针对于`ref`的复杂数据类型而言，它的响应性本身其实也是利用`reactive`函数来进行实现的,即
 
 ```javascript
-const obj = ref({ name: "张三" })
-const obj = reacetive({ name: "张三" })
+const obj = ref({ name: '张三' })
+const obj = reacetive({ name: '张三' })
 ```
 
 本质上的实现方案其实是完全相同的，都是利用`reactive`函数，返回了一个`proxy`实例，监听`proxy`的`getter`、`setter`函数进行了**依赖收集**、**依赖触发**。
@@ -354,17 +354,17 @@ const obj = reacetive({ name: "张三" })
 首先，我们在`vue-next-3.2.37`项目中，创建`packages/vue/examples/mine/ref.html`文件
 
 ```html
-  <script>
-    // 简单数据类型的处理
-    const { ref, effect } = Vue
-    const name = ref('张三')
-    effect(() => {
-      document.querySelector('#app').innerText = name.value
-    })
-    setTimeout(() => {
-      name.value = '猪八戒'
-    }, 2000)
-  </script>
+<script>
+  // 简单数据类型的处理
+  const { ref, effect } = Vue
+  const name = ref('张三')
+  effect(() => {
+    document.querySelector('#app').innerText = name.value
+  })
+  setTimeout(() => {
+    name.value = '猪八戒'
+  }, 2000)
+</script>
 ```
 
 接下来进行测试，我们在浏览器中看到：先显示张三，然后 2s 后，视图被更新为 猪八戒
@@ -396,28 +396,28 @@ const obj = reacetive({ name: "张三" })
       class RefImpl<T> {
         private _value: T
         private _rawValue: T
-      
+
         public dep?: Dep = undefined
         public readonly __v_isRef = true
-      
+
         constructor(value: T, public readonly __v_isShallow: boolean) {
           this._rawValue = __v_isShallow ? value : toRaw(value)
           // 注意这里有所变化, 因为不是复杂数据类型，toReactive函数会直接返回原参数
-          this._value = __v_isShallow ? value : toReactive(value) 
+          this._value = __v_isShallow ? value : toReactive(value)
         }
-      
+
         get value() {
           trackRefValue(this)
           return this._value
         }
-      
+
         set value(newVal) {
           const useDirectValue =
             this.__v_isShallow || isShallow(newVal) || isReadonly(newVal)
           newVal = useDirectValue ? newVal : toRaw(newVal)
           if (hasChanged(newVal, this._rawValue)) {
             this._rawValue = newVal
-            this._value = useDirectValue ? newVal : toReactive(newVal) 
+            this._value = useDirectValue ? newVal : toReactive(newVal)
             triggerRefValue(this, newVal)
           }
         }
@@ -450,21 +450,21 @@ const obj = reacetive({ name: "张三" })
        fn = (fn as ReactiveEffectRunner).effect.fn
      }
    	// 会生成一个 ReactiveEffect 函数的实例 _effect
-     const _effect = new ReactiveEffect(fn) 
+     const _effect = new ReactiveEffect(fn)
      if (options) {
        extend(_effect, options)
        if (options.scope) recordEffectScope(_effect, options.scope)
      }
     	// 执行生成实例 _effect 的 run 函数
      if (!options || !options.lazy) {
-       _effect.run() 
+       _effect.run()
      }
      const runner = _effect.run.bind(_effect) as ReactiveEffectRunner
      runner.effect = _effect
      return runner
    }
-   
-   
+
+
    export class ReactiveEffect<T = any> {
      active = true
      deps: Dep[] = []
@@ -485,7 +485,7 @@ const obj = reacetive({ name: "张三" })
      ) {
        recordEffectScope(this, scope)
      }
-   
+
      run() {
        if (!this.active) {
          return this.fn()
@@ -500,34 +500,35 @@ const obj = reacetive({ name: "张三" })
        }
        try {
          this.parent = activeEffect
-         activeEffect = this
+         activeEffect = this // 这里给 activeEffect 赋值了
          shouldTrack = true
-   
+    
          trackOpBit = 1 << ++effectTrackDepth
-   
+    
          if (effectTrackDepth <= maxMarkerBits) {
            initDepMarkers(this)
          } else {
            cleanupEffect(this)
          }
+         // 执行 effect 函数，触发 get 函数的处理
          return this.fn()
        } finally {
          if (effectTrackDepth <= maxMarkerBits) {
            finalizeDepMarkers(this)
          }
-   
+    
          trackOpBit = 1 << --effectTrackDepth
-   
+    
          activeEffect = this.parent
          shouldTrack = lastShouldTrack
          this.parent = undefined
-   
+    
          if (this.deferStop) {
            this.stop()
          }
        }
      }
-   
+    
      stop() {
        // stopped while running itself - defer the cleanup
        if (activeEffect === this) {
@@ -547,62 +548,200 @@ const obj = reacetive({ name: "张三" })
 
    ```typescript
      get value() {
-       trackRefValue(this)
+       trackRefValue(this)// 触发依赖的收集
        return this._value
      }
    ```
 
+7. 因为第 5 步中，`activeEffect`已经被赋值了，所以进行`trackRefValue`时
+
+   ```typescript
+   export function trackRefValue(ref: RefBase<any>) {
+     if (shouldTrack && activeEffect) {
+       ref = toRaw(ref)
+       if (__DEV__) {
+         trackEffects(ref.dep || (ref.dep = createDep()), {
+           target: ref,
+           type: TrackOpTypes.GET,
+           key: 'value',
+         })
+       } else {
+         trackEffects(ref.dep || (ref.dep = createDep()))
+       }
+     }
+   }
    
+   // trackEffects就是把当前 activeEffect 放入 ref 的 dep 属性中
+   export function trackEffects(
+     dep: Dep,
+     debuggerEventExtraInfo?: DebuggerEventExtraInfo
+   ) {
+     let shouldTrack = false
+     if (effectTrackDepth <= maxMarkerBits) {
+       if (!newTracked(dep)) {
+         dep.n |= trackOpBit // set newly tracked
+         shouldTrack = !wasTracked(dep)
+       }
+     } else {
+       // Full cleanup mode.
+       shouldTrack = !dep.has(activeEffect!)
+     }
+     if (shouldTrack) {
+       dep.add(activeEffect!)
+       activeEffect!.deps.push(dep)
+       if (__DEV__ && activeEffect!.onTrack) {
+         activeEffect!.onTrack({
+           effect: activeEffect!,
+           ...debuggerEventExtraInfo!,
+         })
+       }
+     }
+   }
+   ```
 
+8. 至此，`get value()`中的`trackRefValue(this)`执行完毕，返回`this._value`,然后第 5 步中的`fn`函数执行完毕，页面中渲染出内容，接着执行`.finally`回调，`activeEffect`又变回了`this.parent`(在这里其实是 undefined).
 
+9. 然后等待 2s 后，数据发生改变，`set value()`函数触发，并为`this._value`赋值了新值，然后触发`triggerRefValue`函数，`triggerRefValue`中触发`triggerEffects`函数，并把`ref.dep`作为参数
 
+   ```typescript
+   class RefImpl{
+    set value(newVal) {
+       const useDirectValue = this.__v_isShallow || isShallow(newVal) || isReadonly(newVal)
+       newVal = useDirectValue ? newVal : toRaw(newVal)
+       if (hasChanged(newVal, this._rawValue)) {
+           this._rawValue = newVal 
+           this._value = useDirectValue ? newVal : toReactive(newVal) // 重新赋值新数据
+           triggerRefValue(this, newVal)
+       }
+   }
+   
+   // 然后这里触发 triggerEffects 函数，当前 ref.dep 作为参数
+   export function triggerRefValue(ref: RefBase<any>, newVal?: any) {
+     ref = toRaw(ref)
+     if (ref.dep) {
+       if (__DEV__) {
+         triggerEffects(ref.dep, {
+           target: ref,
+           type: TriggerOpTypes.SET,
+           key: 'value',
+           newValue: newVal
+         })
+       } else {
+         triggerEffects(ref.dep)
+       }
+     }
+   }
+   ```
 
+10. 而`triggerEffects`通过循环来触发`triggerEffect`回调，触发 `ref.dep`中存储的每一个`ReactiveEffect`实例中的 run 方法（其中调用了 fn 方法）,导致依赖函数重新执行，再次出发 `get value`函数，而此前`this._value`已经被赋值了新值
 
+   ```typescript
+   //effect.ts  中， 就是通过循环处理，调用 ref.dep 中的 ReactiveEffect 实例中的 run 方法（其中调用了 fn 方法）
+   export function triggerEffects(
+     dep: Dep | ReactiveEffect[],
+     debuggerEventExtraInfo?: DebuggerEventExtraInfo
+   ) {
+     // spread into array for stabilization
+     const effects = isArray(dep) ? dep : [...dep]
+     for (const effect of effects) {
+       if (effect.computed) {
+         triggerEffect(effect, debuggerEventExtraInfo)
+       }
+     }
+     for (const effect of effects) {
+       if (!effect.computed) {
+         triggerEffect(effect, debuggerEventExtraInfo)
+       }
+     }
+   }
+   
+   function triggerEffect(
+     effect: ReactiveEffect,
+     debuggerEventExtraInfo?: DebuggerEventExtraInfo
+   ) {
+     if (effect !== activeEffect || effect.allowRecurse) {
+       if (__DEV__ && effect.onTrigger) {
+         effect.onTrigger(extend({ effect }, debuggerEventExtraInfo))
+       }
+       if (effect.scheduler) {
+         effect.scheduler()
+       } else {
+         effect.run()
+       }
+     }
+   }
+   ```
 
+11. 再次触发了`trackRefValue`函数，然后触发`trackEffects`函数，经过内部的处理,`shouldTrack`变为`false`,所以，这次并不会再`add`这一次的依赖实例，`trackRefValue`执行完毕，`get value()`执行完毕并返回新值`this._value`, 依赖回调内部执行，视图更新完成，然后继续`class ReactiveEffect`的实例的`run`方法的`finally`方法执行
 
+    ```typescript
+    if (!newTracked(dep)) {
+      dep.n |= trackOpBit // set newly tracked
+      shouldTrack = !wasTracked(dep)
+    }
+    ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+12. 至此，流程执行完成
 
 ## 06：框架实现：ref 函数-构建简单数据类型的响应性
+
+在`ref.ts`文件中
+
+```typescript
+import { hasChanged } from '@vue/shared'
+import { trackEffects, triggerEffets } from './effect'
+
+export class RefElmp<T> {
+  private _value: T
+  private _rawValue: T // 新增加，代表原始值
+  public readonly __v_isRef = true
+  public dep?: Dep = undefined
+  constructor(value: T, public readonly __v_isShallow: boolean) {
+    this._rawValue = value // 新增
+    this._value = __v_isShallow ? value : toReactive(value)
+  }
+
+  get value() {
+    trackRefValue(this)
+    return this._value
+  }
+ set value(newValue) {
+    if (hasChanged(newValue, this._rawValue)) {
+	 		this._rawValue = newValue
+      this._value = toReactive(newValue)
+      triggerRefValue(this)
+    }
+  }
+}
+
+export function triggerRefValue(ref) {
+  if (ref.dep) {
+    triggerEffets(ref.dep)
+  }
+}
+```
+
+`shared/inex.ts`
+
+```typescript
+export const hasChanged = (value: any, oldValue: any): boolean => !Object.is(value, oldValue)
+```
+
+测试示例
+
+```html
+<script>
+  const { ref, effect } = Vue
+  const name = ref('孙悟空')
+
+  effect(() => {
+    document.querySelector('#app').innerText = name.value
+  })
+  setTimeout(() => {
+    name.value = '猪八戒'
+  }, 2000)
+</script>
+```
 
 测试成功，表示代码完成
 
