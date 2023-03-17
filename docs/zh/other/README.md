@@ -32,6 +32,8 @@
 
 [ClashX: 简单轻量化的代理客户端](https://github.com/yichengchen/clashX/releases/tag/1.90.0)
 
+[Capslock+: 大大地提高你的文字编辑体验](https://capslox.com/cn/)
+
 ## Android 端
 
 [坚果云: 智能同步文件神器](https://www.jianguoyun.com/s/downloads)
