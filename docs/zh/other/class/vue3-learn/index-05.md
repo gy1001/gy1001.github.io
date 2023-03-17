@@ -82,20 +82,20 @@
    class RefImpl<T> {
      private _value: T
      private _rawValue: T
-   
+
      public dep?: Dep = undefined
      public readonly __v_isRef = true
-   
+
      constructor(value: T, public readonly __v_isShallow: boolean) {
        this._rawValue = __v_isShallow ? value : toRaw(value)
        this._value = __v_isShallow ? value : toReactive(value)
      }
-   
+
      get value() {
        trackRefValue(this)
        return this._value
      }
-   
+
      set value(newVal) {
        const useDirectValue =
          this.__v_isShallow || isShallow(newVal) || isReadonly(newVal)
@@ -502,9 +502,9 @@ const obj = reacetive({ name: '张三' })
          this.parent = activeEffect
          activeEffect = this // 这里给 activeEffect 赋值了
          shouldTrack = true
-    
+
          trackOpBit = 1 << ++effectTrackDepth
-    
+
          if (effectTrackDepth <= maxMarkerBits) {
            initDepMarkers(this)
          } else {
@@ -516,19 +516,19 @@ const obj = reacetive({ name: '张三' })
          if (effectTrackDepth <= maxMarkerBits) {
            finalizeDepMarkers(this)
          }
-    
+
          trackOpBit = 1 << --effectTrackDepth
-    
+
          activeEffect = this.parent
          shouldTrack = lastShouldTrack
          this.parent = undefined
-    
+
          if (this.deferStop) {
            this.stop()
          }
        }
      }
-    
+
      stop() {
        // stopped while running itself - defer the cleanup
        if (activeEffect === this) {
@@ -570,7 +570,7 @@ const obj = reacetive({ name: '张三' })
        }
      }
    }
-   
+
    // trackEffects就是把当前 activeEffect 放入 ref 的 dep 属性中
    export function trackEffects(
      dep: Dep,
@@ -609,12 +609,12 @@ const obj = reacetive({ name: '张三' })
        const useDirectValue = this.__v_isShallow || isShallow(newVal) || isReadonly(newVal)
        newVal = useDirectValue ? newVal : toRaw(newVal)
        if (hasChanged(newVal, this._rawValue)) {
-           this._rawValue = newVal 
+           this._rawValue = newVal
            this._value = useDirectValue ? newVal : toReactive(newVal) // 重新赋值新数据
            triggerRefValue(this, newVal)
        }
    }
-   
+
    // 然后这里触发 triggerEffects 函数，当前 ref.dep 作为参数
    export function triggerRefValue(ref: RefBase<any>, newVal?: any) {
      ref = toRaw(ref)
@@ -635,42 +635,42 @@ const obj = reacetive({ name: '张三' })
 
 10. 而`triggerEffects`通过循环来触发`triggerEffect`回调，触发 `ref.dep`中存储的每一个`ReactiveEffect`实例中的 run 方法（其中调用了 fn 方法）,导致依赖函数重新执行，再次出发 `get value`函数，而此前`this._value`已经被赋值了新值
 
-   ```typescript
-   //effect.ts  中， 就是通过循环处理，调用 ref.dep 中的 ReactiveEffect 实例中的 run 方法（其中调用了 fn 方法）
-   export function triggerEffects(
-     dep: Dep | ReactiveEffect[],
-     debuggerEventExtraInfo?: DebuggerEventExtraInfo
-   ) {
-     // spread into array for stabilization
-     const effects = isArray(dep) ? dep : [...dep]
-     for (const effect of effects) {
-       if (effect.computed) {
-         triggerEffect(effect, debuggerEventExtraInfo)
-       }
-     }
-     for (const effect of effects) {
-       if (!effect.computed) {
-         triggerEffect(effect, debuggerEventExtraInfo)
-       }
-     }
-   }
-   
-   function triggerEffect(
-     effect: ReactiveEffect,
-     debuggerEventExtraInfo?: DebuggerEventExtraInfo
-   ) {
-     if (effect !== activeEffect || effect.allowRecurse) {
-       if (__DEV__ && effect.onTrigger) {
-         effect.onTrigger(extend({ effect }, debuggerEventExtraInfo))
-       }
-       if (effect.scheduler) {
-         effect.scheduler()
-       } else {
-         effect.run()
-       }
-     }
-   }
-   ```
+```typescript
+//effect.ts  中， 就是通过循环处理，调用 ref.dep 中的 ReactiveEffect 实例中的 run 方法（其中调用了 fn 方法）
+export function triggerEffects(
+  dep: Dep | ReactiveEffect[],
+  debuggerEventExtraInfo?: DebuggerEventExtraInfo
+) {
+  // spread into array for stabilization
+  const effects = isArray(dep) ? dep : [...dep]
+  for (const effect of effects) {
+    if (effect.computed) {
+      triggerEffect(effect, debuggerEventExtraInfo)
+    }
+  }
+  for (const effect of effects) {
+    if (!effect.computed) {
+      triggerEffect(effect, debuggerEventExtraInfo)
+    }
+  }
+}
+
+function triggerEffect(
+  effect: ReactiveEffect,
+  debuggerEventExtraInfo?: DebuggerEventExtraInfo
+) {
+  if (effect !== activeEffect || effect.allowRecurse) {
+    if (__DEV__ && effect.onTrigger) {
+      effect.onTrigger(extend({ effect }, debuggerEventExtraInfo))
+    }
+    if (effect.scheduler) {
+      effect.scheduler()
+    } else {
+      effect.run()
+    }
+  }
+}
+```
 
 11. 再次触发了`trackRefValue`函数，然后触发`trackEffects`函数，经过内部的处理,`shouldTrack`变为`false`,所以，这次并不会再`add`这一次的依赖实例，`trackRefValue`执行完毕，`get value()`执行完毕并返回新值`this._value`, 依赖回调内部执行，视图更新完成，然后继续`class ReactiveEffect`的实例的`run`方法的`finally`方法执行
 
@@ -705,9 +705,9 @@ export class RefElmp<T> {
     trackRefValue(this)
     return this._value
   }
- set value(newValue) {
+  set value(newValue) {
     if (hasChanged(newValue, this._rawValue)) {
-	 		this._rawValue = newValue
+      this._rawValue = newValue
       this._value = toReactive(newValue)
       triggerRefValue(this)
     }
@@ -724,7 +724,8 @@ export function triggerRefValue(ref) {
 `shared/inex.ts`
 
 ```typescript
-export const hasChanged = (value: any, oldValue: any): boolean => !Object.is(value, oldValue)
+export const hasChanged = (value: any, oldValue: any): boolean =>
+  !Object.is(value, oldValue)
 ```
 
 测试示例
