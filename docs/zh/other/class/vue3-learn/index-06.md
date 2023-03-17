@@ -133,7 +133,56 @@
 
 3. 然后`computed`函数执行完毕，接着执行`effect`函数，会触发`computedObj.value`然后触发`ComputedRefImpl`中`get value()`函数。接着执行`trackRefValue(self)`来收集依赖。这时候判断`_dirty`状态，如果为真(此时为真)，`_dirty`又恢复为`false`，然后执行它的`run`方法(会执行回调，,它会导致 obj.name 的触发，也就是 reactive 的get行为，也就会收集当前依赖：getter 函数，并把函数的返回值也就是 computed 中的计算值赋值给`self._value`),接着返回`self._value`.此时`innerText`中展示的就是`姓名：张三`。
 
-4. 然后联系之前学习内容，进行逻辑调用
+4. 2s后，修改`reactive`类型的`obj.name`值，会触发`createSetter`函数的触发，接着调用`trigger`函数，然后调用`triggerEffects`函数，触发依赖。这里就出现了调度的作用。
+
+   ```typescript
+   export function triggerEffects(
+     dep: Dep | ReactiveEffect[],
+     debuggerEventExtraInfo?: DebuggerEventExtraInfo
+   ) {
+     const effects = isArray(dep) ? dep : [...dep]
+     for (const effect of effects) {
+       // 如果是 computed  属性
+       if (effect.computed) { 
+         triggerEffect(effect, debuggerEventExtraInfo)
+       }
+     }
+     for (const effect of effects) {
+       if (!effect.computed) {
+         triggerEffect(effect, debuggerEventExtraInfo)
+       }
+     }
+   }
+   
+   function triggerEffect(
+     effect: ReactiveEffect,
+     debuggerEventExtraInfo?: DebuggerEventExtraInfo
+   ) {
+     if (effect !== activeEffect || effect.allowRecurse) {
+       if (__DEV__ && effect.onTrigger) {
+         effect.onTrigger(extend({ effect }, debuggerEventExtraInfo))
+       }
+       // 如果有调度器，就要调用调度器函数
+       if (effect.scheduler) { 
+         effect.scheduler()
+       } else {
+         effect.run()
+       }
+     }
+   }
+   ```
+
+5. 这里就会调用调度器函数， 也就是`computedRefImpl`中的如下代码,而此时`this._dirty`已经变为false，然后随后又变为true，并执行依赖的触发`triggerRefValue(this)`，这里就会重新调用`() => { document.querySelector('#app').innerText = computedObj.value}` 函数，更新视图
+
+   ```typescript
+   	  // ReactiveEffect第二个参数几十调度器函数
+       this.effect = new ReactiveEffect(getter, () => {
+         if (!this._dirty) {
+           this._dirty = true
+           triggerRefValue(this)
+         }
+       })
+   ```
 
 至此，整个`obj.name`引发的副作用全部执行完成
 
@@ -173,19 +222,134 @@
 
 1. 创建`packages/reactivity/src/computed.ts`
 
+   >  判断传递的参数是否是一个函数，如果是，就赋值给 getter
+   >
+   > 在 get value函数中进行收集依赖，以及触发回调赋值给_value,并返回 _value
+
    ```typescript
+   // @vue/shared
+   export const isFunction = (val: unknown): val is Function => typeof val === 'function'
+   
+   //computed.ts
    import { isFunction } from "@vue/shared"
+   import { Dep } from './dep'
+   import { ReactiveEffect } from './effect'
+   import { trackRefValue } from './ref'
+   
+   export function computed(getterOrOptions) {
+     let getter
+     if (isFunction(getterOrOptions)) {
+       getter = getterOrOptions
+     }
+   
+     const cRef = new ComputedRelImpl(getter)
+     return cRef
+   }
+   
+   export class ComputedRelImpl<T> {
+     public dep?: Dep = undefined
+     private _value!: T
+     private readonly effect: ReactiveEffect<T>
+     public readonly __v_isRef = true
+     constructor(getter) {
+       this.effect = new ReactiveEffect(getter)
+       this.effect.computed = this
+     }
+     get value() {
+       trackRefValue(this)
+       this._value = this.effect.run()
+       return this._value
+     }
+   }
    ```
 
+2. 接着我们分别进行导出`computed`函数即可
+
+   ```typescript
+   // packages/reactivity/src/index.ts
+   export { computed } from "./computed"
+   // packages/vue/src/index.ts
+   export { reactive, effect, ref, computed } from "@vue/reactivity"
+   ```
+
+3. 创建测试实例`packages/vue/example/reactive/computed.html`
+
+   ```html
+     <script>
+       const { reactive, effect, computed } = Vue
+       const obj = reactive({
+         name: '孙悟空',
+         age: 80
+       })
    
+       const computedObj = computed(() => {
+         return '姓名：' + obj.name
+       })
+   
+       effect(() => {
+         document.getElementById('app').innerText = computedObj.value
+       })
+       setTimeout(() => {
+         obj.name = '猪八戒'
+       }, 2000)
+     </script>
+   ```
 
-04：框架实现：computed 的响应性：初见调度器，处理脏状态
+4. 运行浏览器，可以看到数据被成功渲染，此时数据还不是响应式的，所以 2s后的试图数据并不会发生变化
 
-05：框架实现：computed 的缓存性
+## 04：框架实现：computed 的响应性：初见调度器，处理脏状态
 
-06：总结：computed的计算属性
+根据之间的代码可知，如果我们想要实现**响应性**，那么必须具备以下两个条件
 
-07：源码阅读：响应性的数据监听器 watch,跟踪源码实现逻辑
+1. 收集依赖：该操作我们目前已经在`get value`中进行了
+2. 触发依赖：该操作我们目前尚未完成，而这个也是我们本小节主要需要做的事情
+
+那么根据第二小节的源码可知，这部份代码是写在`ReactiveEffect`第二个参数上的
+
+```typescript
+ this.effect = new ReactiveEffect(getter, () => {
+    if (!this._dirty) {
+      this._dirty = true
+      triggerRefValue(this)
+    }
+  })
+```
+
+这个参数是一个匿名函数，被叫做`scheduler`调度器
+
+该匿名函数中，又涉及到一个`_dirty`变量，该变量我们把它叫做**脏**
+
+那么想要实现`computed`的响应性，就必须要明白这两个东西的概念
+
+### 调度器
+
+调度器`schedular`是一个相对比较复杂的概念，它在`computed`和`watch`中都有涉及，但是在当前的`computed`实现中，它的作用还算比较清晰
+
+所以根据我们秉承的**没有使用就当做不存在**的概念，我们只需要搞清楚，它在当前的作用即可
+
+根据我们第二小节的源码阅读，我们可以知道，此时的`schedular`就相当于一个**回调函数**
+
+在`triggerEffect`只要`effect`存在`schedular`,就会执行该函数
+
+### dirty 脏
+
+
+
+## 05：框架实现：computed 的缓存性
+
+## 06：总结：computed的计算属性
+
+那么到这里我们已经完成了`computed`计算属性的构建
+
+接下来我们来总计一下计算属性的重点
+
+1. 计算属性的重点，本质上是一个`ComputedRefImpl`的实例
+2. `ComputedRefImpl`中通过`dirty`变量来控制`run`的执行和`triggerRefValue`的触发
+3. 想要访问计算属性的值，必须通过`.value`,因为它内部和`ref`一样是通过`get value`来进行实现的
+4. 每次`.value`的时候都会触发`trackRefValue`即：收集依赖
+5. 在依赖触发的时候，需要谨记，先触发`computed`的`effect`，再触发非`computed`的`effect`
+
+## 07：源码阅读：响应性的数据监听器 watch,跟踪源码实现逻辑
 
 08：框架实现：深入 scheduler 调度系统实现机制
 
