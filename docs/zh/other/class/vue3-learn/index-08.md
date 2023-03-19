@@ -252,8 +252,331 @@
 
 ## 03：框架实现：构建h函数，处理ELEMENT+TEXT_CHILDREN场景
 
+1. 新建`vue-next-mini-mine/packages/shared/src/shapeFlags.ts`文件
+
+   ```typescript
+   export const enum ShapeFlags {
+     ELEMENT = 1, // type = Element
+     FUNCTIONAL_COMPONENT = 1 << 1, // 函数组件
+     STATEFUL_COMPONENT = 1 << 2, // 有状态（响应数据）组件
+     TEXT_CHILDREN = 1 << 3,//  chldren = text
+     ARRAY_CHILDREN = 1 << 4, // children =Array 
+     SLOTS_CHILDREN = 1 << 5, // children = slot
+     TELEPORT = 1 << 6, 
+     SUSPENSE = 1 << 7,
+     COMPONENT_SHOULD_KEEP_ALIVE = 1 << 8,
+     COMPONENT_KEPT_ALIVE = 1 << 9,
+     // 组件：有状态（响应数据）组件|函数组件
+     COMPONENT = ShapeFlags.STATEFUL_COMPONENT | ShapeFlags.FUNCTIONAL_COMPONENT
+   }
+   ```
+
+2. 创建`packages/runtime-core/src/h.ts`，构建`h`函数
+
+   ```typescript
+   import { isArray, isObject } from "@vue/shared"
+   import { createVNode, VNode, isVNode } from "./vnode"
+   
+   export function h(type: any, propsOrChildren?: any, children?: any): VNode {
+     const length = arguments.length
+     if (length === 2) {
+       if (isObject(propsOrChildren) && !isArray(propsOrChildren)) {
+         if (isVNode(propsOrChildren)) {
+           return createVNode(type, null, [propsOrChildren],)
+         }
+         return createVNode(type, propsOrChildren, [])
+       }
+       return createVNode(type, null, propsOrChildren)
+     } else {
+       if (length > 3) {
+         children = Array.prototype.slice.call(arguments, 2)
+       } else if (length === 3 && isVNode(children)) {
+         children = [children]
+       }
+       return createVNode(type, propsOrChildren, children)
+     }
+   }
+   
+   // vnode.ts
+   import { isArray, isString } from '@vue/shared'
+   import { ShapeFlags } from 'packages/shared/src/shapeFlags'
+   
+   export function createVNode(type, props, children): VNode {
+     const shapeFlag = isString(type) ? ShapeFlags.ELEMENT : 0
+     return createBaseVNode(type, props, children, shapeFlag)
+   }
+   
+   export interface VNode {
+     type: any
+     __v_isVNode: true
+     props: any
+     children: any
+     shapeFlag: number
+   }
+   
+   export function isVNode(value: any): value is VNode {
+     return (value && value.__v_isVNode === true)
+   }
+   
+   export function createBaseVNode(type, props, children, shapeFlag) {
+     const vnode = {
+       __v_isVNode: true,
+       type,
+       props,
+       shapeFlag
+     } as VNode
+   
+     normalizeChildren(vnode, children)
+     return vnode
+   }
+   
+   export function normalizeChildren(vnode: VNode, children?: unknown) {
+     let type = 0
+     if (children === null) {
+       children = null
+     } else if (isArray(children)) {
+   
+     } else if (typeof children === "object") {
+   
+     } else if (isString(children)) {
+       children = String(children)
+       type = ShapeFlags.TEXT_CHILDREN
+     }
+     vnode.children = children
+     vnode.shapeFlag |= type
+     return vnode
+   }
+   ```
+
+3. 导出 h 函数
+
+   ```typescript
+   // vue-next-mini-mine/packages/runtime-core/src/index.ts
+   export { h } from "./h"
+   
+   // vue-next-mini-mine/packages/vue/src/index.ts
+   export { queuePreFlushCb, watch, h } from "@vue/runtime-core"
+   ```
+
+4. 增加测试实例`vue-next-mini-mine/packages/vue/example/run-time/h.html`
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="UTF-8" />
+       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <title>h</title>
+     </head>
+     <body></body>
+     <script src="../../dist/vue.js"></script>
+     <script>
+       const { h } = Vue
+       const vnode = h('div', { class: 'test' }, 'hello render')
+       console.log(vnode)
+     </script>
+   </html>
+   ```
+
+5. 运行至浏览器，查看打印效果
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b77e5bb076a4431cb357c28095f31716~tplv-k3u1fbpfcp-watermark.image?)
+
+6. 此时就完成了 构建h函数，处理ELEMENT+TEXT_CHILDREN场景 的代码
+
 ## 04：源码阅读：h函数，跟踪ELEMENT+ARRAY_CHILDREN场景下的源码实现
+
+前两节我们处理了 h 函数下比较简单的场景：Element + Text Children
+
+那么这一小节，我们来看 Element + Array Children
+
+1. 修改测试实例
+
+   ```html
+   <script>
+     const { h } = Vue
+     const vnode = h('div', { class: 'test' }, [
+       h('p', 'p1'),
+       h('p', 'p2'),
+       h('p', 'p3')
+     ])
+     console.log(vnode)
+   </script>
+   ```
+
+2. 最终打印为（剔除无用的）
+
+   ```tonjson
+   {
+     "__v_isVNode": true,
+     "type": "div",
+     "props": { "class": "test"},
+     "shapeFlag": 17
+     "children": [
+       {
+         "__v_isVNode": true,
+         "type": "p",
+         "children": "p1",
+         "shapeFlag": 9
+       },
+   		{
+     	 	"__v_isVNode": true,
+         "type": "p",
+         "children": "p2",
+         "shapeFlag": 9
+     	},
+       {
+     	 	"__v_isVNode": true,
+         "type": "p",
+         "children": "p3",
+         "shapeFlag": 9
+     	}
+     ]
+   }
+   ```
+
+3. 通过上述的打印其实我们可以看出一些不同的地方
+
+   1. `children`: 数组
+   2. `shapeFlag`：17
+
+而这两点，也是 `h 函数`处理这种场景下，最不同的地方
+
+那么下面我们就追踪源码，来看一下这次 `h 函数`的执行逻辑，由测试实例控制，我们一共触发了 4 次 `h 函数`
+
+1. 第一次触发`h 函数`
+
+   ```javascript
+   h('p', "p1")
+   ```
+
+2. 进入`_createVNode`方法，测试的参数为
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5c5746fade414aa192d989ca25be3991~tplv-k3u1fbpfcp-watermark.image?)
+
+3. 触发 createBaseVNode 时， shapeFlag = 1
+
+   1. 进入 createBaseVNode
+   2. 触发 normalizeChildren(vnode, children)
+      1. 此时 children 时字符串
+      2. 进入 else， 执行 type = ShapeFlags.TEXT_CHILDREN 此时 type = 8
+      3. 最后执行 vnode.shapeFlag |= type 得到 vnode.shapeFlag = 9
+
+4. 以上流程与之前的看到的完全相同
+
+接下来就是**第二次**、**第三次**触发 h函数，这两次触发代码流程与第一次相同，我们可以跳过
+
+1. 进入到**第四次**触发 h函数
+
+   ```javascript
+   h('div', { class: 'test' }, [
+     h('p', 'p1'),
+     h('p', 'p2'),
+     h('p', 'p3')
+   ])
+   ```
+
+2. 此时进入到 _createVNode 时的参数为
+
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2f79e725650647eb98eda2b094e68cc1~tplv-k3u1fbpfcp-watermark.image?)
+
+   1. 展开 children 数据为**解析完成之后的vnode**
+
+      ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/42102fe9db904064a556f480d1226d8b~tplv-k3u1fbpfcp-watermark.image?)
+
+3. 代码继续，计算 `shapeFlag = 1`
+
+4. 触发 `createBaseVNode`
+
+   1. 进入 `createBaseVNode`
+
+   2. 执行 `normalizeChildren(vnode, children)`
+
+      1. 进入 `normalizeChildren`
+
+      2. 因为当前 `children = Array`,所以代码会进入到 `else if(isArray(children))`
+
+      3. 执行 `type = ShapeFlags.ARRAY_CHILDREN` 即 type = 16
+
+      4. 接下来执行 `vnode.shapeFlag |= type`
+
+         1. 此时 vnode.shapeFlag = 1, 转换为二进制
+
+            ```javascript
+            00000000 00000000 00000000 00000001
+            ```
+
+         2. 此时 type=16，转换为二进制
+
+            ```javascript
+            00000000 00000000 00000000 00010000
+            ```
+
+         3. 所以最终之后的二进制为
+
+            ```javascript
+            00000000 00000000 00000000 00010001
+            ```
+
+         4. 转换为10进制：17
+
+代码执行完毕
+
+由以上代码可知，但我们处理 `ELEMENT + ARRAY_CHILDREN` 场景时
+
+1. 整体的逻辑没有变得很复杂
+2. 第一次计算 `shapeFlag`，依然为 `Element`
+3. 第二次计算 `shapeFlag`，因为 `children 为 Array`，所以会进入`else if(isArray(children))` 判断中
 
 ## 05：框架实现：构建h函数，处理ELEMENT+ARRAY_CHILDREN场景
 
+根据上一节的分析，我们修改`normalizeChildren`函数即可
+
+```typescript
+export function normalizeChildren(vnode: VNode, children?: unknown) {
+  let type = 0
+  if (children === null) {
+    children = null
+  } else if (isArray(children)) {
+    type = ShapeFlags.ARRAY_CHILDREN // 增加此行代码
+  } else if (typeof children === "object") {
+
+  } else if (isString(children)) {
+    children = String(children)
+    type = ShapeFlags.TEXT_CHILDREN
+  }
+  vnode.children = children
+  vnode.shapeFlag |= type
+  return vnode
+}
+```
+
+重新运行测试实例，即可打印如下结果
+
+![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0a04b90bdc4c488eb2d9691bc144fa49~tplv-k3u1fbpfcp-watermark.image?)
+
 ## 06：源码阅读：h函数，组件的本质与对应的VNode
+
+组件是 `vue` 中非常重要的一个概念， 这一小节我们就来看一下**组件**生成 VNode 的情况
+
+在 `vue` 中，组件本质上是**一个对象或者一个函数（Function component）**
+
+> 我们这里**不考虑**组件是函数的情况，因为这个比较少见
+
+我们可以直接利用 `h 函数`+ `render 函数`渲染出一个基本的组件
+
+
+
+## 07：框架实现：处理组件的 VNode
+
+## 08：源码阅读：h函数，跟踪 Text、Comment、Fragment  场景
+
+## 09: 框架实现：实现剩余场景：Text、Comment、Fragment
+
+## 10：源码阅读：对 class 和 style 的增强处理
+
+## 11：框架实现：完成虚拟节点下的 class 和 style 的增强
+
+## 12： 总结
+
