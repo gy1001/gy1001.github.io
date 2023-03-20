@@ -640,6 +640,8 @@ export function normalizeChildren(vnode: VNode, children?: unknown) {
 上一节中我们说到 h 函数最终返回的是一个 VNode 节点，而对于**组件类型**，项目中没有做处理，所以我们在`vue-next-mini/packages/runtime-core/src/vnode.ts`中修改代码如下
 
 ```typescript
+import { isObject } from '@vue/shared'
+
 export function createVNode(type, props, children): VNode {
   const shapeFlag = isString(type) ? ShapeFlags.ELEMENT : 
   	isObject(type) ? ShapeFlags.STATEFUL_COMPONENT : 0 // 增加判断：如果是对象，类型返回：STATEFUL_COMPONENT = 1 << 2, 有状态（响应数据）组件
@@ -738,11 +740,9 @@ Text 标记为**文本**，即：纯文本的 VNode
 </script>
 ```
 
-
-
 查看打印
 
- ![image-20230320160915228](/Users/gaoyuan/Library/Application Support/typora-user-images/image-20230320160915228.png)
+ ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d82d1706ea9d4268a19ee439d74d66f0~tplv-k3u1fbpfcp-watermark.image?)
 
 可以看到 `Fragment` 类型的节点 `type` 是一个`Symbol(Fragment)`，`shapeFlag`是 8
 
@@ -815,7 +815,7 @@ Vue 中对 [class和style](https://cn.vuejs.org/guide/essentials/class-and-style
 
 这样的 h函数，最终得到的 `vnode` 如下
 
-![image-20230320170014163](/Users/gaoyuan/Library/Application Support/typora-user-images/image-20230320170014163.png)
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/43cdb26719c74cb6a8874337294e1a70~tplv-k3u1fbpfcp-watermark.image?)
 
 在源码处`vue-next-3.2.37/packages/runtime-core/src/vnode.ts`文件中的`createVNode`方法中`if (props) `处增加断点
 
@@ -997,7 +997,13 @@ if (props) {
    }
    ```
 
-3. 新建测试示例`vue-next-mini/packages/vue/examples/run-time/h-component-class.html`,内容如下
+3. `vue-next-mini/packages/shared/src/index.ts`文件导入
+
+   ```typescript
+   export { normalizeClass } from "./normalProp"
+   ```
+
+4. 新建测试示例`vue-next-mini/packages/vue/examples/run-time/h-component-class.html`,内容如下
 
    ```html
    <script>
@@ -1012,11 +1018,11 @@ if (props) {
    </script>
    ```
 
-4. 打开浏览器，打印结果如下
+5. 打开浏览器，打印结果如下
 
    ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0a02cfb7e4a94081a1f760813baf34f4~tplv-k3u1fbpfcp-watermark.image?)
 
-5. 由此可见，`class` 的处理逻辑完成了
+6. 由此可见，`class` 的处理逻辑完成了
 
 ## 12： 总结
 

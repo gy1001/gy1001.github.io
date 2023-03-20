@@ -7,7 +7,7 @@
 在之前我们明确过什么是**运行时**，看下面的代码（第二章节运行时使用过该代码）
 
 ```html
- <body>
+<body>
   <div id="app"></div>
 </body>
 <script>
@@ -19,11 +19,11 @@
 </script>
 ```
 
-以上代码代表了一个基本的**运行时**。即：**把 vnode渲染到页面中**.所以大家可以简单的把运行时理解为：就是把vnode渲染到页面中
+以上代码代表了一个基本的**运行时**。即：**把 vnode 渲染到页面中**.所以大家可以简单的把运行时理解为：就是把 vnode 渲染到页面中
 
-## 02: HTML DOM 节点树与虚拟DOM树
+## 02: HTML DOM 节点树与虚拟 DOM 树
 
-首先我们先来学习两个运行时的基本概念 
+首先我们先来学习两个运行时的基本概念
 
 1. HTML DOM 节点树
 2. 虚拟 DOM 树
@@ -38,33 +38,33 @@
 </div>
 ```
 
-当浏览器看到这一段 html 时，它会生成一个对应的 DOM树 来进行表示
+当浏览器看到这一段 html 时，它会生成一个对应的 DOM 树 来进行表示
 
 ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b27dd0ac1d6246eda7d56b7c7debc55c~tplv-k3u1fbpfcp-watermark.image?)
 
-以上我们通过 节点 Node 来描述以上所有的元素，在HTML中所有的元素都是一个节点，注意、文本都属于节点的一部分
+以上我们通过 节点 Node 来描述以上所有的元素，在 HTML 中所有的元素都是一个节点，注意、文本都属于节点的一部分
 
 这样的通过节点构成的一个属性结构，我们就把它叫做**HTML DOM 节点树**
 
-那么明确了什么叫做节点树之后，什么是**虚拟DOM树呢？**
+那么明确了什么叫做节点树之后，什么是**虚拟 DOM 树呢？**
 
-可能有很多同学听过**虚拟DOM**的概念，**虚拟DOM树**和虚拟DOM是息息相关的
+可能有很多同学听过**虚拟 DOM**的概念，**虚拟 DOM 树**和虚拟 DOM 是息息相关的
 
 > [官方文档](https://cn.vuejs.org/guide/extras/rendering-mechanism.html#virtual-dom)
 >
 > 虚拟 DOM (Virtual DOM，简称 VDOM) 是一种编程概念，意为将目标所需的 UI 通过数据结构“虚拟”地表示出来，保存在内存中，然后将真实的 DOM 与之保持同步。这个概念是由 [React](https://reactjs.org/) 率先开拓，随后在许多不同的框架中都有不同的实现，当然也包括 Vue。
 
-虚拟DOM是一种理念，比如我期望通过 一个 JavaScript 对象来描述一个 div 节点的子节点是一个文本节点 text ，则可以这么写
+虚拟 DOM 是一种理念，比如我期望通过 一个 JavaScript 对象来描述一个 div 节点的子节点是一个文本节点 text ，则可以这么写
 
 ```javascript
 // <div>text</div>
 //  通过虚拟 dom 表示
-const vnode = { type:"div", children: "text" }
+const vnode = { type: 'div', children: 'text' }
 ```
 
-在上面这个对象中，我们通过 type 来表示当前为一个div  节点，通过 children 来表示它的子节点，通过 text 表示子节点是一个文本节点，内容是 text
+在上面这个对象中，我们通过 type 来表示当前为一个 div 节点，通过 children 来表示它的子节点，通过 text 表示子节点是一个文本节点，内容是 text
 
-这里所设计的 vnode，是一个**纯JavaScript对象**。我们通常使用它来表示一个**虚拟节点（或者虚拟节点树）**。它里面的属性名不是固定的，比如我们可以使用 type 表示这个是一个 div,也可以使用 tag 进行表示，都是可以的
+这里所设计的 vnode，是一个**纯 JavaScript 对象**。我们通常使用它来表示一个**虚拟节点（或者虚拟节点树）**。它里面的属性名不是固定的，比如我们可以使用 type 表示这个是一个 div,也可以使用 tag 进行表示，都是可以的
 
 在 vue 的源码中，通过使用它来表示所需要创建元素的所有信息，比如
 
@@ -82,16 +82,16 @@ const vnode = { type:"div", children: "text" }
 const vnode = {
   type: 'div',
   children: [
-    { type: "h1", children: 'hello h1' },
-    { type: Comment, chidren: "TODO comment"},
-    "hello div"
-	]
+    { type: 'h1', children: 'hello h1' },
+    { type: Comment, chidren: 'TODO comment' },
+    'hello div',
+  ],
 }
 ```
 
-在运行时 runtime，渲染器 renderer 会遍历整个虚拟 DOM  树，并据此构建真实的 DOM 树，这个过程可以把它叫做**挂载mount**
+在运行时 runtime，渲染器 renderer 会遍历整个虚拟 DOM 树，并据此构建真实的 DOM 树，这个过程可以把它叫做**挂载 mount**
 
-当这个 VNode 对象发生变化时，我们会对比 **旧的VNode 和新的 VNode**之间的区别，找出它们的之间的区别，并把这些其中的变化应用到真实的DOM上，这个过程被称为**更新 patch**
+当这个 VNode 对象发生变化时，我们会对比 **旧的 VNode 和新的 VNode**之间的区别，找出它们的之间的区别，并把这些其中的变化应用到真实的 DOM 上，这个过程被称为**更新 patch**
 
 那么这样的一个挂载和更新的过程，具体是怎么做的呢？
 
@@ -129,7 +129,7 @@ render(null, vnode, document.querySelector('#app'))
 
 当 oldVNode 不存在时，那么我们就认为这是一个全新的渲染，也就是**挂载**
 
-所以以上的mount 方法，我们就可以把它称为一个**挂载方法**
+所以以上的 mount 方法，我们就可以把它称为一个**挂载方法**
 
 ### 更新：patch
 
@@ -168,18 +168,18 @@ setTimeout(() => {
 
 我们在原有的代码中新增了一部分，新增了 patch 函数
 
-在 patch 函数中，我们先**删除了旧的 VNode，然后创建了一个新的VNode**。这样的一个过程，我们就把它叫做**更新：patch**
+在 patch 函数中，我们先**删除了旧的 VNode，然后创建了一个新的 VNode**。这样的一个过程，我们就把它叫做**更新：patch**
 
 ### 总结
 
-本小节我们通过一个简单的例子讲解了**更新mount**和**更新Patch**的概念。这两个概念在 [Vue3官方文档](https://cn.vuejs.org/guide/extras/rendering-mechanism.html#virtual-dom)中也对此进行了详细的介绍
+本小节我们通过一个简单的例子讲解了**更新 mount**和**更新 Patch**的概念。这两个概念在 [Vue3 官方文档](https://cn.vuejs.org/guide/extras/rendering-mechanism.html#virtual-dom)中也对此进行了详细的介绍
 
 1. **挂载**：运行时渲染器调用渲染函数，遍历返回的虚拟 DOM 树，并基于它创建实际的 DOM 节点。这一步会作为[响应式副作用](https://cn.vuejs.org/guide/extras/reactivity-in-depth.html)执行，因此它会追踪其中所用到的所有响应式依赖。
 2. **更新**：当一个依赖发生变化后，副作用会重新运行，这时候会创建一个更新后的虚拟 DOM 树。运行时渲染器遍历这棵新树，将它与旧树进行比较，然后将必要的更新应用到真实 DOM 上去。
 
 这两个概念在我们后面去实现 renderer 渲染器的时候还会经常的使用到
 
-## 04：h函数与render 函数
+## 04：h 函数与 render 函数
 
 不知道大家还记不记得，我们在**第二章节**讲解**运行时**的时候，曾经使用过这样的一个案例
 
@@ -209,23 +209,23 @@ setTimeout(() => {
 
 当时，我们说：有些同学可能看不懂当前代码是什么意思，没有关系，这不重要，后面我们会详细去讲，那么现在就是讲解这个的时候了
 
-根据前面两个小节的介绍，我们已经知道了，vue的渲染分为：挂载和更新。两个步骤
+根据前面两个小节的介绍，我们已经知道了，vue 的渲染分为：挂载和更新。两个步骤
 
 无论是挂载还是更新，都是借助于 VNode 来进行实现的
 
 在以上代码中，我们知道了主要涉及了两个函数
 
-1. h函数
-2. render函数
+1. h 函数
+2. render 函数
 
 那么下面我们一个一个来说
 
-### h函数
+### h 函数
 
-根据以上代码，我们可以通过h函数得到一个vnode
+根据以上代码，我们可以通过 h 函数得到一个 vnode
 
 ```javascript
-const vnode = h('div', {class:'test'}, 'hello render')
+const vnode = h('div', { class: 'test' }, 'hello render')
 ```
 
 打印当前的 vnode,可以得到以下内容
@@ -237,13 +237,13 @@ const vnode = h('div', {class:'test'}, 'hello render')
 ```json
 {
   // 当前节点类型
-  type:"div",
+  "type": "div",
   // 是否是一个 VNode 对象
-  __v_isVNode : true,
+  "__v_isVNode": true,
   // 当前节点的属性
-  props: {class: 'test'},
+  "props": { "class": "test" },
   // 它的子节点
-  children: "hello render"
+  "children": "hello render"
 }
 ```
 
@@ -251,7 +251,7 @@ const vnode = h('div', {class:'test'}, 'hello render')
 
 [h 函数](https://cn.vuejs.org/guide/extras/render-function.html#creating-vnodes)最多可接收三个参数
 
-1. type: string|Component:  既可以是一个字符串（用于原生元素）也可以是一个 Vue 组件定义
+1. type: string|Component: 既可以是一个字符串（用于原生元素）也可以是一个 Vue 组件定义
 2. props?: object | null: 要传递的 prop
 3. children?: Children | Slot | Slots: 子节点
 
@@ -267,7 +267,7 @@ render(vnode, container)
 
 从以上代码我们可知，render 函数主要接收了两个参数
 
-1. vnode: 虚拟节点树或者叫做 虚拟DOM树，两者叫法皆可
+1. vnode: 虚拟节点树或者叫做 虚拟 DOM 树，两者叫法皆可
 2. container：承载的容器。真实节点渲染的位置
 
 通过 render 函数，我们可以：**使用编程式的方式，创建虚拟 DOM 树对应的真实 DOM 树，到指定位置**
@@ -287,14 +287,14 @@ render(vnode, container)
 1. `runtime-core` 与` runtime-dom`的关系，为什么要这么设计
 2. 渲染时，挂载和更新的逻辑处理
 
-### runtime-core 与 runtime-core的关系，为什么要这么设计
+### runtime-core 与 runtime-core 的关系，为什么要这么设计
 
 在 vue 源码中，关于运行时的包主要由两个
 
 1. `packages/runtime-core`：运行时的核心代码
 2. `packages/runtime-dom`:运行时关于浏览器渲染的代码
 
-其中第一个 `runtime-core`  的概念比较好理解，但是`runtime-dom`它是干什么的呢？为什么要单独分出来这样的一个包呢？
+其中第一个 `runtime-core` 的概念比较好理解，但是`runtime-dom`它是干什么的呢？为什么要单独分出来这样的一个包呢？
 
 `runtime-dom`中包含了相关的一些 dom 操作函数，这样做的一个主要目的的进行逻辑抽离，对于 vue 而言，它的主要目的有两种：**浏览器渲染**、**服务器渲染**
 
@@ -302,22 +302,20 @@ render(vnode, container)
 
 所以`runtime-core`只会放一些运行时的核心代码，而不会把平台相关操作放进来。当我们需要对浏览器进行操作的时候，可以吧浏览器的相关操作当做参数传入，如果需要其他平台的操作，就把其他平台的操作对象传入即可。
 
-本质就是为了针对不同的宿主环境，使用不同的API
+本质就是为了针对不同的宿主环境，使用不同的 API
 
 ### 渲染时，挂载和更新的逻辑处理
-
-
 
 ## 06：总结
 
 在本章中，我们掌握了开发 `runtime`之前的一些必备知识
 
-通过本章的内容，我们可知整个`runtime`  核心的方法有两个
+通过本章的内容，我们可知整个`runtime` 核心的方法有两个
 
 1. `h函数`
 2. `render函数`
 
-那么我们在后面去实现` runtime `时，也会以这两个函数为核心进行实现
+那么我们在后面去实现`runtime`时，也会以这两个函数为核心进行实现
 
 即：先实现 `h` 函数，在实现 `render` 函数
 
