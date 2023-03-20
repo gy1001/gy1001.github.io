@@ -228,6 +228,19 @@
    // @vue/shared
    export const isFunction = (val: unknown): val is Function => typeof val === 'function'
    
+   // packages/reactivity/src/effect.ts
+   import { ComputedRelImpl } from './computed'
+   export class ReactiveEffect<T = any> {
+     computed?: ComputedRelImpl<T> // 新增加
+     constructor(public fn: () => T) {
+       this.fn = fn
+     }
+     run() {
+       activeEffect = this
+       return this.fn()
+     }
+   }
+   
    //computed.ts
    import { isFunction } from "@vue/shared"
    import { Dep } from './dep'
@@ -273,24 +286,24 @@
 3. 创建测试实例`packages/vue/example/reactive/computed.html`
 
    ```html
-     <script>
-       const { reactive, effect, computed } = Vue
-       const obj = reactive({
-         name: '孙悟空',
-         age: 80
-       })
+   <script>
+     const { reactive, effect, computed } = Vue
+     const obj = reactive({
+       name: '孙悟空',
+       age: 80
+     })
    
-       const computedObj = computed(() => {
-         return '姓名：' + obj.name
-       })
+     const computedObj = computed(() => {
+       return '姓名：' + obj.name
+     })
    
-       effect(() => {
-         document.getElementById('app').innerText = computedObj.value
-       })
-       setTimeout(() => {
-         obj.name = '猪八戒'
-       }, 2000)
-     </script>
+     effect(() => {
+       document.getElementById('app').innerText = computedObj.value
+     })
+     setTimeout(() => {
+       obj.name = '猪八戒'
+     }, 2000)
+   </script>
    ```
 
 4. 运行浏览器，可以看到数据被成功渲染，此时数据还不是响应式的，所以 2s后的试图数据并不会发生变化
@@ -340,6 +353,9 @@
 1. 在`ComputedRefImpl`类中添加相关属性
 
    ```typescript
+   // 新增引入 triggerRefValue
+   import { trackRefValue, triggerRefValue } from './ref'
+   
    export class ComputedRelImpl<T> {
      public dep?: Dep = undefined
      private _value!: T
@@ -513,7 +529,7 @@
 想要解决这个死循环问题，其实比较简单，我们只需要在`packages/reactivity/src/effect.ts`中的`triggerEffects`中修改如下代码
 
 ```typescript
-export function triggerEffets(deps: Dep) {
+export function triggerEffects(deps: Dep) {
   // 依赖项目集合是否是数组，不是就变为一个数据，
   const effects = isArray(deps) ? deps : [...deps]
   // 使用两个 for  循环，来顺序执行相关依赖即可
@@ -681,11 +697,11 @@ watch(() => obj.name, (value, oldValue) => {
 
 在以上代码中
 
-1. 首先通过 reactive 函数构建了响应性的实例
-2. 然后触发 watch
-3. 最后触发 proxy 的 setter
+1. 首先通过`reactive` 函数构建了响应性的实例
+2. 然后触发 `watch`
+3. 最后触发 `proxy` 的 `setter`
 
-摒弃掉之前熟悉的 reactiv，我们从 watch  函数开始追踪
+摒弃掉之前熟悉的 `reactiv`，我们从`watch` 函数开始追踪
 
 ### watch 函数
 
@@ -814,29 +830,29 @@ watch(() => obj.name, (value, oldValue) => {
 
 由此以上代码可知
 
- 	1. job 函数的主要作用其实就是有两个
- 	 	1. 拿到 newValue 和 OldValue
- 	 	2. 触发 fn 函数执行
+1. `job` 函数的主要作用其实就是有两个
+   1. 拿到 `newValue` 和 `OldValue`
+   2. 触发 `fn 函数`执行
 
 ### 总结
 
-到目前为止，整个 watch 的逻辑就已经全部理清楚了。整体分为了 4 大块
+到目前为止，整个 `watch` 的逻辑就已经全部理清楚了。整体分为了 4 大块
 
-1. watch 函数本身
-2. reactive  中的 setter
-3. flushJobs
-4. job
+1. `watch` 函数本身
+2. `reactive`  中的 `setter`
+3. `flushJobs`
+4. `job`
 
-整个 watch 还是比较复杂的，主要是因为 vue 内部做了很多的**兼容处理**，使代码的复杂度上升了好几个台阶，我们自己去实现的时候**就会简单很多的**
+整个 `watch` 还是比较复杂的，主要是因为 `vue` 内部做了很多的**兼容处理**，使代码的复杂度上升了好几个台阶，我们自己去实现的时候**就会简单很多的**
 
 ## 08：框架实现：深入 scheduler 调度系统实现机制
 
-经过了 computed 的代码和 watch 的代码之后，其实我们可以发现，在这两块代码中包含了同样的一个概念：**调度器scheduler**.完整的说，我们应该叫他：**调度系统**
+经过了 `computed` 的代码和 `watch` 的代码之后，其实我们可以发现，在这两块代码中包含了同样的一个概念：**调度器scheduler**.完整的说，我们应该叫他：**调度系统**
 
 整个调度系统其实包含两个部分来实现
 
-1. lazy: 懒执行
-2. scheduler:调度器
+1. `lazy: 懒执行`
+2. `scheduler:调度器`
 
 ### 懒执行
 
@@ -848,7 +864,7 @@ if(!options || !options.lazy){
 }
 ```
 
-这段代码比较简单，其实就是如果存在 options.lazy 则**不立即**执行 `run 函数`
+这段代码比较简单，其实就是如果存在 `options.lazy` 则**不立即**执行 `run 函数`
 
 修改`packages/reactivity/src/effect.ts`文件（vue-next-mini项目中），修改 effect 函数
 
@@ -860,7 +876,7 @@ export interface ReactiveEffectOptions {
 // 增加第二个参数，判断如果传入的 lazy  有值并且为 true  就不立即执行
 export function effect<T = any>(fn: () => T, options?: ReactiveEffectOptions) {
   const _effect = new ReactiveEffect(fn)
-  if (!options || options.lazy) {
+  if (!options || !options.lazy) {
     _effect.run()
   }
 }
@@ -879,7 +895,7 @@ export function effect<T = any>(fn: () => T, options?: ReactiveEffectOptions) {
       console.log(obj.count)
     },
     {
-      lazy: false
+      lazy: true
     }
   )
   obj.count = 2
@@ -887,18 +903,18 @@ export function effect<T = any>(fn: () => T, options?: ReactiveEffectOptions) {
 </script>
 ```
 
-运行浏览器可以看到，只有 代码结束   被打印出来,说明 是懒执行的
+运行浏览器可以看到，只有 `代码结束`  被打印出来,说明 是懒执行的
 
 ### 调度器
 
 调度器比懒执行要稍微复杂一些，整体的作用分为两块
 
-1. 控制执行顺序
-2. 控制执行规则
+1. **控制执行顺序**
+2. **控制执行规则**
 
 #### 控制执行顺序
 
-我们先来看一个 vue3 的官网的例子，创建测试实例
+我们先来看一个 `vue3` 的官网的例子，创建测试实例
 
 ```javascript
 const { reactive, effect } = Vue
@@ -923,7 +939,7 @@ export function effect<T = any>(fn: () => T, options?: ReactiveEffectOptions) {
   if (options) {
     extend(_effect, options) // 增加合并代码
   }
-  if (!options || options.lazy) {
+  if (!options || !options.lazy) {
     _effect.run()
   }
 }
@@ -945,7 +961,7 @@ export const extend = Object.assign
       console.log(obj.count)
     },
     {
-      // lazy: false
+      // lazy: true
       scheduler: () => {
         setTimeout(() => {
           console.log(obj.count)
@@ -1107,7 +1123,21 @@ export function flushPreFlushCbs() {
        effect.stop()
      }
    }
-   
+   // /packages/reactivity/src/effect.ts
+   export class ReactiveEffect<T = any> {
+     computed?: ComputedRelImpl<T>
+     constructor(public fn: () => T, public scheduler: EffectScheduler | null = null) {
+       this.fn = fn
+     }
+     run() {
+       activeEffect = this
+       return this.fn()
+     }
+   	// 新增加
+     stop() {
+       console.log("TODO ReactiveEffect.stop")
+     }
+   }
    
    // reactivity/src/reactive.ts
    export const enum ReactiveFlags {
@@ -1130,7 +1160,17 @@ export function flushPreFlushCbs() {
    export const EMPTY_OBJ: { readonly [key: string]: any } = {}
    ```
 
-2. 修改测试实例，代码如下
+2. 导出函数
+
+   ```typescript
+   // packages/runtime-core/src/index.ts
+   export { watch } from "./apiWatch"
+   
+   // packages/vue/src/index.ts
+   export { watch } from "@vue/runtime-core"
+   ```
+
+3. 修改测试实例，代码如下
 
    ```html
    <script>
@@ -1157,11 +1197,11 @@ export function flushPreFlushCbs() {
    </script>
    ```
 
-3. 打印效果如下
+4. 打印效果如下
 
    ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/aab004440c7046469bd8c9d9e24bce76~tplv-k3u1fbpfcp-watermark.image?)
 
-4. 但是 2s 后，watch  函数并没有被触发，这是为什么呢？
+5. 但是 2s 后，`watch`  函数并没有被触发，这是为什么呢？
 
 ## 10：问题分析：watch 下的依赖收集原则
 

@@ -297,6 +297,9 @@
      }
    }
    
+   // @vue/shared
+   export const isString = (val: unknown): val is string => typeof val === 'string'
+   
    // vnode.ts
    import { isArray, isString } from '@vue/shared'
    import { ShapeFlags } from 'packages/shared/src/shapeFlags'
@@ -564,19 +567,456 @@ export function normalizeChildren(vnode: VNode, children?: unknown) {
 
 > 我们这里**不考虑**组件是函数的情况，因为这个比较少见
 
-我们可以直接利用 `h 函数`+ `render 函数`渲染出一个基本的组件
+我们可以直接利用 `h 函数`+ `render 函数`渲染出一个基本的组件，在 `vue-next-3.2.37/packages/vue/examples/mine/h.html`，内容如下
 
+```html
+<script>
+  const { h, render } = Vue
+  const component = {
+    render() {
+      const vnode1 = h('div', '这是一个component')
+      console.log(vnode1)
+      return vnode1
+    }
+  }
+  const vnode2 = h(component)
+  console.log(vnode2)
+  render(vnode2, document.querySelector('#app'))
+</script>
+```
 
+运行到浏览器，可以在界面中看到相关文字**这是一个component**
+
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4f1a662943364d4d874a433c47e4cf7e~tplv-k3u1fbpfcp-watermark.image?)
+
+注意查看两个打印结果中的 type, 第一个打印结果(对应代码：`console.log(vnode2)`)是一个对象，展开如下
+
+![image-20230320150715758](/Users/gaoyuan/Library/Application Support/typora-user-images/image-20230320150715758.png)
+
+所以，`compoent 组件`节点与之前的标签节点的几个不同点
+
+1. **type** 不同，一个是对象，一个是字符串
+2. **shapeFlag** 不同
+3. 其他的相同
+
+思考：那么我们可不可以直接使用一个`VNode节点`来直接调用`render`，而跳过 h函数的调用呢，
+
+答案是可以的，**因为本质上 h函数返回的是一个 VNode 节点**
+
+我们修改上述测试代码如下
+
+```html
+<script>
+  const { h, render } = Vue
+  const component = {
+    render() {
+      // const vnode1 = h('div', '这是一个component')
+      // console.log(vnode1)
+      // return vnode1
+      return {
+        __v_isVNode: true,
+        type: 'div',
+        children: '这是一个component',
+        shapeFlag: 9
+      }
+    }
+  }
+  // const vnode2 = h(component)
+  const vnode2 = {
+    __v_isVNode: true,
+    type: component,
+    children: '',
+    shapeFlag: 4
+  }
+  console.log(vnode2)
+  render(vnode2, document.querySelector('#app'))
+</script>
+```
+
+重新打开浏览器，渲染页面效果一致
 
 ## 07：框架实现：处理组件的 VNode
 
+上一节中我们说到 h 函数最终返回的是一个 VNode 节点，而对于**组件类型**，项目中没有做处理，所以我们在`vue-next-mini/packages/runtime-core/src/vnode.ts`中修改代码如下
+
+```typescript
+export function createVNode(type, props, children): VNode {
+  const shapeFlag = isString(type) ? ShapeFlags.ELEMENT : 
+  	isObject(type) ? ShapeFlags.STATEFUL_COMPONENT : 0 // 增加判断：如果是对象，类型返回：STATEFUL_COMPONENT = 1 << 2, 有状态（响应数据）组件
+  return createBaseVNode(type, props, children, shapeFlag)
+}
+```
+
+1. 新建`packages/vue/examples/run-time/h-component.html`文件，内容如下
+
+   ```html
+   <script>
+     const { h } = Vue
+     const component = {
+       render() {
+         const vnode1 = h('div', '这是一个component')
+         console.log(vnode1)
+         return vnode1
+       }
+     }
+     const vnode2 = h(component)
+     console.log(vnode2)
+   </script>
+   ```
+
+2. 运行该实例，可以看到如下打印结果
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ec6bded486c4415882bedc20c8935d5d~tplv-k3u1fbpfcp-watermark.image?)
+
+3. 注意：`normalizeChildren`函数中需要处理`children`为 null 或者 undefinded的情况
+
+   ```typescript
+   export function normalizeChildren(vnode: VNode, children?: unknown) {
+     let type = 0
+     if (children == null) { // 这里需要用双等号 == 
+       children = null
+     } else
+     ...
+   }
+   ```
+
 ## 08：源码阅读：h函数，跟踪 Text、Comment、Fragment  场景
+
+当组件类型处理完成后，然后我们接下来看下`Text`、`Component`、`Fragement`这三个场景下的`VNode`
+
+### Text
+
+Text 标记为**文本**，即：纯文本的 VNode
+
+创建`vue-next-3.2.37/packages/vue/examples/run-time/h-other.html`测试实例，查看`Text`的打印
+
+```html
+ <script>
+  const { h, render, Text, Comment, Fragment } = Vue
+  const vnodeText = h(Text, '这是一个文本节点')
+  console.log(vnodeText)
+  // 可以通过 render 进行渲染
+  render(vnodeText, document.querySelector('#app'))
+</script>
+```
+
+查看打印
+
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a1464fc7fa2a4a29bd99e8c7d43f18cf~tplv-k3u1fbpfcp-watermark.image?)
+
+查看结果，对于 `Text` 类型，我们看到`type` 是一个 `Symbol` 类型的，`shapeFlag`是 8
+
+### Comment
+
+修改测试实例代码如下
+
+```html
+<script>
+    const { h, render, Text, Comment, Fragment } = Vue
+    const vnodeComment = h(Comment, '这是一段注释')
+    console.log(vnodeComment)
+    render(vnodeComment, document.querySelector('#app'))
+  </script>
+```
+
+查看打印
+
+![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d134c83a24b549069808358a3ae4071d~tplv-k3u1fbpfcp-watermark.image?)
+
+可以看到 `Comment` 类型的节点 `type` 是一个`Symbol(Comment)`，`shapeFlag`是 8
+
+### Fragment
+
+修改测试示例
+
+```html
+<script>
+  const { h, render, Text, Comment, Fragment } = Vue
+  const vnodeFragment = h(Fragment, '这是一个 Fragment')
+  console.log(vnodeFragment)
+  render(vnodeFragment, document.querySelector('#app'))
+</script>
+```
+
+
+
+查看打印
+
+ ![image-20230320160915228](/Users/gaoyuan/Library/Application Support/typora-user-images/image-20230320160915228.png)
+
+可以看到 `Fragment` 类型的节点 `type` 是一个`Symbol(Fragment)`，`shapeFlag`是 8
+
+注意：`Fragement`类型渲染出来与文本节点类型不一致，如下
+
+![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9d76ebf5a5ac4b64966decb42ae1940e~tplv-k3u1fbpfcp-watermark.image?)
+
+
 
 ## 09: 框架实现：实现剩余场景：Text、Comment、Fragment
 
+经过上一小节的学习，我们知道这三种类型其实只是 type 类型的不同而已
+
+1. 修改`vue-next-mini/packages/runtime-core/src/vnode.ts`,新增如下内容
+
+   ```typescript
+   export const Fragment = Symbol('Fragment')
+   export const Text = Symbol('Text')
+   export const Comment = Symbol('Comment')
+   ```
+
+2. 在`runtime-core/index.ts`文件中进行导出
+
+   ```typescript
+   export { Comment, Text, Fragment } from './vnode'
+   ```
+
+3. 在`packages/vue/src/index.ts`中也进行导出
+
+   ```typescript
+   export { Text, Comment, Fragment } from "@vue/runtime-core"
+   ```
+
+4. 创建测试示例代码文件`packages/vue/examples/run-time/h-other.html`
+
+   ```html
+   <script>
+     const { h, Text, Comment, Fragment } = Vue
+     const vnodeText = h(Text, '这是一个文本节点')
+     console.log('vnodeText', vnodeText)
+     const vnodeComment = h(Comment, '这是一段注释')
+     console.log('vnodeCommentv', vnodeComment)
+     const vnodeFragment = h(Fragment, '这是一个 Fragment')
+     console.log('vnodeFragment', vnodeFragment)
+   </script>
+   ```
+
+5. 查看打印结果
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f029ceb43cfa412a9353e4f08236784a~tplv-k3u1fbpfcp-watermark.image?)
+
 ## 10：源码阅读：对 class 和 style 的增强处理
 
+Vue 中对 [class和style](https://cn.vuejs.org/guide/essentials/class-and-style.html#class-and-style-bindings)做了专门的增强处理，使其可以支持 `Object` 和 `Array`
+
+比如说，我们可以写如下测试案例`packages/vue/examples/mine/h-element-class.html`
+
+```html
+<script>
+  const { h, render } = Vue
+  // <div :class="{ red: true }"></div>
+  const vnode = h('div', { class: { red: true } }, '增强的class')
+  render(vnode, document.querySelector('#app'))
+</script>
+```
+
+这样，我们就可以得到一个 `class: red`的`div`
+
+![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/111be122c9b642bfa444c693b8bd5c25~tplv-k3u1fbpfcp-watermark.image?)
+
+这样的 h函数，最终得到的 `vnode` 如下
+
+![image-20230320170014163](/Users/gaoyuan/Library/Application Support/typora-user-images/image-20230320170014163.png)
+
+在源码处`vue-next-3.2.37/packages/runtime-core/src/vnode.ts`文件中的`createVNode`方法中`if (props) `处增加断点
+
+```typescript
+if (props) {
+  // for reactive or proxy objects, we need to clone it to enable mutation.
+  props = guardReactiveProps(props)!
+  let { class: klass, style } = props
+  if (klass && !isString(klass)) {
+    props.class = normalizeClass(klass)
+  }
+  if (isObject(style)) {
+    // reactive state objects need to be cloned since they are likely to be
+    // mutated
+    if (isProxy(style) && !isArray(style)) {
+      style = extend({}, style)
+    }
+    props.style = normalizeStyle(style)
+  }
+}
+```
+
+1. 此时`props`为`{ class : { red: true } }`,
+
+2. `let { class: klass, style } = props`从中取出 class style 
+
+3. 当前 class 存在并且不是 字符串，所以会进入  `if (klass && !isString(klass))`中，进入`normalizeClass(klass)`函数
+
+4. 进入`normalizeClass`函数：此时 参数 `class`为 `{ red: true}`
+
+   ```typescript
+   export function normalizeClass(value: unknown): string {
+     let res = ''
+     // 如果此时是字符串，就直接赋值
+     if (isString(value)) {
+       res = value
+     } else if (isArray(value)) {
+       // 如果是 数组，递归调用，并拼接到 res 变量上
+       for (let i = 0; i < value.length; i++) {
+         const normalized = normalizeClass(value[i])
+         if (normalized) {
+           res += normalized + ' '
+         }
+       }
+     } else if (isObject(value)) {
+       // 如果是一个对象，遍历这个对象，如果值为 true，就进行 res 变量拼接
+       for (const name in value) {
+         if (value[name]) {
+           res += name + ' '
+         }
+       }
+     }
+     // 去除两端空格后，返回 res
+     return res.trim()
+   }
+   ```
+
+5. 其实对于 style 的处理同上差不多，我们看以下源码
+
+6. 如果 props 中有 style，并且是一个对象，就调用`normalizeStyle`来处理
+
+   注意：如果一个响应式对象，并且不是数组，就需要进行克隆一份
+
+   ```typescript
+    if (props) {
+       props = guardReactiveProps(props)!
+       let { class: klass, style } = props
+       if (klass && !isString(klass)) {
+         props.class = normalizeClass(klass)
+       }
+       // 处理 style 的逻辑
+       if (isObject(style)) {
+         // reactive state objects need to be cloned since they are likely to be mutated
+         if (isProxy(style) && !isArray(style)) {
+           style = extend({}, style)
+         }
+         props.style = normalizeStyle(style)
+       }
+     }
+   ```
+
+7. 进入`normalizeStyle`函数
+
+   ```typescript
+   export function normalizeStyle(
+     value: unknown
+   ): NormalizedStyle | string | undefined {
+     // 如果是数组
+     if (isArray(value)) {
+       const res: NormalizedStyle = {}
+       for (let i = 0; i < value.length; i++) {
+         const item = value[i]
+         const normalized = isString(item)
+           ? parseStringStyle(item)
+           : (normalizeStyle(item) as NormalizedStyle)
+         if (normalized) {
+           for (const key in normalized) {
+             res[key] = normalized[key]
+           }
+         }
+       }
+       return res
+     } else if (isString(value)) {
+       // 如果是字符串，就直接返回
+       return value
+     } else if (isObject(value)) {
+       // 如果是对象也直接返回
+       return value
+     }
+   }
+   
+   const propertyDelimiterRE = /:(.+)/
+   const listDelimiterRE = /;(?![^(]*\))/g
+   export function parseStringStyle(cssText: string): NormalizedStyle {
+     const ret: NormalizedStyle = {}
+     // 按照正则进行分割然后遍历
+     cssText.split(listDelimiterRE).forEach(item => {
+       if (item) {
+         // 按照正则进行分割
+         const tmp = item.split(propertyDelimiterRE)
+         tmp.length > 1 && (ret[tmp[0].trim()] = tmp[1].trim())
+       }
+     })
+     return ret
+   }
+   ```
+
 ## 11：框架实现：完成虚拟节点下的 class 和 style 的增强
+
+本章节我们就来实现一下 `class 和 style` 的增强
+
+1. 打开`vue-next-mini/packages/runtime-core/src/vnode.ts`文件，修改如下
+
+   ```typescript
+   import { normalizeClass } from '@vue/shared'
+   export function createVNode(type, props, children): VNode {
+     // 新增处理 props 逻辑
+     if (props) {
+       let { class: klass, style } = props
+       // 新增处理 class 逻辑
+       if (klass && !isString(klass)) {
+         props.class = normalizeClass(klass)
+       }
+     }
+     
+     const shapeFlag = isString(type) ? ShapeFlags.ELEMENT : isObject(type)
+       ? ShapeFlags.STATEFUL_COMPONENT : 0
+     return createBaseVNode(type, props, children, shapeFlag)
+   }
+   ```
+
+2. 新建`vue-next-mini/packages/shared/src/normalProp.ts`文件，内容如下
+
+   ```typescript
+   import { isArray, isObject, isString } from './index'
+   
+   export function normalizeClass(value: unknown): string {
+     let res = ""
+     // 如果是字符串，直接返回
+     if (isString(value)) {
+       res = value
+     } else if (isArray(value)) {
+       // 如果是数组
+       for (let index = 0; index < value.length; index++) {
+         const normalized = normalizeClass(value[index])
+         if (normalized) {
+           res += normalized + " "
+         }
+       }
+     } else if (isObject(value)) {
+       // 如果是对象
+       for (const key in (value as object)) {
+         if ((value as object)[key]) {
+           res += key + ' '
+         }
+       }
+     }
+     return res.trim()
+   }
+   ```
+
+3. 新建测试示例`vue-next-mini/packages/vue/examples/run-time/h-component-class.html`,内容如下
+
+   ```html
+   <script>
+     const { h } = Vue
+     // <div :class="{ red: true }"></div>
+     const vnode = h(
+       'div',
+       { class: [{ red: true, blue: false }, { white: true }] },
+       '增强的class'
+     )
+     console.log(vnode)
+   </script>
+   ```
+
+4. 打开浏览器，打印结果如下
+
+   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0a02cfb7e4a94081a1f760813baf34f4~tplv-k3u1fbpfcp-watermark.image?)
+
+5. 由此可见，`class` 的处理逻辑完成了
 
 ## 12： 总结
 
