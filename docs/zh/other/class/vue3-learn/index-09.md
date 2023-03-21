@@ -6,7 +6,7 @@
 
 根据上一章中的描述我们知道，在 `packages/runtime-core/src/renderer.ts`中存放渲染相关的内容
 
-`Vue`  提供了一个 `baseCreateRenderer`  的函数，该函数会返回一个对象，我们把这个返回的这个对象叫做 `renderer 渲染器`
+`Vue` 提供了一个 `baseCreateRenderer` 的函数，该函数会返回一个对象，我们把这个返回的这个对象叫做 `renderer 渲染器`
 
 对于该对象而言，提供了三个方法
 
@@ -14,7 +14,7 @@
 2. `hydrate: 服务端渲染相关`
 3. `createApp：构建vue项目的开始`
 
-查看`baseCreateRenderer`的代码，我们也可以发现整个 `baseCreateRenderer`  包含了2000行代码，可见整个渲染器是非常复杂的
+查看`baseCreateRenderer`的代码，我们也可以发现整个 `baseCreateRenderer` 包含了 2000 行代码，可见整个渲染器是非常复杂的
 
 所以说，对于我们的实现而言，还是和之前一样，我们将谨遵**没有使用就当不存在**和**最少代码的实现逻辑**这两个核心思想，类构建整个 `render` 的过程
 
@@ -22,7 +22,7 @@
 
 那么明确好了这些内容之后 ，我们下面就来进入渲染器的世界吧
 
-## 02: 源码阅读：初见render函数，ELEMENT节点的挂载操作
+## 02: 源码阅读：初见 render 函数`，ELEMENT 节点的挂载操作
 
 在上一小节，我们实现过一个这样的测试案例：`packages/vue/examples/mine/runtime/h-element.html`
 
@@ -41,9 +41,9 @@
 render(vnode, document.querySelector('#app'))
 ```
 
-我们可以在 `packages/runtime-core/src/renderer.ts`的第 2327行，增加 `debugger`
+我们可以在 `packages/runtime-core/src/renderer.ts`的第 2327 行，增加 `debugger`
 
-1. 进入 `render 函数` 
+1. 进入 `render 函数`
 
 2. `render 函数`接收三个参数
 
@@ -59,13 +59,13 @@ render(vnode, document.querySelector('#app'))
 
    3. 执行 `switch case 到 if(shapeFlag & ShapeFlags.ELEMENT )`
 
-      1. 我们知道此时 `shapeFlag`  为 9，转换为二进制
+      1. 我们知道此时 `shapeFlag` 为 9，转换为二进制
 
          ```javascript
          00000000 00000000 00000000 00001001
          ```
 
-      2. `ShapeFlags.ELEMENT` 的值为1，转换为二进制是
+      2. `ShapeFlags.ELEMENT` 的值为 1，转换为二进制是
 
          ```javascript
          00000000 00000000 00000000 00000001
@@ -89,15 +89,15 @@ render(vnode, document.querySelector('#app'))
 
       3. 触发 `mountElement` 方法，即**挂载方法**
 
-         1. 进入 `mountElemen`  方法
+         1. 进入 `mountElemen` 方法
 
-         2. 进入 `el = vnode.el = hostCreateElement(...)`  该方法为创建 Element 的方法
+         2. 进入 `el = vnode.el = hostCreateElement(...)` 该方法为创建 Element 的方法
 
-            1. 进入该方法，可以发现该方法指向 `packages/runtime-core/src/nodeOps.ts`  中的 `createElement`  方法
+            1. 进入该方法，可以发现该方法指向 `packages/runtime-core/src/nodeOps.ts` 中的 `createElement` 方法
             2. 不知道大家还记不记得，之前我们说过：`vue` 为了保持兼容性，把所有和浏览器相关的 `API `封装到了 `runtime-core` 中
-            3. 在 `createElement` 中的代码非常简单就是通过 `document.createElement`  方法`创建 dom`，并返回
+            3. 在 `createElement` 中的代码非常简单就是通过 `document.createElement` 方法`创建 dom`，并返回
 
-         3. 此时 `el` 和 `vnode.el`  的值为 `createElement` 生成的 `div 实例`
+         3. 此时 `el` 和 `vnode.el` 的值为 `createElement` 生成的 `div 实例`
 
          4. 接下来处理 子节点
 
@@ -108,9 +108,9 @@ render(vnode, document.querySelector('#app'))
             1. 进入该方法，同样指向 `packages/runtime-dom/src/nodeOps.ts`下的 `setElementText`方法
             2. 里面的代码非常简单，只有一行 `el.textContext = text`
 
-         7. 那么至此 `div` 已经生成，并且 `textContent`  存在值，如果此时触发 `div 的 outerHTML`方法，得到 `<div>hello render</div>`
+         7. 那么至此 `div` 已经生成，并且 `textContent` 存在值，如果此时触发 `div 的 outerHTML`方法，得到 `<div>hello render</div>`
 
-         8. 那么此时我们只缺少 `class` 属性了，所以接下来进入 `props`  的处理
+         8. 那么此时我们只缺少 `class` 属性了，所以接下来进入 `props` 的处理
 
          9. 执行 `for 循环`，进入 `hostPatchProp `方法，此时`key = class`,`props = { class: "text"}`
 
@@ -123,14 +123,20 @@ render(vnode, document.querySelector('#app'))
                1. 进入 `patchClass`，我们可以看到它内部的代码也比较简单，主要分成了三种情况处理
 
                   ```typescript
-                  export function patchClass(el: Element, value: string | null, isSVG: boolean) {
+                  export function patchClass(
+                    el: Element,
+                    value: string | null,
+                    isSVG: boolean
+                  ) {
                     // directly setting className should be faster than setAttribute in theory
                     // if this is an element during a transition, take the temporary transition
                     // classes into account.
                     const transitionClasses = (el as ElementWithTransition)._vtc
                     if (transitionClasses) {
                       value = (
-                        value ? [value, ...transitionClasses] : [...transitionClasses]
+                        value
+                          ? [value, ...transitionClasses]
+                          : [...transitionClasses]
                       ).join(' ')
                     }
                     //  以下三种方式
@@ -146,7 +152,7 @@ render(vnode, document.querySelector('#app'))
 
                2. 完成 `class 设定`
 
-         10. 当执行完 `hostPatchProp`  之后，如果此时触发 `div`的`outerHTML`方法，将得到 `<div class="test"\> hello render</div>`
+         10. 当执行完 `hostPatchProp` 之后，如果此时触发 `div`的`outerHTML`方法，将得到 `<div class="test"> hello render</div>`
 
          11. 现在` dom` 已经构建好了，最后就只剩下 **挂载**操作了
 
@@ -161,15 +167,15 @@ render(vnode, document.querySelector('#app'))
 
       4. 至此，整个 `patchElement` 执行完成
 
-4. 执行` container._vnode = vnode `为**旧节点赋值**
+4. 执行`container._vnode = vnode`为**旧节点赋值**
 
 由以上代码可知，
 
 1. 整个挂在 `Element | Text_Children` 的过程可以分为以下步骤
    1. 触发 `patch` 方法
    2. 根据 `shapeFlag` 的值，判断触发 `processElement` 方法
-   3. 在 `processElement` 中，根据**是否存在 就VNode**来判定触发**挂载**还是**更新**的操作
-      1. 挂载中分成了4大步
+   3. 在 `processElement` 中，根据**是否存在 就 VNode**来判定触发**挂载**还是**更新**的操作
+      1. 挂载中分成了 4 大步
       2. 处理 `textContent`
       3. 处理 `patch`
       4. 挂载 `dom`
@@ -196,4 +202,3 @@ render(vnode, document.querySelector('#app'))
 ### renderer 渲染器本身
 
 1. 创建`packages/runtime-core/src/renderer.ts`文件
-
