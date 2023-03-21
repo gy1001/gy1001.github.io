@@ -197,8 +197,217 @@ render(vnode, document.querySelector('#app'))
 1. `renderer` 渲染器本身，我们需要构建出 `baseCreateRenderer` 方法
 2. 我们知道所有和 `dom` 的操作都是与`core` 分离的，而和 `dom` 的操作包含了两个部分
    1. `Element操作`：比如 `insert`、 `createElement`等，这些将被放入到 `runtime-dom` 中
-   2. `props操作`：比如设置类名，这些也将被放入到 `runtime-dom` 中
+   2. `props操作`：比如**设置类名**，这些也将被放入到 `runtime-dom` 中
 
 ### renderer 渲染器本身
 
 1. 创建`packages/runtime-core/src/renderer.ts`文件
+
+   ```typescript
+   import { ShapeFlags } from 'packages/shared/src/shapeFlags'
+   import { Fragment, Text, Comment } from './vnode'
+   
+   export interface RendererOptions {
+     /**
+      * 未指定的 element 的 props 打补丁
+      */
+     patchProp(el: Element, key: string, preValue: any, nextValue: any): void
+     /**
+      * 未指定的 element 设置 textContent
+      */
+     setElementText(node: Element, text: string): void
+     /**
+      * 插入指定的 el 到 parent 中，anchor 表示插入的位置，即：锚点
+      */
+     insert(el, parent: Element, anchor?): void
+     /**
+      * 创建 element
+      */
+     createElement(type: string)
+   }
+   
+   export function createRenderer(options: RendererOptions) {
+     return baseCreateRender(options)
+   }
+   
+   export function baseCreateRender(options: RendererOptions) {
+     const {
+       createElement: hostCreateElement,
+       insert: hostInsert,
+       patchProp: hostPatchProp,
+       setElementText: hostSetElementText
+     } = options
+     
+     const processElement = (oldVNode, newVNode, container, anchor) => {
+       if (oldVNode == null) {
+         // 挂载节点
+         mountElement(newVNode, container, anchor)
+       } else {
+         //  更新节点
+       }
+     }
+     
+     const mountElement = (vnode, container, anchor) => {
+       const { type, props, children, shapeFlag } = vnode
+       //  1. 创建 element
+       const el = (vnode.el = hostCreateElement(type))
+       //  2. 设置文本
+       if (shapeFlag && ShapeFlags.TEXT_CHILDREN) {
+         hostSetElementText(el, children)
+       } else if (shapeFlag && ShapeFlags.ARRAY_CHILDREN) {
+       }
+       //  3. 设置 props
+       if (props) {
+         for (const key in props) {
+           hostPatchProp(el, key, null, props[key])
+         }
+       }
+       //  4. 插入
+       hostInsert(el, container, anchor)
+     }
+     
+     const patch = (oldVNode, newVNode, container, anchor) => {
+      	if (oldVNode === newVNode) {
+         return
+       }
+       const { type, shapeFlag } = newVNode
+       switch (type) {
+         case Text:
+           break
+         case Comment:
+           break
+         case Fragment:
+           break
+         default:
+           if (shapeFlag && ShapeFlags.ELEMENT) {
+             processElement(oldVNode, newVNode, container, anchor)
+           } else if (shapeFlag & ShapeFlags.COMPONENT) {
+          		// TODO   
+           }
+           break
+       }
+     }
+    	const render = (vnode, container) => {
+      	if(vnode === null){
+         // TODO 卸载
+       }else{
+         // 打补丁
+         patch(container._vnode || null, vnode, container)
+       }
+       container._vnode = vnode // 更新旧节点
+   	}
+     return {
+       render
+     }
+   }
+   // packages/runtime-core/src/index.ts 导出 createRenderer 函数
+   export { createRenderer } from './renderer'
+   ```
+
+2. 导出 `render` 函数
+
+   1. 在`/packages/runtime-dom/src/index.ts`下添加如下代码
+
+      ```typescript
+      import { extend } from '@vue/shared'
+      import { createRenderer } from '@vue/runtime-core'
+      import { nodeOps } from './nodeOps'
+      import { patchProp } from './patchProp'
+      
+      export const render = (...args) => {
+        ensureRender().render(...args)
+      }
+      let renderer
+      const rendererOptions = extend({ patchProp }, nodeOps)
+      
+      function ensureRender() {
+        return renderer || (renderer = createRenderer(rendererOptions))
+      }
+      ```
+
+   2. 新建`/packages/runtime-dom/src/nodeOps.ts`文件，代码内容如下
+
+      ```typescript
+      const doc = document
+      export const nodeOps = {
+        insert: (child, parent, anchor) => {
+          parent.insertBefore(child, anchor || null)
+        },
+        createElement: (tag: string): Element => {
+          const el = doc.createElement(tag)
+          return el
+        },
+        setElementText: (el: Element, text: string) => {
+          el.textContent = text
+        }
+      }
+      ```
+
+   3. 新建`packages/runtime-dom/src/patchProp.ts`文件，内容如下
+
+      ```typescript
+      // @vue/shared
+      const ONRE = /^on[^a-z]/
+      export const isOn = (key: string): boolean => ONRE.test(key)
+      
+      // patchProp.ts
+      import { isOn } from '@vue/shared' // 新增加的工具函数，是否以 on 开头
+      import { patchClass } from './modules/class'
+      
+      export const patchProp = (el: Element, key, preValue, nextValue) => {
+        if (key === 'class') {
+          patchClass(el, nextValue)
+        } else if (key === 'style') {
+        } else if (isOn(key)) {
+        } else {
+        }
+      }
+      ```
+
+   4. 新建`packages/runtime-dom/src/modules/class.ts`文件，内容如下
+
+      ```typescript
+      export function patchClass(el: Element, value: string | null,) {
+        if (value === null) {
+          el.removeAttribute('class')
+        } else {
+          // 疑问：这里为什么不用 setAttributes
+          el.className = value
+        }
+      }
+      ```
+
+3. 编写测试示例`packages/vue/examples/run-time/render-element.html`,内容如下
+
+   ```html
+   <script>
+     const { h, render } = Vue
+     const vnode = h('div', { class: 'test' }, 'hello render')
+     render(vnode, document.querySelector('#app'))
+   </script>
+   ```
+
+4. 效果如下
+
+   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b20f48939e8643bc8e7054d16fd8f530~tplv-k3u1fbpfcp-watermark.image?)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
