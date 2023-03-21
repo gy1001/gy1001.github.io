@@ -22,7 +22,7 @@
 
 那么明确好了这些内容之后 ，我们下面就来进入渲染器的世界吧
 
-## 02: 源码阅读：初见 render 函数`，ELEMENT 节点的挂载操作
+## 02: 源码阅读：初见 render 函数，ELEMENT 节点的挂载操作
 
 在上一小节，我们实现过一个这样的测试案例：`packages/vue/examples/mine/runtime/h-element.html`
 
@@ -206,7 +206,7 @@ render(vnode, document.querySelector('#app'))
    ```typescript
    import { ShapeFlags } from 'packages/shared/src/shapeFlags'
    import { Fragment, Text, Comment } from './vnode'
-   
+
    export interface RendererOptions {
      /**
       * 未指定的 element 的 props 打补丁
@@ -225,19 +225,19 @@ render(vnode, document.querySelector('#app'))
       */
      createElement(type: string)
    }
-   
+
    export function createRenderer(options: RendererOptions) {
      return baseCreateRender(options)
    }
-   
+
    export function baseCreateRender(options: RendererOptions) {
      const {
        createElement: hostCreateElement,
        insert: hostInsert,
        patchProp: hostPatchProp,
-       setElementText: hostSetElementText
+       setElementText: hostSetElementText,
      } = options
-     
+
      const processElement = (oldVNode, newVNode, container, anchor) => {
        if (oldVNode == null) {
          // 挂载节点
@@ -246,7 +246,7 @@ render(vnode, document.querySelector('#app'))
          //  更新节点
        }
      }
-     
+
      const mountElement = (vnode, container, anchor) => {
        const { type, props, children, shapeFlag } = vnode
        //  1. 创建 element
@@ -265,9 +265,9 @@ render(vnode, document.querySelector('#app'))
        //  4. 插入
        hostInsert(el, container, anchor)
      }
-     
+
      const patch = (oldVNode, newVNode, container, anchor) => {
-      	if (oldVNode === newVNode) {
+       if (oldVNode === newVNode) {
          return
        }
        const { type, shapeFlag } = newVNode
@@ -282,22 +282,22 @@ render(vnode, document.querySelector('#app'))
            if (shapeFlag && ShapeFlags.ELEMENT) {
              processElement(oldVNode, newVNode, container, anchor)
            } else if (shapeFlag & ShapeFlags.COMPONENT) {
-          		// TODO   
+             // TODO
            }
            break
        }
      }
-    	const render = (vnode, container) => {
-      	if(vnode === null){
+     const render = (vnode, container) => {
+       if (vnode === null) {
          // TODO 卸载
-       }else{
+       } else {
          // 打补丁
-         patch(container._vnode || null, vnode, container)
+         patch(container._vnode || null, vnode, container, null)
        }
        container._vnode = vnode // 更新旧节点
-   	}
+     }
      return {
-       render
+       render,
      }
    }
    // packages/runtime-core/src/index.ts 导出 createRenderer 函数
@@ -313,13 +313,13 @@ render(vnode, document.querySelector('#app'))
       import { createRenderer } from '@vue/runtime-core'
       import { nodeOps } from './nodeOps'
       import { patchProp } from './patchProp'
-      
+
       export const render = (...args) => {
         ensureRender().render(...args)
       }
       let renderer
       const rendererOptions = extend({ patchProp }, nodeOps)
-      
+
       function ensureRender() {
         return renderer || (renderer = createRenderer(rendererOptions))
       }
@@ -339,7 +339,7 @@ render(vnode, document.querySelector('#app'))
         },
         setElementText: (el: Element, text: string) => {
           el.textContent = text
-        }
+        },
       }
       ```
 
@@ -349,11 +349,11 @@ render(vnode, document.querySelector('#app'))
       // @vue/shared
       const ONRE = /^on[^a-z]/
       export const isOn = (key: string): boolean => ONRE.test(key)
-      
+
       // patchProp.ts
       import { isOn } from '@vue/shared' // 新增加的工具函数，是否以 on 开头
       import { patchClass } from './modules/class'
-      
+
       export const patchProp = (el: Element, key, preValue, nextValue) => {
         if (key === 'class') {
           patchClass(el, nextValue)
@@ -367,7 +367,7 @@ render(vnode, document.querySelector('#app'))
    4. 新建`packages/runtime-dom/src/modules/class.ts`文件，内容如下
 
       ```typescript
-      export function patchClass(el: Element, value: string | null,) {
+      export function patchClass(el: Element, value: string | null) {
         if (value === null) {
           el.removeAttribute('class')
         } else {
@@ -375,6 +375,12 @@ render(vnode, document.querySelector('#app'))
           el.className = value
         }
       }
+      ```
+
+   5. `vue/src/index.ts`导出`render`函数
+
+      ```typescript
+      export { render } from '@vue/runtime-dom'
       ```
 
 3. 编写测试示例`packages/vue/examples/run-time/render-element.html`,内容如下
@@ -391,23 +397,99 @@ render(vnode, document.querySelector('#app'))
 
    ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b20f48939e8643bc8e7054d16fd8f530~tplv-k3u1fbpfcp-watermark.image?)
 
+## 04：框架实现：渲染更新，ELEMENT 节点的更新实现
 
+1. 继续完善`render`函数，之前已经完成了挂载节点，接下来继续实现更新节点，`packages/runtime-core/src/renderer.ts`
 
+   ```typescript
+   import { EMPTY_OBJ } from '@vue/shared'
 
+   export function baseCreateRender(options: RendererOptions) {
+     const processElement = (oldVNode, newVNode, container, anchor) => {
+       if (oldVNode == null) {
+         // 挂载节点
+       } else {
+         // 更新节点
+         patchElement(oldVNode, newVNode)
+       }
+     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+     const patchElement = (oldVNode, newVNode) => {
+       const el = (newVNode.el = oldVNode.el)
+       const oldProps = oldVNode.props || EMPTY_OBJ
+       const newProps = newVNode.props || EMPTY_OBJ
+       // 比较新旧节点的 children 进行更新
+       patchChildren(oldVNode, newVNode, el, null)
+       // 比较新旧节点的 属性 props 进行更新
+       patchProps(el, newVNode, oldProps, newProps)
+     }
+     // patchChildren 函数需要分为多种情况
+     const patchChildren = (oldVNode, newVNode, container, anchor) => {
+       const c1 = oldVNode && oldVNode.children
+       const prevShapeFlag = oldVNode ? oldVNode.shapeFlag : 0
+       const c2 = newVNode && newVNode.children
+       const { shapeFlag } = newVNode
+       // 注意：子类 children 有三种可能：text array 或者 没有 children
+       // 1. 当新节点的 children 是 text 类型时
+       // 		1.1 如果 旧节点的 children 是 array 类型时，xxxx
+       // 		1.2 否则，都是字符串类型那个，当前后不相等时候，直接调用 hostSetElementText
+       if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+         if (prevShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+           // TODO 卸载旧子节点
+         }
+         if (c2 !== c1) {
+           // 挂在新子节点的文本即可
+           hostSetElementText(container, c2)
+         }
+       } else {
+         // 2.  否则，新节点的 children 类型不是 text，又分情况
+         //    2.1 当旧节点的 children 类型是 array 类型时
+         // 		 	2.1.1 如果新节点 children 类型也是 array, 需要做 diff 处理
+         //    	2.1.2 否则新节点不是array，也不是 text，直接卸载旧的 children 即可
+         if (prevShapeFlag && ShapeFlags.ARRAY_CHILDREN) {
+           if (shapeFlag && ShapeFlags.ARRAY_CHILDREN) {
+             // TODO Diff
+           } else {
+             // TODO 卸载式操作
+           }
+         } else {
+           // 2.2 否则，新节点 是 text 或者空
+           // prev children was text OR null
+           // new children is array OR null
+           // 如果 旧节点是 text 类型，那么删除 旧节点 text 内容即可
+           if (prevShapeFlag && ShapeFlags.TEXT_CHILDREN) {
+             // 删除纠结点的text
+             hostSetElementText(container, '')
+           }
+           // 如果 新节点 children 是 array 类型
+           if (shapeFlag && ShapeFlags.ARRAY_CHILDREN) {
+             // TODO 单独新子节点的挂载
+           }
+         }
+       }
+     }
+     // 比较新旧接节点的 props
+     const patchProps = (el: Element, vnode, oldProps, newProps) => {
+       // 如果前后节点 props 不相等
+       if (oldProps !== newProps) {
+         // 遍历新节点，如果 旧节点中的值与新节点的值不相等，旧更新这个 key
+         for (const key in newProps) {
+           const next = newProps[key]
+           const prev = oldProps[key]
+           if (next !== prev) {
+             hostPatchProp(el, key, prev, next)
+           }
+         }
+         // 如果旧节点不是 空对象，
+         if (oldProps !== EMPTY_OBJ) {
+           // 遍历旧节点，如果在新节点中这个 key 不存在，就更新此属性 key 为null
+           for (const key in oldProps) {
+             if (!(key in newProps)) {
+               hostPatchProp(el, key, oldProps[key], null)
+             }
+           }
+         }
+       }
+     }
+   }
+   ```
