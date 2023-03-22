@@ -403,7 +403,7 @@ render(vnode, document.querySelector('#app'))
 
    ```typescript
    import { EMPTY_OBJ } from '@vue/shared'
-
+   
    export function baseCreateRender(options: RendererOptions) {
      const processElement = (oldVNode, newVNode, container, anchor) => {
        if (oldVNode == null) {
@@ -413,7 +413,7 @@ render(vnode, document.querySelector('#app'))
          patchElement(oldVNode, newVNode)
        }
      }
-
+   
      const patchElement = (oldVNode, newVNode) => {
        const el = (newVNode.el = oldVNode.el)
        const oldProps = oldVNode.props || EMPTY_OBJ
@@ -493,3 +493,82 @@ render(vnode, document.querySelector('#app'))
      }
    }
    ```
+
+## 05：框架实现：处理新旧节点不同元素时，ELEMENT节点的更新
+
+> 经过源码查看，我们知道处理新旧不同节点的时候，我们是先删除旧节点，然后挂载新节点实现的
+
+1. 先到 renderer 函数里面，找到其中的 patch函数
+
+   ```typescript
+   export function baseCreateRender(options: RendererOptions) {
+   
+     const {
+       removeElement: hostRemoveElement  // 新增加
+     } = options
+     
+    	const unmount = vnode => {
+       // 删除旧节点
+       hostRemoveElement(vnode.el)
+     }
+     const patch = (oldVNode, newVNode, container, anchor) => {
+       if (oldVNode === newVNode) {
+         return
+       }
+       // 接下来处理 新旧节点不一致的情况
+       if (oldVNode && !isSameVNodeType(oldVNode, newVNode)) {
+         // 删除旧节点
+         unmount(oldVNode)
+         // 旧节点置为 null,然后后续 进行 processElement 时候会重新挂载新节点
+         oldVNode = null
+       }
+       // 接下如之前，进行 type 的 switch case 不同情况的处理
+       const { type, shapeFlag } = newVNode
+       ...
+     }
+     ...
+   }
+   ```
+
+2. 在`packages/runtime-dom/src/nodeOps.ts`中增加 `removeElement`方法
+
+   ```typescript
+   export const nodeOps = {
+     removeElement: (el: Element) => {
+       const parent = el.parentNode
+       if (parent) {
+         parent.removeChild(el)
+       }
+     }
+   }
+   ```
+
+3. 创建测试示例代码`packages/vue/example/run-time/render-component-update-2.html`,内容如下
+
+   ```html
+   <script>
+     const { h, render } = Vue
+     const vnode = h('div', { class: 'test' }, 'hello render')
+     render(vnode, document.querySelector('#app'))
+   
+     setTimeout(() => {
+       const vnode2 = h('div', { class: 'active' }, 'update')
+       render(vnode2, document.querySelector('#app'))
+     }, 2000)
+     setTimeout(() => {
+       const vnode3 = h('p', 'update 标签为 p')
+       render(vnode3, document.querySelector('#app'))
+     }, 5000)
+   </script>
+   ```
+
+4. 可以看到页面显示效果
+
+   1. 先显示 **class为 test**， 内容显示 **hello render 的 div 元素**
+   2. 2s后，内容变为 **update**, 属性 **class 变为 active**
+   3. 再3s后，内容变为 **update 标签为 p**，**class **属性消失
+
+
+
+
+
