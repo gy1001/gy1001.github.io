@@ -615,3 +615,134 @@ render(vnode, document.querySelector('#app'))
 
 3. 运行测试示例，看到页面中 2s 后，元素消失
 
+## 07：深入属性挂载：HTML Attributes 和 DOM Properties
+
+当我们为一个 DOM 设置对应属性的时候，其实分成了两种情况
+
+1. `HTML Attributes`
+2. `DOM Properties`
+
+那么想要搞明白，上一小节中所出现的问题的原因，我们就需要搞明白上面的两种情况指的是什么意思
+
+### HTML Attributes
+
+[HTML Attributes](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Attributes) 所代表的是**定义在 HTML 标签上的属性**。比如我们以以下 DOM 为例
+
+```html
+<textarea class="test-class" type="text">textarea value</textarea>
+```
+
+这里 HTML Attributes 指的就是 class="test-class" 和 type="text"
+
+### DOM Properties
+
+[DOM Properties](https://developer.mozilla.org/zh-CN/docs/Web/API/element)  所代表的就是在**DOM对象上的属性**，比如下面的
+
+```javascript
+const el = document.querySelector("textarea")
+```
+
+我们就可以通过 . 的形式获取对应的属性
+
+```html
+el.type // "textarea"
+el.className // "test-class"
+el.value // "textarea-value"
+```
+
+### 对比
+
+然后我们对比 HTML Attributes 和 DOM Properties  可以发现双方对于**同样属性的描述是不同的**，而这个是`HTML Attributes`和`DOM Properties`之间的关键
+
+那么明确好了这个之后，我们再来看对应方法，根据上一小节的代码，我们可以知道，设置属性，我们一共使用了两个方法
+
+1. [Element.setAttribute](https://developer.mozilla.org/zh-CN/docs/Web/API/Element/setAttribute): 该方法**可以设置指定元素上的某个属性值*
+2. [dom.xx](https://developer.mozilla.org/zh-CN/docs/Web/API/element#%E5%B1%9E%E6%80%A7)：相当于**直接修改指定对象的属性**
+
+但是这两个方式却有一个很尴尬的问题，那就是**属性名不同**
+
+比如
+
+1. 针对于 `class` 获取
+   1. `HTML Attributes`：`ta.getAttributes("class")`
+   2. `DOM Properties`: `ta.className`
+2. 针对于 `textarea` 的 `type` 获取
+   1. `HTML Attributes`：`ta.getAttributes('type')`
+   2. `DOM Properties`: `ta.type 无法获取`
+3. 针对于 `textarea` 的`value` 获取
+   1. `HTML Attributes`：`ta.getAttributes('value')无法获取`
+   2. `DOM Properties`: `ta.value`
+
+所以为了解决这种问题，咱们就必须要能够**针对不同属性，通过不同方式**进行属性指定。**所以**，vue **才会通过一系列的判断进行处理**，有些判断会最终通过`setAttributes`来处理，而有些判断会最终通过 el[key] 的形式来处理，本质原因就是`HTML Attributes`和`DOM Properties`不一样导致的。
+
+源码中的`pathDomProps`是用来处理`DOM Properties`的，而`patchAttr`方法是用来处理`HTML Attributes`的属性指定
+
+接下来我们来看一个比较特殊的属性`class`,通过上面的演示我们知道，无论是通过`el.setAttributes('class')`还是`el.className`来进行指定，最终都可以达到效果。但是查看源码中有这样一段代码
+
+```typescript
+export function patchClass(el: Element, value: string | null, isSVG: boolean) {
+  const transitionClasses = (el as ElementWithTransition)._vtc
+  if (transitionClasses) {
+    
+  }
+  if (value == null) {
+    
+  } else if (isSVG) {
+    el.setAttribute('class', value)  // 这里用了 setAttribute("class", xxx)来处理
+  } else {
+    el.className = value // 这里又通过 el.className 形式来处理
+  }
+}
+```
+
+那么他为什么要这么做呢，我们先看下面的一个测试示例文件`/packages/vue/examples/mine/attrVsProps.html`
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div id="app1"></div>
+  </body>
+  <script>
+    const div1 = document.querySelector('#app')
+    const div2 = document.querySelector('#app1')
+
+    console.time('className')
+    for (let index = 0; index < 10000; index++) {
+      div1.className = 'test1'
+    }
+    console.timeEnd('className')
+    console.time('attrs')
+    for (let index = 0; index < 10000; index++) {
+      div2.setAttribute('class', 'test2')
+    }
+    console.timeEnd('attrs')
+  </script>
+</html>
+```
+
+运行代码，查看控制台的打印时间
+
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fb26a7a9fc13418ab7856f1b5d38457c~tplv-k3u1fbpfcp-watermark.image?)
+
+可以看出来
+
+**通过 className 形式设置的耗时要 快于 通过 attrs 形式来处理 class 的时间的**，所以在 `vue` 源码中，才会这样处理：差了 `SVG 元素`采用 `setAttributes` 形式处理 `class` 以外，其他的元素处理 `class` 采用 `className` 形式
+
+知悉：**设置 class 时，className 的形式处理性能要优于 attributes 的形式处理**
+
+
+
+
+
+
+
+
+
