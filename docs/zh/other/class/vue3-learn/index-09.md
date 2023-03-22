@@ -568,7 +568,50 @@ render(vnode, document.querySelector('#app'))
    2. 2s后，内容变为 **update**, 属性 **class 变为 active**
    3. 再3s后，内容变为 **update 标签为 p**，**class **属性消失
 
+## 06：框架实现：删除元素，ELEMENT节点的卸载操作
 
+那么现在对于我们的代码而言，他已经有了一个 unmount 函数，那么接下来我们就可以基于这个函数来实现某个元素的卸载操作，比如，新增测试用例为如下
 
+1. 新增`packages/vue/example/run-time/render-element-remove.html`，如下
 
+   我们
+
+   ```html
+   <script>
+     const { h, render } = Vue
+     const vnode = h('div', { class: 'test' }, 'hello render')
+     render(vnode, document.querySelector('#app'))
+   
+     setTimeout(() => {
+       // 把上一次的 元素卸载
+       render(null, document.querySelector('#app'))
+     }, 2000)
+   </script>
+   ```
+
+2. 继续完善`render`函数，修改`packages/runtime-core/src/renderer.ts`
+
+   ```typescript
+   export function baseCreateRender(options: RendererOptions) {
+     ...
+     const render = (vnode, container) => {
+       if (vnode === null) {
+         // 当传入的新节点为空，但是旧节点存在
+         if(container._vnode){
+           // 直接对旧节点进行 卸载 即可
+           unmount(container._vnode)
+         }
+       } else {
+         // 打补丁
+         patch(container._vnode || null, vnode, container, null)
+       }
+       container._vnode = vnode // 更新旧节点
+     }
+     return {
+       render
+     }
+   }
+   ```
+
+3. 运行测试示例，看到页面中 2s 后，元素消失
 
