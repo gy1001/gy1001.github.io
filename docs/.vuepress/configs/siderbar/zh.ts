@@ -133,6 +133,10 @@ export const sidebarZh: SidebarConfig = {
       children: ['/zh/interview/environment/production/01.md'],
     },
     {
+      text: '算法相关',
+      children: ['/zh/interview/algorithm/01.md'],
+    },
+    {
       text: '面试真题',
       children: ['/zh/interview/questions/01.md'],
     },
@@ -141,9 +145,7 @@ export const sidebarZh: SidebarConfig = {
     {
       text: 'Github大佬',
       collapsible: false,
-      children: [
-        '/zh/collect/github/github.md'
-      ]
+      children: ['/zh/collect/github/github.md'],
     },
     {
       text: '技术相关',
@@ -225,13 +227,11 @@ export const sidebarZh: SidebarConfig = {
         '/zh/other/class/interview-front',
         '/zh/other/class/ts-axios',
         {
-          text: "从0到1开发一款IOS APP",
-          children: [
-            '/zh/other/class/ios-development/01'
-          ]
+          text: '从0到1开发一款IOS APP',
+          children: ['/zh/other/class/ios-development/01'],
         },
         {
-          text: "Vue3 源码解析，打造自己的 Vue3 框架，领悟尤大思维精髓",
+          text: 'Vue3 源码解析，打造自己的 Vue3 框架，领悟尤大思维精髓',
           collapsible: false,
           children: [
             '/zh/other/class/vue3-learn/index-01.md',
@@ -243,8 +243,8 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/vue3-learn/index-07.md',
             '/zh/other/class/vue3-learn/index-08.md',
             '/zh/other/class/vue3-learn/index-09.md',
-          ]
-        }
+          ],
+        },
       ],
     },
   ],
