@@ -1173,7 +1173,112 @@ existingInvoker.value = nextValue
    </script>
    ```
 
-   
+## 12: 局部总结
+
+目前我们已经完成了针对于 `ELEMENT` 的：
+
+1. 挂载
+2. 更新
+3. 卸载
+4. `patch props` 打补丁
+   1. `class`
+   2. `style`
+   3. `event`
+   4. `attr`
+
+等行为的处理。
+
+针对于 **挂载、更新、卸载** 而言，我们主要使用了 `packages/runtime-dom/src/nodeOps.ts` 中的浏览器兼容方法进行的实现，比如：
+
+1. `doc.createElement`
+2. `parent.removeChild`
+
+等等。
+
+而对于 `patch props` 的操作而言，因为 `HTML Attributes` 和 `DOM Properties` 不同的问题，所以我们需要针对不同的 `props` 进行分开的处理。
+
+而最后的 `event`，本身并不复杂，但是 `vei` 的更新思路也是非常值得学习的一种事件更新方案。
+
+至此，针对于 `ELEMENT` 的处理终于完成啦~
+
+接下来是 `Text` 、`Comment` 以及 `Component` 的渲染行为。
+
+## 13: 框架实现：renderer渲染器下，Text节点的挂载
+
+1. Text 节点的处理在 `vue-next-mini-mine/packages/runtime-core/src/renderer.ts`文件中的`baseCreateRender`方法中的`patch`方法
+
+   ```typescript
+   export interface RendererOptions {
+     createText(str: string) // 新增
+     setText(node, text: string)
+   }
+   export function baseCreateRender(options: RendererOptions) {
+     const {
+       insert: hostInsert,
+       createText: hostCreateText, // 新增
+       setText: hostSetText // 新增
+     } = options
+    	
+    // ...
+    switch (type) {
+       case Text:
+        processText(oldVNode, newVNode, container, anchor) // 新增
+         break
+       case Comment:
+         break
+       case Fragment:
+         break
+       default:
+         break
+     }
+     const processText = (oldVNode, newVNode, container, anchor) => {
+       if(!oldVNode){
+         // 挂载节点操作
+         const el = (newVNode.el = hostCreateText(newVNode.children))
+         hostInsert(el, container, anchor)
+       }else {
+         // 更新操作
+         const el = (newVNode.el = oldVNode.el!)
+         if(newVNode.children !== oldVNode.children){
+           hostSetText(el, newVNode.children)
+         }
+       }
+     }
+     ...
+   }
+   ```
+
+2. 接下来到我们的`nodeOps.ts`文件中进行处理,增加两个方法
+
+   ```typescript
+   export const nodeOps = {
+     createText: text => doc.createTextNode(text),
+     setText: (node, text) => {
+       node.nodeValue = text
+     }
+   }
+   ```
+
+3. 增加测试示例文件`vue-next-mini-mine/packages/vue/example/run-time/render-text.html`
+
+   ```html
+   <script>
+     const { h, render, Text } = Vue
+     const container = document.querySelector('#app')
+     const vnode = h(Text, 'hello world')
+     render(vnode, container)
+     setTimeout(() => {
+       const vnode2 = h(Text, '你好，世界')
+       render(vnode2, container)
+     }, 2000)
+   </script>
+   ```
+
+4. 运行后，可以看到页面中的运行效果, 测试挂载和更新成功
+
+## 14: 框架实现：renderer渲染器下，Comment节点
+
+
 
 ### 参考文档
 
