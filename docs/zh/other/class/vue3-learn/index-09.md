@@ -498,9 +498,26 @@ render(vnode, document.querySelector('#app'))
 
 > 经过源码查看，我们知道处理新旧不同节点的时候，我们是先删除旧节点，然后挂载新节点实现的
 
-1. 先到 renderer 函数里面，找到其中的 patch函数
+1. 先到 `renderer` 函数里面，找到其中的 `patch函数`
 
    ```typescript
+   // packages/runtime-core/src/vnode
+   export interface VNode {
+     type: any
+     __v_isVNode: true
+     props: any
+     children: any
+     shapeFlag: number
+     key: any // 增加key 属性
+   }
+   
+   // @vue/shared  增加工具函数
+   import { VNode } from 'packages/runtime-core/src/vnode'
+   export const isSameVNodeType = (n1: VNode, n2: VNode) => {
+     return n1.key === n2.key && n1.type === n2.type
+   }
+   
+   // renderer.ts
    export function baseCreateRender(options: RendererOptions) {
    
      const {
@@ -656,7 +673,7 @@ el.value // "textarea-value"
 
 那么明确好了这个之后，我们再来看对应方法，根据上一小节的代码，我们可以知道，设置属性，我们一共使用了两个方法
 
-1. [Element.setAttribute](https://developer.mozilla.org/zh-CN/docs/Web/API/Element/setAttribute): 该方法**可以设置指定元素上的某个属性值*
+1. [Element.setAttribute](https://developer.mozilla.org/zh-CN/docs/Web/API/Element/setAttribute): 该方法**可以设置指定元素上的某个属性值**
 2. [dom.xx](https://developer.mozilla.org/zh-CN/docs/Web/API/element#%E5%B1%9E%E6%80%A7)：相当于**直接修改指定对象的属性**
 
 但是这两个方式却有一个很尴尬的问题，那就是**属性名不同**
@@ -664,20 +681,20 @@ el.value // "textarea-value"
 比如
 
 1. 针对于 `class` 获取
-   1. `HTML Attributes`：`ta.getAttributes("class")`
-   2. `DOM Properties`: `ta.className`
+   1. `HTML Attributes`：`el.getAttribute("class")`
+   2. `DOM Properties`: `el.className`
 2. 针对于 `textarea` 的 `type` 获取
-   1. `HTML Attributes`：`ta.getAttributes('type')`
-   2. `DOM Properties`: `ta.type 无法获取`
+   1. `HTML Attributes`：`el.getAttribute('type')`
+   2. `DOM Properties`: `el.type 无法获取`
 3. 针对于 `textarea` 的`value` 获取
-   1. `HTML Attributes`：`ta.getAttributes('value')无法获取`
-   2. `DOM Properties`: `ta.value`
+   1. `HTML Attributes`：`el.getAttribute('value')无法获取`
+   2. `DOM Properties`: `el.value`
 
-所以为了解决这种问题，咱们就必须要能够**针对不同属性，通过不同方式**进行属性指定。**所以**，vue **才会通过一系列的判断进行处理**，有些判断会最终通过`setAttributes`来处理，而有些判断会最终通过 el[key] 的形式来处理，本质原因就是`HTML Attributes`和`DOM Properties`不一样导致的。
+所以为了解决这种问题，咱们就必须要能够**针对不同属性，通过不同方式**进行属性指定。**所以**，vue **才会通过一系列的判断进行处理**，有些判断会最终通过`setAttribute`来处理，而有些判断会最终通过 `el[key]` 的形式来处理，本质原因就是`HTML Attribute`和`DOM Properties`不一样导致的。
 
 源码中的`pathDomProps`是用来处理`DOM Properties`的，而`patchAttr`方法是用来处理`HTML Attributes`的属性指定
 
-接下来我们来看一个比较特殊的属性`class`,通过上面的演示我们知道，无论是通过`el.setAttributes('class')`还是`el.className`来进行指定，最终都可以达到效果。但是查看源码中有这样一段代码
+接下来我们来看一个比较特殊的属性`class`,通过上面的演示我们知道，无论是通过`el.setAttribute('class')`还是`el.className`来进行指定，最终都可以达到效果。但是查看源码中有这样一段代码
 
 ```typescript
 export function patchClass(el: Element, value: string | null, isSVG: boolean) {
@@ -704,7 +721,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>attr Vs Props</title>
   </head>
   <body>
     <div id="app"></div>
@@ -734,15 +751,90 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
 
 可以看出来
 
-**通过 className 形式设置的耗时要 快于 通过 attrs 形式来处理 class 的时间的**，所以在 `vue` 源码中，才会这样处理：差了 `SVG 元素`采用 `setAttributes` 形式处理 `class` 以外，其他的元素处理 `class` 采用 `className` 形式
+**通过 className 形式设置的耗时要 快于 通过 attrs 形式来处理 class 的时间的**，所以在 `vue` 源码中，才会这样处理：除了 `SVG 元素`采用 `setAttribute` 形式处理 `class` 以外，其他的元素处理 `class` 采用 `className` 形式
 
 知悉：**设置 class 时，className 的形式处理性能要优于 attributes 的形式处理**
 
+## 08： 框架实现：区分处理ELEMENT节点的各种属性挂载
 
+上一小节我们了解了设置属性的多种方式以及它们的不同
 
+1. 修改`packages/runtime-dom/src/patchProp.ts`文件，
 
+   ```typescript
+   import { patchAttr } from './modules/attr'
+   import { patchDomProp } from './modules/prop'
+   export const patchProp = (el: Element, key, preValue, nextValue) => {
+     if (key === 'class') {
+       patchClass(el, nextValue)
+     } else if (key === 'style') {
+     } else if (isOn(key)) {
+       
+     } else if (shouldSetAsProp(el, key)) { 
+       // 新增的
+       patchDomProp(el, key, nextValue)
+     } else {
+       patchAttr(el, key, nextValue)
+     }
+   }
+   
+   
+   function shouldSetAsProp(el: Element, key: string) {
+     if (key === 'form') {
+       // #1787, #2840 form 表单元素的表单属性是只读的，必须设置为属性 attribute
+       return false
+     }
+     // #1526 <input list> 必须设置为属性 attribute
+     if (key === 'list' && el.tagName === 'INPUT') {
+       return false
+     }
+     // #2766 <textarea type> 必须设置为属性 attribute
+     if (key === 'type' && el.tagName === 'TEXTAREA') {
+       return false
+     }
+     return key in el
+   }
+   ```
 
+2. 创建`packages/runtime-dom/src/modules/attr.ts`文件，内容如下
 
+   ```typescript
+   export function patchAttr(el: Element, key: string, value: any) {
+     if (value === null) {
+       el.removeAttribute(key)
+       return
+     }
+     el.setAttribute(key, value)
+   }
+   ```
 
+3. 创建`packages/runtime-dom/src/modules/prop.ts`文件，内容如下
 
+   ```typescript
+   export function patchDomProp(el: Element, key: string, value: any) {
+     try {
+       el[key] = value
+     } catch (error) {}
+   }
+   ```
+
+4. 增加测试用例`packages/vue/examples/run-time/render-element-props.html`,内容如下
+
+   ```html
+   <script>
+     const { h, render } = Vue
+     const vnode = h(
+       'textarea',
+       { class: 'test', value: 'textarea value', type: 'text' },
+       'hello render'
+     )
+     render(vnode, document.querySelector('#app'))
+   </script>
+   ```
+
+5. 打开浏览器，页面内容如下
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9d23bf93498a4a1c844cdd31ed507312~tplv-k3u1fbpfcp-watermark.image?)
+
+## 09：框架实现：ELEMENT节点下，style属性的挂载和
 
