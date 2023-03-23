@@ -838,3 +838,243 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
 
 ## 09：框架实现：ELEMENT节点下，style属性的挂载和
 
+1. 修改`patchProp.ts`文件中的`patchProp`函数
+
+   ```typescript
+   import { patchStyle } from './modules/style'
+   
+   export const patchProp = (el: Element, key, preValue, nextValue) => {
+     if (key === 'class') {
+       patchClass(el, nextValue)
+     } else if (key === 'style') {
+       patchStyle(el, preValue, nextValue) // 新增加处理 style 的逻辑
+     } else if (isOn(key)) {
+     } else if (shouldSetAsProp(el, key)) {
+       patchDomProp(el, key, nextValue)
+     } else {
+       patchAttr(el, key, nextValue)
+     }
+   }
+   ```
+
+2. 新建`packages/runtime-dom/src/modules/style.ts`文件，内容如下
+
+   ```typescript
+   import { isString } from '@vue/shared'
+   
+   export function patchStyle(el: Element, preValue, newValue) {
+     const style = (el as HTMLElement).style
+     const isCSSString = isString(newValue)
+     if (newValue && !isCSSString) {
+       for (const key in newValue) {
+         setStyle(style, key, newValue[key])
+       }
+       // 遍历旧的属性对象，如果属性键在新的对象中不存在，就置为 ""
+       if (preValue && !isString(preValue)) {
+         for (const key in preValue) {
+           if (newValue[key] === null) {
+             setStyle(style, key, '')
+           }
+         }
+       }
+     }
+   }
+   
+   function setStyle(
+     style: CSSStyleDeclaration,
+     key: string,
+     val: string | string[]
+   ) {
+     style[key] = val
+   }
+   ```
+
+3. 新建测试示例`vue-next-mini/packages/vue/examples/run-time/render-element-style.html`,代码如下
+
+   ```html
+   <script>
+     const { h, render } = Vue
+     const vnode = h('div', { style: { color: 'red' } }, '你好，世界')
+     render(vnode, document.querySelector('#app'))
+   
+     setTimeout(() => {
+       const vnode2 = h(
+         'div',
+         { style: { color: 'red', fontSize: '30px' } },
+         '你好，世界'
+       )
+       render(vnode2, document.querySelector('#app'))
+     }, 2000)
+   </script>
+   ```
+
+## 10：源码阅读：ELEMENT节点下，事件的挂载和更新
+
+1. 增加测试实例代码`vue-next-3.2.37/packages/vue/examples/mine/render-elemet-listener.html`,内容如下
+
+   ```html
+   <script>
+     const { h, render } = Vue
+     const vnode = h(
+       'button',
+       {
+         style: { color: 'red' },
+         onClick() { alert('你好呀') }
+       },
+       '点我'
+     )
+     render(vnode, document.querySelector('#app'))
+   
+     setTimeout(() => {
+       const vnode2 = h(
+         'button',
+         {
+           style: { color: 'red', fontSize: '30px' },
+           ondblclick: [ 
+             () => { alert('双击获得大奖了') },
+             () => { alert('我又点击了') }
+           ]
+         },
+         '双击我'
+       )
+       render(vnode2, document.querySelector('#app'))
+     }, 2000)
+   </script>
+   ```
+
+2. 查看 `vue-next-3.2.37/packages/runtime-dom/src/patchProp.ts`中的处理,里面做了一些列的判断，最终调用了`patchEvent`函数处理
+
+   ```typescript
+   export const patchProp: DOMRendererOptions['patchProp'] = ( 
+     el,
+     key,
+     prevValue,
+     nextValue,
+     isSVG = false,
+     prevChildren,
+     parentComponent,
+     parentSuspense,
+     unmountChildren
+   ) => {
+      if (key === 'class') {
+      }...
+      else if(isOn(key)){ 
+        // isOn 的判断逻辑 (key: string) => /^on[^a-z]/.test(key)
+        // 如果属性名字是以 on 开头的，并且不是 以 onUpdate: 开头的
+        // ignore v-model listeners
+       if (!isModelListener(key)) { // isModelListener: (key) => key.startsWith('onUpdate:')
+         patchEvent(el, key, prevValue, nextValue, parentComponent)
+       }
+      }else if ..
+   }
+   ```
+
+3. 接着查看`vue-next-3.2.37/packages/runtime-dom/src/modules/events.ts`中的处理
+
+   ```typescript
+   export function patchEvent(
+     el: Element & { _vei?: Record<string, Invoker | undefined> },
+     rawName: string,
+     prevValue: EventValue | null,
+     nextValue: EventValue | null,
+     instance: ComponentInternalInstance | null = null
+   ) {
+     // vei = vue event invokers 
+     // 声明一个_vei属性挂载在 el 上,初始值为一个对象 {}
+     const invokers = el._vei || (el._vei = {})
+     // 是否存在这个事件对象，用来处理更新同事件的回调函数
+     const existingInvoker = invokers[rawName]
+     if (nextValue && existingInvoker) {
+       // patch
+       // 如果要设置的属性值存在，并且之间绑定过同名属性的事件，就直接赋值即可，这样解决了频繁的删除、新增事件时非常消耗性能的问题。
+       existingInvoker.value = nextValue
+     } else {
+   		// 如果不存在
+       const [name, options] = parseName(rawName)
+       if (nextValue) {
+         // add: 新的值存在，就代表添加，调用 createInvoker 函数
+         const invoker = (invokers[rawName] = createInvoker(nextValue, instance))
+         addEventListener(el, name, invoker, options)
+       } else if (existingInvoker) {
+         // remove：如果之前绑定过，但是此次不存在就进行移除
+         removeEventListener(el, name, existingInvoker, options)
+         // 并从 invokers 赋值该属性值为 undefined
+         invokers[rawName] = undefined
+       }
+     }
+   }
+   
+   // 返回一个经过包装后的函数，调用后的返回值，有一个 value 属性指向用户的设置回调
+   function createInvoker(
+     initialValue: EventValue,
+     instance: ComponentInternalInstance | null
+   ) {
+   	// 这是一个回调函数
+     const invoker: Invoker = (e: Event) => {
+       // async edge case #6566: inner click event triggers patch, event handler
+       // attached to outer element during patch, and triggered again. This
+       // happens because browsers fire microtask ticks between event propagation.
+       // the solution is simple: we save the timestamp when a handler is attached,
+       // and the handler would only fire if the event passed to it was fired
+       // AFTER it was attached.
+       const timeStamp = e.timeStamp || _getNow()
+   
+       if (skipTimestampCheck || timeStamp >= invoker.attached - 1) {
+         // callWithAsyncErrorHandling 是一个加了 try...catch 包装的函数
+         callWithAsyncErrorHandling(
+           patchStopImmediatePropagation(e, invoker.value),
+           instance,
+           ErrorCodes.NATIVE_EVENT_HANDLER,
+           [e]
+         )
+       }
+     }
+     invoker.value = initialValue
+     invoker.attached = getNow()
+     return invoker
+   }
+   
+   // 真是当调用的事件回调处理，分为数组、不是数组的判断
+   function patchStopImmediatePropagation(
+     e: Event,
+     value: EventValue
+   ): EventValue {
+     if (isArray(value)) {
+       const originalStop = e.stopImmediatePropagation
+       e.stopImmediatePropagation = () => {
+         originalStop.call(e)
+         ;(e as any)._stopped = true
+       }
+       return value.map(fn => (e: Event) => !(e as any)._stopped && fn && fn(e))
+     } else {
+       return value
+     }
+   }
+   ```
+
+### 总结
+
+**总结：**
+
+1. 我们一共三次进入 `patchEvent` 方法
+   1. 第一次进入为 挂载 `onClick` 行为
+   2. 第二次进入为 挂载 `onDblclick` 行为
+   3. 第三次进入为 卸载 `onClick` 行为
+2. 挂载事件，通过 `el.addEventListener` 完成
+3. 卸载事件，通过 `el.removeEventListener` 完成
+4. 除此之外，还有一个 `_vei` 即 `invokers` 对象 和 `invoker` 函数，我们说两个东西需要重点关注，那么这两个对象有什么意义呢？
+
+### **深入事件更新**
+
+在 `patchEvent` 方法中有一行代码是我们没有讲到的，那就是：
+
+```typescript
+// patch
+existingInvoker.value = nextValue
+```
+
+这行代码是用来更新事件的，`vue` 通过这种方式而不是调用 `addEventListener` 和 `removeEventListener` 解决了**频繁的删除、新增事件**时非常消耗性能的问题。
+
+### 参考文档
+
+[vue3 源码学习，实现一个 mini-vue（九）：构建 renderer 渲染器之 ELEMENT 节点的各种属性挂载](https://juejin.cn/post/7185608954171359292#heading-5)
