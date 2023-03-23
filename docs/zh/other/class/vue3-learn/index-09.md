@@ -818,7 +818,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
    }
    ```
 
-4. 增加测试用例`packages/vue/examples/run-time/render-element-props.html`,内容如下
+4. 增加测试用例`packages/vue/examples/run-time/render-element-props.htmrender-element-props.html`,内容如下
 
    ```html
    <script>
@@ -1074,6 +1074,106 @@ existingInvoker.value = nextValue
 ```
 
 这行代码是用来更新事件的，`vue` 通过这种方式而不是调用 `addEventListener` 和 `removeEventListener` 解决了**频繁的删除、新增事件**时非常消耗性能的问题。
+
+## 11： 框架实现：ELEMENT节点下，事件的挂载和更新
+
+1. 修改`vue-next-mini-mine/packages/runtime-dom/src/patchProp.ts`文件，完善里面的处理事件的方法
+
+   ```typescript
+   import { patchEvent } from './modules/event'
+   
+   export const patchProp = (el: Element, key, preValue, nextValue) => {
+     if (key === 'class') {
+     } else if (key === 'style') {
+     } else if (isOn(key)) {
+       patchEvent(el, key, preValue, nextValue) // 新增处理事件的回调
+     } else if (shouldSetAsProp(el, key)) {
+     } else {
+     }
+   }
+   ```
+
+2. 新建`vue-next-mini-mine/packages/runtime-dom/src/modules/event.ts`文件，内容如下
+
+   ```typescript
+   import { isArray } from '@vue/shared'
+   
+   export function patchEvent(
+     el: Element & { _vei?: Object },
+     name: string,
+     prev,
+     next
+   ) {
+     const invokers = el._vei || (el._vei = {}) // 增加 事件缓存对象 属性
+     const existingInvoker = invokers[name]
+     if (next && existingInvoker) {
+       // 更新回调
+       existingInvoker.value = next
+     } else {
+       const rawName = parseName(name)  // 处理事件属性名，
+       if (next) {
+         const invoker = (invokers[name] = createInvoker(next))
+         el.addEventListener(rawName, invoker) 
+       } else if (existingInvoker) {
+         el.removeEventListener(rawName, existingInvoker) // 移除事件
+         invokers[name] = undefined // 缓存对象中的事件值 置为 undefined
+       }
+     }
+   }
+   
+   
+   function parseName(name: string) {
+     return name.slice(2).toLowerCase() // 截取事件属性并小写
+   }
+   
+   function createInvoker(initialValue) {
+     const invoker = (e: Event) => {
+       // 如果是数组类型，就需要循环执行
+       if (isArray(invoker.value)) {
+         invoker.value.forEach(fn => {
+           fn()
+         })
+       } else {
+         invoker.value && invoker.value()
+       }
+     }
+     invoker.value = initialValue
+     return invoker
+   }
+   ```
+
+3. 增加测试示例文件`vue-next-mini-mine/packages/vue/example/run-time/render-element-event.html`,内容如下
+
+   ```html
+   <script>
+     const { h, render } = Vue
+     const vnode = h(
+       'button',
+       {
+         style: { color: 'red' },
+         onClick() { alert('你好呀') }
+       },
+       '点我'
+     )
+     render(vnode, document.querySelector('#app'))
+     setTimeout(() => {
+       const vnode2 = h(
+         'button',
+         {
+           style: { color: 'red', fontSize: '30px' },
+           onDblclick: [ 
+             () => { alert('双击获得大奖') },
+             () => { alert('我又双击了') }
+           ]
+         },
+         '双击'
+       )
+       render(vnode2, document.querySelector('#app'))
+     }, 2000)
+   </script>
+   ```
+
+   
 
 ### 参考文档
 
