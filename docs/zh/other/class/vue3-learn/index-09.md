@@ -1278,7 +1278,7 @@ existingInvoker.value = nextValue
 
 ## 14: 框架实现：renderer渲染器下，Comment节点
 
-首先知晓：comment节点是一个静态节点，不涉及到更新，所以它没有更新操作
+首先知晓：`comment` 节点是一个静态节点，不涉及到更新，所以它没有更新操作
 
 1. 在`packages/runtime-core/src/renderer.ts`中添加 `Comment`  处理逻辑
 
@@ -1340,7 +1340,98 @@ existingInvoker.value = nextValue
 
    ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6a0da6050d354765b7925cf64708d825~tplv-k3u1fbpfcp-watermark.image?)
 
+## 15: 框架实现：renderer渲染器下，Fragment节点
+
+1. 在`packages/runtime-core/src/renderer.ts`中添加 `Fragment` 处理逻辑
+
+   ```typescript
+   import { normalizeVNode } from './commponentRenderUtis'
+   export interface RendererOptions {
    
+   }
+   export function baseCreateRender(options: RendererOptions) {
+     const {
+       insert: hostInsert,
+       createComment: hostCreateComment
+     } = options
+    ...
+    const patch = (oldVNode, newVNode, container, anchor = null) => {
+      ...
+       const { type, shapeFlag } = newVNode
+       switch (type) {
+        case Fragment:
+           processFragement(oldVNode, newVNode, container, anchor)
+           break;
+       }
+    }
+    const processFragement = (oldVNode, newVNode, container, anchor) => {
+       if (!oldVNode) {
+         mountChildren(newVNode.children, container, anchor)
+       } else {
+         patchChildren(oldVNode, newVNode, container, anchor)
+       }
+     }
+     // 对children 的循环渲染
+     const mountChildren = (nodeChildren, container, anchor) => {
+       if (isString(nodeChildren)) {
+         nodeChildren = nodeChildren.split('')
+       }
+       for (let index = 0; index < nodeChildren.length; index++) {
+         const child = (nodeChildren[index] = normalizeVNode(nodeChildren[index]))
+         patch(null, child, container, anchor)
+       }
+     }
+     // 之前的逻辑
+     const patchChildren = (oldVNode, newVNode, container, anchor) => {
+       
+     }
+    	
+   	return { ... } 
+    
+   }
+   ```
+
+2. 新建文件`packages/runtime-core/src/commponentRenderUtis.ts`内容如下
+
+   ```typescript
+   import { createVNode, Text } from './vnode'
+   
+   export function normalizeVNode(child) {
+     if (typeof child === 'object') {
+       return cloneIfMounted(child)
+     } else {
+       // strings and numbers
+       return createVNode(Text, null, String(child))
+     }
+   }
+   
+   function cloneIfMounted(child) {
+     return child
+   }
+   ```
+
+3. 新增测试用例代码`packages/vue/examples/run-time/render-fragment.html`,内容如下
+
+   ```html
+   <script>
+     const { h, render, Fragment } = Vue
+     const container = document.querySelector('#app')
+     const vnode = h(Fragment, 'hello world')
+     render(vnode, container)
+     setTimeout(() => {
+       const vnode2 = h(Fragment, '你好，世界')
+       render(vnode2, container)
+     }, 2000)
+   </script>
+   ```
+
+4. 打开浏览器运行，可以看到刚开始渲染的结果如下
+
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/288610aa549d4d0795d8c4a8206383b2~tplv-k3u1fbpfcp-watermark.image?)
+
+   2s后，视图进行更新，页面内容如下
+
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1be3ba45de884780a9e80c4c7b017837~tplv-k3u1fbpfcp-watermark.image?)
 
 ### 参考文档
 
