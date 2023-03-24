@@ -252,9 +252,9 @@ render(vnode, document.querySelector('#app'))
        //  1. 创建 element
        const el = (vnode.el = hostCreateElement(type))
        //  2. 设置文本
-       if (shapeFlag && ShapeFlags.TEXT_CHILDREN) {
+       if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
          hostSetElementText(el, children)
-       } else if (shapeFlag && ShapeFlags.ARRAY_CHILDREN) {
+       } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
        }
        //  3. 设置 props
        if (props) {
@@ -279,7 +279,7 @@ render(vnode, document.querySelector('#app'))
          case Fragment:
            break
          default:
-           if (shapeFlag && ShapeFlags.ELEMENT) {
+           if (shapeFlag & ShapeFlags.ELEMENT) {
              processElement(oldVNode, newVNode, container, anchor)
            } else if (shapeFlag & ShapeFlags.COMPONENT) {
              // TODO
@@ -403,7 +403,7 @@ render(vnode, document.querySelector('#app'))
 
    ```typescript
    import { EMPTY_OBJ } from '@vue/shared'
-   
+
    export function baseCreateRender(options: RendererOptions) {
      const processElement = (oldVNode, newVNode, container, anchor) => {
        if (oldVNode == null) {
@@ -413,7 +413,7 @@ render(vnode, document.querySelector('#app'))
          patchElement(oldVNode, newVNode)
        }
      }
-   
+
      const patchElement = (oldVNode, newVNode) => {
        const el = (newVNode.el = oldVNode.el)
        const oldProps = oldVNode.props || EMPTY_OBJ
@@ -446,8 +446,8 @@ render(vnode, document.querySelector('#app'))
          //    2.1 当旧节点的 children 类型是 array 类型时
          // 		 	2.1.1 如果新节点 children 类型也是 array, 需要做 diff 处理
          //    	2.1.2 否则新节点不是array，也不是 text，直接卸载旧的 children 即可
-         if (prevShapeFlag && ShapeFlags.ARRAY_CHILDREN) {
-           if (shapeFlag && ShapeFlags.ARRAY_CHILDREN) {
+         if (prevShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+           if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
              // TODO Diff
            } else {
              // TODO 卸载式操作
@@ -457,12 +457,12 @@ render(vnode, document.querySelector('#app'))
            // prev children was text OR null
            // new children is array OR null
            // 如果 旧节点是 text 类型，那么删除 旧节点 text 内容即可
-           if (prevShapeFlag && ShapeFlags.TEXT_CHILDREN) {
+           if (prevShapeFlag & ShapeFlags.TEXT_CHILDREN) {
              // 删除纠结点的text
              hostSetElementText(container, '')
            }
            // 如果 新节点 children 是 array 类型
-           if (shapeFlag && ShapeFlags.ARRAY_CHILDREN) {
+           if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
              // TODO 单独新子节点的挂载
            }
          }
@@ -890,7 +890,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
      const { h, render } = Vue
      const vnode = h('div', { style: { color: 'red' } }, '你好，世界')
      render(vnode, document.querySelector('#app'))
-   
+
      setTimeout(() => {
        const vnode2 = h(
          'div',
@@ -1006,7 +1006,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
        }
      }
    }
-   
+
    // 返回一个经过包装后的函数，调用后的返回值，有一个 value 属性指向用户的设置回调
    function createInvoker(
      initialValue: EventValue,
@@ -1021,7 +1021,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
        // and the handler would only fire if the event passed to it was fired
        // AFTER it was attached.
        const timeStamp = e.timeStamp || _getNow()
-   
+
        if (skipTimestampCheck || timeStamp >= invoker.attached - 1) {
          // callWithAsyncErrorHandling 是一个加了 try...catch 包装的函数
          callWithAsyncErrorHandling(
@@ -1036,7 +1036,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
      invoker.attached = getNow()
      return invoker
    }
-   
+
    // 真是当调用的事件回调处理，分为数组、不是数组的判断
    function patchStopImmediatePropagation(
      e: Event,
@@ -1357,7 +1357,7 @@ existingInvoker.value = nextValue
    ```typescript
    import { normalizeVNode } from './commponentRenderUtis'
    import {  isString } from '@vue/shared'
-   
+
    export function baseCreateRender(options: RendererOptions) {
     ...
     const patch = (oldVNode, newVNode, container, anchor = null) => {
@@ -1390,9 +1390,9 @@ existingInvoker.value = nextValue
      const patchChildren = (oldVNode, newVNode, container, anchor) => {
    		...
      }
-   
+
    	return { ... }
-   
+
    }
    ```
 
