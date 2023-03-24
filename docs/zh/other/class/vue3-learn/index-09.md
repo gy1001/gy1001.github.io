@@ -1142,7 +1142,7 @@ existingInvoker.value = nextValue
    }
    ```
 
-3. 增加测试示例文件`vue-next-mini-mine/packages/vue/example/run-time/render-element-event.html`,内容如下（注意：这里用了**双击事件***，打开浏览器不要使用 手机 视图，**手机视图上双击事件不会触发**）
+3. 增加测试示例文件`vue-next-mini-mine/packages/vue/example/run-time/render-element-event.html`,内容如下（注意：这里用了**双击事件**，打开浏览器不要使用 手机 视图，**手机视图上双击事件不会触发**）
 
    ```html
    <script>
@@ -1278,7 +1278,69 @@ existingInvoker.value = nextValue
 
 ## 14: 框架实现：renderer渲染器下，Comment节点
 
+首先知晓：comment节点是一个静态节点，不涉及到更新，所以它没有更新操作
 
+1. 在`packages/runtime-core/src/renderer.ts`中添加 `Comment`  处理逻辑
+
+   ```typescript
+   export interface RendererOptions {
+     createComment(text: string)
+   }
+   export function baseCreateRender(options: RendererOptions) {
+     const {
+       insert: hostInsert,
+       createComment: hostCreateComment
+     } = options
+    ...
+    const patch = (oldVNode, newVNode, container, anchor = null) => {
+      ...
+       const { type, shapeFlag } = newVNode
+       switch (type) {
+        case Comment:
+           processComment(oldVNode, newVNode, container, anchor)
+           break;
+       }
+    }
+    // 处理 comment 函数，如果之前没有，就进行创建 挂载操作，并把 新节点的 el 属性指向该节点
+     const processComment = (oldVNode, newVNode, container, anchor) => {
+       if (!oldVNode) {
+         const el = (newVNode.el = hostCreateComment(newVNode.children))
+         hostInsert(el, container)
+       } else 
+         // 如果存在，就只需要把之前的 el 属性赋值即可，因为没有更新操作
+         newVNode.el = oldVNode.el
+       }
+     }
+    	
+   	return { ... } 
+    
+   }
+   ```
+
+2. 接着在`packages/runtime-dom/src/nodeOps.ts`增加`createComment`方法
+
+   ```typescript
+   export const nodeOps = {
+     createComment: text => doc.createComment(text)
+   }
+   ```
+
+3. 编写测试用例文件`packages/vue/examples/run-time/render-comment.html`,内容如下
+
+   ```html
+   <script>
+     const { h, render, Comment } = Vue
+     const container = document.querySelector('#app')
+     const vnode = h(Comment, 'i am a comment')
+     render(vnode, container)
+   </script>
+   ```
+
+4. 运行浏览器，可以看到如下效果（页面中渲染了 注释节点）：
+
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6a0da6050d354765b7925cf64708d825~tplv-k3u1fbpfcp-watermark.image?)
+
+   
 
 ### 参考文档
 
