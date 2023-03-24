@@ -1203,7 +1203,7 @@ existingInvoker.value = nextValue
 
 接下来是 `Text` 、`Comment` 以及 `Component` 的渲染行为。
 
-## 13: 框架实现：renderer渲染器下，Text节点的挂载
+## 13: 框架实现：renderer渲染器下，Text节点的挂载和更新
 
 1. Text 节点的处理在 `vue-next-mini-mine/packages/runtime-core/src/renderer.ts`文件中的`baseCreateRender`方法中的`patch`方法
 
@@ -1276,7 +1276,7 @@ existingInvoker.value = nextValue
 
 4. 运行后，可以看到页面中的运行效果, 测试挂载和更新成功
 
-## 14: 框架实现：renderer渲染器下，Comment节点
+## 14: 框架实现：renderer渲染器下，Comment节点的挂载和更新
 
 首先知晓：`comment` 节点是一个静态节点，不涉及到更新，所以它没有更新操作
 
@@ -1340,7 +1340,7 @@ existingInvoker.value = nextValue
 
    ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6a0da6050d354765b7925cf64708d825~tplv-k3u1fbpfcp-watermark.image?)
 
-## 15: 框架实现：renderer渲染器下，Fragment节点
+## 15: 框架实现：renderer渲染器下，Fragment节点的挂载和更新
 
 1. 在`packages/runtime-core/src/renderer.ts`中添加 `Fragment` 处理逻辑
 
