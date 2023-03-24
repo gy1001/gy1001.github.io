@@ -403,7 +403,7 @@ render(vnode, document.querySelector('#app'))
 
    ```typescript
    import { EMPTY_OBJ } from '@vue/shared'
-
+   
    export function baseCreateRender(options: RendererOptions) {
      const processElement = (oldVNode, newVNode, container, anchor) => {
        if (oldVNode == null) {
@@ -413,7 +413,7 @@ render(vnode, document.querySelector('#app'))
          patchElement(oldVNode, newVNode)
        }
      }
-
+   
      const patchElement = (oldVNode, newVNode) => {
        const el = (newVNode.el = oldVNode.el)
        const oldProps = oldVNode.props || EMPTY_OBJ
@@ -890,7 +890,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
      const { h, render } = Vue
      const vnode = h('div', { style: { color: 'red' } }, '你好，世界')
      render(vnode, document.querySelector('#app'))
-
+   
      setTimeout(() => {
        const vnode2 = h(
          'div',
@@ -1006,7 +1006,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
        }
      }
    }
-
+   
    // 返回一个经过包装后的函数，调用后的返回值，有一个 value 属性指向用户的设置回调
    function createInvoker(
      initialValue: EventValue,
@@ -1021,7 +1021,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
        // and the handler would only fire if the event passed to it was fired
        // AFTER it was attached.
        const timeStamp = e.timeStamp || _getNow()
-
+   
        if (skipTimestampCheck || timeStamp >= invoker.attached - 1) {
          // callWithAsyncErrorHandling 是一个加了 try...catch 包装的函数
          callWithAsyncErrorHandling(
@@ -1036,7 +1036,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
      invoker.attached = getNow()
      return invoker
    }
-
+   
    // 真是当调用的事件回调处理，分为数组、不是数组的判断
    function patchStopImmediatePropagation(
      e: Event,
@@ -1356,14 +1356,9 @@ existingInvoker.value = nextValue
 
    ```typescript
    import { normalizeVNode } from './commponentRenderUtis'
-   export interface RendererOptions {
-
-   }
+   import {  isString } from '@vue/shared'
+   
    export function baseCreateRender(options: RendererOptions) {
-     const {
-       insert: hostInsert,
-       createComment: hostCreateComment
-     } = options
     ...
     const patch = (oldVNode, newVNode, container, anchor = null) => {
       ...
@@ -1393,11 +1388,11 @@ existingInvoker.value = nextValue
      }
      // 之前的逻辑
      const patchChildren = (oldVNode, newVNode, container, anchor) => {
-
+   		...
      }
-
+   
    	return { ... }
-
+   
    }
    ```
 
