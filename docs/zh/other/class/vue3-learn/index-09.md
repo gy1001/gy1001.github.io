@@ -1,4 +1,4 @@
-# 09: runtime 统一运行时- 构建 renderer 渲染器
+# 09-runtime 运行时-构建 renderer 渲染器
 
 ## 01: 前言
 
@@ -403,7 +403,7 @@ render(vnode, document.querySelector('#app'))
 
    ```typescript
    import { EMPTY_OBJ } from '@vue/shared'
-   
+
    export function baseCreateRender(options: RendererOptions) {
      const processElement = (oldVNode, newVNode, container, anchor) => {
        if (oldVNode == null) {
@@ -413,7 +413,7 @@ render(vnode, document.querySelector('#app'))
          patchElement(oldVNode, newVNode)
        }
      }
-   
+
      const patchElement = (oldVNode, newVNode) => {
        const el = (newVNode.el = oldVNode.el)
        const oldProps = oldVNode.props || EMPTY_OBJ
@@ -494,7 +494,7 @@ render(vnode, document.querySelector('#app'))
    }
    ```
 
-## 05：框架实现：处理新旧节点不同元素时，ELEMENT节点的更新
+## 05：框架实现：处理新旧节点不同元素时，ELEMENT 节点的更新
 
 > 经过源码查看，我们知道处理新旧不同节点的时候，我们是先删除旧节点，然后挂载新节点实现的
 
@@ -510,20 +510,20 @@ render(vnode, document.querySelector('#app'))
      shapeFlag: number
      key: any // 增加key 属性
    }
-   
+
    // @vue/shared  增加工具函数
    import { VNode } from 'packages/runtime-core/src/vnode'
    export const isSameVNodeType = (n1: VNode, n2: VNode) => {
      return n1.key === n2.key && n1.type === n2.type
    }
-   
+
    // renderer.ts
    export function baseCreateRender(options: RendererOptions) {
-   
+
      const {
        removeElement: hostRemoveElement  // 新增加
      } = options
-     
+
     	const unmount = vnode => {
        // 删除旧节点
        hostRemoveElement(vnode.el)
@@ -556,7 +556,7 @@ render(vnode, document.querySelector('#app'))
        if (parent) {
          parent.removeChild(el)
        }
-     }
+     },
    }
    ```
 
@@ -567,7 +567,7 @@ render(vnode, document.querySelector('#app'))
      const { h, render } = Vue
      const vnode = h('div', { class: 'test' }, 'hello render')
      render(vnode, document.querySelector('#app'))
-   
+
      setTimeout(() => {
        const vnode2 = h('div', { class: 'active' }, 'update')
        render(vnode2, document.querySelector('#app'))
@@ -581,11 +581,11 @@ render(vnode, document.querySelector('#app'))
 
 4. 可以看到页面显示效果
 
-   1. 先显示 **class为 test**， 内容显示 **hello render 的 div 元素**
-   2. 2s后，内容变为 **update**, 属性 **class 变为 active**
-   3. 再3s后，内容变为 **update 标签为 p**，**class **属性消失
+   1. 先显示 **class 为 test**， 内容显示 **hello render 的 div 元素**
+   2. 2s 后，内容变为 **update**, 属性 **class 变为 active**
+   3. 再 3s 后，内容变为 **update 标签为 p**，**class **属性消失
 
-## 06：框架实现：删除元素，ELEMENT节点的卸载操作
+## 06：框架实现：删除元素，ELEMENT 节点的卸载操作
 
 那么现在对于我们的代码而言，他已经有了一个 unmount 函数，那么接下来我们就可以基于这个函数来实现某个元素的卸载操作，比如，新增测试用例为如下
 
@@ -598,7 +598,7 @@ render(vnode, document.querySelector('#app'))
      const { h, render } = Vue
      const vnode = h('div', { class: 'test' }, 'hello render')
      render(vnode, document.querySelector('#app'))
-   
+
      setTimeout(() => {
        // 把上一次的 元素卸载
        render(null, document.querySelector('#app'))
@@ -653,23 +653,21 @@ render(vnode, document.querySelector('#app'))
 
 ### DOM Properties
 
-[DOM Properties](https://developer.mozilla.org/zh-CN/docs/Web/API/element)  所代表的就是在**DOM对象上的属性**，比如下面的
+[DOM Properties](https://developer.mozilla.org/zh-CN/docs/Web/API/element) 所代表的就是在**DOM 对象上的属性**，比如下面的
 
 ```javascript
-const el = document.querySelector("textarea")
+const el = document.querySelector('textarea')
 ```
 
 我们就可以通过 . 的形式获取对应的属性
 
 ```html
-el.type // "textarea"
-el.className // "test-class"
-el.value // "textarea-value"
+el.type // "textarea" el.className // "test-class" el.value // "textarea-value"
 ```
 
 ### 对比
 
-然后我们对比 HTML Attributes 和 DOM Properties  可以发现双方对于**同样属性的描述是不同的**，而这个是`HTML Attributes`和`DOM Properties`之间的关键
+然后我们对比 HTML Attributes 和 DOM Properties 可以发现双方对于**同样属性的描述是不同的**，而这个是`HTML Attributes`和`DOM Properties`之间的关键
 
 那么明确好了这个之后，我们再来看对应方法，根据上一小节的代码，我们可以知道，设置属性，我们一共使用了两个方法
 
@@ -700,12 +698,10 @@ el.value // "textarea-value"
 export function patchClass(el: Element, value: string | null, isSVG: boolean) {
   const transitionClasses = (el as ElementWithTransition)._vtc
   if (transitionClasses) {
-    
   }
   if (value == null) {
-    
   } else if (isSVG) {
-    el.setAttribute('class', value)  // 这里用了 setAttribute("class", xxx)来处理
+    el.setAttribute('class', value) // 这里用了 setAttribute("class", xxx)来处理
   } else {
     el.className = value // 这里又通过 el.className 形式来处理
   }
@@ -755,7 +751,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
 
 知悉：**设置 class 时，className 的形式处理性能要优于 attributes 的形式处理**
 
-## 08： 框架实现：区分处理ELEMENT节点的各种属性挂载
+## 08： 框架实现：区分处理 ELEMENT 节点的各种属性挂载
 
 上一小节我们了解了设置属性的多种方式以及它们的不同
 
@@ -769,16 +765,14 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
        patchClass(el, nextValue)
      } else if (key === 'style') {
      } else if (isOn(key)) {
-       
-     } else if (shouldSetAsProp(el, key)) { 
+     } else if (shouldSetAsProp(el, key)) {
        // 新增的
        patchDomProp(el, key, nextValue)
      } else {
        patchAttr(el, key, nextValue)
      }
    }
-   
-   
+
    function shouldSetAsProp(el: Element, key: string) {
      if (key === 'form') {
        // #1787, #2840 form 表单元素的表单属性是只读的，必须设置为属性 attribute
@@ -836,13 +830,13 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
 
    ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9d23bf93498a4a1c844cdd31ed507312~tplv-k3u1fbpfcp-watermark.image?)
 
-## 09：框架实现：ELEMENT节点下，style属性的挂载和
+## 09：框架实现：ELEMENT 节点下，style 属性的挂载和
 
 1. 修改`patchProp.ts`文件中的`patchProp`函数
 
    ```typescript
    import { patchStyle } from './modules/style'
-   
+
    export const patchProp = (el: Element, key, preValue, nextValue) => {
      if (key === 'class') {
        patchClass(el, nextValue)
@@ -861,7 +855,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
 
    ```typescript
    import { isString } from '@vue/shared'
-   
+
    export function patchStyle(el: Element, preValue, newValue) {
      const style = (el as HTMLElement).style
      const isCSSString = isString(newValue)
@@ -879,7 +873,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
        }
      }
    }
-   
+
    function setStyle(
      style: CSSStyleDeclaration,
      key: string,
@@ -896,7 +890,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
      const { h, render } = Vue
      const vnode = h('div', { style: { color: 'red' } }, '你好，世界')
      render(vnode, document.querySelector('#app'))
-   
+
      setTimeout(() => {
        const vnode2 = h(
          'div',
@@ -908,7 +902,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
    </script>
    ```
 
-## 10：源码阅读：ELEMENT节点下，事件的挂载和更新
+## 10：源码阅读：ELEMENT 节点下，事件的挂载和更新
 
 1. 增加测试实例代码`vue-next-3.2.37/packages/vue/examples/mine/render-elemet-listener.html`,内容如下
 
@@ -919,21 +913,27 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
        'button',
        {
          style: { color: 'red' },
-         onClick() { alert('你好呀') }
+         onClick() {
+           alert('你好呀')
+         },
        },
        '点我'
      )
      render(vnode, document.querySelector('#app'))
-   
+
      setTimeout(() => {
        const vnode2 = h(
          'button',
          {
            style: { color: 'red', fontSize: '30px' },
-           ondblclick: [ 
-             () => { alert('双击获得大奖了') },
-             () => { alert('我又点击了') }
-           ]
+           ondblclick: [
+             () => {
+               alert('双击获得大奖了')
+             },
+             () => {
+               alert('我又点击了')
+             },
+           ],
          },
          '双击我'
        )
@@ -945,7 +945,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
 2. 查看 `vue-next-3.2.37/packages/runtime-dom/src/patchProp.ts`中的处理,里面做了一些列的判断，最终调用了`patchEvent`函数处理
 
    ```typescript
-   export const patchProp: DOMRendererOptions['patchProp'] = ( 
+   export const patchProp: DOMRendererOptions['patchProp'] = (
      el,
      key,
      prevValue,
@@ -958,7 +958,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
    ) => {
       if (key === 'class') {
       }...
-      else if(isOn(key)){ 
+      else if(isOn(key)){
         // isOn 的判断逻辑 (key: string) => /^on[^a-z]/.test(key)
         // 如果属性名字是以 on 开头的，并且不是 以 onUpdate: 开头的
         // ignore v-model listeners
@@ -979,7 +979,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
      nextValue: EventValue | null,
      instance: ComponentInternalInstance | null = null
    ) {
-     // vei = vue event invokers 
+     // vei = vue event invokers
      // 声明一个_vei属性挂载在 el 上,初始值为一个对象 {}
      const invokers = el._vei || (el._vei = {})
      // 是否存在这个事件对象，用来处理更新同事件的回调函数
@@ -989,11 +989,14 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
        // 如果要设置的属性值存在，并且之间绑定过同名属性的事件，就直接赋值即可，这样解决了频繁的删除、新增事件时非常消耗性能的问题。
        existingInvoker.value = nextValue
      } else {
-   		// 如果不存在
+       // 如果不存在
        const [name, options] = parseName(rawName)
        if (nextValue) {
          // add: 新的值存在，就代表添加，调用 createInvoker 函数
-         const invoker = (invokers[rawName] = createInvoker(nextValue, instance))
+         const invoker = (invokers[rawName] = createInvoker(
+           nextValue,
+           instance
+         ))
          addEventListener(el, name, invoker, options)
        } else if (existingInvoker) {
          // remove：如果之前绑定过，但是此次不存在就进行移除
@@ -1003,13 +1006,13 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
        }
      }
    }
-   
+
    // 返回一个经过包装后的函数，调用后的返回值，有一个 value 属性指向用户的设置回调
    function createInvoker(
      initialValue: EventValue,
      instance: ComponentInternalInstance | null
    ) {
-   	// 这是一个回调函数
+     // 这是一个回调函数
      const invoker: Invoker = (e: Event) => {
        // async edge case #6566: inner click event triggers patch, event handler
        // attached to outer element during patch, and triggered again. This
@@ -1018,7 +1021,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
        // and the handler would only fire if the event passed to it was fired
        // AFTER it was attached.
        const timeStamp = e.timeStamp || _getNow()
-   
+
        if (skipTimestampCheck || timeStamp >= invoker.attached - 1) {
          // callWithAsyncErrorHandling 是一个加了 try...catch 包装的函数
          callWithAsyncErrorHandling(
@@ -1033,7 +1036,7 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
      invoker.attached = getNow()
      return invoker
    }
-   
+
    // 真是当调用的事件回调处理，分为数组、不是数组的判断
    function patchStopImmediatePropagation(
      e: Event,
@@ -1045,7 +1048,9 @@ export function patchClass(el: Element, value: string | null, isSVG: boolean) {
          originalStop.call(e)
          ;(e as any)._stopped = true
        }
-       return value.map(fn => (e: Event) => !(e as any)._stopped && fn && fn(e))
+       return value.map(
+         (fn) => (e: Event) => !(e as any)._stopped && fn && fn(e)
+       )
      } else {
        return value
      }
@@ -1075,13 +1080,13 @@ existingInvoker.value = nextValue
 
 这行代码是用来更新事件的，`vue` 通过这种方式而不是调用 `addEventListener` 和 `removeEventListener` 解决了**频繁的删除、新增事件**时非常消耗性能的问题。
 
-## 11： 框架实现：ELEMENT节点下，事件的挂载和更新
+## 11： 框架实现：ELEMENT 节点下，事件的挂载和更新
 
 1. 修改`vue-next-mini-mine/packages/runtime-dom/src/patchProp.ts`文件，完善里面的处理事件的方法
 
    ```typescript
    import { patchEvent } from './modules/event'
-   
+
    export const patchProp = (el: Element, key, preValue, nextValue) => {
      if (key === 'class') {
      } else if (key === 'style') {
@@ -1097,7 +1102,7 @@ existingInvoker.value = nextValue
 
    ```typescript
    import { isArray } from '@vue/shared'
-   
+
    export function patchEvent(
      el: Element & { _vei?: Object },
      name: string,
@@ -1110,27 +1115,26 @@ existingInvoker.value = nextValue
        // 更新回调
        existingInvoker.value = next
      } else {
-       const rawName = parseName(name)  // 处理事件属性名，
+       const rawName = parseName(name) // 处理事件属性名，
        if (next) {
          const invoker = (invokers[name] = createInvoker(next))
-         el.addEventListener(rawName, invoker) 
+         el.addEventListener(rawName, invoker)
        } else if (existingInvoker) {
          el.removeEventListener(rawName, existingInvoker) // 移除事件
          invokers[name] = undefined // 缓存对象中的事件值 置为 undefined
        }
      }
    }
-   
-   
+
    function parseName(name: string) {
      return name.slice(2).toLowerCase() // 截取事件属性并小写
    }
-   
+
    function createInvoker(initialValue) {
      const invoker = (e: Event) => {
        // 如果是数组类型，就需要循环执行
        if (isArray(invoker.value)) {
-         invoker.value.forEach(fn => {
+         invoker.value.forEach((fn) => {
            fn()
          })
        } else {
@@ -1151,7 +1155,9 @@ existingInvoker.value = nextValue
        'button',
        {
          style: { color: 'red' },
-         onClick() { alert('你好呀') }
+         onClick() {
+           alert('你好呀')
+         },
        },
        '点我'
      )
@@ -1161,10 +1167,14 @@ existingInvoker.value = nextValue
          'button',
          {
            style: { color: 'red', fontSize: '30px' },
-           onDblclick: [ 
-             () => { alert('双击获得大奖') },
-             () => { alert('我又双击了') }
-           ]
+           onDblclick: [
+             () => {
+               alert('双击获得大奖')
+             },
+             () => {
+               alert('我又双击了')
+             },
+           ],
          },
          '双击'
        )
@@ -1203,7 +1213,7 @@ existingInvoker.value = nextValue
 
 接下来是 `Text` 、`Comment` 以及 `Component` 的渲染行为。
 
-## 13: 框架实现：renderer渲染器下，Text节点的挂载和更新
+## 13: 框架实现：renderer 渲染器下，Text 节点的挂载和更新
 
 1. Text 节点的处理在 `vue-next-mini-mine/packages/runtime-core/src/renderer.ts`文件中的`baseCreateRender`方法中的`patch`方法
 
@@ -1218,7 +1228,7 @@ existingInvoker.value = nextValue
        createText: hostCreateText, // 新增
        setText: hostSetText // 新增
      } = options
-    	
+
     // ...
     switch (type) {
        case Text:
@@ -1252,10 +1262,10 @@ existingInvoker.value = nextValue
 
    ```typescript
    export const nodeOps = {
-     createText: text => doc.createTextNode(text),
+     createText: (text) => doc.createTextNode(text),
      setText: (node, text) => {
        node.nodeValue = text
-     }
+     },
    }
    ```
 
@@ -1276,11 +1286,11 @@ existingInvoker.value = nextValue
 
 4. 运行后，可以看到页面中的运行效果, 测试挂载和更新成功
 
-## 14: 框架实现：renderer渲染器下，Comment节点的挂载和更新
+## 14: 框架实现：renderer 渲染器下，Comment 节点的挂载和更新
 
 首先知晓：`comment` 节点是一个静态节点，不涉及到更新，所以它没有更新操作
 
-1. 在`packages/runtime-core/src/renderer.ts`中添加 `Comment`  处理逻辑
+1. 在`packages/runtime-core/src/renderer.ts`中添加 `Comment` 处理逻辑
 
    ```typescript
    export interface RendererOptions {
@@ -1306,14 +1316,14 @@ existingInvoker.value = nextValue
        if (!oldVNode) {
          const el = (newVNode.el = hostCreateComment(newVNode.children))
          hostInsert(el, container)
-       } else 
+       } else
          // 如果存在，就只需要把之前的 el 属性赋值即可，因为没有更新操作
          newVNode.el = oldVNode.el
        }
      }
-    	
-   	return { ... } 
-    
+
+   	return { ... }
+
    }
    ```
 
@@ -1321,7 +1331,7 @@ existingInvoker.value = nextValue
 
    ```typescript
    export const nodeOps = {
-     createComment: text => doc.createComment(text)
+     createComment: (text) => doc.createComment(text),
    }
    ```
 
@@ -1340,14 +1350,14 @@ existingInvoker.value = nextValue
 
    ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6a0da6050d354765b7925cf64708d825~tplv-k3u1fbpfcp-watermark.image?)
 
-## 15: 框架实现：renderer渲染器下，Fragment节点的挂载和更新
+## 15: 框架实现：renderer 渲染器下，Fragment 节点的挂载和更新
 
 1. 在`packages/runtime-core/src/renderer.ts`中添加 `Fragment` 处理逻辑
 
    ```typescript
    import { normalizeVNode } from './commponentRenderUtis'
    export interface RendererOptions {
-   
+
    }
    export function baseCreateRender(options: RendererOptions) {
      const {
@@ -1383,11 +1393,11 @@ existingInvoker.value = nextValue
      }
      // 之前的逻辑
      const patchChildren = (oldVNode, newVNode, container, anchor) => {
-       
+
      }
-    	
-   	return { ... } 
-    
+
+   	return { ... }
+
    }
    ```
 
@@ -1395,7 +1405,7 @@ existingInvoker.value = nextValue
 
    ```typescript
    import { createVNode, Text } from './vnode'
-   
+
    export function normalizeVNode(child) {
      if (typeof child === 'object') {
        return cloneIfMounted(child)
@@ -1404,7 +1414,7 @@ existingInvoker.value = nextValue
        return createVNode(Text, null, String(child))
      }
    }
-   
+
    function cloneIfMounted(child) {
      return child
    }
@@ -1429,7 +1439,7 @@ existingInvoker.value = nextValue
 
    ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/288610aa549d4d0795d8c4a8206383b2~tplv-k3u1fbpfcp-watermark.image?)
 
-   2s后，视图进行更新，页面内容如下
+   2s 后，视图进行更新，页面内容如下
 
    ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1be3ba45de884780a9e80c4c7b017837~tplv-k3u1fbpfcp-watermark.image?)
 
