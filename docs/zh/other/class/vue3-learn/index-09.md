@@ -1142,7 +1142,7 @@ existingInvoker.value = nextValue
    }
    ```
 
-3. 增加测试示例文件`vue-next-mini-mine/packages/vue/example/run-time/render-element-event.html`,内容如下
+3. 增加测试示例文件`vue-next-mini-mine/packages/vue/example/run-time/render-element-event.html`,内容如下（注意：这里用了**双击事件***，打开浏览器不要使用 手机 视图，**手机视图上双击事件不会触发**）
 
    ```html
    <script>
