@@ -190,6 +190,142 @@
 
 5. 此时，组件渲染完成
 
+## 04：源码阅读：无状态组件的更新与卸载
+
+所谓的组件更新，其实本质上就是一个 **卸载、挂载** 的逻辑
+
+1. 对于这样的卸载逻辑，我们之前已经完成过。
+2. 所以，目前我们的代码 **支持** 组件的更新操作。
+
+## 05：代码实现：无状态组件的更新与卸载
+
+上一节我们知道，针对于组件的更新，它是通过先卸载旧节点，然后更新新节点来实现的。所以我们目前的代码是支持的
+
+我们编写测试用例代码`packages/vue/examples/runtime/render-component-update.html`
+
+```html
+<script>
+  const { h, render } = Vue
+  const component = {
+    render() {
+      return h('div', 'i am a component')
+    }
+  }
+  const vnode = h(component)
+  render(vnode, document.querySelector('#app'))
+
+  setTimeout(() => {
+    const component2 = {
+      render() {
+        return h('div', 'component update')
+      }
+    }
+    const vnode2 = h(component2)
+    render(vnode2, document.querySelector('#app'))
+  }, 2000)
+</script>
+```
+
+查看效果，测试通过
+
+## 06：局部总结
+
+那么到现在我们已经完成了**无状态组件的挂载、更新、卸载**操作
+
+从以上的内容中我们可以发现
+
+1. 所谓组件的渲染，本质上指的是`render`函数返回值的渲染
+2. 组件渲染的过程，会生成`ReactiveEffect`实例`effect`
+3. 额外还存在一个`instance`实例，该示例表示**组件本身**，同时`vnode.component`指向它
+4. 组件本身额外提供了很多的状态，比如`isMounted`
+
+但是以上的内容，全部都是针对于**无状态**组件来看的
+
+在我们的实际开发中，组件通常是**有状态（即：存在data响应式数据）**的，那么**有状态的组件**和**无状态组件**他们之间的渲染存在什么差异呢？让我们继续往下看
+
+## 07：源码实现：有状态的响应性组件挂载逻辑
+
+### 总结
+
+1. 有状态的组件渲染，核心的点是**让`render`函数中的`this.xxx`得到真实数据**
+2. 那么想要达到这个目的，我们就必须要**改变**`this`的指向
+3. 改变的方式就是在：生成`subTree`时，通过`call`方法，指定`this`
+
+## 08：框架实现：有状态的响应性组件挂载逻辑
+
+1. 在 `packages/runtime-core/src/component.ts`的`finishComponentSetup` 方法中，触发 `applyOptions`：
+
+   ```typescript
+   import { reactive } from '@vue/reactivity'
+   import { isObject } from '@vue/shared'
+   
+   export function finishComponentSetup(instance) {
+     const component = instance.type
+   
+     instance.render = component.render
+    // 改变 options 中的 this 指向
+     applyOptions(instance)
+   }
+   
+   function applyOptions(instance: any) {
+     const { data: dataOptions } = instance.type
+   
+     // 存在 data 选项时
+     if (dataOptions) {
+       // 触发 dataOptions 函数，拿到 data 对象
+       const data = dataOptions()
+       // 如果拿到的 data 是一个对象
+       if (isObject(data)) {
+         // 则把 data 包装成 reactiv 的响应性数据，赋值给 instance
+         instance.data = reactive(data)
+       }
+     }
+   }
+   ```
+
+2. 在`packages/runtime-core/src/componentRenderUtils.ts`中，为`render`的调用，通过`call`方法来修改`this`的指向
+
+   ```typescript
+   export function renderComponentRoot(instance) {
+     const { vnode, render, data } = instance
+     let result
+     try {
+       if (vnode.shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+         // 新增：获取到 result 返回值，如果 render 中使用了 this，则需要修改 this 指向
+         result = normalizeVNode(render!.call(data))
+       }
+     } catch (error) {
+       console.error(error)
+     }
+     return result
+   }
+   ```
+
+3. 至此，代码完成，我们可以创建对应测试示例`packages/vue/examples/runtime/render-comment-data.html`
+
+   ```html
+   <script>
+     const { h, render } = Vue
+     const component = {
+       data() {
+         return {
+           msg: 'hello component'
+         }
+       },
+       render() {
+         return h('div', this.msg)
+       }
+     }
+     const vnode = h(component)
+     // 挂载
+     render(vnode, document.querySelector('#app'))
+   </script>
+   ```
+
+   
+
+
+
 ## 参考文章
 
 [vue3 源码学习，实现一个 mini-vue（十一）：组件的设计原理与渲染方案](https://juejin.cn/post/7187069728358629434#heading-1)
