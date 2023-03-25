@@ -545,6 +545,266 @@
 
    ![4.gif](https://yejiwei.com/static/img/a0f887305803e10b0014458a647caf82.4.gif)
 
+## 11：源码阅读：生命回调钩子中访问响应性数据
+
+### created
+
+通过之前的代码我们已经知道，`created`的回调是在`applyOptions`中触发的，所以我们可以直接在这个函数中进行`debugger`
+
+1. 进入`applyOptions`
+2. 剔除之前相同的逻辑，执行代码`if(created){...}`
+
+![image.png](https://yejiwei.com/static/img/70db101d336f4b9e2058a0ba58b9b784.image.png)
+
+通过以上，我们很容易分析`created`能获取到相应数据的原因
+
+### mounted
+
+对于`mounted`而言，我们知道它的生命周期注册是在`applyOptions`方法内的`registerLifecycleHook`方法中，我们可以直接来看一下源码中的`registerLifecycleHook`方法
+
+```typescript
+function registerLifecycleHook(
+  register: Function,
+  hook?: Function | Function[]
+) {
+  if (isArray(hook)) {
+    hook.forEach(_hook => register(_hook.bind(publicThis)))
+  } else if (hook) {
+    register((hook as Function).bind(publicThis))
+  }
+}
+```
+
+该方法中的逻辑也是非常简单，可以看到它和`created`处理几乎一样，都是通过`bind`方法来改变`this`指向
+
+### 总结
+
+无论是`created`也好，还是`mounted`也好，本质上都是通过`bind`方法来修改`this`指向，已达到在回调钩子中访问响应式数据的目的。
+
+## 12：框架实现：生命回调钩子中访问响应性数据
+
+根据上一节的描述，我们只需要改变生命周期钩子中的`this`指向即可
+
+1. 在`packages/runtime-core/src/component.ts`为`callHook`方法增加参数，以此来改变`this`指向
+
+   ```typescript
+   // 创建对应的 callHook：
+   function callHook(hook: Function, proxy) {
+     hook.bind(proxy)()
+   }
+   ```
+
+2. 在`applyOptions`方法中为`callHook`的调用，传递第二个参数
+
+   ```typescript
+   function applyOptions(instance: any) {
+     // hooks
+     if (beforeCreate) {
+       callHook(beforeCreate, instance.data) //  此时 instance.data 自然是没有值的，不过没有关系
+     }
+   
+     ...
+   
+     // hooks
+     if (created) {
+       callHook(created, instance.data)
+     }
+   }
+   ```
+
+3. 另外，在`registerLifecycleHook`中，为`hook`修改`this`指向
+
+   ```typescript
+   function registerLifecycleHook(register: Function, hook?: Function) {
+     register(hook?.bind(instance.data), instance)
+   }
+   ```
+
+4. 至此，代码完成。创建测试示例`packages/examples/runtime/render-component-hook-data.html`,代码如下
+
+   ```html
+   <script>
+     const { h, render } = Vue
+     const component = {
+       data() {
+         return {
+           msg: 'hello component'
+         }
+       },
+       render() {
+         return h('div', this.msg)
+       },
+       beforeCreate() {
+         alert('beforeCreate ' + this.msg)
+       },
+       created() {
+         alert('created ' + this.msg)
+       },
+       mounted() {
+         alert('mounted ' + this.msg)
+       }
+     }
+     const vnode = h(component)
+     // 挂载
+     render(vnode, document.querySelector('#app'))
+   </script>
+   ```
+
+5. 运行代码，正常打开显示
+
+## 13：源码阅读：响应性数据改变，触发组件的响应性变化
+
+虽然目前我们已经完成了在生命周期中访问响应性数据，但是还有个问题就是：**响应性数据改变，没有触发组件发生变化**
+
+再来看这一块的内容之前,首先我们需要先来明确一些基本的概念
+
+组件的渲染，本质上是`render`函数返回值的渲染，所谓响应性数据，指的是 
+
+1. `getter`时收集依赖
+2. `setter`时触发依赖
+
+那么根据以上概念，我们所需要做的是
+
+1. 在组件的数据被触发`getter`时，我们应该收集依赖。那么组件什么时候触发的`getter`呢？在`packages/runtime-core/src/renderer.ts`的`setupRenderEffect`方法中，我们创建了一个`effect`，并且把`effect`的`fn`指向了`componentUpdateFn`函数。在该函数中，我们触发了`getter`，然后得到了`subTree`，然后进行渲染。所以收集依赖的函数为`componentUpdateFn`。
+2. 在组件的数据被触发`setter`时，我们应该触发依赖。我们刚才说，收集的依赖本质上是`componentUpdateFn`函数，所以我们在触发依赖时，所触发的也应该是`componentUpdateFn`函数
+
+明确好了以上内容之后，我们就去分析一下源码是怎么做的，我们创建测试示例`render-component-hook-data-change.html`
+
+```html
+<script>
+  const { h, render } = Vue
+  const component = {
+    data() {
+      return {
+        msg: 'hello component'
+      }
+    },
+    render() {
+      return h('div', this.msg)
+    },
+    // 组件实例处理完所有与状态相关的选项之后
+    created() {
+      setTimeout(() => {
+        this.msg = '你好，世界'
+      }, 2000)
+    }
+  }
+  const vnode = h(component)
+  // 挂载
+  render(vnode, document.querySelector('#app'))
+</script>
+```
+
+在`comonentUpdateFn`中进行`debugger`，等待**第二次**进入`componentUpdateFn`函数（注意：此时我们仅仅关注依赖触发，生命周期的触发不再关注对象，会直接跳过）
+
+1. 第二次进入`componentUpdateFn`，因为这次组件已经挂载过了，所以会执行else, 在`else`中将下一次要渲染的`vnode`赋值给`next`，我们继续往下执行
+
+   ![image.png](https://yejiwei.com/static/img/553092e70f7dfe9d654c61c486b4e514.image.png)
+
+2. 在`else`中，代码最终会执行`renderComponentRoot`，而对于`renderComponentRoot`方法。我们也很熟悉了，它内部会调用
+
+   ```typescript
+   result = normalizeVNode(
+     render!.call(
+       proxyToUse,
+       proxyToUse!,
+       renderCache,
+       props,
+       setupState,
+       data,
+       ctx
+     )
+   )
+   ```
+
+同样通过`call`方法，改变`this`指向，触发`render`。然后通过`normalizeVNode`得到`vnode`,这次得到的`vnode`就是下一次要渲染的`subTree`.接着跳出`renderComponentRoot`方法继续执行代码
+
+![image.png](https://yejiwei.com/static/img/9478446e52a89bfb5a27d8bf5fbf389e.image.png)
+
+3. 可以看到，最终触发`patch`方法，完成**更新操作**
+4. 至此，整个组件视图的更新完成
+
+### 总结
+
+所谓的组件响应性更新，本质上指的是:`componentUpdateFn`的再次触发，根据新的**数据**生成新的`subTree`，再通过`path`进行更新操作
+
+## 14: 框架实现：响应性数据改变，触发组件的响应性变化
+
+1. 在 `packages/runtime-core/src/renderer.ts` 的 `componentUpdateFn` 方法中，加入如下逻辑：
+
+```typescript
+const setupRenderEffect = (instance, initialVNode, container, anchor) => {
+  const componentUpdateFn = () => {
+    // 当前处于 mounted 之前，即执行 挂载 逻辑
+    if (!instance.isMounted) {
+      // 获取 hook
+      const { bm, m } = instance
+      // beforeMount hook
+      if (bm) {
+        bm()
+      }
+      const subTree = (instance.subTree = renderComponentRoot(instance))
+      patch(null, subTree, container, anchor)
+      // mounted hook
+      if (m) {
+        m()
+      }
+      initialVNode.el = subTree.el
+      // 修改 mounted 状态
+      instance.isMounted = true
+    } else {
+     	//-----------新增代码-------------------
+      let { next, vnode } = instance
+      if (!next) {
+        next = vnode
+      }
+      // 获取下一次的 subTree
+      const nextTree = renderComponentRoot(instance)
+      // 保存对应的 subTree  以便进行更新操作
+      const prevTree = instance.subTree
+      instance.subTree = nextTree
+      // 通过 patch  进行更新操作
+      patch(prevTree, nextTree, container, anchor)
+      // 更新 next
+      next.el = nextTree.el
+    }
+}
+```
+
+至此，代码完成。创建对应测试示例`packages/vue/examples/runtime/render-component-hook-data-change.html`
+
+```html
+<body>
+  <div id="app"></div>
+</body>
+<script>
+  const { h, render } = Vue
+
+  const component = {
+    data() {
+      return {
+        msg: 'hello component'
+      }
+    },
+    render() {
+      return h('div', this.msg)
+    },
+    // 组件实例处理完所有与状态相关的选项之后
+    created() {
+      setTimeout(() => {
+        this.msg = '你好，世界'
+      }, 2000)
+    }
+  }
+
+  const vnode = h(component)
+  // 挂载
+  render(vnode, document.querySelector('#app'))
+</script>
+```
+
+![5.gif](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7bf76ad2419c49adb8fe0b13edb392fa~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+
 ## 参考文章
 
 [vue3 源码学习，实现一个 mini-vue（十一）：组件的设计原理与渲染方案](https://juejin.cn/post/7187069728358629434#heading-1)
