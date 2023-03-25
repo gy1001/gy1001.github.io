@@ -322,9 +322,228 @@
    </script>
    ```
 
+## 09：源码阅读：组件生命周期回调处理逻辑
+
+在前面几节中，我们其实已经在源码中查看到了对应的一些生命周期处理逻辑
+
+我们知道`vue`把生命周期叫做生命周期钩子，说白了就是：**在指定时间触发的回调方法**
+
+整个源码过程可以分为两大块
+
+1. 第一块是`beforeCreate`和`created`，它的执行主要是再`applyOptions`中执行的，我们直接通过`options.beforeCreate`和`options.created`来判断是否有这两个钩子，再通过`callHook`执行
+2. 第二块是对于其余的`11`个生命周期，我们都是通过`registerLifecycleHook`方法将这些声明周期注入到`instance`里面，然后在合适的时机进行触发
+
+## 10：框架实现：组件生命周期回调处理逻辑
+
+明确好了源码的生命周期以后，那么接下来我们来实现一下对应的逻辑
+
+我们本小节要处理的生命周期有四个，首先我们先处理前两个`beforeCreate`和`created`，我们知道这两个回调方法是在`applyOptions`方法中回调的
+
+1. 在`packages/runtime-core/src/components.ts`的`applyOptions`方法中
+
+   ```typescript
+   function applyOptions(instance: any) {
+       const {
+         data: dataOptions,
+         beforeCreate,
+         created,
+         beforeMount,
+         mounted
+       } = instance.type
    
+       // hooks
+       if (beforeCreate) {
+           callHook(beforeCreate)
+       }
+   
+       // 存在 data 选项时
+       if (dataOptions) {
+           ...
+       }
+   
+       // hooks
+       if (created) {
+          callHook(created)
+       }
+   }
+    
+   // 创建对应的 callHook：
+   function callHook(hook: Function) {
+     hook()
+   }
+   ```
 
+2. 至此，`beforeCreate`和`created`完成
 
+接下来我们来处理`beforeMount`和`mounted`在，对于这两个生命周期而言，它需要先注册，再触发
+
+那么我们先来处理注册的逻辑
+
+**首先我们需要先创建`LifecycleHooks`**
+
+1. 在`packages/runtime-core/src/component.ts`中
+
+   ```typescript
+   export const enum LifecycleHooks {
+     BEFORE_CREATE = 'bc',
+     CREATED = 'c',
+     BEFEORE_MOUNT = 'bm',
+     MOUNTED = 'm'
+   }
+   ```
+
+2. 同样，在此文件中，在生成组件实例时，提供对应的生命周期相关选项
+
+   ```typescript
+   export function createComponentInstance(vnode) {
+     const { type } = vnode
+   
+     const instance = {
+       ...
+       // 生命周期相关
+       isMounted: false, // 是否挂载
+       bc: null, // beforeCreate
+       c: null, // created
+       bm: null, // beforeMount
+       m: null // mounted
+     }
+     return instance
+   }
+   ```
+
+3. 创建`packages/runtime-core/src/apiLifecycle.ts`模块，处理对应的`hooks`注册方法
+
+   ```typescript
+   import { LifecycleHooks } from './component'
+   
+   export function injectHook(
+     type: LifecycleHooks,
+     hook: Function,
+     instance
+   ): Function | undefined {
+     // 将hook  注册到组件实例中
+     if (instance) {
+       instance[type] = hook
+       return hook
+     }
+   }
+   
+   export const createHook = (lifecycle: LifecycleHooks) => {
+     return (hook, target) => injectHook(lifecycle, hook, target)
+   }
+   
+   export const onBeforeMount = createHook(LifecycleHooks.BEFEORE_MOUNT)
+   export const onMounted = createHook(LifecycleHooks.MOUNTED)
+   ```
+
+​	这样，我们注册`hooks`的一些基础逻辑完成
+
+4. 接下来我们就可以在`applyOptions`方法中，完成对应的注册
+
+   ```typescript
+   import { onBeforeMount, onMounted } from './apiLifecycle'
+   
+   function applyOptions(instance: any) {
+      const {
+       data: dataOptions,
+       beforeCreate,
+       created,
+       beforeMount,
+       mounted
+     } = instance.type
+       ...
+       function registerLifecycleHook(register: Function, hook?: Function) {
+           register(hook, instance)
+       }
+   
+       // 注册 hooks
+       registerLifecycleHook(onBeforeMount, beforeMount)
+       registerLifecycleHook(onMounted, mounted)
+   }
+   ```
+
+5. 这样就把`bm`和`m`注册到组件实例之后了，下面就可以在`componentUpdateFn`中触发响应的`hook`了
+
+   ```typescript
+   export function baseCreateRender(options: RendererOptions) {
+   	... 
+     const setupRenderEffect = (instance, initialVNode, container, anchor) => {
+       const componentUpdateFn = () => {
+         // 当前处于 mounted 之前，即执行 挂载 逻辑
+         if (!instance.isMounted) {
+           // 获取 hook
+           const { bm, m } = instance
+           // beforeMount hook
+           if (bm) {
+             bm()
+           }
+           const subTree = (instance.subTree = renderComponentRoot(instance))
+           patch(null, subTree, container, anchor)
+           // mounted hook
+           if (m) {
+             m()
+           }
+           initialVNode.el = subTree.el
+         } else {
+         }
+       }
+   
+       const effect = (instance.effect = new ReactiveEffect(
+         componentUpdateFn,
+         () => {
+           queuePreFlushCb(update)
+         }
+       ))
+       const update = (instance.update = () => effect.run())
+       update()
+     }
+     ...
+     return {
+   
+     }
+   }
+   ```
+
+6. 至此，生命周期逻辑处理完成，我们可以创建对应测试示例`packages/vue/examples/runtime/render-component-hook.html`
+
+   ```html
+   <script>
+     const { h, render } = Vue
+     const component = {
+       data() {
+         return {
+           msg: 'hello component'
+         }
+       },
+       render() {
+         return h('div', this.msg)
+       },
+       // 组件初始化完成之后
+       beforeCreate() {
+         alert('beforeCreate')
+       },
+       // 组件实例处理完所有与状态相关的选项之后
+       created() {
+         alert('created')
+       },
+       // 组件被挂载之前
+       beforeMount() {
+         alert('beforeMount')
+       },
+       // 组件被挂载之后
+       mounted() {
+         alert('mounted')
+       }
+     }
+     const vnode = h(component)
+     // 挂载
+     render(vnode, document.querySelector('#app'))
+   </script>
+   ```
+
+7. 运行浏览器，可以看到如下效果
+
+   ![4.gif](https://yejiwei.com/static/img/a0f887305803e10b0014458a647caf82.4.gif)
 
 ## 参考文章
 
