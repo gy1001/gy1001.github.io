@@ -805,6 +805,131 @@ const setupRenderEffect = (instance, initialVNode, container, anchor) => {
 
 ![5.gif](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7bf76ad2419c49adb8fe0b13edb392fa~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
+## 15: 源码阅读：compositionAPI，setup函数
+
+我们已经处理好了组件非常多的概念，但是我们知道对于`vue3`而言，提供了`composition API`,即`setup`函数的概念
+
+那么如果我们想要通过`setup`函数来进行一个响应性数据的挂载，那么又应该怎么做呢？
+
+我们创建一个测试示例`render-component-setup.html`内容如下
+
+```html
+<script>
+  const { reactive, h, render } = Vue
+  const component = {
+    setup() {
+      const obj = reactive({
+        name: '张三'
+      })
+      return () => h('div', obj.name)
+    }
+  }
+  const vnode = h(component)
+  // 挂载
+  render(vnode, document.querySelector('#app'))
+</script>
+```
+
+在上面的代码中，我们构建了一个`setup`函数，并且在`setup`函数中`return`了一个函数，函数中返回了一个`vnode`
+
+我们知道，`vue`对于组件的挂载，本质上是触发`mountComponent`，在`mountComponent`中调用了`setUpComponent`函数，通过此函数来对组件的选项进行标准化
+
+那么`setup`函数本质上就是一个`vue`组件的选项，所以对于`setup`函数处理的核心逻辑，就在`setupComponent`中。我们在这函数内部进行`debugger`
+
+![image.png](https://yejiwei.com/static/img/0785e74a875899e33378037470f4286f.image.png)
+
+1. 由上图我们看到了`setup`函数最终被执行了，由此得到`setupResult`的值为`()=>h('div', obj.name)`。即`setup`函数的返回值。我们代码继续执行
+
+   ![image.png](https://yejiwei.com/static/img/061f608553715bfedff07f77d13b3a98.image.png)
+
+2. 我们可以看到，先是触发了`handleSetupResult`方法，在`handleSetupResult`方法中会将`setupResult`赋值给`instance.render`，最后进行了`finishComponentSetup`
+
+3. 后面的逻辑就是**有状态的响应性组件挂载逻辑**的逻辑了，这里就不再详细说明
+
+### 总结
+
+1. 对于`setup`函数的`composition API`语法的组件挂载，本质上只是多了一个`setup`函数的处理
+2. 对于`setup`函数内部，可以完成对应的**自治**，所以我们**无需**通过`call`方法来改变`this`指向，即可得到真实的`render`
+3. 得到真实的`render`之后，后面就是正常的组件挂载了
+
+## 16：框架实现：compositionAPI，setup函数
+
+1. 在`packages/runtime-core/src/component.ts`模块中的`setupStatefulComponent`方法中，增加`setup`判定
+
+   ```typescript
+   export function setupStatefuleComponent(instance) {
+     const { setup } = instance.type
+     if (setup) {
+       console.log('执行setup函数')
+       const setupResult = setup()
+       handleSetupResult(instance, setupResult)
+     } else {
+       finishComponentSetup(instance)
+     }
+   }
+   
+   export function handleSetupResult(instance, setupResult) {
+     if (isFunction(setupResult)) {
+       instance.render = setupResult
+     }
+     finishComponentSetup(instance)
+   }
+   
+   // 在 finishComponentSetup 中，如果已经存在 render，则不需要重新赋值：
+   export function finishComponentSetup(instance) {
+     const component = instance.type
+     // 组件不存在 render 时，才需要重新赋值
+     if (!instance.render) {
+       instance.render = component.render
+     }
+     // 改变 options 中的 this 指向
+     applyOptions(instance)
+   }
+   ```
+
+2. 至此，代码完成，创建对应测试示例`packages/vue/examples/runtime/render-component-setup.html`
+
+   ```html
+   <script>
+     const { reactive, h, render } = Vue
+   
+     const component = {
+       setup() {
+         const obj = reactive({
+           name: '张三'
+         })
+   
+         setTimeout(() => {
+           obj.name = '李四'
+         }, 2000)
+   
+         return () => h('div', obj.name)
+       }
+     }
+   
+     const vnode = h(component)
+     // 挂载
+     render(vnode, document.querySelector('#app'))
+   </script>
+   ```
+
+   **挂载**和**更新**完成
+
+## 17. 总结
+
+在本章中，我们处理了`vue`中组件对应的**挂载、更新逻辑**
+
+我们知道组件本质上就是一个对象(或者函数)，组件的渲染本质上就是`render`函数返回值的渲染
+
+组件渲染的内部，构建了`ReactiveEffect`的实例，其目的是为了实现组件的响应性渲染
+
+而当我们期望在组件内部访问响应性数据时，分为两种情况
+
+1. 通过`this`访问：对于这种情况我们需要改变`this`指向，改变的方式是通过`call`方法或者`bind`方法
+2. 通过`setup`访问：这种方式因为不涉及`this`指向问题，反而更加简单当组件内部的响应性数据发生变化时，会触发`componentUpdateFn`函数，在该函数中根据`isMounted`的值的不同，进行了不同的处理
+
+组件的生命周期钩子，本质上只是一些方法的回调，当然，如果我们希望在生命周期钩子中通过`this`访问响应性数据，那么一样需要改变`this`指向
+
 ## 参考文章
 
 [vue3 源码学习，实现一个 mini-vue（十一）：组件的设计原理与渲染方案](https://juejin.cn/post/7187069728358629434#heading-1)
