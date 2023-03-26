@@ -130,7 +130,7 @@ export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
        //  2. 设置文本
        if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
        } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
-         mountChildren(vnode.children, container, anchor) // 新增加，我们之前已经实现过了 mountChildren 方法
+         mountChildren(vnode.children, el, anchor) // 新增加，我们之前已经实现过了 mountChildren 方法
        }
      }
    }
@@ -216,7 +216,7 @@ export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
      ])
      // 挂载
      render(vnode, document.querySelector('#app'))
-
+   
      // 延迟两秒，生成新的 vnode，进行更新操作
      setTimeout(() => {
        const vnode2 = h('ul', [
