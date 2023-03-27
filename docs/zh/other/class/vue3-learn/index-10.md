@@ -2,7 +2,7 @@
 
 ## 01:前言
 
- 在本章中，我们将要关注于 component 组件的渲染逻辑，对于组件而言，本身比较复杂所以我们单独拿出来一章来进行讲解
+在本章中，我们将要关注于 component 组件的渲染逻辑，对于组件而言，本身比较复杂所以我们单独拿出来一章来进行讲解
 
 在学习本章节之前，我们需要先来回忆一下再学习 h 函数时，我们学到的内容
 
@@ -31,7 +31,7 @@
   const component = {
     render() {
       return h('div', 'hello component')
-    }
+    },
   }
 
   const vnode = h(component)
@@ -52,15 +52,13 @@
    ```typescript
    import { createComponentInstance, setupComponent } from './component'
    import { renderComponentRoot } from './commponentRenderUtis'
-   
+
    export function baseCreateRender(options: RendererOptions) {
-     
      const patch = (oldVNode, newVNode, container, anchor) => {
-       
        const { type, shapeFlag } = newVNode
        switch (type) {
          case xxx:
-         	break;
+           break
          default:
            if (shapeFlag & ShapeFlags.ELEMENT) {
            } else if (shapeFlag & ShapeFlags.COMPONENT) {
@@ -69,21 +67,21 @@
            break
        }
      }
-     
+
      // 创建 processComponent 函数：
      const processComponent = (oldVNode, newVNode, container, anchor) => {
        if (oldVNode == null) {
          mountComponent(newVNode, container, anchor)
        }
      }
-     
+
      const mountComponent = (initialVNode, container, anchor) => {
        const instance = (initialVNode.component =
          createComponentInstance(initialVNode))
        setupComponent(instance)
        setupRenderEffect(instance, initialVNode, container, anchor)
      }
-     
+
      const setupRenderEffect = (instance, initialVNode, container, anchor) => {
        const componentUpdateFn = () => {
          if (!instance.isMounted) {
@@ -93,7 +91,7 @@
          } else {
          }
        }
-   
+
        const effect = (instance.effect = new ReactiveEffect(
          componentUpdateFn,
          () => {
@@ -103,8 +101,6 @@
        const update = (instance.update = () => effect.run())
        update()
      }
-     
-     
    }
    ```
 
@@ -121,22 +117,22 @@
        subTree: null,
        effect: null,
        update: null,
-       render: null
+       render: null,
      }
      return instance
    }
-   
+
    export function setupComponent(instance) {
      setupStatefuleComponent(instance)
    }
-   
+
    export function setupStatefuleComponent(instance) {
      finishComponentSetup(instance)
    }
-   
+
    export function finishComponentSetup(instance) {
      const component = instance.type
-   
+
      instance.render = component.render
    }
    ```
@@ -146,7 +142,7 @@
    ```typescript
    import { ShapeFlags } from 'packages/shared/src/shapeFlags'
    import { createVNode, Text } from './vnode'
-   
+
    export function renderComponentRoot(instance) {
      const { vnode, render } = instance
      let result
@@ -155,10 +151,10 @@
          result = normalizeVNode(render!())
        }
      } catch (error) {}
-   
+
      return result
    }
-   
+
    export function normalizeVNode(child) {
      if (typeof child === 'object') {
        return cloneIfMounted(child)
@@ -167,7 +163,7 @@
        return createVNode(Text, null, String(child))
      }
    }
-   
+
    function cloneIfMounted(child) {
      return child
    }
@@ -181,7 +177,7 @@
      const component = {
        render() {
          return h('div', 'i am a component')
-       }
+       },
      }
      const vnode = h(component)
      render(vnode, document.querySelector('#app'))
@@ -209,7 +205,7 @@
   const component = {
     render() {
       return h('div', 'i am a component')
-    }
+    },
   }
   const vnode = h(component)
   render(vnode, document.querySelector('#app'))
@@ -218,7 +214,7 @@
     const component2 = {
       render() {
         return h('div', 'component update')
-      }
+      },
     }
     const vnode2 = h(component2)
     render(vnode2, document.querySelector('#app'))
@@ -241,7 +237,7 @@
 
 但是以上的内容，全部都是针对于**无状态**组件来看的
 
-在我们的实际开发中，组件通常是**有状态（即：存在data响应式数据）**的，那么**有状态的组件**和**无状态组件**他们之间的渲染存在什么差异呢？让我们继续往下看
+在我们的实际开发中，组件通常是**有状态（即：存在 data 响应式数据）**的，那么**有状态的组件**和**无状态组件**他们之间的渲染存在什么差异呢？让我们继续往下看
 
 ## 07：源码实现：有状态的响应性组件挂载逻辑
 
@@ -258,18 +254,18 @@
    ```typescript
    import { reactive } from '@vue/reactivity'
    import { isObject } from '@vue/shared'
-   
+
    export function finishComponentSetup(instance) {
      const component = instance.type
-   
+
      instance.render = component.render
-    // 改变 options 中的 this 指向
+     // 改变 options 中的 this 指向
      applyOptions(instance)
    }
-   
+
    function applyOptions(instance: any) {
      const { data: dataOptions } = instance.type
-   
+
      // 存在 data 选项时
      if (dataOptions) {
        // 触发 dataOptions 函数，拿到 data 对象
@@ -301,7 +297,7 @@
    }
    ```
 
-3. 至此，代码完成，我们可以创建对应测试示例`packages/vue/examples/runtime/render-comment-data.html`
+3. 至此，代码完成，我们可以创建对应测试示例`packages/vue/examples/runtime/render-component-data.html`
 
    ```html
    <script>
@@ -309,12 +305,12 @@
      const component = {
        data() {
          return {
-           msg: 'hello component'
+           msg: 'hello component',
          }
        },
        render() {
          return h('div', this.msg)
-       }
+       },
      }
      const vnode = h(component)
      // 挂载
@@ -350,23 +346,23 @@
          beforeMount,
          mounted
        } = instance.type
-   
+
        // hooks
        if (beforeCreate) {
            callHook(beforeCreate)
        }
-   
+
        // 存在 data 选项时
        if (dataOptions) {
            ...
        }
-   
+
        // hooks
        if (created) {
           callHook(created)
        }
    }
-    
+
    // 创建对应的 callHook：
    function callHook(hook: Function) {
      hook()
@@ -388,7 +384,7 @@
      BEFORE_CREATE = 'bc',
      CREATED = 'c',
      BEFEORE_MOUNT = 'bm',
-     MOUNTED = 'm'
+     MOUNTED = 'm',
    }
    ```
 
@@ -397,7 +393,7 @@
    ```typescript
    export function createComponentInstance(vnode) {
      const { type } = vnode
-   
+
      const instance = {
        ...
        // 生命周期相关
@@ -415,7 +411,7 @@
 
    ```typescript
    import { LifecycleHooks } from './component'
-   
+
    export function injectHook(
      type: LifecycleHooks,
      hook: Function,
@@ -427,22 +423,22 @@
        return hook
      }
    }
-   
+
    export const createHook = (lifecycle: LifecycleHooks) => {
      return (hook, target) => injectHook(lifecycle, hook, target)
    }
-   
+
    export const onBeforeMount = createHook(LifecycleHooks.BEFEORE_MOUNT)
    export const onMounted = createHook(LifecycleHooks.MOUNTED)
    ```
 
-​	这样，我们注册`hooks`的一些基础逻辑完成
+​ 这样，我们注册`hooks`的一些基础逻辑完成
 
 4. 接下来我们就可以在`applyOptions`方法中，完成对应的注册
 
    ```typescript
    import { onBeforeMount, onMounted } from './apiLifecycle'
-   
+
    function applyOptions(instance: any) {
       const {
        data: dataOptions,
@@ -455,7 +451,7 @@
        function registerLifecycleHook(register: Function, hook?: Function) {
            register(hook, instance)
        }
-   
+
        // 注册 hooks
        registerLifecycleHook(onBeforeMount, beforeMount)
        registerLifecycleHook(onMounted, mounted)
@@ -466,7 +462,7 @@
 
    ```typescript
    export function baseCreateRender(options: RendererOptions) {
-   	... 
+   	...
      const setupRenderEffect = (instance, initialVNode, container, anchor) => {
        const componentUpdateFn = () => {
          // 当前处于 mounted 之前，即执行 挂载 逻辑
@@ -487,7 +483,7 @@
          } else {
          }
        }
-   
+
        const effect = (instance.effect = new ReactiveEffect(
          componentUpdateFn,
          () => {
@@ -499,7 +495,7 @@
      }
      ...
      return {
-   
+
      }
    }
    ```
@@ -512,7 +508,7 @@
      const component = {
        data() {
          return {
-           msg: 'hello component'
+           msg: 'hello component',
          }
        },
        render() {
@@ -533,7 +529,7 @@
        // 组件被挂载之后
        mounted() {
          alert('mounted')
-       }
+       },
      }
      const vnode = h(component)
      // 挂载
@@ -568,7 +564,7 @@ function registerLifecycleHook(
   hook?: Function | Function[]
 ) {
   if (isArray(hook)) {
-    hook.forEach(_hook => register(_hook.bind(publicThis)))
+    hook.forEach((_hook) => register(_hook.bind(publicThis)))
   } else if (hook) {
     register((hook as Function).bind(publicThis))
   }
@@ -602,9 +598,9 @@ function registerLifecycleHook(
      if (beforeCreate) {
        callHook(beforeCreate, instance.data) //  此时 instance.data 自然是没有值的，不过没有关系
      }
-   
+
      ...
-   
+
      // hooks
      if (created) {
        callHook(created, instance.data)
@@ -628,7 +624,7 @@ function registerLifecycleHook(
      const component = {
        data() {
          return {
-           msg: 'hello component'
+           msg: 'hello component',
          }
        },
        render() {
@@ -642,7 +638,7 @@ function registerLifecycleHook(
        },
        mounted() {
          alert('mounted ' + this.msg)
-       }
+       },
      }
      const vnode = h(component)
      // 挂载
@@ -658,7 +654,7 @@ function registerLifecycleHook(
 
 再来看这一块的内容之前,首先我们需要先来明确一些基本的概念
 
-组件的渲染，本质上是`render`函数返回值的渲染，所谓响应性数据，指的是 
+组件的渲染，本质上是`render`函数返回值的渲染，所谓响应性数据，指的是
 
 1. `getter`时收集依赖
 2. `setter`时触发依赖
@@ -676,7 +672,7 @@ function registerLifecycleHook(
   const component = {
     data() {
       return {
-        msg: 'hello component'
+        msg: 'hello component',
       }
     },
     render() {
@@ -687,7 +683,7 @@ function registerLifecycleHook(
       setTimeout(() => {
         this.msg = '你好，世界'
       }, 2000)
-    }
+    },
   }
   const vnode = h(component)
   // 挂载
@@ -697,7 +693,7 @@ function registerLifecycleHook(
 
 在`comonentUpdateFn`中进行`debugger`，等待**第二次**进入`componentUpdateFn`函数（注意：此时我们仅仅关注依赖触发，生命周期的触发不再关注对象，会直接跳过）
 
-1. 第二次进入`componentUpdateFn`，因为这次组件已经挂载过了，所以会执行else, 在`else`中将下一次要渲染的`vnode`赋值给`next`，我们继续往下执行
+1. 第二次进入`componentUpdateFn`，因为这次组件已经挂载过了，所以会执行 else, 在`else`中将下一次要渲染的`vnode`赋值给`next`，我们继续往下执行
 
    ![image.png](https://yejiwei.com/static/img/553092e70f7dfe9d654c61c486b4e514.image.png)
 
@@ -783,7 +779,7 @@ const setupRenderEffect = (instance, initialVNode, container, anchor) => {
   const component = {
     data() {
       return {
-        msg: 'hello component'
+        msg: 'hello component',
       }
     },
     render() {
@@ -794,7 +790,7 @@ const setupRenderEffect = (instance, initialVNode, container, anchor) => {
       setTimeout(() => {
         this.msg = '你好，世界'
       }, 2000)
-    }
+    },
   }
 
   const vnode = h(component)
@@ -805,7 +801,7 @@ const setupRenderEffect = (instance, initialVNode, container, anchor) => {
 
 ![5.gif](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7bf76ad2419c49adb8fe0b13edb392fa~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
-## 15: 源码阅读：compositionAPI，setup函数
+## 15: 源码阅读：compositionAPI，setup 函数
 
 我们已经处理好了组件非常多的概念，但是我们知道对于`vue3`而言，提供了`composition API`,即`setup`函数的概念
 
@@ -819,10 +815,10 @@ const setupRenderEffect = (instance, initialVNode, container, anchor) => {
   const component = {
     setup() {
       const obj = reactive({
-        name: '张三'
+        name: '张三',
       })
       return () => h('div', obj.name)
-    }
+    },
   }
   const vnode = h(component)
   // 挂载
@@ -852,11 +848,12 @@ const setupRenderEffect = (instance, initialVNode, container, anchor) => {
 2. 对于`setup`函数内部，可以完成对应的**自治**，所以我们**无需**通过`call`方法来改变`this`指向，即可得到真实的`render`
 3. 得到真实的`render`之后，后面就是正常的组件挂载了
 
-## 16：框架实现：compositionAPI，setup函数
+## 16：框架实现：compositionAPI，setup 函数
 
 1. 在`packages/runtime-core/src/component.ts`模块中的`setupStatefulComponent`方法中，增加`setup`判定
 
    ```typescript
+   import { isFunction } from '@vue/shared'
    export function setupStatefuleComponent(instance) {
      const { setup } = instance.type
      if (setup) {
@@ -867,14 +864,14 @@ const setupRenderEffect = (instance, initialVNode, container, anchor) => {
        finishComponentSetup(instance)
      }
    }
-   
+
    export function handleSetupResult(instance, setupResult) {
      if (isFunction(setupResult)) {
        instance.render = setupResult
      }
      finishComponentSetup(instance)
    }
-   
+
    // 在 finishComponentSetup 中，如果已经存在 render，则不需要重新赋值：
    export function finishComponentSetup(instance) {
      const component = instance.type
@@ -892,21 +889,21 @@ const setupRenderEffect = (instance, initialVNode, container, anchor) => {
    ```html
    <script>
      const { reactive, h, render } = Vue
-   
+
      const component = {
        setup() {
          const obj = reactive({
-           name: '张三'
+           name: '张三',
          })
-   
+
          setTimeout(() => {
            obj.name = '李四'
          }, 2000)
-   
+
          return () => h('div', obj.name)
-       }
+       },
      }
-   
+
      const vnode = h(component)
      // 挂载
      render(vnode, document.querySelector('#app'))
