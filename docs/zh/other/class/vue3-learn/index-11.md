@@ -216,7 +216,7 @@ export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
      ])
      // 挂载
      render(vnode, document.querySelector('#app'))
-   
+
      // 延迟两秒，生成新的 vnode，进行更新操作
      setTimeout(() => {
        const vnode2 = h('ul', [
@@ -229,28 +229,28 @@ export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
    </script>
    ```
 
-## 05：源码阅读：场景二：自后向前的diff对比
+## 05：源码阅读：场景二：自后向前的 diff 对比
 
 1. 我们新建测试示例:
 
    ```html
    <script>
      const { h, render } = Vue
-   
+
      const vnode = h('ul', [
        h('li', { key: 1 }, 'a'),
        h('li', { key: 2 }, 'b'),
-       h('li', { key: 3 }, 'c')
+       h('li', { key: 3 }, 'c'),
      ])
      // 挂载
      render(vnode, document.querySelector('#app'))
-   
+
      // 延迟两秒，生成新的 vnode，进行更新操作
      setTimeout(() => {
        const vnode2 = h('ul', [
          h('li', { key: 4 }, 'a'),
          h('li', { key: 2 }, 'b'),
-         h('li', { key: 3 }, 'd')
+         h('li', { key: 3 }, 'd'),
        ])
        render(vnode2, document.querySelector('#app'))
      }, 2000)
@@ -290,7 +290,7 @@ export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
 1. `vue`的`diff`首先会**自前向后**和**自后向前**，处理所有的**相同的**`VNode`节点
 2. 每次处理成功之后，会自减`e1`和`e2`,表示**新、旧节点中已经处理完成的节点（自后向前）**
 
-## 06：框架实现：场景二：自后向前的diff对比
+## 06：框架实现：场景二：自后向前的 diff 对比
 
 明确好了自后向前的`diff`对比之后，接下来我们就可以直接进行对应的实现了
 
@@ -298,17 +298,16 @@ export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
 
    ```typescript
    // 2. 自后向前的 diff 对比，经过循环之后，从后开始的相同 vnode 将被处理
-     while (i <= oldChildrenEnd && i <= newChildrenEnd) {
-         const oldVNode = oldChildren[oldChildrenEnd]
-         const newVNode = normalizeVNode(newChildren[newChildrenEnd])
-       if (isSameVNodeType(oldVNode, newVNode)) {
-         patch(oldVNode, newVNode, container, null)
-       } else {
-         break
-       }
-       oldChildrenEnd--
-       newChildrenEnd--
+   while (i <= oldChildrenEnd && i <= newChildrenEnd) {
+     const oldVNode = oldChildren[oldChildrenEnd]
+     const newVNode = normalizeVNode(newChildren[newChildrenEnd])
+     if (isSameVNodeType(oldVNode, newVNode)) {
+       patch(oldVNode, newVNode, container, null)
+     } else {
+       break
      }
+     oldChildrenEnd--
+     newChildrenEnd--
    }
    ```
 
@@ -320,7 +319,7 @@ export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
      const vnode = h('ul', [
        h('li', { key: 1 }, 'a'),
        h('li', { key: 2 }, 'b'),
-       h('li', { key: 3 }, 'c')
+       h('li', { key: 3 }, 'c'),
      ])
      // 挂载
      render(vnode, document.querySelector('#app'))
@@ -329,14 +328,14 @@ export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
        const vnode2 = h('ul', [
          h('li', { key: 4 }, 'a'),
          h('li', { key: 2 }, 'b'),
-         h('li', { key: 3 }, 'd')
+         h('li', { key: 3 }, 'd'),
        ])
        render(vnode2, document.querySelector('#app'))
      }, 2000)
    </script>
    ```
 
-## 07: 源码阅读：场景三：新节点多于旧节点的diff对比
+## 07: 源码阅读：场景三：新节点多于旧节点的 diff 对比
 
 以上两种场景，新节点数量和旧节点数量都是完全一致的
 
@@ -358,10 +357,7 @@ export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
 <script>
   const { h, render } = Vue
 
-  const vnode = h('ul', [
-    h('li', { key: 1 }, 'a'),
-    h('li', { key: 2 }, 'b')
-  ])
+  const vnode = h('ul', [h('li', { key: 1 }, 'a'), h('li', { key: 2 }, 'b')])
   // 挂载
   render(vnode, document.querySelector('#app'))
 
@@ -398,7 +394,7 @@ export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
     const vnode2 = h('ul', [
       h('li', { key: 3 }, 'c'),
       h('li', { key: 1 }, 'a'),
-      h('li', { key: 2 }, 'b')
+      h('li', { key: 2 }, 'b'),
     ])
     render(vnode2, document.querySelector('#app'))
   }, 2000)
@@ -419,7 +415,7 @@ export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
 2. 这两种情况下的区别在于：**插入的位置不同**
 3. 明确好插入的位置之后，直接通过`patch`进行打补丁即可
 
-## 08：框架实现：场景三：新节点多于旧节点的diff对比
+## 08：框架实现：场景三：新节点多于旧节点的 diff 对比
 
 根据上一小节的分析，我们可以直接在`packages/runtime-core/src/renderer.ts`中的`patchKeyedChildren`方法下，实现如下代码
 
@@ -438,3 +434,262 @@ if (i > oldChildrenEnd) {
 }
 ```
 
+创建对应测试示例`packages/vue/examples/runtime/render-element-diff-3.html`
+
+```html
+<script>
+  const { h, render } = Vue
+  const vnode = h('ul', [h('li', { key: 1 }, 'a'), h('li', { key: 2 }, 'b')])
+  // 挂载
+  render(vnode, document.querySelector('#app'))
+
+  // 延迟两秒，生成新的 vnode，进行更新操作
+  setTimeout(() => {
+    const vnode2 = h('ul', [
+      h('li', { key: 1 }, 'a'),
+      h('li', { key: 2 }, 'b'),
+      h('li', { key: 3 }, 'c'),
+    ])
+    render(vnode2, document.querySelector('#app'))
+  }, 2000)
+</script>
+```
+
+测试成功
+
+## 09：源码阅读：场景四：旧节点多于新节点时的 diff 对比
+
+接下来我们来看场景四**旧节点多于新节点**时，根据场景三的经验，其实我们也可以明确，对于旧节点多于新节点时，对应的场景也可以细分为两种
+
+1. 多出的旧节点位于**尾部**
+2. 多出的旧节点位于**头部**
+
+```html
+<script>
+  const { h, render } = Vue
+  const vnode = h('ul', [
+    h('li', { key: 1 }, 'a'),
+    h('li', { key: 2 }, 'b'),
+    h('li', { key: 3 }, 'c'),
+  ])
+  // 挂载
+  render(vnode, document.querySelector('#app'))
+
+  // 延迟两秒，生成新的 vnode，进行更新操作
+  setTimeout(() => {
+    const vnode2 = h('ul', [h('li', { key: 1 }, 'a'), h('li', { key: 2 }, 'b')])
+    render(vnode2, document.querySelector('#app'))
+  }, 2000)
+</script>
+```
+
+跟踪代码，直接进入场景四，即可
+
+![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2d7b53e92fff4b50910a89172ea0f8cd~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+
+1. 因为`i=2,e1=0,e2=1`，所以最后会执行`unmount`方法**卸载**多余出来的第三个`vnode`
+2. 以上代码比较简单，对于多出的旧节点位于**头部**的场景，同样执行该逻辑
+
+### 总结
+
+由以上代码可知
+
+旧节点多于新节点时，整体的处理比较简单，只需要**卸载旧节点**即可
+
+## 10：框架实现：场景四：旧节点多于新节点的 diff 对比
+
+根据上一小节的分析，我们可以直接在`packages/runtime-core/src/renderer.ts`中的`patchKeyedChildren`方法，实现如下代码
+
+```typescript
+// 4. 旧节点多与新节点时的 diff 比对。
+else if (i > newChildrenEnd) {
+  while (i <= oldChildrenEnd) {
+    unmount(oldChildren[i])
+    i++
+  }
+}
+```
+
+创建如下测试示例`packages/vue/examples/runtime/render-element-diff-4.html`
+
+```html
+<script>
+  const { h, render } = Vue
+  const vnode = h('ul', [
+    h('li', { key: 1 }, 'a'),
+    h('li', { key: 2 }, 'b'),
+    h('li', { key: 3 }, 'c'),
+  ])
+  // 挂载
+  render(vnode, document.querySelector('#app'))
+
+  // 延迟两秒，生成新的 vnode，进行更新操作
+  setTimeout(() => {
+    const vnode2 = h('ul', [h('li', { key: 1 }, 'a'), h('li', { key: 2 }, 'b')])
+    render(vnode2, document.querySelector('#app'))
+  }, 2000)
+</script>
+```
+
+测试成功
+
+## 11：局部总结：前四种 diff 场景的总结与乱序场景
+
+那么到目前为止，我们已经实现了 `4` 种 `diff` 场景对应的处理，经过前面的学习我们可以知道，对于前四中 `diff` 场景而言，`diff` 处理本质上是比较简单的
+
+1. 自前向后的 `diff` 对比：主要处理从前到后的相同`VNode`。例如:`(a b) c` 对应 `(a b) d e`
+2. 自后向前的 `diff` 对比：主要处理从后到前的相同`VNode`。例如：`a (b c)` 对应 `d e (b c)`
+3. 新节点多于旧节点的`diff`对比：主要处理新增节点
+4. 旧节点多于新节点的`diff`对比：主要处理删除节点
+
+但是仅靠前四种场景的话，那么是无法满足实际开发中的所有逻辑的。所以我们还需要最关键的一种场景需要处理，那就是**乱序场景**
+
+那么什么情况下我们需要乱序场景呢？
+
+我们来看以下的`diff`场景
+
+```html
+<script>
+  const { h, render } = Vue
+
+  const vnode = h('ul', [
+    h('li', { key: 1 }, 'a'),
+    h('li', { key: 2 }, 'b'),
+    h('li', { key: 3 }, 'c'),
+    h('li', { key: 4 }, 'd'),
+    h('li', { key: 5 }, 'e'),
+  ])
+  // 挂载
+  render(vnode, document.querySelector('#app'))
+
+  // 延迟两秒，生成新的 vnode，进行更新操作
+  setTimeout(() => {
+    const vnode2 = h('ul', [
+      h('li', { key: 1 }, 'new-a'),
+      h('li', { key: 3 }, 'new-c'),
+      h('li', { key: 2 }, 'new-b'),
+      h('li', { key: 6 }, 'new-f'),
+      h('li', { key: 5 }, 'new-e'),
+    ])
+    render(vnode2, document.querySelector('#app'))
+  }, 2000)
+</script>
+```
+
+该测试示例经过前四个`while`的过程为
+
+![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f852453e0c6b45eab94be381a9bdd541~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+
+1. 初始状态：索引`i = 0`。旧节点结束索引`e1 = 4`。新节点索引`e2 = 4`
+1. 自前向后的索引：索引`i = 1`。旧节点结束索引`e1 = 4`。新节点索引`e2 = 4`
+1. 自后向前的索引：索引`i = 1`。旧节点结束索引`e1 = 3`。新节点索引`e2 = 3`
+1. 增加新节点：无任何变化
+1. 删除旧节点：无任何变化
+
+1. 此时中间还剩下三对节点没有处理，该怎么办呢？
+
+## 12：前置知识：场景五：最长递增子序列
+
+在场景 5 的`diff`中，`vue`使用了**最长递增子序列**这样的一个概念，所以想要更好的理解场景 5，那么我们需要先搞明白，两个问题
+
+1. 什么是最长递增子序列？
+2. 最长递增子序列在`diff`中的作用是什么？
+
+### 什么是最长递增子序列
+
+> [维基百科-最长递增子序列](https://zh.m.wikipedia.org/zh-hans/%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97)：在一个给定的数组序列中，找到一个子序列，使得这个子序列元素的数值依次递增，并且这个子序列的长度尽可能地大
+
+只看概念可能难以理解，我们来看一个具体的例子
+
+假设，我们现在有一个这样的两组节点
+
+```typescript
+旧节点：1、2、3、4、5、6
+新节点：1、3、2、4、6、5
+```
+
+我们可以根据**新节点**生成**递增子序列（非最长）（注意：并不是唯一的）**，其结果为
+
+1. `1、3、6`
+2. `1、2、4、6`
+3. ...
+
+### 最长递增子序列在`diff`中的作用是什么
+
+那么现在我们成功得到了 递增子序列，那么下面我们来看，这两个递增子序列在我们接下来的 diff 中起到了什么作用？
+
+根据我们之前的四中场景可知，所谓的`diff`，其实说白了就是对**一组节点**进行**添加、删除、打补丁**的对应操作。但是除了以上三种操作之外，其实还有最后一种操作方式，那就是**移动**
+
+我们来看下面这个例子
+
+那么接下来，我们来分析一下移动的策略，整个移动根据递增子序列的不同，将拥有两种移动策略
+
+1. `1、3、6`递增序列下
+   1. 因为`1、3、6`的递增已确认，所以它们三个是不需要移动的，那么我们所需要移动的节点无非就是三个`2、4、5`
+   2. 所以我们需要经过**三次**移动
+2. `1、2、4、6`递增如下
+   1. 因为`1、2、4、6`的递增已经确认，所以他们四个是不需要移动的，那么我们所需要移动的节点无非就是来**两个**`3、5`
+   2. 所以我们需要讲过**两次**移动
+
+所以由以上分析，我们可知：**最长递增自序列的确定，可以帮助我们减少移动的次数**
+
+所以，当我们需要进行节点移动时，移动需要事先构建出最长递增子序列，以保证我们的移动方案
+
+## 13：源码逻辑：场景五：求解最长递增子序列
+
+`vue`中关于求**求解最长递增子序列**的代码在`packages/runtime-core/src/render.ts`中的第`2410`行代码，可以看到存在一个`getSequence`的函数
+
+```typescript
+function getSequence(arr: number[]): number[] {
+  const p = arr.slice()
+  const result = [0]
+  let i, j, u, v, c
+  const len = arr.length
+  for (i = 0; i < len; i++) {
+    const arrI = arr[i]
+    if (arrI !== 0) {
+      j = result[result.length - 1]
+      if (arr[j] < arrI) {
+        p[i] = j
+        result.push(i)
+        continue
+      }
+      u = 0
+      v = result.length - 1
+      while (u < v) {
+        c = (u + v) >> 1
+        if (arr[result[c]] < arrI) {
+          u = c + 1
+        } else {
+          v = c
+        }
+      }
+      if (arrI < arr[result[u]]) {
+        if (u > 0) {
+          p[i] = result[u - 1]
+        }
+        result[u] = i
+      }
+    }
+  }
+  u = result.length
+  v = result[u - 1]
+  while (u-- > 0) {
+    result[u] = v
+    v = p[v]
+  }
+  return result
+}
+```
+
+这个解法的原理就是通过 `贪心 + 二分查找`，有兴趣的同学可以去 [Leetcode](https://link.juejin.cn/?target=https%3A%2F%2Fleetcode.cn%2Fproblems%2Flongest-increasing-subsequence%2F) 上做些相关的算法题，这里就不详细展开了。。。
+
+## 14：源码阅读：场景五：乱序下的 diff 对比
+
+到目前为止，我们已经明确了：
+
+1. `diff`指的就是：**添加、删除、打补丁、移动**四个行为
+2. **最长子序列**是什么，以及在`diff`中的作用
+3. 场景五的乱序，是最复杂的场景，将会涉及到**添加、删除、打补丁、移动**这些所有场景
+
+那么明确好了以上内容之后，我们先来看对应**场景五**的测试示例
