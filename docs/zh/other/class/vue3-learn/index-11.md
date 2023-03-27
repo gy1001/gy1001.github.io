@@ -59,7 +59,7 @@ export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
 
    这样，我们的`vnode`就可以具备`key`属性了
 
-## 03：场景一：自前向后的 diff 对比
+## 03：源码阅读：场景一：自前向后的 diff 对比
 
 我们创建如下测试示例
 
@@ -94,11 +94,11 @@ export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
 
 1. 在`patchKeyedChildren`中，进行`debugger`，等待`2s`，进入`debugger`
 
-   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c5bc768565154ffc9d95261a9186d9d5~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/eeb3a6798ea0458496332ecf2bcb46a0~tplv-k3u1fbpfcp-watermark.image?)
 
 2. 由上图中所示，在`patchKeyedChildren`方法中程序会进入`while (i <= e1 && i <= e2)`而在**第一次循环**中，因为 `n1`和`n2`的`key`和`type`都相同，所以会进入`if`执行`patch`方法，进行打补丁。最后`i++`变为`1`。因为此时仍然满足`i<=e1 && i<=e2`，所以会**第二次进入循环**
 
-   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5c354a9325aa4e6baf35a3b1728abe39~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d7cc79e98b59453aac3c807d3fae63a3~tplv-k3u1fbpfcp-watermark.image?)
 
 3. 因为第二次的`n1`和`n2`的`type`和`key`仍然相同，所以仍然会进入`if`和第一步执行相同操作，接着`i++`变为`2`，此时**会进入第三次循环**。而第三次的`n1`和`n2`也是相同的`vnode`，所以与前两次一样执行`patch`
 
@@ -228,3 +228,213 @@ export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
      }, 2000)
    </script>
    ```
+
+## 05：源码阅读：场景二：自后向前的diff对比
+
+1. 我们新建测试示例:
+
+   ```html
+   <script>
+     const { h, render } = Vue
+   
+     const vnode = h('ul', [
+       h('li', { key: 1 }, 'a'),
+       h('li', { key: 2 }, 'b'),
+       h('li', { key: 3 }, 'c')
+     ])
+     // 挂载
+     render(vnode, document.querySelector('#app'))
+   
+     // 延迟两秒，生成新的 vnode，进行更新操作
+     setTimeout(() => {
+       const vnode2 = h('ul', [
+         h('li', { key: 4 }, 'a'),
+         h('li', { key: 2 }, 'b'),
+         h('li', { key: 3 }, 'd')
+       ])
+       render(vnode2, document.querySelector('#app'))
+     }, 2000)
+   </script>
+   ```
+
+   在这个例子中，`vnode2`的第一个节点的`key=4`,这就会导致一个情况：**如果我们从前往后进行对比 diff,那么第一个`child`无法满足`isSameVNodeType`,就会直接跳出循环**
+
+   我们去调试，看下源码中是怎么处理的
+
+2. 进入`patchKeyedChildren`方法，因为前面的赋值都是一样的我们直接来到第一个`while`循环
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/13a8799db04546f88794fb5b192eff1f~tplv-k3u1fbpfcp-watermark.image?)
+
+3. 当进入第一个`while`的第一次循环时，此时`n1`的`key`为 `1`，`n2`的`key`为`4`,所以，`isSameVNodeType(n1, n2)`为`false`,会执行`else`中的`break`跳出当前`while`.第一个`while`结束，来到第二个`while`开始**第一次循环**
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bb06ae7a0e3d49cda4acd818a37c1999~tplv-k3u1fbpfcp-watermark.image?)
+
+4. 由上图可知，第二个`while`循环是从后往前遍历的，且第一次进入循环会比较两个列表的最后一个`vnode`节点，因为此时两个节点不相同所以会进行`patch`打补丁，完成第三个节点的更新后,`e1 -e2`,`e1`和`e2`此时都是`1`，所以会进入**第二次循环**
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0ea2d27c645b460db493f27cf9384c89~tplv-k3u1fbpfcp-watermark.image?)
+
+5. 由于第二次进入循环`n1`和`n2`的`type`和`key`还是相同的，所以会再次执行`patch`操作，此时`e1`和`e2`都为`0`,满足`i<=e1 && i<=e2`，所以会进行**第三次循环**
+
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/09620a8056d346ca8613d106de3d897f~tplv-k3u1fbpfcp-watermark.image?)
+
+6. 此时 `n1.key = 1` `n2.key = 4` 所以会执行 `break` 跳出循环。
+
+7. 此时，各变量的值为：`e1 = 0` `e2 = 0` `i = 0` `l2 = 3`
+
+8. 三次循环全部完成，此时，我们查看浏览器，可以发现`children`的**更新**操作已经完成。后续的代码无需关心
+
+### 总结
+
+由以上代码可知，
+
+1. `vue`的`diff`首先会**自前向后**和**自后向前**，处理所有的**相同的**`VNode`节点
+2. 每次处理成功之后，会自减`e1`和`e2`,表示**新、旧节点中已经处理完成的节点（自后向前）**
+
+## 06：框架实现：场景二：自后向前的diff对比
+
+明确好了自后向前的`diff`对比之后，接下来我们就可以直接进行对应的实现了
+
+1. 在`patchKeyedChildren`方法中，处理自后向前的场景
+
+   ```typescript
+   // 2. 自后向前的 diff 对比，经过循环之后，从后开始的相同 vnode 将被处理
+     while (i <= oldChildrenEnd && i <= newChildrenEnd) {
+         const oldVNode = oldChildren[oldChildrenEnd]
+         const newVNode = normalizeVNode(newChildren[newChildrenEnd])
+       if (isSameVNodeType(oldVNode, newVNode)) {
+         patch(oldVNode, newVNode, container, null)
+       } else {
+         break
+       }
+       oldChildrenEnd--
+       newChildrenEnd--
+     }
+   }
+   ```
+
+2. 创建测试示例`packages/vue/examples/runtime/render-element-diff-2.html`
+
+   ```html
+   <script>
+     const { h, render } = Vue
+     const vnode = h('ul', [
+       h('li', { key: 1 }, 'a'),
+       h('li', { key: 2 }, 'b'),
+       h('li', { key: 3 }, 'c')
+     ])
+     // 挂载
+     render(vnode, document.querySelector('#app'))
+     // 延迟两秒，生成新的 vnode，进行更新操作
+     setTimeout(() => {
+       const vnode2 = h('ul', [
+         h('li', { key: 4 }, 'a'),
+         h('li', { key: 2 }, 'b'),
+         h('li', { key: 3 }, 'd')
+       ])
+       render(vnode2, document.querySelector('#app'))
+     }, 2000)
+   </script>
+   ```
+
+## 07: 源码阅读：场景三：新节点多于旧节点的diff对比
+
+以上两种场景，新节点数量和旧节点数量都是完全一致的
+
+但是我们也知道一旦产生更新，那么新旧节点的数量是可能会存在不一致的抢矿，具体的不一致情况分为以下两种：
+
+1. 新节点的数量多于旧节点的数量
+2. 旧节点的数量多于新节点的数量
+
+本小节我们先来研究一下**新节点的数量多于旧节点的数量**的抢矿
+
+新节点的数量多于旧节点的数量的场景下，依然可以被细分为两种具体的场景
+
+1. 多出的新节点位于**头部**
+2. 多出的新节点位于**尾部**
+
+明确好了以上内容之后，我们来看如下测试示例
+
+```html
+<script>
+  const { h, render } = Vue
+
+  const vnode = h('ul', [
+    h('li', { key: 1 }, 'a'),
+    h('li', { key: 2 }, 'b')
+  ])
+  // 挂载
+  render(vnode, document.querySelector('#app'))
+
+  // 延迟两秒，生成新的 vnode，进行更新操作
+  setTimeout(() => {
+    const vnode2 = h('ul', [
+      h('li', { key: 1 }, 'a'),
+      h('li', { key: 2 }, 'b'),
+      h('li', { key: 3 }, 'c'),
+    ])
+    render(vnode2, document.querySelector('#app'))
+  }, 2000)
+</script>
+```
+
+根据以上代码进入`debugger`,忽略掉前两种场景，直接从第三种场景开始
+
+代码进入场景三: `3. common sequence + mount`，以下图示逻辑为：多出的新节点位于**尾部**的场景
+
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3f6fb10d5fff4df7a871a4480210bc92~tplv-k3u1fbpfcp-watermark.image?)
+
+那么接下来我们来看：多出的新节点位于**头部**的场景
+
+```html
+<script>
+  const { h, render } = Vue
+
+  const vnode = h('ul', [h('li', { key: 1 }, 'a'), h('li', { key: 2 }, 'b')])
+  // 挂载
+  render(vnode, document.querySelector('#app'))
+
+  // 延迟两秒，生成新的 vnode，进行更新操作
+  setTimeout(() => {
+    const vnode2 = h('ul', [
+      h('li', { key: 3 }, 'c'),
+      h('li', { key: 1 }, 'a'),
+      h('li', { key: 2 }, 'b')
+    ])
+    render(vnode2, document.querySelector('#app'))
+  }, 2000)
+</script>
+```
+
+根据以上代码，再次进入场景三：`3. common sequence + mount`:
+
+![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/94857afe9b25445fac85dd272007e7ef~tplv-k3u1fbpfcp-watermark.image?)
+
+### 总结
+
+由以上代码可知
+
+1. 对于新节点多于旧节点的场景具体可以再细分为以下两种情况
+   1. 多出的新节点位于**尾部**
+   2. 多出的新节点位于**头部**
+2. 这两种情况下的区别在于：**插入的位置不同**
+3. 明确好插入的位置之后，直接通过`patch`进行打补丁即可
+
+## 08：框架实现：场景三：新节点多于旧节点的diff对比
+
+根据上一小节的分析，我们可以直接在`packages/runtime-core/src/renderer.ts`中的`patchKeyedChildren`方法下，实现如下代码
+
+```typescript
+// 3. 新节点多余旧节点时的 diff 比对。
+if (i > oldChildrenEnd) {
+  if (i <= newChildrenEnd) {
+    const nextPos = newChildrenEnd + 1
+    const anchor =
+      nextPos < newChildrenLength ? newChildren[nextPos].el : parentAnchor
+    while (i <= newChildrenEnd) {
+      patch(null, normalizeVNode(newChildren[i]), container, anchor)
+      i++
+    }
+  }
+}
+```
+
