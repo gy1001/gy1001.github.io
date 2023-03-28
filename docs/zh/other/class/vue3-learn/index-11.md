@@ -216,7 +216,7 @@ export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
      ])
      // 挂载
      render(vnode, document.querySelector('#app'))
-   
+
      // 延迟两秒，生成新的 vnode，进行更新操作
      setTimeout(() => {
        const vnode2 = h('ul', [
@@ -640,40 +640,81 @@ else if (i > newChildrenEnd) {
 `vue`中关于求**求解最长递增子序列**的代码在`packages/runtime-core/src/render.ts`中的第`2410`行代码，可以看到存在一个`getSequence`的函数
 
 ```typescript
-function getSequence(arr: number[]): number[] {
+/**
+ * 获取最长递增子序列下标
+ * 维基百科：https://en.wikipedia.org/wiki/Longest_increasing_subsequence
+ * 百度百科：https://baike.baidu.com/item/%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97/22828111
+ */
+function getSequence(arr) {
+  // 获取一个数组浅拷贝。注意 p 的元素改变并不会影响 arr
+  // p 是一个最终的回溯数组，它会在最终的 result 回溯中被使用
+  // 它会在每次 result 发生变化时，记录 result 更新前最后一个索引的值
   const p = arr.slice()
+  // 定义返回值（最长递增子序列下标），因为下标从 0 开始，所以它的初始值为 0
   const result = [0]
   let i, j, u, v, c
+  // 当前数组的长度
   const len = arr.length
+  // 对数组中所有的元素进行 for 循环处理，i = 下标
   for (i = 0; i < len; i++) {
+    // 根据下标获取当前对应元素
     const arrI = arr[i]
+    //
     if (arrI !== 0) {
+      // 获取 result 中的最后一个元素，即：当前 result 中保存的最大值的下标
       j = result[result.length - 1]
+      // arr[j] = 当前 result 中所保存的最大值
+      // arrI = 当前值
+      // 如果 arr[j] < arrI 。那么就证明，当前存在更大的序列，那么该下标就需要被放入到 result 的最后位置
       if (arr[j] < arrI) {
         p[i] = j
+        // 把当前的下标 i 放入到 result 的最后位置
         result.push(i)
         continue
       }
+      // 不满足 arr[j] < arrI 的条件，就证明目前 result 中的最后位置保存着更大的数值的下标。
+      // 但是这个下标并不一定是一个递增的序列，比如： [1, 3] 和 [1, 2]
+      // 所以我们还需要确定当前的序列是递增的。
+      // 计算方式就是通过：二分查找来进行的
+
+      // 初始下标
       u = 0
+      // 最终下标
       v = result.length - 1
+      // 只有初始下标 < 最终下标时才需要计算
       while (u < v) {
+        // (u + v) 转化为 32 位 2 进制，右移 1 位 === 取中间位置（向下取整）例如：8 >> 1 = 4;  9 >> 1 = 4; 5 >> 1 = 2
+        // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Right_shift
+        // c 表示中间位。即：初始下标 + 最终下标 / 2 （向下取整）
         c = (u + v) >> 1
+        // 从 result 中根据 c（中间位），取出中间位的下标。
+        // 然后利用中间位的下标，从 arr 中取出对应的值。
+        // 即：arr[result[c]] = result 中间位的值
+        // 如果：result 中间位的值 < arrI，则 u（初始下标）= 中间位 + 1。即：从中间向右移动一位，作为初始下标。 （下次直接从中间开始，往后计算即可）
         if (arr[result[c]] < arrI) {
           u = c + 1
         } else {
+          // 否则，则 v（最终下标） = 中间位。即：下次直接从 0 开始，计算到中间位置 即可。
           v = c
         }
       }
+      // 最终，经过 while 的二分运算可以计算出：目标下标位 u
+      // 利用 u 从 result 中获取下标，然后拿到 arr 中对应的值：arr[result[u]]
+      // 如果：arr[result[u]] > arrI 的，则证明当前  result 中存在的下标 《不是》 递增序列，则需要进行替换
       if (arrI < arr[result[u]]) {
         if (u > 0) {
           p[i] = result[u - 1]
         }
+        // 进行替换，替换为递增序列
         result[u] = i
       }
     }
   }
+  // 重新定义 u。此时：u = result 的长度
   u = result.length
+  // 重新定义 v。此时 v = result 的最后一个元素
   v = result[u - 1]
+  // 自后向前处理 result，利用 p 中所保存的索引值，进行最后的一次回溯
   while (u-- > 0) {
     result[u] = v
     v = p[v]
@@ -693,3 +734,74 @@ function getSequence(arr: number[]): number[] {
 3. 场景五的乱序，是最复杂的场景，将会涉及到**添加、删除、打补丁、移动**这些所有场景
 
 那么明确好了以上内容之后，我们先来看对应**场景五**的测试示例
+
+```html
+<script>
+  const { h, render } = Vue
+
+  const vnode = h('ul', [
+    h('li', { key: 1 }, 'a'),
+    h('li', { key: 2 }, 'b'),
+    h('li', { key: 3 }, 'c'),
+    h('li', { key: 4 }, 'd'),
+    h('li', { key: 5 }, 'e'),
+  ])
+  // 挂载
+  render(vnode, document.querySelector('#app'))
+
+  // 延迟两秒，生成新的 vnode，进行更新操作
+  setTimeout(() => {
+    const vnode2 = h('ul', [
+      h('li', { key: 1 }, 'new-a'),
+      h('li', { key: 3 }, 'new-c'),
+      h('li', { key: 2 }, 'new-b'),
+      h('li', { key: 6 }, 'new-f'),
+      h('li', { key: 5 }, 'new-e'),
+    ])
+    render(vnode2, document.querySelector('#app'))
+  }, 2000)
+</script>
+```
+
+该测试示例经过前四个`while`的过程为
+
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9b51d01e1e0948429454c1f6899a6599~tplv-k3u1fbpfcp-watermark.image?)
+
+1. 初始状态：索引`i = 0`。旧节点结束索引`e1 = 4`。新节点索引`e2 = 4`
+1. 自前向后的索引：索引`i = 1`。旧节点结束索引`e1 = 4`。新节点索引`e2 = 4`
+1. 自后向前的索引：索引`i = 1`。旧节点结束索引`e1 = 3`。新节点索引`e2 = 3`
+1. 增加新节点：无任何变化
+1. 删除旧节点：无任何变化
+
+1. 此时中间还剩下三对节点没有处理，该怎么办呢？
+
+## 15：框架实现：场景五：乱序下的 diff 对比
+
+## 16: 总结
+
+整个的`diff`就分为 5 种场景，前四种场景相对而言，还比较简单。最复杂的就是第 5 种，乱序的场景
+
+整个的`diff`种，涉及到了很多的算法，比如：最长递增子序列
+
+### 总结`runtime`模块，对于`runtime`而言
+
+1. 我们首先是了解了`dom`、节点、节点树和**虚拟 DOM**，虚拟节点之间的概念
+2. 然后知道了`render`函数和`h`函数各自的作用。`h`函数可以得到一个`vnode`，而`render`函数可以渲染为一个`vnode`
+3. 接着就是**挂载、更新、卸载**这三组概念。知道了针对不同的`vnode`节点，他们的**挂载、更新、卸载**方式也是不同的
+4. 之后又深入了组件，我们知道组件本质上就是一个对象（或者函数），组件的挂载本质上是`render`函数的挂载
+5. 组件内部维护了一个`effect`对象，已达到响应性渲染的效果
+6. 针对于`setup`函数而言，他在实际上反而更加简单，因为不需要改变`this`指向了
+7. 结合所学，新旧节点的所有挂载和更新情况，可以被分为九种场景
+   1. 旧节点为纯文本时
+      1. 新节点为纯文本：执行文本替换操作
+      2. 新节点为空：删除旧节点
+      3. 新节点数组：清空文本，添加多个节点
+   2. 旧节点为空时：
+      1. 新节点为纯文本：添加新节点
+      2. 新节点为空：不做任何事情
+      3. 新节点为数组时：添加过个节点
+   3. 旧节点是数组时：
+      1. 新节点为纯文本：删除所有旧节点，添加新节点
+      2. 新节点为空：删除所有旧节点
+      3. 新节点为数组时：进行`diff`操作
+8. 最后的`diff`分为`5`种场景，最后一种场景还是比较复杂的
