@@ -216,7 +216,7 @@ export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
      ])
      // 挂载
      render(vnode, document.querySelector('#app'))
-
+   
      // 延迟两秒，生成新的 vnode，进行更新操作
      setTimeout(() => {
        const vnode2 = h('ul', [
@@ -485,7 +485,7 @@ if (i > oldChildrenEnd) {
 
 跟踪代码，直接进入场景四，即可
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2d7b53e92fff4b50910a89172ea0f8cd~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/11f5f6ba0da945cd84c65dcdf3800829~tplv-k3u1fbpfcp-watermark.image?)
 
 1. 因为`i=2,e1=0,e2=1`，所以最后会执行`unmount`方法**卸载**多余出来的第三个`vnode`
 2. 以上代码比较简单，对于多出的旧节点位于**头部**的场景，同样执行该逻辑
@@ -578,7 +578,7 @@ else if (i > newChildrenEnd) {
 
 该测试示例经过前四个`while`的过程为
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f852453e0c6b45eab94be381a9bdd541~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9b51d01e1e0948429454c1f6899a6599~tplv-k3u1fbpfcp-watermark.image?)
 
 1. 初始状态：索引`i = 0`。旧节点结束索引`e1 = 4`。新节点索引`e2 = 4`
 1. 自前向后的索引：索引`i = 1`。旧节点结束索引`e1 = 4`。新节点索引`e2 = 4`
