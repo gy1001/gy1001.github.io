@@ -216,7 +216,7 @@ export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
      ])
      // 挂载
      render(vnode, document.querySelector('#app'))
-
+   
      // 延迟两秒，生成新的 vnode，进行更新操作
      setTimeout(() => {
        const vnode2 = h('ul', [
