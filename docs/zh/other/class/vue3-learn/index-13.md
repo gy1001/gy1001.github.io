@@ -119,7 +119,29 @@
 
 在刚才的图示中，我们通过[递归下降算法](https://zh.wikipedia.org/wiki/递归下降解析器)这样的一种扫描形式把`tokens`解析**栈**解析成了`AST(抽象语法树)`
 
-### 04:源码阅读：编译器第一步：依据模板，生成 AST 抽象语法树
+## 04:源码阅读：编译器第一步：依据模板，生成 AST 抽象语法树
+
+通过上一下节的学习我们知道，生成`AST`抽象语法树是在`packages/compile-core/src/compile.ts`中的第 85 行` const ast = isString(template) ? baseParse(template, options) : template`生成的
+
+而当`template`是数组时就会调用`baseParse`这个函数，它
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## 05：框架实现：构建 parse 方法，生成 context 方法
 
