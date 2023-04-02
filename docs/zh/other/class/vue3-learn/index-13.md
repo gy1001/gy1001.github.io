@@ -109,7 +109,7 @@
 
 具体的扫描过程为（文档中仅显示初始状态和结束状态）
 
-### 初始状态
+### 初始状态 
 
 ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7e38871574ed40a3b1b11383ede9b89d~tplv-k3u1fbpfcp-watermark.image?)
 
@@ -123,26 +123,509 @@
 
 通过上一下节的学习我们知道，生成`AST`抽象语法树是在`packages/compile-core/src/compile.ts`中的第 85 行` const ast = isString(template) ? baseParse(template, options) : template`生成的
 
-而当`template`是数组时就会调用`baseParse`这个函数，它
+而当`template`是字符串时就会调用`baseParse`这个函数，根据这个方法来生成对应的`AST`。
 
+那么我们直接进入这个方法中，这个方法位于`vue-next-3.2.37/packages/compiler-core/src/parse.ts`这个文件中，我们可以看到这个文件之中有 1000 多行代码，这也证明了 AST 的生成在内部其实是一个非常复杂的过程，并且里面包含了很多边缘性的处理
 
+所以我们再去看这一块的逻辑，同样会按照之前的方式，只关注当前业务下的逻辑，忽略掉其他逻辑，以此来降低整体复杂度。
 
+通过`packages/compile-core/src/compile.ts`中的`baseCompile`方法可以知道，整个`parse`的过程是从`baseParsr`开会的，所以我们可以直接从这个方式进行开始`debugger`
 
+新建测试示例`vue-next-3.2.37/packages/vue/examples/mine/compiler/compiler-ast.html`，内容如下
 
+```html
+<script>
+  const { compile } = Vue
+  // 创建 template
+  const template = `<div>hello world</div>`
+  // 生成 render 函数
+  const renderFn = compile(template)
+</script>
+```
 
+当前对应的`template`对应的目标极简`AST`为（这意味着我们将不再关注其他的属性生成）
 
+```javascript
+const ast = {
+  "type": 0,
+  "children": [
+    {
+      "type": 1,
+      "tag": "div",
+      "tagType": 0,
+      // 属性，目前我们没有做任何处理，但是需要添加上，否则，生成的ast放到vue源码中会抛出错误
+      "props": [],
+      "children": [
+        { "type": 2, "content": " hello world "}
+      ]
+    }
+  ],
+  // loc: 位置，这个属性并不影响渲染，但是它必须存在，否则会报错，所以我们给了他一个 {}
+ "loc": {}
+}
+```
 
+模板解析的`token`流程为(以`<div> hello world</div>`为例)：
 
+```text
+1. <div
+2. >
+3. hello world
+4. </div
+5. >
+```
 
+由以上代码可知
 
+1. 整个 AST 生成的核心方法是 parseChildren 方法
+2. 生成的过程是，对于整个 template: `<div>hello world</div>`进行了解析，整个解析分为 5 步（第二小节的讲解）
+   1. **第一次解析**：`<div`：此时`context.srouce = >hello world</div>`
+   2. **第二次解析**：`>`：此时`context.srouce = hello world</div>`
+   3. **第三次解析**：`hello world`：此时`context.srouce = </div>`
+   4. **第四次解析**：`</div`：此时`>`
+   5. **第五次解析**：`>`：此时`context.srouce = ""`
 
+3. 在这个解析过程中，我们逐步扫描(第三小节的讲解)对应的每次`token`，得到一个对应的`AST`对象
 
+`vue`源码中的`parse`逻辑是非常复杂的，我们当前只是针对`<div>hello world</div>`这一种类型的`element`类型进行处理
 
-
-
-
-
+其他的比如`<pre>、<img />`这些标签类型的处理，大家可以根据本小节的内容，自己进行测试，我们在课程中就不会一一进行讲解了
 
 ## 05：框架实现：构建 parse 方法，生成 context 方法
 
+从这一小节开始，我们将实现 vue-next-mini 中的编辑器模块。首先我们第一步要做的就是先生成 AST 对象。但是我们知道 AST 对象的生成颇为复杂，所以我们把整个过程分为三步进行处理
+
+1. 构建 parse 方法，生成 context 实例
+2. 构建 parseChildren, 处理所有子节点(**最复杂**)
+   1. 构建有限自动状态机解析模板
+   2. 构建 token 生成 AST 结构
+
+那么本小节，我们先处理第一步
+
+1. 创建`packages/compiler-core/src/compile.ts`模板，写入如下代码
+
+   ```typescript
+   import { baseParse } from './parse'
+   
+   export function baseCompile(template: string, options) {
+     const ast = baseParse(template)
+     console.log(JSON.stringify(ast))
+     return {}
+   }
+   ```
+
+2. 新建`packages/compiler-core/src/parse.ts`文件，内容如下
+
+   ```typescript
+   export interface ParserContext {
+     source: string
+   }
+   
+   function createParserContext(content: string): ParserContext {
+     return {
+       source: content
+     }
+   }
+   
+   export function baseParse(content: string) {
+     const context = createParserContext(content)
+     console.log(context)
+     return {}
+   }
+   ```
+
+3. 创建`packages/compiler-dom/src/index.ts`模块，导出`compile`方法
+
+   ```typescript
+   import { baseCompile } from 'packages/compiler-core/src/compile'
+   
+   export function compile(template: string, options) {
+     return baseCompile(template, options)
+   }
+   ```
+
+4. `vue-next-mini/packages/vue/src/index.ts`中，导出`compile`方法
+
+   ```typescript
+   export { compile } from '@vue/compiler-dom'
+   ```
+
+5. 新建测试示例`vue-next-mini/packages/vue/example/compile/compiler-ast.html`，内容如下
+
+   ```html
+   <script>
+     const { compile } = Vue
+     const template = `<div>hello world</div>`
+     const renderFn = compile(template)
+   </script>
+   ```
+
+6. 运行测试示例，可以看到如下打印
+
+   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bbadb3ba729340fd8d1afd715cd0f95a~tplv-k3u1fbpfcp-watermark.image?)
+
 ## 06：框架实现：构建有限自动状态机解析模板，扫描 token 生成 AST 结构
+
+上一节中我们成功拿到了上下文对象`context`,这一节我们就要通过`parseChildren`方法处理所有的子节点，整个处理的过程可以分为两大块：
+
+1. 构建有限自动状态机解析模板
+2. 扫描`token`生成`AST`结构
+
+接下里我们来进行实现
+
+1. `baseParse`方法中调用`parseChildren`方法
+
+   ```typescript
+   export function baseParse(content: string) {
+     const context = createParserContext(content)
+     const children = parseChildren(context, []) // 新增加
+     console.log(children)
+     return {}
+   }
+   ```
+
+2. 创建`parseChildren`方法
+
+   ```typescript
+   import { ElementTypes, NodeTypes } from './ast'
+   
+   export interface ParserContext {
+     source: string
+   }
+   
+   enum TagType {
+     Start,
+     End
+   }
+   
+   // ancestors 是一个 elementNode 节点数组
+   function isEnd(context: ParserContext, ancestors) {
+     const s = context.source
+     // 如果是 </ 为开始
+     if (startsWith(s, '</')) {
+       // TODO: probably bad performance
+       for (let i = ancestors.length - 1; i >= 0; --i) {
+         if (startsWithEndTagOpen(s, ancestors[i].tag)) {
+           return true
+         }
+       }
+     }
+     return !s
+   }
+   
+   // 是否以打开标签的结束标签为开始
+   function startsWithEndTagOpen(source: string, tag: string): boolean {
+     return (
+       startsWith(source, '</') &&
+       source.slice(2, 2 + tag.length).toLowerCase() === tag.toLowerCase()
+     )
+   }
+   
+   function startsWith(source: string, searchString: string): boolean {
+     return source.startsWith(searchString)
+   }
+   
+   function parseChildren(context: ParserContext, ancestors) {
+     const nodes = []
+     // while 循环，直到最后是一个结束标签
+     while (!isEnd(context, ancestors)) {
+       const s = context.source
+       let node
+       if (startsWith(s, '{{')) {
+         // TODO: {{}}
+       } else if (s[0] === '<') {
+         if (/[a-z]/i.test(s[1])) {
+           node = parseElement(context, ancestors)
+         }
+       }
+       // 如果上面的判断没有进入，那node就是空的，说明此时内容是 文本
+       if (!node) {
+         node = parseText(context)
+       }
+       pushNodes(nodes, node)
+     }
+     return nodes
+   }
+   
+   // 把 node 放入 nodes
+   function pushNodes(nodes, node) {
+     nodes.push(node)
+   }
+   
+   // 处理标签节点
+   function parseElement(context: ParserContext, ancestors) {
+     // 获得当前 tag 元素
+     const element = parseTag(context, TagType.Start)
+     ancestors.push(element)
+     // 处理子节点
+     const children = parseChildren(context, ancestors)
+     ancestors.pop()
+     element.children = children
+     if (startsWithEndTagOpen(context.source, element.tag)) {
+       parseTag(context, TagType.End)
+     }
+     return element
+   }
+   
+   // 处理文本节点（静态文本节点），所以以 < 或者 {{ 为最后的一个位置处理，
+   function parseText(context: ParserContext) {
+     const endTokens = ['<', '{{']
+     // 先创建当前文本节点的最后索引位置是 当前字符串的长度
+     let endIndex = context.source.length
+     // 如果有找到 上面两种类型的索引位置，并且位置索引小于 endIndex,就更新这个最后的索引位置 endIndex
+     for (let index = 0; index < endTokens.length; index++) {
+       const j = context.source.indexOf(endTokens[index], 1)
+       if (j !== -1 && endIndex > j) {
+         endIndex = j
+       }
+     }
+     // 截取获得当前文本
+     const content = parseTextData(context, endIndex)
+     return {
+       type: NodeTypes.TEXT,
+       content
+     }
+   }
+   
+   // 按照长度截取当前文本，把字符串进行截取
+   function parseTextData(context: ParserContext, length: number) {
+     const rawText = context.source.slice(0, length)
+     advanceBy(context, length)
+     return rawText
+   }
+   
+   // 按照长度，对当前上下文中的 source 进行截取
+   function advanceBy(context: ParserContext, numberOfCharacters) {
+     context.source = context.source.slice(numberOfCharacters)
+   }
+   
+   // 解析标签，
+   function parseTag(context: ParserContext, type: TagType) {
+     // 通过 context.source  解析出 tag 名字
+     const match: any = /^<\/?([a-z][^\r\n\t\f />]*)/i.exec(context.source)
+     const tag = match[1]
+     advanceBy(context, match[0].length)
+     let isSelfClosing = startsWith(context.source, '/>') // 是否是自闭合标签
+     // 如果是闭合标签，就需要在往后截取2位，否则就是1位
+     advanceBy(context, isSelfClosing ? 2 : 1)
+   
+     return {
+       type: NodeTypes.ELEMENT,
+       tag: tag,
+       tagType: ElementTypes.ELEMENT,
+       props: [],
+       children: []
+     }
+   }
+   ```
+
+3. 创建`ast.ts`，内容如下
+
+   ```typescript
+   export const enum NodeTypes {
+     ROOT,
+     ELEMENT,
+     TEXT,
+     COMMENT,
+     SIMPLE_EXPRESSION,
+     INTERPOLATION,
+     ATTRIBUTE,
+     DIRECTIVE,
+     // containers
+     COMPOUND_EXPRESSION,
+     IF,
+     IF_BRANCH,
+     FOR,
+     TEXT_CALL,
+     // codegen
+     VNODE_CALL,
+     JS_CALL_EXPRESSION,
+     JS_OBJECT_EXPRESSION,
+     JS_PROPERTY,
+     JS_ARRAY_EXPRESSION,
+     JS_FUNCTION_EXPRESSION,
+     JS_CONDITIONAL_EXPRESSION,
+     JS_CACHE_EXPRESSION,
+   
+     // ssr codegen
+     JS_BLOCK_STATEMENT,
+     JS_TEMPLATE_LITERAL,
+     JS_IF_STATEMENT,
+     JS_ASSIGNMENT_EXPRESSION,
+     JS_SEQUENCE_EXPRESSION,
+     JS_RETURN_STATEMENT
+   }
+   
+   export const enum ElementTypes {
+     ELEMENT,
+     COMPONENT,
+     SLOT,
+     TEMPLATE
+   }
+   ```
+
+4. 重新运行浏览器，可以看到如下打印效果(`parseChildren(context, [])`的返回值)
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/98324f74245b4cc5b93efc19f4668d48~tplv-k3u1fbpfcp-watermark.image?)
+
+## 07：框架实现：生成AST，构建测试
+
+接下来我们就需要处理上节返回的一个`chilren`，我们需要返回一个带有根节点的内容
+
+1. 增加并调用`createRoot`方法
+
+   ```typescript
+   export function createRoot(children) {
+     return {
+       type: NodeTypes.ROOT,
+       children,
+       loc: {}
+     }
+   }
+   
+   export function baseParse(content: string) {
+     const context = createParserContext(content)
+     const children = parseChildren(context, [])
+     return createRoot(children) // 返回 createRoot 处理后的对象
+   }
+   ```
+
+2. 这时重新运行打印，结果如下（`baseCompile中的console.log(JSON.stringify(ast))`）
+
+   ```json
+   {
+     "type": 0,
+     "children": [
+       {
+         "type": 1,
+         "tag": "div",
+         "tagType": 0,
+         "props": [],
+         "children": [
+           {
+             "type": 2,
+             "content": "hello world"
+           }
+         ]
+       }
+     ],
+     "loc": {}
+   }
+   ```
+
+3. 怎么样验证这个结构是否正确呢？我们修改`vue-next-3.2.37/packages/vue/dist/vue.global.js`中的`ast`生成内容，然后修改为
+
+   ```javascript
+   // const ast = isString(template) ? baseParse(template, options) : template;
+   const ast = {
+     type: 0,
+     children: [
+       {
+         type: 1,
+         tag: 'div',
+         tagType: 0,
+         props: [],
+         children: [{ type: 2, content: 'hello world test' }]
+       }
+     ],
+     loc: {}
+   }
+   ```
+
+4. 这样先把`ast`生成内容修改成我们在第2步中生成的相似的任意内容，然后创建测试示例`ue-next-3.2.37/packages/vue/examples/mine/compiler/compile-ast-test.html`
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="UTF-8" />
+       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <title>Document</title>
+     </head>
+     <body>
+       <div id="app"></div>
+     </body>
+     <script src="../../../dist/vue.global.js"></script>
+     <script>
+       const { compile, render, h } = Vue
+       const template = `
+             <div>hello world</div>
+           `
+       const renderFn = compile(template)
+       const component = {
+         render: renderFn
+       }
+       const vnode = h(component)
+       render(vnode, document.querySelector('#app'))
+     </script>
+   </html>
+   ```
+
+5. 运到到浏览器中，可以看到页面中正常渲染出来了`hello world test`内容
+
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c8b2a567e0ee401b9ed6823e59899424~tplv-k3u1fbpfcp-watermark.image?)
+
+## 08：扩展知识：AST 到 JavaScript AST 的转化策略和注意事项
+
+在生成了`AST`之后，我们知道接下来就需要把`AST`转换为`JavaScript AST`了。但是在转化过程中，有一些对应的策略和注意事项，我们需要再本小节中进行描述
+
+### 转换策略
+
+我们知道从`AST`转换为`JavaScript AST`本质上就是一个对象结构的变化，变化的本质是为了后面更方便的解析对象，生成`render`函数
+
+在转换的过程中，我们需要遵循如下策略
+
+1. 深度优先
+2. 转化函数分离
+3. 上下文对象
+
+#### 深度优先
+
+我们知道`AST`而言，它是包含层级的，比如
+
+1. 最外层是`ROOT`
+2. `children`是根节点
+3. 。。。
+
+这样的结构下，就会存在一个自上而下的层级，那么针对这样的一个层级而言，我们需要遵循**深度优先，自上而下**的一个转化方案
+
+因为父节点的状态往往需要根据子节点的情况才能进行确定，比如：
+
+```html
+<div>hello world</div>
+<div>hello {{msg}}</div>
+```
+
+#### 转换函数分离
+
+在处理`AST` 的时候，我们知道，针对不同的 `token`，那么会使用不同的 `parseXXX` 方法进行处理，那么同样的，在 `transfrom` 的过程中，我们也会通过不同的 `transformXXX` 方法进行转化
+
+但是为了防止 `transform` 模块过于臃肿，所以我们会通过 `options` 的方式对 `transformXXX` 方法进行注入(类似于 `render` 的 `option`)
+
+所有注入的方法，会生成一个 `nodeTransFrorms` 数组，通过 `options`  传入
+
+#### 上下文对象
+
+上下文对象即 `context`, 对于上下文对象而言我们并不陌生。比如在 `parse` 时、`setup` 函数中、`vuex` 的 `action`  上，都出现过 `context` 对象
+
+对于 `context` 而言，我们可以把他理解为一个 **全局变量** 或者 **单例的全局变量**，它是一个多模块都可以访问的唯一对象
+
+在 `transform` 的策略中，因为存在**转化函数分离**这样的一个特性，所以我们必须要构建出这样的`context`  对象，用来保存当前节点的 `node` 节点等数据
+
+### 注意事项
+
+说完了转化策略以后，我们来看下注意事项
+
+对于 `transform` 转化方法而言，`vue` 本身的视线非常复杂，比如：指令、{{}}。。。 都会在这里处理
+
+但是对于我们当前而言，我们不需要考虑这些复杂的情况，仅查看最简单的静态数据渲染，以此来简化整体逻辑
+
+## 09： 源码阅读：编译器第二步：转换AST，得到JavaScript AST
+
+这一小节，我们就来看下对应的`transform`逻辑，我们创建如下测试示例
+
+
+
+## 10：框架实现：转换JavaScript AST，构建
+
