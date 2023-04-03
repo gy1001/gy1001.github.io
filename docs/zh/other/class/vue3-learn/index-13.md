@@ -627,5 +627,427 @@ const ast = {
 
 
 
-## 10：框架实现：转换JavaScript AST，构建
+## 10：框架实现：转换 JavaScript AST，构建深度优先
+
+明确好了 transform 的大致逻辑之后，这一小节我们就开始实现以下对应的代码，我们代码的逻辑实现我们分为两个小节来讲
+
+1. 深度优先排序
+2. 完成具体的节点转化
+
+这一小节，我们先来完成深度优先排序
+
+1. 在 packages/compiler-core/src/compile.ts  中的 baseCompile 中，增加 transform  的方法触发
+
+   ```typescript
+   import { extend } from '@vue/shared'
+   import { baseParse } from './parse'
+   import { transform } from './transform'
+   import { transformElement } from './transform/transformElement'
+   import { transformText } from './transform/transformText'
+   
+   
+   export function baseCompile(template: string, options) {
+     const ast = baseParse(template)
+     // 新增加 transform 函数调用
+     transform(
+       ast,
+       extend(options, {
+         nodeTransforms: [transformElement, transformText]
+       })
+     )
+     console.log(JSON.stringify(ast))
+     return {}
+   }
+   ```
+
+2. 创建`packages/compile-core/src/tranforms/transforElement.ts`模块，导出`transformElement`方法
+
+   ```typescript
+   // 对 element 节点的转化方法
+   export function transformElement(node, context) {
+     return function postTransformElement() {}
+   }
+   ```
+
+3. 创建`packages/compiler-core/src/transforms/transformText.ts`模块，导出`transformText`方法
+
+   ```typescript
+   import { NodeTypes } from '../ast'
+   
+   export function transformText(node, context) {
+     if (
+       node.type === NodeTypes.ROOT ||
+       node.type === NodeTypes.ELEMENT ||
+       node.type === NodeTypes.FOR ||
+       node.type === NodeTypes.IF_BRANCH
+     ) {
+       return () => {}
+     }
+   }
+   ```
+
+4. 创建`packages/compiler-core/src/transform.ts`模块，创建`transform`方法
+
+   ```typescript
+   import { NodeTypes } from './ast'
+   
+   // 声明 transform 上下文
+   export interface TransformContext {
+     // AST  根节点
+     root 
+     // 每次转化时记录的父节点
+     parent: ParentNode | null 
+     // 每次转化时记录的子节点索引
+     childIndex: number
+     // 当前处理的节点
+     currentNode
+     // 协助创建 JavaScript AST 属性 helpers, 该属性是一个 map,key值为 Symbol(方法名)表示 helper 函数中创建节点的方法
+     helpers: Map<symbol, number>
+     helper<T extends symbol>(name: T): T
+     // 转化方法的集合
+     nodeTransforms: any[]
+   }
+   
+   // 创建 transform 上下文
+   export function createTransformContext(root, { nodeTransforms = [] }) {
+     const context: TransformContext = {
+       nodeTransforms,
+       root,
+       helpers: new Map(),
+       currentNode: root,
+       parent: null,
+       childIndex: 0,
+       helper(name) {
+         const count = context.helpers.get(name) || 0
+         context.helpers.set(name, count + 1)
+         return name
+       }
+     }
+     return context
+   }
+   
+   /**
+    * 根据 AST 生成 JavaScript AST
+    * @param root AST
+    * @param options 配置对象
+    */
+   export function transform(root, options) {
+     // 创建 transform 上下文
+     const context = createTransformContext(root, options)
+     // 按照深度优先依次处理 node 节点转化
+     traverseNode(root, context)
+   }
+   
+   // 深度优先
+   /**
+    * 遍历转化节点，转化的过程中一定是深度优先的（即：孙 -> 子 -> 父) 因为当时节点的状态往往需要根据子节点的情况来确定
+    * 转化的过程分为两个阶段
+    * 1. 进入阶段：存储所有节点的转化函数到 exitFns  中
+    * 2. 退出阶段：执行 exitFns中缓存的函数，且一定是倒序的，因为这样才能保证整个执行过程中是深度优先的
+    */
+   function traverseNode(node, context: TransformContext) {
+     context.currentNode = node
+     // apply transform plugins
+     const { nodeTransforms } = context
+     const exitFns: any = []
+     for (let index = 0; index < nodeTransforms.length; index++) {
+       const onExit = nodeTransforms[index](node, context)
+       if (onExit) {
+         exitFns.push(onExit)
+       }
+     }
+     switch (node.type) {
+       case NodeTypes.ELEMENT:
+       case NodeTypes.ROOT:
+         traversChildren(node, context)
+         break
+     }
+     // exit transforms
+     context.currentNode = node
+     let i = exitFns.length
+     while (i--) {
+       exitFns[i]()
+     }
+   }
+   
+   function traversChildren(parent, context: TransformContext) {
+     parent.children.forEach((node, index) => {
+       context.parent = parent
+       context.childIndex = index
+       traverseNode(node, context)
+     })
+   }
+   ```
+
+## 11：构建 transformXXX 方法，转化对应节点
+
+1. 新建`packages/compiler-core/src/transform/transformElement.ts`文件，内容如下
+
+   ```typescript
+   import { NodeTypes, createVNodeVall } from '../ast'
+   
+   export function transformElement(node, context) {
+     return function postTransformElement() {
+       node = context.currentNode
+       // 如果节点不是 ELEMENT 类型直接返回
+       if (node.type !== NodeTypes.ELEMENT) {
+         return
+       }
+       const { tag } = node
+       let vnodeTag = `"${tag}"`
+       let vnodeProps = []
+       let vnodeChildren = node.children
+   		// 为当前节点增加 codegenNode 属性
+       node.codegenNode = createVNodeVall(
+         context,
+         vnodeTag,
+         vnodeProps,
+         vnodeChildren
+       )
+     }
+   }
+   
+   // ast.ts 中增加 createVNodeCall 方法
+   export function createVNodeCall(context, tag, props?, children?) {
+     if (context) {
+       context.helper(CREATE_ELEMENT_VNODE)
+     }
+     return {
+       type: NodeTypes.VNODE_CALL,
+       tag,
+       props,
+       children
+     }
+   }
+   ```
+
+2. 新建`packages/compiler-core/src/transform/transformText.ts`文件，内容如下
+
+   ```typescript
+   import { NodeTypes } from '../ast'
+   import { isText } from '../utils'
+   
+   /**
+    * 将 相邻的文本节点 和表达式 合并为一个表达式
+    * 例如：
+    * <div> hello {{ msg }} </div>
+    * 上述模板包含两个节点：
+    * 1. hello TEXT文本节点
+    * 2. {{ msg }} INTERPOLATION 表达式节点
+    * 这两个节点在 生成 render 函数时候，需要被合并成 "hello" + _toDisplayString(_ctx.msg)
+    * 那么在合并时候需要多出来这个 + 加号
+    * 例如：children: [ {TEXT 文本节点}， " + ", { INTERPOLATION 表达式节点 }]
+    * @param node
+    * @param context
+    * @returns
+    */
+   export function transformText(node, context) {
+     if (
+       node.type === NodeTypes.ROOT ||
+       node.type === NodeTypes.ELEMENT ||
+       node.type === NodeTypes.FOR ||
+       node.type === NodeTypes.IF_BRANCH
+     ) {
+       return () => {
+         const children = node.children
+         let currentContainer
+         for (let index = 0; index < children.length; index++) {
+           const child = children[index]
+           if (isText(child)) {
+             for (let j = index + 1; j < children.length; j++) {
+               const next = children[j]
+               // 如果接下来的节点也是 文本节点
+               if (isText(next)) {
+                 if (!currentContainer) {
+                   currentContainer = children[index] = createCompundExpression(
+                     [child],
+                     child.loc
+                   )
+                 }
+                 currentContainer.children.push(` + `, next)
+                 children.splice(j, 1)
+                 j--
+               } else {
+                 // 如果第一个节点是 text 第二个节点不是 text 则不需要合并
+                 currentContainer = undefined
+                 break
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+   
+   export function createCompundExpression(children, loc) {
+     return {
+       type: NodeTypes.COMPOUND_EXPRESSION,
+       loc,
+       children
+     }
+   }
+   
+   // 新建 utils.ts 文件
+   import { NodeTypes } from './ast'
+   export function isText(node) {
+     return node.type === NodeTypes.INTERPOLATION || node.type === NodeTypes.TEXT
+   }
+   ```
+
+   ## 12：框架实现：处理根节点的转化，生成 JavaScript AST
+
+   1. 修改`transform.ts`中的 `transform`方法
+
+      ```typescript
+      import { isSingleElementRoot } from './transform/hoistStatic'
+      
+      export function transform(root, options) {
+        const context = createTransformContext(root, options)
+        traverseNode(root, context)
+        // 处理根节点
+        createRootCodegen(root)
+        root.helpers = [...context.helpers.keys()]
+        root.components = []
+        root.directives = []
+        root.imports = []
+        root.hoists = []
+        root.temps = []
+        root.cached = []
+      }
+      
+      function createRootCodegen(root) {
+        const { children } = root
+        // vue2 仅支持单个根节点
+        if (children.length === 1) {
+          const child = children[0]
+          if (isSingleElementRoot(root, child) && child.codegenNode) {
+            root.codegenNode = child.codegenNode
+          }
+        }
+        // vue3 支持多个根节点
+      }
+      ```
+
+   2. 新建文件`transform/hoistStatic.ts`文件，内容如下
+
+      ```typescript
+      import { NodeTypes } from '../ast'
+      
+      export function isSingleElementRoot(root, child) {
+        const { children } = root
+        return children.length === 1 && child.type === NodeTypes.ELEMENT
+      }
+      ```
+
+   3. 打开测试示例`/packages/vue/examples/compiler/compiler-ast.html`，内容如下
+
+      ```html
+       <script>
+        const { compile } = Vue
+        const template = `<div>hello world</div>`
+        const renderFn = compile(template)
+      </script>
+      ```
+
+   4. 运行浏览器，查看打印结果
+
+      > 注意：baseCompile 方法中的打印代码: console.log(ast); console.log(JSON.stringify(ast))
+
+      ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8c878cb152da4676942b90bbaff0043d~tplv-k3u1fbpfcp-watermark.image?)
+
+   5. 怎么样验证这个结果对吗，我们在`vue-next-3.2.37/packages/compiler-core/src/compile.ts`中修改代码
+
+      ```typescript
+      import { CREATE_ELEMENT_VNODE } from './runtimeHelpers'
+      
+      export function baseCompile(
+        template: string | RootNode,
+        options: CompilerOptions = {}
+      ): CodegenResult {
+      	...
+        
+        // 第一个参数结构与上面浏览器打印结果结构保持一致
+        return generate(
+          {
+            type: 0,
+            children: [
+              {
+                type: 1,
+                tag: 'div',
+                tagType: 0,
+                props: [],
+                children: [{ type: 2, content: 'hello world111' }],
+                codegenNode: {
+                  type: 13,
+                  tag: '"div"',
+                  props: [],
+                  children: [{ type: 2, content: 'hello world111' }]
+                }
+              }
+            ],
+            loc: {},
+            codegenNode: {
+              type: 13,
+              tag: '"div"',
+              props: [],
+              children: [{ type: 2, content: 'hello world111' }]
+            },
+            // 注意：这里 JSON.stringify 后，是 null, 需要我们手动更改引入
+            helpers: [CREATE_ELEMENT_VNODE],
+            components: [],
+            directives: [],
+            imports: [],
+            hoists: [],
+            temps: [],
+            cached: []
+          },
+      
+          extend({}, options, {
+            prefixIdentifiers
+          })
+        )	
+      }
+      ```
+
+   6. 在源码项目中运行命令:`npm run dev`
+
+   7. 运行源码`vue-next-3.2.7`中的测试示例，内容如下
+
+      ```html
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>Document</title>
+        </head>
+        <body>
+          <div id="app"></div>
+        </body>
+        <script src="../../../dist/vue.global.js"></script>
+        <script>
+          const { compile, render, h } = Vue
+          const template = `
+                <div>hello world</div>
+              `
+          const renderFn = compile(template)
+          const component = {
+            render: renderFn
+          }
+          const vnode = h(component)
+          render(vnode, document.querySelector('#app'))
+        </script>
+      </html>
+      ```
+
+   8. 可以看到页面中正确显示了文本内容
+
+      ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/87ff1f1229f84f97b2eb697e8b88e07e~tplv-k3u1fbpfcp-watermark.image?)
+
+
+
+
+
+
 
