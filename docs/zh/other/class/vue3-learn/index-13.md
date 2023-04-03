@@ -894,158 +894,160 @@ const ast = {
    }
    ```
 
-   ## 12：框架实现：处理根节点的转化，生成 JavaScript AST
+## 12：框架实现：处理根节点的转化，生成 JavaScript AST
 
-   1. 修改`transform.ts`中的 `transform`方法
+1. 修改`transform.ts`中的 `transform`方法
 
-      ```typescript
-      import { isSingleElementRoot } from './transform/hoistStatic'
-      
-      export function transform(root, options) {
-        const context = createTransformContext(root, options)
-        traverseNode(root, context)
-        // 处理根节点
-        createRootCodegen(root)
-        root.helpers = [...context.helpers.keys()]
-        root.components = []
-        root.directives = []
-        root.imports = []
-        root.hoists = []
-        root.temps = []
-        root.cached = []
-      }
-      
-      function createRootCodegen(root) {
-        const { children } = root
-        // vue2 仅支持单个根节点
-        if (children.length === 1) {
-          const child = children[0]
-          if (isSingleElementRoot(root, child) && child.codegenNode) {
-            root.codegenNode = child.codegenNode
-          }
-        }
-        // vue3 支持多个根节点
-      }
-      ```
+   ```typescript
+   import { isSingleElementRoot } from './transform/hoistStatic'
+   
+   export function transform(root, options) {
+     const context = createTransformContext(root, options)
+     traverseNode(root, context)
+     // 处理根节点
+     createRootCodegen(root)
+     root.helpers = [...context.helpers.keys()]
+     root.components = []
+     root.directives = []
+     root.imports = []
+     root.hoists = []
+     root.temps = []
+     root.cached = []
+   }
+   
+   function createRootCodegen(root) {
+     const { children } = root
+     // vue2 仅支持单个根节点
+     if (children.length === 1) {
+       const child = children[0]
+       if (isSingleElementRoot(root, child) && child.codegenNode) {
+         root.codegenNode = child.codegenNode
+       }
+     }
+     // vue3 支持多个根节点
+   }
+   ```
 
-   2. 新建文件`transform/hoistStatic.ts`文件，内容如下
+2. 新建文件`transform/hoistStatic.ts`文件，内容如下
 
-      ```typescript
-      import { NodeTypes } from '../ast'
-      
-      export function isSingleElementRoot(root, child) {
-        const { children } = root
-        return children.length === 1 && child.type === NodeTypes.ELEMENT
-      }
-      ```
+   ```typescript
+   import { NodeTypes } from '../ast'
+   
+   export function isSingleElementRoot(root, child) {
+     const { children } = root
+     return children.length === 1 && child.type === NodeTypes.ELEMENT
+   }
+   ```
 
-   3. 打开测试示例`/packages/vue/examples/compiler/compiler-ast.html`，内容如下
+3. 打开测试示例`/packages/vue/examples/compiler/compiler-ast.html`，内容如下
 
-      ```html
-       <script>
-        const { compile } = Vue
-        const template = `<div>hello world</div>`
-        const renderFn = compile(template)
-      </script>
-      ```
+   ```html
+    <script>
+     const { compile } = Vue
+     const template = `<div>hello world</div>`
+     const renderFn = compile(template)
+   </script>
+   ```
 
-   4. 运行浏览器，查看打印结果
+4. 运行浏览器，查看打印结果
 
-      > 注意：baseCompile 方法中的打印代码: console.log(ast); console.log(JSON.stringify(ast))
+   > 注意：baseCompile 方法中的打印代码: console.log(ast); console.log(JSON.stringify(ast))
 
-      ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8c878cb152da4676942b90bbaff0043d~tplv-k3u1fbpfcp-watermark.image?)
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8c878cb152da4676942b90bbaff0043d~tplv-k3u1fbpfcp-watermark.image?)
 
-   5. 怎么样验证这个结果对吗，我们在`vue-next-3.2.37/packages/compiler-core/src/compile.ts`中修改代码
+5. 怎么样验证这个结果对吗，我们在`vue-next-3.2.37/packages/compiler-core/src/compile.ts`中修改代码
 
-      ```typescript
-      import { CREATE_ELEMENT_VNODE } from './runtimeHelpers'
-      
-      export function baseCompile(
-        template: string | RootNode,
-        options: CompilerOptions = {}
-      ): CodegenResult {
-      	...
-        
-        // 第一个参数结构与上面浏览器打印结果结构保持一致
-        return generate(
-          {
-            type: 0,
-            children: [
-              {
-                type: 1,
-                tag: 'div',
-                tagType: 0,
-                props: [],
-                children: [{ type: 2, content: 'hello world111' }],
-                codegenNode: {
-                  type: 13,
-                  tag: '"div"',
-                  props: [],
-                  children: [{ type: 2, content: 'hello world111' }]
-                }
-              }
-            ],
-            loc: {},
-            codegenNode: {
-              type: 13,
-              tag: '"div"',
-              props: [],
-              children: [{ type: 2, content: 'hello world111' }]
-            },
-            // 注意：这里 JSON.stringify 后，是 null, 需要我们手动更改引入
-            helpers: [CREATE_ELEMENT_VNODE],
-            components: [],
-            directives: [],
-            imports: [],
-            hoists: [],
-            temps: [],
-            cached: []
-          },
-      
-          extend({}, options, {
-            prefixIdentifiers
-          })
-        )	
-      }
-      ```
+   ```typescript
+   import { CREATE_ELEMENT_VNODE } from './runtimeHelpers'
+   
+   export function baseCompile(
+     template: string | RootNode,
+     options: CompilerOptions = {}
+   ): CodegenResult {
+   	...
+     
+     // 第一个参数结构与上面浏览器打印结果结构保持一致
+     return generate(
+       {
+         type: 0,
+         children: [
+           {
+             type: 1,
+             tag: 'div',
+             tagType: 0,
+             props: [],
+             children: [{ type: 2, content: 'hello world111' }],
+             codegenNode: {
+               type: 13,
+               tag: '"div"',
+               props: [],
+               children: [{ type: 2, content: 'hello world111' }]
+             }
+           }
+         ],
+         loc: {},
+         codegenNode: {
+           type: 13,
+           tag: '"div"',
+           props: [],
+           children: [{ type: 2, content: 'hello world111' }]
+         },
+         // 注意：这里 JSON.stringify 后，是 null, 需要我们手动更改引入
+         helpers: [CREATE_ELEMENT_VNODE],
+         components: [],
+         directives: [],
+         imports: [],
+         hoists: [],
+         temps: [],
+         cached: []
+       },
+   
+       extend({}, options, {
+         prefixIdentifiers
+       })
+     )	
+   }
+   ```
 
-   6. 在源码项目中运行命令:`npm run dev`
+6. 在源码项目中运行命令:`npm run dev`
 
-   7. 运行源码`vue-next-3.2.7`中的测试示例，内容如下
+7. 运行源码`vue-next-3.2.7`中的测试示例，内容如下
 
-      ```html
-      <!DOCTYPE html>
-      <html lang="en">
-        <head>
-          <meta charset="UTF-8" />
-          <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <title>Document</title>
-        </head>
-        <body>
-          <div id="app"></div>
-        </body>
-        <script src="../../../dist/vue.global.js"></script>
-        <script>
-          const { compile, render, h } = Vue
-          const template = `
-                <div>hello world</div>
-              `
-          const renderFn = compile(template)
-          const component = {
-            render: renderFn
-          }
-          const vnode = h(component)
-          render(vnode, document.querySelector('#app'))
-        </script>
-      </html>
-      ```
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="UTF-8" />
+       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <title>Document</title>
+     </head>
+     <body>
+       <div id="app"></div>
+     </body>
+     <script src="../../../dist/vue.global.js"></script>
+     <script>
+       const { compile, render, h } = Vue
+       const template = `
+             <div>hello world</div>
+           `
+       const renderFn = compile(template)
+       const component = {
+         render: renderFn
+       }
+       const vnode = h(component)
+       render(vnode, document.querySelector('#app'))
+     </script>
+   </html>
+   ```
 
-   8. 可以看到页面中正确显示了文本内容
+8. 可以看到页面中正确显示了文本内容
 
-      ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/87ff1f1229f84f97b2eb697e8b88e07e~tplv-k3u1fbpfcp-watermark.image?)
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/87ff1f1229f84f97b2eb697e8b88e07e~tplv-k3u1fbpfcp-watermark.image?)
 
 
+
+## 13：扩展知识：render 函数的生成方案 
 
 
 
