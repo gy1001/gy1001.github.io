@@ -2,17 +2,17 @@
 
 ## 01: 前言
 
-在上一章节我们了解了 compiler  的作用和大致流程之后，那么这一章节我们将要在 vue-next-mine中实现一个自己的编译器
+在上一章节我们了解了 compiler 的作用和大致流程之后，那么这一章节我们将要在 vue-next-mine 中实现一个自己的编译器
 
-但是我们知道，compiler  是一个非常复杂的概念，我们无法在有限的课程中实现一个完善的编译器，所以，我们将会和之前一样，严格遵循：**没有使用就当不存在**和**最少代码的实现逻辑**这两个标准。只关注**核心**和**当前业务**相关的内容，而忽略其他
+但是我们知道，compiler 是一个非常复杂的概念，我们无法在有限的课程中实现一个完善的编译器，所以，我们将会和之前一样，严格遵循：**没有使用就当不存在**和**最少代码的实现逻辑**这两个标准。只关注**核心**和**当前业务**相关的内容，而忽略其他
 
 那么明确好了以上内容之后，接下来，就让我们进入编译器的学习把~~~
 
-## 02：扩展知识：JavaScript与有限状态机
+## 02：扩展知识：JavaScript 与有限状态机
 
-我们知道想要实现 compiler  第一步是构建 AST 对象，那么想要构建 AST，就需要利用 [有限状态机](https://zh.wikipedia.org/wiki/%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA)的概念
+我们知道想要实现 compiler 第一步是构建 AST 对象，那么想要构建 AST，就需要利用 [有限状态机](https://zh.wikipedia.org/wiki/%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA)的概念
 
-有限状态机也被叫做**有限自动状态机**，表示**有限个[状态](https://zh.wikipedia.org/wiki/状态)以及在这些状态之间的转移和动作等行为的[数学计算模型](https://zh.wikipedia.org/wiki/计算模型_(数学))**。
+有限状态机也被叫做**有限自动状态机**，表示**有限个[状态](https://zh.wikipedia.org/wiki/状态)以及在这些状态之间的转移和动作等行为的[数学计算模型](<https://zh.wikipedia.org/wiki/计算模型_(数学)>)**。
 
 光看着概念，可能难以理解，那么下面我们来看一个具体的例子
 
@@ -20,7 +20,7 @@
 
 而对于`baseParse`方法而言，接收一个`template`作为参数，返回一个`ast`对象
 
-即：**通过 parse方法，解析 template,得到ast  对象**。中键解析的过程，就需要使用到**有限自动状态机**
+即：**通过 parse 方法，解析 template,得到 ast 对象**。中键解析的过程，就需要使用到**有限自动状态机**
 
 我们来写如下模板（template)
 
@@ -31,17 +31,18 @@
 `vue`想要把改模板解析成`AST`，那么就需要利用有限自动状态机队该模板进行分析，分析的过程中主要包含了三个特性
 
 > 摘自：https://www.ruanyifeng.com/blog/2013/09/finite-state_machine_for_javascript.html
+>
 > 1. 状态总数是有限的
-> 	1. 初识状态
-> 	2. 标签开始状态
-> 	3. 标签名称状态
-> 	4. 文本状态
-> 	5. 结束标签状态
-> 	6. 结束标签名称状态
-> 	7. 。。。
+>    1. 初识状态
+>    2. 标签开始状态
+>    3. 标签名称状态
+>    4. 文本状态
+>    5. 结束标签状态
+>    6. 结束标签名称状态
+>    7. 。。。
 > 2. 任一时刻，只处在一种状态之中
 > 3. 某种条件下，会从一种状态转变为另一种状态
-> 	1. 比如，从 1 到 2 意味着从初识状态切换到了标签开始状态
+>    1. 比如，从 1 到 2 意味着从初识状态切换到了标签开始状态
 
 如下图所示
 
@@ -109,7 +110,7 @@
 
 具体的扫描过程为（文档中仅显示初始状态和结束状态）
 
-### 初始状态 
+### 初始状态
 
 ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7e38871574ed40a3b1b11383ede9b89d~tplv-k3u1fbpfcp-watermark.image?)
 
@@ -147,21 +148,19 @@
 
 ```javascript
 const ast = {
-  "type": 0,
-  "children": [
+  type: 0,
+  children: [
     {
-      "type": 1,
-      "tag": "div",
-      "tagType": 0,
+      type: 1,
+      tag: 'div',
+      tagType: 0,
       // 属性，目前我们没有做任何处理，但是需要添加上，否则，生成的ast放到vue源码中会抛出错误
-      "props": [],
-      "children": [
-        { "type": 2, "content": " hello world "}
-      ]
-    }
+      props: [],
+      children: [{ type: 2, content: ' hello world ' }],
+    },
   ],
   // loc: 位置，这个属性并不影响渲染，但是它必须存在，否则会报错，所以我们给了他一个 {}
- "loc": {}
+  loc: {},
 }
 ```
 
@@ -179,6 +178,7 @@ const ast = {
 
 1. 整个 AST 生成的核心方法是 parseChildren 方法
 2. 生成的过程是，对于整个 template: `<div>hello world</div>`进行了解析，整个解析分为 5 步（第二小节的讲解）
+
    1. **第一次解析**：`<div`：此时`context.srouce = >hello world</div>`
    2. **第二次解析**：`>`：此时`context.srouce = hello world</div>`
    3. **第三次解析**：`hello world`：此时`context.srouce = </div>`
@@ -206,7 +206,7 @@ const ast = {
 
    ```typescript
    import { baseParse } from './parse'
-   
+
    export function baseCompile(template: string, options) {
      const ast = baseParse(template)
      console.log(JSON.stringify(ast))
@@ -220,13 +220,13 @@ const ast = {
    export interface ParserContext {
      source: string
    }
-   
+
    function createParserContext(content: string): ParserContext {
      return {
-       source: content
+       source: content,
      }
    }
-   
+
    export function baseParse(content: string) {
      const context = createParserContext(content)
      console.log(context)
@@ -238,7 +238,7 @@ const ast = {
 
    ```typescript
    import { baseCompile } from 'packages/compiler-core/src/compile'
-   
+
    export function compile(template: string, options = {}) {
      return baseCompile(template, options)
    }
@@ -288,16 +288,16 @@ const ast = {
 
    ```typescript
    import { ElementTypes, NodeTypes } from './ast'
-   
+
    export interface ParserContext {
      source: string
    }
-   
+
    enum TagType {
      Start,
-     End
+     End,
    }
-   
+
    // ancestors 是一个 elementNode 节点数组
    function isEnd(context: ParserContext, ancestors) {
      const s = context.source
@@ -312,7 +312,7 @@ const ast = {
      }
      return !s
    }
-   
+
    // 是否以打开标签的结束标签为开始
    function startsWithEndTagOpen(source: string, tag: string): boolean {
      return (
@@ -320,11 +320,11 @@ const ast = {
        source.slice(2, 2 + tag.length).toLowerCase() === tag.toLowerCase()
      )
    }
-   
+
    function startsWith(source: string, searchString: string): boolean {
      return source.startsWith(searchString)
    }
-   
+
    function parseChildren(context: ParserContext, ancestors) {
      const nodes = []
      // while 循环，直到最后是一个结束标签
@@ -346,12 +346,12 @@ const ast = {
      }
      return nodes
    }
-   
+
    // 把 node 放入 nodes
    function pushNodes(nodes, node) {
      nodes.push(node)
    }
-   
+
    // 处理标签节点
    function parseElement(context: ParserContext, ancestors) {
      // 获得当前 tag 元素
@@ -366,7 +366,7 @@ const ast = {
      }
      return element
    }
-   
+
    // 处理文本节点（静态文本节点），所以以 < 或者 {{ 为最后的一个位置处理，
    function parseText(context: ParserContext) {
      const endTokens = ['<', '{{']
@@ -383,22 +383,22 @@ const ast = {
      const content = parseTextData(context, endIndex)
      return {
        type: NodeTypes.TEXT,
-       content
+       content,
      }
    }
-   
+
    // 按照长度截取当前文本，把字符串进行截取
    function parseTextData(context: ParserContext, length: number) {
      const rawText = context.source.slice(0, length)
      advanceBy(context, length)
      return rawText
    }
-   
+
    // 按照长度，对当前上下文中的 source 进行截取
    function advanceBy(context: ParserContext, numberOfCharacters) {
      context.source = context.source.slice(numberOfCharacters)
    }
-   
+
    // 解析标签，
    function parseTag(context: ParserContext, type: TagType) {
      // 通过 context.source  解析出 tag 名字
@@ -408,13 +408,13 @@ const ast = {
      let isSelfClosing = startsWith(context.source, '/>') // 是否是自闭合标签
      // 如果是闭合标签，就需要在往后截取2位，否则就是1位
      advanceBy(context, isSelfClosing ? 2 : 1)
-   
+
      return {
        type: NodeTypes.ELEMENT,
        tag: tag,
        tagType: ElementTypes.ELEMENT,
        props: [],
-       children: []
+       children: [],
      }
    }
    ```
@@ -446,21 +446,21 @@ const ast = {
      JS_FUNCTION_EXPRESSION,
      JS_CONDITIONAL_EXPRESSION,
      JS_CACHE_EXPRESSION,
-   
+
      // ssr codegen
      JS_BLOCK_STATEMENT,
      JS_TEMPLATE_LITERAL,
      JS_IF_STATEMENT,
      JS_ASSIGNMENT_EXPRESSION,
      JS_SEQUENCE_EXPRESSION,
-     JS_RETURN_STATEMENT
+     JS_RETURN_STATEMENT,
    }
-   
+
    export const enum ElementTypes {
      ELEMENT,
      COMPONENT,
      SLOT,
-     TEMPLATE
+     TEMPLATE,
    }
    ```
 
@@ -468,7 +468,7 @@ const ast = {
 
    ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/98324f74245b4cc5b93efc19f4668d48~tplv-k3u1fbpfcp-watermark.image?)
 
-## 07：框架实现：生成AST，构建测试
+## 07：框架实现：生成 AST，构建测试
 
 接下来我们就需要处理上节返回的一个`chilren`，我们需要返回一个带有根节点的内容
 
@@ -479,10 +479,10 @@ const ast = {
      return {
        type: NodeTypes.ROOT,
        children,
-       loc: {}
+       loc: {},
      }
    }
-   
+
    export function baseParse(content: string) {
      const context = createParserContext(content)
      const children = parseChildren(context, [])
@@ -525,14 +525,14 @@ const ast = {
          tag: 'div',
          tagType: 0,
          props: [],
-         children: [{ type: 2, content: 'hello world test' }]
-       }
+         children: [{ type: 2, content: 'hello world test' }],
+       },
      ],
-     loc: {}
+     loc: {},
    }
    ```
 
-4. 这样先把`ast`生成内容修改成我们在第2步中生成的相似的任意内容，然后创建测试示例`ue-next-3.2.37/packages/vue/examples/mine/compiler/compile-ast-test.html`
+4. 这样先把`ast`生成内容修改成我们在第 2 步中生成的相似的任意内容，然后创建测试示例`ue-next-3.2.37/packages/vue/examples/mine/compiler/compile-ast-test.html`
 
    ```html
    <!DOCTYPE html>
@@ -554,7 +554,7 @@ const ast = {
            `
        const renderFn = compile(template)
        const component = {
-         render: renderFn
+         render: renderFn,
        }
        const vnode = h(component)
        render(vnode, document.querySelector('#app'))
@@ -603,15 +603,15 @@ const ast = {
 
 但是为了防止 `transform` 模块过于臃肿，所以我们会通过 `options` 的方式对 `transformXXX` 方法进行注入(类似于 `render` 的 `option`)
 
-所有注入的方法，会生成一个 `nodeTransFrorms` 数组，通过 `options`  传入
+所有注入的方法，会生成一个 `nodeTransFrorms` 数组，通过 `options` 传入
 
 #### 上下文对象
 
-上下文对象即 `context`, 对于上下文对象而言我们并不陌生。比如在 `parse` 时、`setup` 函数中、`vuex` 的 `action`  上，都出现过 `context` 对象
+上下文对象即 `context`, 对于上下文对象而言我们并不陌生。比如在 `parse` 时、`setup` 函数中、`vuex` 的 `action` 上，都出现过 `context` 对象
 
 对于 `context` 而言，我们可以把他理解为一个 **全局变量** 或者 **单例的全局变量**，它是一个多模块都可以访问的唯一对象
 
-在 `transform` 的策略中，因为存在**转化函数分离**这样的一个特性，所以我们必须要构建出这样的`context`  对象，用来保存当前节点的 `node` 节点等数据
+在 `transform` 的策略中，因为存在**转化函数分离**这样的一个特性，所以我们必须要构建出这样的`context` 对象，用来保存当前节点的 `node` 节点等数据
 
 ### 注意事项
 
@@ -621,11 +621,9 @@ const ast = {
 
 但是对于我们当前而言，我们不需要考虑这些复杂的情况，仅查看最简单的静态数据渲染，以此来简化整体逻辑
 
-## 09： 源码阅读：编译器第二步：转换AST，得到JavaScript AST
+## 09： 源码阅读：编译器第二步：转换 AST，得到 JavaScript AST
 
 这一小节，我们就来看下对应的`transform`逻辑，我们创建如下测试示例
-
-
 
 ## 10：框架实现：转换 JavaScript AST，构建深度优先
 
@@ -644,15 +642,14 @@ const ast = {
    import { transform } from './transform'
    import { transformElement } from './transforms/transformElement'
    import { transformText } from './transforms/transformText'
-   
-   
+
    export function baseCompile(template: string, options) {
      const ast = baseParse(template, options)
      // 新增加 transform 函数调用
      transform(
        ast,
        extend(options, {
-         nodeTransforms: [transformElement, transformText]
+         nodeTransforms: [transformElement, transformText],
        })
      )
      console.log(JSON.stringify(ast))
@@ -673,7 +670,7 @@ const ast = {
 
    ```typescript
    import { NodeTypes } from '../ast'
-   
+
    export function transformText(node, context) {
      if (
        node.type === NodeTypes.ROOT ||
@@ -690,13 +687,13 @@ const ast = {
 
    ```typescript
    import { NodeTypes } from './ast'
-   
+
    // 声明 transform 上下文
    export interface TransformContext {
      // AST  根节点
-     root 
+     root
      // 每次转化时记录的父节点
-     parent: ParentNode | null 
+     parent: ParentNode | null
      // 每次转化时记录的子节点索引
      childIndex: number
      // 当前处理的节点
@@ -707,7 +704,7 @@ const ast = {
      // 转化方法的集合
      nodeTransforms: any[]
    }
-   
+
    // 创建 transform 上下文
    export function createTransformContext(root, { nodeTransforms = [] }) {
      const context: TransformContext = {
@@ -721,11 +718,11 @@ const ast = {
          const count = context.helpers.get(name) || 0
          context.helpers.set(name, count + 1)
          return name
-       }
+       },
      }
      return context
    }
-   
+
    /**
     * 根据 AST 生成 JavaScript AST
     * @param root AST
@@ -737,7 +734,7 @@ const ast = {
      // 按照深度优先依次处理 node 节点转化
      traverseNode(root, context)
    }
-   
+
    // 深度优先
    /**
     * 遍历转化节点，转化的过程中一定是深度优先的（即：孙 -> 子 -> 父) 因为当时节点的状态往往需要根据子节点的情况来确定
@@ -769,7 +766,7 @@ const ast = {
        exitFns[i]()
      }
    }
-   
+
    function traversChildren(parent, context: TransformContext) {
      parent.children.forEach((node, index) => {
        context.parent = parent
@@ -785,7 +782,7 @@ const ast = {
 
    ```typescript
    import { NodeTypes, createVNodeCall } from '../ast'
-   
+
    export function transformElement(node, context) {
      return function postTransformElement() {
        node = context.currentNode
@@ -797,7 +794,7 @@ const ast = {
        let vnodeTag = `"${tag}"`
        let vnodeProps = []
        let vnodeChildren = node.children
-   		// 为当前节点增加 codegenNode 属性
+       // 为当前节点增加 codegenNode 属性
        node.codegenNode = createVNodeCall(
          context,
          vnodeTag,
@@ -806,7 +803,7 @@ const ast = {
        )
      }
    }
-   
+
    // ast.ts 中增加 createVNodeCall 方法
    import { CREATE_ELEMENT_VNODE } from './runtimeHelpers'
    export function createVNodeCall(context, tag, props?, children?) {
@@ -817,18 +814,17 @@ const ast = {
        type: NodeTypes.VNODE_CALL,
        tag,
        props,
-       children
+       children,
      }
    }
-   
+
    // 新建 runtimeHelpers.ts 文件，内容如下
    export const CREATE_ELEMENT_VNODE = Symbol(`createElementVNode`)
    export const CREATE_VNODE = Symbol('createVNode')
    export const helperNameMap: any = {
      [CREATE_ELEMENT_VNODE]: `createElementVNode`,
-     [CREATE_VNODE]: `createVNode`
+     [CREATE_VNODE]: `createVNode`,
    }
-   
    ```
 
 2. 新建`packages/compiler-core/src/transform/transformText.ts`文件，内容如下
@@ -836,7 +832,7 @@ const ast = {
    ```typescript
    import { NodeTypes } from '../ast'
    import { isText } from '../utils'
-   
+
    /**
     * 将 相邻的文本节点 和表达式 合并为一个表达式
     * 例如：
@@ -888,19 +884,21 @@ const ast = {
        }
      }
    }
-   
+
    export function createCompundExpression(children, loc) {
      return {
        type: NodeTypes.COMPOUND_EXPRESSION,
        loc,
-       children
+       children,
      }
    }
-   
+
    // 新建 utils.ts 文件
    import { NodeTypes } from './ast'
    export function isText(node) {
-     return node.type === NodeTypes.INTERPOLATION || node.type === NodeTypes.TEXT
+     return (
+       node.type === NodeTypes.INTERPOLATION || node.type === NodeTypes.TEXT
+     )
    }
    ```
 
@@ -910,7 +908,7 @@ const ast = {
 
    ```typescript
    import { isSingleElementRoot } from './transforms/hoistStatic'
-   
+
    export function transform(root, options) {
      const context = createTransformContext(root, options)
      traverseNode(root, context)
@@ -924,7 +922,7 @@ const ast = {
      root.temps = []
      root.cached = []
    }
-   
+
    function createRootCodegen(root) {
      const { children } = root
      // vue2 仅支持单个根节点
@@ -942,7 +940,7 @@ const ast = {
 
    ```typescript
    import { NodeTypes } from '../ast'
-   
+
    export function isSingleElementRoot(root, child) {
      const { children } = root
      return children.length === 1 && child.type === NodeTypes.ELEMENT
@@ -952,7 +950,7 @@ const ast = {
 3. 打开测试示例`/packages/vue/examples/compiler/compiler-ast.html`，内容如下
 
    ```html
-    <script>
+   <script>
      const { compile } = Vue
      const template = `<div>hello world</div>`
      const renderFn = compile(template)
@@ -969,13 +967,13 @@ const ast = {
 
    ```typescript
    import { CREATE_ELEMENT_VNODE } from './runtimeHelpers'
-   
+
    export function baseCompile(
      template: string | RootNode,
      options: CompilerOptions = {}
    ): CodegenResult {
    	...
-     
+
      // 第一个参数结构与上面浏览器打印结果结构保持一致
      return generate(
        {
@@ -1011,11 +1009,11 @@ const ast = {
          temps: [],
          cached: []
        },
-   
+
        extend({}, options, {
          prefixIdentifiers
        })
-     )	
+     )
    }
    ```
 
@@ -1043,7 +1041,7 @@ const ast = {
            `
        const renderFn = compile(template)
        const component = {
-         render: renderFn
+         render: renderFn,
        }
        const vnode = h(component)
        render(vnode, document.querySelector('#app'))
@@ -1055,9 +1053,7 @@ const ast = {
 
    ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/87ff1f1229f84f97b2eb697e8b88e07e~tplv-k3u1fbpfcp-watermark.image?)
 
-
-
-## 13：扩展知识：render 函数的生成方案 
+## 13：扩展知识：render 函数的生成方案
 
 当我们得到了 `JavaScript AST` 之后，下面就可以生成对应的 `render` 函数了
 
@@ -1069,54 +1065,54 @@ const ast = {
 
    ```typescript
    return generate(
-       {
-         type: 0,
-         children: [
-           {
-             type: 1,
-             tag: 'div',
-             tagType: 0,
+     {
+       type: 0,
+       children: [
+         {
+           type: 1,
+           tag: 'div',
+           tagType: 0,
+           props: [],
+           children: [{ type: 2, content: 'hello world111' }],
+           codegenNode: {
+             type: 13,
+             tag: '"div"',
              props: [],
              children: [{ type: 2, content: 'hello world111' }],
-             codegenNode: {
-               type: 13,
-               tag: '"div"',
-               props: [],
-               children: [{ type: 2, content: 'hello world111' }]
-             }
-           }
-         ],
-         loc: {},
-         codegenNode: {
-           type: 13,
-           tag: '"div"',
-           props: [],
-           children: [{ type: 2, content: 'hello world111' }]
+           },
          },
-         helpers: [CREATE_ELEMENT_VNODE],
-         components: [],
-         directives: [],
-         imports: [],
-         hoists: [],
-         temps: [],
-         cached: []
+       ],
+       loc: {},
+       codegenNode: {
+         type: 13,
+         tag: '"div"',
+         props: [],
+         children: [{ type: 2, content: 'hello world111' }],
        },
-   
-       extend({}, options, {
-         prefixIdentifiers
-       })
-     )
+       helpers: [CREATE_ELEMENT_VNODE],
+       components: [],
+       directives: [],
+       imports: [],
+       hoists: [],
+       temps: [],
+       cached: [],
+     },
+
+     extend({}, options, {
+       prefixIdentifiers,
+     })
+   )
    ```
 
-2. 生成的render  函数如下
+2. 生成的 render 函数如下
 
    ```typescript
    const _Vue = Vue
-   
+
    return function render(_ctx, _cache) {
      with (_ctx) {
        const { createElementVNode: _createElementVNode } = _Vue
-       return _createElementVNode("div", [], ["hello world111"])
+       return _createElementVNode('div', [], ['hello world111'])
      }
    }
    ```
@@ -1148,7 +1144,7 @@ context.code = `
 把上述字符串处理之后，我们就可以得到一样函数格式的字符
 
 ```javascript
-context.code =`
+context.code = `
 	const _Vue = Vue
 	return function render(_ctx, _cache){
 		const { createElementVNode, _creaElementVNode } = _Vue
@@ -1173,7 +1169,7 @@ context.code =`
 
    ```typescript
    const { createElementVNode, _creaElementVNode } = _Vue
-   return _createElementVNode("div", [], [ "hello world" ])
+   return _createElementVNode('div', [], ['hello world'])
    ```
 
 我们只需要把以上的内容拼接到一起，那么就可以得到最终的目标结果。
@@ -1181,7 +1177,7 @@ context.code =`
 那么为了完成对应的拼接，我们可以提供一个 push 函数
 
 ```typescript
-function push(code){
+function push(code) {
   context.code += code
 }
 ```
@@ -1193,7 +1189,7 @@ function push(code){
 在去处理这样的一个字符串的过程中，我们不光需要处理拼接，还需要处理对相应的格式问题，比如
 
 ```javascript
-context.code =`
+context.code = `
 	const _Vue = Vue
 	(换行)
 	return function render(_ctx, _cache){
@@ -1210,30 +1206,28 @@ context.code =`
 ```javascript
 context.indentLevel = 0 // 表示缩进
 // 换行
-function newline(n: number){
+function newline(n: number) {
   newline(context.indentLevel)
 }
 // 缩进 +  换行
-function indent(n: number){
+function indent(n: number) {
   newline(++context.indentLevel)
 }
 // 取消缩进 + 换行
-function deindent(n:number){
+function deindent(n: number) {
   newline(--context.indentLevel)
 }
 
-function newline(n:number){
-  context.code += "\n" +  ``.repeat(n)
+function newline(n: number) {
+  context.code += '\n' + ``.repeat(n)
 }
 ```
 
-## 14：源码阅读：编译器第三步：生成 render 函数 
-
-
+## 14：源码阅读：编译器第三步：生成 render 函数
 
 ## 15. 框架实现：构建 CodegenContext 上下文对象
 
-对于 `generate`  的构建，我们将分成两部分来进行实现
+对于 `generate` 的构建，我们将分成两部分来进行实现
 
 1. 构建 `context` 上下文对象
 2. 利用 `context` 完成函数拼接
@@ -1250,11 +1244,11 @@ function newline(n:number){
    }
    ```
 
-2. 创建`packages/compiler-core/src/codegen.ts`  模块，构建 `generate` 和 `createCodegenContext` 方法
+2. 创建`packages/compiler-core/src/codegen.ts` 模块，构建 `generate` 和 `createCodegenContext` 方法
 
    ```typescript
    import { helperNameMap } from './runtimeHelpers'
-   
+
    function createCodegenContext(ast) {
      const context = {
        runtimeGlobalName: 'Vue',
@@ -1276,21 +1270,20 @@ function newline(n:number){
        },
        deindent() {
          newline(--context.indentLevel)
-       }
+       },
      }
-   
+
      function newline(n: number) {
        context.code += '\n' + ` `.repeat(n)
      }
      return context
    }
-   
+
    export function generate(ast) {
      const context = createCodegenContext(ast)
-   
+
      const { push, newline, deindent, indent } = context
    }
-   
    ```
 
 ## 16:框架实现：解析 JavaScript AST，拼接 render 函数
@@ -1299,9 +1292,9 @@ function newline(n:number){
 >
 > ```javascript
 > const _Vue = Vue
-> return function render(_ctx, _cache){
-> 	const { createElementVNode, _creaElementVNode } = _Vue
-> 	return _createElementVNode("div", [], [ "hello world" ])
+> return function render(_ctx, _cache) {
+>   const { createElementVNode, _creaElementVNode } = _Vue
+>   return _createElementVNode('div', [], ['hello world'])
 > }
 > ```
 
@@ -1311,15 +1304,15 @@ function newline(n:number){
    import { NodeTypes } from './ast'
    import { getVNodeHelper } from './utils'
    import { isArray, isString } from '@vue/shared'
-   
+
    const aliasHelper = (s: symbol) => {
      return `${helperNameMap[s]}: _${helperNameMap[s]}`
    }
-   
+
    export function generate(ast) {
      const context = createCodegenContext(ast)
      const { push, newline, deindent, indent } = context
-     
+
      // 前置代码
      getFunctionPreamble(context)
      // 接着是函数和参数
@@ -1345,10 +1338,10 @@ function newline(n:number){
      push('}')
      return {
        ast,
-       code: context.code
+       code: context.code,
      }
    }
-   
+
    function genNode(node, context) {
      switch (node.type) {
        case NodeTypes.VNODE_CALL:
@@ -1361,31 +1354,37 @@ function newline(n:number){
          break
      }
    }
-   
+
    function genText(node, context) {
      context.push(JSON.stringify(node.content))
    }
-   
+
    function genVNodeCall(node, context) {
      const { push, helper } = context
      const { tag, isComponent, props, children, patchFlag, dynamicProps } = node
      const callHelper = getVNodeHelper(context.isSSR, isComponent)
      push(helper(callHelper) + `(`)
-   
-     const args = genNullableArgs([tag, props, children, patchFlag, dynamicProps])
+
+     const args = genNullableArgs([
+       tag,
+       props,
+       children,
+       patchFlag,
+       dynamicProps,
+     ])
      genNodeList(args, context)
      push(')')
    }
-   
+
    function genNullableArgs(args: any[]) {
      let i = args.length
      while (i--) {
        // 注意这里是双不等 != 不是 !==, 要排除undefined
        if (args[i] != null) break
      }
-     return args.slice(0, i + 1).map(arg => arg || `null`)
+     return args.slice(0, i + 1).map((arg) => arg || `null`)
    }
-   
+
    function genNodeList(nodes, context) {
      const { push } = context
      for (let index = 0; index < nodes.length; index++) {
@@ -1402,13 +1401,13 @@ function newline(n:number){
        }
      }
    }
-   
+
    function genNodeListArray(nodes, context) {
      context.push('[')
      genNodeList(nodes, context)
      context.push(']')
    }
-   
+
    function getFunctionPreamble(context) {
      const { push, runtimeGlobalName, newline } = context
      const VueBinding = runtimeGlobalName
@@ -1416,11 +1415,10 @@ function newline(n:number){
      newline()
      push(`return `)
    }
-   
-   
+
    // utils.ts 中增加 getVNodeHelper 方法
    import { CREATE_ELEMENT_VNODE, CREATE_VNODE } from './runtimeHelpers'
-   
+
    export function getVNodeHelper(ssr: boolean, isComponent: boolean) {
      return ssr || isComponent ? CREATE_VNODE : CREATE_ELEMENT_VNODE
    }
@@ -1429,7 +1427,7 @@ function newline(n:number){
 2. 创建一个测试示例`/packages/vue/example/compile/compiler-codegen.html`
 
    ```html
-    <script>
+   <script>
      const { compile, h, render } = Vue
      const template = `<div>hello world test</div>`
      const { code } = compile(template)
@@ -1441,10 +1439,10 @@ function newline(n:number){
 
    ```javascript
    const _Vue = Vue
-   
+
    return function render(_ctx, _cache) {
-    const { createElementVNode: _createElementVNode} = _Vue
-    return _createElementVNode("div", [], ["hello world test"])
+     const { createElementVNode: _createElementVNode } = _Vue
+     return _createElementVNode('div', [], ['hello world test'])
    }
    ```
 
@@ -1462,7 +1460,7 @@ function newline(n:number){
      console.log(code)
      const renderFn = new Function(code)()
      const vnode = h({
-       render: renderFn
+       render: renderFn,
      })
      console.log(renderFn)
      render(vnode, document.querySelector('#app'))
@@ -1484,7 +1482,7 @@ function newline(n:number){
    ```typescript
    // packages/runtime-core/src/index.ts
    export { createElementVNode } from './vnode'
-   
+
    // packages/vue/src/index.ts
    export { createElementVNode } from '@vue/runtime-core'
    ```
@@ -1493,9 +1491,7 @@ function newline(n:number){
 
 ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/456cf6021538440a9e61462f84aab4e8~tplv-k3u1fbpfcp-watermark.image?)
 
-
-
-## 17: 框架实现：新建 compat 模块，把 render 转化为 function 
+## 17: 框架实现：新建 compat 模块，把 render 转化为 function
 
 上一节中已经成功把 `JavaScript AST` 拼接成了 `render` 函数，但是跟我们日常使用略有不同。上一节的测试示例中我们手动声明了一个`new Function(code)()`，手动生成了一个`renderFn`函数
 
@@ -1505,13 +1501,13 @@ function newline(n:number){
 
    ```typescript
    import { compile } from '@vue/compiler-dom'
-   
+
    function compileToFunction(template, options) {
      const { code } = compile(template, options)
      const render = new Function(code)()
      return render
    }
-   
+
    export { compileToFunction as compile }
    ```
 
@@ -1525,12 +1521,12 @@ function newline(n:number){
 3. 新建测试示例 `packages/vue/example/compile/compiler-render.html`
 
    ```html
-    <script>
+   <script>
      const { compile, h, render } = Vue
      const template = `<div>hello world renderFn</div>`
      const renderFn = compile(template)
      const vnode = h({
-       render: renderFn
+       render: renderFn,
      })
      render(vnode, document.querySelector('#app'))
    </script>
@@ -1546,12 +1542,12 @@ function newline(n:number){
 
 我们知道整个编辑器的处理过程分为了三部分
 
-1. 解析模板 `template`  为 `AST`
+1. 解析模板 `template` 为 `AST`
    1. 在这一步过程中，我们使用了
       1. 有限自动状态机解析模板得到了 `tokens`
       2. 通过扫描 `tokens` 最终得到了 `AST`
 2. 转换为 `AST` 为 `JavaScript AST`
-   1. 这一步是为了最终生成 `render`  函数做准备
+   1. 这一步是为了最终生成 `render` 函数做准备
    2. 利用了**深度优先**的方式，进行了**自下而上**的逐层转化
-3. 生成 `render`  函数
-   1. 这一步也是最后的解析环节，我们需要对 `JavaScript AST`  进行处理，得到最终的 `render 函数`
+3. 生成 `render` 函数
+   1. 这一步也是最后的解析环节，我们需要对 `JavaScript AST` 进行处理，得到最终的 `render 函数`
