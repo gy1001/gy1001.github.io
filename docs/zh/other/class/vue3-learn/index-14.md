@@ -33,9 +33,9 @@
     render: renderFn,
     data() {
       return {
-        msg: 'world'
+        msg: 'world',
       }
-    }
+    },
   }
   // 通过 h 函数，生成 vnode
   const vnode = h(component)
@@ -44,70 +44,70 @@
 </script>
 ```
 
-在上面代码中，我们通过 data 声明了一个响应式数据，然后在 template  中通过 {{}} 进行使用，从而得到 hello {{msg}} 这样的一个表达式，这样的表达式我们把它叫做**复合表达式**
+在上面代码中，我们通过 data 声明了一个响应式数据，然后在 template 中通过 {{}} 进行使用，从而得到 hello {{msg}} 这样的一个表达式，这样的表达式我们把它叫做**复合表达式**
 
-我们可以在 vue 的源码 baseCompile  方法中分别查看 AST JavaScript AST 和 render 函数的值
+我们可以在 vue 的源码 baseCompile 方法中分别查看 AST JavaScript AST 和 render 函数的值
 
 ```json
 // AST
 {
-  type: 0,
-  children: [
+  "type": 0,
+  "children": [
     {
-      type: 1,
-      ns: 0,
-      tag: 'div',
-      tagType: 0,
-      props: [],
-      isSelfClosing: false,
-      children: [
+      "type": 1,
+      "ns": 0,
+      "tag": "div",
+      "tagType": 0,
+      "props": [],
+      "isSelfClosing": false,
+      "children": [
         {
-          type: 2,
-          content: 'hello ',
-          loc: {
-            start: { column: 6, line: 1, offset: 5 },
-            end: { column: 12, line: 1, offset: 11 },
-            source: 'hello '
+          "type": 2,
+          "content": "hello ",
+          "loc": {
+            "start": { "column": 6, "line": 1, "offset": 5 },
+            "end": { "column": 12, "line": 1, "offset": 11 },
+            "source": "hello "
           }
         },
         {
-          type: 5, // NodeTypes.INTERPOLATION
-          content: {
-            type: 4, // NodeTypes.SIMPLE_EXPRESSION
-            isStatic: false,
-            constType: 0,
-            content: 'msg',
-            loc: {
-              start: { column: 14, line: 1, offset: 13 },
-              end: { column: 17, line: 1, offset: 16 },
-              source: 'msg'
+          "type": 5, // NodeTypes.INTERPOLATION
+          "content": {
+            "type": 4, // NodeTypes.SIMPLE_EXPRESSION
+            "isStatic": false,
+            "constType": 0,
+            "content": "msg",
+            "loc": {
+              "start": { "column": 14, "line": 1, "offset": 13 },
+              "end": { "column": 17, "line": 1, "offset": 16 },
+              "source": "msg"
             }
           },
-          loc: {
-            start: { column: 12, line: 1, offset: 11 },
-            end: { column: 19, line: 1, offset: 18 },
-            source: '{{msg}}'
+          "loc": {
+            "start": { "column": 12, "line": 1, "offset": 11 },
+            "end": { "column": 19, "line": 1, "offset": 18 },
+            "source": "{{msg}}"
           }
         }
       ],
-      loc: {
-        start: { column: 1, line: 1, offset: 0 },
-        end: { column: 25, line: 1, offset: 24 },
-        source: '<div>hello {{msg}}</div>'
+      "loc": {
+        "start": { "column": 1, "line": 1, "offset": 0 },
+        "end": { "column": 25, "line": 1, "offset": 24 },
+        "source": "<div>hello {{msg}}</div>"
       }
     }
   ],
-  helpers: [],
-  components: [],
-  directives: [],
-  hoists: [],
-  imports: [],
-  cached: 0,
-  temps: 0,
-  loc: {
-    start: { column: 1, line: 1, offset: 0 },
-    end: { column: 25, line: 1, offset: 24 },
-    source: '<div>hello {{msg}}</div>'
+  "helpers": [],
+  "components": [],
+  "directives": [],
+  "hoists": [],
+  "imports": [],
+  "cached": 0,
+  "temps": 0,
+  "loc": {
+    "start": { "column": 1, "line": 1, "offset": 0 },
+    "end": { "column": 25, "line": 1, "offset": 24 },
+    "source": "<div>hello {{msg}}</div>"
   }
 }
 ```
@@ -117,217 +117,229 @@
 ```json
 // JavaScript AST
 {
-  type: 0,
-  children: [
+  "type": 0,
+  "children": [
     {
-      type: 1,
-      ns: 0,
-      tag: 'div',
-      tagType: 0,
-      props: [],
-      isSelfClosing: false,
-      children: [
+      "type": 1,
+      "ns": 0,
+      "tag": "div",
+      "tagType": 0,
+      "props": [],
+      "isSelfClosing": false,
+      "children": [
         {
-          type: 8,
-          loc: {
-            start: { column: 6, line: 1, offset: 5 },
-            end: { column: 12, line: 1, offset: 11 },
-            source: 'hello '
+          "type": 8,
+          "loc": {
+            "start": { "column": 6, "line": 1, "offset": 5 },
+            "end": { "column": 12, "line": 1, "offset": 11 },
+            "source": "hello "
           },
-          children: [
+          "children": [
             {
-              type: 2,
-              content: 'hello ',
-              loc: {
-                start: { column: 6, line: 1, offset: 5 },
-                end: { column: 12, line: 1, offset: 11 },
-                source: 'hello '
+              "type": 2,
+              "content": "hello ",
+              "loc": {
+                "start": { "column": 6, "line": 1, "offset": 5 },
+                "end": { "column": 12, "line": 1, "offset": 11 },
+                "source": "hello "
               }
             },
-            ' + ',
+            " + ",
             {
-              type: 5, // NodeTypes.INTERPOLATION
-              content: {
-                type: 4, // NodeTypes.SIMPLE_EXPRESSION
-                isStatic: false,
-                constType: 0,
-                content: 'msg',
-                loc: {
-                  start: { column: 14, line: 1, offset: 13 },
-                  end: { column: 17, line: 1, offset: 16 },
-                  source: 'msg'
+              "type": 5, // NodeTypes.INTERPOLATION
+              "content": {
+                "type": 4, // NodeTypes.SIMPLE_EXPRESSION
+                "isStatic": false,
+                "constType": 0,
+                "content": "msg",
+                "loc": {
+                  "start": { "column": 14, "line": 1, "offset": 13 },
+                  "end": { "column": 17, "line": 1, "offset": 16 },
+                  "source": "msg"
                 }
               },
-              loc: {
-                start: { column: 12, line: 1, offset: 11 },
-                end: { column: 19, line: 1, offset: 18 },
-                source: '{{msg}}'
+              "loc": {
+                "start": { "column": 12, "line": 1, "offset": 11 },
+                "end": { "column": 19, "line": 1, "offset": 18 },
+                "source": "{{msg}}"
               }
             }
           ]
         }
       ],
-      loc: {
-        start: { column: 1, line: 1, offset: 0 },
-        end: { column: 25, line: 1, offset: 24 },
-        source: '<div>hello {{msg}}</div>'
+      "loc": {
+        "start": { "column": 1, "line": 1, "offset": 0 },
+        "end": { "column": 25, "line": 1, "offset": 24 },
+        "source": "<div>hello {{msg}}</div>"
       },
-      codegenNode: {
-        type: 13,
-        tag: '"div"',
-        children: {
-          type: 8,
-          loc: {
-            start: { column: 6, line: 1, offset: 5 },
-            end: { column: 12, line: 1, offset: 11 },
-            source: 'hello '
+      "codegenNode": {
+        "type": 13,
+        "tag": "\"div\"",
+        "children": {
+          "type": 8,
+          "loc": {
+            "start": { "column": 6, "line": 1, "offset": 5 },
+            "end": { "column": 12, "line": 1, "offset": 11 },
+            "source": "hello "
           },
-          children: [
+          "children": [
             {
-              type: 2,
-              content: 'hello ',
-              loc: {
-                start: { column: 6, line: 1, offset: 5 },
-                end: { column: 12, line: 1, offset: 11 },
-                source: 'hello '
+              "type": 2,
+              "content": "hello ",
+              "loc": {
+                "start": { "column": 6, "line": 1, "offset": 5 },
+                "end": { "column": 12, "line": 1, "offset": 11 },
+                "source": "hello "
               }
             },
-            ' + ',
+            " + ",
             {
-              type: 5,
-              content: {
-                type: 4,
-                isStatic: false,
-                constType: 0,
-                content: 'msg',
-                loc: {
-                  start: { column: 14, line: 1, offset: 13 },
-                  end: { column: 17, line: 1, offset: 16 },
-                  source: 'msg'
+              "type": 5,
+              "content": {
+                "type": 4,
+                "isStatic": false,
+                "constType": 0,
+                "content": "msg",
+                "loc": {
+                  "start": { "column": 14, "line": 1, "offset": 13 },
+                  "end": { "column": 17, "line": 1, "offset": 16 },
+                  "source": "msg"
                 }
               },
-              loc: {
-                start: { column: 12, line: 1, offset: 11 },
-                end: { column: 19, line: 1, offset: 18 },
-                source: '{{msg}}'
+              "loc": {
+                "start": { "column": 12, "line": 1, "offset": 11 },
+                "end": { "column": 19, "line": 1, "offset": 18 },
+                "source": "{{msg}}"
               }
             }
           ]
         },
-        patchFlag: '1 /* TEXT */',
-        isBlock: true,
-        disableTracking: false,
-        isComponent: false,
-        loc: {
-          start: { column: 1, line: 1, offset: 0 },
-          end: { column: 25, line: 1, offset: 24 },
-          source: '<div>hello {{msg}}</div>'
+        "patchFlag": "1 /* TEXT */",
+        "isBlock": true,
+        "disableTracking": false,
+        "isComponent": false,
+        "loc": {
+          "start": { "column": 1, "line": 1, "offset": 0 },
+          "end": { "column": 25, "line": 1, "offset": 24 },
+          "source": "<div>hello {{msg}}</div>"
         }
       }
     }
   ],
-  helpers: [null, null, null],
-  components: [],
-  directives: [],
-  hoists: [],
-  imports: [],
-  cached: 0,
-  temps: 0,
-  codegenNode: {
-    type: 13,
-    tag: '"div"',
-    children: {
-      type: 8,
-      loc: {
-        start: { column: 6, line: 1, offset: 5 },
-        end: { column: 12, line: 1, offset: 11 },
-        source: 'hello '
+  "helpers": [null, null, null],
+  "components": [],
+  "directives": [],
+  "hoists": [],
+  "imports": [],
+  "cached": 0,
+  "temps": 0,
+  "codegenNode": {
+    "type": 13,
+    "tag": "\"div\"",
+    "children": {
+      "type": 8,
+      "loc": {
+        "start": { "column": 6, "line": 1, "offset": 5 },
+        "end": { "column": 12, "line": 1, "offset": 11 },
+        "source": "hello "
       },
-      children: [
+      "children": [
         {
-          type: 2,
-          content: 'hello ',
-          loc: {
-            start: { column: 6, line: 1, offset: 5 },
-            end: { column: 12, line: 1, offset: 11 },
-            source: 'hello '
+          "type": 2,
+          "content": "hello ",
+          "loc": {
+            "start": { "column": 6, "line": 1, "offset": 5 },
+            "end": { "column": 12, "line": 1, "offset": 11 },
+            "source": "hello "
           }
         },
-        ' + ',
+        " + ",
         {
-          type: 5,
-          content: {
-            type: 4,
-            isStatic: false,
-            constType: 0,
-            content: 'msg',
-            loc: {
-              start: { column: 14, line: 1, offset: 13 },
-              end: { column: 17, line: 1, offset: 16 },
-              source: 'msg'
+          "type": 5,
+          "content": {
+            "type": 4,
+            "isStatic": false,
+            "constType": 0,
+            "content": "msg",
+            "loc": {
+              "start": { "column": 14, "line": 1, "offset": 13 },
+              "end": { "column": 17, "line": 1, "offset": 16 },
+              "source": "msg"
             }
           },
-          loc: {
-            start: { column: 12, line: 1, offset: 11 },
-            end: { column: 19, line: 1, offset: 18 },
-            source: '{{msg}}'
+          "loc": {
+            "start": { "column": 12, "line": 1, "offset": 11 },
+            "end": { "column": 19, "line": 1, "offset": 18 },
+            "source": "{{msg}}"
           }
         }
       ]
     },
-    patchFlag: '1 /* TEXT */',
-    isBlock: true,
-    disableTracking: false,
-    isComponent: false,
-    loc: {
-      start: { column: 1, line: 1, offset: 0 },
-      end: { column: 25, line: 1, offset: 24 },
-      source: '<div>hello {{msg}}</div>'
+    "patchFlag": "1 /* TEXT */",
+    "isBlock": true,
+    "disableTracking": false,
+    "isComponent": false,
+    "loc": {
+      "start": { "column": 1, "line": 1, "offset": 0 },
+      "end": { "column": 25, "line": 1, "offset": 24 },
+      "source": "<div>hello {{msg}}</div>"
     }
   },
-  loc: {
-    start: { column: 1, line: 1, offset: 0 },
-    end: { column: 25, line: 1, offset: 24 },
-    source: '<div>hello {{msg}}</div>'
+  "loc": {
+    "start": { "column": 1, "line": 1, "offset": 0 },
+    "end": { "column": 25, "line": 1, "offset": 24 },
+    "source": "<div>hello {{msg}}</div>"
   }
 }
 ```
 
-模板中生成的 `renderFn`  内容如下
+模板中生成的 `renderFn` 内容如下
 
 ```javascript
 const _Vue = Vue
 
 return function render(_ctx, _cache) {
   with (_ctx) {
-    const { toDisplayString: _toDisplayString, openBlock: _openBlock, createElementBlock: _createElementBlock } = _Vue
+    const {
+      toDisplayString: _toDisplayString,
+      openBlock: _openBlock,
+      createElementBlock: _createElementBlock,
+    } = _Vue
 
-    return (_openBlock(), _createElementBlock("div", null, "hello " + _toDisplayString(msg), 1 /* TEXT */))
+    return (
+      _openBlock(),
+      _createElementBlock(
+        'div',
+        null,
+        'hello ' + _toDisplayString(msg),
+        1 /* TEXT */
+      )
+    )
   }
 }
 ```
 
-由以上内容可以看出，当我们增加了复合表达式之后，`AST`、`JavaScript AST`和`render`  函数中多出了如下内容
+由以上内容可以看出，当我们增加了复合表达式之后，`AST`、`JavaScript AST`和`render` 函数中多出了如下内容
 
 ```json
 // AST
 {
-  type: 5, // NodeTypes.INTERPOLATION
-  content: {
-    type: 4, // NodeTypes.SIMPLE_EXPRESSION
-    isStatic: false,
-    constType: 0,
-    content: 'msg',
-    loc: {
-      start: { column: 14, line: 1, offset: 13 },
-      end: { column: 17, line: 1, offset: 16 },
-      source: 'msg'
+  "type": 5, // NodeTypes.INTERPOLATION
+  "content": {
+    "type": 4, // NodeTypes.SIMPLE_EXPRESSION
+    "isStatic": false,
+    "constType": 0,
+    "content": "msg",
+    "loc": {
+      "start": { "column": 14, "line": 1, "offset": 13 },
+      "end": { "column": 17, "line": 1, "offset": 16 },
+      "source": "msg"
     }
   },
-  loc: {
-    start: { column: 12, line: 1, offset: 11 },
-    end: { column: 19, line: 1, offset: 18 },
-    source: '{{msg}}'
+  "loc": {
+    "start": { "column": 12, "line": 1, "offset": 11 },
+    "end": { "column": 19, "line": 1, "offset": 18 },
+    "source": "{{msg}}"
   }
 }
 ```
@@ -335,41 +347,41 @@ return function render(_ctx, _cache) {
 ```json
 // JavaScript AST
 {
-  type: 8,
-  loc: {
-    start: { column: 6, line: 1, offset: 5 },
-    end: { column: 12, line: 1, offset: 11 },
-    source: 'hello '
+  "type": 8,
+  "loc": {
+    "start": { "column": 6, "line": 1, "offset": 5 },
+    "end": { "column": 12, "line": 1, "offset": 11 },
+    "source": "hello "
   },
-  children: [
+  "children": [
     {
-      type: 2,
-      content: 'hello ',
-      loc: {
-        start: { column: 6, line: 1, offset: 5 },
-        end: { column: 12, line: 1, offset: 11 },
-        source: 'hello '
+      "type": 2,
+      "content": "hello ",
+      "loc": {
+        "start": { "column": 6, "line": 1, "offset": 5 },
+        "end": { "column": 12, "line": 1, "offset": 11 },
+        "source": "hello "
       }
     },
     // --------------------------- 以下为多出来的 ---------------------------
-    ' + ',
+    " + ",
     {
-      type: 5, // NodeTypes.INTERPOLATION
-      content: {
-        type: 4, // NodeTypes.SIMPLE_EXPRESSION
-        isStatic: false,
-        constType: 0,
-        content: 'msg',
-        loc: {
-          start: { column: 14, line: 1, offset: 13 },
-          end: { column: 17, line: 1, offset: 16 },
-          source: 'msg'
+      "type": 5, // NodeTypes.INTERPOLATION
+      "content": {
+        "type": 4, // NodeTypes.SIMPLE_EXPRESSION
+        "isStatic": false,
+        "constType": 0,
+        "content": "msg",
+        "loc": {
+          "start": { "column": 14, "line": 1, "offset": 13 },
+          "end": { "column": 17, "line": 1, "offset": 16 },
+          "source": "msg"
         }
       },
-      loc: {
-        start: { column: 12, line: 1, offset: 11 },
-        end: { column: 19, line: 1, offset: 18 },
-        source: '{{msg}}'
+      "loc": {
+        "start": { "column": 12, "line": 1, "offset": 11 },
+        "end": { "column": 19, "line": 1, "offset": 18 },
+        "source": "{{msg}}"
       }
     }
   ]
@@ -396,33 +408,33 @@ return function render(_ctx, _cache) {
 ```json
 // 需要新增的 AST 结构
 {
-  type: 5, // NodeTypes.INTERPOLATION
-  content: {
-    type: 4, // NodeTypes.SIMPLE_EXPRESSION
-    isStatic: false,
-    constType: 0,
-    content: 'msg',
-    loc: {
-      start: { column: 14, line: 1, offset: 13 },
-      end: { column: 17, line: 1, offset: 16 },
-      source: 'msg'
+  "type": 5, // NodeTypes.INTERPOLATION
+  "content": {
+    "type": 4, // NodeTypes.SIMPLE_EXPRESSION
+    "isStatic": false,
+    "constType": 0,
+    "content": "msg",
+    "loc": {
+      "start": { "column": 14, "line": 1, "offset": 13 },
+      "end": { "column": 17, "line": 1, "offset": 16 },
+      "source": "msg"
     }
   },
-  loc: {
-    start: { column: 12, line: 1, offset: 11 },
-    end: { column: 19, line: 1, offset: 18 },
-    source: '{{msg}}'
+  "loc": {
+    "start": { "column": 12, "line": 1, "offset": 11 },
+    "end": { "column": 19, "line": 1, "offset": 18 },
+    "source": "{{msg}}"
   }
 }
 ```
 
-查看`packages/compiler-core/src/parse.ts`中的代码逻辑，找到 `parseChildren`  方法
+查看`packages/compiler-core/src/parse.ts`中的代码逻辑，找到 `parseChildren` 方法
 
-我们知道该方法主要是用来解析子节点，内部存在的 `if`  逻辑
+我们知道该方法主要是用来解析子节点，内部存在的 `if` 逻辑
 
 ```typescript
-  if (startsWith(s, '{{')) {
-  }
+if (startsWith(s, '{{')) {
+}
 ```
 
 我们再上述基础上增加以下逻辑处理
@@ -432,7 +444,7 @@ function parseChildren(context: ParserContext, ancestors) {
   ...
   if (startsWith(s, '{{')) {
     node = parseInterpolation(context)
-  } 
+  }
 }
 
 
@@ -454,7 +466,7 @@ function parseInterpolation(context: ParserContext) {
 }
 ```
 
-然后在`/packages/compiler-core/src/compile.ts`  中打印 生成的 `ast`，代码如下
+然后在`/packages/compiler-core/src/compile.ts` 中打印 生成的 `ast`，代码如下
 
 ```typescript
 export function baseCompile(template: string, options) {
@@ -463,7 +475,7 @@ export function baseCompile(template: string, options) {
   transform(
     ast,
     extend(options, {
-      nodeTransforms: [transformElement, transformText]
+      nodeTransforms: [transformElement, transformText],
     })
   )
   return generate(ast)
@@ -506,11 +518,11 @@ const ast = {
       props: [],
       children: [
         { type: 2, content: 'hello--' },
-        { type: 5, content: { type: 4, isStatic: false, content: 'msg' } }
-      ]
-    }
+        { type: 5, content: { type: 4, isStatic: false, content: 'msg' } },
+      ],
+    },
   ],
-  loc: {}
+  loc: {},
 }
 ```
 
@@ -525,41 +537,41 @@ const ast = {
 ```json
 // 需要新增的 JavaScript AST 结构
 {
-  type: 8,
-  loc: {
-    start: { column: 6, line: 1, offset: 5 },
-    end: { column: 12, line: 1, offset: 11 },
-    source: 'hello '
+  "type": 8,
+  "loc": {
+    "start": { "column": 6, "line": 1, "offset": 5 },
+    "end": { "column": 12, "line": 1, "offset": 11 },
+    "source": "hello "
   },
-  children: [
+  "children": [
     {
-      type: 2,
-      content: 'hello ',
-      loc: {
-        start: { column: 6, line: 1, offset: 5 },
-        end: { column: 12, line: 1, offset: 11 },
-        source: 'hello '
+      "type": 2,
+      "content": "hello ",
+      "loc": {
+        "start": { "column": 6, "line": 1, "offset": 5 },
+        "end": { "column": 12, "line": 1, "offset": 11 },
+        "source": "hello "
       }
     },
     // --------------------------- 以下为多出来的 ---------------------------
-    ' + ',
+    " + ",
     {
-      type: 5, // NodeTypes.INTERPOLATION
-      content: {
-        type: 4, // NodeTypes.SIMPLE_EXPRESSION
-        isStatic: false,
-        constType: 0,
-        content: 'msg',
-        loc: {
-          start: { column: 14, line: 1, offset: 13 },
-          end: { column: 17, line: 1, offset: 16 },
-          source: 'msg'
+      "type": 5, // NodeTypes.INTERPOLATION
+      "content": {
+        "type": 4, // NodeTypes.SIMPLE_EXPRESSION
+        "isStatic": false,
+        "constType": 0,
+        "content": "msg",
+        "loc": {
+          "start": { "column": 14, "line": 1, "offset": 13 },
+          "end": { "column": 17, "line": 1, "offset": 16 },
+          "source": "msg"
         }
       },
-      loc: {
-        start: { column: 12, line: 1, offset: 11 },
-        end: { column: 19, line: 1, offset: 18 },
-        source: '{{msg}}'
+      "loc": {
+        "start": { "column": 12, "line": 1, "offset": 11 },
+        "end": { "column": 19, "line": 1, "offset": 18 },
+        "source": "{{msg}}"
       }
     }
   ]
@@ -577,7 +589,7 @@ function traverseNode(node, context: TransformContext) {
   switch (node.type) {
     ...
     case NodeTypes.INTERPOLATION:
-      // ---------- 这里处理 INTERPOLATION ---------- 
+      // ---------- 这里处理 INTERPOLATION ----------
   		context.helper(TO_DISPLAY_STRING)
       break
   }
@@ -591,7 +603,7 @@ export const helperNameMap: any = {
 }
 ```
 
-然后我们在`compile.ts`  中对于 `ast`进行打印
+然后我们在`compile.ts` 中对于 `ast`进行打印
 
 ```typescript
 export function baseCompile(template: string, options) {
@@ -599,7 +611,7 @@ export function baseCompile(template: string, options) {
   transform(
     ast,
     extend(options, {
-      nodeTransforms: [transformElement, transformText]
+      nodeTransforms: [transformElement, transformText],
     })
   )
   console.log(ast)
@@ -613,7 +625,1140 @@ export function baseCompile(template: string, options) {
 
 ## 05：响应性数据的编译器处理：render 转化逻辑分析
 
+```json
+// render 函数，内容进行了简化
+const _Vue = Vue
+
+return function render(_ctx, _cache) {
+  with (_ctx) {
+    const { toDisplayString: _toDisplayString, createElementBlock: _createElementBlock } = _Vue
+    return (_openBlock(), _createElementBlock("div", null, "hello " + _toDisplayString(msg)))
+  }
+}
+```
+
+那么接下来我们就要处理 render 的转化逻辑了。由以上最终生成的方法克制，对于主要增加了以下两块代码
+
+1. `toDisplayString`方法：该方法的作用非常简单，接收一个变量，返回对应的响应性数据。比如在以上代码和测试场景中，`_toDisplayString(msg)`方法的调用代表着接收 `msg` 变量作为参数，返回 `world` 字符串
+2. `with(_ctx)` 由刚才的代码我们可知：在使用 `_toDisplayString` 时，我们用到了一个 `msg` 变量。但是在整个的 `render` 代码中却没有 `msg` 变量的存在。那么为什么没抛出对应的错误呢？这是以为[with](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/with)的作用，它会改变语句的作用域链，从而找到 `msg` 变量
+
+所以根据以上两点，我们再去处理时，就需要关注以下内容
+
+1. 在 `generate` 方法中，增加 `with` 的 `push` 和 `toDisplayStrign` 方法的调用
+2. 完成 `toDisplayStirng` 方法
+3. 因为`with`改变作用域，所以我们在`runtime`时，需要注意新的作用域会不会引发其他的错误
+
 ## 06：响应性数据的编译器处理：generate 生成 render 函数
+
+这一小节，我们来完成`generate`的函数拼接
+
+1. 修改`codegen.ts`文件，修改如下
+
+   ```typescript
+   export function generate(ast) {
+     const context = createCodegenContext(ast)
+     const { push, newline, deindent, indent } = context
+     getFunctionPreamble(context)
+     const functionName = `render`
+
+     const args = ['_ctx', '_cache']
+     const signature = args.join(', ')
+     push(`function ${functionName}(${signature}) {`)
+     indent()
+     // 新增加 with 函数 { 以及缩进
+     push(`with(_ctx) {`)
+     indent()
+
+     const hasHelpers = ast.helpers.length > 0
+     if (hasHelpers) {
+       push(`const { ${ast.helpers.map(aliasHelper).join(', ')}} = _Vue`)
+     }
+     newline()
+     push(`return `)
+     if (ast.codegenNode) {
+       genNode(ast.codegenNode, context)
+     } else {
+       push(`null`)
+     }
+     // 同样的需要增加 对应的缩进以及 {
+     deindent()
+     push('}')
+
+     deindent()
+     push('}')
+     console.log(context.code)
+     return {
+       ast,
+       code: context.code,
+     }
+   }
+   ```
+
+2. 在对表达式进行相应的处理
+
+   ```typescript
+   import { TO_DISPLAY_STRING } from './runtimeHelpers'
+
+   function genNode(node, context) {
+     switch (node.type) {
+       case NodeTypes.VNODE_CALL:
+         genVNodeCall(node, context)
+         break
+       case NodeTypes.TEXT:
+         genText(node, context)
+         break
+       // ------------ 新增加 ---------------
+       case NodeTypes.SIMPLE_EXPRESSION:
+         genExpression(node, context)
+         break
+       case NodeTypes.INTERPOLATION:
+         genInterpolation(node, context)
+         break
+       case NodeTypes.COMPOUND_EXPRESSION:
+         genCompoundExpression(node, context)
+         break
+       // ----------------------------------
+       default:
+         break
+     }
+   }
+
+   function genCompoundExpression(node, context) {
+     for (let index = 0; index < node.children.length; index++) {
+       const child = node.children[index]
+       if (isString(child)) {
+         context.push(child)
+       } else {
+         genNode(child, context)
+       }
+     }
+   }
+
+   function genExpression(node, context) {
+     const { content, isStatic } = node
+     context.push(isStatic ? JSON.stringify(content) : content)
+   }
+
+   function genInterpolation(node, context) {
+     const { push, helper } = context
+     push(`${helper(TO_DISPLAY_STRING)}(`)
+     genNode(node.content, context)
+     push(`)`)
+   }
+
+   // runtimeHelpers.ts 增加 TO_DISPLAY_STRING
+   export const TO_DISPLAY_STRING = Symbol('toDisplayString')
+   export const helperNameMap: any = {
+     [TO_DISPLAY_STRING]: `toDisplayString`,
+   }
+   ```
+
+3. 回到测试用例`compiler-reactive.html`中打印`renderFn`，可以看到如下结果
+
+   ```typescript
+   const _Vue = Vue
+   return function render(_ctx, _cache) {
+     with (_ctx) {
+       const {
+         toDisplayString: _toDisplayString,
+         createElementVNode: _createElementVNode,
+       } = _Vue
+       return _createElementVNode('div', [], ['hello ' + _toDisplayString(msg)])
+     }
+   }
+   ```
 
 ## 07：响应性数据的编译器处理：render 函数的执行逻辑
 
+现在我们已经成功地得到了 `render` 函数，但是也得到了一个错误
+
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dc0feb7e5ae24d3d81bf171381ec13b9~tplv-k3u1fbpfcp-watermark.image?)
+
+该错误指向 `componentRenderUtils.ts`模块中的`renderComponentRoor`
+
+```typescript
+// 解析 render 函数的返回值
+export function renderComponentRott(instance){
+  ...
+}
+```
+
+那么出现该错误的原因是什么呢？
+
+因为`with`的作用，到时内部函数的作用域指向了`_ctx`，而此时`_ctx`是`undefined`
+
+修改`renderComponentRoor`函数如下
+
+```typescript
+export function renderComponentRoot(instance) {
+  ...
+  result = normalizeVNode(render!.call(data, data)) // 增加第二个参数 data
+  ...
+}
+```
+
+此时再次运行，这个错误解决了，会出现另一个错误 _TypeError: \_toDisplayString is not a function_
+
+新增加文件`packages/shared/src/toDisplayString.ts`,内容如下
+
+```typescript
+export const toDisplayString = (value): string => {
+  return String(value)
+}
+```
+
+进行导出
+
+```typescript
+// /packages/shared/src/index.ts
+export { toDisplayString } from './toDisplayString'
+
+// /packages/vue/src/index.ts
+export { toDisplayString } from '@vue/shared'
+```
+
+再次运行，我们会发现页面中正常渲染了
+
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/96defd5fd232409b9b8ee1a85c641bbd~tplv-k3u1fbpfcp-watermark.image?)
+
+此时数据已经是具有响应性的，修改测试示例如下
+
+```html
+<script>
+  const { compile, render, h } = Vue
+  // 创建 template
+  const template = `<div>hello {{msg}}</div>`
+  // 生成 render 函数
+  const renderFn = compile(template)
+  console.log(renderFn.toString())
+  // 创建组件
+  const component = {
+    render: renderFn,
+    data() {
+      return {
+        msg: 'world',
+      }
+    },
+    created() {
+      setTimeout(() => {
+        this.msg = '世界'
+      }, 2000)
+    },
+  }
+  // 通过 h 函数，生成 vnode
+  const vnode = h(component)
+  // 通过 render 函数渲染组件
+  render(vnode, document.querySelector('#app'))
+</script>
+```
+
+运行，2s 后数据更新了
+
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4afe6f1a1b514c54bd1884f41dae36e2~tplv-k3u1fbpfcp-watermark.image?)
+
+## 08: 多层级模板的编译器处理：多层级的处理逻辑
+
+在我们处理好响应式的数据处理之后，接下来我们来看一下多层级的视图渲染
+
+什么叫做多层级的视图渲染呢？我们来看下面的测试示例
+
+```html
+<script>
+  const { compile, render, h } = Vue
+  // 创建 template
+  const template = `<div><h1>hello {{msg}}<h1></div>` // 多层级
+  // 生成 render 函数
+  const renderFn = compile(template)
+  console.log(renderFn.toString())
+  // 创建组件
+  const component = {
+    render: renderFn,
+    data() {
+      return {
+        msg: 'world',
+      }
+    },
+    created() {
+      setTimeout(() => {
+        this.msg = '世界'
+      }, 2000)
+    },
+  }
+  // 通过 h 函数，生成 vnode
+  const vnode = h(component)
+  // 通过 render 函数渲染组件
+  render(vnode, document.querySelector('#app'))
+</script>
+```
+
+在该测试示例中，我们的`template`包含了一个子节点`h1`元素，从现在的`vue-next-mini`中运行该测试示例，大家可以发现是无法运行的
+
+那么如果想解析当前的子节点我们应该怎么做呢？
+
+我们知道`compile`的作用就是把模板解析成`render`函数，我们现在看一下，现在解析出来的`render`
+
+```json
+function render(_ctx, _cache) {
+ with(_ctx) {
+  const { toDisplayString: _toDisplayString, createElementVNode: _createElementVNode} = _Vue
+  return _createElementVNode("div", [], [])
+ }
+}
+```
+
+在以上代码中，我们可以发现，没有渲染出`h1`的原因，其实就非常简单了，就是因为第三个参数 `[]`
+
+如果想要渲染出`h1`,那么就需要提供出如下的`render`
+
+```json
+function render(_ctx, _cache) {
+ with(_ctx) {
+  const { toDisplayString: _toDisplayString, createElementVNode: _createElementVNode} = _Vue
+  return _createElementVNode("div", [], [" ", _createElement("h1", [],["hello world"]), " "])
+ }
+}
+```
+
+那么这样`render`函数如何实现呢？
+
+对于我们现在的代码而言，解析`render`的代码位于`packages/compiler-core/src/codegen.ts`中，此时我们`ast`结构如下
+
+```json
+{
+  "type": 0,
+  "children": [
+    {
+      "type": 1,
+      "tag": "div",
+      "tagType": 0,
+      "props": [],
+      "children": [
+        {
+          "type": 1,
+          "tag": "h1",
+          "tagType": 0,
+          "props": [],
+          "children": [
+            {
+              "type": 8,
+              "children": [
+                {
+                  "type": 2,
+                  "content": "hello "
+                },
+                " + ",
+                {
+                  "type": 5,
+                  "content": {
+                    "type": 4,
+                    "isStatic": false,
+                    "content": "msg"
+                  }
+                }
+              ]
+            },
+            {
+              "type": 1,
+              "tag": "h1",
+              "tagType": 0,
+              "props": [],
+              "children": [],
+              "codegenNode": {
+                "type": 13,
+                "tag": "\"h1\"",
+                "props": [],
+                "children": []
+              }
+            }
+          ],
+          "codegenNode": {
+            "type": 13,
+            "tag": "\"h1\"",
+            "props": [],
+            "children": [
+              {
+                "type": 8,
+                "children": [
+                  {
+                    "type": 2,
+                    "content": "hello "
+                  },
+                  " + ",
+                  {
+                    "type": 5,
+                    "content": {
+                      "type": 4,
+                      "isStatic": false,
+                      "content": "msg"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": 1,
+                "tag": "h1",
+                "tagType": 0,
+                "props": [],
+                "children": [],
+                "codegenNode": {
+                  "type": 13,
+                  "tag": "\"h1\"",
+                  "props": [],
+                  "children": []
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "codegenNode": {
+        "type": 13,
+        "tag": "\"div\"",
+        "props": [],
+        "children": [
+          {
+            "type": 1,
+            "tag": "h1",
+            "tagType": 0,
+            "props": [],
+            "children": [
+              {
+                "type": 8,
+                "children": [
+                  {
+                    "type": 2,
+                    "content": "hello "
+                  },
+                  " + ",
+                  {
+                    "type": 5,
+                    "content": {
+                      "type": 4,
+                      "isStatic": false,
+                      "content": "msg"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": 1,
+                "tag": "h1",
+                "tagType": 0,
+                "props": [],
+                "children": [],
+                "codegenNode": {
+                  "type": 13,
+                  "tag": "\"h1\"",
+                  "props": [],
+                  "children": []
+                }
+              }
+            ],
+            "codegenNode": {
+              "type": 13,
+              "tag": "\"h1\"",
+              "props": [],
+              "children": [
+                {
+                  "type": 8,
+                  "children": [
+                    {
+                      "type": 2,
+                      "content": "hello "
+                    },
+                    " + ",
+                    {
+                      "type": 5,
+                      "content": {
+                        "type": 4,
+                        "isStatic": false,
+                        "content": "msg"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": 1,
+                  "tag": "h1",
+                  "tagType": 0,
+                  "props": [],
+                  "children": [],
+                  "codegenNode": {
+                    "type": 13,
+                    "tag": "\"h1\"",
+                    "props": [],
+                    "children": []
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "loc": {},
+  "codegenNode": {
+    "type": 13,
+    "tag": "\"div\"",
+    "props": [],
+    "children": [
+      {
+        "type": 1,
+        "tag": "h1",
+        "tagType": 0,
+        "props": [],
+        "children": [
+          {
+            "type": 8,
+            "children": [
+              {
+                "type": 2,
+                "content": "hello "
+              },
+              " + ",
+              {
+                "type": 5,
+                "content": {
+                  "type": 4,
+                  "isStatic": false,
+                  "content": "msg"
+                }
+              }
+            ]
+          },
+          {
+            "type": 1,
+            "tag": "h1",
+            "tagType": 0,
+            "props": [],
+            "children": [],
+            "codegenNode": {
+              "type": 13,
+              "tag": "\"h1\"",
+              "props": [],
+              "children": []
+            }
+          }
+        ],
+        "codegenNode": {
+          "type": 13,
+          "tag": "\"h1\"",
+          "props": [],
+          "children": [
+            {
+              "type": 8,
+              "children": [
+                {
+                  "type": 2,
+                  "content": "hello "
+                },
+                " + ",
+                {
+                  "type": 5,
+                  "content": {
+                    "type": 4,
+                    "isStatic": false,
+                    "content": "msg"
+                  }
+                }
+              ]
+            },
+            {
+              "type": 1,
+              "tag": "h1",
+              "tagType": 0,
+              "props": [],
+              "children": [],
+              "codegenNode": {
+                "type": 13,
+                "tag": "\"h1\"",
+                "props": [],
+                "children": []
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "helpers": [null, null],
+  "components": [],
+  "directives": [],
+  "imports": [],
+  "hoists": [],
+  "temps": [],
+  "cached": []
+}
+```
+
+其中的`h1`标签的`type`为 1，而 1 对应 `nodeTypes`中的`ELEMENT`类型
+
+```typescript
+function genNode(node, context) {
+
+  // 增加如下代码
+  case NodeTypes.ELEMENT:
+    genNode(node.codegen, context)
+    break
+}
+```
+
+此时再重新运行此时示例，可以发现正常渲染了
+
+![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4b0ca9a9c8424c58b83471f56ccfc914~tplv-k3u1fbpfcp-watermark.image?)
+
+## 09: 基于编译器的指令(v-xxx)处理:指令解析逻辑
+
+在 vue 中，指令是一个非常重要的环节。vue 的指令主要集中在`compiler`编译器中。那么接下来我们来看一下`vue`中的指令处理逻辑
+
+vue 中提供的指令非常多，大家可以点击[这里来查看所有的内置指令](https://cn.vuejs.org/api/built-in-directives.html),针对于这么多的指令，我们不可能全部进行讲解实现逻辑，所以我们在这里以`v-if`为例子，为大家讲解指令的解析与处理方案
+
+我们创建如下测试示例`packages/vue/examples/mine/compiler/compiler-directive.html`
+
+```html
+<script>
+  const { compile, render, h } = Vue
+  // 创建 template
+  const template = `<div>hello {{msg}}<h1 v-if="isShow">你好，世界</h1></div>`
+  // 生成 render 函数
+  const renderFn = compile(template)
+  console.log(renderFn.toString())
+  // 创建组件
+  const component = {
+    render: renderFn,
+    data() {
+      return {
+        msg: 'world',
+        isShow: false,
+      }
+    },
+    created() {
+      setTimeout(() => {
+        this.msg = '世界'
+        this.isShow = true
+      }, 2000)
+    },
+  }
+  // 通过 h 函数，生成 vnode
+  const vnode = h(component)
+  // 通过 render 函数渲染组件
+  render(vnode, document.querySelector('#app'))
+</script>
+```
+
+在源码项目运行该实例，可以看到生成的`render`函数如下
+
+```json
+function render(_ctx, _cache) {
+  with (_ctx) {
+    const { toDisplayString: _toDisplayString, openBlock: _openBlock, createElementBlock: _createElementBlock, createCommentVNode: _createCommentVNode, createTextVNode: _createTextVNode } = _Vue
+
+    return (_openBlock(), _createElementBlock("div", null, [
+      _createTextVNode("hello " + _toDisplayString(msg), 1 /* TEXT */),
+      isShow
+        ? (_openBlock(), _createElementBlock("h1", _hoisted_1, "你好，世界"))
+        : _createCommentVNode("v-if", true)
+    ]))
+  }
+}
+```
+
+根据之间的经验和上面的代码可知
+
+1. `with(_ctx)`将改变作用域，使`isShow`指向`data`。即：`data.isShow`
+2. `isShow ? xx : xx` 。这三个表达式是渲染的关键，我们`v-if`本质上就是一个`if`判断，满足条件则渲染，不满足则不渲染。
+
+那么明确好了对应的`render`逻辑之后，接下来我们就来看对应的`ast`和`JavaScript AST`
+
+```json
+// ast
+{
+  "type": 0,
+  "children": [
+    {
+      "type": 1,
+      "ns": 0,
+      "tag": "div",
+      "tagType": 0,
+      "props": [],
+      "isSelfClosing": false,
+      "children": [
+        {
+          "type": 2,
+          "content": "hello ",
+          "loc": {
+            "start": { "column": 6, "line": 1, "offset": 5 },
+            "end": { "column": 12, "line": 1, "offset": 11 },
+            "source": "hello "
+          }
+        },
+        {
+          "type": 5,
+          "content": {
+            "type": 4,
+            "isStatic": false,
+            "constType": 0,
+            "content": "msg",
+            "loc": {
+              "start": { "column": 14, "line": 1, "offset": 13 },
+              "end": { "column": 17, "line": 1, "offset": 16 },
+              "source": "msg"
+            }
+          },
+          "loc": {
+            "start": { "column": 12, "line": 1, "offset": 11 },
+            "end": { "column": 19, "line": 1, "offset": 18 },
+            "source": "{{msg}}"
+          }
+        },
+        {
+          "type": 1, // NodeTypes.Element
+          "ns": 0,
+          "tag": "h1",
+          "tagType": 0,
+          "props": [
+            {
+              "type": 7, // NodeTypes.DIRECTIVE
+              "name": "if", // 指令名字
+              "exp": {
+                // 表达式
+                "type": 4, // NodeTypes.SIMPLE_EXPRESSION
+                "content": "isShow", // 值
+                "isStatic": false,
+                "constType": 0,
+                "loc": {
+                  "start": { "column": 29, "line": 1, "offset": 28 },
+                  "end": { "column": 35, "line": 1, "offset": 34 },
+                  "source": "isShow"
+                }
+              },
+              "modifiers": [],
+              "loc": {
+                "start": { "column": 23, "line": 1, "offset": 22 },
+                "end": { "column": 36, "line": 1, "offset": 35 },
+                "source": "v-if=\"isShow\""
+              }
+            }
+          ],
+          "isSelfClosing": false,
+          "children": [
+            {
+              "type": 2,
+              "content": "你好，世界",
+              "loc": {
+                "start": { "column": 37, "line": 1, "offset": 36 },
+                "end": { "column": 42, "line": 1, "offset": 41 },
+                "source": "你好，世界"
+              }
+            }
+          ],
+          "loc": {
+            "start": { "column": 19, "line": 1, "offset": 18 },
+            "end": { "column": 47, "line": 1, "offset": 46 },
+            "source": "<h1 v-if=\"isShow\">你好，世界</h1>"
+          }
+        }
+      ],
+      "loc": {
+        "start": { "column": 1, "line": 1, "offset": 0 },
+        "end": { "column": 53, "line": 1, "offset": 52 },
+        "source": "<div>hello {{msg}}<h1 v-if=\"isShow\">你好，世界</h1></div>"
+      }
+    }
+  ],
+  "helpers": [],
+  "components": [],
+  "directives": [],
+  "hoists": [],
+  "imports": [],
+  "cached": 0,
+  "temps": 0,
+  "loc": {
+    "start": { "column": 1, "line": 1, "offset": 0 },
+    "end": { "column": 53, "line": 1, "offset": 52 },
+    "source": "<div>hello {{msg}}<h1 v-if=\"isShow\">你好，世界</h1></div>"
+  }
+}
+```
+
+以上的`AST`，主要看备注部分
+
+由以上的`AST`可知，针对于指令的处理，主要集中在`props`选项中，所以针对于`AST`而言，我们**只需要额外增加属性(props)的处理即可**
+
+接下来我们来看`JavaScript AST`
+
+`JavaScript AST`决定了最终的`render`渲染，它的处理更加复杂。我们之前创建过`transformElement`与`transformText`用来处理`element`和`text`的渲染，那么同样的道理，针对于指令的处理，我们也需要创建对应的`transformXXX`才可以进行处理
+
+如果以`v-if`为例，那么我们需要增加对应的`vif.ts`模块
+
+`vif.ts`模块，需要为模块增加额外的`branches`属性，以此来处理对应的分支指令渲染逻辑
+
+```json
+// 部分的 JavaScript AST
+{
+  "type": 9,
+  // 分支处理
+  "branches": [
+    {
+      "type": 10, // NodeTypes.IF_BRANCH
+      "condition": {
+        "type": 4, // NodeTypes.SIMPLE_EXPRESSION
+        "content": "isShow",
+        "isStatic": false,
+        "constType": 0
+      },
+      "children": [
+        {
+          "type": 1,
+          "ns": 0,
+          "tag": "h1",
+          "tagType": 0,
+          "props": [],
+          "isSelfClosing": false,
+          "children": [
+            {
+              "type": 2,
+              "content": "你好，世界",
+              "loc": {
+                "start": {
+                  "column": 37,
+                  "line": 1,
+                  "offset": 36
+                },
+                "end": {
+                  "column": 42,
+                  "line": 1,
+                  "offset": 41
+                },
+                "source": "你好，世界"
+              }
+            }
+          ],
+          "codegenNode": {
+            "type": 13, // NodeTypes.VNODE_CALL
+            "tag": "\"h1\"",
+            "props": {
+              "type": 4,
+              "content": "_hoisted_1",
+              "isStatic": false,
+              "constType": 2,
+              "hoisted": {
+                "type": 15,
+                "properties": [
+                  {
+                    "type": 16,
+                    "key": {
+                      "type": 4,
+                      "content": "key",
+                      "isStatic": true,
+                      "constType": 3
+                    },
+                    "value": {
+                      "type": 4,
+                      "content": "0",
+                      "isStatic": false,
+                      "constType": 2
+                    }
+                  }
+                ]
+              }
+            },
+            "children": {
+              "type": 2,
+              "content": "你好，世界"
+            },
+            "isBlock": true,
+            "disableTracking": false,
+            "isComponent": false
+          }
+        }
+      ],
+      "isTemplateIf": false
+    }
+  ],
+  "codegenNode": {
+    "type": 19,
+    "test": {
+      "type": 4,
+      "content": "isShow",
+      "isStatic": false,
+      "constType": 0
+    },
+    "consequent": {
+      "type": 13,
+      "tag": "\"h1\"",
+      "props": {
+        "type": 4,
+        "content": "_hoisted_1",
+        "isStatic": false,
+        "constType": 2,
+        "hoisted": {
+          "type": 15,
+          "properties": [
+            {
+              "type": 16,
+              "loc": {
+                "source": "",
+                "start": {
+                  "line": 1,
+                  "column": 1,
+                  "offset": 0
+                },
+                "end": {
+                  "line": 1,
+                  "column": 1,
+                  "offset": 0
+                }
+              },
+              "key": {
+                "type": 4,
+                "content": "key",
+                "isStatic": true,
+                "constType": 3
+              },
+              "value": {
+                "type": 4,
+                "content": "0",
+                "isStatic": false,
+                "constType": 2
+              }
+            }
+          ]
+        }
+      },
+      "children": {
+        "type": 2,
+        "content": "你好，世界"
+      },
+      "isBlock": true,
+      "disableTracking": false,
+      "isComponent": false
+    },
+    "alternate": {
+      "type": 14,
+      "arguments": ["\"v-if\"", "true"]
+    },
+    "newline": true
+  }
+}
+```
+
+## 10： 基于编译器的指令(v-xxx)处理：AST 解析逻辑
+
+那么首先我们先处理`AST`的解析逻辑
+
+我们知道`AST`的解析，主要集中在`packages/compiler-core/src/parse.ts`中，在该模块下，存在`parseTag`方法，该方法主要用来**解析标签**。那么对于我们的属性解析，也需要在该方法下进行
+
+该方法目前的标签解析，主要分成三部分
+
+1. 标签开始
+2. 表签名
+3. 标签结束
+
+根据标签`<div v-if="xxx">`的结构，我们的指令处理，应该在**标签名-标签结果**中间进行处理：
+
+1. 在`parseTag`增加属性处理逻辑
+
+   ```typescript
+   function parseTag(context: ParserContext, type: TagType) {
+     const match: any = /^<\/?([a-z][^\r\n\t\f />]*)/i.exec(context.source)
+     const tag = match[1]
+     advanceBy(context, match[0].length)
+     // -------------------- 属性和指令的处理 --------------------
+     advanceSpaces(context)
+     let props = parseAttributes(context, type)
+     // ------------------------------------------------------------
+     let isSelfClosing = startsWith(context.source, '/>') // 是否是自闭合标签
+     advanceBy(context, isSelfClosing ? 2 : 1)
+     return {
+       type: NodeTypes.ELEMENT,
+       tag: tag,
+       tagType: ElementTypes.ELEMENT,
+       props: props, // 注意：这里需要改为 props
+       children: [],
+     }
+   }
+
+   function parseAttributes(context, type) {
+     const props: any = []
+     const attributeNames = new Set<string>()
+     while (
+       context.source.length > 0 &&
+       !startsWith(context.source, '>') &&
+       !startsWith(context.source, '/>')
+     ) {
+       const attr = parseAttribute(context, attributeNames)
+       if (type === TagType.Start) {
+         props.push(attr)
+       }
+       advanceSpaces(context)
+     }
+     return props
+   }
+
+   function parseAttribute(context: ParserContext, nameSet: Set<string>) {
+     const match = /^[^\t\r\n\f />][^\t\r\n\f />=]*/.exec(context.source)!
+     const name = match[0]
+     nameSet.add(name)
+     advanceBy(context, name.length)
+     let value: any = undefined
+     if (/^[\t\r\n\f ]*=/.test(context.source)) {
+       advanceSpaces(context)
+       advanceBy(context, 1)
+       advanceSpaces(context)
+       value = parseAttributeValue(context)
+     }
+     // 属性中的指令处理
+     if (/^(v-[A-Za-z0-9-]|:|\.|@|#)/.test(name)) {
+       // 正则匹配指令，
+       const match =
+         /(?:^v-([a-z0-9-]+))?(?:(?::|^\.|^@|^#)(\[[^\]]+\]|[^\.]+))?(.+)?$/i.exec(
+           name
+         )!
+       // 拿到指令名字
+       let dirname = match[1]
+       return {
+         type: NodeTypes.DIRECTIVE,
+         name: dirname,
+         exp: value && {
+           type: NodeTypes.SIMPLE_EXPRESSION,
+           content: value.content,
+           isStatic: false,
+           loc: {},
+         },
+         art: undefined,
+         modifiers: undefined,
+         loc: {},
+       }
+     }
+     return {
+       type: NodeTypes.ATTRIBUTE,
+       name,
+       value: value && {
+         type: NodeTypes.TEXT,
+         content: value.context,
+         loc: {},
+       },
+       loc: {},
+     }
+   }
+
+   function parseAttributeValue(context: ParserContext) {
+     let content = ''
+     const quote = context.source[0] // 这里有可能是 '，也有可能是是 "
+     advanceBy(context, 1)
+     const endIndex = context.source.indexOf(quote)
+     if (endIndex === -1) {
+       content = parseTextData(context, context.source.length)
+     } else {
+       content = parseTextData(context, endIndex)
+       advanceBy(context, 1)
+     }
+     return { content, loc: {}, isQuoted: true }
+   }
+
+   function advanceSpaces(context: ParserContext): void {
+     const match = /^[\t\r\n\f ]+/.exec(context.source)
+     if (match) {
+       advanceBy(context, match[0].length)
+     }
+   }
+   ```
+
+2. 这样，我们的指令 AST 转换处理就已经完成了，在`compile`函数中进行打印
+
+   ```typescript
+   export function baseCompile(template: string, options) {
+     const ast = baseParse(template)
+     console.log(JSON.stringify(ast)) // 打印
+     transform(
+       ast,
+       extend(options, {
+         nodeTransforms: [transformElement, transformText],
+       })
+     )
+
+     return generate(ast)
+   }
+   ```
+
+3. 运行测试示例`compiler-directive.html`
+
+   ```html
+   <script>
+     const { compile, render, h } = Vue
+     // 创建 template
+     const template = `<div>hello <h1 v-if="isShow">你好，世界</h1></div>`
+     // 生成 render 函数
+     const renderFn = compile(template)
+     console.log(renderFn.toString())
+     // 创建组件
+     const component = {
+       render: renderFn,
+       data() {
+         return {
+           isShow: false,
+         }
+       },
+       created() {
+         setTimeout(() => {
+           this.isShow = true
+         }, 2000)
+       },
+     }
+     // 通过 h 函数，生成 vnode
+     const vnode = h(component)
+     // 通过 render 函数渲染组件
+     render(vnode, document.querySelector('#app'))
+   </script>
+   ```
+
+4. 得到`AST`打印结果如下
+
+   ```json
+   {
+     "type": 0,
+     "children": [
+       {
+         "type": 1,
+         "tag": "div",
+         "tagType": 0,
+         "props": [],
+         "children": [
+           { "type": 2, "content": "hello" },
+           {
+             "type": 1,
+             "tag": "h1",
+             "tagType": 0,
+             "props": [
+               {
+                 "type": 7,
+                 "name": "if",
+                 "exp": {
+                   "type": 4,
+                   "content": "isShow",
+                   "isStatic": false,
+                   "loc": {}
+                 },
+                 "loc": {}
+               }
+             ],
+             "children": [{ "type": 2, "content": "你好，世界" }]
+           }
+         ]
+       }
+     ],
+     "loc": {}
+   }
+   ```
+
+5. 把当前`AST`替换到`vue`源码中，发现指令可以被正常渲染
+
+## 11：基于编译器的指令(v-xxx)处理：JavaScript AST，构建 v-if 转换模块
+
+## 12：基于编译器的指令(v-xxx)处理：JavaScript AST，transform 的转换逻辑
+
+## 13：基于编译器的指令(v-xxx)处理：生成 render 函数
+
+## 14：总结
