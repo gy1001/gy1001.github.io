@@ -2326,6 +2326,138 @@ return function render(_ctx,_cache){
 
 1. 在`packages/compiler-core/src/codegen.ts`中的`genNode`方法下增加节点处理
 
+```typescript
+function genNode(node, context) {
+  switch (node.type) {
+    ...
+    // 条件表达式
+  	case NodeTypes.JS_CONDITIONAL_EXPRESSION:
+     genConditionalExpression(node, context)
+     break
+    // 调用表达式
+   	case NodeTypes.JS_CALL_EXPRESSION:
+      genCallExpression(node, context)
+      break
+    case NodeTypes.IF:
+      genNode(node.codegenNode, context)
+      break
+  }
+}
 
+function genCallExpression(node, context) {
+  const { push, helper } = context
+  const callee = isString(node.callee) ? node.callee : helper(node.callee)
+  push(callee + '(')
+  genNodeList(node.arguments, context)
+  push(')')
+}
+
+// isShow ? _createElementVNode("h1", null, ["你好，世界"]) : _createCommentVNode("v-if", true)
+function genConditionalExpression(node, context) {
+  const { test, newline: needNewLine, consequent, alternate } = node
+  const { push, indent, deindent, newline } = context
+
+  if (test.type === NodeTypes.SIMPLE_EXPRESSION) {
+    genExpression(test, context)
+  }
+  // 换行
+  needNewLine && indent()
+  context.indentLevel++
+  needNewLine || push(` `)
+  push('?')
+  genNode(consequent, context)
+  context.indentLevel--
+  needNewLine && newline()
+  needNewLine || push(' ')
+  push(': ')
+  const isNested = alternate.type === NodeTypes.JS_CONDITIONAL_EXPRESSION
+  if (!isNested) {
+    context.indentLevel++
+  }
+  genNode(alternate, context)
+  if (!isNested) {
+    context.indentLevel--
+  }
+  needNewLine && deindent()
+}
+```
+
+再次运行测试示例`compiler-directive.html`，内容如下
+
+```html
+<script>
+  const { compile, render, h } = Vue
+  // 创建 template
+  const template = `<div>hello {{msg}}<h1 v-if="isShow">你好，世界</h1></div>`
+  // 生成 render 函数
+  const renderFn = compile(template)
+  console.log(renderFn.toString())
+  // 创建组件
+  const component = {
+    render: renderFn,
+    data() {
+      return {
+        isShow: false,
+        msg: 'world'
+      }
+    },
+    created() {
+      setTimeout(() => {
+        this.isShow = true
+      }, 2000)
+    }
+  }
+  // 通过 h 函数，生成 vnode
+  const vnode = h(component)
+  // 通过 render 函数渲染组件
+  render(vnode, document.querySelector('#app'))
+</script>
+```
+
+可以看到生成的`renderFn.toSring()`结果如下
+
+```json
+function render(_ctx, _cache) {
+ with(_ctx) {
+  const { toDisplayString: _toDisplayString, createElementVNode: _createElementVNode, createCommentVNode: _createCommentVNode} = _Vue
+  return _createElementVNode("div", [], ["hello " + _toDisplayString(msg), isShow
+   ?_createElementVNode("h1", null, ["你好，世界"])
+   : _createCommentVNode('v-if', true)
+  ])
+ }
+}
+```
+
+同时页面报错（显然是因为`_createCommentVNode`我们没有创建并导出）
+
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/762b032af4294929b7b26a56a27ba43a~tplv-k3u1fbpfcp-watermark.image?)
+
+在`packages/runtime-core/src/vnode.ts`中创建`createCommentVNode`函数
+
+```typescript
+export function createCommentVNode(text) {
+  return createVNode(Comment, null, text) // 注意第一个参数代表 Comment 类型
+}
+```
+
+分别进行导出
+
+```typescript
+// /packages/runtime-core/src/index.ts
+export { createCommentVNode } from './vnode'
+
+// /packages/vue/src/index.ts
+export { createCommentVNode } from '@vue/runtime-core'
+```
+
+再次刷新页面，报错就会消失了
 
 ## 14：总结
+
+那么到这里，咱们的编译器处理，就已经全部完成了。
+
+在本章中我们对编译器进行了一些深入的了解，对于编译器而言，本质上就是把`template`转换为`render`函数
+
+对于指令或者`{{}}`而言，本质只是模板解析的一部分，所以这部分的核心处理逻辑都是在编译器中进行的
+
+而对于指令而言，每一个指令的处理都会对应一个`transformXXX`函数，这个函数的存在本质上就是为了生成一个对应的**属性节点**，以便在`genrate`时，进行对应的解析。
