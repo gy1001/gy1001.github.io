@@ -312,7 +312,7 @@ return function render(_ctx, _cache) {
         'div',
         null,
         'hello ' + _toDisplayString(msg),
-        1 /* TEXT */
+        1 /* TEXT */,
       )
     )
   }
@@ -476,7 +476,7 @@ export function baseCompile(template: string, options) {
     ast,
     extend(options, {
       nodeTransforms: [transformElement, transformText],
-    })
+    }),
   )
   return generate(ast)
 }
@@ -612,7 +612,7 @@ export function baseCompile(template: string, options) {
     ast,
     extend(options, {
       nodeTransforms: [transformElement, transformText],
-    })
+    }),
   )
   console.log(ast)
   return generate(ast)
@@ -1608,7 +1608,7 @@ function render(_ctx, _cache) {
        // 正则匹配指令，
        const match =
          /(?:^v-([a-z0-9-]+))?(?:(?::|^\.|^@|^#)(\[[^\]]+\]|[^\.]+))?(.+)?$/i.exec(
-           name
+           name,
          )!
        // 拿到指令名字
        let dirname = match[1]
@@ -1670,7 +1670,7 @@ function render(_ctx, _cache) {
        ast,
        extend(options, {
          nodeTransforms: [transformElement, transformText],
-       })
+       }),
      )
 
      return generate(ast)
@@ -1757,14 +1757,14 @@ function render(_ctx, _cache) {
 
    ```typescript
    import { transformIf } from './transform/vif'
-   
+
    export function baseCompile(template: string, options) {
      const ast = baseParse(template)
      transform(
        ast,
        extend(options, {
-         nodeTransforms: [transformElement, transformText, transformIf]
-       })
+         nodeTransforms: [transformElement, transformText, transformIf],
+       }),
      )
      console.log(ast) // 这里最后查看打印结果
      return generate(ast)
@@ -1774,11 +1774,16 @@ function render(_ctx, _cache) {
 2. 在`packages/compiler-core/src/transform.ts`中增加`createStructuralDirectiveTransform`方法
 
    ```typescript
-   export function createStructuralDirectiveTransform(name: string | RegExp, fn) {
+   import { isString } from '@vue/shared'
+
+   export function createStructuralDirectiveTransform(
+     name: string | RegExp,
+     fn,
+   ) {
      const matches = isString(name)
        ? (n: string) => n === name
        : (n: string) => name.test(n)
-   
+
      return (node, context) => {
        if (node.type === NodeTypes.ELEMENT) {
          const exitFns: any = []
@@ -1801,15 +1806,20 @@ function render(_ctx, _cache) {
 3. 新建`/packages/compiler-core/src/transform/vif.ts`,内容如下
 
    ```typescript
-   import { createStructuralDirectiveTransform } from '../transform'
+   import {
+     createStructuralDirectiveTransform,
+     TransformContext,
+   } from '../transform'
+   import { isString } from '@vue/shared'
+   import { CREATE_COMMENT } from '../runtimeHelpers'
    import {
      NodeTypes,
      createConditionalExpression,
      createObjectProperty,
-     createSimpleExpression
+     createSimpleExpression,
    } from '../ast'
    import { getMemoedVNodeCall } from '../utils'
-   
+
    export const transformIf = createStructuralDirectiveTransform(
      /^(if|else|else-if)$/,
      (node, dir, context) => {
@@ -1817,51 +1827,60 @@ function render(_ctx, _cache) {
          let key = 0
          return () => {
            if (isRoot) {
-             ifNode.codegenNode = createCodegenNodeForBranch(branch, key, context)
+             ifNode.codegenNode = createCodegenNodeForBranch(
+               branch,
+               key,
+               context,
+             )
            }
          }
        })
-     }
+     },
    )
-   
+
    function createCodegenNodeForBranch(
      branch,
      keyIndex,
-     context: TransformContext
+     context: TransformContext,
    ) {
      if (branch.condition) {
        return createConditionalExpression(
          branch.condition,
          createChildrenCodegenNode(branch, keyIndex),
          // 第三个参数是替代方案，比如：v-if为false时候的渲染效果
-         createCallExpression(context.helper(CREATE_COMMENT), ["'v-if'", 'true'])
+         createCallExpression(context.helper(CREATE_COMMENT), [
+           "'v-if'",
+           'true',
+         ]),
        )
      } else {
        return createChildrenCodegenNode(branch, keyIndex)
      }
    }
-   
+
    export function createCallExpression(callee, args) {
      return {
        type: NodeTypes.JS_CALL_EXPRESSION,
        loc: {},
-       arguments: args
+       callee,
+       arguments: args,
      }
    }
-   
+
    // 创建指定子节点的 codegen
    function createChildrenCodegenNode(branch, keyIndex: number) {
      const keyProperty = createObjectProperty(
        'key',
-       createSimpleExpression(`${keyIndex}`, false)
+       createSimpleExpression(`${keyIndex}`, false),
      )
      const { children } = branch
      const firstChild = children[0]
      const ret = firstChild.codegenNode
      const vnodeCall = getMemoedVNodeCall(ret)
      injectProp(vnodeCall, keyProperty)
+     return ret
    }
-   
+
    export function injectProp(node, prop) {
      let propsWithInjection
      let props =
@@ -1871,68 +1890,30 @@ function render(_ctx, _cache) {
      }
      node.props = propsWithInjection
    }
-   
+
    export function createObjectExpresssion(properties) {
      return {
        type: NodeTypes.JS_OBJECT_EXPRESSION,
        loc: {},
-       properties: properties
+       properties: properties,
      }
    }
-   ```
 
-4. 在`ast.ts`中增加`createConditionalExpression、createObjectProperty、createSimpleExpression `方法
-
-   ```typescript
-   export function createConditionalExpression(
-     test,
-     consquent,
-     alternate,
-     newline = true
-   ) {
-      return {
-       type: NodeTypes.JS_CONDITIONAL_EXPRESSION,
-       test,
-       consquent,
-       alternate,
-       newline,
-       loc: {}
-     }
-   }
-   
-   export function createObjectProperty(key, value) {
-     return {
-       type: NodeTypes.JS_PROPERTY,
-       loc: {},
-       key: isString(key) ? createSimpleExpression(key, true) : key,
-       value
-     }
-   }
-   
-   export function createSimpleExpression(content, isStatic: boolean) {
-     return {
-       type: NodeTypes.SIMPLE_EXPRESSION,
-       loc: {},
-       content,
-       isStatic
-     }
-   }
-   
    export function processIf(
      node,
      dir,
      context: TransformContext,
-     processCodegen?: (node, branch, isRoot: boolean) => () => void
+     processCodegen?: (node, branch, isRoot: boolean) => () => void,
    ) {
      if (dir.name === 'if') {
        const branch = createIfBranch(node, dir)
        const ifNode = {
          type: NodeTypes.IF,
          branches: [branch],
-         loc: {}
+         loc: {},
        }
        // 这里调用了 replaceNode方法，所以在 TransformContext 声明和实现中要进行增加方法的声明和实现
-       context.replaceNode(ifNode) 
+       context.replaceNode(ifNode)
        if (processCodegen) {
          return processCodegen(ifNode, branch, true)
        }
@@ -1941,18 +1922,59 @@ function render(_ctx, _cache) {
        console.log('processIf 中的 else 暂时不实现')
      }
    }
-   
-   export function createIfBranch(node, dir) {
+   ```
+
+4. 在`runtimeHelpers.ts`中增加`CREATE_COMMENT`
+
+   ```typescript
+   export const CREATE_COMMENT = Symbol('createCommentVNode')
+   export const helperNameMap: any = {
+     ...
+     [CREATE_COMMENT]: `createCommentVNode`
+   }
+   ```
+
+5. `在`ast.ts`中增加`createConditionalExpression、createObjectProperty、createSimpleExpression `方法
+
+   ```typescript
+   import { isString } from '@vue/shared'
+
+   export function createConditionalExpression(
+     test,
+     consequent,
+     alternate,
+     newline = true,
+   ) {
      return {
-       type: NodeTypes.IF_BRANCH,
+       type: NodeTypes.JS_CONDITIONAL_EXPRESSION,
+       test,
+       consequent,
+       alternate,
+       newline,
        loc: {},
-       condition: dir.exp,
-       children: [node]
+     }
+   }
+
+   export function createObjectProperty(key, value) {
+     return {
+       type: NodeTypes.JS_PROPERTY,
+       loc: {},
+       key: isString(key) ? createSimpleExpression(key, true) : key,
+       value,
+     }
+   }
+
+   export function createSimpleExpression(content, isStatic: boolean) {
+     return {
+       type: NodeTypes.SIMPLE_EXPRESSION,
+       loc: {},
+       content,
+       isStatic,
      }
    }
    ```
 
-5. 在`utils.ts`中增加`getMemoedVNodeCall`方法
+6. 在`utils.ts`中增加`getMemoedVNodeCall`方法
 
    ```typescript
    export function getMemoedVNodeCall(node) {
@@ -1960,26 +1982,29 @@ function render(_ctx, _cache) {
    }
    ```
 
-6. 在`packages/compiler-core/src/transform.ts`中修改代码如下
+7. 在`packages/compiler-core/src/transform.ts`中修改代码如下
 
    ```typescript
+   import { isArray } from '@vue/shared'
+
    export interface TransformContext {
-   	// 新增 replaceNode 方法
+     // 新增 replaceNode 方法
      replaceNode(node): void
    }
-   
+
    export function createTransformContext(root, { nodeTransforms = [] }) {
-      const context: TransformContext = {
-        // 新增 replaceNode 的实现
-        replaceNode(node) {
+     const context: TransformContext = {
+       // 新增 replaceNode 的实现
+       replaceNode(node) {
          if (context.parent) {
-           context.parent.children[context.childIndex] = context.currentNode = node
+           context.parent.children[context.childIndex] = context.currentNode =
+             node
          }
-       }
-      }
-      return context
+       },
+     }
+     return context
    }
-   
+
    function traverseNode(node, context: TransformContext) {
      context.currentNode = node
      // apply transform plugins
@@ -2001,7 +2026,7 @@ function render(_ctx, _cache) {
          // 节点已删除
          return
        }
-   		// 节点更换
+       // 节点更换
        node = context.currentNode
      }
      switch (node.type) {
@@ -2027,7 +2052,7 @@ function render(_ctx, _cache) {
    }
    ```
 
-7. 重新运行测试示例`packages/vue/examples/compiler/compiler-directive.html`，内容如下
+8. 重新运行测试示例`packages/vue/examples/compiler/compiler-directive.html`，内容如下
 
    ```html
    <script>
@@ -2043,7 +2068,7 @@ function render(_ctx, _cache) {
        data() {
          return {
            msg: 'world',
-           isShow: false
+           isShow: false,
          }
        },
        created() {
@@ -2051,7 +2076,7 @@ function render(_ctx, _cache) {
            this.msg = '世界'
            this.isShow = true
          }, 2000)
-       }
+       },
      }
      // 通过 h 函数，生成 vnode
      const vnode = h(component)
@@ -2060,7 +2085,7 @@ function render(_ctx, _cache) {
    </script>
    ```
 
-8. 在控制台可以看到如下信息
+9. 在控制台可以看到如下信息
 
    ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/136a9363e3214de49e40b7188d62e22d~tplv-k3u1fbpfcp-watermark.image?)
 
@@ -2091,7 +2116,189 @@ function traverseNode(node, context: TransformContext) {
 运行测试实例`compiler-directive.html`,打印出`JavaScript AST`,(注意：因为 `Symbol` 不会再 `json` 字符串下打印，所以需要我们手动加上)
 
 ```json
-{"type":0,"children":[{"type":1,"tag":"div","tagType":0,"props":[],"children":[{"type":8,"children":[{"type":2,"content":"hello "}," + ",{"type":5,"content":{"type":4,"isStatic":false,"content":"msg"}}]},{"type":9,"branches":[{"type":10,"loc":{},"condition":{"type":4,"content":"isShow","isStatic":false,"loc":{}},"children":[{"type":1,"tag":"h1","tagType":0,"props":[],"children":[{"type":2,"content":"你好，世界"}],"codegenNode":{"type":13,"tag":"\"h1\"","children":[{"type":2,"content":"你好，世界"}]}}]}],"loc":{},"codegenNode":{"type":19,"test":{"type":4,"content":"isShow","isStatic":false,"loc":{}},"alternate":{"type":14,"loc":{},"arguments":["'v-if'","true"]},"newline":true,"loc":{}}}],"codegenNode":{"type":13,"tag":"\"div\"","props":[],"children":[{"type":8,"children":[{"type":2,"content":"hello "}," + ",{"type":5,"content":{"type":4,"isStatic":false,"content":"msg"}}]},{"type":9,"branches":[{"type":10,"loc":{},"condition":{"type":4,"content":"isShow","isStatic":false,"loc":{}},"children":[{"type":1,"tag":"h1","tagType":0,"props":[],"children":[{"type":2,"content":"你好，世界"}],"codegenNode":{"type":13,"tag":"\"h1\"","children":[{"type":2,"content":"你好，世界"}]}}]}],"loc":{},"codegenNode":{"type":19,"test":{"type":4,"content":"isShow","isStatic":false,"loc":{}},"alternate":{"type":14,"loc":{},"arguments":["'v-if'","true"]},"newline":true,"loc":{}}}]}}],"loc":{},"codegenNode":{"type":13,"tag":"\"div\"","props":[],"children":[{"type":8,"children":[{"type":2,"content":"hello "}," + ",{"type":5,"content":{"type":4,"isStatic":false,"content":"msg"}}]},{"type":9,"branches":[{"type":10,"loc":{},"condition":{"type":4,"content":"isShow","isStatic":false,"loc":{}},"children":[{"type":1,"tag":"h1","tagType":0,"props":[],"children":[{"type":2,"content":"你好，世界"}],"codegenNode":{"type":13,"tag":"\"h1\"","children":[{"type":2,"content":"你好，世界"}]}}]}],"loc":{},"codegenNode":{"type":19,"test":{"type":4,"content":"isShow","isStatic":false,"loc":{}},"alternate":{"type":14,"loc":{},"arguments":["'v-if'","true"]},"newline":true,"loc":{}}}]},"helpers":[null,null,null],"components":[],"directives":[],"imports":[],"hoists":[],"temps":[],"cached":[]}
+import { CREATE_COMMENT, CREATE_ELEMENT_VNODE, TO_DISPLAY_STRING } from './runtimeHelpers' // 要引入
+// 以下是 JavaScript AST
+{
+  type: 0,
+  children: [
+    {
+      type: 1,
+      tag: 'div',
+      tagType: 0,
+      props: [],
+      children: [
+        {
+          type: 8,
+          children: [
+            { type: 2, content: 'hello ' },
+            ' + ',
+            { type: 5, content: { type: 4, isStatic: false, content: 'msg' } }
+          ]
+        },
+        {
+          type: 9,
+          loc: {},
+          branches: [
+            {
+              type: 10,
+              loc: {},
+              condition: {
+                type: 4,
+                content: 'isShow',
+                isStatic: false,
+                loc: {}
+              },
+              children: [
+                {
+                  type: 1,
+                  tag: 'h1',
+                  tagType: 0,
+                  props: [],
+                  children: [{ type: 2, content: '你好，世界' }],
+                  codegenNode: {
+                    type: 13,
+                    tag: '"h1"',
+                    children: [{ type: 2, content: '你好，世界' }]
+                  }
+                }
+              ]
+            }
+          ],
+          codegenNode: {
+            type: 19,
+            test: { type: 4, content: 'isShow', isStatic: false, loc: {} },
+            consequent: {
+              type: 13,
+              tag: '"h1"',
+              children: [{ type: 2, content: '你好，世界' }]
+            },
+            alternate: { type: 14, loc: {}, arguments: ["'v-if'", 'true'] },
+            newline: true,
+            loc: {}
+          }
+        }
+      ],
+      codegenNode: {
+        type: 13,
+        tag: '"div"',
+        props: [],
+        children: [
+          {
+            type: 8,
+            children: [
+              { type: 2, content: 'hello ' },
+              ' + ',
+              { type: 5, content: { type: 4, isStatic: false, content: 'msg' } }
+            ]
+          },
+          {
+            type: 9,
+            loc: {},
+            branches: [
+              {
+                type: 10,
+                loc: {},
+                condition: {
+                  type: 4,
+                  content: 'isShow',
+                  isStatic: false,
+                  loc: {}
+                },
+                children: [
+                  {
+                    type: 1,
+                    tag: 'h1',
+                    tagType: 0,
+                    props: [],
+                    children: [{ type: 2, content: '你好，世界' }],
+                    codegenNode: {
+                      type: 13,
+                      tag: '"h1"',
+                      children: [{ type: 2, content: '你好，世界' }]
+                    }
+                  }
+                ]
+              }
+            ],
+            codegenNode: {
+              type: 19,
+              test: { type: 4, content: 'isShow', isStatic: false, loc: {} },
+              consequent: {
+                type: 13,
+                tag: '"h1"',
+                children: [{ type: 2, content: '你好，世界' }]
+              },
+              alternate: { type: 14, loc: {}, arguments: ["'v-if'", 'true'] },
+              newline: true,
+              loc: {}
+            }
+          }
+        ]
+      }
+    }
+  ],
+  loc: {},
+  codegenNode: {
+    type: 13,
+    tag: '"div"',
+    props: [],
+    children: [
+      {
+        type: 8,
+        children: [
+          { type: 2, content: 'hello ' },
+          ' + ',
+          { type: 5, content: { type: 4, isStatic: false, content: 'msg' } }
+        ]
+      },
+      {
+        type: 9,
+        loc: {},
+        branches: [
+          {
+            type: 10,
+            loc: {},
+            condition: { type: 4, content: 'isShow', isStatic: false, loc: {} },
+            children: [
+              {
+                type: 1,
+                tag: 'h1',
+                tagType: 0,
+                props: [],
+                children: [{ type: 2, content: '你好，世界' }],
+                codegenNode: {
+                  type: 13,
+                  tag: '"h1"',
+                  children: [{ type: 2, content: '你好，世界' }]
+                }
+              }
+            ]
+          }
+        ],
+        codegenNode: {
+          type: 19,
+          test: { type: 4, content: 'isShow', isStatic: false, loc: {} },
+          consequent: {
+            type: 13,
+            tag: '"h1"',
+            children: [{ type: 2, content: '你好，世界' }],
+            callee: CREATE_COMMENT // 这里 callee 也是symbol类型，json序列化后会消失，需要手动加上
+          },
+          alternate: { type: 14, loc: {}, arguments: ["'v-if'", 'true'] },
+          newline: true,
+          loc: {}
+        }
+      }
+    ]
+  },
+  helpers: [CREATE_COMMENT, CREATE_ELEMENT_VNODE, TO_DISPLAY_STRING],
+  components: [],
+  directives: [],
+  imports: [],
+  hoists: [],
+  temps: [],
+  cached: []
+}
 ```
 
 直接把以上内容复制到`vue3`源码中的`generate`方法调用处(替换`ast`),页面可正常渲染，证明当前的`JavaScript AST` 处理完成
@@ -2118,10 +2325,6 @@ return function render(_ctx,_cache){
 而对于`codegen`模板而言，解析当前参数的函数为`genNode`,所以我们需要在`genNode`中增加对应的节点处理
 
 1. 在`packages/compiler-core/src/codegen.ts`中的`genNode`方法下增加节点处理
-
-   
-
-
 
 
 
