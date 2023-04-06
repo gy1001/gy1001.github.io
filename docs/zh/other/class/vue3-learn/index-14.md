@@ -745,12 +745,6 @@ return function render(_ctx, _cache) {
      genNode(node.content, context)
      push(`)`)
    }
-
-   // runtimeHelpers.ts 增加 TO_DISPLAY_STRING
-   export const TO_DISPLAY_STRING = Symbol('toDisplayString')
-   export const helperNameMap: any = {
-     [TO_DISPLAY_STRING]: `toDisplayString`,
-   }
    ```
 
 3. 回到测试用例`compiler-reactive.html`中打印`renderFn`，可以看到如下结果
@@ -778,7 +772,7 @@ return function render(_ctx, _cache) {
 
 ```typescript
 // 解析 render 函数的返回值
-export function renderComponentRott(instance){
+export function renderComponentRoot(instance){
   ...
 }
 ```
@@ -1199,7 +1193,7 @@ function genNode(node, context) {
 
   // 增加如下代码
   case NodeTypes.ELEMENT:
-    genNode(node.codegen, context)
+    genNode(node.codegenNode, context)
     break
 }
 ```
@@ -1757,8 +1751,378 @@ function render(_ctx, _cache) {
 
 ## 11：基于编译器的指令(v-xxx)处理：JavaScript AST，构建 v-if 转换模块
 
+`vue`内部具备非常多的指令，所以我们需要有一个统一的方法来对这些指令进行处理，在`packages/compiler-core/src/transform.ts`模块下，创建`createStrucaDirectiveTransform`方法，该方法返回一个闭包函数
+
+1. `packages/compiler-core/src/compile.ts` 这里增加 transformIf.ts 方法
+
+   ```typescript
+   import { transformIf } from './transform/vif'
+   
+   export function baseCompile(template: string, options) {
+     const ast = baseParse(template)
+     transform(
+       ast,
+       extend(options, {
+         nodeTransforms: [transformElement, transformText, transformIf]
+       })
+     )
+     console.log(ast) // 这里最后查看打印结果
+     return generate(ast)
+   }
+   ```
+
+2. 在`packages/compiler-core/src/transform.ts`中增加`createStructuralDirectiveTransform`方法
+
+   ```typescript
+   export function createStructuralDirectiveTransform(name: string | RegExp, fn) {
+     const matches = isString(name)
+       ? (n: string) => n === name
+       : (n: string) => name.test(n)
+   
+     return (node, context) => {
+       if (node.type === NodeTypes.ELEMENT) {
+         const exitFns: any = []
+         const { props } = node
+         for (let index = 0; index < props.length; index++) {
+           const prop = props[index]
+           if (prop.type === NodeTypes.DIRECTIVE && matches(prop.name)) {
+             props.splice(index, 1)
+             index--
+             const onExit = fn(node, prop, context)
+             if (onExit) exitFns.push(onExit)
+           }
+         }
+         return exitFns
+       }
+     }
+   }
+   ```
+
+3. 新建`/packages/compiler-core/src/transform/vif.ts`,内容如下
+
+   ```typescript
+   import { createStructuralDirectiveTransform } from '../transform'
+   import {
+     NodeTypes,
+     createConditionalExpression,
+     createObjectProperty,
+     createSimpleExpression
+   } from '../ast'
+   import { getMemoedVNodeCall } from '../utils'
+   
+   export const transformIf = createStructuralDirectiveTransform(
+     /^(if|else|else-if)$/,
+     (node, dir, context) => {
+       return processIf(node, dir, context, (ifNode, branch, isRoot) => {
+         let key = 0
+         return () => {
+           if (isRoot) {
+             ifNode.codegenNode = createCodegenNodeForBranch(branch, key, context)
+           }
+         }
+       })
+     }
+   )
+   
+   function createCodegenNodeForBranch(
+     branch,
+     keyIndex,
+     context: TransformContext
+   ) {
+     if (branch.condition) {
+       return createConditionalExpression(
+         branch.condition,
+         createChildrenCodegenNode(branch, keyIndex),
+         // 第三个参数是替代方案，比如：v-if为false时候的渲染效果
+         createCallExpression(context.helper(CREATE_COMMENT), ["'v-if'", 'true'])
+       )
+     } else {
+       return createChildrenCodegenNode(branch, keyIndex)
+     }
+   }
+   
+   export function createCallExpression(callee, args) {
+     return {
+       type: NodeTypes.JS_CALL_EXPRESSION,
+       loc: {},
+       arguments: args
+     }
+   }
+   
+   // 创建指定子节点的 codegen
+   function createChildrenCodegenNode(branch, keyIndex: number) {
+     const keyProperty = createObjectProperty(
+       'key',
+       createSimpleExpression(`${keyIndex}`, false)
+     )
+     const { children } = branch
+     const firstChild = children[0]
+     const ret = firstChild.codegenNode
+     const vnodeCall = getMemoedVNodeCall(ret)
+     injectProp(vnodeCall, keyProperty)
+   }
+   
+   export function injectProp(node, prop) {
+     let propsWithInjection
+     let props =
+       node.type === NodeTypes.VNODE_CALL ? node.props : node.arguments[2]
+     if (props === null || isString(props)) {
+       propsWithInjection = createObjectExpresssion([prop])
+     }
+     node.props = propsWithInjection
+   }
+   
+   export function createObjectExpresssion(properties) {
+     return {
+       type: NodeTypes.JS_OBJECT_EXPRESSION,
+       loc: {},
+       properties: properties
+     }
+   }
+   ```
+
+4. 在`ast.ts`中增加`createConditionalExpression、createObjectProperty、createSimpleExpression `方法
+
+   ```typescript
+   export function createConditionalExpression(
+     test,
+     consquent,
+     alternate,
+     newline = true
+   ) {
+      return {
+       type: NodeTypes.JS_CONDITIONAL_EXPRESSION,
+       test,
+       consquent,
+       alternate,
+       newline,
+       loc: {}
+     }
+   }
+   
+   export function createObjectProperty(key, value) {
+     return {
+       type: NodeTypes.JS_PROPERTY,
+       loc: {},
+       key: isString(key) ? createSimpleExpression(key, true) : key,
+       value
+     }
+   }
+   
+   export function createSimpleExpression(content, isStatic: boolean) {
+     return {
+       type: NodeTypes.SIMPLE_EXPRESSION,
+       loc: {},
+       content,
+       isStatic
+     }
+   }
+   
+   export function processIf(
+     node,
+     dir,
+     context: TransformContext,
+     processCodegen?: (node, branch, isRoot: boolean) => () => void
+   ) {
+     if (dir.name === 'if') {
+       const branch = createIfBranch(node, dir)
+       const ifNode = {
+         type: NodeTypes.IF,
+         branches: [branch],
+         loc: {}
+       }
+       // 这里调用了 replaceNode方法，所以在 TransformContext 声明和实现中要进行增加方法的声明和实现
+       context.replaceNode(ifNode) 
+       if (processCodegen) {
+         return processCodegen(ifNode, branch, true)
+       }
+     }
+     return () => {
+       console.log('processIf 中的 else 暂时不实现')
+     }
+   }
+   
+   export function createIfBranch(node, dir) {
+     return {
+       type: NodeTypes.IF_BRANCH,
+       loc: {},
+       condition: dir.exp,
+       children: [node]
+     }
+   }
+   ```
+
+5. 在`utils.ts`中增加`getMemoedVNodeCall`方法
+
+   ```typescript
+   export function getMemoedVNodeCall(node) {
+     return node
+   }
+   ```
+
+6. 在`packages/compiler-core/src/transform.ts`中修改代码如下
+
+   ```typescript
+   export interface TransformContext {
+   	// 新增 replaceNode 方法
+     replaceNode(node): void
+   }
+   
+   export function createTransformContext(root, { nodeTransforms = [] }) {
+      const context: TransformContext = {
+        // 新增 replaceNode 的实现
+        replaceNode(node) {
+         if (context.parent) {
+           context.parent.children[context.childIndex] = context.currentNode = node
+         }
+       }
+      }
+      return context
+   }
+   
+   function traverseNode(node, context: TransformContext) {
+     context.currentNode = node
+     // apply transform plugins
+     const { nodeTransforms } = context
+     const exitFns: any = []
+     for (let index = 0; index < nodeTransforms.length; index++) {
+       const onExit = nodeTransforms[index](node, context)
+       if (onExit) {
+         // 增加判断是数组的处理逻辑
+         // 指令中的 transforms 返回为数组，需要解构
+         if (isArray(onExit)) {
+           exitFns.push(...onExit)
+         } else {
+           exitFns.push(onExit)
+         }
+       }
+       // 因为触发了 replaceNode 可能会导致 context.currentNode  发生变化，所以需要在这里校正
+       if (!context.currentNode) {
+         // 节点已删除
+         return
+       }
+   		// 节点更换
+       node = context.currentNode
+     }
+     switch (node.type) {
+       // 新增加 case 类型 NodeTypes.IF_BRANCH 的处理
+       case NodeTypes.IF_BRANCH:
+       case NodeTypes.ELEMENT:
+       case NodeTypes.ROOT:
+         traversChildren(node, context)
+         break
+       case NodeTypes.INTERPOLATION:
+         context.helper(TO_DISPLAY_STRING)
+         break
+       // 新增加 NodeTypes.IF 的处理
+       case NodeTypes.IF:
+         console.log('if')
+         break
+     }
+     context.currentNode = node
+     let i = exitFns.length
+     while (i--) {
+       exitFns[i]()
+     }
+   }
+   ```
+
+7. 重新运行测试示例`packages/vue/examples/compiler/compiler-directive.html`，内容如下
+
+   ```html
+   <script>
+     const { compile, render, h } = Vue
+     // 创建 template
+     const template = `<div>hello {{msg}}<h1 v-if="isShow">你好，世界</h1></div>`
+     // 生成 render 函数
+     const renderFn = compile(template)
+     console.log(renderFn.toString())
+     // 创建组件
+     const component = {
+       render: renderFn,
+       data() {
+         return {
+           msg: 'world',
+           isShow: false
+         }
+       },
+       created() {
+         setTimeout(() => {
+           this.msg = '世界'
+           this.isShow = true
+         }, 2000)
+       }
+     }
+     // 通过 h 函数，生成 vnode
+     const vnode = h(component)
+     // 通过 render 函数渲染组件
+     render(vnode, document.querySelector('#app'))
+   </script>
+   ```
+
+8. 在控制台可以看到如下信息
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/136a9363e3214de49e40b7188d62e22d~tplv-k3u1fbpfcp-watermark.image?)
+
 ## 12：基于编译器的指令(v-xxx)处理：JavaScript AST，transform 的转换逻辑
 
+当`vif`模块构建完成之后，接下来我们就只需要在`transform`中针对`IF`使用`vif`模块进行转化即可
+
+我们知道转化的主要方法为`traverseNode`函数，所以我们需要在该函数内增加如下代码
+
+```typescript
+function traverseNode(node, context: TransformContext) {
+	...
+  switch (node.type) {
+    // v-if 指令处理
+    case NodeTypes.IF:
+      console.log('if')
+      for (let i = 0; i < node.branches.length; i++) {
+        traverseNode(node.branches[i], context)
+      }
+      break
+  }
+  ...
+}
+```
+
+至此，我们在`transform`中拥有了处理`if`的能力
+
+运行测试实例`compiler-directive.html`,打印出`JavaScript AST`,(注意：因为 `Symbol` 不会再 `json` 字符串下打印，所以需要我们手动加上)
+
+```json
+{"type":0,"children":[{"type":1,"tag":"div","tagType":0,"props":[],"children":[{"type":8,"children":[{"type":2,"content":"hello "}," + ",{"type":5,"content":{"type":4,"isStatic":false,"content":"msg"}}]},{"type":9,"branches":[{"type":10,"loc":{},"condition":{"type":4,"content":"isShow","isStatic":false,"loc":{}},"children":[{"type":1,"tag":"h1","tagType":0,"props":[],"children":[{"type":2,"content":"你好，世界"}],"codegenNode":{"type":13,"tag":"\"h1\"","children":[{"type":2,"content":"你好，世界"}]}}]}],"loc":{},"codegenNode":{"type":19,"test":{"type":4,"content":"isShow","isStatic":false,"loc":{}},"alternate":{"type":14,"loc":{},"arguments":["'v-if'","true"]},"newline":true,"loc":{}}}],"codegenNode":{"type":13,"tag":"\"div\"","props":[],"children":[{"type":8,"children":[{"type":2,"content":"hello "}," + ",{"type":5,"content":{"type":4,"isStatic":false,"content":"msg"}}]},{"type":9,"branches":[{"type":10,"loc":{},"condition":{"type":4,"content":"isShow","isStatic":false,"loc":{}},"children":[{"type":1,"tag":"h1","tagType":0,"props":[],"children":[{"type":2,"content":"你好，世界"}],"codegenNode":{"type":13,"tag":"\"h1\"","children":[{"type":2,"content":"你好，世界"}]}}]}],"loc":{},"codegenNode":{"type":19,"test":{"type":4,"content":"isShow","isStatic":false,"loc":{}},"alternate":{"type":14,"loc":{},"arguments":["'v-if'","true"]},"newline":true,"loc":{}}}]}}],"loc":{},"codegenNode":{"type":13,"tag":"\"div\"","props":[],"children":[{"type":8,"children":[{"type":2,"content":"hello "}," + ",{"type":5,"content":{"type":4,"isStatic":false,"content":"msg"}}]},{"type":9,"branches":[{"type":10,"loc":{},"condition":{"type":4,"content":"isShow","isStatic":false,"loc":{}},"children":[{"type":1,"tag":"h1","tagType":0,"props":[],"children":[{"type":2,"content":"你好，世界"}],"codegenNode":{"type":13,"tag":"\"h1\"","children":[{"type":2,"content":"你好，世界"}]}}]}],"loc":{},"codegenNode":{"type":19,"test":{"type":4,"content":"isShow","isStatic":false,"loc":{}},"alternate":{"type":14,"loc":{},"arguments":["'v-if'","true"]},"newline":true,"loc":{}}}]},"helpers":[null,null,null],"components":[],"directives":[],"imports":[],"hoists":[],"temps":[],"cached":[]}
+```
+
+直接把以上内容复制到`vue3`源码中的`generate`方法调用处(替换`ast`),页面可正常渲染，证明当前的`JavaScript AST` 处理完成
+
 ## 13：基于编译器的指令(v-xxx)处理：生成 render 函数
+
+当`JavaScript AST`构建完成之后，最后我们只需要生成对应的`render`函数即可
+
+```json
+const _Vue = Vue
+return function render(_ctx,_cache){
+  with(_ctx){
+    const {createElementVNode: _createElementVNode, createCommentVNode:_createCommentVNode } = _Vue
+    return _createElementVNode("div", [], [
+      "hello world",
+      isShow ? _createElementVNode("h1", null, ["你好，世界"]) : _createCommentVNode("v-if", true)
+    ])
+  }
+}
+```
+
+依据以上模板，可以看出，`render`函数的核心是在于当前的三元表达式 { children } 处理
+
+而对于`codegen`模板而言，解析当前参数的函数为`genNode`,所以我们需要在`genNode`中增加对应的节点处理
+
+1. 在`packages/compiler-core/src/codegen.ts`中的`genNode`方法下增加节点处理
+
+   
+
+
+
+
 
 ## 14：总结
