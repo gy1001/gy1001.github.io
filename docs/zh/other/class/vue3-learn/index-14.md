@@ -460,7 +460,9 @@ function parseInterpolation(context: ParserContext) {
     content: {
       type: NodeTypes.SIMPLE_EXPRESSION,
       isStatic: false,
-      content: preTrimContent.trim()
+      content: preTrimContent.trim(),
+      // Set `isConstant` to false by default and will decide in transformExpression
+      constType: 0
     }
   }
 }
@@ -1573,7 +1575,7 @@ function render(_ctx, _cache) {
        children: [],
      }
    }
-
+   
    function parseAttributes(context, type) {
      const props: any = []
      const attributeNames = new Set<string>()
@@ -1590,7 +1592,7 @@ function render(_ctx, _cache) {
      }
      return props
    }
-
+   
    function parseAttribute(context: ParserContext, nameSet: Set<string>) {
      const match = /^[^\t\r\n\f />][^\t\r\n\f />=]*/.exec(context.source)!
      const name = match[0]
@@ -1621,7 +1623,7 @@ function render(_ctx, _cache) {
            isStatic: false,
            loc: {},
          },
-         art: undefined,
+         arg: undefined,
          modifiers: undefined,
          loc: {},
        }
@@ -1637,7 +1639,7 @@ function render(_ctx, _cache) {
        loc: {},
      }
    }
-
+   
    function parseAttributeValue(context: ParserContext) {
      let content = ''
      const quote = context.source[0] // 这里有可能是 '，也有可能是是 "
@@ -1651,7 +1653,7 @@ function render(_ctx, _cache) {
      }
      return { content, loc: {}, isQuoted: true }
    }
-
+   
    function advanceSpaces(context: ParserContext): void {
      const match = /^[\t\r\n\f ]+/.exec(context.source)
      if (match) {
