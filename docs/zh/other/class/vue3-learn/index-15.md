@@ -202,11 +202,11 @@
    }
    ```
 
-   
+7. 再次运行浏览器，发现页面正常渲染了
 
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/429711b628f84919a6d89735ed3bddd7~tplv-k3u1fbpfcp-watermark.image?)
 
-
-03：基于 template 渲染的 createApp 的构建逻辑
+## 03：基于 template 渲染的 createApp 的构建逻辑
 
 
 
