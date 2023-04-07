@@ -208,11 +208,128 @@
 
 ## 03：基于 template 渲染的 createApp 的构建逻辑
 
+对于组件而言，我们不光要支持`render`还需要支持`template`的模板渲染
 
+```html
+<script>
+  const { createApp } = Vue
+  const APP = {
+    template:"<div>hello world</div>"
+  }
+  const app = createApp(APP)
+  app.mount("#app")
+</script>
+```
 
-04：总结
+1. 新建测试示例`packages/vue/examples/createApp-template.html`
 
- 
+   ```html
+   <script>
+     const { createApp } = Vue
+     const APP = {
+       template: '<div>hello world</div>'
+     }
+     const app = createApp(APP)
+     app.mount('#app')
+   </script>
+   ```
+
+2. 运行测试示例，报错信息如下
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c865c146169140b59f2e684844374bcd~tplv-k3u1fbpfcp-watermark.image?)
+
+3. 原因分析：
+
+   1. 当我们触发`createApp`时，最终触发的是`createAppApI`中的`createApp`函数，在这个函数中触发mount 方法时候，是通过`createVNode`来生成`vnode`节点实例的。
+
+   2. 对于`createVNode`而言，我们之前是先实现了`runtime`模块，然后实现了`compile`模块。换句话说，`runtime`模块和`compile`模块目前是没有联系的
+
+   3. 在`/packages/runtime-core/src/component.ts`文件中，我们通过`finishComponentSetup`方法拿到了`instance.render`方法。而此时因为使用了模板`template`,组件中就不存在`render`函数,修改如下
+
+      ```typescript
+      let compile: any = null
+      
+      export function finishComponentSetup(instance) {
+        const component = instance.type
+        // 组件不存在 render 时，才需要重新赋值
+        if (!instance.render) {
+          if (compile && !component.render) 
+            if (component.template) {
+              const template = component.template
+              component.render = compile(template)
+            }
+          }
+          instance.render = component.render
+        }
+        applyOptions(instance)
+      }
+      
+      export function registerRuntimeCompiler(_compile: any) {
+        compile = _compile
+      }
+      ```
+
+   4. 然后我们只需要触发`registerRuntimeCompiler`方法即可
+
+      ```typescript
+      // /packages/vue-compact/src/index.ts
+      import { registerRuntimeCompiler } from 'packages/runtime-core/src/component'
+      
+      registerRuntimeCompiler(compileToFunction)
+      ```
+
+   5. 再次运行测试实例，结果还报错误
+
+      ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/06c27a6f3404461189b177040d05cc55~tplv-k3u1fbpfcp-watermark.image?)
+
+   6. 根据错误，我们打开`packages/runtime-core/src/commponentRenderUtis.ts`中的`renderComponentRoot`方法，分析得知，call中的第二个参数`data`目前是`undefined`,修改如下
+
+      ```typescript
+      export function renderComponentRoot(instance) {
+        const { vnode, render, data } = instance
+        let result
+        try {
+          if (vnode.shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+            result = normalizeVNode(render!.call(data, data || {})) // 增加一个默认值 {}
+          }
+        } catch (error) {
+          console.log(error, 'error')
+        }
+        return result
+      }
+      ```
+
+   7. 刷新页面，看到页面中正常渲染了
+
+      ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f1c43370aa834650a8cd76b791a010f0~tplv-k3u1fbpfcp-watermark.image?)
+
+## 04：总结
+
+ 到这里我们已经完成了**运行时+编译器**的合并逻辑，那么我们可以运行如下测试实例，来查看一个相对完整的测试示例
+
+```html
+<script>
+  const { createApp } = Vue
+  const APP = {
+    template: '<div>hello world,<h1 v-if="isShow">{{msg}}</h1></div>',
+    data() {
+      return {
+        msg: '你好，世界',
+        isShow: false
+      }
+    },
+    created() {
+      setTimeout(() => {
+        this.isShow = true
+      }, 2000)
+    }
+  }
+  const app = createApp(APP)
+  app.mount('#app')
+</script>
+```
+
+运行浏览器，可以看到页面中先显示`hello world`，2s后显示`你好，世界`
 
 
 
