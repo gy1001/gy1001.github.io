@@ -150,7 +150,7 @@
               "content": {
                 "type": 4, // NodeTypes.SIMPLE_EXPRESSION
                 "isStatic": false,
-                "constType": 0,
+                "constType": 0, // 这个需要加上，否则会报错误
                 "content": "msg",
                 "loc": {
                   "start": { "column": 14, "line": 1, "offset": 13 },
@@ -497,7 +497,7 @@ export function baseCompile(template: string, options) {
       props: [],
       children: [
         { type: 2, content: 'hello ' },
-        { type: 5, content: { type: 4, isStatic: false, content: 'msg' } }
+        { type: 5, content: { type: 4, isStatic: false, content: 'msg', constType: 0 } }
       ]
     }
   ],
@@ -519,8 +519,8 @@ const ast = {
       tagType: 0,
       props: [],
       children: [
-        { type: 2, content: 'hello--' },
-        { type: 5, content: { type: 4, isStatic: false, content: 'msg' } },
+        { type: 2, content: 'hello ' },
+        { type: 5, content: { type: 4, isStatic: false, content: 'msg', constType: 0  } },
       ],
     },
   ],
@@ -1685,7 +1685,7 @@ function render(_ctx, _cache) {
    <script>
      const { compile, render, h } = Vue
      // 创建 template
-     const template = `<div>hello <h1 v-if="isShow">你好，世界</h1></div>`
+     const template = `<div>hello {{msg}}<h1 v-if="isShow">你好，世界</h1></div>`
      // 生成 render 函数
      const renderFn = compile(template)
      console.log(renderFn.toString())
@@ -1714,38 +1714,43 @@ function render(_ctx, _cache) {
 
    ```json
    {
-     "type": 0,
-     "children": [
+     type: 0,
+     children: [
        {
-         "type": 1,
-         "tag": "div",
-         "tagType": 0,
-         "props": [],
-         "children": [
-           { "type": 2, "content": "hello" },
+         type: 1,
+         tag: 'div',
+         tagType: 0,
+         props: [],
+         children: [
+           { type: 2, content: 'hello ' },
            {
-             "type": 1,
-             "tag": "h1",
-             "tagType": 0,
-             "props": [
+             type: 5,
+             content: { type: 4, isStatic: false, content: 'msg', constType: 0 }
+           },
+           {
+             type: 1,
+             tag: 'h1',
+             tagType: 0,
+             props: [
                {
-                 "type": 7,
-                 "name": "if",
-                 "exp": {
-                   "type": 4,
-                   "content": "isShow",
-                   "isStatic": false,
-                   "loc": {}
+                 type: 7,
+                 name: 'if',
+                 exp: {
+                   type: 4,
+                   content: 'isShow',
+                   isStatic: false,
+                   loc: {},
+                   constType: 0
                  },
-                 "loc": {}
+                 loc: {}
                }
              ],
-             "children": [{ "type": 2, "content": "你好，世界" }]
+             children: [{ type: 2, content: '你好，世界11111' }]
            }
          ]
        }
      ],
-     "loc": {}
+     loc: {}
    }
    ```
 
@@ -2134,7 +2139,7 @@ import { CREATE_COMMENT, CREATE_ELEMENT_VNODE, TO_DISPLAY_STRING } from './runti
           children: [
             { type: 2, content: 'hello ' },
             ' + ',
-            { type: 5, content: { type: 4, isStatic: false, content: 'msg' } }
+            { type: 5, content: { type: 4, isStatic: false, content: 'msg', constType: 0 } }
           ]
         },
         {
@@ -2148,7 +2153,8 @@ import { CREATE_COMMENT, CREATE_ELEMENT_VNODE, TO_DISPLAY_STRING } from './runti
                 type: 4,
                 content: 'isShow',
                 isStatic: false,
-                loc: {}
+                loc: {},
+                constType: 0
               },
               children: [
                 {
@@ -2168,7 +2174,7 @@ import { CREATE_COMMENT, CREATE_ELEMENT_VNODE, TO_DISPLAY_STRING } from './runti
           ],
           codegenNode: {
             type: 19,
-            test: { type: 4, content: 'isShow', isStatic: false, loc: {} },
+            test: { type: 4, content: 'isShow', isStatic: false, loc: {}, constType: 0 },
             consequent: {
               type: 13,
               tag: '"h1"',
@@ -2190,7 +2196,7 @@ import { CREATE_COMMENT, CREATE_ELEMENT_VNODE, TO_DISPLAY_STRING } from './runti
             children: [
               { type: 2, content: 'hello ' },
               ' + ',
-              { type: 5, content: { type: 4, isStatic: false, content: 'msg' } }
+              { type: 5, content: { type: 4, isStatic: false, content: 'msg', constType: 0 } }
             ]
           },
           {
@@ -2204,7 +2210,8 @@ import { CREATE_COMMENT, CREATE_ELEMENT_VNODE, TO_DISPLAY_STRING } from './runti
                   type: 4,
                   content: 'isShow',
                   isStatic: false,
-                  loc: {}
+                  loc: {},
+                  constType: 0
                 },
                 children: [
                   {
@@ -2224,7 +2231,7 @@ import { CREATE_COMMENT, CREATE_ELEMENT_VNODE, TO_DISPLAY_STRING } from './runti
             ],
             codegenNode: {
               type: 19,
-              test: { type: 4, content: 'isShow', isStatic: false, loc: {} },
+              test: { type: 4, content: 'isShow', isStatic: false, loc: {}, constType: 0 },
               consequent: {
                 type: 13,
                 tag: '"h1"',
@@ -2250,7 +2257,7 @@ import { CREATE_COMMENT, CREATE_ELEMENT_VNODE, TO_DISPLAY_STRING } from './runti
         children: [
           { type: 2, content: 'hello ' },
           ' + ',
-          { type: 5, content: { type: 4, isStatic: false, content: 'msg' } }
+          { type: 5, content: { type: 4, isStatic: false, content: 'msg', constType: 0 } }
         ]
       },
       {
@@ -2260,7 +2267,7 @@ import { CREATE_COMMENT, CREATE_ELEMENT_VNODE, TO_DISPLAY_STRING } from './runti
           {
             type: 10,
             loc: {},
-            condition: { type: 4, content: 'isShow', isStatic: false, loc: {} },
+            condition: { type: 4, content: 'isShow', isStatic: false, loc: {}, constType: 0 },
             children: [
               {
                 type: 1,
@@ -2279,14 +2286,18 @@ import { CREATE_COMMENT, CREATE_ELEMENT_VNODE, TO_DISPLAY_STRING } from './runti
         ],
         codegenNode: {
           type: 19,
-          test: { type: 4, content: 'isShow', isStatic: false, loc: {} },
+          test: { type: 4, content: 'isShow', isStatic: false, loc: {},  constType: 0 },
           consequent: {
             type: 13,
             tag: '"h1"',
             children: [{ type: 2, content: '你好，世界' }],
+          },
+          alternate: { 
+            type: 14, 
+            loc: {}, 
+            arguments: ["'v-if'", 'true'],
             callee: CREATE_COMMENT // 这里 callee 也是symbol类型，json序列化后会消失，需要手动加上
           },
-          alternate: { type: 14, loc: {}, arguments: ["'v-if'", 'true'] },
           newline: true,
           loc: {}
         }
