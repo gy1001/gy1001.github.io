@@ -153,6 +153,8 @@
      const app = ensureRender().createApp(...args)
      return app
    }
+   // packages/vue/src/index.ts
+   export { createApp } from '@vue/runtime-dom'
    ```
 
 4. 创建测试示例`packages/vue/examples/createApp/createApp.html`文件，内容如下
@@ -179,6 +181,7 @@
    > 注意：因为这个文件夹是用来支持 dom 渲染的，所以为了扩展方便，需要在这里进行扩展
 
    ```typescript
+   import { isString } from '@vue/shared'
    export const createApp = (...args) => {
      const app = ensureRender().createApp(...args)
      const { mount } = app
