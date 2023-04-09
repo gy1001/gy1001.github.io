@@ -232,7 +232,7 @@ export const sidebarZh: SidebarConfig = {
         },
         {
           text: 'Vue3 源码解析，打造自己的 Vue3 框架，领悟尤大思维精髓',
-          collapsible: false,
+          collapsible: true,
           children: [
             '/zh/other/class/vue3-learn/index-01.md',
             '/zh/other/class/vue3-learn/index-02.md',
@@ -251,6 +251,11 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/vue3-learn/index-15.md',
             '/zh/other/class/vue3-learn/index-16.md',
           ],
+        },
+        {
+          text: '吃透前端工程化，大厂级实战项目以战带练',
+          collapsible: true,
+          children: ['/zh/other/class/engineering/index-01.md'],
         },
       ],
     },
