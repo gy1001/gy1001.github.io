@@ -255,7 +255,10 @@ export const sidebarZh: SidebarConfig = {
         {
           text: '吃透前端工程化，大厂级实战项目以战带练',
           collapsible: true,
-          children: ['/zh/other/class/engineering/index-01.md'],
+          children: [
+            '/zh/other/class/engineering/index-01.md',
+            '/zh/other/class/engineering/index-02.md',
+          ],
         },
       ],
     },
