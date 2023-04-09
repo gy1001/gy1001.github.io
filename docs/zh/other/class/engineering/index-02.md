@@ -1,32 +1,32 @@
 # 02-企业工程化场景分析&工程化核心技术讲解
 
-## 01：【起航】阶段概览 
+## 01：【起航】阶段概览
 
 ### 阶段目标
 
-* 完成前端原生`JS`项目升级模块化开发+`MVVM`框架
-* 掌握并实践`Webpack`各种优化技巧
-* 掌握`Vue2`和`Vue3`框架搭建原理和方法
+- 完成前端原生`JS`项目升级模块化开发+`MVVM`框架
+- 掌握并实践`Webpack`各种优化技巧
+- 掌握`Vue2`和`Vue3`框架搭建原理和方法
 
 ### 课程安排
 
-* `webpack`核心概念入门：`bundle`、`chunk`、`loader`、`plugin`等
-* `ZBestPC` 商城项目源码分析和工程化痛点分析
-* `ZBestPC`商场项目从原生`JS项目`升级到`Webpack工程化`开发
-* `ZBestPC`商城项目升级到`Vue2`、`Vue3`框架开发
+- `webpack`核心概念入门：`bundle`、`chunk`、`loader`、`plugin`等
+- `ZBestPC` 商城项目源码分析和工程化痛点分析
+- `ZBestPC`商场项目从原生`JS项目`升级到`Webpack工程化`开发
+- `ZBestPC`商城项目升级到`Vue2`、`Vue3`框架开发
 
 ### 课程收获
 
-* 掌握`webpack`的基本概念和企业级项目的完整实践过程
-* 解决`Webpack`实际应用过程中碰到的问题
-* 掌握`Vue2`和`Vue3`框架的搭建和升级的具体方法
-* 掌握`SPA`和`MPA`架构的区别和搭建方法
+- 掌握`webpack`的基本概念和企业级项目的完整实践过程
+- 解决`Webpack`实际应用过程中碰到的问题
+- 掌握`Vue2`和`Vue3`框架的搭建和升级的具体方法
+- 掌握`SPA`和`MPA`架构的区别和搭建方法
 
 ### 学习方法
 
-* 本阶段项目非常注重理论和实践的结合
-* 需要先掌握工程化、模块化、`Webpack`、`MVVM`等概念后在做项目
-* 实践过程中一定要理解背后的问题再动手解决，解决过程中要不断思考和总结，并进行持续迭代和优化
+- 本阶段项目非常注重理论和实践的结合
+- 需要先掌握工程化、模块化、`Webpack`、`MVVM`等概念后在做项目
+- 实践过程中一定要理解背后的问题再动手解决，解决过程中要不断思考和总结，并进行持续迭代和优化
 
 ### 开源项目
 
@@ -36,101 +36,101 @@
 
 ### 思考以下问题
 
-* 前端工厂化是如何一步步发展到今天的？
-* 前端开发模式是如何逐步演化的？
+- 前端工厂化是如何一步步发展到今天的？
+- 前端开发模式是如何逐步演化的？
 
 ### 前端历史大事件
 
-* 1995 年 Brendan Eich 发明 JavaScript
-* 2005 年 Ajax（Asynchronous JavaScript And XML）广泛应用
-* 2008 年 V8 引擎发布
-* 2009 年 Nodejs 发布
-* 2010 年 NPM 0.1版本发布
-* 2013 年 Webpack 1.0 版本发布
-* 2013 年 React 1.0版本发布
-* 2014 年 Vue 1.0版本发布
+- 1995 年 Brendan Eich 发明 JavaScript
+- 2005 年 Ajax（Asynchronous JavaScript And XML）广泛应用
+- 2008 年 V8 引擎发布
+- 2009 年 Nodejs 发布
+- 2010 年 NPM 0.1 版本发布
+- 2013 年 Webpack 1.0 版本发布
+- 2013 年 React 1.0 版本发布
+- 2014 年 Vue 1.0 版本发布
 
 ### 前端开发模式进化过程
 
-* 前后端混合(1995-2005):服务端渲染，`JavaScript`仅实现交互
-* 前后端分离(2005-2013):借助ajax实现`前后端分离`、`SPA`等新模式
-* 模块化开发（2013-2014）：`Npm`管理模块，`Webpack`编译打包资源
-* 模块化+MVVM（2014-至今）：基于`React`或者`Vue`，开发`Html`成为历史
+- 前后端混合(1995-2005):服务端渲染，`JavaScript`仅实现交互
+- 前后端分离(2005-2013):借助 ajax 实现`前后端分离`、`SPA`等新模式
+- 模块化开发（2013-2014）：`Npm`管理模块，`Webpack`编译打包资源
+- 模块化+MVVM（2014-至今）：基于`React`或者`Vue`，开发`Html`成为历史
 
 ### 前端工程化解决了什么问题
 
-* 前端开发效率、开发规范、访问性能
-  * 问题1：`js` 全局作用域冲突
-  * 问题2：编码规范问题
-  * 问题3：资源合并和压缩问题
-  * 问题4：高版本 `js` 预发降级
+- 前端开发效率、开发规范、访问性能
+  - 问题 1：`js` 全局作用域冲突
+  - 问题 2：编码规范问题
+  - 问题 3：资源合并和压缩问题
+  - 问题 4：高版本 `js` 预发降级
 
 ## 03：前端工程化的应用场景
 
 ### 请思考下面的问题
 
-* 你目前所在企业的前端研发流程是什么？
+- 你目前所在企业的前端研发流程是什么？
 
 思考这个问题的原因呢？
 
-* 前端工程化贯穿于整个研发流程，解决研发流程中的问题
-* 工程化的核心目标是三点：**效率、规范、性能**
-* 只有了解了前端研发流程的痛点，才能够进行诊断和优化
-* 需要站在研发场景的角度去思考研发流程痛点
+- 前端工程化贯穿于整个研发流程，解决研发流程中的问题
+- 工程化的核心目标是三点：**效率、规范、性能**
+- 只有了解了前端研发流程的痛点，才能够进行诊断和优化
+- 需要站在研发场景的角度去思考研发流程痛点
 
 ### 企业前端项目面临的真实问题
 
-* 项目量级别增加：几千行代码=>几万行代码
-* 项目数量扩大：几个项目=>几千个项目
-* 项目复杂度高：Web项目=>H5/PC/小程序/服务端/脚手架
-* 团队人数增加：几个前端=>几百个前端
+- 项目量级别增加：几千行代码=>几万行代码
+- 项目数量扩大：几个项目=>几千个项目
+- 项目复杂度高：Web 项目=>H5/PC/小程序/服务端/脚手架
+- 团队人数增加：几个前端=>几百个前端
 
 ### 企业前端工程问题解决
 
-* 项目量级增加：模块化（Common js和ESM）、npm、webpack
-* 项目数量扩大：研发平台、研发脚手架
-* 项目复杂度高：工程脚手架（统一解决不同技术栈的工程差异）
-* 团队人数增加：研发平台、研发脚手架
+- 项目量级增加：模块化（Common js 和 ESM）、npm、webpack
+- 项目数量扩大：研发平台、研发脚手架
+- 项目复杂度高：工程脚手架（统一解决不同技术栈的工程差异）
+- 团队人数增加：研发平台、研发脚手架
 
 ### 企业前端工程化应用场景
 
-* 项目研发模式升级（模块化+MVVM）
-* 工程脚手架
-* 研发脚手架
-* 项目性能优化
+- 项目研发模式升级（模块化+MVVM）
+- 工程脚手架
+- 研发脚手架
+- 项目性能优化
 
 ### 课程三大项目介绍
 
-* 项目1：`ZBestPC`项目架构升级，原生js=>`webpack+vue`
-* 项目2：`vue-elm`项目架构升级，工程架构升级+性能优化
-* 项目3：`imooc-build`工程化脚手架开发，`vue-cli=>imooc-build`
+- 项目 1：`ZBestPC`项目架构升级，原生 js=>`webpack+vue`
+- 项目 2：`vue-elm`项目架构升级，工程架构升级+性能优化
+- 项目 3：`imooc-build`工程化脚手架开发，`vue-cli=>imooc-build`
 
 ### 课程三大项目解决问题一览
 
-* 项目研发模式升级：<= ZBestPc 架构升级 + vue-elm架构升级
-* 工程脚手架 <= imooc-build  工程化脚手架
-* 研发脚手<=imooc-cli脚手架（web前端架构师课程项目）
-* 项目性能优化<=vue-elm架构升级
+- 项目研发模式升级：<= ZBestPc 架构升级 + vue-elm 架构升级
+- 工程脚手架 <= imooc-build 工程化脚手架
+- 研发脚手<=imooc-cli 脚手架（web 前端架构师课程项目）
+- 项目性能优化<=vue-elm 架构升级
 
 ### 04：前端工程化关键技术之模块化详解
 
 ### 本节核心内容和目标
 
-* 内容：讲解前端工程化关键技术 **模块化** 的实现原理
-* 范围：覆盖主流模块化规范：Commonjs、AMD、CMD、ESM
-* 目标：对前端工程化知识体系建立基础认知
+- 内容：讲解前端工程化关键技术 **模块化** 的实现原理
+- 范围：覆盖主流模块化规范：Commonjs、AMD、CMD、ESM
+- 目标：对前端工程化知识体系建立基础认知
 
 ### 前端模块化的背景
 
-* 前端模块化是一种标准，而不是实现
-* 理解模块化是理解前端工程化的前提
-* 前端模块化是前端项目规模化的必然结果
+- 前端模块化是一种标准，而不是实现
+- 理解模块化是理解前端工程化的前提
+- 前端模块化是前端项目规模化的必然结果
 
 ### 什么是前端模块化
 
-* 将复杂程序根据规范拆分为若干模块，一个模块包括**输入**和**输出**
-* 模块的内部实现是**私有的**，对外暴露接口与其他模块通信
-* 一个`HTML`页面可以引入的`script`包括：脚本和模块
+- 将复杂程序根据规范拆分为若干模块，一个模块包括**输入**和**输出**
+- 模块的内部实现是**私有的**，对外暴露接口与其他模块通信
+- 一个`HTML`页面可以引入的`script`包括：脚本和模块
 
 ### 脚本和模块的区别
 
@@ -138,7 +138,7 @@
 
 ### 前端模块化的进化过程
 
-#### 第一阶段：全局function函数，将不同功能封装成不同函数
+#### 第一阶段：全局 function 函数，将不同功能封装成不同函数
 
 缺陷：**容易引发全局明明空间冲突**
 
@@ -165,9 +165,9 @@ function sum(a, b) {
 }
 
 const data = api()
-const a = handle(data,"a")
-const b = handle(data,"b")
-const c = sum(a,b)
+const a = handle(data, 'a')
+const b = handle(data, 'b')
+const c = sum(a, b)
 console.log(c)
 ```
 
@@ -226,7 +226,7 @@ console.log(handle.set(2))
 console.log(handle.get()) // 2
 ```
 
-#### 第三阶段：IIFE模式，通过自执行函数创建闭包
+#### 第三阶段：IIFE 模式，通过自执行函数创建闭包
 
 缺陷：**无法解决模块相互依赖问题**
 
@@ -278,13 +278,13 @@ m.setA(3)
 console.log(m.getA())
 ```
 
-#### 第四阶段：IIEF模式增强，支持传入自定义依赖
+#### 第四阶段：IIEF 模式增强，支持传入自定义依赖
 
 缺陷：
 
-* 多依赖传入时，代码阅读困难
-* 无法支持大规模的模块化开发
-* 无特定语法支持，代码简陋
+- 多依赖传入时，代码阅读困难
+- 无法支持大规模的模块化开发
+- 无特定语法支持，代码简陋
 
 ```javascript
 ;(function (global) {
@@ -307,8 +307,6 @@ console.log(m.getA())
     handle,
   }
 })(window)
-
-
 ;(function (global, moduleAPI) {
   // 数据运算
   function sum(a, b) {
@@ -322,16 +320,16 @@ console.log(m.getA())
 })(window, window._Module_API)
 ```
 
-## 05：前端工程化关键技术之CommonJS规范详解
+## 05：前端工程化关键技术之 CommonJS 规范详解
 
-### CommonJS规范介绍
+### CommonJS 规范介绍
 
-* `Nodejs`默认模块化规范，每个文件都是一个模块，有自己的作用域
-* `Nodejs`中`Cjs模块`加载采用同步加载方式
-* 通过`require`加载模块，通过`exports`或者`module.exports`输出模块
-* 所有代码都运行在模块作用域，不会污染全局作用域
-* 模块可以多次加载。**第一次加载时会运行模块，模块输出结果会被缓存**，再次加载时，会从缓存结果中直接读取模块输出结果
-* 模块加载的顺序，按照其在代码中出现的顺序
+- `Nodejs`默认模块化规范，每个文件都是一个模块，有自己的作用域
+- `Nodejs`中`Cjs模块`加载采用同步加载方式
+- 通过`require`加载模块，通过`exports`或者`module.exports`输出模块
+- 所有代码都运行在模块作用域，不会污染全局作用域
+- 模块可以多次加载。**第一次加载时会运行模块，模块输出结果会被缓存**，再次加载时，会从缓存结果中直接读取模块输出结果
+- 模块加载的顺序，按照其在代码中出现的顺序
 
 ```javascript
 // cjs/sum.js
@@ -371,45 +369,45 @@ const c = sum(a, b)
 console.log(c)
 ```
 
-### CommonJS规范特点
+### CommonJS 规范特点
 
-* 所有代码都运行在模块作用域，不会污染全局作用域
-* 模块可以多次加载。**第一次加载时会运行模块，模块输出结果会被缓存**，再次加载时，会从缓存结果中直接读取模块输出结果
-* 模块加载的顺序，按照其在代码中出现的顺序
-* **模块输出的值是值的拷贝**，类似 IIFE 方案中的内部变量
+- 所有代码都运行在模块作用域，不会污染全局作用域
+- 模块可以多次加载。**第一次加载时会运行模块，模块输出结果会被缓存**，再次加载时，会从缓存结果中直接读取模块输出结果
+- 模块加载的顺序，按照其在代码中出现的顺序
+- **模块输出的值是值的拷贝**，类似 IIFE 方案中的内部变量
 
-### ComoonJS规范打包
+### ComoonJS 规范打包
 
-* 安装 Browserify: `npm install browserify -g`
-* 模块化打包命令：`browserify module_test/cjs/entry.js -o dist/bundle.js`
-* 注意，当存在多个模块时，每个模块都需要单独打包
+- 安装 Browserify: `npm install browserify -g`
+- 模块化打包命令：`browserify module_test/cjs/entry.js -o dist/bundle.js`
+- 注意，当存在多个模块时，每个模块都需要单独打包
 
-### browserify打包原理
+### browserify 打包原理
 
-* 本质还是通过自执行函数实现模块化
-* 将每个模块编号，存入一个对象，每个模块标记依赖模块
-* 实现了`require`方法，核心是通过`call`方法调用模块，并传入`require/module/exports`方法，通过`module`存储模块信息，通过`exports`存储模块输出信息
+- 本质还是通过自执行函数实现模块化
+- 将每个模块编号，存入一个对象，每个模块标记依赖模块
+- 实现了`require`方法，核心是通过`call`方法调用模块，并传入`require/module/exports`方法，通过`module`存储模块信息，通过`exports`存储模块输出信息
 
-## 06：前端工程化关键技术之ESModule规范详解
+## 06：前端工程化关键技术之 ESModule 规范详解
 
-### AMD规范介绍
+### AMD 规范介绍
 
-* AMD 规范采用非同步加载模块，允许指定回调函数
-* Node 模块通常都位于本地，加载速度快，所以适用于同步加载
-* 浏览器环境下，模块需要请求获取，所以适用于异步加载
-* Require.js  就是 AMD 的一个具体实现库
+- AMD 规范采用非同步加载模块，允许指定回调函数
+- Node 模块通常都位于本地，加载速度快，所以适用于同步加载
+- 浏览器环境下，模块需要请求获取，所以适用于异步加载
+- Require.js 就是 AMD 的一个具体实现库
 
-### CMD规范介绍
+### CMD 规范介绍
 
-* CMD 整合了 CommonJS 和 AMD 的优点，模块加载时异步的
-* CMD 专门用于浏览器，sea.js 是CMD 规范的一个实现
-* AMD 和 CMD 最大的问题就是没有通过语法升级解决模块化
+- CMD 整合了 CommonJS 和 AMD 的优点，模块加载时异步的
+- CMD 专门用于浏览器，sea.js 是 CMD 规范的一个实现
+- AMD 和 CMD 最大的问题就是没有通过语法升级解决模块化
 
 ### ESModule 规范介绍
 
-* ESModule 设计理念是希望在编译时就确定模块依赖关系及输入输出
-* CommonJS 和 AMD 必须在运行时才能确定依赖和输入、输出
-* ESModule 通过 import 加载模块，通过 export 输出模块
+- ESModule 设计理念是希望在编译时就确定模块依赖关系及输入输出
+- CommonJS 和 AMD 必须在运行时才能确定依赖和输入、输出
+- ESModule 通过 import 加载模块，通过 export 输出模块
 
 ```javascript
 // esm 规范的
@@ -451,14 +449,14 @@ const c = sum(a, b)
 console.log(c)
 ```
 
-### CommonJS和ESModule规范对比
+### CommonJS 和 ESModule 规范对比
 
-* `CommonJS` 模块输出的值是值的拷贝，`ES Modules` 模块输出的是值的引用
-* `CommonJS` 模块是运行时加载，`ES Modules` 模块是编译时输出接口
-* `CommonJS` 模块是单个值导出，`ES Modules` 可以导出多个
-* `CommonJS` 模块为同步加载，`ES Modules` 支持异步加载
-* `CommonJS` 的 this 是当前模块，`ES Modules` 的 this 是 undefined
-* `CommonJS` 和 `ES Module` 的语法不同
+- `CommonJS` 模块输出的值是值的拷贝，`ES Modules` 模块输出的是值的引用
+- `CommonJS` 模块是运行时加载，`ES Modules` 模块是编译时输出接口
+- `CommonJS` 模块是单个值导出，`ES Modules` 可以导出多个
+- `CommonJS` 模块为同步加载，`ES Modules` 支持异步加载
+- `CommonJS` 的 this 是当前模块，`ES Modules` 的 this 是 undefined
+- `CommonJS` 和 `ES Module` 的语法不同
 
 #### 测试用例
 
@@ -557,7 +555,7 @@ console.log(a) // 1
 plus()
 console.log(a) // 1
 
-console.log(this === module.exports) // true 
+console.log(this === module.exports) // true
 ```
 
 运行`node test-cjs.index.js`结果如下
@@ -569,77 +567,76 @@ console.log(this === module.exports) // true
 ```javascript
 module.exports = {
   a: 1,
-  plus 
+  plus,
 }
 // 所以获取后的 a 的值是不会变化的
 ```
 
-| CommonJS                                               | ES Module                  |
-| ------------------------------------------------------ | -------------------------- |
-| 加载模块：require                                      | 加载模块：import           |
-| 输出模块：module.exports 或者 exports                  | 输出模块：export           |
-| Nodejs默认采用的模块化规范 <br />Node 14后默认支持 ESM | 浏览器默认采用的模块化规范 |
+| CommonJS                                                 | ES Module                  |
+| -------------------------------------------------------- | -------------------------- |
+| 加载模块：require                                        | 加载模块：import           |
+| 输出模块：module.exports 或者 exports                    | 输出模块：export           |
+| Nodejs 默认采用的模块化规范 <br />Node 14 后默认支持 ESM | 浏览器默认采用的模块化规范 |
 
 ### 脚本和模块对比
 
-* 模块具备更高的开发效率（可读性强、复用高效）
-* 脚本具备更高的页面性能（模块文件多、加载速度慢）
-* 模块在浏览器中运行会存在兼容性问题，要特别注意
+- 模块具备更高的开发效率（可读性强、复用高效）
+- 脚本具备更高的页面性能（模块文件多、加载速度慢）
+- 模块在浏览器中运行会存在兼容性问题，要特别注意
 
 ### 浏览器模块化的局限
 
-* 缺乏模块管理能力，模块分散在各个项目中
-* 性能加载慢，无法大型项目中直接使用
-* 这两个问题是`npm`和`webpack`核心解决的问题
+- 缺乏模块管理能力，模块分散在各个项目中
+- 性能加载慢，无法大型项目中直接使用
+- 这两个问题是`npm`和`webpack`核心解决的问题
 
-## 07：前端工程化关键技术之npm+webpack原理
+## 07：前端工程化关键技术之 npm+webpack 原理
 
 ### npm 诞生背景
 
-* npm 是由程序员[Isaacs](https://github.com/isaacs)发明
-* 初步思路
-  * 集中管理所有模块，所有模块都上传到仓库（registry）
-  * 模块内创建 `package.json`  标注模块的基本信息
-  * 通过 `npm publish` 发布模块，上传到仓库(registry)
-  * 通过 `npm install` 安装模块，模块安装到`node_modules`目录
-* npm 于2014年商业化，2020 被 Github 收购
-* npm 解决的核心问题就是模块管理问题
-* npm 包含 cli、模块仓库、官网三大部分
+- npm 是由程序员[Isaacs](https://github.com/isaacs)发明
+- 初步思路
+  - 集中管理所有模块，所有模块都上传到仓库（registry）
+  - 模块内创建 `package.json` 标注模块的基本信息
+  - 通过 `npm publish` 发布模块，上传到仓库(registry)
+  - 通过 `npm install` 安装模块，模块安装到`node_modules`目录
+- npm 于 2014 年商业化，2020 被 Github 收购
+- npm 解决的核心问题就是模块管理问题
+- npm 包含 cli、模块仓库、官网三大部分
 
 ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/25c3ae68ea4c402fbf7abb3198dcdf01~tplv-k3u1fbpfcp-watermark.image?)
 
 ### npm 原理总结
 
-* `npm init` 创建模块，`npm install` 安装模块，`npm publish` 发布模块
-* `npm link` 本地开发，`npm config` 调整配置 ，`npm run` 调用 `scripts`
-* `npm` 规范：`package.json`管理模块信息，`node_modules`保存依赖
+- `npm init` 创建模块，`npm install` 安装模块，`npm publish` 发布模块
+- `npm link` 本地开发，`npm config` 调整配置 ，`npm run` 调用 `scripts`
+- `npm` 规范：`package.json`管理模块信息，`node_modules`保存依赖
 
 ### npm 的局限
 
-* npm 只能解决模块的高效管理和获取问题
-* npm 无法解决性能加载的问题
-* 模块发明后，制约其广泛应用的因素就是**性能问题**
+- npm 只能解决模块的高效管理和获取问题
+- npm 无法解决性能加载的问题
+- 模块发明后，制约其广泛应用的因素就是**性能问题**
 
 ### webpack 诞生背景
 
-* webpack 于 2012年3月10号诞生，作者是 Tobias(德国)
-* 移植了GWT(google web toolkit)的功能（code splitting)
-* 2014年 Instagram 团队分享性能优化时，提到使用 Webpack 的 code spliting 特性
-* Webpack 的出现模糊了任务和构建的边界，使之融为一体
+- webpack 于 2012 年 3 月 10 号诞生，作者是 Tobias(德国)
+- 移植了 GWT(google web toolkit)的功能（code splitting)
+- 2014 年 Instagram 团队分享性能优化时，提到使用 Webpack 的 code spliting 特性
+- Webpack 的出现模糊了任务和构建的边界，使之融为一体
 
 ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/126be6cd08f740b3a73f76beb47ad03f~tplv-k3u1fbpfcp-watermark.image?)
 
 ### Webpack 的原理
 
-* 最初的 webpack 核心解决的问题就是**代码合并于拆分**
-* webpack 的核心理念就是将资源都视为模块，统一进行打包和处理
-* webpack 提供了 loader 和 plugins 完成功能扩展
+- 最初的 webpack 核心解决的问题就是**代码合并与拆分**
+- webpack 的核心理念就是将资源都视为模块，统一进行打包和处理
+- webpack 提供了 loader 和 plugins 完成功能扩展
 
-## 08：ZBestPC工程化改造需求分析
+## 08：ZBestPC 工程化改造需求分析
 
 ### 项目需求
 
-* 第一阶段：项目 webpack 改造，使原生 js 项目能够支持模块开发以及打包
-* 第二阶段：Vue SPA(单页面应用)改造，使项目能够使用 Vue 进行单页面应用开发
-* 第三阶段：Vue MPA(多页面应用)改造，使项目能够使用 Vue 进行多页面应用开发
-
+- 第一阶段：项目 webpack 改造，使原生 js 项目能够支持模块开发以及打包
+- 第二阶段：Vue SPA(单页面应用)改造，使项目能够使用 Vue 进行单页面应用开发
+- 第三阶段：Vue MPA(多页面应用)改造，使项目能够使用 Vue 进行多页面应用开发
