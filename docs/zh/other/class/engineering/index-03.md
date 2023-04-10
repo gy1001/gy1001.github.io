@@ -108,9 +108,77 @@
 
 9. 运行`public/index.html`，可以看到打印结果
 
+10. 这里我们可以打开打包后的文件，删除注释后，得到如下的一个结果
 
+    ```javascript
+    ;(() => {
+      var __webpack_modules__ = {
+        './src/index.js': () => {
+          eval(
+            "console.log('hello webpack')\n\n\n//# sourceURL=webpack://webpack-demo/./src/index.js?",
+          )
+        },
+      }
+      var __webpack_exports__ = {}
+      __webpack_modules__['./src/index.js']()
+    })()
+    ```
 
+## 03：webpack source-map原理讲解
 
+通过`devtool`可以得到完全不同的打包源码，会对打包性能也有重大影响。
+
+`devtool`的配置项可以通过官网获得:[https://webpack.js.org/configuration/devtool/](https://webpack.js.org/configuration/devtool/)
+
+source-map 的原理可以参考阮一峰来世的文章：[http://www.ruanyifeng.com/blog/2013/01/javascript_source_map.html](http://www.ruanyifeng.com/blog/2013/01/javascript_source_map.html)
+
+修改`webpack.config.js`文件如下
+
+```javascript
+const path = require('path')
+module.exports = {
+  mode: 'development',
+  entry: './src/index.js',
+  output: {
+    path: path.resolve(__dirname, './dist'),
+    filename: 'bundle.js',
+  },
+  devtool: 'source-map', // 添加如下代码
+}
+```
+
+重新执行`npm run build`，可以看到`dist` 目录下多了一个`bundle.js.map`文件，而`bundle.js`文件内容如下
+
+```javascript
+/******/ ;(() => { // webpackBootstrap
+  var __webpack_exports__ = {}
+  /*!**********************!*\
+  !*** ./src/index.js ***!
+  \**********************/
+  console.log('hello webpack')
+
+  /******/
+})()
+//# sourceMappingURL=bundle.js.map
+```
+
+而`bundle.js.map`文件内容如下
+
+```javascript
+{
+  "version": 3,
+  "file": "bundle.js", // 对应的源文件
+  "mappings": ";;;;;AAAA",// 我对源文件中哪一行进行映射，第6行开始
+  "sources": [
+    "webpack://webpack-demo/./src/index.js"
+  ],
+  "sourcesContent": [
+    "console.log('hello webpack')\n"
+  ],
+  "names": [],
+  "sourceRoot": ""
+}
+```
 
 
 
