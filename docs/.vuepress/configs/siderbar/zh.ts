@@ -259,6 +259,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/engineering/index-01.md',
             '/zh/other/class/engineering/index-02.md',
             '/zh/other/class/engineering/index-03.md',
+            '/zh/other/class/engineering/index-04.md',
           ],
         },
       ],
