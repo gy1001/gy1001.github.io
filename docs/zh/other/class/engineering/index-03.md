@@ -335,9 +335,9 @@ module.exports = {
 
 10. 需要再安装一个插件`style-loader`
 
-   ```shell
-   npm install style-loader  -D
-   ```
+    ```shell
+    npm install style-loader  -D
+    ```
 
 11. 修改配置文件`webpack.config.js`内容如下
 
@@ -349,3 +349,181 @@ module.exports = {
       },
     }
     ```
+
+## 05：创建属于自己的文件类型：自定义loader开发
+
+1. 我们新建测试文件`/src/test.imooc`文件，内容如下
+
+   ```html
+   <script>
+   export default {
+     a: 1,
+     b: 2
+   }
+   </script>
+   ```
+
+2. `index.js`中引入该文件
+
+   ```javascript
+   import value from './test.imooc'
+   import './index.css'
+   console.log('hello webpack')
+   console.log(value)
+   ```
+
+3. 新建`loader/imooc-loader.js`文件，内容如下
+
+   ```javascript
+   const reg = /<script>([\s\S]+?)<\/script>/
+   
+   module.exports = function (source) {
+     const __source = source.match(reg)
+     console.log('=imooc loader running=', __source)
+     return __source && __source[1]
+   }
+   // 判断当前模块是否是主模块，如果是主模块，就运行以下代码
+   // 可以用来对 loader 进行单独处理 比如单独运行 node ./loader/imooc-loader.js 时会运行
+   if (require.main === module) {
+     const source = `<script>
+     export default {
+       a: 1,
+       b: 2
+     }
+     </script>`
+     const match = source.match(reg)
+     console.log(match)
+   }
+   ```
+
+4. 修改配置文件`webpack.config.js`，内容如下
+
+   ```javascript
+   const path = require('path')
+   module.exports = {
+     mode: 'development',
+     entry: './src/index.js',
+     output: {
+       path: path.resolve(__dirname, './dist'),
+       filename: 'bundle.js',
+     },
+     devtool: 'source-map',
+     module: {
+       rules: [
+         { test: /\.css$/, use: ['style-loader', 'css-loader'] },
+         {
+           test: /\.imooc$/,
+           use: [path.resolve(__dirname, './loader/imooc-loader.js')],
+         },
+       ],
+     },
+   }
+   ```
+
+5. 重新运行`npm run build`进行打包，可以在终端看到打印的代码，重新运行`index.html`至浏览器中，可以看到控制台打印的结果
+
+### 内联调用 loader
+
+1. 我们修改`webpack.config.js`文件，不对`css`文件进行处理, 删除 `css` 处理规则
+
+2. 修改`index.js`中文件如下
+
+   ```javascript
+   import 'style-loader!css-loader!./index.css' // 内联式调用 loader
+   ```
+
+3. 重新打包，可以发现一切如常
+
+缺点：
+
+1. 调用繁琐
+2. 多次调用需要多次拼接
+3. 此用法不建议使用，了解即可
+
+## 06：webpack plugin入门 + BannerPlugin 源码解析
+
+### 解决了什么问题 ？
+
+`webpack` 构建生命周期功能定制问题， `webpack` 本身就是一个构建过程的状态机，其自身的核心功能也是在构建在 `loader` 和 `plugin` 的机制上
+
+### webpack hooks
+
+* `compiler 钩子`：[https://www.webpackjs.com/api/compiler-hooks/#hooks](https://www.webpackjs.com/api/compiler-hooks/#hooks)
+* `compilation 钩子`：[https://www.webpackjs.com/api/compilation-hooks/](https://www.webpackjs.com/api/compilation-hooks/)
+
+### Qucik Start
+
+使用官方 BannerPlugin 来进行一个流程的梳理
+
+1. 修改`webpack.config.js`文件，添加如下代码
+
+   ```javascript
+   const webpack = require('webpack')
+   module.exports = {
+   	plugins: [
+       new webpack.BannerPlugin({
+         banner: '欢迎学习前端工程化课程',
+       }),
+     ],
+   }
+   ```
+
+2. 重新运行`npm run build`，可以看到`bundle.js`顶部已经添加了这句话
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/20c0964985754e4889042d76cf88f97e~tplv-k3u1fbpfcp-watermark.image?)
+
+3. 我们打开`node_modules/webpack/lib/BannerPlugin.js`中可以看到这个实现原理
+
+   * 这是一个`BannerPlugin`类，实现了`constructor`、`apply`方法
+   * 在`apply`方法中，分别调用了`compiler.hooks.compilation.tap("BannerPlugin",`以及`compilation.hooks.processAssets.tap`等钩子函数
+
+## 07: 自定义webpack plugin实现自定义页脚注释
+
+1. 新建文件`plugin/FooterPlugin.js`文件，内容如下
+
+   ```javascript
+   const { ConcatSource } = require('webpack-sources')
+   
+   class FooterPlugin {
+     constructor(options) {
+       this.options = options
+     }
+     apply(compiler) {
+       compiler.hooks.compilation.tap('FooterPlugin', (compilation) => {
+         compilation.hooks.processAssets.tap('FootterPlugin', () => {
+           for (const chunk of compilation.chunks) {
+             for (const file of chunk.files) {
+               const commont = `/*${this.options.banner}*/`
+               compilation.updateAsset(
+                 file,
+                 (old) => new ConcatSource(old, '\n', commont),
+               )
+             }
+           }
+         })
+       })
+     }
+   }
+   
+   module.exports = FooterPlugin
+   ```
+
+2. 配置文件`webpack.config.js`中引入插件`FooterPlugin.js`
+
+   ```javascript
+   const FooterPlugin = require('./plugin/FooterPlugin')
+   module.exports = {
+     plugins: [
+       ...
+       new FooterPlugin({
+         banner: '慕课网出品',
+       }),
+     ],
+   }
+   ```
+
+3. 重新打包`npm run build`，打开`bundle.js`可以看到如下内容
+
+   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/df99c1e271ff4d7f82cdceec3d5e7893~tplv-k3u1fbpfcp-watermark.image?)
+
+   
