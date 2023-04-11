@@ -306,7 +306,9 @@ module.exports = {
 
 5. 安装`css-loader`
 
-   `npm install css-loader -D`
+    ```shell
+     npm install css-loader -D
+    ```
 
 6. 修改配置文件`webpack.config.js`
 
@@ -323,13 +325,21 @@ module.exports = {
 
 8. 但是运行页面至浏览器，发现仍然没有显示
 
-9. 需要再安装一个插件`style-loader`
+9. 查找原因
+
+   1. 通过查看`bundle.js`可以看到如下
+
+      ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a1df6fe2a9d14069a96bbd2bbe5bfb34~tplv-k3u1fbpfcp-watermark.image?)
+
+   2. 生成了一个变量`___CSS_LOADER_EXPORT___`，但是导出后并没有进行下一步的处理
+
+10. 需要再安装一个插件`style-loader`
 
    ```shell
    npm install style-loader  -D
    ```
 
-10. 修改配置文件`webpack.config.js`内容如下
+11. 修改配置文件`webpack.config.js`内容如下
 
     ```javascript
     module.exports = {
