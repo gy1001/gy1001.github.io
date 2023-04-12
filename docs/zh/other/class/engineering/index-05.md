@@ -1,6 +1,6 @@
 # 05-前期准备: 原生 JS 项目工程化架构改造
 
-## 01: 原生js项目集成webpack
+## 01: 原生 js 项目集成 webpack
 
 1. 新建文件夹`zbestpc_update`
 
@@ -10,7 +10,7 @@
    npm init -y
    touch webpack.config.js
    mkdir src
-   cd src 
+   cd src
    touch index.js
    mkdir public
    cd public
@@ -32,8 +32,7 @@
        filename: 'bundle.js',
      },
    }
-   
-   
+
    // index.js
    console.log('hello world')
    ```
@@ -63,7 +62,7 @@
    }
    ```
 
-## 02: 使用html-webpack-plugin实现自动注入bundle
+## 02: 使用 html-webpack-plugin 实现自动注入 bundle
 
 1. 安装`html-webpack-plugin`
 
@@ -85,10 +84,12 @@
        filename: '[name].[hash].js',
      },
      // 使用插件
-     plugins: [new HtmlWebpackPlugin({
-        filename: 'index.html',
-        template: './public/index.html',
-     })],
+     plugins: [
+       new HtmlWebpackPlugin({
+         filename: 'index.html',
+         template: './public/index.html',
+       }),
+     ],
    }
    ```
 
@@ -115,7 +116,7 @@
 
 7. 复制`ZBestPC-master/js`文件及至`src/`文件夹下
 
-## 03：首页css移植+webpack5图片打包新特性详解
+## 03：首页 css 移植+webpack5 图片打包新特性详解
 
 1. 在`src/index.js`中引入`css文件`
 
@@ -153,8 +154,7 @@
    module.exports = {
      module: {
        rules: [
-         ...
-         {
+         ...{
            test: /\.(png|svg|jpg|png|jpeg|gif)$/i,
            type: 'asset',
            parser: {
@@ -171,11 +171,11 @@
    }
    ```
 
-6. 执行打包命令后，发现有错误（因为部分图片没有找到，我们可以删除或者注释相应的css中的引用部分）
+6. 执行打包命令后，发现有错误（因为部分图片没有找到，我们可以删除或者注释相应的 css 中的引用部分）
 
 7. 重新打包，运行`dist/index.html`至浏览器，就可以看到样式已经添加了（部分小图片已经被转换为 base64 位流），图片暂时还没有添加上
 
-## 04： 首页js移植+ProvidePlugin注入全局变量
+## 04： 首页 js 移植+ProvidePlugin 注入全局变量
 
 1. 在`src/index.js`中添加`js`引用
 
@@ -199,22 +199,21 @@
 4. 把`public/index.html`底部 js 代码移动到`nav.js` 中, 并在顶部引入
 
    ```javascript
-   import "flexsilder"
+   import 'flexsilder'
    ```
 
 5. 修改配置文件如下
 
    ```javascript
    const webapck = require('webpack')
-   
+
    module.exports = {
-      plugins: [
-       ...
-       new webapck.ProvidePlugin({
+     plugins: [
+       ...new webapck.ProvidePlugin({
          $: 'jquery',
          jQuery: 'jquery',
        }),
-      ]
+     ],
    }
    ```
 
@@ -230,6 +229,3 @@
 7. 重新运行`npm run build`后，刷新浏览器可以看到不在报错了
 
 8. 打开`index.html`，全局替换`img/`为`../src/img/`后，重新刷新浏览器，就可以看到页面中图片正常显示，以及轮播图正常轮播
-
-
-
