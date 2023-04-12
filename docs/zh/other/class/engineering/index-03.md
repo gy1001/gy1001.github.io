@@ -1,4 +1,4 @@
-# 03-[初探] 原生前端项目工程化改造
+# 03-【初探】生前端项目工程化改造
 
 ## 01: webpack 快读上手
 
@@ -135,7 +135,7 @@ source-map 的原理可以参考阮一峰来世的文章：[http://www.ruanyifen
 
 [生产上的问题你不会用 sourcemap 定位吗？](https://juejin.cn/post/7209648356530962489)
 
-[万字长文：关于sourcemap，这篇文章就够了](https://juejin.cn/post/6969748500938489892#heading-18)
+[万字长文：关于 sourcemap，这篇文章就够了](https://juejin.cn/post/6969748500938489892#heading-18)
 
 [sourcemap 这么讲，我彻底理解了](https://juejin.cn/post/7199895323187347514#heading-5)
 
@@ -226,31 +226,31 @@ module.exports = {
 
 2. 注意：Base-VLQ 编码》
 
-   >对于正负而言，编码规则设定**第一个单元的最后一位用于表示正负数，零正一负**；
+   > 对于正负而言，编码规则设定**第一个单元的最后一位用于表示正负数，零正一负**；
    >
-   >* **这里需要注意，为什么说是【第一个单元】，因为一共六个位，去掉一个表示连续，一个表示正负，那能表示的范围是[-15,15]，如果数字过大，就会需要多个单元去描述非第一个单元是不需要表示正负的，所以只需要最高位表示是否终止即可。**
+   > - **这里需要注意，为什么说是【第一个单元】，因为一共六个位，去掉一个表示连续，一个表示正负，那能表示的范围是[-15,15]，如果数字过大，就会需要多个单元去描述非第一个单元是不需要表示正负的，所以只需要最高位表示是否终止即可。**
 
-   * 见名知意，其实就是 VLQ 编码方式和 base64 编码的结合。不过有几点与 VLQ 的区别也需要注意一下
-     * Base64 VLQ 需要能够表示负数,于是用第一个单元的最后一位来作为符号标志位
-     * 在 Base64 VLQ 中，因为要和 base64 相对应，所以修改`vlq`7 位一组的设定，改为 5 位一组，加上设定为最高位的连续位正好六位。
-   * 举例子
-     * 对于 7： 二进制是 111，
-       * 只有一个单元，自然最高位是 0；
-       * 正数，所以最后一位是 0；
-       * 最后只有三位，所以前置位补 0；
-       * 得出的 VLQ 编码就是`001110`；
-       * ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bfef3c9831194a3bb1b24d4ee4339d38~tplv-k3u1fbpfcp-watermark.image?)
-     * **对于 1200**：二进制是：10010110000
-       * 多个单元，所以连续，最高位是 1；
-       * 正数，所以最后一位是 0；
-       * 超过一个单元，所以对于第一个单元在二进制中从后取出四个数出来填充四位即可
-       * 那得到的第一个单元的组成就是`100000`
-       * 再完成第二个单元
-         * 还是填不满，所以联系，最高位是 1
-         * 非第一个单元，所以不管正负了，取出五个数填充五位即可
-         * 得到的第二个单元的组成就是`101011`
-       * 例推下去，最后得到的结果即`100000101011000010`
-       * ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4aa865e15d904a34ae4c8db322945c35~tplv-k3u1fbpfcp-watermark.image?)
+   - 见名知意，其实就是 VLQ 编码方式和 base64 编码的结合。不过有几点与 VLQ 的区别也需要注意一下
+     - Base64 VLQ 需要能够表示负数,于是用第一个单元的最后一位来作为符号标志位
+     - 在 Base64 VLQ 中，因为要和 base64 相对应，所以修改`vlq`7 位一组的设定，改为 5 位一组，加上设定为最高位的连续位正好六位。
+   - 举例子
+     - 对于 7： 二进制是 111，
+       - 只有一个单元，自然最高位是 0；
+       - 正数，所以最后一位是 0；
+       - 最后只有三位，所以前置位补 0；
+       - 得出的 VLQ 编码就是`001110`；
+       - ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bfef3c9831194a3bb1b24d4ee4339d38~tplv-k3u1fbpfcp-watermark.image?)
+     - **对于 1200**：二进制是：10010110000
+       - 多个单元，所以连续，最高位是 1；
+       - 正数，所以最后一位是 0；
+       - 超过一个单元，所以对于第一个单元在二进制中从后取出四个数出来填充四位即可
+       - 那得到的第一个单元的组成就是`100000`
+       - 再完成第二个单元
+         - 还是填不满，所以联系，最高位是 1
+         - 非第一个单元，所以不管正负了，取出五个数填充五位即可
+         - 得到的第二个单元的组成就是`101011`
+       - 例推下去，最后得到的结果即`100000101011000010`
+       - ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4aa865e15d904a34ae4c8db322945c35~tplv-k3u1fbpfcp-watermark.image?)
 
 3. VLQ 编码和 base64 编码的对应关系如下表：
 
@@ -306,9 +306,9 @@ module.exports = {
 
 5. 安装`css-loader`
 
-    ```shell
-     npm install css-loader -D
-    ```
+   ```shell
+    npm install css-loader -D
+   ```
 
 6. 修改配置文件`webpack.config.js`
 
@@ -350,16 +350,16 @@ module.exports = {
     }
     ```
 
-## 05：创建属于自己的文件类型：自定义loader开发
+## 05：创建属于自己的文件类型：自定义 loader 开发
 
 1. 我们新建测试文件`/src/test.imooc`文件，内容如下
 
    ```html
    <script>
-   export default {
-     a: 1,
-     b: 2
-   }
+     export default {
+       a: 1,
+       b: 2,
+     }
    </script>
    ```
 
@@ -376,7 +376,7 @@ module.exports = {
 
    ```javascript
    const reg = /<script>([\s\S]+?)<\/script>/
-   
+
    module.exports = function (source) {
      const __source = source.match(reg)
      console.log('=imooc loader running=', __source)
@@ -440,7 +440,7 @@ module.exports = {
 2. 多次调用需要多次拼接
 3. 此用法不建议使用，了解即可
 
-## 06：webpack plugin入门 + BannerPlugin 源码解析
+## 06：webpack plugin 入门 + BannerPlugin 源码解析
 
 ### 解决了什么问题 ？
 
@@ -448,8 +448,8 @@ module.exports = {
 
 ### webpack hooks
 
-* `compiler 钩子`：[https://www.webpackjs.com/api/compiler-hooks/#hooks](https://www.webpackjs.com/api/compiler-hooks/#hooks)
-* `compilation 钩子`：[https://www.webpackjs.com/api/compilation-hooks/](https://www.webpackjs.com/api/compilation-hooks/)
+- `compiler 钩子`：[https://www.webpackjs.com/api/compiler-hooks/#hooks](https://www.webpackjs.com/api/compiler-hooks/#hooks)
+- `compilation 钩子`：[https://www.webpackjs.com/api/compilation-hooks/](https://www.webpackjs.com/api/compilation-hooks/)
 
 ### Qucik Start
 
@@ -460,7 +460,7 @@ module.exports = {
    ```javascript
    const webpack = require('webpack')
    module.exports = {
-   	plugins: [
+     plugins: [
        new webpack.BannerPlugin({
          banner: '欢迎学习前端工程化课程',
        }),
@@ -474,16 +474,16 @@ module.exports = {
 
 3. 我们打开`node_modules/webpack/lib/BannerPlugin.js`中可以看到这个实现原理
 
-   * 这是一个`BannerPlugin`类，实现了`constructor`、`apply`方法
-   * 在`apply`方法中，分别调用了`compiler.hooks.compilation.tap("BannerPlugin",`以及`compilation.hooks.processAssets.tap`等钩子函数
+   - 这是一个`BannerPlugin`类，实现了`constructor`、`apply`方法
+   - 在`apply`方法中，分别调用了`compiler.hooks.compilation.tap("BannerPlugin",`以及`compilation.hooks.processAssets.tap`等钩子函数
 
-## 07: 自定义webpack plugin实现自定义页脚注释
+## 07: 自定义 webpack plugin 实现自定义页脚注释
 
 1. 新建文件`plugin/FooterPlugin.js`文件，内容如下
 
    ```javascript
    const { ConcatSource } = require('webpack-sources')
-   
+
    class FooterPlugin {
      constructor(options) {
        this.options = options
@@ -504,7 +504,7 @@ module.exports = {
        })
      }
    }
-   
+
    module.exports = FooterPlugin
    ```
 
@@ -514,8 +514,7 @@ module.exports = {
    const FooterPlugin = require('./plugin/FooterPlugin')
    module.exports = {
      plugins: [
-       ...
-       new FooterPlugin({
+       ...new FooterPlugin({
          banner: '慕课网出品',
        }),
      ],
@@ -525,5 +524,3 @@ module.exports = {
 3. 重新打包`npm run build`，打开`bundle.js`可以看到如下内容
 
    ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/df99c1e271ff4d7f82cdceec3d5e7893~tplv-k3u1fbpfcp-watermark.image?)
-
-   
