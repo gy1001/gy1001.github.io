@@ -243,3 +243,224 @@
 9. 重新打包，打开`index.html`，查看`inde.js`大小，已经减少一半
 
    ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a4c73a5758474c60ad84ae1f1a07b564~tplv-k3u1fbpfcp-watermark.image?)
+
+## 05： 精化：详细讲解treeshaking的使用前提和触发条件
+
+上一节中我们使用的对于不同的`treeshaking`，就是说`lodash`库包下面有很多`js`文件，比如`get.js、has.js、indexOf.js`等等文件，上一节中我们只是使用`get.js`文件，对于同一个库下面的其他文件，做了`treeshakign`处理，
+
+那么对于同一个文件中的`js`文件呢？
+
+1. 新建`src/tool.js`文件
+
+   ```javascript
+   export function test1() {
+     console.log('test1')
+   }
+   
+   export function test2() {
+     console.log('test2')
+   }
+   ```
+
+2. `index.js`中进行引用
+
+   ```javascript
+   import { test1 } from './tool'
+   console.log(test1)
+   ```
+
+3. 运行`npm run build`命令，查看`dist/js/index.xxx.js`文件,搜索`test1`、`test2`发现均可以搜到，我们得知目前情况下同一个文件下是没有触发`treeshaking`的
+
+4. 如果想要对同一个文件也使用`treeshaking`，这就需要第三个条件：**mode=production**
+
+5. 修改配置文件`webpack.config.js`，
+
+   ```javascript
+   module.exports = {
+     mode: 'production'
+   };
+   ```
+
+6. 重新进行打包`npm run build`,查看`dist/js/index.xxx.js`文件,搜索`test1`、`test2`发现`test2`不能被搜索到了，这样就完成了**同一个文件下的treeshaking**
+
+**注意**：一定要使用**解构**来加载模块，模块中也不要一股脑导出一个对象，否则`treeshaking`会失效
+
+## 06：划重点：详细讲解 splitChunk 特性
+
+1. 修改`webpack.config.js`文件中的`mode`为`development`
+
+   ```javascript
+   module.exports = {
+     mode: 'development'
+   };
+   ```
+
+2. 目前整体模块还不算大，我们修改`index.js`文件，全量引入`lodash`
+
+   ```javascript
+   import _ from 'lodash-es'
+   console.log(_.get({ a: 1 }, 'a'))
+   ```
+
+3. 重新运行`npm run build`，查看打包后的`dist/index.xxx.js`文件大小为`1.9M`，显然这个大小有点过大
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4965f7d5a4734c808d78312bdbed051a~tplv-k3u1fbpfcp-watermark.image?)
+
+4. 然后进行分割。修改配置文件如下
+
+   ```javascript
+   module.exports = {
+     ...
+     optimization: {
+       ... 
+       // 添加 splitChunks 属性配置
+       splitChunks: {},
+     },
+   }
+   ```
+
+5. 重新打包，发现大小并没有发生变化，这是为什么呢？
+
+6. 我们查看[官方文档](https://webpack.docschina.org/plugins/split-chunks-plugin#root),知悉其默认配置如下
+
+   ```javascript
+   module.exports = {
+     //...
+     optimization: {
+       splitChunks: {
+         chunks: 'async', // 这表明将选择哪些 chunk 进行优化。当提供一个字符串，有效值为 all，async 和 initial。设置为 all 可能特别强大，因为这意味着 chunk 可以在异步和非异步 chunk 之间共享。
+         minSize: 20000, // 生成 chunk 的最小体积（以 bytes 为单位）。
+         minRemainingSize: 0,
+         minChunks: 1, // 拆分前必须共享模块的最小 chunks 数。
+         maxAsyncRequests: 30, // 按需加载时的最大并行请求数。
+         maxInitialRequests: 30, // 入口点的最大并行请求数。
+         enforceSizeThreshold: 50000, // 强制执行拆分的体积阈值和其他限制（minRemainingSize，maxAsyncRequests，maxInitialRequests）将被忽略。
+         cacheGroups: {
+           defaultVendors: {
+             test: /[\\/]node_modules[\\/]/,
+             priority: -10,
+             reuseExistingChunk: true,
+           },
+           default: {
+             minChunks: 2,
+             priority: -20,
+             reuseExistingChunk: true,
+           },
+         },
+       },
+     },
+   };
+   ```
+
+7. 我们修改为如下配置
+
+   ```javascript
+   module.exports = {
+     ...
+     optimization: {
+       ... 
+       splitChunks: {
+         chunks: "all",
+         minSize: 300 * 1024,
+       },
+     },
+   }
+   ```
+
+8. 删除`dist`目录，重新打包`npm run build`，可以看到多了一个文件`vendors-node_modules_pnpm_flexslider_2_7_2_node_modules_flexslider_jquery_flexslider_js-node_-bf1d5e.5f06f1cc8de30c0397b7.js`,根绝文件名字大概可以猜到它是把`jquery、flexslider`等打包到一起
+
+9. 我们可以修改文件名字,配置如下，重新打包，就可以得到`common.xxxx.js`文件
+
+   ```javascript
+   module.exports = {
+     ...
+     optimization: {
+       ... 
+       splitChunks: {
+         chunks: "all",
+         minSize: 300 * 1024,
+         name: "common"
+       },
+     },
+   }
+   ```
+
+10. 我们也可以对某一组组件进行打包
+
+    ```javascript
+    module.exports = {
+      ...
+      optimization: {
+        ... 
+        splitChunks: {
+          chunks: "all",
+          minSize: 300 * 1024,
+          name: "common"
+        },
+        // 增加 cacheGroups 属性
+        cacheGroups: {
+          jquery: {
+            name: 'jquery',
+            test: /jquery/,
+            chunks: 'all',
+          },
+        },
+      },
+    }
+    ```
+
+## 07：利用 ejs 实现公共代码复用
+
+我们发现`index.html`中的`footer、header`部分是可以抽离出来的，
+
+1. 新建`ejs/header.ejs`文件，吧`index.html`中的`header`部分移动出来，剪切入`header.ejs`中
+
+2. 在`index.html`中之间`header`部分添加如下代码
+
+   ```html
+   // index.html
+   <%= require("../ejs/header.ejs")({title:'我是首页'}) %>
+      
+   // (支持传入变量)
+   header.ejs  需要被变量渲染的地方写入 <%= title %>
+   ```
+
+3. 安装`ejs-loader`
+
+   ```shell
+   npm install ejs-loader --save-dev
+   ```
+
+4. 修改`webpack.config.js`配置文件如下
+
+   ```javascript
+   module.exports = {
+     module: {
+       rules: [
+         ...
+         {
+           test: /\.ejs$/,
+           use: [
+             {
+               loader: 'ejs-loader',
+               options: {
+                 esModule: false,
+               },
+             },
+           ],
+         },
+       ]
+     }
+   }
+   ```
+
+5. 重新打包`npm run build`，打开`index.html`可以看到页面中`header`那部分被ejs中的header.ejs文件内容替换，并且写入了变量名字
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d75b4f20d05e45639c9f16e2a1aee34c~tplv-k3u1fbpfcp-watermark.image?)
+
+6. 同理，你可以按照上述操作完成 `footer.ejs`不分
+
+
+
+## 08：利用 CleanWebpackPlugin 清空 dist 目录
+
