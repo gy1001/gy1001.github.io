@@ -134,3 +134,112 @@
 3. 删除`dist`目录，重新进行`npm run build`
 
 4. 可以看到`dist`目录下分别产生了`css/index.xxx.css`以及`css/login.xxx.css`文件，并且在`index.html`和`login.html`页面内部分别进行了引入
+
+## 04：性能优化之js&css压缩+treeshaking特性详解
+
+### js&css压缩
+
+1. 压缩`js`我们使用`[uglifyjs-webpack-plugin]`[https://webpack.docschina.org/plugins/uglifyjs-webpack-plugin/](https://webpack.docschina.org/plugins/uglifyjs-webpack-plugin/)
+
+   ```shell
+   npm install uglifyjs-webpack-plugin --save-dev
+   ```
+
+2. 然后把插件添加到你的 `webpack.config.js` 配置中
+
+   ```javascript
+   const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+   
+   module.exports = {
+     optimization: {
+       minimize: true, // 默认开发模式下不压缩
+       minimizer: [new UglifyJsPlugin({ sourceMap: true })],
+     },
+   };
+   ```
+
+3. 重新运行`npm run build`，可以看到`js`代码被要压缩了
+
+4. 压缩`css`我们使用`CssMinimizerWebpackPlugin`
+
+   ```shell
+   npm install css-minimizer-webpack-plugin --save-dev
+   ```
+
+5. 然后把插件添加到你的 `webpack.config.js` 配置中
+
+   ```javascript
+   const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+   
+   module.exports = {
+     optimization: {
+       minimize: true, // 默认开发模式下不压缩
+       minimizer: [
+         new UglifyJsPlugin({ sourceMap: true }),
+         new CssMinimizerPlugin(),
+       ],
+     },
+   };
+   ```
+
+### tree shaking
+
+> treeshaking 的触发条件
+>
+> * 通过解构的方式获取方法，可以触发 tree shakin
+> * 调用的 npm 包必须使用 ES Module 规范
+
+1. 这里我们先用`lodash`包进行演示
+
+   ```shell
+   npm install lodash --save-dev
+   ```
+
+2. `index.js`中进行引用
+
+   ```javascript
+   console.log(_.get({ a: 1 }, 'a'))
+   import _ from 'lodash'
+   ```
+
+3. 执行打包命令`npm run build`，重新运行`index.html`可以看到如下效果
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/617ecafd961f40b1946af4309ebe8462~tplv-k3u1fbpfcp-watermark.image?)
+
+4. 修改`index.js`中的代码如下
+
+   ```javascript
+   // import _ from 'lodash'
+   // treeshaking 的触发条件
+   // 1. 通过解构的方式获取方法，可以触发 tree shakin
+   // 2. 调用的 npm 包必须使用 ES Module 规范
+   import { get } from 'lodash'
+   console.log(get({ a: 1 }, 'a'))
+   ```
+
+5. 这时候重新打包`npm run build`，重新运行`index.html`，发现`index.js`大小并没有发生变化
+
+6. 这是为什么呢？因为你不符合第二个调用条件：**调用的 npm 包必须使用 ES Module 规范**，`lodash`源码中随便打开一个文件可以看到这样一句，可以看出来它使用的是 `Commonjs` 规范，所以并不满足`treeshaking`的一个要求
+
+   ```javascript
+   module.exports = xxxx
+   // /node_modules/lodash/_apply.js 最后一句是 module.exports = apply;
+   ```
+
+7. 那应该怎么办呢？我们可以使用`lodash-es`
+
+   ```shell
+   npm install lodash-es --save-dev
+   ```
+
+8. 修改`index.js`中的引用
+
+   ```javascript
+   // import { get } from 'lodash'
+   import { get } from 'lodash-es'
+   console.log(get({ a: 1 }, 'a'))
+   ```
+
+9. 重新打包，打开`index.html`，查看`inde.js`大小，已经减少一半
+
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a4c73a5758474c60ad84ae1f1a07b564~tplv-k3u1fbpfcp-watermark.image?)
