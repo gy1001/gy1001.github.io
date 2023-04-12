@@ -464,3 +464,22 @@
 
 ## 08：利用 CleanWebpackPlugin 清空 dist 目录
 
+1. 安装`clean-webpack-plugin`插件
+
+   ```shell
+   npm install clean-webpack-plugin --save-dev
+   ```
+
+2. 修改`webpack.config.js`中引入即可
+
+   ```javascript
+   const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+   module.exports = {
+     plugins: [
+       ...
+       new CleanWebpackPlugin(),
+     ]
+   }
+   ```
+
+3. 重新运行打包`npm run build`，可以看到`dist`目录中不会再保留上次打包留下的文件
