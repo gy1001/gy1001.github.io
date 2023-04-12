@@ -229,3 +229,45 @@
 7. 重新运行`npm run build`后，刷新浏览器可以看到不在报错了
 
 8. 打开`index.html`，全局替换`img/`为`../src/img/`后，重新刷新浏览器，就可以看到页面中图片正常显示，以及轮播图正常轮播
+
+## 05：zbestpc项目登录页面移植
+
+1. 拷贝`ZBestPC-master/login.html`至`src/`下, 并删除`css/js`的引用，修改`img/`为`../src/img/`
+
+2. `index.js`中引入`login.css`
+
+   ```javascript
+   import './css/login.css'
+   ```
+
+3. `webpack.config.js`中增加配置
+
+   ```javascript
+   module.exports = {
+     ...
+     plugins: [
+       ...
+       new HtmlWebpackPlugin({
+         filename: 'index.html',
+         template: './public/index.html',
+       }),
+       new HtmlWebpackPlugin({
+         filename: 'login.html',
+         template: './public/login.html',
+       }),
+     ]
+   }
+   ```
+
+4. 修改`src/index.html`中的代码,更改登录跳转链接
+
+   ```html
+   <p class="fl">
+     <a href="login.html" id="login">登录</a>
+     <a href="#" id="reg">注册</a>
+   </p>
+   ```
+
+5. 重新执行`npm run build`命令，运行`dist/index.html`，并点击登录，可以成功跳转至`login.html`页面
+
+6. 至此，首页和登录页面移植完成
