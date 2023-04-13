@@ -199,7 +199,7 @@
 4. 把`public/index.html`底部 js 代码移动到`nav.js` 中, 并在顶部引入
 
    ```javascript
-   import 'flexsilder'
+   import 'flexslider'
    ```
 
 5. 修改配置文件如下
