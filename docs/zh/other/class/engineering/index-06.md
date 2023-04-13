@@ -124,7 +124,7 @@
      plugins: [
        ...
        new MiniCssExtractPlugin({
-         filename: 'css/[name].[hash].css',
+         filename: 'css/[name].[contenthash:8].css',
          chunkFilename: 'css/[name].chunk.css',
        }),
      ]
