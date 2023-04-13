@@ -3,6 +3,7 @@ import { sidebarZh, sidebarEn } from '../.vuepress/configs/siderbar/zh'
 import { copyCodePlugin } from 'vuepress-plugin-copy-code2'
 import { photoSwipePlugin } from 'vuepress-plugin-photo-swipe'
 import { commentPlugin } from 'vuepress-plugin-comment2'
+import { searchPlugin } from '@vuepress/plugin-search'
 
 export default defineUserConfig({
   base: '/',
@@ -73,6 +74,16 @@ export default defineUserConfig({
     },
   }),
   plugins: [
+    searchPlugin({
+      locales: {
+        '/': {
+          placeholder: 'Search',
+        },
+        '/zh/': {
+          placeholder: '搜索',
+        },
+      },
+    }),
     copyCodePlugin({
       // 插件选项
     }),
