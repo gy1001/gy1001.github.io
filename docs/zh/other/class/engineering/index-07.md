@@ -516,6 +516,167 @@
 
 ## 05：Vue MPA 应用移植和工程问题解决
 
+目前我们的页面是单页面，打包后只有一个`index.html`，对seo 不是很友好，所以我们接下来进行`MPA`应用的一个开发
+
+1. 复制一份`webpack.vue.config.js`为`webpack.vue.mpa.config.js`（注意：`entry` 是多入口，以及 `plugins` 中模板也需要多个）
+
+   ```javascript
+   const path = require('path')
+   const webapck = require('webpack')
+   const HtmlWebpackPlugin = require('html-webpack-plugin')
+   const CopyWebpackPlugin = require('copy-webpack-plugin')
+   const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+   const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+   const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+   const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+   const resolve = (dirPath) => path.resolve(__dirname, dirPath)
+   const { VueLoaderPlugin } = require('vue-loader')
+   const config = {
+     mode: 'development',
+     entry: {
+       // 增加多入口文件
+       home: resolve('../src/mpa/home.js'),
+       login: resolve('../src/mpa/login.js'),
+     },
+     output: {
+       filename: 'js/[name].js',
+       path: resolve('../dist'),
+     },
+     plugins: [
+       // 增加多入口模板文件
+       new HtmlWebpackPlugin({
+         filename: 'index.html',
+         template: resolve('../public/index-vue.html'),
+         chunks: ['home'],
+       }),
+       new HtmlWebpackPlugin({
+         filename: 'login.html',
+         template: resolve('../public/index-vue.html'),
+         chunks: ['login'],
+       }),
+       new webapck.ProvidePlugin({
+         $: 'jquery',
+         jQuery: 'jquery',
+       }),
+       new CopyWebpackPlugin({
+         patterns: [
+           {
+             from: resolve('../src/img'),
+             to: resolve('../dist/img'),
+           },
+         ],
+       }),
+       new MiniCssExtractPlugin({
+         filename: 'css/[name][contenthash:8].css',
+         chunkFilename: 'css/[name].chunk.css',
+       }),
+       new CleanWebpackPlugin(),
+       new VueLoaderPlugin(),
+     ],
+     module: {
+       rules: [
+         {
+           test: /\.css$/,
+           use: [MiniCssExtractPlugin.loader, 'css-loader'],
+         },
+         {
+           test: /\.vue$/,
+           use: ['vue-loader'],
+         },
+         {
+           test: /\.(png|svg|jpg|png|jpeg|gif)$/i,
+           type: 'asset',
+           parser: {
+             dataUrlCondition: {
+               maxSize: 8 * 1024,
+             },
+           },
+           generator: {
+             filename: 'img/[name].[contenthash:6][ext]', // 解决重名问题
+           },
+         },
+       ],
+     },
+     devServer: {
+       static: {
+         directory: resolve('../dist'),
+       },
+       compress: true,
+       port: 9000,
+       hot: true,
+       proxy: {
+         '/': {
+           target: 'http://localhost:9000',
+           // 只需要添加该方法，然后当请求的是html，则重定向到index.html
+           bypass: function (req, res, proxyOptions) {
+             if (req.headers.accept.indexOf('html') !== -1) {
+               console.log('Skipping proxy for browser request.')
+               return '/index.html'
+             }
+           },
+         },
+       },
+     },
+     optimization: {
+       minimize: true, // 默认开发模式下不压缩
+       minimizer: [
+         new UglifyJsPlugin({ sourceMap: false }),
+         new CssMinimizerPlugin(),
+       ],
+       splitChunks: {
+         chunks: 'all',
+         minSize: 300 * 1024,
+         name: 'common',
+         cacheGroups: {
+           jquery: {
+             name: 'jquery',
+             test: /jquery/,
+             chunks: 'all',
+           },
+         },
+       },
+     },
+   }
+   
+   module.exports = config
+   ```
+
+2. 新增加`src/mpa/home.js`、`src/map/login.js`
+
+   ```javascript
+   // src/mpa/home.js
+   import { createApp } from 'vue'
+   import Home from '../Home.vue'
+   createApp(Home).mount('#app')
+   
+   // src/mpa.login.js
+   import { createApp } from 'vue'
+   import Login from '../Login.vue'
+   createApp(Login).mount('#app')
+   ```
+
+3. 增加配置`package.json`中的脚本命令
+
+   ```json
+   {
+     "scripts": {
+       "dev:vueMpa": "webpack-dev-server --config ./build/webpack.vue.mpa.config.js",
+       "build:vueMpa": "webpack build --config ./build/webpack.vue.mpa.config.js"
+     },
+   }
+   ```
+
+4. 修改`src/Home.vue`中的登录跳转逻辑
+
+   ```html
+   <!-- <a @click="toLogin" id="login">登录</a> -->
+   <a href="login.html" id="login">登录</a>
+   ```
+
+5. 重新运行`npm run dev:vueMap`命令，打开`http://localhost:9000/`首页正常显示，点击登录跳转登录页面
+
+6. 重新运行`npm run build:vueMap`命令，打开`dist/index.html`，中可以到页面正常渲染，点击登录按钮，正常跳转显示
+
 ## 06：Vue2 升级 Vue3 原理讲解+构建脚本升级
 
 ## 07：Vue2 升级 Vue3 源码改造
