@@ -679,4 +679,26 @@
 
 ## 06：Vue2 升级 Vue3 原理讲解+构建脚本升级
 
+如果你使用的`vue2`，你需要对`package.json`中的相关包进行升级，比如`vue-loader、vue、vue-router`
+
+修改到指定版本号后，然后`npm install`安装最新的依赖
+
 ## 07：Vue2 升级 Vue3 源码改造
+
+1. 修改代码部分
+
+   ```javascript
+   // webpack.xxx.config.js 中的 VueLoaderPlugin 引入方式更改如下
+   const { VueLoaderPlugin } = require('vue-loader')
+   
+   // 入口文件出的 import Vue form "vue"改为
+   import { createApp } from 'vue'
+   
+   // 引入vue-router 方式 改为
+   import { createRouter } from 'vue-router'
+   
+   xxxx
+   ```
+
+
+
