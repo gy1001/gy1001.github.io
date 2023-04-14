@@ -1,30 +1,30 @@
 # 08-大型前端项目：进阶实战——架构升级需求分析+构建源码分析
 
-## 01：vue2-elm架构升级需求分析 
+## 01：vue2-elm 架构升级需求分析
 
 ### 准备工作
 
-* 原项目源码：[https://github.com/bailicangdu/vue2-elm.git](https://github.com/bailicangdu/vue2-elm.git)
+- 原项目源码：[https://github.com/bailicangdu/vue2-elm.git](https://github.com/bailicangdu/vue2-elm.git)
 
-* 安装依赖和运行
+- 安装依赖和运行
 
   ```shell
-  npm install 
+  npm install
   npm run dev
   ```
 
 ### 构建源码分析
 
-* build
-  * buiild.js: 打包执行文件
-  * webpack.config.js: 项目配置公共文件
-  * webpack.dev.config.js: 项目启动配置文件
-  * wepack.dll.cofnig.js: 插件抽离第三方配置文件
-  * webpack.prod.config.js: 项目打包配置文件
-* config
-  * 开发和线上环境的配置文件
+- build
+  - buiild.js: 打包执行文件
+  - webpack.config.js: 项目配置公共文件
+  - webpack.dev.config.js: 项目启动配置文件
+  - wepack.dll.cofnig.js: 插件抽离第三方配置文件
+  - webpack.prod.config.js: 项目打包配置文件
+- config
+  - 开发和线上环境的配置文件
 
-## 02：vue2-elm项目启动+构建命令分析
+## 02：vue2-elm 项目启动+构建命令分析
 
 上一节中我们通过脚本`npm run dev`来运行代码，发现页面正常渲染，
 
@@ -42,41 +42,41 @@
 
 2. 通过语句前一部分`cross-env NODE_ENV=online` 可知我们通过`cross-env`库设置了`NODE_ENV`为`online`,为什么要用`cross-env`呢？可以参考下文[Node 的 cross-env 模块](https://juejin.cn/post/7006650325931130916)
 
-3. 拓展知识：[webpack彻底搞懂系列之 - .env文件](https://juejin.cn/post/7069309414192185381)
+3. 拓展知识：[webpack 彻底搞懂系列之 - .env 文件](https://juejin.cn/post/7069309414192185381)
 
 4. 然后执行`node build/dev-server.js`
 
 5. 查看`build/dev-server.js`文件，里面用到了很多直到现在还在使用的代码以及思想
 
-   * webpack-dev-middleware
-   * 热更新的一个实现
-   * 等等
+   - webpack-dev-middleware
+   - 热更新的一个实现
+   - 等等
 
-## 03：vue2-elm项目开发模式构建源码分析
+## 03：vue2-elm 项目开发模式构建源码分析
 
 ### 分析源码的方式
 
-* 直接阅读
-* 运行起来，打日志(比如：`console.log`)
-* 运行起来，在浏览器中打断点（因为运行时有一些上下文）
+- 直接阅读
+- 运行起来，打日志(比如：`console.log`)
+- 运行起来，在浏览器中打断点（因为运行时有一些上下文）
 
-## 04：深入理解开发模式下时为什么要启动express服务
+## 04：深入理解开发模式下时为什么要启动 express 服务
 
-* vue-cli 在本地开发模式下，为什么采用 express 启动静态资源服务器
+- vue-cli 在本地开发模式下，为什么采用 express 启动静态资源服务器
 
-  * 解决线上部署后的资源路径问题
-  * 解决 history 模式下的 URL fallback 问题
+  - 解决线上部署后的资源路径问题
+  - 解决 history 模式下的 URL fallback 问题
 
-* 参考
+- 参考
 
-  * [为什么vue+webpack需要用到node，如何部署项目到服务器？ ](https://www.cnblogs.com/zhuzhenwei918/p/6866094.html)
-  * [Vue-Router:不同的历史模式](https://router.vuejs.org/zh/guide/essentials/history-mode.html)
+  - [为什么 vue+webpack 需要用到 node，如何部署项目到服务器？ ](https://www.cnblogs.com/zhuzhenwei918/p/6866094.html)
+  - [Vue-Router:不同的历史模式](https://router.vuejs.org/zh/guide/essentials/history-mode.html)
 
-* 为什么`hisory模式下，刷新页面会报404`
+- 为什么`hisory模式下，刷新页面会报404`
 
-  * 因为在history 模式下，只是动态的通过js 操作window.history 来改变有浏览器地址栏里的路径，并没有发起http请求，但当你直接 在浏览器里输入这个地址的时候 就一定要先对服务器放起http请求，但是这个目标在服务器上又不存在所以就返回了404了，怎么解决呢，就是把所有的请求全部转发到 `http://www.xxx.com/index.hmtl` 上就可以了　　
+  - 因为在 history 模式下，只是动态的通过 js 操作 window.history 来改变有浏览器地址栏里的路径，并没有发起 http 请求，但当你直接 在浏览器里输入这个地址的时候 就一定要先对服务器放起 http 请求，但是这个目标在服务器上又不存在所以就返回了 404 了，怎么解决呢，就是把所有的请求全部转发到 `http://www.xxx.com/index.hmtl` 上就可以了
 
-  * 解决方案:[https://webpack.docschina.org/configuration/dev-server/](https://webpack.docschina.org/configuration/dev-server/)
+  - 解决方案:[https://webpack.docschina.org/configuration/dev-server/](https://webpack.docschina.org/configuration/dev-server/)
 
     ```javascript
     module.exports = {
@@ -87,22 +87,22 @@
             target: 'http://localhost:3000',
             bypass: function (req, res, proxyOptions) {
               if (req.headers.accept.indexOf('html') !== -1) {
-                console.log('Skipping proxy for browser request.');
-                return '/index.html';
+                console.log('Skipping proxy for browser request.')
+                return '/index.html'
               }
             },
           },
         },
       },
-    };
+    }
     ```
 
-## 05：http服务原理讲解+express服务快速搭建
+## 05：http 服务原理讲解+express 服务快速搭建
 
 一个 express 服务的一个访问流程
 
 1. 用户通过浏览器访问某个域名后，发起一个 http 请求,打到指定的服务器上
-2. 假如这里请求的是 80 端口，服务器中有一个 express 服务监听 80端口，会对这个端口进行处理
+2. 假如这里请求的是 80 端口，服务器中有一个 express 服务监听 80 端口，会对这个端口进行处理
 3. 假如请求的是`index.html`,其中还会请求其他的一些文件`app.js`、`index.css`等
 
 ### express 服务快速搭建
@@ -123,7 +123,9 @@
    const app = express()
    // 拦截路由
    app.get('/', function (req, res) {
-     res.send("<html><body><div style='color: red;'>我是测试</div></body></html>")
+     res.send(
+       "<html><body><div style='color: red;'>我是测试</div></body></html>",
+     )
    })
    // 监听端口，启动服务
    const port = 9001
@@ -140,9 +142,7 @@
 
    ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d427141b583243f0b18e836da0e0ba35~tplv-k3u1fbpfcp-watermark.image?)
 
-   
-
-## 06：express核心概念middleware深入讲解 
+## 06：express 核心概念 middleware 深入讲解
 
 ### 什么是中间件
 
@@ -163,7 +163,7 @@
    // 创建服务
    const express = require('express')
    const app = express()
-   
+
    // 中间件: 处理请求的业务逻辑
    // 前置中间件
    // 可以理解为全局中间件：第一个参数为回调函数时，则针对所有请求生效
@@ -172,21 +172,23 @@
      next()
      console.log('before middleware end')
    })
-   
+
    // 拦截路由
    app.get('/', function (req, res, next) {
-     console.log("拦截了 / 路由")
-     res.send("<html><body><div style='color: red;'>我是测试</div></body></html>")
+     console.log('拦截了 / 路由')
+     res.send(
+       "<html><body><div style='color: red;'>我是测试</div></body></html>",
+     )
      next() // 如果不执行 next, 后续中间件不会执行
    })
-   
+
    // 后置中间件
    app.use(function (req, res, next) {
      console.log('after middle start')
      next()
      console.log('after middle end')
    })
-   
+
    // 监听端口，启动服务
    const port = 9001
    app.listen(port, function () {
@@ -210,10 +212,10 @@
 
    ```javascript
    // 在后置中间件前加入
-   
+
    // 路由中间件，第一个参数为匹配路由，第二个参数为回调函数
    app.use('/test', function (req, res, next) {
-      console.log("拦截了 /test 路由")
+     console.log('拦截了 /test 路由')
      res.send('text')
      next()
    })
@@ -229,7 +231,7 @@
 
    ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/23ad322950a0400d9d709f98da92cb9b~tplv-k3u1fbpfcp-watermark.image?)
 
-## 07：express异常中间件和异常捕获机制详解
+## 07：express 异常中间件和异常捕获机制详解
 
 ### 异常中间件
 
@@ -247,14 +249,14 @@ app.use(function (req, res) {
 })
 
 // 这个 promise 内部异常不会被捕获
-app.use(function(req,res){
-	console.log("new promise middleware")
-	new Promise((resolve, reject) => {
-    console.log("promise")
+app.use(function (req, res) {
+  console.log('new promise middleware')
+  new Promise((resolve, reject) => {
+    console.log('promise')
     resolve()
   }).then(() => {
-    console.log("then")
-    throw new Error("promise error")
+    console.log('then')
+    throw new Error('promise error')
   })
 })
 
@@ -273,7 +275,7 @@ app.use(function (err, req, res, next) {
 })
 ```
 
-那么对于不能捕获的 promise异常怎么处理呢？
+那么对于不能捕获的 promise 异常怎么处理呢？
 
 ```javascript
 // 全局 promise 异常捕获
@@ -290,10 +292,81 @@ process.on('uncaughtException', function (err) {
   console.log('uncaughtException', err.message)
 })
 
-throw new Error("启动之前的异常")
+throw new Error('启动之前的异常')
 ```
 
-## 08：express https服务+静态资源服务搭建实战
+## 08：express https 服务+静态资源服务搭建实战
 
+### 如何启动一个 https 服务呢？
 
+1. 新建`https`文件夹，网上搜寻一些免费的证书或者购买,文件类似如下测试
 
+   - `https/xxxxx.key` 公钥
+   - `https/xxxx.pem` 密钥
+
+2. 创建 `https服务`
+
+   ```javascript
+   const https = require('https')
+   const fs = require('fs')
+   const port = 9001
+   const httpsPort = 443
+   const options = {
+     // 私钥
+     key: fs.readFileSync('./https/xxxx.key'),
+     // 公钥
+     cert: fs.readFileSync('./https/xxx.pem'),
+   }
+
+   // app 为之前通过 express 创建的 http 服务
+   const httpsServer = https.createServer(options, app)
+   httpsServer.listen(httpsPort, function () {
+     console.log('https服务启动成功')
+   })
+   ```
+
+3. 有可能你申请的证书对应域名为 `abc.com`
+
+4. 你需要在 `hosts` 文件中增加如下配置
+
+   ```javascript
+   127.0.0.1 abc.com
+   ```
+
+5. 然后打开浏览器`https://abc.com` 即可
+
+### 静态资源服务
+
+1. 新建`static`文件夹，这个文件夹当做我们的静态资源文件夹
+
+2. 新建`static/index.html`、`static/inde.js`,内容如下
+
+   ```html
+   // index.html
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="UTF-8" />
+       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <title>Document</title>
+     </head>
+     <script src="./index.js"></script>
+     <body>
+       <div>1111</div>
+     </body>
+   </html>
+
+   // index.js console.log('index.js')
+   ```
+
+3. 增加静态资源命令
+
+   ```javascript
+   // 同构部署
+   app.use('/static', express.static('./static'))
+   ```
+
+4. 这样通过访问`localhost:9001/static/index.html`可以看到页面正常显示，且控制台正常打印
+
+5. 同样访问`https://abc.com/static/index.html`一样的效果
