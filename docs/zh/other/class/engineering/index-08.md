@@ -229,6 +229,8 @@
 
    ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/23ad322950a0400d9d709f98da92cb9b~tplv-k3u1fbpfcp-watermark.image?)
 
+## 07：express异常中间件和异常捕获机制详解
+
 ### 异常中间件
 
 注意事项：
@@ -236,13 +238,62 @@
 1. 异常中间件全局只包含一个
 2. 异常中间件可以传递给普通中间件
 3. 异常中间件需要放在所有中间件最后
+4. 异常中间件只能捕获回调函数中的异常（如果是 promise 内部异常就不会被捕获）
 
-## 07：express异常中间件和异常捕获机制详解
+```javascript
+app.use(function (req, res) {
+  console.log('after next middler')
+  throw new Error('error message')
+})
 
+// 这个 promise 内部异常不会被捕获
+app.use(function(req,res){
+	console.log("new promise middleware")
+	new Promise((resolve, reject) => {
+    console.log("promise")
+    resolve()
+  }).then(() => {
+    console.log("then")
+    throw new Error("promise error")
+  })
+})
 
+// 异常中间件
+// 注意事项
+// 1. 异常中间件全局只包含一个
+// 2. 异常中间件可以传递给普通中间件
+// 3. 异常中间件需要放在所有中间件最后
+app.use(function (err, req, res, next) {
+  console.log('!error-----', err.message)
+})
+
+// 如果有多个异常中间件，后续的不会执行
+app.use(function (err, req, res, next) {
+  console.log(err.message, '这里不会生效')
+})
+```
+
+那么对于不能捕获的 promise异常怎么处理呢？
+
+```javascript
+// 全局 promise 异常捕获
+process.on('unhandledRejection', function (err) {
+  console.error('unhandledRejection', err.message)
+})
+```
+
+那么还有其他的异常怎么办呢？
+
+```javascript
+// 全局异常捕获
+process.on('uncaughtException', function (err) {
+  console.log('uncaughtException', err.message)
+})
+
+throw new Error("启动之前的异常")
+```
 
 ## 08：express https服务+静态资源服务搭建实战
-
 
 
 
