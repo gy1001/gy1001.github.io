@@ -1,4 +1,4 @@
-# 07-【加餐】原生 JS 项目 Vue 进阶改造
+# 07-原生 js 项目：进阶实战——原生 js 升级 Vue 框架完整流程
 
 ## 01：webpack 多配置文件改造
 
@@ -15,7 +15,7 @@
    const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
    const { CleanWebpackPlugin } = require('clean-webpack-plugin')
    const resolve = (dirPath) => path.resolve(__dirname, dirPath)
-   
+
    module.exports = {
      mode: 'development',
      entry: {
@@ -130,8 +130,6 @@
      },
    }
    ```
-
-   
 
 3. 重新运行打包`npm run build`，运行`index.html`至浏览器，可以正常运行显示
 
@@ -254,9 +252,9 @@
    // src/main.js
    import { createApp } from 'vue'
    import App from './App.vue'
-   
+
    createApp(App).mount('#app')
-   
+
    // src/App.vue
    <template>
      <div id="app">{{ msg }}</div>
@@ -270,7 +268,7 @@
      },
    }
    </script>
-   
+
    <style scoped></style>
    ```
 
@@ -300,7 +298,7 @@
      },
    }
    ```
-   
+
 5. 执行`npm run build:vue`，发现可以正常打包，然后运行至浏览器，`dom结构`也正常渲染
 
 6. 执行`npm run dev:vue`，打开`http://localhost:9000/`也可以正常渲染
@@ -315,18 +313,18 @@
    <template>
      <div>ZBestPC-master/index.html`中`body部分</div>
    </template>
-   
+
    <script>
    import './css/public.css'
    import './css/index.css'
-   
+
    import 'jquery'
    import './js/public'
    import './js/nav'
-   
+
    export default {}
    </script>
-   
+
    <style scoped></style>
    ```
 
@@ -347,7 +345,7 @@
      },
    }
    </script>
-   
+
    <style scoped></style>
    ```
 
@@ -365,30 +363,27 @@
    import { createRouter, createWebHashHistory } from 'vue-router'
    import Home from './Home.vue'
    import Login from './Login.vue'
-   
+
    const routes = [
      { path: '/', redirect: '/home' },
      { path: '/home', component: Home },
      { path: '/login', component: Login },
    ]
-   
+
    const router = createRouter({
      history: createWebHashHistory(),
      routes, // `routes: routes` 的缩写
    })
-   
+
    export default router
    ```
 
 6. `main.js`引用`router.js`
 
    ```javascript
-   
    import router from './router'
    createApp(App).use(router).mount('#app')
    ```
-
-   
 
 7. 接着，新建`src/Login.vue`
 
@@ -415,14 +410,14 @@
        </form>
      </div>
    </template>
-   
+
    <script>
    // 引入 样式
    import './css/public.css'
    import './css/login.css'
    export default {}
    </script>
-   
+
    <style scoped></style>
    ```
 
@@ -431,7 +426,7 @@
    ```vue
    <template>
      // 修改为 router-view 内置组件
-     <router-view></router-view> 
+     <router-view></router-view>
    </template>
    <script>
    export default {
@@ -440,7 +435,7 @@
      },
    }
    </script>
-   
+
    <style scoped></style
    ```
 
@@ -453,11 +448,11 @@
    <script>
    import './css/public.css'
    import './css/index.css'
-   
+
    import 'jquery'
    import './js/public'
    import './js/nav'
-   
+
    export default {
      methods: {
        // 增加 点击登录调用方法，去登录界面
@@ -479,16 +474,16 @@
    import { createRouter, createWebHistory } from 'vue-router'
    import Home from './Home.vue'
    import Login from './Login.vue'
-   
+
    const routes = [
      { path: '/', redirect: '/home' },
      { path: '/home', component: Home },
      { path: '/login', component: Login },
    ]
-   
+
    const router = createRouter({
      history: createWebHistory(),
-     routes, 
+     routes,
    })
    export default router
    ```
@@ -499,7 +494,7 @@
 
    ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4828bf0344bb4b898754e7e9ea7a4ac4~tplv-k3u1fbpfcp-watermark.image?)
 
-4. 此时我们需要修改`devserver`中的配置`webpack.vue.config.js`[具体参考webpack-devserver文档](https://webpack.docschina.org/configuration/dev-server/)
+4. 此时我们需要修改`devserver`中的配置`webpack.vue.config.js`[具体参考 webpack-devserver 文档](https://webpack.docschina.org/configuration/dev-server/)
 
    ```javascript
    module.exports = {
@@ -516,7 +511,7 @@
            },
          },
        },
-     }
+     },
    }
    ```
 
@@ -536,7 +531,7 @@
 
 ## 05：Vue MPA 应用移植和工程问题解决
 
-目前我们的页面是单页面，打包后只有一个`index.html`，对seo 不是很友好，所以我们接下来进行`MPA`应用的一个开发
+目前我们的页面是单页面，打包后只有一个`index.html`，对 seo 不是很友好，所以我们接下来进行`MPA`应用的一个开发
 
 1. 复制一份`webpack.vue.config.js`为`webpack.vue.mpa.config.js`（注意：`entry` 是多入口，以及 `plugins` 中模板也需要多个）
 
@@ -657,7 +652,7 @@
        },
      },
    }
-   
+
    module.exports = config
    ```
 
@@ -668,7 +663,7 @@
    import { createApp } from 'vue'
    import Home from '../Home.vue'
    createApp(Home).mount('#app')
-   
+
    // src/mpa.login.js
    import { createApp } from 'vue'
    import Login from '../Login.vue'
@@ -682,7 +677,7 @@
      "scripts": {
        "dev:vueMpa": "webpack-dev-server --config ./build/webpack.vue.mpa.config.js",
        "build:vueMpa": "webpack build --config ./build/webpack.vue.mpa.config.js"
-     },
+     }
    }
    ```
 
@@ -710,15 +705,12 @@
    ```javascript
    // webpack.xxx.config.js 中的 VueLoaderPlugin 引入方式更改如下
    const { VueLoaderPlugin } = require('vue-loader')
-   
+
    // 入口文件出的 import Vue form "vue"改为
    import { createApp } from 'vue'
-   
+
    // 引入vue-router 方式 改为
    import { createRouter } from 'vue-router'
-   
+
    xxxx
    ```
-
-
-
