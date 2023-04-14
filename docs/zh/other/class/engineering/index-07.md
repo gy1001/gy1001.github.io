@@ -15,7 +15,7 @@
    const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
    const { CleanWebpackPlugin } = require('clean-webpack-plugin')
    const resolve = (dirPath) => path.resolve(__dirname, dirPath)
-
+   
    module.exports = {
      mode: 'development',
      entry: {
@@ -120,7 +120,20 @@
    }
    ```
 
-2. 重新运行打包`npm run build`，运行`index.html`至浏览器，可以正常运行显示
+2. 修改`package.json`中的打包命令，如下
+
+   ```javascript
+   {
+     "scripts": {
+       "build": "webpack build --config ./build/webpack.config.js",
+       "dev": "webpack-dev-server --config ./build/webpack.config.js",
+     },
+   }
+   ```
+
+   
+
+3. 重新运行打包`npm run build`，运行`index.html`至浏览器，可以正常运行显示
 
 ## 02：完成 Vue 项目构建前的准备工作
 
@@ -243,8 +256,7 @@
    import App from './App.vue'
    
    createApp(App).mount('#app')
-
-
+   
    // src/App.vue
    <template>
      <div id="app">{{ msg }}</div>
@@ -258,7 +270,7 @@
      },
    }
    </script>
-
+   
    <style scoped></style>
    ```
 
@@ -282,15 +294,13 @@
    ```javascript
    {
      "scripts": {
-       "build": "webpack build --config ./build/webpack.config.js",
-       "dev": "webpack-dev-server --config ./build/webpack.config.js",
         // 添加如下脚本
        "dev:vue": "webpack-dev-server --config ./build/webpack.vue.config.js",
        "build:vue": "webpack build --config ./build/webpack.vue.config.js"
      },
    }
    ```
-
+   
 5. 执行`npm run build:vue`，发现可以正常打包，然后运行至浏览器，`dom结构`也正常渲染
 
 6. 执行`npm run dev:vue`，打开`http://localhost:9000/`也可以正常渲染
@@ -370,7 +380,17 @@
    export default router
    ```
 
-6. 接着，新建`src/login.vue`
+6. `main.js`引用`router.js`
+
+   ```javascript
+   
+   import router from './router'
+   createApp(App).use(router).mount('#app')
+   ```
+
+   
+
+7. 接着，新建`src/Login.vue`
 
    ```vue
    <template>
@@ -406,7 +426,7 @@
    <style scoped></style>
    ```
 
-7. 这里我们要修改`App.vue`，如下
+8. 这里我们要修改`App.vue`，如下
 
    ```vue
    <template>
@@ -424,11 +444,11 @@
    <style scoped></style
    ```
 
-8. 修改首页中的登录方法
+9. 修改首页中的登录方法
 
    ```vue
    <template>
-       <a @click="toLogin" id="login">登录</a>
+     <a @click="toLogin" id="login">登录</a>
    </template>
    <script>
    import './css/public.css'
@@ -449,14 +469,14 @@
    </script>
    ```
 
-9. 运行`npm run dev:vue`，打开`http://localhost:9000/`首页正常显示，点击登录跳转登录页面，也正常显示
+10. 运行`npm run dev:vue`，打开`http://localhost:9000/`首页正常显示，点击登录跳转登录页面，也正常显示
 
 ### 使用 history 模式
 
-1. 我们修改`router.js`中为`createWebHashHistory`
+1. 我们修改`router.js`中为`createWebHistory`
 
    ```javascript
-   import { createRouter, createWebHashHistory } from 'vue-router'
+   import { createRouter, createWebHistory } from 'vue-router'
    import Home from './Home.vue'
    import Login from './Login.vue'
    
@@ -467,7 +487,7 @@
    ]
    
    const router = createRouter({
-     history: createWebHashHistory(),
+     history: createWebHistory(),
      routes, 
    })
    export default router
@@ -673,9 +693,9 @@
    <a href="login.html" id="login">登录</a>
    ```
 
-5. 重新运行`npm run dev:vueMap`命令，打开`http://localhost:9000/`首页正常显示，点击登录跳转登录页面
+5. 重新运行`npm run dev:vueMpa`命令，打开`http://localhost:9000/`首页正常显示，点击登录跳转登录页面
 
-6. 重新运行`npm run build:vueMap`命令，打开`dist/index.html`，中可以到页面正常渲染，点击登录按钮，正常跳转显示
+6. 重新运行`npm run build:vueMpa`命令，打开`dist/index.html`，中可以到页面正常渲染，点击登录按钮，正常跳转显示
 
 ## 06：Vue2 升级 Vue3 原理讲解+构建脚本升级
 
