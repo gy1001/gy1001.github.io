@@ -335,6 +335,162 @@
 
 ## 07：首页 vue3 语法升级
 
+1. 目前首页的`js`代码还是按照之前的老的方式`data、methods、components`等等方式，
+
+2. 接下来我们使用`vue3`的新语法特性`setup`来进行改造
+
+   ```vue
+   <script>
+   import { ref, computed, onMounted, reactive } from "vue";
+   import headTop from "../../components/header/head";
+   import {
+     cityGuess,
+     hotcity as hotcityApi,
+     groupcity as groupcityApi,
+   } from "../../service/getData";
+   
+   export default {
+     components: {
+       headTop,
+     },
+     setup() {
+       const guessCity = ref(""); //当前城市
+       const guessCityid = ref(""); //当前城市id
+       let hotcity = reactive([]); //热门城市列表
+       const groupcity = ref({}); //所有城市列表
+       //将获取的数据按照A-Z字母开头排序
+       const sortgroupcity = computed(() => {
+         let sortobj = {};
+         for (let i = 65; i <= 90; i++) {
+           if (groupcity.value[String.fromCharCode(i)]) {
+             sortobj[String.fromCharCode(i)] =
+               groupcity.value[String.fromCharCode(i)];
+           }
+         }
+         return sortobj;
+       });
+   
+       onMounted(() => {
+         // 获取当前城市
+         cityGuess().then((res) => {
+           guessCity.value = res.name;
+           guessCityid.value = res.id;
+         });
+   
+         //获取热门城市
+         hotcityApi().then((res) => {
+           hotcity = res;
+         });
+   
+         //获取所有城市
+         groupcityApi().then((res) => {
+           groupcity.value = res;
+         });
+       });
+       const reload = () => {
+         window.location.reload();
+       };
+       return {
+         guessCity,
+         guessCityid,
+         hotcity,
+         groupcity,
+         sortgroupcity,
+         reload,
+       };
+     },
+   };
+   </script>
+   ```
+
 ## 08：vuex 和 vue-router 移植要点解析
 
+1. 这里可以参照之前的`main.js`中引入`vue-router`、`vuex`，以及`router.js`、`store.js`作为参考
+
+2. `vuex`中`store`的获取，参考文档[https://vuex.vuejs.org/zh/guide/composition-api.html](https://vuex.vuejs.org/zh/guide/composition-api.html)
+
+   ```javascript
+   import { useStore } from 'vuex'
+   
+   export default {
+     setup () {
+       const store = useStore()
+     }
+   }
+   ```
+
+3. `vue-router`的获取参考文档[https://router.vuejs.org/zh/guide/advanced/composition-api.html](https://router.vuejs.org/zh/guide/advanced/composition-api.html)
+
+   ```javascript
+   import { useRouter, useRoute } from 'vue-router'
+   
+   export default {
+     setup() {
+       const router = useRouter()
+       const route = useRoute()
+   
+       function pushWithQuery(query) {
+         router.push({
+           name: 'search',
+           query: {
+             ...route.query,
+           },
+         })
+       }
+     },
+   }
+   ```
+
 ## 09：vue3.2 setup 语法糖升级
+
+Vue 3.2 以后增加了 setup 语法糖，首页语法可以更改为如下
+
+```vue
+// script 标签中增加 setup 属性，代表使用 setupy 语法糖特性
+<script setup>
+import { ref, computed, onMounted, reactive } from "vue";
+import headTop from "../../components/header/head";
+import {
+  cityGuess,
+  hotcity as hotcityApi,
+  groupcity as groupcityApi,
+} from "../../service/getData";
+
+const guessCity = ref(""); //当前城市
+const guessCityid = ref(""); //当前城市id
+let hotcity = reactive([]); //热门城市列表
+const groupcity = ref({}); //所有城市列表
+//将获取的数据按照A-Z字母开头排序
+const sortgroupcity = computed(() => {
+  let sortobj = {};
+  for (let i = 65; i <= 90; i++) {
+    if (groupcity.value[String.fromCharCode(i)]) {
+      sortobj[String.fromCharCode(i)] = groupcity.value[String.fromCharCode(i)];
+    }
+  }
+  return sortobj;
+});
+
+onMounted(() => {
+  // 获取当前城市
+  cityGuess().then((res) => {
+    guessCity.value = res.name;
+    guessCityid.value = res.id;
+  });
+
+  //获取热门城市
+  hotcityApi().then((res) => {
+    hotcity = res;
+  });
+
+  //获取所有城市
+  groupcityApi().then((res) => {
+    groupcity.value = res;
+  });
+});
+const reload = () => {
+  window.location.reload();
+};
+</script>
+```
+
