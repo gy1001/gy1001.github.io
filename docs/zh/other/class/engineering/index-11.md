@@ -386,6 +386,36 @@ module.exports = {
 
 ## 07：利用 webpack5 cache 特性大幅提升构建性能
 
+### 利用缓存提升二次构建速度
+
+cache 默认在 node_modules/.cache/terser-plugin 文件下，通过 SHA 或者 base64 编码之前的文件处理结果，并保存文件映射关系，方便下一次处理文件时可以查看之前同文件（同内容）是否有可用缓存，默认存放在内存中，可以修改将缓存存放在硬盘中
+
+背景：webpack4 在运行时是有缓存的，只不过缓存只存在于内存中。所以，一旦 webpack 的运行程序被关闭，这些缓存就丢失了。这就导致我们 npm run start/build 的时候根本无缓存可用，而在 webpack5 中，cache 配置了除了原本的 true 和 false 外，还增加了许多自配置项。可以将缓存文件存储在硬盘中
+
+* type: 缓存类型。值为 memory 或者 filesystem, 分别代表基于内存的临时缓存，以及基于文件系统的持久化缓存。在选择 filesystem 的情况下，下面介绍的其他属性生效
+
+* cacheDirectory: 缓存目录。默认目录为 node_modules/.cache/webpack
+
+* name: 缓存名称。同时也是 cacheDirectory中的子目录命名，默认值为 webpack 的 ${config.name}-${config.mode}
+
+* cacheLocation: 缓存真正的存放地址。默认使用的是上述两个属性的组合：
+
+  path.resolve(cache.cacheDirectory, cache.name) 该属性在赋值情况下将忽略上面的 cacheDirectory 和 name 属性
+
+```javascript
+// vue.config.js
+module.exports = {
+	configureWebpack: smp.wrap({
+    cache: {
+      type: "filesystem",
+      cacheDirectory: path.resolve(__dirname, "./node_modules/.temp_cache"),
+    },
+  })
+}
+```
+
+
+
 ## 08：image-webpack-loader 实现图片 5 倍压缩
 
 ## 09：purgecss-webpack-plugin 优化 css 体积
