@@ -258,7 +258,80 @@
 
 ## 06：接口升级+图片链接升级
 
+1. 修改`src/config/fetch.js`中的借口地址
 
+   ```javascript
+   // 40 行改为如下 
+   const response = await fetch("http://cangdu.org:8001" + url, requestConfig);
+   ```
+
+2. 这样回到浏览器就可以看到页面中已经正常请求返回
+
+3. 下面我们来处理图片的一个请求错误问题
+
+4. 打开`src/config/env.js`可以看到这里配置了图片地址（根据不同的环境返回不同的配置）,更改为如下
+
+   ```javascript
+   if (process.env.NODE_ENV == "development") {
+     // imgBaseUrl = "/img/";
+     imgBaseUrl = "//elm.cangdu.org/img/"; // 把本地的图片改为线上
+   } else if (process.env.NODE_ENV == "production") {
+     baseUrl = "//elm.cangdu.org";
+     imgBaseUrl = "//elm.cangdu.org/img/";
+   }
+   ```
+
+5. 目前图片就可以正常渲染了
+
+6. 接着我们回到首页`http://localhost:8081/home`可以看到，首页的一个样式有所丢失导致页面渲染效果不对
+
+   ```html
+   // 页面中显示
+   <ul class="citylistul clear">
+     <router-link
+       tag="li"
+       v-for="item in hotcity"
+       :to="'/city/' + item.id"
+       :key="item.id"
+     >
+       {{ item.name }}
+     </router-link>
+   </ul>
+   ```
+
+   这里我们看到`router-link`写了一个`tag="li"`属性，在旧版本中是会渲染成`li`标签的，旧版本中对应的`css`也是依照这个逻辑
+
+   ```scss
+   .citylistul {
+     li {
+       float: left;
+       text-align: center;
+       color: $blue;
+       border-bottom: 0.025rem solid $bc;
+       border-right: 0.025rem solid $bc;
+       @include wh(25%, 1.75rem);
+       @include font(0.6rem, 1.75rem);
+     }
+     li:nth-of-type(4n) {
+       border-right: none;
+     }
+   }
+   ```
+
+   但是目前在新版本中查看浏览器可以看到，渲染的是一个`a`标签
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e337caef235f4e09aada892e689e26e2~tplv-k3u1fbpfcp-watermark.image?)
+
+   所以需要进行更改`css`中的`li`问`a`即可
+
+   ```scss
+   .citylistul {
+     a { ... }
+     a:nth-of-type(4n) { ... }
+   }
+   ```
+
+   这样首页渲染效果就正常了
 
 ## 07：首页 vue3 语法升级
 
