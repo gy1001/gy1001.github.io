@@ -210,15 +210,8 @@
 
    > 报错信息如下
    >
-   > vue-router.mjs?23bd:35 [Vue Router warn]: <router-view> can no longer be used directly inside <transition> or <keep-alive>.
-   > Use slot props instead:
-   >
-   > <router-view v-slot="{ Component }">
-   >   <transition>
-   >     <component :is="Component" />
-   >   </transition>
-   > </router-view>
-
+   > vue-router.mjs?23bd:35 [Vue Router warn]: \<router-view\> can no longer be used directly inside \<transition\> or \<keep-alive\>
+   
    ```vue
    // 更改为如下包裹方式
    <template>
@@ -237,7 +230,7 @@
      </div>
    </template>
    ```
-
+   
 4. `router.js`中有报错，需要更改
 
    报错信息如下
