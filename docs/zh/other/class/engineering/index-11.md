@@ -112,7 +112,89 @@ module.exports = {
 
 ## 04：构建性能优化之多进程thread-loader
 
+### 多进程/多实例 thread-loader
+
+> [thread-loader:https://github.com/webpack-contrib/thread-loader](https://github.com/webpack-contrib/thread-loader)
+>
+> [webpack 之 thread-loader:https://www.webpackjs.com/loaders/thread-loader/](https://www.webpackjs.com/loaders/thread-loader/)
+
+```javascript
+npm install thread-loader -D
+
+// webpack.base.config.js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: "thread-loader",
+            options: {
+              workers: 3,
+            },
+          },
+     				// {
+            //   loader: "babel-loader",
+            //   options: {
+            //     presets: ["@babel/preset-env"],
+            //     plugins: ["@babel/plugin-transform-runtime"],
+            //   },
+            // },
+          },
+        ],
+      },
+    ],
+  },
+}
+```
+
+当然还有其他的可选方案
+
+* parallel-webpack
+* HappyPack
+
+但是由于 happyPack 原作者对 js 的兴趣逐渐丢失，所以之后维护很少，webpack4 之后推荐使用 thread-loader
+
+#### [Vue-cli之parallel：https://cli.vuejs.org/zh/config/#parallel](https://cli.vuejs.org/zh/config/#parallel)
+
+对于 vue-cli，官方有一个配置选项
+
+> ### [parallel](https://cli.vuejs.org/zh/config/#parallel)
+>
+> - Type: `boolean`
+>
+> - Default: `require('os').cpus().length > 1`
+>
+>   是否为 Babel 或 TypeScript 使用 `thread-loader`。该选项在系统的 CPU 有多于一个内核时自动启用，仅作用于生产构建。
+
+```javascript
+// vue.config.js
+module.exports = {
+  // parallel 选项
+  parallel: true,
+  configureWebpack: smp.wrap({
+    resolve: {
+      extensions: ["", ".js", ".vue", ".less", ".css", ".scss"],
+      alias: {
+        src: path.resolve(__dirname, "./src"), // 注意这里路径有所更改
+        assets: path.resolve(__dirname, "./src/assets"), // 注意这里路径有所更改
+        components: path.resolve(__dirname, "./src/components"), // 注意这里路径有所更改
+      },
+    },
+    plugins: [
+      new BundleAnalyzerPlugin({
+        analyzerMode: "disabled", // 不启动展示打包报告的http服务器
+      }),
+    ],
+  }),
+};
+```
+
 ## 05【精华】webpack5分包策略详解
+
+
 
 ## 06：分包文件拷贝和模板的自动引用
 
