@@ -209,29 +209,35 @@ module.exports = {
 
 ```javascript
 // build/weback.dll.config.js
-const path = require("path");
-const webpack = require("webpack");
-const dllPath = "../dll";
+const path = require('path')
+const webpack = require('webpack')
+const dllPath = '../dll'
 
 module.exports = {
-  mode: "production",
+  mode: 'production',
   devtool: false,
   entry: {
-    vue: ["vue", "vue-router", "showdown", "better-scroll"],
+    vue: ['vue', 'vue-router', 'showdown', 'better-scroll'],
   },
   output: {
     path: path.join(__dirname, dllPath),
-    filename: "[name].dll.js",
-    library: "[name]_[fullhash]",
+    filename: '[name].dll.js',
+    library: '[name]_[fullhash]',
   },
   plugins: [
     new webpack.DllPlugin({
-      path: path.join(__dirname, dllPath, "[name]-manifest.json"),
-      name: "[name]_[fullhash]",
+      path: path.join(__dirname, dllPath, '[name]-manifest.json'),
+      name: '[name]_[fullhash]',
       context: process.cwd(),
     }),
   ],
-};
+}
+```
+
+这里需要安装`webpack webpack-cli`
+
+```shell
+npm install webpack webpack-cli -D
 ```
 
 接下来在`package.json`中增加打包命令
@@ -279,21 +285,21 @@ module.exports = {
 
    ```javascript
    // vue.config.js
-   const CopyWebpackPlugin = require("copy-webpack-plugin");
-   
+   const CopyWebpackPlugin = require('copy-webpack-plugin')
+
    module.exports = {
      configureWebpack: smp.wrap({
        plugins: [
          new CopyWebpackPlugin({
            patterns: [
              {
-               from: path.resolve(__dirname, "./dll/vue.dll.js"),
-               to: path.resolve(__dirname, "./dist/js/vue.dll.js"),
+               from: path.resolve(__dirname, './dll/vue.dll.js'),
+               to: path.resolve(__dirname, './dist/js/vue.dll.js'),
              },
            ],
          }),
-       ]
-     })
+       ],
+     }),
    }
    ```
 
@@ -311,25 +317,25 @@ module.exports = {
 
    ```javascript
    // vue.config.js
-   
+
+   const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin')
    // 注意这里我们需要关闭 SpeedMeasuurePlugin 插件，否则引用不成功
    const smp = new SpeedMeasuurePlugin({
      disable: true,
-   });
-   
+   })
+
    module.exports = {
      configureWebpack: smp.wrap({
        plugins: [
-         ...
-         new AddSsetHtmlWebpackPlugin({
-           filepath: path.resolve(__dirname, "./dll/vue.dll.js"),
+         ...new AddAssetHtmlWebpackPlugin({
+           filepath: path.resolve(__dirname, './dll/vue.dll.js'),
          }),
-       ]
-     })
+       ],
+     }),
    }
    ```
 
-3. 其实在这里我们用`add-asset-html-webpack-plugin`引用这个`vue.dll.js`时，它会帮助我们进行拷贝到dist 目录下
+3. 其实在这里我们用`add-asset-html-webpack-plugin`引用这个`vue.dll.js`时，它会帮助我们进行拷贝到 dist 目录下
 
 4. 所以我们不需要进行 复制 dll 文件，在配置文件中删除 copy-webpack-plugin 的使用即可，整体下来配置文件 `vue.config.js`内容如下
 
@@ -342,7 +348,7 @@ module.exports = {
    });
    // const CopyWebpackPlugin = require("copy-webpack-plugin");
    const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
-   const AddSsetHtmlWebpackPlugin = require("add-asset-html-webpack-plugin");
+   const AddAssetHtmlWebpackPlugin = require("add-asset-html-webpack-plugin");
    module.exports = {
      parallel: false,
      configureWebpack: smp.wrap({
@@ -370,7 +376,7 @@ module.exports = {
          //     },
          //   ],
          // }),
-         new AddSsetHtmlWebpackPlugin({
+         new AddAssetHtmlWebpackPlugin({
            filepath: path.resolve(__dirname, "./dll/vue.dll.js"),
          }),
        ],
@@ -392,30 +398,239 @@ cache 默认在 node_modules/.cache/terser-plugin 文件下，通过 SHA 或者 
 
 背景：webpack4 在运行时是有缓存的，只不过缓存只存在于内存中。所以，一旦 webpack 的运行程序被关闭，这些缓存就丢失了。这就导致我们 npm run start/build 的时候根本无缓存可用，而在 webpack5 中，cache 配置了除了原本的 true 和 false 外，还增加了许多自配置项。可以将缓存文件存储在硬盘中
 
-* type: 缓存类型。值为 memory 或者 filesystem, 分别代表基于内存的临时缓存，以及基于文件系统的持久化缓存。在选择 filesystem 的情况下，下面介绍的其他属性生效
+- type: 缓存类型。值为 memory 或者 filesystem, 分别代表基于内存的临时缓存，以及基于文件系统的持久化缓存。在选择 filesystem 的情况下，下面介绍的其他属性生效
 
-* cacheDirectory: 缓存目录。默认目录为 node_modules/.cache/webpack
+- cacheDirectory: 缓存目录。默认目录为 node_modules/.cache/webpack
 
-* name: 缓存名称。同时也是 cacheDirectory中的子目录命名，默认值为 webpack 的 ${config.name}-${config.mode}
+- name: 缓存名称。同时也是 cacheDirectory 中的子目录命名，默认值为 webpack 的 ${config.name}-${config.mode} 比如：default-production
 
-* cacheLocation: 缓存真正的存放地址。默认使用的是上述两个属性的组合：
+- cacheLocation: 缓存真正的存放地址。默认使用的是上述两个属性的组合：
 
   path.resolve(cache.cacheDirectory, cache.name) 该属性在赋值情况下将忽略上面的 cacheDirectory 和 name 属性
 
 ```javascript
 // vue.config.js
 module.exports = {
-	configureWebpack: smp.wrap({
+  configureWebpack: smp.wrap({
     cache: {
-      type: "filesystem",
-      cacheDirectory: path.resolve(__dirname, "./node_modules/.temp_cache"),
+      type: 'filesystem',
+      cacheDirectory: path.resolve(__dirname, './node_modules/.temp_cache'),
     },
+  }),
+}
+```
+
+[Cache 官方文档: https://webpack.docschina.org/configuration/cache/#root](https://webpack.docschina.org/configuration/cache/#root)
+
+## 08：image-webpack-loader 实现图片 5 倍压缩
+
+### 减少构建目标
+
+背景：当我们使用 loader 对项目进行编译的使用，webpack 是对我们整个项目进行处理的，这里也包括 node_modules 中的文件，这样会增加我们构建项目所消耗的时间，有没有办法可以跳过 node_modules 文件的处理呢，其实这个是有的，module/rules 中的 test、include、exclude 都是针对处理当前的 rule 的 loader 做范围限制的，loader 会针对依赖图中的所有 modules 进行匹配逻辑，如果匹配了，则用当前 loader 进行处理。在使用 loader 时可以通过 test、include、exclude 三个配置项来命中 Loader 要应用规则的文件，为了尽可能少的让文件被 Loader 处理，可以通过 include 去命中只有哪些文件需要被整理
+
+- exclude: 指定要排除的文件
+- inclue: 指定要包含的文件
+- exclude 优先级高于 include,在 include 和 exclude 中使用绝对路径数组，尽量避免 exclude,而更倾向于使用 include
+- 使用 include 和 exclude 指定需要处理的文件，忽略不需要处理的文件
+
+```javascript
+{
+   module: {
+      rules: [
+        {
+          test: /\.(gif|png|jpe?g|svg|webp)$/i,
+          exclude: /node_modules/,
+          loader: "xxx",
+        },
+      ],
+    },
+}
+```
+
+### 图片压缩
+
+背景：vue-cli 中已经默认帮我们做了很多优化处理，包括静态资源输出、样式处理、代码分割等等，我们需要自己手动配置的事情更少了，而图片压缩处理就是其中的一件，vue 项目中的图片文件过大，会导致打包体积增大，需要将大文件的图片进行压缩从而缩小打包体积。
+
+#### image-webpack-loader（已不更新）
+
+[image-webpack-loader 已归档不再更新:https://github.com/tcoopman/image-webpack-loader](https://github.com/tcoopman/image-webpack-loader)
+
+注意：安装 image-webpack-loader 之后打包的项目可能会遇到 Cannot find module image-gifsicle 报错，需要在 package.json 中 增加 image-gifsicle 然后在 node_modules 中删除 image-webpack-loader 后重新安装 cnpm install image-webpack-loader
+
+参考文档：[https://blog.csdn.net/weixin_57605398/article/details/121944815](https://blog.csdn.net/weixin_57605398/article/details/121944815)
+
+```javascript
+npm install image-webpack-loader -D
+
+// vue.config.js
+module.exports = {
+ configureWebpack: smp.wrap({
+   module: {
+    rules: [
+      {
+        test: /\.(gif|png|jpe?g|svg)$/i,
+        use: [
+          {
+            loader: "image-webpack-loader",
+            options: {
+              mozjpeg: {
+                progressive: true,
+              },
+              // optipng.enabled: false will disable optipng
+              optipng: {
+                enabled: false,
+              },
+              pngquant: {
+                quality: [0.65, 0.9],
+                speed: 4,
+              },
+              gifsicle: {
+                interlaced: false,
+              },
+              // the webp option will enable WEBP
+              webp: {
+                quality: 75,
+              },
+            },
+          },
+        ],
+      },
+    ],
+  },
+ })
+}
+```
+
+运行`npm run build`,新版本中的运行保如下错误
+
+```shell
+ Failed to compile with 1 error                                  13:53:35
+
+ error  in ./src/images/activity.png
+
+Syntax Error: Error
+
+
+ ERROR  HookWebpackError: Cannot read properties of undefined (reading 'toString')
+HookWebpackError: Cannot read properties of undefined (reading 'toString')
+    at /Users/gaoyuan/Downloads/vue2-elm-master/node_modules/.store/webpack@5.79.0/node_modules/webpack/lib/HookWebpackError.js:65:13
+    at eval (eval at create (/Users/gaoyuan/Downloads/vue2-elm-master/node_modules/.store/tapable@2.2.1/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:38:1)
+-- inner error --
+TypeError: Cannot read properties of undefined (reading 'toString')
+    at /Users/gaoyuan/Downloads/vue2-elm-master/node_modules/.store/webpack@5.79.0/node_modules/webpack/lib/cache/PackFileCacheStrategy.js:1217:53
+    at async Promise.all (index 62)
+```
+
+暂时没有找到解决方案
+
+#### 目前推荐使用：image-minimizer-webpack-plugin
+
+[建议使用 ImageMinimizerWebpackPlugin:https://www.webpackjs.com/plugins/image-minimizer-webpack-plugin/](https://www.webpackjs.com/plugins/image-minimizer-webpack-plugin/)
+
+```shell
+npm install image-minimizer-webpack-plugin imagemin --save-dev
+```
+
+官方文档：图片有两种压缩方式
+
+1. [Lossless](https://en.wikipedia.org/wiki/Lossless_compression) (without loss of quality).
+2. [Lossy](https://en.wikipedia.org/wiki/Lossy_compression) (with loss of quality).
+
+**Recommended imagemin plugins for lossless optimization**
+
+```shell
+npm install imagemin-gifsicle imagemin-jpegtran imagemin-optipng imagemin-svgo --save-dev
+```
+
+**Recommended imagemin plugins for lossy optimization**
+
+```shell
+npm install imagemin-gifsicle imagemin-mozjpeg imagemin-pngquant imagemin-svgo --save-dev
+```
+
+```javascript
+// vue.config.js
+const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin')
+module.exports = {
+  configureWebpack: smp.wrap({
+    module: {
+      rules: [
+        {
+          test: /\.(jpe?g|png|gif|svg)$/i,
+          type: 'asset',
+        },
+      ],
+    },
+    optimization: {
+      minimizer: [
+        new ImageMinimizerPlugin({
+          minimizer: {
+            implementation: ImageMinimizerPlugin.imageminMinify,
+            options: {
+              plugins: [
+                ['gifsicle', { interlaced: true }],
+                ['jpegtran', { progressive: true }],
+                ['optipng', { optimizationLevel: 5 }],
+                // Svgo configuration here https://github.com/svg/svgo#configuration
+                [
+                  'svgo',
+                  {
+                    plugins: [
+                      {
+                        name: 'preset-default',
+                        params: {
+                          overrides: {
+                            removeViewBox: false,
+                            addAttributesToSVGElement: {
+                              params: {
+                                attributes: [
+                                  { xmlns: 'http://www.w3.org/2000/svg' },
+                                ],
+                              },
+                            },
+                          },
+                        },
+                      },
+                    ],
+                  },
+                ],
+              ],
+            },
+          },
+        }),
+      ],
+    },
+  }),
+}
+```
+
+重新运行`npm run build`可以最终看到`dist`目录下, `activity.xxx.png`由最开始的 300 多 k 减少为 181kb 左右
+
+## 09：purgecss-webpack-plugin 优化 css 体积
+
+[purgecss-webpack-plugin:https://github.com/FullHuman/purgecss/tree/main/packages/purgecss-webpack-plugin](https://github.com/FullHuman/purgecss/tree/main/packages/purgecss-webpack-plugin)
+
+背景：一个项目经过长期的迭代更新，可能会产生一些无用的 css 样式更新，如果将这些无用的样式文件进行打包会增加项目体积，如果使用人工删除的方式会增加工作量，css 能不能像 js 那样通过 tree shaking 的方式将没有使用到的样式文件进行删除呢？purgecss-webpack-plugin 就是帮我们把项目中一些没有使用过的代码删除，减少项目体积的插件
+
+```javascript
+npm install purgecss-webpack-plugin glob -D
+
+const { PurgeCSSPlugin } = require("purgecss-webpack-plugin");
+const glob = require("glob");
+const PATHS = {
+  src: path.join(__dirname, "src"),
+};
+// vue.config.js
+module.exports = {
+  configureWebpack: smp.wrap({
+    plugins: [
+      ...
+      new PurgeCSSPlugin({
+        paths: glob.sync(`${PATHS.src}/**/*`, { nodir: true }),
+      }),
+    ]
   })
 }
 ```
 
-
-
-## 08：image-webpack-loader 实现图片 5 倍压缩
-
-## 09：purgecss-webpack-plugin 优化 css 体积
+重新打包`npm run build`可以看到 css 文件夹使用插件之前为 309k 左右，使用插件后，内部多了一些`xxx.css.map`，其他的`css`文件总大小为 12kb 左右
