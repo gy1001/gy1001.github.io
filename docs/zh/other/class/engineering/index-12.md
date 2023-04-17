@@ -404,7 +404,84 @@ module.exports = {
 
 [文档：https://github.com/mzgoddard/hard-source-webpack-plugin](https://github.com/mzgoddard/hard-source-webpack-plugin)
 
-04: webpack4和5构建结果对比
+## 04: webpack4和5构建结果对比
+
+### 资源模块处理
+
+* webpack4 中处理字符图标等文件需要单独引入 loader 进行处理（以图片为例子）
+
+  ```javascript
+  npm install url-loader file-loader -S
+  
+  {
+    test: /\.(png|jpe?g|gif|svg)$/, // 处理图片新增代码
+    loader: "url-loader",
+    options: {
+      name: "[name].[hash:5].[ext]",
+      limit: 100 * 1024,
+      outputPath: "images"
+    }
+  }
+  ```
+
+* webpack5 中允许使用资源文件（字体、图标等）而无需配置额外 loader
+
+  > 资源模块类型（asset modules types）通过四种新的模块类型，来替换所有的 loader
+
+* asset/resource 发送一个单独的文件并导出 URL，之前通过 file-loader 实现
+
+* asset/inline 导出一个资源的 data URL，之前通过 url-loader 实现
+
+* asset/source 导出资源的源代码，之前通过使用 raw-loader 实现
+
+* asset 在导出一个 data URL 和发送一个单独的文件之间自动选择，之前通过使用 url-loader 并且配置资源体积限制实现
+
+### 代码实操
+
+#### webpack4 
+
+1. 我们在 webpack4-demo 项目下的新建 `assets/images`文件夹, 并放入一张图片，比如`a.png`
+
+2. 我们在`src/index.js`中增加如下代码
+
+   ```javascript
+   const aImg = require('../assets/images/a.png')
+   const img = new Image()
+   img.src = aImg
+   document.body.insertBefore(img, document.body.firstChild)
+   ```
+
+3. 修改`webpack.config.js`，增加如下配置
+
+   ```javascript
+   module.exports = {
+     module: {
+       rules: [
+         {
+           test: /\.(png|jpe?g|gif|svg)$/, // 处理图片新增代码
+           loader: 'url-loader',
+           options: {
+             name: '[name].[hash:5].[ext]',
+             limit: 10 * 1024,
+             outputPath: 'images',
+           },
+         },
+       ],
+     },
+   }
+   ```
+
+4. 安装依赖库
+
+   ```shell
+   npm installl file-loder url-loader -D
+   ```
+
+5. 运行打包命令`npm run build`
+
+#### webpack5 
+
+
 
 05: webpack5高级特性：URIs解析
 
