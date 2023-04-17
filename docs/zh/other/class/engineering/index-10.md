@@ -36,7 +36,7 @@
    "vue": "^2.1.0",
    "vue-router": "^2.1.1",
    "vuex": "^2.0.0"
-
+   
    // 或者也可以执行以下命令
    npm uninstall vue vue-router vuex
    ```
@@ -49,7 +49,7 @@
    "vuex": "^4.0.0"
    ```
 
-3. 配置 vue3 所需要的依赖(把原有 devDependencies 全部删除), 并修改执行脚本
+3. 配置 vue3 所需要的依赖(把原有 devDependencies 全部删除), 并**修改执行脚本**
 
    ```json
    {
@@ -63,7 +63,7 @@
      },
      "scripts": {
        "dev": "vue-cli-service serve",
-       "build": "vue-cli serve build"
+       "build": "vue-cli-service build"
      }
    }
    ```
