@@ -520,9 +520,49 @@ module.exports = {
 
 ## 05: webpack5高级特性：URIs解析
 
+### URIS
+
+> 更新文档内容
+>
+> Webpack5 支持在请求中处理协议
+>
+> * 支持 data: 支持 Base64 或者原始编码。MimeType 可以在 module.rule  中被映射到加载器和模块类型。例如：import x from "data:text/javascript,export default 42"
+> * 支持 file: 支持引入本地资源文件（非项目中资源）
+> * 支持 http(s): 需要通过 new webapck.experiments.schmemesHttp(s)UrlPlugin() 选择加入。
+>   * 默认情况下，当目标为 Web 时，这些 URI 会导致对外部资源的请求（他们是外部资源）
+
+```javascript
+// data  
+import data from "data:text/javascript,export default 'hello webapck4'"
+console.log(data)
+
+// file
+import file from "file:///Users/gaoyuan/Desktop/demo/a.png"
+const addImg = document.querySelector(".addImg")
+addImg.setAttributes("src", data)
+
+// https
+// webpack.config.js
+experiments: {
+  buildHttp: {
+    allowedUris: [
+      "https://fast-learn-oss.youbaobao.xyz/",
+      "http://hp.hpbb.me//upload/20171108173745476048.jpeg?x-oss-process"
+    ],
+    frozen: false,
+    cacheLocation: false,
+    upgrade: true
+  }
+}
+```
+
 ## 06: webpack5高级特性：TreeShaking和SideEffects 
 
+
+
 ## 07: webpack5高级特性：模块联邦
+
+
 
 ## 08: webpack5高级特性：PackageExports
 
