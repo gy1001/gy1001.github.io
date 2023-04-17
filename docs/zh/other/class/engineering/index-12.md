@@ -296,6 +296,114 @@ webpack 5.79.0 compiled successfully in 139 ms
 
 ## 03: webpack缓存插件hard-source-webpack-plugin
 
+cache 这个功能实在 webpack4 以后才产生的
+
+而对于早期版本，如果想使用缓存，并且是物理缓存的话可以使用这个插件
+
+从`vue-cli`和`create-react-app`中可以知道并没有实用dll，
+是因为：**Webpack 4 的打包性能足够好的，dll继续维护的必要了。**
+
+更好的代替者`DLL，选择hard-source-webpack-plugin`
+
+```javascript
+npm install hard-source-webpack-plugin -D
+
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+
+module.exports = {
+  // ......
+  plugins: [
+    new HardSourceWebpackPlugin() // <- 直接加入这行代码就行
+  ]
+}
+```
+
+1. 我们在`webapck4-demo`中进行安装
+
+   ```bash
+   npm install hard-source-webpack-plugin -D
+   ```
+
+2. 我们先修改`packages.json`中的`cache`为false,即：不使用缓存的情况下，看下这个打包的一个时间过程,并且删除`node_modules/.cache`目录
+
+   ```javascript
+   const path = require('path')
+   module.exports = {
+     mode: 'production',
+     ...
+     cache: false,
+   }
+   ```
+
+3. 重新执行`npm run build`，打印日志如下
+
+   ```bash
+   Hash: 4331f7fd8bd86e286a6d
+   Version: webpack 4.46.0
+   Time: 1664ms
+   Built at: 2023/04/17 下午5:20:55
+       Asset      Size  Chunks             Chunk Names
+   common.js  60.6 KiB       0  [emitted]  common
+     main.js  1.56 KiB       1  [emitted]  main
+   Entrypoint main = common.js main.js
+   ```
+
+4. 再次执行`npm run build`,打印日志如下
+
+   ```bash
+   Hash: 929d247d9241bcef072a
+   Version: webpack 4.46.0
+   Time: 396ms
+   Built at: 2023/04/17 下午5:24:18
+       Asset      Size  Chunks             Chunk Names
+   common.js  60.6 KiB       0  [emitted]  common
+     main.js  1.56 KiB       1  [emitted]  main
+   Entrypoint main = common.js main.js
+   ```
+
+5. 查看`node_modules/.cache`目录下已经产生了缓存目录(`/webpack4-demo/node_modules/.cache/terser-webpack-plugin`),有点奇怪，没有禁用掉，
+
+6. 我们增加如下插件配置
+
+   ```javascript
+   const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
+   module.exports = {
+     plugins: [new HardSourceWebpackPlugin()],
+   }
+   ```
+
+7. 执行`npm run build`.打印日志如下
+
+   ```javascript
+   Hash: 929d247d9241bcef072a
+   Version: webpack 4.46.0
+   Time: 450ms
+   Built at: 2023/04/17 下午5:29:34
+       Asset      Size  Chunks             Chunk Names
+   common.js  60.6 KiB       0  [emitted]  common
+     main.js  1.56 KiB       1  [emitted]  main
+   Entrypoint main = common.js main.js
+   ```
+
+8. 再次执行`npm run build`.打印日志如下
+
+   ```bash
+   Hash: e439ca4d2cf3a8a49531
+   Version: webpack 4.46.0
+   Time: 305ms
+   Built at: 2023/04/17 下午5:30:27
+       Asset      Size  Chunks             Chunk Names
+   common.js  60.6 KiB       0  [emitted]  common
+     main.js  1.56 KiB       1  [emitted]  main
+   Entrypoint main = common.js main.js
+   ```
+
+9. 可以看到`node_modules`下的缓存目录多了一个`node_modules/.cache/hard-source`
+
+10. 同样的，这个插件也是至此一些配置选项的
+
+[文档：https://github.com/mzgoddard/hard-source-webpack-plugin](https://github.com/mzgoddard/hard-source-webpack-plugin)
+
 04: webpack4和5构建结果对比
 
 05: webpack5高级特性：URIs解析
