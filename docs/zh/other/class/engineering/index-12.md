@@ -109,15 +109,6 @@
 
 ### webpack4 中
 
-```javascript
-npm install hard-source-webpack-plugin -D
-
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
-module.exports = {
-  plugins: [new HardSourceWebpackPlugin()],
-}
-```
-
 目前`src/index.js`中内容较少，我们新安装一个 vue
 
 ```shell
@@ -449,6 +440,12 @@ module.exports = {
    const img = new Image()
    img.src = aImg
    document.body.insertBefore(img, document.body.firstChild)
+   
+   // 也可以如下写
+   // const aImg = require('../assets/images/a.png')
+   // const img = document.createElement('img')
+   // img.src = aImg
+   // document.body.insertBefore(img, document.body.firstChild)
    ```
 
 3. 修改`webpack.config.js`，增加如下配置
@@ -461,6 +458,7 @@ module.exports = {
            test: /\.(png|jpe?g|gif|svg)$/, // 处理图片新增代码
            loader: 'url-loader',
            options: {
+           	esModule: false, // 这里设置为false，否则打包出来是 [object Module]
              name: '[name].[hash:5].[ext]',
              limit: 10 * 1024,
              outputPath: 'images',
@@ -477,16 +475,54 @@ module.exports = {
    npm installl file-loder url-loader -D
    ```
 
-5. 运行打包命令`npm run build`
+5. 运行打包命令`npm run build`，新建`dist/index.html`,引用`dist/main.js`，打开至浏览器就可以看到图片渲染效果
 
 #### webpack5 
 
+1. 我们在 webpack4-demo 项目下的新建 `assets/images`文件夹, 并放入一张图片，比如`a.png`
 
+2. 我们在`src/index.js`中增加如下代码
 
-05: webpack5高级特性：URIs解析
+   ```javascript
+   const aImg = require('../assets/images/a.png')
+   const img = document.createElement('img')
+   img.src = aImg
+   document.body.insertBefore(img, document.body.firstChild)
+   ```
 
-06: webpack5高级特性：TreeShaking和SideEffects 
+3. 修改`webpack.config.js`，增加如下配置
 
-07: webpack5高级特性：模块联邦
+   ```javascript
+   module.exports = {
+     ...
+     module: {
+       rules: [
+         {
+           test: /\.(png|jpe?g|gif|svg)$/, // 处理图片新增代码
+           type: 'asset',
+           parser: {
+             dataUrlCondition: {
+               maxSize: 1024,
+             },
+           },
+           generator: {
+             filename: 'images/[name].[hash:5][ext]',
+           },
+         },
+       ],
+     },
+   }
+   ```
 
-08: webpack5高级特性：PackageExports
+4. 重新运行`npm run build`，打包`dist`目录
+
+5. 新建`dist/index.html`,引用`dist/main.js`，打开至浏览器就可以看到图片渲染效果
+
+## 05: webpack5高级特性：URIs解析
+
+## 06: webpack5高级特性：TreeShaking和SideEffects 
+
+## 07: webpack5高级特性：模块联邦
+
+## 08: webpack5高级特性：PackageExports
+
