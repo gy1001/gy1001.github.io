@@ -520,7 +520,7 @@ module.exports = {
 
 ## 05: webpack5高级特性：URIs解析
 
-### URIS
+### [URIS](https://www.webpackjs.com/blog/2020-10-10-webpack-5-release/#uris)
 
 > 更新文档内容
 >
@@ -556,6 +556,93 @@ experiments: {
 }
 ```
 
+### webpack 4 中
+
+
+
+### webpack 5 中
+
+1. 在`webpack5-demo/src/index.js`中加入以下代码
+
+   ```javascript
+   import data from "data:text/javascript,export default 'hello webpack5'"
+   console.log(data)
+   ```
+
+2. 重新运行`npm run build`，在`dist/main.js`中搜索`hello webpack5`,发现可以搜索到
+
+   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c9e78f8e38024eaf8dab99efc076f3a5~tplv-k3u1fbpfcp-watermark.image?)
+
+3. 在`webpack5-demo/src/index.js`中再加入以下代码
+
+   ```javascript
+   // 这个路径根据自己的实际地址来处理
+   import file from "file:///Users/gaoyuan/Desktop/webpack-feature/demo1/webpack5-demo/assets/images/a.png"
+   const addImg = document.querySelector(".addImg")
+   addImg.setAttributes("src", file)
+   ```
+
+4. 重新运行`npm run build`,可以看到`dist/images`下多了`b.xxx.png`,而对应的`dist/main.js`中相关代码如下
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/580ae2303a7f4dfabf98ef012062880e~tplv-k3u1fbpfcp-watermark.image?)
+
+5. xx
+
+   ```javascript
+   import ModuleA from 'http://imooc-dev.youbaobao.xyz/test/moduleA.js'
+   console.log(ModuleA.a + 2)
+   ```
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/848a94c964c7413a8652a5b121420e82~tplv-k3u1fbpfcp-watermark.image?)
+
+6. 执行`npm run build`,报错信息如下
+
+   ```javascript
+   ERROR in external "https://imooc-dev.youbaobao.xyz/test/moduleA.js"
+   The target environment doesn't support dynamic import() syntax so it's not possible to use external type 'module' within a script
+   Error: The target environment doesn't support dynamic import() syntax so it's not possible to use external type 'module' within a script
+   ```
+
+7. 因为这个特性是一个实验特性，所以我们需要修改配置文件`webpack.config.js`
+
+   ```javascript
+   module.exports = {
+     experiments: {
+       buildHttp: {
+         // 白名单域名
+         allowedUris: ['http://imooc-dev.youbaobao.xyz'],
+         // 还可以增加额外的特性
+         cacheLocation: false,
+       },
+     },
+   }
+   ```
+
+8. 再次执行`npm run build`，可以看到一个报错信息
+
+   ```javascript
+   ERROR in ./src/index.js 18:0-68
+   Module not found: Error: http://imooc-dev.youbaobao.xyz/test/moduleA.js has no lockfile entry and lockfile is frozen
+   ```
+
+9. 我们修改`webpack.config.js`，如下
+
+   ```javascript
+   module.exports = {
+     experiments: {
+       buildHttp: {
+         allowedUris: ['http://imooc-dev.youbaobao.xyz'],
+         cacheLocation: false,
+         frozen: false,
+       },
+     },
+   }
+   ```
+
+10. 再次执行`npm run build`，打包成功，打开`dist/main.js`中寻找结果，如下(直接把结果计算后，赋值)
+
+    ![image-20230418183209214](/Users/gaoyuan/Library/Application Support/typora-user-images/image-20230418183209214.png)
+
 ## 06: webpack5高级特性：TreeShaking和SideEffects 
 
 
@@ -565,4 +652,12 @@ experiments: {
 
 
 ## 08: webpack5高级特性：PackageExports
+
+
+
+
+
+## 参考文章
+
+[webpack5新特性:https://juejin.cn/post/6983985071699001357#heading-1](https://juejin.cn/post/6983985071699001357#heading-1)
 
