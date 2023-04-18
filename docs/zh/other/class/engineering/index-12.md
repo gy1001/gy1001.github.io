@@ -645,7 +645,164 @@ experiments: {
 
 ## 06: webpack5高级特性：TreeShaking和SideEffects 
 
+### Tree Shaking
 
+> tree shaking 是一个术语，通常用于描述移除 JavaScript 上下文中的未引用代码，webapck5 现在能够跟踪对导出的嵌套属性的访问。这可以改变重新导出命名空间对象的 tree shaking，
+>
+> Webpack4 没有分析模块的导出和引用之间的依赖关系，webpack5  有一个新的选项 optimization.innerGraph 在生产模式下默认是开启的，他可以对模块中的标志进行分析，找出导出和引用之间的依赖关系
+
+### 更高效的 TreeShaking
+
+#### webpack4 tree shaking
+
+在 webpack4 中是没有办法对 export default 中的对象进行 tree shaking 的
+
+例如下面的，demo1 中导出一个对象含有 a、b 属性，index.js 中调用了 obj.a(), 而最终打包后的 main.js，中既有 a 属性又有 b 属性
+
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0d676667e6cd412a8260c1b6329f1ea2~tplv-k3u1fbpfcp-watermark.image?)
+
+#### webpack5 tree shaking
+
+而在 webpack5 中可以看到最终的 main.js 中直接把静态的结果放入到最后相应位置上，来解决 tree shaking 的问题。
+
+![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/463301f5ac224fd688d72d13436efd02~tplv-k3u1fbpfcp-watermark.image?)
+
+### SideEffect
+
+[将文件标记为 side-effect-free(无副作用):https://webpack.docschina.org/guides/tree-shaking/#mark-the-file-as-side-effect-free](https://webpack.docschina.org/guides/tree-shaking/#mark-the-file-as-side-effect-free)
+
+#### webpack4 中
+
+1. 注释`src/index.js`中所有内容，删除 `dist` 目录，添加如下代码
+
+   ```javascript
+   // index.js 
+   import "./lib"
+   console.log(1)
+   
+   // src/lib.js ：注意此文件并没有 export 任何内容
+   console.log("lib")
+   ```
+
+2. 运行`npm run build`,`dist/main.js`结果如下(可以看到 lib 文件有被加载进来)
+
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f84714ff4e2748b9bc35a4e1b825f885~tplv-k3u1fbpfcp-watermark.image?)
+
+3. 接下来我们注释掉`src/lib.js`中的代码
+
+   ```javascript
+   // console.log('lib')
+   ```
+
+4. 再次进行打包`npm run build`，可以看到如下结果
+
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0c95f99b792d46ed932fc886faa1a8a1~tplv-k3u1fbpfcp-watermark.image?)
+
+5. 我们再次修改`inde.js`文件如下
+
+   ```javascript
+   // 可能会需要先安装 vue 那就执行 npm install vue -S
+   
+   import './lib'
+   import "vue" // 引入 vue 但是没有使用
+   console.log(1)
+   ```
+
+6. 再次进行打包`npm run build`，可以看到如下结果(`dist/main.js`瞬间变大了，因为它把`vue`包全部打入进入了，它并不能准确的判断出我们有没有使用，为了避免出错，就直接全部打入)
+
+   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/06f5904f757842d0b32daeabbd47a545~tplv-k3u1fbpfcp-watermark.image?)
+
+#### webpack5 中
+
+1. 注释`src/index.js`中所有内容，删除 `dist` 目录，添加如下代码
+
+   ```javascript
+   // index.js 
+   import "./lib"
+   console.log(1)
+   
+   // src/lib.js ：注意此文件并没有 export 任何内容
+   console.log("lib")
+   ```
+
+2. 运行`npm run build`,`dist/main.js`结果如下(可以看到 lib 文件有被加载进来,但是文件内容已经少了很多)
+
+   ![image-20230418230349844](/Users/yuangao/Library/Application Support/typora-user-images/image-20230418230349844.png)
+
+3. 接下来我们注释掉`src/lib.js`中的代码
+
+   ```javascript
+   // console.log('lib')
+   ```
+
+4. 再次进行打包`npm run build`，可以看到如下结果(就剩下一行代码了)
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8b84bcde16e94e2a9ad082420bd0020d~tplv-k3u1fbpfcp-watermark.image?)
+
+5. 我们再次修改`index.js`文件如下
+
+   ```javascript
+   // 可能会需要先安装 vue 那就执行 npm install vue -S
+   
+   import './lib'
+   import "vue" // 引入 vue 但是没有使用
+   console.log(1)
+   ```
+
+6. 再次进行打包`npm run build`，可以看到如下结果(`dist/main.js`并没有变大，因为`webpack5`默认采取了一种激进的方式，我认为你并没有使用，所以我并不对它进行打包)，当然它采取了一种相对只能的方式来进行处理，比如如果你有 对其进行 console.log 之类的，他就会打进去
+
+   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6aabc76e412148a6bdc4030fd2f80951~tplv-k3u1fbpfcp-watermark.image?)
+
+7. 上面步骤显示了 webpack5 和 webpack4 之间的一个打包差异，那么我们能不能自己进行控制呢？
+
+8. 答案是可以的，这里就要用到这个新特性 `Effects`
+
+9. 首先我们更改`index.js`文件内容如下
+
+   ```javascript
+   import './lib'
+   // import "vue" // 引入 vue 但是没有使用
+   console.log(1)
+   
+   // lib.js 打开注释
+   console.log("lig") // 这里前面我们已经看到了，如果注释，webpack5  打包就会忽略这个文件，打包结果只有一行，如果不注释，这行代码就会被打包进打包文件
+   ```
+
+10. 我们可以修改`package.json`中的`Effects`来处理
+
+    ```javascript
+    {
+      "sideEffects": true // 表示我认为它有副作用
+    }
+    ```
+
+11. 再次进行打包`npm run build`，可以看到如下结果
+
+    ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2b99780c01744a9281bf6edf54110055~tplv-k3u1fbpfcp-watermark.image?)
+
+12. 再次修改`package.json`中的`Effects`来处理
+
+    ```javascript
+    {
+      "sideEffects": false
+    }
+    ```
+
+13. 再次进行打包`npm run build`，可以看到如下结果
+
+    ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8b84bcde16e94e2a9ad082420bd0020d~tplv-k3u1fbpfcp-watermark.image?)
+
+14. 同时我们还可以对某个文件进行精准控制，比如修改`sideEffects`为如下结果
+
+    ```javascript
+    {
+      "sideEffects": [
+        "./src/lib.js" // 认为它有副作用，要打包
+      ]
+    }
+    ```
+
+15. 由此我们知道，除了常规的`import { a } from "moduleA"`的 tree shaking 方式以外，还有一个 `sideEffects` 方式来进行精准的 `tree shaking`（其实绝大多数情况下，是不需要进行更改的，使用默认值 false 让 webpack 进行决策即可，如果你发现打包结果与想要的效果不一致时，就可以检查是否是由于副作用导致了其他问题，从而可以使用`sideEffects`来进行精准控制）
 
 ## 07: webpack5高级特性：模块联邦
 
