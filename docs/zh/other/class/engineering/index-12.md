@@ -821,12 +821,288 @@ experiments: {
 
 这个方案是直接将一个应用的包应用于另一个应用，同时具备整体应用一起打包的公共依赖抽取能力。让应用具备模块化输出能力，其实开辟了一中新的应用形态，即“中心应用”，这个中心应用用于在线动态分布 Runtime 子模块，并不直接提供给用户使用。所有子应用都可以利用 Runtime 方式复用主要的 Npm 包和模块，更好的集成到主应用中
 
-1. 新建文件夹`demo2/app_a`以及`demo2/app_b`
-2. 
+1. 新建文件夹`demo2/app_a`（做为子应用）以及 `demo2/app_b` (b作为主应用)
+
+2. 终端进入`app_a`文件夹，执行命令
+
+   ```shell
+   npm init -y
+   ```
+
+3. 新建`app_a/webpack.config.js`(拷贝`demo1/webpack5-demo/webpack.config.js`，并增加 devServer 配置)
+
+   ```javascript
+   const path = require('path')
+   module.exports = {
+     mode: 'production',
+     entry: './src/index.js',
+     output: {
+       path: path.resolve(__dirname, 'dist'),
+       filename: '[name].js',
+     },
+     optimization: {
+       splitChunks: {
+         minSize: 1 * 1024,
+         chunks: 'all',
+         name: 'common',
+       },
+     },
+     // cache: true, 适合开发模式
+     // cache: true, //cache: true 与 cache: { type: 'memory' } 配置作用一致。 传入 false 会禁用缓存:
+     cache: {
+       type: 'filesystem',
+     },
+     module: {
+       rules: [
+         {
+           test: /\.(png|jpe?g|gif|svg)$/, // 处理图片新增代码
+           type: 'asset',
+           parser: {
+             dataUrlCondition: {
+               maxSize: 1024,
+             },
+           },
+           generator: {
+             filename: 'images/[name].[hash:5][ext]',
+           },
+         },
+       ],
+     },
+     experiments: {
+       buildHttp: {
+         // 白名单域名
+         allowedUris: ['http://imooc-dev.youbaobao.xyz'],
+         // 还可以增加额外的特性
+         cacheLocation: false,
+         frozen: false,
+       },
+     },
+     // 需要增加如下配置
+     devServer: {
+       host: 'localhost',
+       port: 3000,
+     },
+   }
+   ```
+
+4. 新建文件`src/index.js`，内容如下
+
+   ```javascript
+   function run() {
+     console.log('子应用启用中')
+   }
+   
+   export default run
+   ```
+
+5. 安装`webpack webpack-cli webpack-dev-server ` 模块
+
+   ```shell
+   npm install webpack webpack-cli webpack-dev-server -D
+   ```
+
+6. 接着我们修改`package.json`中的脚本命令
+
+   ```javascript
+   {
+     "scripts": {
+       "build": "webapck",
+       "start": "webpack server"
+     },
+   }
+   ```
+
+7. 执行  `npm run start` 来启动服务
+
+8. 此时打开 `http://localhost:3000/main.js`时就可以看到相应打包后的代码
+
+9. 接着处理 `app_b`
+
+10. 终端进 入 `app_b` 文件夹，执行命令
+
+    ```shell
+    npm init -y
+    ```
+
+11. 新建 `app_a/webpack.config.js` (拷贝`demo1/webpack5-demo/webpack.config.js`，并增加 `devServer plugins` 配置)
+
+    ```javascript
+    const path = require('path')
+    const HtmlWebpackPlugin = require('html-webpack-plugin')
+    
+    module.exports = {
+      mode: 'production',
+      entry: './src/index.js',
+      output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: '[name].js',
+      },
+      optimization: {
+        splitChunks: {
+          minSize: 1 * 1024,
+          chunks: 'all',
+          name: 'common',
+        },
+      },
+      // cache: true, 适合开发模式
+      // cache: true, //cache: true 与 cache: { type: 'memory' } 配置作用一致。 传入 false 会禁用缓存:
+      cache: {
+        type: 'filesystem',
+      },
+      module: {
+        rules: [
+          {
+            test: /\.(png|jpe?g|gif|svg)$/, // 处理图片新增代码
+            type: 'asset',
+            parser: {
+              dataUrlCondition: {
+                maxSize: 1024,
+              },
+            },
+            generator: {
+              filename: 'images/[name].[hash:5][ext]',
+            },
+          },
+        ],
+      },
+      experiments: {
+        buildHttp: {
+          // 白名单域名
+          allowedUris: ['http://imooc-dev.youbaobao.xyz'],
+          // 还可以增加额外的特性
+          cacheLocation: false,
+          frozen: false,
+        },
+      },
+      // 需要增加如下配置
+      devServer: {
+        host: 'localhost',
+        port: 3001,
+      },
+      plugins: [
+        new HtmlWebpackPlugin({
+          template: './public/index.html',
+        }),
+      ],
+    }
+    ```
+
+12. 由于`webpack-dev-server`默认会使用`public`作为静态资源文件夹
+
+13. 我们新建`app_b/public/index.html`，内容如下
+
+    ```html
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Main Module</title>
+      </head>
+      <body></body>
+    </html>
+    ```
+
+14. 新建文件`src/index.js`，内容如下
+
+    ```javascript
+    console.log('主应用启动中')
+    ```
+
+15. 安装`webpack webpack-cli webpack-dev-server ` 模块
+
+    ```shell
+    npm install html-webpack-plugin webpack webpack-cli webpack-dev-server -D
+    ```
+
+16. 接着我们修改`package.json`中的脚本命令
+
+    ```javascript
+    {
+      "scripts": {
+        "build": "webapck",
+        "start": "webpack server"
+      },
+    }
+    ```
+
+17. 执行  `npm run start` 来启动服务 http://localhost:3001/ 就可以在控制台看到输出信息
+
+18. 接下来就到了关键时候，这时候我们是启动了两个单独的服务，并且两个服务之间还没有任何的关联、联动
+
+19. 修改 app_a 中的 webpack.config.js 增加内容如下
+
+    ```javascript
+    const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin')
+    
+    module.exports = {
+      plugins: [
+        new ModuleFederationPlugin({
+          // 暴露的文件名称 
+          filename: 'app_a.js',
+          // 应用名，全局唯一，不可冲突。 
+          name: 'app_a',
+          // 远程应用暴露出的模块名。
+          exposes: {
+            './moduleA': './src/index.js',
+          },
+        }),
+      ],
+    }
+    ```
+
+20. 在 app_a 中重新运行 npm run start ，就会重新打包，从而向外部暴露一个模块
+
+21. 接着我们来到 app_b 中对暴露的模块进行一个接收,修改 package.json 如下
+
+    ```javascript
+    const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin')
+    
+    module.exports = {
+      plugins: [
+        new HtmlWebpackPlugin({
+          template: './public/index.html',
+        }),
+        // 增加插件
+        new ModuleFederationPlugin({
+          filename: 'app_b.js',
+          name: 'app_b',
+          // 远程访问地址入口 
+          remotes: {
+            app_a: 'app_a@http://localhost:3000/main.js',
+          },
+        }),
+      ],
+    }
+    ```
+
+22. 接这修改 app_a/src/index.js 中的代码
+
+    ```javascript
+    console.log('主应用启动中')
+    
+    import('app_a/moduleA')
+      .then((res) => {
+        const moduleA = res.default
+        console.log(moduleA())
+      })
+      .catch((err) => {
+        console.log(err, 11122)
+      })
+    ```
+
+23. 在 app_b 中启动脚本 npm run dev ,打开 localhost:3001 就可以看到控制台输出日志
+
+24. 目前本地运行报错，不知道为什么，？？？？？？？？？？？待解决
+
+    
 
 ## 08: webpack5高级特性：PackageExports
 
+### 支持全新的 node.js 生态特性
 
+> 现在支持 package.json 中的 exports 和 imports 字段，原生支持 Yarn Pnpm 更多细节参见[package exports](https://webpack.docschina.org/guides/package-exports/)
 
 
 
