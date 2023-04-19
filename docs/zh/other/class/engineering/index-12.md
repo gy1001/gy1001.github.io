@@ -641,7 +641,7 @@ experiments: {
 
 10. 再次执行`npm run build`，打包成功，打开`dist/main.js`中寻找结果，如下(直接把结果计算后，赋值)
 
-    ![image-20230418183209214](/Users/gaoyuan/Library/Application Support/typora-user-images/image-20230418183209214.png)
+    ![image-20230418183209214.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3af54be2c64a4f7fa52cbf3632c6c986~tplv-k3u1fbpfcp-watermark.image?)
 
 ## 06: webpack5高级特性：TreeShaking和SideEffects 
 
