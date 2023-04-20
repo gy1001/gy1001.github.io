@@ -4,7 +4,8 @@ import { copyCodePlugin } from 'vuepress-plugin-copy-code2'
 import { photoSwipePlugin } from 'vuepress-plugin-photo-swipe'
 import { commentPlugin } from 'vuepress-plugin-comment2'
 import { searchPlugin } from '@vuepress/plugin-search'
-
+// https://vuepress-theme-hope.github.io/v2/md-enhance/guide/mermaid.html#sequence-diagram
+import { mdEnhancePlugin } from 'vuepress-plugin-md-enhance'
 export default defineUserConfig({
   base: '/',
   head: [['meta', { name: 'referrer', content: 'no-referrer' }]],
@@ -93,6 +94,10 @@ export default defineUserConfig({
       serverURL: 'https://gy1001-comment.vercel.app',
       dark: 'auto',
       login: 'enable',
+    }),
+    mdEnhancePlugin({
+      // Enable mermaid
+      mermaid: true,
     }),
   ],
   markdown: {
