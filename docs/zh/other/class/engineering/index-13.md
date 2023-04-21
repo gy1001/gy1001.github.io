@@ -858,7 +858,163 @@ drwxr-xr-x   4 gaoyuan  staff   128  4 21 10:07 bin
    -rwxr-xr-x	gaoyuan	staff	package.json
    ```
 
+## 13：文件容量和创建时间的获取
 
+1. 新建`getFileSizeAndDate.js`文件，内容如下
 
+   ```javascript
+   module.exports = function getFileSizeAndDate(stat) {
+     const { mtime, size } = stat
+     const mtimes = new Date(mtime)
+     const month = mtimes.getMonth() + 1
+     const date = mtimes.getDate()
+     const hour = mtimes.getHours()
+     const minute = mtimes.getMinutes()
+     return size + '\t' + month + '月' + date + '日' + hour + ':' + minute
+   }
+   ```
 
+2. `index.js`文件进行引入
+
+   ```javascript
+   #!/usr/bin/env node
+   const parse = require('./parseArgs.js')
+   const auth = require('./auth.js')
+   const getFileType = require('./getFileType.js')
+   const getFileUser = require('./getFileUser.js')
+   // 引入 getFileSizeAndDate
+   const getFileSizeAndDate = require('./getFileSizeAndDate.js')
+   const { args, isAll, isList } = parse()
+   const fs = require('fs')
+   const dir = process.cwd()
+   let output = ''
+   let files = fs.readdirSync(dir)
+   if (!isAll) {
+     files = files.filter((file) => file.indexOf('.') > 0)
+   }
+   if (!isList) {
+     files.forEach((file) => (output += file + '              '))
+   } else {
+     files.forEach((file, index) => {
+       const stat = fs.statSync(file)
+       const mode = stat.mode
+       const authString = auth(mode)
+       const fileType = getFileType(mode)
+       const fileUser = getFileUser(stat)
+       // 获取文件时间、大小
+       const fileSizeAndDate = getFileSizeAndDate(stat)
+       output +=
+         fileType +
+         authString +
+         '\t' +
+         fileUser +
+         '\t' +
+         fileSizeAndDate +
+         '\t' +
+         file +
+         (index === files.length - 1 ? '' : '\n')
+     })
+   }
+   
+   console.log(output)
+   ```
+
+3. 打开终端执行命令,输入`imooc-ls -la`结果如下
+
+   ```bash
+   // imooc-ls -la 命令
+   gaoyuan@gaoyuandeMac imooc-ls % imooc-ls -la
+   -rwxr-xr-x	gaoyuan	staff	6148	4月21日10:16	.DS_Store
+   -rw-r--r--	gaoyuan	staff	42	4月21日10:18	.prettierrc.json
+   drwxr-xr-x	gaoyuan	staff	256	4月21日16:24	bin
+   -rwxr-xr-x	gaoyuan	staff	250	4月21日10:10	package.json
+   
+   // 系统命令
+   gaoyuan@gaoyuandeMac imooc-ls % ls -la
+   total 32
+   drwxr-xr-x@  6 gaoyuan  staff   192  4 21 10:18 .
+   drwx------@ 24 gaoyuan  staff   768  4 21 09:26 ..
+   -rwxr-xr-x@  1 gaoyuan  staff  6148  4 21 10:16 .DS_Store
+   -rw-r--r--   1 gaoyuan  staff    42  4 21 10:18 .prettierrc.json
+   drwxr-xr-x   8 gaoyuan  staff   256  4 21 16:24 bin
+   -rwxr-xr-x   1 gaoyuan  staff   250  4 21 10:10 package.json
+   ```
+
+## 14：文件夹下级文件数量功能开发
+
+1. 修改`index.js`文件，内容如下
+
+   ```javascript
+   #!/usr/bin/env node
+   const parse = require('./parseArgs.js')
+   const auth = require('./auth.js')
+   const getFileType = require('./getFileType.js')
+   const getFileUser = require('./getFileUser.js')
+   const getFileSizeAndDate = require('./getFileSizeAndDate.js')
+   const { args, isAll, isList } = parse()
+   const fs = require('fs')
+   const dir = process.cwd()
+   let output = ''
+   let files = fs.readdirSync(dir)
+   if (!isAll) {
+     files = files.filter((file) => file.indexOf('.') > 0)
+   }
+   if (!isList) {
+     files.forEach((file) => (output += file + '              '))
+   } else {
+     files.forEach((file, index) => {
+       const stat = fs.statSync(file)
+       // 是否是文件夹
+       const isDirectory = stat.isDirectory(file)
+       let size = 1
+       if (isDirectory) {
+         // 如果是文件夹，就读取内部的文件数量，并更改数量
+         const subDir = fs.readdirSync(file)
+         size = subDir.length
+       }
+       const mode = stat.mode
+       const authString = auth(mode)
+       const fileType = getFileType(mode)
+       const fileUser = getFileUser(stat)
+       const fileSizeAndDate = getFileSizeAndDate(stat)
+       output +=
+         fileType +
+         authString +
+         ' ' +
+         size +
+         ' ' +
+         fileUser +
+         '\t' +
+         fileSizeAndDate +
+         '\t' +
+         file +
+         (index === files.length - 1 ? '' : '\n')
+     })
+   }
+   
+   console.log(output)
+   ```
+
+2. 打开终端执行命令,输入`imooc-ls -la`结果如下
+
+   ```javascript
+   // imooc-ls 的脚本
+   gaoyuan@gaoyuandeMac imooc-ls % imooc-ls -la
+   -rwxr-xr-x 1 gaoyuan	staff	6148	4月21日10:16	.DS_Store
+   -rw-r--r-- 1 gaoyuan	staff	42	4月21日10:18	.prettierrc.json
+   drwxr-xr-x 6 gaoyuan	staff	256	4月21日16:24	bin
+   -rwxr-xr-x 1 gaoyuan	staff	250	4月21日10:10	package.json
+   
+   // 系统的脚本
+   gaoyuan@gaoyuandeMac imooc-ls % ls -la      
+   total 32
+   drwxr-xr-x@  6 gaoyuan  staff   192  4 21 10:18 .
+   drwx------@ 24 gaoyuan  staff   768  4 21 09:26 ..
+   -rwxr-xr-x@  1 gaoyuan  staff  6148  4 21 10:16 .DS_Store
+   -rw-r--r--   1 gaoyuan  staff    42  4 21 10:18 .prettierrc.json
+   drwxr-xr-x   8 gaoyuan  staff   256  4 21 16:24 bin
+   -rwxr-xr-x   1 gaoyuan  staff   250  4 21 10:10 package.json
+   ```
+
+## 15: 脚手架自动化测试流程讲解和脚本开发
 
