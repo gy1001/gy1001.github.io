@@ -651,16 +651,21 @@ drwxr-xr-x   4 gaoyuan  staff   128  4 21 10:07 bin
    ```javascript
    const fs = require('fs')
    module.exports = function getFileType(mode) {
-     const isDirectory = mode & fs.constants.S_IFDIR
-     const isFile = mode & fs.constants.S_IFREG
-     const isLink = mode & fs.constants.S_IFLNK
-   
+     // console.log(fs.constants.S_IFLNK) // 40960
+   	// console.log(fs.constants.S_IFREG) // 32768
+   	// console.log(fs.constants.S_IFDIR) // 16384
+     const isDirectory = (mode & fs.constants.S_IFDIR) === fs.constants.S_IFDIR
+     const isFile = (mode & fs.constants.S_IFREG) === fs.constants.S_IFREG
+     const isLink = (mode & fs.constants.S_IFLNK) === fs.constants.S_IFLNK
+   	// 注意：这里 link 类型的也是一个文件，所以 link 类型要先进行判断返回
      if (isDirectory) {
        return 'd'
-     } else if (isFile) {
-       return '-'
      } else if (isLink) {
        return 'l'
+     } else if (isFile) {
+       return '-'
+     } else {
+       return '-'
      }
    }
    ```
@@ -1017,4 +1022,339 @@ drwxr-xr-x   4 gaoyuan  staff   128  4 21 10:07 bin
    ```
 
 ## 15: 脚手架自动化测试流程讲解和脚本开发
+
+> [mocha 官网:https://mochajs.cn/#installation](https://mochajs.cn/#installation)
+
+1. 这里我们安装 `mocha`  
+
+   ```bash
+   npm install mocha -D
+   ```
+
+2. 新建`test/test.js`，内容如下
+
+   ```javascript
+   var assert = require('assert')
+   describe('Array', function () {
+     describe('#indexOf()', function () {
+       it('should return -1 when the value is not present', function () {
+         assert.equal([1, 2, 3].indexOf(4), -1)
+       })
+     })
+   })
+   ```
+
+3. `package.json`中增加脚本命令
+
+   ```javascript
+   {
+   	"scripts": {
+       "test": "mocha test/test.js"
+     },
+   }
+   ```
+
+4. 执行命令`npm run test`,结果如下
+
+   ```bash
+   gaoyuan@gaoyuandeMac imooc-ls % npm run test ./test/test.js
+   
+   > imooc-ls@1.0.0 test
+   > mocha "./test/test.js"
+     Array
+       #indexOf()
+         ✔ should return -1 when the value is not present
+     1 passing (12ms)
+   ```
+
+5. 修改`/test/test.js`,来测试我们`/bin/`文件夹下的功能函数
+
+   ```javascript
+   const parseArgs = require('../bin/parseArgs')
+   var assert = require('assert')
+   
+   describe('imooc-ls', function () {
+     describe('parseArgs', function () {
+       it('args test', function () {
+         const { args, isList, isAll } = parseArgs()
+         assert.equal(isList, false)
+         assert.equal(isAll, false)
+         assert.equal(args.length, 1)
+         assert.equal(args[0], 'test/test.js')
+       })
+     })
+   })
+   ```
+
+6. 重新执行命令`npm run test`,结果如下
+
+   ```bash
+   gaoyuan@gaoyuandeMac imooc-ls % npm run test
+   > imooc-ls@1.0.0 test
+   > mocha test/test.js
+     imooc-ls
+       parseArgs
+         ✔ args test
+     1 passing (10ms)
+   ```
+
+7. 新建`/test/test.arg.js`文件，内容如下
+
+   ```javascript
+   var assert = require('assert')
+   const parseArgs = require('../bin/parseArgs')
+   
+   describe('imooc-ls', function () {
+     describe('parseArgs', function () {
+       it('args test', function () {
+         const { args, isList, isAll } = parseArgs()
+         assert.equal(isList, true)
+         assert.equal(isAll, true)
+         assert.equal(args.length, 2)
+         assert.equal(args[0], 'test/test.arg.js')
+       })
+     })
+   })
+   ```
+
+8. `package.json`中新建脚本
+
+   ```json
+   {
+   	"scripts": {
+       "test:args": "mocha test/test.arg.js -la"
+     },
+   }
+   ```
+
+9. 运行脚本命令`npm run test:args`，结果如下
+
+   ```bash
+   gaoyuan@gaoyuandeMac imooc-ls % npm run test:args
+   > imooc-ls@1.0.0 test:args
+   > mocha test/test.arg.js -la
+     imooc-ls
+       parseArgs
+         ✔ args test
+     1 passing (11ms)
+   ```
+
+10. 接下来我们添加测试`getFileUser`函数功能的测试函数，修改`test/test.js`增加如下函数
+
+    ```javascript
+    var assert = require('assert')
+    const parseArgs = require('../bin/parseArgs')
+    const getFileUser = require('../bin/getFileUser')
+    
+    describe('imooc-ls', function () {
+      describe('parseArgs', function () {
+        it('args test', function () {
+         ...
+        })
+      })
+        
+      describe('getFileUser', function () {
+        it('get current user', function () {
+          const stat1 = { uid: 501, gid: 20 }
+          const user1 = getFileUser(stat1)
+          assert.equal(user1, 'gaoyuan' + '\t' + 'staff')
+        })
+        it('get root user', function () {
+          const stat2 = { uid: 0, gid: 0 }
+          const user2 = getFileUser(stat2)
+          assert.equal(user2, 'root' + '\t' + 'wheel')
+        })
+      })
+       
+    })
+    ```
+
+11. 重新执行脚本`npm run test`，结果如下
+
+    ```bash
+    gaoyuan@gaoyuandeMac imooc-ls % npm run test
+    > imooc-ls@1.0.0 test
+    > mocha test/test.js
+      imooc-ls
+        parseArgs
+          ✔ args test
+        getFileUser
+          ✔ get current user
+          ✔ get root user
+      3 passing (76ms)
+    ```
+
+12. 继续测试`getFileType`功能，修改`test/test.js`增加如下函数
+
+    ```javascript
+    var assert = require('assert')
+    
+    const parseArgs = require('../bin/parseArgs')
+    const getFileUser = require('../bin/getFileUser')
+    const getFileType = require('../bin/getFileType')
+    
+    describe('imooc-ls', function () {
+      describe('parseArgs', function () {
+        it('args test', function () {
+      	...
+        })
+      })
+    
+      describe('getFileUser', function () {
+        it('get current user', function () {
+         ...
+        })
+        it('get root user', function () {
+         ...
+        })
+      })
+    
+      describe('getFileType', function () {
+        it('is file', function () {
+          const mode = 32768 // file
+          const result = getFileType(mode)
+          assert.equal(result, '-')
+        })
+        it('is directory', function () {
+          const mode = 16384 // directory
+          const result = getFileType(mode)
+          assert.equal(result, 'd')
+        })
+        it('is link', function () {
+          const mode = 40960 // link
+          const result = getFileType(mode)
+          assert.equal(result, 'l')
+        })
+        it('block device', function () {
+          const mode = 24576 // block device
+          const result = getFileType(mode)
+          assert.equal(result, 'd')
+        })
+      })
+    })
+    ```
+
+13. 重新执行脚本`npm run test`，结果如下
+
+    ```bash
+    gaoyuan@gaoyuandeMac imooc-ls % npm run test
+    > imooc-ls@1.0.0 test
+    > mocha test/test.js
+      imooc-ls
+        parseArgs
+          ✔ args test
+        getFileUser
+          ✔ get current user
+          ✔ get root user
+        getFileType
+          ✔ is file
+          ✔ is directory
+          ✔ is link
+          ✔ block device
+      6 passing (88ms)
+    ```
+
+14. 接下里接续测试`auth`部分，修改`test/test.js`增加如下函数
+
+    ```javascript
+    var assert = require('assert')
+    const parseArgs = require('../bin/parseArgs')
+    const getFileUser = require('../bin/getFileUser')
+    const getFileType = require('../bin/getFileType')
+    const auth = require('../bin/auth')
+    
+    describe('imooc-ls', function () {
+      describe('parseArgs', function () {
+        it('args test', function () {
+         ...
+        })
+      })
+    
+      describe('getFileUser', function () {
+        it('get current user', function () {
+          ...
+        })
+        it('get root user', function () {
+          ...
+        })
+      })
+    
+      describe('getFileType', function () {
+        it('is file', function () {
+          ...
+        })
+        it('is directory', function () {
+          ...
+        })
+        it('is link', function () {
+         	...
+        })
+        it('block device', function () {
+          ...
+        })
+      })
+    
+      describe('getAuth', function () {
+        it('user rwx------', function () {
+          const mode = 4544 // user rwx
+          const result = auth(mode)
+          assert.equal(result, 'rwx------')
+        })
+        it('group ---rwx---', function () {
+          const mode = 4152 // group rwx
+          const result = auth(mode)
+          assert.equal(result, '---rwx---')
+        })
+        it('other ------rwx', function () {
+          const mode = 4103 // other rwx
+          const result = auth(mode)
+          assert.equal(result, '------rwx')
+        })
+        it('noe ---------', function () {
+          const mode = 4096 // none rwx
+          const result = auth(mode)
+          assert.equal(result, '---------')
+        })
+        it('bad mode', function () {
+          const mode = 0 // bad mode
+          const result = auth(mode)
+          assert.equal(result, '---------')
+        })
+        it('bad mode string', function () {
+          const mode = 'a' // bad mode string
+          const result = auth(mode)
+          assert.equal(result, '---------')
+        })
+      })
+    })
+    ```
+
+15. 重新执行脚本`npm run test`，结果如下
+
+    ```bash
+    gaoyuan@gaoyuandeMac imooc-ls % npm run test
+    > imooc-ls@1.0.0 test
+    > mocha test/test.js
+      imooc-ls
+        parseArgs
+          ✔ args test
+        getFileUser
+          ✔ get current user
+          ✔ get root user (41ms)
+        getFileType
+          ✔ is file
+          ✔ is directory
+          ✔ is link
+          ✔ block device
+        getAuth
+          ✔ user rwx------
+          ✔ group ---rwx---
+          ✔ other ------rwx
+          ✔ noe ---------
+          ✔ bad mode
+          ✔ bad mode string
+      13 passing (124ms)
+    ```
+
+    
 
