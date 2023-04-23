@@ -40,20 +40,20 @@
 5. 执行以下命令创建本地连接
 
    ```bash
-   sudo npm link 
+   sudo npm link
    ```
 
 6. 再次执行`imooc-build`可以看到如下内容
 
    ```bash
-   yuangao at yuandeMac-mini in /usr/local/bin 
+   yuangao at yuandeMac-mini in /usr/local/bin
    $ imooc-build
    imooc-build
    ```
 
 ## 02: 脚手架框架之框架搭建+参数解析
 
->  这里我们要使用到一个 commander 库，因为上一节中的脚手架参数获取方式不够灵活，实际开发很少会使用
+> 这里我们要使用到一个 commander 库，因为上一节中的脚手架参数获取方式不够灵活，实际开发很少会使用
 >
 > [comander:npm 官方文档](https://www.npmjs.com/package/commander)
 
@@ -79,12 +79,12 @@
    ```bash
    $ imooc-build --first -s
    error: option '-s, --separator <char>' argument missing // -s 后面必须需要参数
-   yuangao at yuandeMac-mini in ~/Desktop/imooc-build 
+   yuangao at yuandeMac-mini in ~/Desktop/imooc-build
    $ imooc-build --first -s test
    { first: true, separator: 'test' }  // 输出 options 参数
-   $ imooc-build -s --separator 
+   $ imooc-build -s --separator
    { separator: '--separator' }
-   $ imooc-build --separator -s 
+   $ imooc-build --separator -s
    { separator: '-s' }     // -s  --seperator 是一样的效果，且后面的是前面的参数
    ```
 
@@ -105,20 +105,19 @@
 5. 运行以下命令，结果如下
 
    ```bash
-   yuangao at yuandeMac-mini in ~/Desktop/imooc-build 
-   $ imooc-build -s / --first a/b/c  
+   yuangao at yuandeMac-mini in ~/Desktop/imooc-build
+   $ imooc-build -s / --first a/b/c
    [ 'a/b/c' ] // program.args 的值
    [ 'a' ]
    上述命令可以解释为：以 / 为参数 分割 /a/b/c 截取1个数
-   
+
    $ imooc-build --fitst a/b/c -s /
    error: unknown option '--fitst'
    (Did you mean --first?)
    这里脚手架会帮助我们匹配最接近的命令参数，并进行提示
    ```
 
-
-## 03：脚手架框架之subcommand解析
+## 03：脚手架框架之 subcommand 解析
 
 1. 修改`bin/imooc-build.js`为以下内容
 
@@ -131,7 +130,7 @@
    // const limit = options.first ? 1 : undefined
    // console.log(program.args)
    // console.log(program.args[0].split(options.separator, limit))
-   
+
    const { Command } = require('commander')
    const program = new Command()
    program
@@ -144,25 +143,25 @@
 2. 然后我们打开终端，执行命令：可以发现目前这个脚本已经具有了`-h(其实就是--help)`以及`-V(其实就是--version)`的命令
 
    ```bash
-   yuangao at yuandeMac-mini in ~/Desktop/imooc-build 
+   yuangao at yuandeMac-mini in ~/Desktop/imooc-build
    $ imooc-build -h
    Usage: imooc-build [options]
-   
+
    CLI to build javascript project
-   
+
    Options:
      -V, --version  output the version number
      -h, --help     display help for command
    $ imooc-build --help
    Usage: imooc-build [options]
-   
+
    CLI to build javascript project
-   
+
    Options:
      -V, --version  output the version number
      -h, --help     display help for command
-   
-   
+
+
    $ imooc-build -V
    0.0.1
    $ imooc-build --version
@@ -179,8 +178,7 @@
      .name('imooc-build')
      .description('CLI to build javascript project')
      .version('0.0.1')
-   program.parse()
-   
+
    // 增加如下内容
    program
      .command('split')
@@ -193,6 +191,8 @@
        const limit = options.first ? 1 : undefined
        console.log(args.split(options.separator, limit))
      })
+
+   program.parse()
    ```
 
 4. 然后我们打开终端，执行命令，结果如下
@@ -201,28 +201,28 @@
    $ imooc-build split --separator=/ a/b/c --first
    args a/b/c { separator: '/', first: true } // 这里打印的是 args
    [ 'a' ] // split hou 后的参数
-   
+
    $ imooc-build split --separator=/ a/b/c // 这里没有增加 --fist 参数
    args a/b/c { separator: '/' }
    [ 'a', 'b', 'c' ]
-   
-   $ imooc-build split -s=/ a/b/c         
+
+   $ imooc-build split -s=/ a/b/c
    args a/b/c { separator: '=/' } // 注意这里 separator 参数略有不同
    [ 'a/b/c' ]
-   
-   $ imooc-build split --separator / a/b/c        
+
+   $ imooc-build split --separator / a/b/c
    args a/b/c { separator: '/' }
    [ 'a', 'b', 'c' ]
-   
-   $ imooc-build split -s /  a/b/c        
+
+   $ imooc-build split -s /  a/b/c
    args a/b/c { separator: '/' }
    [ 'a', 'b', 'c' ]
    ```
 
-## 04：commander框架帮助文档生成规则
+## 04：commander 框架帮助文档生成规则
 
 > 1. 生成脚手架的帮助文档：imooc-build -h
-> 2. 生成脚手架command的帮助文档：imooc-build split -h / imooc-build help split
+> 2. 生成脚手架 command 的帮助文档：imooc-build split -h / imooc-build help split
 
 执行命令，可以看到如下结果
 
@@ -238,7 +238,7 @@ Options:
 
 Commands:
   split [options] <string>  Split string to array
-  help [command]   
+  help [command]
 
 $ imooc-build split -h
 Usage: imooc-build split [options] <string>
@@ -252,12 +252,12 @@ Options:
   --first                 display just the first substring
   -s, --separator <char>  separator char (default: ",")
   -h, --help              display help for command
-  
+
 $ imooc-build help split
 结果同上
 ```
 
-## 05：commander options基础特性解析
+## 05：commander options 基础特性解析
 
 ### options 的四种定义方式
 
@@ -280,7 +280,7 @@ $ imooc-build help split
 
 1. `const options = program.opts();`获取`options`
 
-> 不过这里获取的是全局的参数，而不是 某一个option 中的 options
+> 不过这里获取的是全局的参数，而不是 某一个 option 中的 options
 
 2. 比如在`bin/imooc-build.js`最后加入以下几句
 
@@ -324,7 +324,7 @@ console.log("options", options)
 2. 再次执行命令，效果如下(可以看到此时`globalOptions`和 上一步中的`options`结果一样)
 
    ```bash
-   yuangao at yuandeMac-mini in ~/Desktop/imooc-build 
+   yuangao at yuandeMac-mini in ~/Desktop/imooc-build
    $ imooc-build -d -s -p pizza split aaa --first
    options { debug: true, small: true, pizzaType: 'pizza' }
    globalOptions { debug: true, small: true, pizzaType: 'pizza' }
@@ -341,7 +341,7 @@ console.log("options", options)
      .name('imooc-build')
      .description('CLI to build javascript project')
      .version('0.0.1')
-   
+
    program
      .command('split')
      .description('Split string to array')
@@ -349,31 +349,314 @@ console.log("options", options)
      .option('--first', 'display just the first substring')
      .option('-s, --separator <char>', 'separator char', ',')
      .action((args, options) => {
-     	// 这里分别获取 options 和 globalOptions 
+       // 这里分别获取 options 和 globalOptions
        const p_options = program.opts()
-   		console.log('p_options', p_options)
-   		const globalOptions = program.optsWithGlobals()
-   		console.log('globalOptions', globalOptions)
+       console.log('p_options', p_options)
+       const globalOptions = program.optsWithGlobals()
+       console.log('globalOptions', globalOptions)
        const limit = options.first ? 1 : undefined
        console.log(args.split(options.separator, limit))
      })
-   
+
    program
      .option('-d, --debug', 'output extra debugging')
      .option('-s, --small', 'small pizza size')
      .option('-p, --pizza-type <type>', 'flavour of pizza')
-   
+
    program.parse()
    ```
 
 5. 我们继续执行在终端中执行命令，查看结果:（这里看到结果也是一样的）
 
    ```bash
-   yuangao at yuandeMac-mini in ~/Desktop/imooc-build 
-   $ imooc-build split aaa -d -s -p ppp 
+   yuangao at yuandeMac-mini in ~/Desktop/imooc-build
+   $ imooc-build split aaa -d -s -p ppp
    p_options { debug: true, small: true, pizzaType: 'ppp' }
    globalOptions { debug: true, small: true, pizzaType: 'ppp' }
    ```
 
 ### `.getOptionValue()` and `.setOptionValue()` work with a single option value
 
+##### getOptionValue
+
+> getOptionVaue 可以获得某一个选项的值
+>
+> 注意：这里是针对全局参数的一个方法
+
+1. 修改`build/imooc-build.js` 文件
+
+   ```javascript
+   ...
+   program
+     .command('split')
+     .description('Split string to array')
+     .argument('<string>', 'string to split')
+     .option('--first', 'display just the first substring')
+     .option('-s, --separator <char>', 'separator char', ',')
+   	.option("-e --extra", "extra for something")
+     .action((args, options) => {
+       console.log(program.getOptionValue('extra')) // 这里想通过 getOptionVaue 获得 extra 的值
+       const limit = options.first ? 1 : undefined
+       console.log(args.split(options.separator, limit))
+     })
+
+   program.parse()
+   ...
+   ```
+
+2. 执行命令以及结果如下
+
+   ```bash
+   $ imooc-build split aaa -e
+   undefined // 获取不到 split 内部的参数值
+   ```
+
+3. 修改`build/imooc-build.js` 文件
+
+   ```javascript
+   ...
+   program
+     .option('-d, --debug', 'output extra debugging')
+
+   program
+     .command('split')
+     .description('Split string to array')
+     .argument('<string>', 'string to split')
+     .option('--first', 'display just the first substring')
+     .option('-s, --separator <char>', 'separator char', ',')
+   	.option("-e --extra", "extra for something")
+     .action((args, options) => {
+       console.log(program.getOptionValue('debug')) // 这里想通过 getOptionValue 获得 debug 的值
+       const limit = options.first ? 1 : undefined
+       console.log(args.split(options.separator, limit))
+     })
+
+   program.parse()
+   ...
+   ```
+
+4. 执行命令以及结果如下
+
+   ```bash
+   $ imooc-build split aaa -d
+   true // 这里通过 getOptionValue 方法获得 debug 的值为 true
+   ```
+
+5. 那么我在`command("split")`中如何通过 `optsWithGlobals()`获取参数呢？
+
+6. 继续修改`build/imooc-build.js`文件，内容如下
+
+   ```javascript
+   ...
+   program
+     .option('-d, --debug', 'output extra debugging')
+
+   program
+     .command('split')
+     .description('Split string to array')
+     .argument('<string>', 'string to split')
+     .option('--first', 'display just the first substring')
+     .option('-s, --separator <char>', 'separator char', ',')
+   	.option("-e --extra", "extra for something")
+     .action((args, options) => {
+       console.log(program.commands[0].optsWithGlobals())
+       const limit = options.first ? 1 : undefined
+       console.log(args.split(options.separator, limit))
+     })
+
+   program.parse()
+   ...
+   ```
+
+7. 执行命令以及结果如下
+
+   ```bash
+   $  split aaa --first -s a -d
+   { separator: 'a', first: true, debug: true }
+   ```
+
+8. 这里由于`program.commands[0]`太过死板，我们也可以如下操作，`action`回调支持第三个参数
+
+   ```javascript
+   ...
+   program
+     .option('-d, --debug', 'output extra debugging')
+
+   program
+     .command('split')
+     .description('Split string to array')
+     .argument('<string>', 'string to split')
+     .option('--first', 'display just the first substring')
+     .option('-s, --separator <char>', 'separator char', ',')
+   	.option("-e --extra", "extra for something")
+     .action((args, options, cmd) => {
+       console.log(cmd.optsWithGlobals())
+     	console.log(cmd.opts())
+       const limit = options.first ? 1 : undefined
+       console.log(args.split(options.separator, limit))
+     })
+   program.parse()
+   ...
+   ```
+
+9. 执行命令以及结果如下(结果与上一步骤一致)
+
+   ```bash
+   $ imooc-build split aaa --first -s a -d
+   { separator: 'a', first: true, debug: true }
+   { separator: 'a', first: true }
+   ```
+
+10. 总结
+
+    - .opts: 获取当前实例的`options`,比如全局`program`获取全局`options`,`subcommand`获取局部`options`
+    - .optsWithGloabls: 获取全部`options`,全局获取全局`options`,`subcommand`获取全局+局部`options`
+
+## 06: commander options 高级特性解析
+
+### 支持连写
+
+1. 修改`bin/imooc-build.js`,内容如下
+
+   ```javascript
+   ...
+   program.option('-d, --debug', 'output extra debugging')
+   program
+     .command('split')
+     .description('Split string to array')
+     .argument('<string>', 'string to split')
+     .option('--first', 'display just the first substring')
+     .option('-s, --separator <char>', 'separator char', ',')
+     .option('-e --extra', 'extra for something')
+   	.option('-a --add [string]', 'add something')
+     .action((args, options, cmd) => {
+       console.log(cmd.optsWithGlobals())
+       const limit = options.first ? 1 : undefined
+       console.log(args.split(options.separator, limit))
+     })
+
+   program.parse()
+   ...
+   ```
+
+2. 运行命令及结果如下
+
+   ```bash
+   // 因为 program 定义了 -d command('split')后面还有 -e -a xxxoption，所以可以连写
+   // 注意：由于 -a 后面有参数，所以要特别注意顺序，否则可能存在参数获取不是你想要的情况
+   $ imooc-build split aaa  -dea aaa
+   { separator: ',', extra: true, add: 'aaa', debug: true }
+   ```
+
+### option() 参数\<string\>与[string]的区别
+
+> \<string\>表示参数必须, 不加参数时候，会进行报错提示，
+>
+> [string]表示参数可选，不加参数时候，获取参数类型变为布尔值
+
+1. 在上面那个例子中 `split`后面参数是`<string>`，是必须得，而`option('-a --add [string]')`这里是可选的
+
+2. 运行如下命令，以及结果如下
+
+   ```bash
+   $ imooc-build split aaa  -dea aaa // 这里 -a 后面有参数，根据打印获得的值是 aaa
+   { separator: ',', extra: true, add: 'aaa', debug: true }
+   $ imooc-build split aaa  -dea  // 这里 -a 后面没有参数，根据打印获得的值是 布尔值 true
+   { separator: ',', extra: true, add: true, debug: true }
+   ```
+
+### option() 后面也支持默认值
+
+1. 比如上面的示例代码中
+
+   ```javascript
+   ...
+     .option('-s, --separator <char>', 'separator char', ',') // 这里 -s 后面必须有参数，而这里代了默认值
+   ...
+   ```
+
+2. 运行命令以及相应结果如下
+
+   ```bash
+   $ imooc-build split aaa
+   { separator: ',' } // 默认值
+   $ imooc-build split aaa -s // 如果后面写了 -s 或者 --separator 后面就必须跟一个数
+   error: option '-s, --separator <char>' argument missing
+   $ imooc-build split aaa --separator // 如果后面写了 -s 或者 --separator 后面就必须跟一个数
+   error: option '-s, --separator <char>' argument missing
+   ```
+
+### Required option：必须的 option
+
+> 目前示例中的 option 均是可选的，就是不加也不会报错
+>
+> ```
+> .requiredOption
+> ```
+
+1. 修改`bin/imooc-build.js`,增加代码如下
+
+   ```javascript
+   ...
+   program.requiredOption('-c, --cheese <type>', 'pizza must have cheese')
+
+   program.parse()
+   ```
+
+2. 运行命令及相应结果如下
+
+   ```bash
+   $ imooc-build split aaa
+   error: required option '-c, --cheese <type>' not specified
+   ```
+
+3. 当前如果赋值了默认值，比如
+
+   ```javascript
+   ...
+   program.requiredOption('-c, --cheese <type>', 'pizza must have cheese', "default-cheese")
+
+   program.parse()
+   ```
+
+4. 运行命令以及相应结果如下
+
+   ```bash
+   $ imooc-build split aaa // 这里就不会报错
+   ```
+
+### Variadic option
+
+> 可以通过 ... 支持多个参数, 隔断方式是 正常分割 或者 -- 或者紧挨着
+
+1. 修改`bin/imooc-build.js`，结果如下
+
+   ```javascript
+   ...
+   program
+     .option('-n, --number <numbers...>', 'specify numbers')
+     .option('-l, --letter [letters...]', 'specify letters')
+   program.parse()
+
+   console.log('Options: ', program.opts())
+   console.log('Remaining arguments: ', program.args)
+   ```
+
+2. 运行如下命令及相应结果如下
+
+   ```bash
+   // 第一种方式：正常书写
+   $ imooc-build -n 1 2 3 --letter a b c
+   Options:  { number: [ '1', '2', '3' ], letter: [ 'a', 'b', 'c' ] }
+   Remaining arguments:  []
+
+   // 第二种方式: = 等于号
+   $ imooc-build --letter=A -n80 operand
+   Options:  { letter: [ 'A' ], number: [ '80' ] }
+   Remaining arguments:  [ 'operand' ]
+
+   // 第三种方式: -- 分割方式
+   $ imooc-build --letter -n 1 -n 2 3 -- operand
+   Options:  { letter: true, number: [ '1', '2', '3' ] }
+   Remaining arguments:  [ 'operand' ]
+   ```
