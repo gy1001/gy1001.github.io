@@ -110,7 +110,7 @@
    [ 'a/b/c' ] // program.args 的值
    [ 'a' ]
    上述命令可以解释为：以 / 为参数 分割 /a/b/c 截取1个数
-
+   
    $ imooc-build --fitst a/b/c -s /
    error: unknown option '--fitst'
    (Did you mean --first?)
@@ -146,17 +146,17 @@
    yuangao at yuandeMac-mini in ~/Desktop/imooc-build
    $ imooc-build -h
    Usage: imooc-build [options]
-
+   
    CLI to build javascript project
-
+   
    Options:
      -V, --version  output the version number
      -h, --help     display help for command
    $ imooc-build --help
    Usage: imooc-build [options]
-
+   
    CLI to build javascript project
-
+   
    Options:
      -V, --version  output the version number
      -h, --help     display help for command
@@ -201,19 +201,19 @@
    $ imooc-build split --separator=/ a/b/c --first
    args a/b/c { separator: '/', first: true } // 这里打印的是 args
    [ 'a' ] // split hou 后的参数
-
+   
    $ imooc-build split --separator=/ a/b/c // 这里没有增加 --fist 参数
    args a/b/c { separator: '/' }
    [ 'a', 'b', 'c' ]
-
+   
    $ imooc-build split -s=/ a/b/c
    args a/b/c { separator: '=/' } // 注意这里 separator 参数略有不同
    [ 'a/b/c' ]
-
+   
    $ imooc-build split --separator / a/b/c
    args a/b/c { separator: '/' }
    [ 'a', 'b', 'c' ]
-
+   
    $ imooc-build split -s /  a/b/c
    args a/b/c { separator: '/' }
    [ 'a', 'b', 'c' ]
@@ -649,14 +649,375 @@ console.log("options", options)
    $ imooc-build -n 1 2 3 --letter a b c
    Options:  { number: [ '1', '2', '3' ], letter: [ 'a', 'b', 'c' ] }
    Remaining arguments:  []
-
+   
    // 第二种方式: = 等于号
    $ imooc-build --letter=A -n80 operand
    Options:  { letter: [ 'A' ], number: [ '80' ] }
    Remaining arguments:  [ 'operand' ]
-
+   
    // 第三种方式: -- 分割方式
    $ imooc-build --letter -n 1 -n 2 3 -- operand
    Options:  { letter: true, number: [ '1', '2', '3' ] }
    Remaining arguments:  [ 'operand' ]
    ```
+
+## 07：高能：利用 Option 对象创建脚手架属性
+
+### Version option
+
+>  version 这个值通常会从 package.json 中进行读取
+
+1. 我们修改`bind/imooc-build.js`，代码如下
+
+   ```javascript
+   const pkg = require('../package.json')
+   const { Command } = require('commander')
+   const program = new Command()
+   program
+     .name('imooc-build')
+     .description('CLI to build javascript project')
+     .version(pkg.version)
+   
+   ...
+   program.parse()
+   ```
+
+2. 运行命令及效果如下
+
+   ```bash
+   $ imooc-build -V                           
+   0.0.1
+   ```
+
+3. 另外，我们也可以对`version`进行定制`option`,目前默认是支持 `-V`,可以通过 `help`类查看
+
+   >  默认是  -V, --version ， description 是： output the version number
+
+   ```bash
+   $ imooc-build help
+   Usage: imooc-build [options] [command]
+   
+   CLI to build javascript project
+   
+   Options:
+     -V, --version              output the version number
+     -d, --debug                output extra debugging
+     -c, --cheese <type>        pizza must have cheese (default:
+                                "default-cheese")
+     -n, --number <numbers...>  specify numbers
+     -l, --letter [letters...]  specify letters
+     -h, --help                 display help for command
+   
+   Commands:
+     split [options] <string>   Split string to array
+     help [command]             display help for command
+   ```
+
+4. 修改`bin/imooc-build.js`如下
+
+   ```javascript
+   const pkg = require('../package.json')
+   const { Command } = require('commander')
+   const program = new Command()
+   program
+     .name('imooc-build')
+     .description('CLI to build javascript project')
+     .version(pkg.version, "-v, --version", "optput your version")
+   
+   ...
+   program.parse()
+   ```
+
+5. 再行运行`xxx help`,查看效果
+
+   > 这里变为 -v --version  description 变为：optput your version
+
+   ```bash
+   $ imooc-build help
+   Usage: imooc-build [options] [command]
+   
+   CLI to build javascript project
+   
+   Options:
+     -v, --version              optput your version
+     -d, --debug                output extra debugging
+     -c, --cheese <type>        pizza must have cheese (default:
+                                "default-cheese")
+     -n, --number <numbers...>  specify numbers
+     -l, --letter [letters...]  specify letters
+     -h, --help                 display help for command
+   
+   Commands:
+     split [options] <string>   Split string to array
+     help [command]             display help for command
+   ```
+
+### More configuration
+
+>  之前我们都是通过 .option() 来增加方法，但是某些场景下已经不能满足，这时候可以使用构造函数：Option
+
+#### 可以通过 Option 构造函数来增加方法
+
+1. 修改`bin/imooc-build.js`,代码如下
+
+   ```javascript
+   const { Command, Option } = require('commander')
+   ...
+   
+   // 增加 -se --secret， 并且调用 hideHelp 来隐藏 help 时的描述信息
+   program
+     .command('test')
+     .addOption(new Option('-m, --secret', 'secret something').hideHelp())
+     .action((options, cmd) => { // 注意：这里的 actions 只有两个参数
+       console.log(cmd.optsWithGlobals())
+     })
+   
+   program.parse()
+   ```
+
+2. 执行命令及相应结果如下(注意：command test 中没有提示语)
+
+   ```bash
+   $ imooc-build help      
+   Usage: imooc-build [options] [command]
+   
+   CLI to build javascript project
+   
+   Options:
+   	...
+   
+   Commands:
+     split [options] <string>   Split string to array
+     test [options]
+     help [command]             display help for command
+   ```
+
+###  .default() 添加默认值
+
+1. 修改`bin/imooc-build.js`,代码如下
+
+   ```javascript
+   const { Command, Option } = require('commander')
+   ...
+   
+   // 使用.default来设置默认值，第一个值是默认值，第二个参数是对默认值的一个解释
+   program
+     .command('test')
+     .addOption(new Option('-m, --secret', 'secret something').hideHelp())
+   	.addOption(new Option('-t, --timeout <delay>', 'timeout in seconds').default(60, 'one minute'))
+     .action((options, cmd) => {
+       console.log(cmd.optsWithGlobals())
+     })
+   
+   program.parse()
+   ```
+
+2. 执行命令及相应结果如下
+
+   ```bash
+   $  imooc-build test -h   
+   Usage: imooc-build test [options]
+   
+   Options:
+     -t, --timeout <delay>  timeout in seconds (default: one minute)
+     -h, --help             display help for command
+     
+   $ imooc-build test help 
+   { timeout: 60, cheese: 'default-cheese' }
+   
+   $ imooc-build test -t 10
+   { timeout: '10', cheese: 'default-cheese' }
+   ```
+
+### .choices() 来提供选择项
+
+1. 修改`bin/imooc-build.js`,代码如下
+
+   ```javascript
+   ...
+   program
+     .command('test')
+     .addOption(new Option('-m, --secret [char]', 'secret something').hideHelp())
+     .addOption(
+       new Option('-t, --timeout <delay>', 'timeout in seconds').default(
+         60,
+         'one minute',
+       ),
+     )
+   	.addOption(new Option('-f, --choose <size>', 'drink size').choices(['small', 'medium', 'large']))
+     .action((options, cmd) => {
+       console.log(cmd.optsWithGlobals())
+     })
+   program.parse()
+   ```
+
+2. 执行命令及相应结果如下(如果值不符合，就会报错提示)
+
+   ```bash
+   $ imooc-build test -f a
+   error: option '-f, --choose <size>' argument 'a' is invalid. Allowed choices are small, medium, large.
+   
+   $ imooc-build test -f small
+   { timeout: 60, choose: 'small', cheese: 'default-cheese' }
+   ```
+
+### .env() 来设置 port 等
+
+1. 修改`bin/imooc-build.js`,代码如下
+
+   ```javascript
+   ...
+   program
+     .command('test')
+     .addOption(new Option('-m, --secret [char]', 'secret something').hideHelp())
+     .addOption(
+       new Option('-t, --timeout <delay>', 'timeout in seconds').default(
+         60,
+         'one minute',
+       ),
+     )
+   	.addOption(new Option('-f, --choose <size>', 'drink size').choices(['small', 'medium', 'large']))
+     .addOption(new Option('-p, --port <number>', 'port number').env('PORT'))
+   	.addOption(new Option('-j, --jtest <number>', 'just a test').env('TEST'))
+     .action((options, cmd) => {
+       console.log(cmd.optsWithGlobals())
+     })
+   
+   program.parse()
+   ```
+
+2. 执行命令及相应结果如下
+
+   ```bash
+   $ imooc-build test -p 80
+   { timeout: 60, port: '80', cheese: 'default-cheese' }
+   
+   // 还可以通过环境变量来获取
+   $ PORT=80 imooc-build test 
+   { timeout: 60, port: '80', cheese: 'default-cheese' }
+   $ PORT=80 TEST=jest imooc-build test
+   { timeout: 60, port: '80', jtest: 'jest', cheese: 'default-cheese' }
+   ```
+
+### .preset()和.argParser()
+
+> .preset： 用于设置默认值，它的强大之处在于可以动态进行设置
+>
+> .argParser: 参数为函数，可以用这个函数格式化后的值返回作为最终结果
+
+1. 修改`bin/imooc-build.js`,代码如下
+
+   ```javascript
+   ...
+   program
+     .command('test')
+   	.addOption(new Option('--donate [amount]', 'optional donation in dollars').preset('20').argParser(parseFloat))
+     .addOption(new Option('--color [color]', 'text color').preset(getDefaultColor())).argParser(parseFloat))
+     .action((options, cmd) => {
+       console.log(cmd.optsWithGlobals())
+     })
+   
+   program.parse()
+   ```
+
+2. 执行命令及相应结果如下
+
+   ```bash
+   $  imooc-build test  --donate
+   { donate: 20 }
+   $ imooc-build test  --donate 10
+   { donate: 10 }
+   $ imooc-build test --color     
+   { color: 'green' }
+   $ imooc-build test --color white
+   { color: 'white' }
+   ```
+
+### .conflicts()
+
+>  表示不能和 xxx 一起使用
+
+1. 修改`bin/imooc-build.js`,代码如下
+
+   ```javascript
+   ...
+   program
+     .command('test')
+     .addOption(new Option('-p, --port <number>', 'port number').env('PORT'))
+     .addOption(
+       new Option('--disable-server', 'disables the server').conflicts('port'),
+     )
+     .action((options, cmd) => {
+       console.log(cmd.optsWithGlobals())
+     })
+   
+   program.parse()
+   ```
+
+2. 执行命令及相应结果如下
+
+   ```bash
+   $ PORT=80 imooc-build test --disable-server
+   error: option '--disable-server' cannot be used with environment variable 'PORT'
+   $ imooc-build test --disable-server  
+   { disableServer: true }
+   $ imooc-build % imooc-build test --disable-server -p 80
+   error: option '--disable-server' cannot be used with option '-p, --port <number>'
+   ```
+
+3. 这里还支持与多个 option 进行冲突，参数是一个字符串数组
+
+4. 可以修改`bin/imooc-build.js`为如下代码
+
+   ```javascript
+   ...
+   program
+     .command('test')
+     .addOption(new Option('-p, --port <number>', 'port number').env('PORT'))
+     .addOption(new Option('-j, --jtest <number>', 'just a test').env('TEST'))
+     .addOption(
+       new Option('--disable-server', 'disables the server').conflicts(['port', 'jtest']),
+     )
+     .action((options, cmd) => {
+       console.log(cmd.optsWithGlobals())
+     })
+   
+   program.parse()
+   ```
+
+5. 执行命令及相应结果如下
+
+   ```bash
+   $ imooc-build test --disable-server -j 11
+   error: option '--disable-server' cannot be used with option '-j, --jtest <number>'
+   ```
+
+### .implies()
+
+> 暗示，意味着
+
+1. 修改`bin/imooc-build.js`为如下代码
+
+   ```javascript
+   ...
+   program
+     .command('test')
+     .addOption(new Option('--free-drink', 'small drink included free ').implies({ drink: 'small' }));
+     .action((options, cmd) => {
+       console.log(cmd.optsWithGlobals())
+     })
+   
+   program.parse()
+   ```
+
+2. 执行命令及相应结果如下
+
+   ```bash
+   $ imooc-build test             
+   {}
+   $ imooc-build test --free-drink
+   { freeDrink: true, drink: 'small' }
+   ```
+
+   
+
