@@ -1019,5 +1019,492 @@ console.log("options", options)
    { freeDrink: true, drink: 'small' }
    ```
 
-   
+## 08: 自定义 Option 处理函数
 
+>  这个允许我们对传入的 option 参数做自定义处理
+
+1. 修改`bin/imooc-build.js`为如下代码
+
+   ```javascript
+   ...
+   program
+     .command('custom')
+     .option('-f --float <number>', 'float number')
+     .action((options, cmd) => {
+       console.log(cmd.optsWithGlobals())
+     })
+   program.parse()
+   ```
+
+2. 执行命令及相应结果如下
+
+   ```bash
+   $ imooc-build custom -f 1.2
+   { float: '1.2' }
+   ```
+
+3. 增加第三个参数格式化函数
+
+   ```javascript
+   ...
+   program
+     .command('custom')
+     .option('-f --float <number>', 'float number', parseFloat)
+     .action((options, cmd) => {
+       console.log(cmd.optsWithGlobals())
+     })
+   program.parse()
+   ```
+
+4. 执行命令及相应结果如下
+
+   ```bash
+   $ imooc-build custom -f 1.2
+   { float: 1.2 }
+   ```
+
+5. 当然也可以传入自定义函数来进行格式化处理
+
+   ```javascript
+   const { InvalidArgumentError } = require('commander')
+   ...
+   
+   function myParseInt(value) {
+     const intValue = parseInt(value)
+     if (isNaN(intValue)) {
+       throw new InvalidArgumentError('it is not a int number')
+     }
+     return intValue
+   }
+   program
+     .command('custom')
+     .option('-f --float <number>', 'float number', parseFloat)
+   	.option('-i --int <number>', 'int number', myParseInt)
+     .action((options, cmd) => {
+       console.log(cmd.optsWithGlobals())
+     })
+   program.parse()
+   ```
+
+6. 执行命令及相应结果如下
+
+   ```bash
+   $ imooc-build custom -i a  
+   error: option '-i --int <number>' argument 'a' is invalid. it is not a int number
+   $ imooc-build custom -i 100.1
+   { int: 100 }
+   ```
+
+## 09: 高级特性：Option参数叠加处理
+
+> option 支持四个参数，
+>
+> 第一个是 命令参数形式
+>
+> 第二个是 命令描述
+>
+> 第三个是处理函数，
+>
+> 第四个是默认初始值，也就是处理函数中 第二个参数 previous的值
+
+1. 修改代码如下
+
+   ```javascript
+   ...
+   
+   function increaseVerbosity(dummyValue, previous) {
+     dummyValue = +dummyValue || 0
+     return previous + 1 + dummyValue
+   }
+   program
+     .command('custom')
+     .option(
+       '--verbose <number>',
+       'verbosity that can be increased',
+       increaseVerbosity,
+       0,
+     )
+     .action((options, cmd) => {
+       console.log(cmd.optsWithGlobals())
+     })
+   program.parse()
+   ```
+
+2. 执行命令及相应结果如下
+
+   ```bash
+   $ imooc-build custom --verbose 10
+   { verbose: 11 }
+   $ imooc-build custom --verbose 10 --verbose 20 --verbose 40
+   { verbose: 73 }
+   ```
+
+3. 再来看一个相似的例子
+
+   ```javascript
+   ...
+   function collect(value, previous) {
+     return previous.concat([value])
+   }
+   
+   function increaseVerbosity(dummyValue, previous) {
+     dummyValue = +dummyValue || 0
+     return previous + 1 + dummyValue
+   }
+   
+   program
+     .command('custom')
+   	.option(
+       '--verbose <number>',
+       'verbosity that can be increased',
+       increaseVerbosity,
+       0,
+     )
+     .option('-c, --collect <value>', 'repeatable value', collect, [])
+     .action((options, cmd) => {
+       console.log(cmd.optsWithGlobals())
+     })
+   program.parse()
+   ```
+
+4. 执行命令及相应结果如下
+
+   ```bash
+   $ imooc-build custom -c 1 -c 2 -c 4
+   { collect: [ '1', '2', '4' ], verbose: 0 }
+   ```
+
+## 10: Command基本用法解析
+
+### 直接在 .command()第一个参数中定义名字和参数
+
+```typescript
+// 用法结构
+export **interface** CommandOptions {
+  hidden?: boolean; // 表示可以在 help 中进行隐藏
+  isDefault?: boolean; // 如果为 true，login 这个命令在终端调用时可以隐藏
+  */*** **@deprecated** *since v7, replaced by hidden \*/*
+  noHelp?: boolean;
+}
+.command(nameAndArgs: string, opts?: CommandOptions)
+```
+
+1. 修改代码如下
+
+   ```javascript
+   ...
+   
+   program
+     .command('login <username> [pasword]')
+     .option('-f --force', 'just a stand by here')
+     // 如果不输入 password，这个password 位置也会占位
+     // 并且 command login 后面定义多少个参数，这里就有多少个位置占用
+     .action((username, password, options, cmd) => {
+       console.log(username, password, options, cmd.optsWithGlobals())
+     })
+   
+   program.parse()
+   ```
+
+2. 执行命令及相应结果如下
+
+   ```bash
+   $ login root root123 
+   root root123 {} {}
+   $ imooc-build login root root123 -f
+   root root123 { force: true } { force: true }
+   $ imooc-build login root -f  
+   root undefined { force: true } { force: true } 
+   ```
+
+3. 当然 command 后面还支持第二个参数
+
+   ```javascript
+   ...
+   
+   program
+     .command('login <username> [pasword]',  { hidden: true, isDefault: true })
+     .option('-f --force', 'just a stand by here')
+     // 如果不输入 password，这个password 位置也会占位
+     // 并且 command login 后面定义多少个参数，这里就有多少个位置占用
+     .action((username, password, options, cmd) => {
+       console.log(username, password, options, cmd.optsWithGlobals())
+     })
+   
+   program.parse()
+   ```
+
+4. 执行命令及相应结果如下
+
+   ```bash
+   $ imooc-build  root root123 -f
+   root root123 { force: true } { force: true }
+   ```
+
+### 通过.argument()来定义参数
+
+> 使用 .argument() 来定义参数
+>
+> 优点：可以设置 description 在 help 中进行解释、也可以设置默认值
+
+1. 修改代码如下
+
+   ```javascript
+   ...
+   program
+     .command('login', { hidden: true, isDefault: true })
+     .argument('<usernam>', 'it is our username')
+     .argument('[password]', 'your password', 'default password')
+     .option('-f --force', 'just a stand by here')
+     .action((username, password, options, cmd) => {
+       console.log(username, password, options, cmd.optsWithGlobals())
+     })
+   
+   program.parse()
+   ```
+
+2. 执行命令及相应结果如下
+
+   ```javascript
+   // 在help 中显示自定义 description
+   $ imooc-build help login     
+   Usage: imooc-build login [options] <usernam> [password]
+   
+   Arguments:
+     usernam     it is our username
+     password    your password (default: "default password")
+   
+   Options:
+     -f --force  just a stand by here
+     -h, --help  display help for command
+     
+   // 参数获取跟上一小节一样
+   $ imooc-build  root root123 -f
+   root root123 { force: true } { force: true }
+   
+   // 还支持默认值
+   $ imooc-build  root  -f       
+   root default password { force: true } { force: true }
+   ```
+
+3. 还支持一次性传入多个值
+
+   ```javascript
+   ...
+   program
+     .command('login', { hidden: true, isDefault: true })
+     .argument('<usernam>', 'it is our username')
+     .argument('[password]', 'your password', 'default password')
+   	// 支持一次性传入多个，并且内部会有处理
+     .argument('<dir...>', 'dir list')
+     .option('-f --force', 'just a stand by here')
+     .action((username, password, dir, options, cmd) => {
+       console.log(username, password, dir, options, cmd.optsWithGlobals())
+     })
+   program.parse()
+   ```
+
+4. 执行命令及相应结果如下
+
+   ```bash
+   // 如果dir 参数以 空格 隔开会自动分割为数组
+   $ imooc-build root root123 1 2 3 4 -f 
+   root root123 [ '1', '2', '3', '4' ] { force: true } { force: true }
+   $ imooc-build  root root123 "1 2 3 4" -f 
+   root root123 [ '1 2 3 4' ] { force: true } { force: true }
+   ```
+
+5. 当然这里还有一个`.arguments()` 用法其实跟上面差不多
+
+   ```javascript
+   ...
+   program
+     .command('login', { hidden: true, isDefault: true })
+     // .argument('<usernam>', 'it is our username')
+     // .argument('[password]', 'your password', 'default password')
+     .arguments('<username> [password]')
+     .argument('<dir...>', 'dir list')
+     .option('-f --force', 'just a stand by here')
+     .action((username, password, dir, options, cmd) => {
+       console.log(username, password, dir, options, cmd.optsWithGlobals())
+     })
+   
+   program.parse()
+   ```
+
+6. 执行命令及相应结果如下
+
+   ```bash
+   $ imooc-build root root123 dir1 dir2
+   root root123 [ 'dir1', 'dir2' ] {} {}
+   ```
+
+## 11: Argument 高级用法解析
+
+> .addArgument(new commander.Argument(...))
+>
+> 他也支持很多方法
+>
+> * .argRequired() 参数必须
+> * .argOptional() 参数可选
+> * .choices([...]) 参数必须是指定的
+> * .argParser(fn) 自定义格式化参数函数
+> * default(value, description) 默认值和解释
+
+1. 修改代码如下
+
+   ```javascript
+   ...
+   program
+     .command('login', { hidden: true, isDefault: true })
+     // .argument('<usernam>', 'it is our username')
+     // .argument('[password]', 'your password', 'default password')
+     // .arguments('<username> [password]')
+     // .argument('<dir...>', 'dir list')
+     .addArgument(
+       new Argument('username', 'this is your username')
+         .argRequired()
+         .choices(['root', 'guest']),
+     )
+     .addArgument(
+       new Argument('[password]', 'this is your password').argParser(parseFloat),
+     )
+     .option('-f --force', 'just a stand by here')
+     .action((username, password,  options, cmd) => {
+       console.log(username, password, options, cmd.optsWithGlobals())
+     })
+   
+   program.parse()
+   ```
+
+2. 这里就不运行测试了
+
+## 12：Commander action this用法+钩子函数
+
+### action 中支持 this，前提是不可以使用箭头函数
+
+1. 修改代码如下
+
+   ```javascript
+   ...
+   program
+     .command('login', { hidden: true, isDefault: true })
+     .addArgument(
+       new Argument('username', 'this is your username')
+         .argRequired()
+         .choices(['root', 'guest']),
+     )
+     .addArgument(
+       new Argument('[password]', 'this is your password').argParser(parseFloat),
+     )
+     .option('-f --force', 'just a stand by here')
+     .action(function (username, password, options, cmd) {
+       console.log(this.args[0], this.args[1], this.opts())
+     })
+   
+   program.parse()
+   ```
+
+2. 执行命令及相应结果如下
+
+   ```bash
+   $ imooc-build login root root123  -f     
+   root root123 { force: true }
+   ```
+
+### 钩子函数
+
+1. 修改代码如下
+
+   ```javascript
+   ...
+   program
+     .command('login', { hidden: true, isDefault: true })
+     .addArgument(
+       new Argument('username', 'this is your username')
+         .argRequired()
+         .choices(['root', 'guest']),
+     )
+     .addArgument(
+       new Argument('[password]', 'this is your password').argParser(parseFloat),
+     )
+     .option('-f --force', 'just a stand by here')
+     .hook('preAction', (thisCommand, actionCommand) => {
+       // 这里是前置钩子回调
+       // 因为 .command  后面还可以再写 command 所以这里提供了两个参数
+       // 在使用一个 command  时他们是相等的
+       console.log('-------前置hook-------')
+       console.log(thisCommand.args, thisCommand.opts())
+       console.log('----------------------------')
+     })
+     .hook('postAction', (thisCommand, actionCommand) => {
+       // 这里是后置钩子回调
+       console.log('-------后置hook-------')
+       console.log(thisCommand.args, thisCommand.opts())
+     })
+     .action(function (username, password, options, cmd) {
+       console.log(this.args[0], this.args[1], this.opts())
+     })
+   
+   program.parse()
+   ```
+
+2. 执行命令及相应结果如下
+
+   ```bash
+   $ imooc-build login root root123  -f
+   -------前置hook-------
+   [ 'root', 'root123' ] { force: true }
+   ----------------------------
+   root root123 { force: true }
+   -------后置hook-------
+   [ 'root', 'root123' ] { force: true }
+   ```
+
+3. 当然你可以在全局中写 hook, 如下代码
+
+   ```javascript
+   ...
+   program
+     .option('-d, --debug', 'output extra debugging')
+     .hook('preAction', (thisCommand, actionCommand) => {
+       console.log('===============全局 preAction hook:start===============')
+       console.log(thisCommand === actionCommand)
+       console.log(thisCommand === program)
+       console.log(actionCommand.args, actionCommand.opts())
+       console.log('===============全局 preAction hook:end===============')
+     })
+     .hook('postAction', (thisCommand, actionCommand) => {
+       console.log('===============全局 postAction hook:start===============')
+       console.log(thisCommand === actionCommand)
+       console.log(thisCommand === program)
+       console.log(actionCommand.args, actionCommand.opts())
+       console.log('===============全局 postAction hook:end===============')
+     })
+   
+   ...
+   ```
+
+4. 执行命令及相应结果如下
+
+   ```bash
+   $ imooc-build login root root123  -f
+   ===============全局 preAction hook:start===============
+   false
+   true
+   [ 'root', 'root123' ] { force: true }
+   ===============全局 preAction hook:end===============
+   -------前置hook-------
+   [ 'root', 'root123' ] { force: true }
+   ----------------------------
+   root root123 { force: true }
+   -------后置hook-------
+   [ 'root', 'root123' ] { force: true }
+   ===============全局 postAction hook:start===============
+   false
+   true
+   [ 'root', 'root123' ] { force: true }
+   ===============全局 postAction hook:end===============
+   ```
+
+   
