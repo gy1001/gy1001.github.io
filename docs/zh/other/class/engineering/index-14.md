@@ -1509,4 +1509,161 @@ export **interface** CommandOptions {
 
 ## 13: 脚手架框架搭建之Node版本校验
 
-1.
+### 前置知识: semver
+
+```javascript
+const semver = require('semver')
+
+// valid: 校验输入的版本有效性
+console.log(semver.valid('v1.0.0')) // 1.0.0
+console.log(semver.valid('1.0.0')) // 1.0.0
+console.log(semver.valid('1.0')) // null
+console.log(semver.valid('v')) // null
+console.log(semver.valid('v1.0.0.00')) // null
+
+// clean: 从一个表达式中拿到想要的一个结果
+console.log(semver.clean('  =v1.2.3   ')) // 1.2.3
+console.log(semver.clean('v1.0.0')) // 1.0.0
+console.log(semver.clean('1.0.0')) // 1.0.0
+console.log(semver.clean('>v1.0.0')) // null
+console.log(semver.clean('>1.0.0')) // null
+
+// satisfies: 一个版本号是否满足后面的参数条件
+console.log(semver.satisfies('1.2.3', '1.x || >=2.5.0 || 5.0.0 - 7.2.3')) // true
+console.log(semver.satisfies('1.2.3', '2.x')) // false
+
+console.log(semver.validRange('6.0.1', '5.0.0-7.2.3')) // 6.0.1
+
+// .gt 是否前者大于后者
+console.log(semver.gt('1.2.3', '9.8.7')) // false
+
+// .lt 是否前者小于后者
+console.log(semver.lt('1.2.3', '9.8.7')) // true
+
+console.log(semver.minVersion('>=1.0.0').version) // 1.0.0
+
+console.log(semver.valid(semver.coerce('v2'))) // '2.0.0'
+console.log(semver.valid(semver.coerce('42.6.7.9.3-alpha'))) // '42.6.7'
+```
+
+### 代码实操
+
+1. 新建`lib/checkNode.js`文件，内容如下
+
+   ```javascript
+   const semver = require('semver')
+   
+   module.exports = function checkNode(minNodeVersion) {
+     // 获取当前 node 版本号
+     const nodeVersion = semver.valid(semver.coerce(process.version))
+     return semver.satisfies(nodeVersion, '>=' + minNodeVersion)
+   }
+   ```
+
+2. 修改`bin/imooc-build.js`内容如下
+
+   ```javascript
+   #!/usr/bin/env node
+   const commander = require('commander')
+   const pkg = require('../package.json')
+   const checkNode = require('../lib/checkNode')
+   // 创建自执行函数
+   ;(async function () {
+     try {
+       // 设置node的最低版本
+       const MIN_NODE_VERSION = '8.9.0'
+       // 校验版本号，如果不符合要求就报错
+       if (!checkNode(MIN_NODE_VERSION)) {
+         throw new Error(
+           'Please upgrade your node version to v' + MIN_NODE_VERSION,
+         )
+       }
+     } catch (error) {
+       console.log(error.message)
+     }
+   })()
+   ```
+
+## 14：脚手架框架搭建之命令注册 
+
+1. 继续修改`bin/imooc-build.js`，如下
+
+   ```javascript
+   #!/usr/bin/env node
+   const { program } = require('commander')
+   const pkg = require('../package.json')
+   const checkNode = require('../lib/checkNode')
+   const startServer = require('../start/startServer')
+   const build = require('../build/buildServer')
+   ;(async function () {
+     try {
+       const MIN_NODE_VERSION = '8.9.0'
+       if (!checkNode(MIN_NODE_VERSION)) {
+         throw new Error(
+           'Please upgrade your node version to v' + MIN_NODE_VERSION,
+         )
+       }
+       // 设置版本号
+       program.version(pkg.version)
+       // 增加一个 start 命令
+       program
+         .command('start')
+         .description('start server by imooc-build ')
+         .allowUnknownOption()
+         .action(startServer)
+   		// 增加一个 build 命令
+       program
+         .command('build')
+         .description('build server by imooc-build')
+         .allowUnknownOption()
+         .action(build)
+   	
+       program.parse(process.argv)
+     } catch (error) {
+       console.log(error.message)
+     }
+   })()
+   ```
+
+2. 新建`start/startServer.js`文件，内容如下
+
+   ```javascript
+   module.exports = function startServer(args, opts, cmd) {
+     console.log('start server')
+   }
+   ```
+
+3. 新建`build/buildServer.js`，内容如下
+
+   ```javascript
+   module.exports = function build(args, opts, cmd) {
+     console.log('build server')
+   }
+   ```
+
+4. 执行终端命令，查看效果
+
+   ```bash
+   $ imooc-build      
+   Usage: imooc-build [options] [command]
+   
+   Options:
+     -V, --version   output the version number
+     -h, --help      display help for command
+   
+   Commands:
+     start           start server by imooc-build
+     build           build server by imooc-build
+     help [command]  display help for command
+   
+   $ imooc-build -V
+   0.0.1
+   
+   $ imooc-build start
+   start server
+   
+   $ imooc-build build
+   build server
+   ```
+
+   
