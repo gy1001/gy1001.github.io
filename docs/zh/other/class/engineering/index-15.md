@@ -870,11 +870,58 @@ try {
 }
 ```
 
+## 10：命令行交互实现方案inquirer详解
 
+> [npm库之 inquire:https://www.npmjs.com/package/inquirer](https://www.npmjs.com/package/inquirer)
 
+1. 安装`inquirer`:注意：官方文档中从v9以后是 ESmodule形式了，所以需要安装如下版本
 
+   ```bash
+   npm install --save inquirer@^8.0.0
+   ```
 
+2. 我们接着`devService.js`中的`else`中继续写
 
+   ```javascript
+   const inquirer = require('inquirer')  
+   try {
+     const newPort = await detectPort(defaultPort)
+     if (newPort === defaultPort) {
+       console.log('端口号' + defaultPort + '可以使用')
+     } else {
+       console.log('端口号' + defaultPort + '被占用，建议使用新端口号' + newPort)
+       // 命令行交互
+       const questions = {
+         type: 'list',
+         name: 'answer',
+         message: '请选择',
+         choices: ['a', 'b', 'c'],
+       }
+       const answer = await inquirer.prompt(questions)
+       console.log(answer)
+     }
+   } catch (error) {
+     console.log(error)
+   }
+   ```
+
+3. 运行终端，可以看到效果如下
+
+   ```bash
+   imooc-build start
+   ? 请选择 (Use arrow keys)
+   ❯ a 
+     b 
+     c 
+   ```
+
+4. 使用箭头上下选择后，结果如下
+
+   ```bash
+   { answer: 'a' } // 或者 b、c
+   ```
+
+   
 
 
 
