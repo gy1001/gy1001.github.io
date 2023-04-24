@@ -160,7 +160,7 @@ console.log('-------- dev service end ----------')
 
 ### exec 方式创建子进程
 
-1. 修改`startService.js`方法，代码如下
+1. 修改`startServer.js`方法，代码如下
 
    ```javascript
    ...
@@ -204,7 +204,7 @@ console.log('-------- dev service end ----------')
 
 ### execFile 方式创建子进程
 
-1. 修改`startService.js`方法，代码如下
+1. 修改`startServer.js`方法，代码如下
 
    ```javascript
    function runServer() {
@@ -245,7 +245,7 @@ console.log('-------- dev service end ----------')
 
 ### spawn
 
-1. 修改`startService.js`方法，代码如下
+1. 修改`startServer.js`方法，代码如下
 
    ```javascript
    function runServer() {
@@ -291,7 +291,7 @@ console.log('-------- dev service end ----------')
 
 > child_process.fork 是 spawn() 方法的特殊形式，用于创建进程, **可以帮会我们进行进程间的通信**
 
-1. 修改`startService.js`方法，代码如下
+1. 修改`startServer.js`方法，代码如下
 
    ```javascript
    function runServer() {
@@ -323,7 +323,7 @@ console.log('-------- dev service end ----------')
 
 3. 那么如何进行通信呢？
 
-4. 我们继续修改`startService.js`方法，代码如下
+4. 我们继续修改`startServer.js`方法，代码如下
 
    ```javascript
    function runServer() {
@@ -384,22 +384,73 @@ console.log('-------- dev service end ----------')
 
    * 先执行脚本`devService.js`,其中的`console.log`率先执行
    * 然后`devService.js`中，执行监听函数，并发送消息
-   * `startService.js`中，监听到`message`事件并触发执行，然后打印出来
-   * 接着`startService.js`中，发送消息，
+   * `startServer.js`中，监听到`message`事件并触发执行，然后打印出来
+   * 接着`startServer.js`中，发送消息，
    * 子进程中监听函数执行，打印
    * 并且在终端中仍然可以看到，这个进程处于一个运行监听状态
 
+## 06：子进程运行脚本获取默认端口号
 
+### 如何进行传递信息
 
+1. 修改`startServer.js`,内容如下
 
+   ```javascript
+   // 增加第二个参数   
+   const child = cp.fork(srciprtPath, ['a=1'])
+   ```
 
+2. 修改`devService.js`,增加代码如下
 
+   ```javascript
+   console.log(process.argv)
+   ```
 
+3. 终端运行命令及结果如下
 
+   ```bash
+   $ imooc-build start
+   
+   [
+     '/usr/local/bin/node',
+     '/Users/gaoyuan/Desktop/imooc-build/lib/start/devService.js',
+     'a=1'
+   ]
+   ```
 
+4. 这里就可以拿到传递的参数
 
+### 实现自定义端口号
 
+1. 修改`startServer.js`,内容如下
 
+   ```javascript
+    const child = cp.fork(srciprtPath, ['--port 8080'])
+   ```
+
+2. 修改`devService.js`,增加代码如下
+
+   ```javascript
+   const params = process.argv.slice(2)
+   const DEFAUL_PORT = 8000
+   const paramObj = {}
+   params.forEach((param) => {
+     const paramsArr = param.split(' ')
+     paramObj[paramsArr[0].replace('--', '')] = paramsArr[1]
+   })
+   const defaultPort = paramObj.port || DEFAUL_PORT
+   console.log(paramObj)
+   ```
+
+3. 终端运行命令，及结果如下
+
+   ```bash
+   imooc-build start
+   
+   { port: '8080' }
+   ```
+
+## 07: Node实现端口号是否被占用功能校验
 
 
 
