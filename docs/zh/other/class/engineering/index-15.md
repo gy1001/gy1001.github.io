@@ -957,9 +957,9 @@ try {
        name: 'answer',
        message: `${defaultPort}已被占用，是否启用新端口号${newPort}?`,
      }
-     const answer = await inquirer.prompt(questions)
-     if (!answer) {
-       process.exit(1) // 如果拒绝就退出
+     const result = await inquirer.prompt(questions)
+     if (!result.answer) {
+         process.exit(1)
      } else {
        // 否则就进行下一步操作
      }
@@ -975,4 +975,142 @@ try {
    ? 8080已被占用，是否启用新端口号8081? (Y/n) 
    ```
 
+## 11：实现配置文件修改后服务自动重启
+
+### 先实现子进程退出时，主进程也退出
+
+1. 新建`lib/service/Service.js`，内容如下
+
+   ```javascript
+   class Service {
+     constructor(props) {}
+     start() {
+       console.log('启动服务')
+     }
+   }
    
+   module.exports = Service
+   ```
+
+2. 修改`lib/start/startServer.js`文件，内容如下: 保证当子进程退出时，主进程也退出
+
+   ```javascript
+   const chokidar = require('chokidar')
+   const path = require('path')
+   const cp = require('child_process')
+   
+   module.exports = function startServer(args, opts, cmd) {
+     console.log('start server')
+     runServer()
+     // 2. 监听配置修改
+     // runWatcher()
+   }
+   
+   function runServer() {
+     // 启动 webpack 服务
+     console.log('pid', process.pid)
+     // 第四种：fork
+     const srciprtPath = path.resolve(__dirname, './devService.js')
+     const child = cp.fork(srciprtPath, ['--port 8080'])
+   
+     child.on('exit', (code) => {
+       console.log(code)
+       if (code) {
+         // 子进程退出时，主进程也进行关闭，比如：端口号被占用时选择了拒绝使用新端口号
+         process.exit(code)
+       }
+     })
+   }
+   ```
+
+3. 运行终端,效果如下
+
+   ```bash
+   $ imooc-build start
+   start server
+   pid 5344
+   端口号8080被占用，建议使用新端口号8081
+   ? 8080已被占用，是否启用新端口号8081? (Y/n) 
+   ```
+
+4. 此时如果选择`N`,那么程序将直接退出
+
+   ```bash
+   ? 8080已被占用，是否启用新端口号8081? No
+   启动服务
+   1
+   ```
+
+### 再实现，文件修改时重启服务
+
+1. 修改`devServer.js`,代码如下
+
+   ```javascript
+   let child
+   
+   function runServer() {
+     ...
+     // 这里需要把 child 设置为全局变量
+     child = cp.fork(srciprtPath, ['--port 8080'])
+     ...
+   }
+     
+   function onChange(eventName, path) {
+     console.log('change')
+     child.kill()
+     runServer()
+   }
+     
+   function runWatcher() {
+     // 监听配置文件
+     const configPath = path.resolve(__dirname, './config.js')
+     const watcher = chokidar
+       .watch(configPath)
+       .on('change', onChange)
+       .on('erro', (error) => {
+         console.error('file watch error!', error)
+         process.exit(1)
+       })
+   }
+     
+   module.exports = function startServer(args, opts, cmd) {
+     console.log('start server')
+     runServer()
+     // 解开注释
+     runWatcher()
+   }
+   ```
+
+2. 此时运行终端
+
+   ```bash
+   $ imooc-build start
+   start server
+   ? 8080已被占用，是否启用新端口号8081? (Y/n) 
+   
+   // 如果选择Y，就是如下结果
+   ? 8080已被占用，是否启用新端口号8081? Yes
+   启动服务
+   ```
+
+3. 然后更改`start/config.js`文件，修改为,点击保存，会触发`onChange`时间，关闭子进程，然后重新启动一个子进程
+
+   ```javascript
+   const a = {
+     a: '1',
+     b: '2',
+     c: '3',
+   }
+   ```
+
+4. 效果如下
+
+   ```bash
+   ? 8080已被占用，是否启用新端口号8081? (Y/n)
+   // 重新输入 Y，重新运行服务
+   ```
+
+5. 注意：这里启动服务后，每次修改文件，重新启动服务时，都会询问我们是否启动新端口号，显然这里是不太理想的，这里有个小细节：如果我们在这个过程中使用`process.env.xxx`来存储一个变量值，第一次端口号确认更新后变为`true`,后续再根据这个变量值来处理，是不能达到预期的，**因为服务已经重启了,变量值并没有保持**
+
+
+
