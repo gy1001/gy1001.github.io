@@ -1,6 +1,6 @@
-# 工程化脚手架：进阶实战——工程化脚手架启动流程实战
+# 15-工程化脚手架：进阶实战——工程化脚手架启动流程实战
 
-## 01: Node文件监听chokidar库详解
+## 01: Node 文件监听 chokidar 库详解
 
 1. 安装依赖库
 
@@ -41,13 +41,21 @@
    }
    ```
 
-3. 新建`lib/start/config.js`，内容如下
+3. 新建`lib/build/buildServer.js`，内容如下
+
+   ```javascript
+   module.exports = function () {
+     console.log('build server')
+   }
+   ```
+
+4. 新建`lib/start/config.js`，内容如下
 
    ```{  a: '1'}
    { a: '1' }
    ```
 
-4. 运行如下命令，及相应效果如下(可以看到此时监听了三个项目：`start文件夹、config.js、startServer.js`)
+5. 运行如下命令，及相应效果如下(可以看到此时监听了三个项目：`start文件夹、config.js、startServer.js`)
 
    ```bash
    $  imooc-build start
@@ -57,13 +65,13 @@
    add /Users/gaoyuan/Desktop/imooc-build/lib/start/startServer.js
    ```
 
-5. 如果修改了其中的文件，比如`config.js`，修改如下
+6. 如果修改了其中的文件，比如`config.js`，修改如下
 
    ```bash
    change /Users/gaoyuan/Desktop/imooc-build/lib/start/config.js
    ```
 
-## 02: chokidar实现原理和源码分析
+## 02: chokidar 实现原理和源码分析
 
 1. 打开`node_modules/chokidar/package.json`文件，可以看到如下内容
 
@@ -79,17 +87,17 @@
 
    ```javascript
    const watch = (paths, options) => {
-     const watcher = new FSWatcher(options); // 实例化这个 FSWatcher 类
-     watcher.add(paths);
-     return watcher;
-   };
-   
-   exports.watch = watch;
+     const watcher = new FSWatcher(options) // 实例化这个 FSWatcher 类
+     watcher.add(paths)
+     return watcher
+   }
+
+   exports.watch = watch
    ```
 
 3. 这个类继承于`EventEmitter`事件派发器
 
-## 03：通过chokidar实现 config 配置文件监听
+## 03：通过 chokidar 实现 config 配置文件监听
 
 1. 修改`startServer.js`,监听`config.js`文件
 
@@ -113,15 +121,15 @@
    ...
    ```
 
-## 04: 划重点：Node启动子进程方法之 execFile + exec
+## 04: 划重点：Node 启动子进程方法之 execFile + exec
 
 ### 前置知识
 
-* 进程是程序的一个最小单位，
+- 进程是程序的一个最小单位，
 
-* 在终端中可以通过`ps -ef`来查看所有的进程
+- 在终端中可以通过`ps -ef`来查看所有的进程
 
-* 进程都有 `PID、PPID`
+- 进程都有 `PID、PPID`
 
   ```bash
   $ ps -ef
@@ -241,7 +249,7 @@ console.log('-------- dev service end ----------')
    -------- dev service end ----------
    ```
 
-## 05: 划重点：Node启动子进程方法之spawn+fork
+## 05: 划重点：Node 启动子进程方法之 spawn+fork
 
 ### spawn
 
@@ -251,7 +259,9 @@ console.log('-------- dev service end ----------')
    function runServer() {
      console.log('pid', process.pid)
      // 第三种：使用 spwan
-     const child = cp.spawn('node', [path.resolve(__dirname, './devService.js')])
+     const child = cp.spawn('node', [
+       path.resolve(__dirname, './devService.js'),
+     ])
      // 输出相关的数据
      child.stdout.on('data', function (data) {
        console.log('data from child: ' + data)
@@ -382,12 +392,12 @@ console.log('-------- dev service end ----------')
 
 7. 根据上述打印过程，我们可以看到执行流程如下
 
-   * 先执行脚本`devService.js`,其中的`console.log`率先执行
-   * 然后`devService.js`中，执行监听函数，并发送消息
-   * `startServer.js`中，监听到`message`事件并触发执行，然后打印出来
-   * 接着`startServer.js`中，发送消息，
-   * 子进程中监听函数执行，打印
-   * 并且在终端中仍然可以看到，这个进程处于一个运行监听状态
+   - 先执行脚本`devService.js`,其中的`console.log`率先执行
+   - 然后`devService.js`中，执行监听函数，并发送消息
+   - `startServer.js`中，监听到`message`事件并触发执行，然后打印出来
+   - 接着`startServer.js`中，发送消息，
+   - 子进程中监听函数执行，打印
+   - 并且在终端中仍然可以看到，这个进程处于一个运行监听状态
 
 ## 06：子进程运行脚本获取默认端口号
 
@@ -396,7 +406,7 @@ console.log('-------- dev service end ----------')
 1. 修改`startServer.js`,内容如下
 
    ```javascript
-   // 增加第二个参数   
+   // 增加第二个参数
    const child = cp.fork(srciprtPath, ['a=1'])
    ```
 
@@ -410,7 +420,7 @@ console.log('-------- dev service end ----------')
 
    ```bash
    $ imooc-build start
-   
+
    [
      '/usr/local/bin/node',
      '/Users/gaoyuan/Desktop/imooc-build/lib/start/devService.js',
@@ -425,7 +435,7 @@ console.log('-------- dev service end ----------')
 1. 修改`startServer.js`,内容如下
 
    ```javascript
-    const child = cp.fork(srciprtPath, ['--port 8080'])
+   const child = cp.fork(srciprtPath, ['--port 8080'])
    ```
 
 2. 修改`devService.js`,增加代码如下
@@ -450,7 +460,7 @@ console.log('-------- dev service end ----------')
    { port: '8080' }
    ```
 
-## 07: Node实现端口号是否被占用功能校验
+## 07: Node 实现端口号是否被占用功能校验
 
 > 这里用到一个 npm 库：detect-port
 
@@ -478,7 +488,9 @@ console.log('-------- dev service end ----------')
        if (newPort === defaultPort) {
          console.log('端口号' + defaultPort + '可以使用')
        } else {
-         console.log('端口号' + defaultPort + '被占用，建议使用新端口号' + newPort)
+         console.log(
+           '端口号' + defaultPort + '被占用，建议使用新端口号' + newPort,
+         )
        }
      } catch (error) {}
    })()
@@ -491,39 +503,39 @@ console.log('-------- dev service end ----------')
    端口号8080被占用，建议使用新端口号8081
    ```
 
-## 08: detect-port库源码分析
+## 08: detect-port 库源码分析
 
 ### 参考文章
 
 [detect-port 源码心得:https://zhuanlan.zhihu.com/p/434454631#detect-port](https://zhuanlan.zhihu.com/p/434454631#detect-port)
 
-* 源码核心是使用`nodeJs` 中 `net` 模块，来判断端口号是否可用, 同时设置最大端口号，是设置值 + 10，如果大于 65535，则是65535，如下代码
+- 源码核心是使用`nodeJs` 中 `net` 模块，来判断端口号是否可用, 同时设置最大端口号，是设置值 + 10，如果大于 65535，则是 65535，如下代码
 
   ```javascript
   function listen(port, hostname, callback) {
     const server = new net.Server();
     ...
   }
-    
-  
+
+
   let maxPort = port + 10;
   if (maxPort > 65535) {
   maxPort = 65535;
-  }  
+  }
   ```
 
-* 如何判断端口被占用呢？
+- 如何判断端口被占用呢？
 
   ```javascript
   server.listen(port, hostname, () => {
-    port = server.address().port;
-    server.close();
-    debug('get free %s:%s', hostname, port);
-    return callback(null, port);
-  });
+    port = server.address().port
+    server.close()
+    debug('get free %s:%s', hostname, port)
+    return callback(null, port)
+  })
   ```
 
-* 同时这里会有多次判断，全部成功时才会认为这个端口可用
+- 同时这里会有多次判断，全部成功时才会认为这个端口可用
 
   ```javascript
    // 1. check null
@@ -534,31 +546,35 @@ console.log('-------- dev service end ----------')
       ...
       // 3. check localhost
       listen(port, 'localhost', err => {
-      	...   
+      	...
         // 4. check current ip
         listen(port, address.ip(), (err, realPort) => {
-        	...  
+        	...
         })
       })
     })
   }
   ```
 
-* 其中一个一旦失败就会调用`handleError`方法，他会把端口号`port`加 1，然后再次执行
+- 其中一个一旦失败就会调用`handleError`方法，他会把端口号`port`加 1，然后再次执行
 
   ```javascript
-   function handleError() {
-    port++;
+  function handleError() {
+    port++
     if (port >= maxPort) {
-      debug('port: %s >= maxPort: %s, give up and use random port', port, maxPort);
-      port = 0;
-      maxPort = 0;
+      debug(
+        'port: %s >= maxPort: %s, give up and use random port',
+        port,
+        maxPort,
+      )
+      port = 0
+      maxPort = 0
     }
-    tryListen(port, maxPort, hostname, callback);
+    tryListen(port, maxPort, hostname, callback)
   }
   ```
 
-## 09：Node 内置库net详解
+## 09：Node 内置库 net 详解
 
 > [Node.js Net 模块:https://www.runoob.com/nodejs/nodejs-net-module.html](https://www.runoob.com/nodejs/nodejs-net-module.html)
 
@@ -587,7 +603,7 @@ console.log('-------- dev service end ----------')
 3. 修改`devService.js`代码, 把`null`改为`0.0.0.0`
 
    ```javascript
-   tcpServer.listen(8080, "0,0,0,0", function () {
+   tcpServer.listen(8080, '0,0,0,0', function () {
      console.log(tcpServer.address())
    })
    ```
@@ -602,7 +618,7 @@ console.log('-------- dev service end ----------')
 5. 修改`devService.js`代码, 把`8080`改为`8081`
 
    ```javascript
-   tcpServer.listen(8081, "0.0.0.0", function () {
+   tcpServer.listen(8081, '0.0.0.0', function () {
      console.log(tcpServer.address())
    })
    ```
@@ -617,7 +633,7 @@ console.log('-------- dev service end ----------')
 7. 继续修改`devService.js`代码, 把`0.0.0.0`改为`192.3.4.6`（一个不存在的`IP`）
 
    ```javascript
-   tcpServer.listen(8081, "192.3.4.6", function () {
+   tcpServer.listen(8081, '192.3.4.6', function () {
      console.log(tcpServer.address())
    })
    ```
@@ -706,11 +722,11 @@ console.log('-------- dev service end ----------')
      console.log(data.toString()) // 这里的data 是一个Buffer
      console.log('-------客户端接收到了服务端的数据:end--------')
    })
-   
+
    client.on('error', (error) => {
      console.log('error', error)
    })
-   
+
    client.on('end', () => {
      console.log('client end')
    })
@@ -745,7 +761,7 @@ console.log('-------- dev service end ----------')
 2. 同样服务端也要进行接受，我们在`devServer.js`内部的`tcpServer.on("connection")`回调函数内进行监听，修改如下
 
    ```javascript
-    tcpServer.on('connection', (socket) => {
+   tcpServer.on('connection', (socket) => {
      console.log('socket链接')
      setTimeout(() => {
        socket.write('服务端向客户端写入数据')
@@ -870,11 +886,11 @@ try {
 }
 ```
 
-## 10：命令行交互实现方案inquirer详解
+## 10：命令行交互实现方案 inquirer 详解
 
-> [npm库之 inquire:https://www.npmjs.com/package/inquirer](https://www.npmjs.com/package/inquirer)
+> [npm 库之 inquire:https://www.npmjs.com/package/inquirer](https://www.npmjs.com/package/inquirer)
 
-1. 安装`inquirer`:注意：官方文档中从v9以后是 ESmodule形式了，所以需要安装如下版本
+1. 安装`inquirer`:注意：官方文档中从 v9 以后是 ESmodule 形式了，所以需要安装如下版本
 
    ```bash
    npm install --save inquirer@^8.0.0
@@ -883,19 +899,22 @@ try {
 2. 我们接着`devService.js`中的`else`中继续写
 
    ```javascript
-   const inquirer = require('inquirer')  
+   const inquirer = require('inquirer')
    try {
      const newPort = await detectPort(defaultPort)
      if (newPort === defaultPort) {
        console.log('端口号' + defaultPort + '可以使用')
      } else {
-       console.log('端口号' + defaultPort + '被占用，建议使用新端口号' + newPort)
+       console.log(
+         '端口号' + defaultPort + '被占用，建议使用新端口号' + newPort,
+       )
        // 命令行交互
        const questions = {
-         type: 'list',
+         type: 'list', // 这里除了 list 还有 rawlist,是带有序号的列表，还有 expand、checkbox、confirm等等
          name: 'answer',
          message: '请选择',
          choices: ['a', 'b', 'c'],
+         default: 'b', // 默认值可以设置
        }
        const answer = await inquirer.prompt(questions)
        console.log(answer)
@@ -910,9 +929,9 @@ try {
    ```bash
    imooc-build start
    ? 请选择 (Use arrow keys)
-   ❯ a 
-     b 
-     c 
+   ❯ a
+     b
+     c
    ```
 
 4. 使用箭头上下选择后，结果如下
@@ -921,23 +940,39 @@ try {
    { answer: 'a' } // 或者 b、c
    ```
 
+5. 这里我们使用`confirm`这个交互，最终代码改为
+
+   ```javascript
+   try {
+     const newPort = await detectPort(defaultPort)
+     if (newPort === defaultPort) {
+       console.log('端口号' + defaultPort + '可以使用')
+     } else {
+       console.log('端口号' + defaultPort + '被占用，建议使用新端口号' + newPort)
+     }
    
+     // 命令行交互
+     const questions = {
+       type: 'confirm',
+       name: 'answer',
+       message: `${defaultPort}已被占用，是否启用新端口号${newPort}?`,
+     }
+     const answer = await inquirer.prompt(questions)
+     if (!answer) {
+       process.exit(1) // 如果拒绝就退出
+     } else {
+       // 否则就进行下一步操作
+     }
+   } catch (error) {
+     console.log(error)
+   }
+   ```
 
+6. 运行终端命令，相应效果如下
 
+   ```bash
+   $ imooc-build start
+   ? 8080已被占用，是否启用新端口号8081? (Y/n) 
+   ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   
