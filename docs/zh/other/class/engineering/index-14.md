@@ -1548,7 +1548,13 @@ console.log(semver.valid(semver.coerce('42.6.7.9.3-alpha'))) // '42.6.7'
 
 ### 代码实操
 
-1. 新建`lib/checkNode.js`文件，内容如下
+1. 安装`smver`
+
+   ```bash
+   npm install semver -D
+   ```
+
+2. 新建`lib/checkNode.js`文件，内容如下
 
    ```javascript
    const semver = require('semver')
@@ -1560,7 +1566,7 @@ console.log(semver.valid(semver.coerce('42.6.7.9.3-alpha'))) // '42.6.7'
    }
    ```
 
-2. 修改`bin/imooc-build.js`内容如下
+3. 修改`bin/imooc-build.js`内容如下
 
    ```javascript
    #!/usr/bin/env node
