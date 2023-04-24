@@ -558,9 +558,317 @@ console.log('-------- dev service end ----------')
   }
   ```
 
-  
+## 09：Node 内置库net详解
 
+> [Node.js Net 模块:https://www.runoob.com/nodejs/nodejs-net-module.html](https://www.runoob.com/nodejs/nodejs-net-module.html)
 
+### 基础使用
+
+1. 在`devService.js`中增加如下代码
+
+   ```javascript
+   const net = require('net')
+   const tcpServer = new net.Server()
+   tcpServer.listen(8080, null, function () {
+     console.log(tcpServer.address())
+   })
+   tcpServer.on('error', (err) => {
+     console.log(err)
+   })
+   ```
+
+2. 执行终端及结果如下
+
+   ```bash
+   $ imooc-build start
+   { address: '::', family: 'IPv6', port: 8080 }
+   ```
+
+3. 修改`devService.js`代码, 把`null`改为`0.0.0.0`
+
+   ```javascript
+   tcpServer.listen(8080, "0,0,0,0", function () {
+     console.log(tcpServer.address())
+   })
+   ```
+
+4. 执行终端及结果如下（这里我是本地已经被占用了，所以会有如下报错）
+
+   ```bash
+   $ imooc-build start
+   Error: listen EADDRINUSE: address already in use 0.0.0.0:8080
+   ```
+
+5. 修改`devService.js`代码, 把`8080`改为`8081`
+
+   ```javascript
+   tcpServer.listen(8081, "0.0.0.0", function () {
+     console.log(tcpServer.address())
+   })
+   ```
+
+6. 执行终端及结果如下
+
+   ```bash
+   $ imooc-build start
+   { address: '0.0.0.0', family: 'IPv4', port: 8081 }
+   ```
+
+7. 继续修改`devService.js`代码, 把`0.0.0.0`改为`192.3.4.6`（一个不存在的`IP`）
+
+   ```javascript
+   tcpServer.listen(8081, "192.3.4.6", function () {
+     console.log(tcpServer.address())
+   })
+   ```
+
+8. 执行终端及结果如下
+
+   ```bash
+   $ imooc-build start
+   Error: listen EADDRNOTAVAIL: address not available 192.3.4.6:8081
+   ```
+
+### 深入使用
+
+> 我们写一个双向链接通信的功能
+>
+> [参考：net.Socket: https://www.runoob.com/nodejs/nodejs-net-module.html](https://www.runoob.com/nodejs/nodejs-net-module.html)
+
+#### 初步链接
+
+1. 修改`devService.js`代码中的`192.3.4.6`改为`localhost`，并监听`connection`事件
+
+   ```javascript
+   const net = require('net')
+   const tcpServer = new net.Server()
+   tcpServer.listen(8081, 'localhost', function () {
+     console.log(tcpServer.address())
+   })
+   tcpServer.on('error', (err) => {
+     console.log(err)
+   })
+   tcpServer.on('connection', (socket) => {
+     console.log('socket链接')
+   })
+   ```
+
+2. 然后我们建立客户端，新建`test/client.js`文件，内容如下
+
+   ```javascript
+   const net = require('net')
+   const client = new net.Socket()
+   client.connect(8081, 'localhost', function () {
+     console.log('connect successful')
+   })
+   ```
+
+3. 这里我们需要执行两个服务，一个服务端，一个客户端，且前者先执行
+
+4. 用终端打开传程序执行`imooc-build start`来执行服务端(这个终端我们成为 Server 终端)
+
+   ```bash
+   $ imooc-build start
+   { address: '127.0.0.1', family: 'IPv4', port: 8081 }
+   ```
+
+5. 再打开一个终端，执行`node test/client.js`（这个终端我们称为 Client 终端）
+
+   ```bash
+   $ node client.js
+   connect successful
+   ```
+
+6. 第五步执行完成后，我们就可以在 `Server终端`中看到如下结果, 链接成功
+
+   ```bash
+   socket链接
+   ```
+
+#### 服务端向客户端通信
+
+1. 修改`devServer.js`中的代码，在`connection`中写入代码，实现由服务端向客户端发送消息
+
+   ```javascript
+   tcpServer.on('connection', (socket) => {
+     console.log('socket链接')
+     setTimeout(() => {
+       socket.write('服务端向客户端写入数据')
+     }, 2000)
+   })
+   ```
+
+2. 接着客户端这边需要进行一个接收，修改`client.js`，增加`.on("data")`的监听
+
+   ```javascript
+   client.on('data', (data) => {
+     console.log('-------客户端接收到了服务端的数据:start--------')
+     console.log(data.toString()) // 这里的data 是一个Buffer
+     console.log('-------客户端接收到了服务端的数据:end--------')
+   })
+   
+   client.on('error', (error) => {
+     console.log('error', error)
+   })
+   
+   client.on('end', () => {
+     console.log('client end')
+   })
+   ```
+
+3. 接着先重启`Server终端`，再重启`Client 终端`
+
+4. 我们在`Client终端`进行观察，`Server终端`启动大约 2s 后日志打印结果如下
+
+   ```bash
+   -------客户端接收到了服务端的数据:start--------
+   服务端向客户端写入数据
+   -------客户端接收到了服务端的数据:end--------
+   ```
+
+#### 客户端向服务端通信
+
+1. 我们修改`client.js`。在客户端内，接收到消息后 1s,向服务端发送消息
+
+   ```javascript
+   client.on('data', (data) => {
+     console.log('-------客户端接收到了服务端的数据:start--------')
+     console.log(data.toString()) // 这里的data 是一个Buffer
+     console.log('-------客户端接收到了服务端的数据:end--------')
+     setTimeout(() => {
+       console.log('客户端要给服务端发送消息了')
+       client.write('hello i am clinet')
+     }, 1000)
+   })
+   ```
+
+2. 同样服务端也要进行接受，我们在`devServer.js`内部的`tcpServer.on("connection")`回调函数内进行监听，修改如下
+
+   ```javascript
+    tcpServer.on('connection', (socket) => {
+     console.log('socket链接')
+     setTimeout(() => {
+       socket.write('服务端向客户端写入数据')
+     }, 2000)
+     // ---------------这里我们进行监听通信------------------------
+     socket.on('data', (data) => {
+       console.log('-------服务端接收到了客户端的数据:start--------')
+       const commandString = data.toString()
+       console.log(commandString)
+       if (commandString === 'END') {
+         socket.end()
+       }
+       console.log('-------服务端接收到了客户端的数据:end----------')
+     })
+   })
+   ```
+
+3. 接着先重启`Server终端`，再重启`Client 终端`
+
+4. 我们在`Server终端`进行观察，`Client终端`启动大约 3s 后日志打印结果如下
+
+   ```bash
+   -------服务端接收到了客户端的数据:start--------
+   hello i am clinet
+   -------服务端接收到了客户端的数据:end----------
+   ```
+
+5. 这里我们还做了一个特殊处理，当发现客户端发送过来的是`END`时候，就关闭客户端
+
+#### 监听指令
+
+> 当发现客户端发送过来的是`END`时候，就关闭客户端
+
+1. 服务端核心代码就是上一小节中的
+
+   ```javascript
+   if (commandString === 'END') {
+     socket.end()
+   }
+   ```
+
+2. 接着我们在`client.js`中增加关闭字符串代码
+
+   ```javascript
+   setTimeout(() => {
+     client.write('END')
+   }, 5000)
+   ```
+
+3. 接着先重启`Server终端`，再重启`Client 终端`
+
+4. 观察`Client终端`，最终这里会收到`end`事件的回调，打印效果如下
+
+   ```bash
+   client end
+   ```
+
+### 完整代码
+
+#### test/client.js
+
+```javascript
+const net = require('net')
+const client = new net.Socket()
+
+client.connect(8081, 'localhost', function () {
+  console.log('connect successful')
+})
+
+client.on('data', (data) => {
+  console.log('-------客户端接收到了服务端的数据:start--------')
+  console.log(data.toString()) // 这里的data 是一个Buffer
+  console.log('-------客户端接收到了服务端的数据:end--------')
+  setTimeout(() => {
+    console.log('客户端要给服务端发送消息了')
+    client.write('hello i am clinet')
+  }, 2000)
+})
+
+client.on('end', () => {
+  console.log('client end')
+})
+
+client.on('error', (error) => {
+  console.log('error', error)
+})
+
+setTimeout(() => {
+  client.write('END')
+}, 5000)
+```
+
+#### start/devService.js
+
+```javascript
+try {
+  const net = require('net')
+  const tcpServer = new net.Server()
+  tcpServer.listen(8081, 'localhost', function () {
+    console.log(tcpServer.address())
+  })
+  tcpServer.on('error', (err) => {
+    console.log(err)
+  })
+  tcpServer.on('connection', (socket) => {
+    console.log('socket链接')
+    setTimeout(() => {
+      socket.write('服务端向客户端写入数据')
+    }, 2000)
+    socket.on('data', (data) => {
+      console.log('-------服务端接收到了客户端的数据:start--------')
+      const commandString = data.toString()
+      console.log(commandString)
+      if (commandString === 'END') {
+        socket.end()
+      }
+      console.log('-------服务端接收到了客户端的数据:end----------')
+    })
+  })
+} catch (error) {
+  console.log(error)
+}
+```
 
 
 
