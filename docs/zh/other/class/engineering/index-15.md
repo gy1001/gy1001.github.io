@@ -438,7 +438,7 @@ console.log('-------- dev service end ----------')
      const paramsArr = param.split(' ')
      paramObj[paramsArr[0].replace('--', '')] = paramsArr[1]
    })
-   const defaultPort = paramObj.port || DEFAUL_PORT
+   const defaultPort = parseInt(paramObj.port || DEFAUL_PORT, 10)
    console.log(paramObj)
    ```
 
@@ -452,9 +452,50 @@ console.log('-------- dev service end ----------')
 
 ## 07: Node实现端口号是否被占用功能校验
 
+> 这里用到一个 npm 库：detect-port
 
+1. 安装这个库
 
+   ```bash
+   npm install detect-port -S
+   ```
 
+2. 修改`devService.js`,代码如下
+
+   ```javascript
+   const detectPort = require('detect-port')
+   ;(async function () {
+     const params = process.argv.slice(2)
+     const DEFAUL_PORT = 8000
+     const paramObj = {}
+     params.forEach((param) => {
+       const paramsArr = param.split(' ')
+       paramObj[paramsArr[0].replace('--', '')] = paramsArr[1]
+     })
+     const defaultPort = parseInt(paramObj.port || DEFAUL_PORT, 10)
+     try {
+       const newPort = await detectPort(defaultPort)
+       if (newPort === defaultPort) {
+         console.log('端口号' + defaultPort + '可以使用')
+       } else {
+         console.log('端口号' + defaultPort + '被占用，建议使用新端口号' + newPort)
+       }
+     } catch (error) {}
+   })()
+   ```
+
+3. 终端运行命令，及结果如下
+
+   ```bash
+   $ imooc-build start
+   端口号8080被占用，建议使用新端口号8081
+   ```
+
+## 08: detect-port库源码分析
+
+### 参考文章
+
+[detect-port 源码心得:https://zhuanlan.zhihu.com/p/434454631#detect-port](https://zhuanlan.zhihu.com/p/434454631#detect-port)
 
 
 
