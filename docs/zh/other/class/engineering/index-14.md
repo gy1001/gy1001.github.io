@@ -1599,8 +1599,8 @@ console.log(semver.valid(semver.coerce('42.6.7.9.3-alpha'))) // '42.6.7'
    const { program } = require('commander')
    const pkg = require('../package.json')
    const checkNode = require('../lib/checkNode')
-   const startServer = require('../start/startServer')
-   const build = require('../build/buildServer')
+   const startServer = require('../lib/start/startServer')
+   const build = require('../lib/build/buildServer')
    ;(async function () {
      try {
        const MIN_NODE_VERSION = '8.9.0'
@@ -1631,7 +1631,7 @@ console.log(semver.valid(semver.coerce('42.6.7.9.3-alpha'))) // '42.6.7'
    })()
    ```
 
-2. 新建`start/startServer.js`文件，内容如下
+2. 新建`/lib/start/startServer.js`文件，内容如下
 
    ```javascript
    module.exports = function startServer(args, opts, cmd) {
@@ -1639,7 +1639,7 @@ console.log(semver.valid(semver.coerce('42.6.7.9.3-alpha'))) // '42.6.7'
    }
    ```
 
-3. 新建`build/buildServer.js`，内容如下
+3. 新建`/lib/build/buildServer.js`，内容如下
 
    ```javascript
    module.exports = function build(args, opts, cmd) {
