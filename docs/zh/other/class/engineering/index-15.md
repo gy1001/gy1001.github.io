@@ -21,7 +21,6 @@
    function runWatcher() {
      // 启动配置监听服务
      // 使用三方库：chokidar
-     const configPath = path.resolve('./config.js')
      // 这里先通过监听 start 文件夹来查看回调数据
      chokidar
        .watch(path.resolve(__dirname, '../start'))
@@ -58,23 +57,337 @@
    add /Users/gaoyuan/Desktop/imooc-build/lib/start/startServer.js
    ```
 
+5. 如果修改了其中的文件，比如`config.js`，修改如下
+
+   ```bash
+   change /Users/gaoyuan/Desktop/imooc-build/lib/start/config.js
+   ```
+
 ## 02: chokidar实现原理和源码分析
 
+1. 打开`node_modules/chokidar/package.json`文件，可以看到如下内容
 
+   ```json
+   {
+     ...
+     "main": "index.js"
+     ...
+   }
+   ```
 
+2. 打开这个文件可以看到
 
+   ```javascript
+   const watch = (paths, options) => {
+     const watcher = new FSWatcher(options); // 实例化这个 FSWatcher 类
+     watcher.add(paths);
+     return watcher;
+   };
+   
+   exports.watch = watch;
+   ```
 
+3. 这个类继承于`EventEmitter`事件派发器
 
+## 03：通过chokidar实现 config 配置文件监听
 
+1. 修改`startServer.js`,监听`config.js`文件
 
+   ```javascript
+   ...
+   function onChange(eventName, path) {
+     console.log('change')
+   }
+   
+   function runWatcher() {
+     const configPath = path.resolve(__dirname, './config.js')
+     const watcher = chokidar
+       // .watch(path.resolve(__dirname, '../start'))
+       .watch(configPath)
+       .on('all', onChange)
+       .on('erro', (error) => {
+         console.error('file watch error!', error)
+         process.exit(1)
+       })
+   }
+   ...
+   ```
 
+## 04: 划重点：Node启动子进程方法之 execFile + exec
 
+### 前置知识
 
+* 进程是程序的一个最小单位，
 
+* 在终端中可以通过`ps -ef`来查看所有的进程
 
+* 进程都有 `PID、PPID`
 
+  ```bash
+  $ ps -ef
+    UID   PID  PPID   C STIME   TTY           TIME CMD
+      0     1     0   0 四06下午 ??         7:36.74 /sbin/launchd
+      0    97     1   0 四06下午 ??         0:17.92 /usr/sbin/syslogd
+      0    98     1   0 四06下午 ??         2:03.46 /usr/libexec/UserEventAgent (System)
+      0   101     1   0 四06下午 ??         0:19.90 /System/Library/PrivateFrameworks/Uninstall.framework/Resources/uninstalld
+      0   102     1   0 四06下午 ??         0:01.72 /usr/libexec/kextd
+      0   103     1   0 四06下午 ??         3:37.02 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/Support/fseventsd
+  ...
+  ```
 
+#### 启动子进程的方式
 
+[Node.js 多进程:https://www.runoob.com/nodejs/nodejs-process.html#](https://www.runoob.com/nodejs/nodejs-process.html#)
+
+[玩转 node 子进程 — child_process:https://juejin.cn/post/6882290865763680264](https://juejin.cn/post/6882290865763680264)
+
+Node 提供了 child_process 模块来创建子进程，方法有：
+
+- **exec** - child_process.exec 使用子进程执行命令，缓存子进程的输出，并将子进程的输出以回调函数参数的形式返回。
+- **execFile**: 启动一个子进程来执行可执行文件；
+- **spawn** - child_process.spawn 使用指定的命令行参数创建新进程。
+- **fork** - child_process.fork 是 spawn() 的特殊形式，用于在子进程中运行的模块，如 fork('./son.js') 相当于 spawn('node', ['./son.js']) 。与 spawn 方法不同的是，fork 会在父进程与子进程之间，建立一个通信管道，用于进程之间的通信。
+
+新建文件`start/devService.js`,内容如下
+
+```javascript
+console.log('-------- dev service start ----------')
+console.log(process.argv)
+console.log(process.pid)
+console.log(process.ppid)
+console.log('-------- dev service end ----------')
+```
+
+### exec 方式创建子进程
+
+1. 修改`startService.js`方法，代码如下
+
+   ```javascript
+   ...
+   const cp = require('child_process')
+   const path = require('path')
+   function runServer() {
+     // 启动子进程的方式
+     console.log('pid', process.pid)
+     // 第一中使用 exec
+     cp.exec(
+       'node ' + path.resolve(__dirname, './devService.js'),
+       (err, stdout, stderr) => {
+         if (err) {
+           console.log('error', 'err')
+         } else {
+           console.log('dev callback')
+           console.log(stdout)
+         }
+       },
+     )
+   }
+   ...
+   ```
+
+2. 执行终端命令及效果如下
+
+   ```bash
+   $  imooc-build start
+   start server
+   pid 93502
+   dev callback
+   -------- dev service start ----------
+   [
+     '/usr/local/bin/node',
+     '/Users/gaoyuan/Desktop/imooc-build/lib/start/devService.js'
+   ]
+   93503
+   93502
+   -------- dev service end ----------
+   ```
+
+### execFile 方式创建子进程
+
+1. 修改`startService.js`方法，代码如下
+
+   ```javascript
+   function runServer() {
+     console.log('pid', process.pid)
+     // 第二种：使用 execFile 方式
+     cp.execFile(
+       'node',
+       [path.resolve(__dirname, './devService.js')],
+       {},
+       (err, stdout) => {
+         if (!err) {
+           console.log(stdout)
+         } else {
+           console.log(err)
+         }
+       },
+     )
+   }
+   ```
+
+2. 执行终端命令及效果如下
+
+   ```bash
+   $ imooc-build start
+   start server
+   pid 97678
+   -------- dev service start ----------
+   [
+     '/usr/local/bin/node',
+     '/Users/gaoyuan/Desktop/imooc-build/lib/start/devService.js'
+   ]
+   97680
+   97678
+   -------- dev service end ----------
+   ```
+
+## 05: 划重点：Node启动子进程方法之spawn+fork
+
+### spawn
+
+1. 修改`startService.js`方法，代码如下
+
+   ```javascript
+   function runServer() {
+     console.log('pid', process.pid)
+     // 第三种：使用 spwan
+     const child = cp.spawn('node', [path.resolve(__dirname, './devService.js')])
+     // 输出相关的数据
+     child.stdout.on('data', function (data) {
+       console.log('data from child: ' + data)
+     })
+   
+     // 错误的输出
+     child.stderr.on('data', function (data) {
+       console.log('error from child: ' + data)
+     })
+   
+     // 子进程结束时输出
+     child.on('close', function (code) {
+       console.log('child exists with code: ' + code)
+     })
+   }
+   ```
+
+2. 执行终端命令及效果如下
+
+   ```bash
+   $  imooc-build start
+   start server
+   pid 98855
+   data from child: -------- dev service start ----------
+   
+   data from child: [
+     '/usr/local/bin/node',
+     '/Users/gaoyuan/Desktop/imooc-build/lib/start/devService.js'
+   ]
+   98856
+   98855
+   data from child: -------- dev service end ----------
+   child exists with code: 0
+   ```
+
+### fork
+
+> child_process.fork 是 spawn() 方法的特殊形式，用于创建进程, **可以帮会我们进行进程间的通信**
+
+1. 修改`startService.js`方法，代码如下
+
+   ```javascript
+   function runServer() {
+     console.log('pid', process.pid)
+     // 第四种：fork
+     const srciprtPath = path.resolve(__dirname, './devService.js')
+     const child = cp.fork(srciprtPath)
+     child.on('data', (data) => {
+       console.log(data)
+     })
+   }
+   ```
+
+2. 执行终端命令及效果如下
+
+   ```bash
+   $ imooc-build start
+   start server
+   pid 99720
+   -------- dev service start ----------
+   [
+     '/usr/local/bin/node',
+     '/Users/gaoyuan/Desktop/imooc-build/lib/start/devService.js'
+   ]
+   99721
+   99720
+   -------- dev service end ----------
+   ```
+
+3. 那么如何进行通信呢？
+
+4. 我们继续修改`startService.js`方法，代码如下
+
+   ```javascript
+   function runServer() {
+     console.log('pid', process.pid)
+     // 第四种：fork
+     const srciprtPath = path.resolve(__dirname, './devService.js')
+     const child = cp.fork(srciprtPath)
+     child.on('message', (data) => {
+       // 接收来自子进程中的消息
+       console.log('-------message from child process: start---')
+       console.log(data)
+       console.log('-------message from child process: end---')
+     })
+     child.send('hello child process')
+   }
+   ```
+
+5. 修改`devServive.js`文件，增加接收和发送消息事件
+
+   ```javascript
+   console.log('-------- dev service start ----------')
+   console.log(process.argv)
+   console.log(process.pid)
+   console.log(process.ppid)
+   console.log('-------- dev service end ----------')
+   // 增加以下功能
+   process.on('message', (data) => {
+     console.log('==========massage from main process: start=============')
+     console.log(data)
+     console.log('==========massage from main process: end================')
+   })
+   process.send('message from child process')
+   ```
+
+6. 终端运行命令，及相应结果如下
+
+   ```bash
+   $ imooc-build start
+   start server
+   pid 324
+   -------- dev service start ----------
+   [
+     '/usr/local/bin/node',
+     '/Users/gaoyuan/Desktop/imooc-build/lib/start/devService.js'
+   ]
+   325
+   324
+   -------- dev service end ----------
+   -------message from child process: start---
+   message from child process
+   -------message from child process: end---
+   ==========massage from main process: start=============
+   hello child process
+   ==========massage from main process: end================
+   ```
+
+7. 根据上述打印过程，我们可以看到执行流程如下
+
+   * 先执行脚本`devService.js`,其中的`console.log`率先执行
+   * 然后`devService.js`中，执行监听函数，并发送消息
+   * `startService.js`中，监听到`message`事件并触发执行，然后打印出来
+   * 接着`startService.js`中，发送消息，
+   * 子进程中监听函数执行，打印
+   * 并且在终端中仍然可以看到，这个进程处于一个运行监听状态
 
 
 
