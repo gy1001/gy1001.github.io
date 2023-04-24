@@ -497,7 +497,68 @@ console.log('-------- dev service end ----------')
 
 [detect-port 源码心得:https://zhuanlan.zhihu.com/p/434454631#detect-port](https://zhuanlan.zhihu.com/p/434454631#detect-port)
 
+* 源码核心是使用`nodeJs` 中 `net` 模块，来判断端口号是否可用, 同时设置最大端口号，是设置值 + 10，如果大于 65535，则是65535，如下代码
 
+  ```javascript
+  function listen(port, hostname, callback) {
+    const server = new net.Server();
+    ...
+  }
+    
+  
+  let maxPort = port + 10;
+  if (maxPort > 65535) {
+  maxPort = 65535;
+  }  
+  ```
+
+* 如何判断端口被占用呢？
+
+  ```javascript
+  server.listen(port, hostname, () => {
+    port = server.address().port;
+    server.close();
+    debug('get free %s:%s', hostname, port);
+    return callback(null, port);
+  });
+  ```
+
+* 同时这里会有多次判断，全部成功时才会认为这个端口可用
+
+  ```javascript
+   // 1. check null
+  listen(port, null, (err, realPort) => {
+  	...
+    // 2. check 0.0.0.0
+    listen(port, '0.0.0.0', err => {
+      ...
+      // 3. check localhost
+      listen(port, 'localhost', err => {
+      	...   
+        // 4. check current ip
+        listen(port, address.ip(), (err, realPort) => {
+        	...  
+        })
+      })
+    })
+  }
+  ```
+
+* 其中一个一旦失败就会调用`handleError`方法，他会把端口号`port`加 1，然后再次执行
+
+  ```javascript
+   function handleError() {
+    port++;
+    if (port >= maxPort) {
+      debug('port: %s >= maxPort: %s, give up and use random port', port, maxPort);
+      port = 0;
+      maxPort = 0;
+    }
+    tryListen(port, maxPort, hostname, callback);
+  }
+  ```
+
+  
 
 
 
