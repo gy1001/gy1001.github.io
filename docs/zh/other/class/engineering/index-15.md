@@ -949,25 +949,23 @@ try {
        console.log('端口号' + defaultPort + '可以使用')
      } else {
        console.log('端口号' + defaultPort + '被占用，建议使用新端口号' + newPort)
+        // 命令行交互
+       const questions = {
+         type: 'confirm',
+         name: 'answer',
+         message: `${defaultPort}已被占用，是否启用新端口号${newPort}?`,
+       }
+       const result = await inquirer.prompt(questions)
+       if (!result.answer) {
+          process.exit(1)
+       } 
      }
-   
-     // 命令行交互
-     const questions = {
-       type: 'confirm',
-       name: 'answer',
-       message: `${defaultPort}已被占用，是否启用新端口号${newPort}?`,
-     }
-     const result = await inquirer.prompt(questions)
-     if (!result.answer) {
-         process.exit(1)
-     } else {
-       // 否则就进行下一步操作
-     }
+     // 否则就进行下一步操作
    } catch (error) {
      console.log(error)
    }
    ```
-
+   
 6. 运行终端命令，相应效果如下
 
    ```bash
@@ -992,23 +990,19 @@ try {
    module.exports = Service
    ```
 
-2. 修改`devService.js`中的`else`，内容如下
+2. 修改`devService.js`中的代码，内容如下
 
    ```javascript
    const Service = require('../service/Service')
    
-   if (!result.answer) {
-       process.exit(1)
-   } else {
-     // 否则就进行下一步操作
-     const args = {
-       port: newPort,
-     }
-     const service = new Service(args)
-     service.start()
+   // 否则就进行下一步操作
+   const args = {
+     port: newPort,
    }
+   const service = new Service(args)
+   service.start()
    ```
-
+   
 3. 修改`lib/start/startServer.js`文件，内容如下: 保证当子进程退出时，主进程也退出
 
    ```javascript
