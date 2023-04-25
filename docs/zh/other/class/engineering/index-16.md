@@ -44,22 +44,20 @@ end=>end: 结束
 
 start->check_node
 check_node(yes)->imooc-build(path1,bottom)->register_start->watch_start->is_start
-
+check_node(no)->end
 imooc-build(path2,right)->register_build->watch_build->is_build
-
 is_start(yes)->start_pc(path1, left)->register_config_change->watch_config_change
 watch_config_change(yes)->kill_pc_restart
 watch_config_change(no)->watch_config_change
-
-start_pc(path2, right)->parse_params->get_port->check_port
-
+start_pc(path2, bottom)->parse_params->get_port->check_port
+check_port(yes)->is_use_new_port
+is_use_new_port(yes)->add_port->check_port
+is_use_new_port(no)->end
 
 check_port(no)->use_port->new_service(path1,right)->start_service->parse_config->parse_plugins->plugins_run->hooks_run
 hooks_run->create_chainwebpack_config->new_webpack_compiler->new_webpack_dev_server->start_server
 new_service(path2,bottom)->create_config->create_utils
-check_port(yes)->is_use_new_port
-is_use_new_port(yes)->add_port->check_port
-is_use_new_port(no)->end
+
 ```
 
 ## 02: 重要：工程化脚手架核心服务架构设计
