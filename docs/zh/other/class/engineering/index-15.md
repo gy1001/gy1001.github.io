@@ -992,7 +992,24 @@ try {
    module.exports = Service
    ```
 
-2. 修改`lib/start/startServer.js`文件，内容如下: 保证当子进程退出时，主进程也退出
+2. 修改`devService.js`中的`else`，内容如下
+
+   ```javascript
+   const Service = require('../service/Service')
+   
+   if (!result.answer) {
+       process.exit(1)
+   } else {
+     // 否则就进行下一步操作
+     const args = {
+       port: newPort,
+     }
+     const service = new Service(args)
+     service.start()
+   }
+   ```
+
+3. 修改`lib/start/startServer.js`文件，内容如下: 保证当子进程退出时，主进程也退出
 
    ```javascript
    const chokidar = require('chokidar')
@@ -1023,7 +1040,7 @@ try {
    }
    ```
 
-3. 运行终端,效果如下
+4. 运行终端,效果如下
 
    ```bash
    $ imooc-build start
@@ -1033,12 +1050,10 @@ try {
    ? 8080已被占用，是否启用新端口号8081? (Y/n) 
    ```
 
-4. 此时如果选择`N`,那么程序将直接退出
+5. 此时如果选择`N`,那么程序将直接退出
 
    ```bash
    ? 8080已被占用，是否启用新端口号8081? No
-   启动服务
-   1
    ```
 
 ### 再实现，文件修改时重启服务
