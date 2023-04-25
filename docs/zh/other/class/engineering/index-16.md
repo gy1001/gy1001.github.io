@@ -72,7 +72,6 @@ new_service(path2,bottom)->create_config->create_utils
 
    ```javascript
    const DEFAULT_CONFIG_NAME = 'imooc-build.config.json'
-   
    class Service {
      constructor(opts) {
        this.args = opts
@@ -88,7 +87,7 @@ new_service(path2,bottom)->create_config->create_utils
        console.log('解析配置文件')
      }
    }
-   
+
    module.exports = Service
    ```
 
@@ -118,7 +117,7 @@ new_service(path2,bottom)->create_config->create_utils
    {
      "scripts": {
        "dev": "imooc-build start"
-     },
+     }
    }
    ```
 
@@ -150,7 +149,7 @@ new_service(path2,bottom)->create_config->create_utils
    program
      .command('start')
      .option('-c --config <config>', '配置文件路径')
-   
+
    program
      .command('build')
      .option('-c --config <config>', '配置文件路径')
@@ -160,10 +159,9 @@ new_service(path2,bottom)->create_config->create_utils
 2. 修改`startServer.js`,接收参数
 
    ```javascript
-   
    // 增加全局参数 config，重启服务时候需要
    let configParams
-   
+
    function runServer(args) {
      // 接收参数
      const { config } = args
@@ -177,13 +175,13 @@ new_service(path2,bottom)->create_config->create_utils
        }
      })
    }
-   
+
    function onChange(eventName, path) {
      child.kill()
      // 传入 configParams
      runServer(configParams)
    }
-   
+
    module.exports = function startServer(args, opts, cmd) {
      console.log('start server')
      // 这里增加参数传入
@@ -194,13 +192,13 @@ new_service(path2,bottom)->create_config->create_utils
 
 3. 接着修改`devService.js`文件，处理参数
 
-   >  这里之前我们通过 **const** params = process.argv.slice(2) 来处理参数，并最终放在了 paramObj 中
+   > 这里之前我们通过 **const** params = process.argv.slice(2) 来处理参数，并最终放在了 paramObj 中
 
    ```javascript
    const defaultPort = parseInt(paramObj.port || DEFAUL_PORT, 10)
    // 增加如下代码
    const config = paramObj.config || ''
-   
+
    try{
      ...
      const args = {
@@ -211,7 +209,7 @@ new_service(path2,bottom)->create_config->create_utils
      const service = new Service(args)
      service.start()
    }catch(){
-     
+
    }
    ```
 
@@ -219,7 +217,6 @@ new_service(path2,bottom)->create_config->create_utils
 
    ```javascript
    class Service {
-     
      // 解析配置文件
      resolveConfig() {
        console.log('解析配置文件', this.args)
@@ -242,11 +239,12 @@ new_service(path2,bottom)->create_config->create_utils
 1. 修改`Service.js`，代码如下
 
    ```javascript
+   const path = require('path')
+   
    class Service {
-     
      // 增加是否是绝对路径的判断处理
      resolveConfig() {
-   		console.log('解析配置文件', this.args)
+       console.log('解析配置文件', this.args)
        const { config } = this.args
        let configPath = config
        if (config) {
@@ -263,4 +261,23 @@ new_service(path2,bottom)->create_config->create_utils
    module.exports = Service
    ```
 
-2. 
+2. 修改`samples/package.json`，内容如下
+
+   ```javascript
+   {
+     "scripts": {
+       "dev": "imooc-build start --config ./imooc-build.config.json"
+     },
+   }
+   ```
+
+3. 在`samples`文件夹下运行终端，结果如下
+
+   ```bash
+   $ npm run dev
+   > imooc-build start --config ./imooc-build.config.json
+   启动服务
+   /Users/yuangao/Desktop/imooc-build/samples/imooc-build.config.json
+   ```
+
+   
