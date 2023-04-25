@@ -280,4 +280,8 @@ new_service(path2,bottom)->create_config->create_utils
    /Users/yuangao/Desktop/imooc-build/samples/imooc-build.config.json
    ```
 
-   
+## 05: fast-glob实现文件遍历功能
+
+>  上一小节中，只处理了 config 存在的时候，如果没有存在呢？我们就需要进行一个全局的搜索，有两种形式一种是 imooc-build.config.js 还有一种是 imooc-build.config.json
+>
+> [npm库：fast-glob: https://www.npmjs.com/package/fast-glob](https://www.npmjs.com/package/fast-glob)
