@@ -98,6 +98,7 @@ export default defineUserConfig({
     mdEnhancePlugin({
       // Enable mermaid
       mermaid: true,
+      flowchart: true,
     }),
   ],
   markdown: {
