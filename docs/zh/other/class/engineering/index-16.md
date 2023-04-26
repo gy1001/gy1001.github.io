@@ -742,5 +742,128 @@ new_service(path2,bottom)->create_config->create_utils
 * 如果文件是 js 类型且内部没有 esmodule 形式的代码，也可以正常通过 require 来加载
 * 如果文件是 js 类型且内部代码符合 esmodule 形式，那就要变为 mjs 文件后缀，且导出采用 export default 形式。外部导入使用 import 
 
+## 07：基于npmlog的公共日志类封装
+
+> 我们目前的日志都是基于 console.log 但是某些是测试日志，这样我们就可以通过 npmlog 这个库来进行处理
+>
+> [npmlog库代码: https://www.npmjs.com/package/npmlog](https://www.npmjs.com/package/npmlog)
+>
+> 举例：下述方法是不同 level 的打印
+>
+> - log.silly(prefix, message, ...)
+> - log.verbose(prefix, message, ...)
+> - log.info(prefix, message, ...)
+> - log.http(prefix, message, ...)
+> - log.warn(prefix, message, ...)
+> - log.error(prefix, message, ...)
+
+### 初步了解 npmlog 库
+
+1. 安装依赖库（在脚手架中）
+
+   ```bash
+   npm install npmlog -D
+   ```
+
+2. 新建`utils/log.js`文件，内容如下
+
+   ```javascript
+   const npmlog = require('npmlog')
+   const LOG_LEVELS = ['verbose', 'info', 'warn', 'error']
+   const LOG_LEVEL = process.env.LOG_LEVEL
+   npmlog.level = LOG_LEVELS.indexOf(LOG_LEVEL) !== -1  ? LOG_LEVEL : 'info'
+   module.exports = npmlog
+   ```
+
+3. 我们修改`Service.js`,增加如下代码
+
+   ```javascript
+   const log = require('../../utils/log')
+   
+   class Service {
+       // 解析配置文件
+     async resolveConfig() {
+       log.verbose('解析配置文件', this.args)
+       log.info('解析配置文件', this.args)
+       ...
+     }
+   }
+   ```
+
+4. 此时我们在`samples`文件夹下，重新运行终端命令（效果如下，并且是有不同颜色的区别）
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6208a08896a142088dfd2c28c48e1acd~tplv-k3u1fbpfcp-watermark.image?)
+
+5. 由上图可以看到我们的日志输出，只输出了`info`类型的日志，`verbose`类型的日志并没有输出
+
+6. 如果更改`utils/log.js`文件，改变`level`配置
+
+   ```javascript
+   const npmlog = require('npmlog')
+   const LOG_LEVELS = ['verbose', 'info', 'warn', 'error']
+   // npmlog.level = LOG_LEVELS.indexOf(LOG_LEVEL) > 0 ? LOG_LEVEL : 'info'
+   npmlog.level = 'verbose'
+   module.exports = npmlog
+   ```
+
+7. 再次运行终端命令（效果如下）
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/73be3f8e462742a08e17c58d97122aa4~tplv-k3u1fbpfcp-watermark.image?)
+
+### 完善代码
+
+1. 修改`utils/log.js`，代码如下
+
+   ```javascript
+   const npmlog = require('npmlog')
+   const LOG_LEVELS = ['verbose', 'info', 'warn', 'error']
+   const LOG_LEVEL = process.env.LOG_LEVEL
+   npmlog.level = LOG_LEVELS.indexOf(LOG_LEVEL) !== -1 ? LOG_LEVEL : 'info'
+   module.exports = npmlog
+   ```
+
+2. 这个时候我们可以在脚手架中增加一个`-d`的全局 option  来表示正在调试阶段，并且利用前置钩子，修改`bin/imooc-build.js`文件，内容如下
+
+   ```javascript
+    // 增加一个全局的 -d 表示 debug 模式
+   program.option('-d --debug', '开启调试模式')
+     .hook('preAction', (thisCommand, actionCommand) => {
+       const { debug } = actionCommand.optsWithGlobals()
+       if (debug) {
+         process.env.LOG_LEVEl = 'verbose'
+       }
+     })
+   ```
+
+3. 我们在`samples/package.json`中新建一个脚本
+
+   ```javascript
+   {
+     "dev:debug": "imooc-build start -d"
+   }
+   ```
+
+4. 这样我们在`samples`文件夹下的终端运行
+
+5. 运行`npm run dev:noconfig`时效果如下
+
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e524ff91dcb74a05be33df70b055ce5c~tplv-k3u1fbpfcp-watermark.image?)
+
+6. 运行`npm run dev:debug`时效果如下
+
+   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/47ff40e2623945e6b736631be7df03f8~tplv-k3u1fbpfcp-watermark.image?)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
