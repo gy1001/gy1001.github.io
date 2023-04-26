@@ -381,3 +381,366 @@ new_service(path2,bottom)->create_config->create_utils
    ```bash
    $ npm run dev:noconfig
    配置文件不存在，终止执行 // 直接退出了
+
+## 06：多类型配置文件结构解析
+
+> * 如果文件是 json 文件，我们就直接 require 进来，获取各个参数
+> * 如果是 js 文件，我们也可以通过 require 进来
+>   * 如果内部文件采用 cjs 方式引入依赖，那就会解析正常
+>   * 如果内部文件采用 esModule 方式引入依赖，那就会造成解析错误  
+> * node 目前是支持运行 .mjs 类型的采用 esModule 标准书写的代码的
+
+### 文件是 json 类型
+
+1. 配置文件名字修改为`imooc-build.config.json`，内容如下
+
+   ```json
+   {
+     "entry": "src/inedx.js",
+     "plugins": []
+   }
+   ```
+
+2. 修改`Service.js`中的代码，如下
+
+   ```javascript
+   class Service {
+     resolveConfig() {
+       if (config) {
+         
+       }else{
+         
+       }
+       // 这里增加配置文件判断逻辑，
+        if (configPath && fs.existsSync(configPath)) {
+         console.log(configPath)
+         // 这里增加 json 文件处理逻辑
+         const isJson = configPath.endsWith('.json')
+         if (isJson) {
+           const config = require(configPath)
+           console.log(config)
+         }
+       } else {
+         console.log('配置文件不存在，终止执行')
+         process.exit(1)
+       }
+     }
+   }
+   ```
+
+3. 重新运行终端，效果如下
+
+   ```bash
+   $ npm run dev:noconfig
+   /Users/gaoyuan/Desktop/imooc-build/samples/imooc-build.config.json
+   { entry: 'src/inedx.js', plugins: [] } // 这是文件内容，获取成功
+   ```
+
+### 文件是 js 类型
+
+1. 配置文件名字修改为`imooc-build.config.js`，修改内容如下
+
+   ```javascript
+   module.exports = {
+     entry: 'src/inedx.js',
+     plugins: [],
+   }
+   ```
+
+2. 修改`Service.js`中的代码，增加处理`.js`文件逻辑，如下
+
+   ```javascript
+   class Service {
+     resolveConfig() {
+       if (config) {
+         
+       }else{
+         
+       }
+        if (configPath && fs.existsSync(configPath)) {
+         console.log(configPath)
+         const isJson = configPath.endsWith('.json')
+         // 增加 isJs 文件逻辑判断
+         const isJs = configPath.endsWith('.js')
+         if (isJson) {
+           ...
+         } else if (isJs) {
+           const config = require(configPath)
+           console.log(config)
+         }
+       } else {
+         console.log('配置文件不存在，终止执行')
+         process.exit(1)
+       }
+     }
+   }
+   ```
+
+3. 重新运行终端，效果如下(这里正常解析，没问题)
+
+   ```bash
+   $ npm run dev:noconfig
+   解析配置文件 { port: 8080, config: '' }
+   { entry: 'src/inedx.js', plugins: [] }
+   ```
+
+4. 修改`imooc-build.config.js`，内容如下(用 cjs 形式引入代码)
+
+   ```javascript
+   const entry = 'src/index.js'
+   const path = require('path')
+   
+   module.exports = {
+     entry: path.isAbsolute(entry) ? entry : path.resolve(entry),
+     plugins: [],
+   }
+   ```
+
+5. 重新运行终端，效果如下(这里也会正常解析，没问题)
+
+   ```bash
+   $ npm run dev:noconfig
+   解析配置文件 { port: 8080, config: '' }
+   {
+     entry: '/Users/gaoyuan/Desktop/imooc-build/samples/src/index.js',
+     plugins: []
+   }
+   ```
+
+6. 但是如果代码中含有 esModule 标准的代码，修改`imooc-build.config.js`如下
+
+   ```javascript
+   const entry = 'src/index.js'
+   import path from 'path'
+   
+   module.exports = {
+     entry: path.isAbsolute(entry) ? entry : path.resolve(entry),
+     plugins: [],
+   }
+   ```
+
+7. 重新运行终端，效果如下(这里就会解析报错)
+
+   ```bash
+   import path from 'path'
+   ^^^^^^
+   
+   SyntaxError: Cannot use import statement outside a module
+   ```
+
+### 文件是 mjs 类型
+
+1. 新建测试代码`src/test.mjs`,内容如下
+
+   ```javascript
+   import path from 'path'
+   console.log(path.isAbsolute('package.json'))
+   ```
+
+2. 运行终端命令，效果如下（运行正常）
+
+   ```bash
+   $ node src/test.mjs 
+   false
+   ```
+
+3. 配置文件名字修改为`imooc-build.config.mjs`，修改内容如下
+
+   ```javascript
+   const entry = 'src/index.js'
+   import path from 'path'
+   
+   module.exports = {
+     entry: path.isAbsolute(entry) ? entry : path.resolve(entry),
+     plugins: [],
+   }
+   ```
+
+4. 当然，这里需要修改`service/Service.js`，修改地方如下
+
+   ```javascript
+   const DEFAULT_CONFIG_NAME = ['imooc-build.config.(json|mjs|js)'] // 增加 mjs 类型
+   ```
+
+5. 修改`Service.js`中的代码，增加处理`.mjs`文件逻辑，如下
+
+   ```javascript
+   class Service {
+     resolveConfig() {
+       if (config) {
+         
+       }else{
+         
+       }
+        if (configPath && fs.existsSync(configPath)) {
+         console.log(configPath)
+         const isJson = configPath.endsWith('.json')
+         const isJs = configPath.endsWith('.js')
+         // 增加 isMJs 文件逻辑判断
+         const isMjs = configPath.endsWith('.mjs')
+         if (isJson) {
+           ...
+         } else if (isJs) {
+           ...
+         } else if (isMjs) {
+           const config = require(configPath)
+           console.log(config)
+         }
+       } else {
+         console.log('配置文件不存在，终止执行')
+         process.exit(1)
+       }
+     }
+   }
+   ```
+
+6. 重新运行终端，效果如下(报错)
+
+   ```bash
+   Error [ERR_REQUIRE_ESM]: require() of ES Module /Users/gaoyuan/Desktop/imooc-build/samples/imooc-build.config.mjs not supported.
+   Instead change the require of /Users/gaoyuan/Desktop/imooc-build/samples/imooc-build.config.mjs to a dynamic import() which is available in all CommonJS modules.
+       at Service.resolveConfig (/Users/gaoyuan/Desktop/imooc-build/lib/service/Service.js:47:24)
+       at Service.start (/Users/gaoyuan/Desktop/imooc-build/lib/service/Service.js:15:10)
+       at /Users/gaoyuan/Desktop/imooc-build/lib/start/devService.js:50:13 {
+     code: 'ERR_REQUIRE_ESM'
+   }
+   ```
+
+7. 这里和视频教程有出入，需要修改`Service.js`中的代码，修改处理`.mjs`文件逻辑，如下
+
+   ```javascript
+   class Service {
+     // 需要支持异步
+     async resolveConfig() {
+       if (config) {
+         
+       }else{
+         
+       }
+        if (configPath && fs.existsSync(configPath)) {
+         console.log(configPath)
+         const isJson = configPath.endsWith('.json')
+         const isJs = configPath.endsWith('.js')
+         const isMjs = configPath.endsWith('.mjs')
+         if (isJson) {
+           ...
+         } else if (isJs) {
+           ...
+         } else if (isMjs) {
+           // 修改 isMjs 文件类型逻辑处理
+           const config = await import(configPath)
+           console.log(config.default)
+         }
+       } else {
+         console.log('配置文件不存在，终止执行')
+         process.exit(1)
+       }
+     }
+   }
+   ```
+
+8. 并且修改`imooc-build.config.mjs`，内容如下
+
+   ```javascript
+   const entry = 'src/index.js'
+   import path from 'path'
+   export default {
+     entry: path.isAbsolute(entry) ? entry : path.resolve(entry),
+     plugins: [],
+   }
+   ```
+
+9. 重新运行终端，效果如下(解析正常)
+
+   ```bash
+   $ npm run dev:noconfig
+   解析配置文件 { port: 8080, config: '' }
+   {
+     entry: '/Users/gaoyuan/Desktop/imooc-build/samples/src/index.js',
+     plugins: []
+   }
+   ```
+
+### 总体代码整合
+
+1. `Service.js`中的代码如下
+
+   ```javascript
+   const DEFAULT_CONFIG_NAME = ['imooc-build.config.(json|mjs|js)']
+   const path = require('path')
+   const fg = require('fast-glob')
+   const fs = require('fs')
+   class Service {
+     constructor(opts) {
+       this.args = opts
+       this.config = {}
+       this.hooks = {}
+       //
+       this.dir = process.cwd()
+     }
+     start() {
+       console.log('启动服务')
+       this.resolveConfig()
+     }
+     // 解析配置文件
+     async resolveConfig() {
+       console.log('解析配置文件', this.args)
+       const { config } = this.args
+       let configPath = config
+       if (config) {
+         if (path.isAbsolute(config)) {
+           configPath = config
+         } else {
+           configPath = path.resolve(config)
+         }
+       } else {
+         // 如果没有配置，就查找默认文件
+         const [configFile] = fg.sync(DEFAULT_CONFIG_NAME, {
+           cwd: this.dir,
+           absolute: true,
+         })
+         configPath = configFile
+       }
+       let configParams = {}
+       if (configPath && fs.existsSync(configPath)) {
+         const isJson = configPath.endsWith('.json')
+         const isJs = configPath.endsWith('.js')
+         const isMjs = configPath.endsWith('.mjs')
+         if (isJson) {
+           configParams = require(configPath)
+         } else if (isJs) {
+           configParams = require(configPath)
+         } else if (isMjs) {
+           configParams = await import(configPath)
+           configParams = configParams.default
+         }
+         console.log(configParams)
+       } else {
+         console.log('配置文件不存在，终止执行')
+         process.exit(1)
+       }
+     }
+   }
+   
+   module.exports = Service
+   ```
+
+2. 重新运行终端，效果如下
+
+   ```bash
+   $ npm run dev:noconfig
+   解析配置文件 { port: 8080, config: '' }
+   {
+     entry: '/Users/gaoyuan/Desktop/imooc-build/samples/src/index.js',
+     plugins: []
+   }
+   ```
+
+### 注意：
+
+* 从上面可以看出，如果配置文件是 json 类型，可以正常 require 加载
+* 如果文件是 js 类型且内部没有 esmodule 形式的代码，也可以正常通过 require 来加载
+* 如果文件是 js 类型且内部代码符合 esmodule 形式，那就要变为 mjs 文件后缀，且导出采用 export default 形式。外部导入使用 import 
+
+
+
