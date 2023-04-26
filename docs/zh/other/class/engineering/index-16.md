@@ -161,10 +161,12 @@ new_service(path2,bottom)->create_config->create_utils
    ```javascript
    // 增加全局参数 config，重启服务时候需要
    let configParams
-
+   
    function runServer(args) {
-     // 接收参数
-     const { config } = args
+     // 接收参数，注意这里后续参数解析会变为字符串，
+     // 如果不存在时，就会变为字符串的 undefinded, "undefined"
+     // 需要给个默认值
+     const { config = "" } = args
      const srciprtPath = path.resolve(__dirname, './devService.js')
      // 运行脚本时也要增加参数
      configParams = ['--port 8080', '--config ' + config]
@@ -175,13 +177,13 @@ new_service(path2,bottom)->create_config->create_utils
        }
      })
    }
-
+   
    function onChange(eventName, path) {
      child.kill()
      // 传入 configParams
      runServer(configParams)
    }
-
+   
    module.exports = function startServer(args, opts, cmd) {
      console.log('start server')
      // 这里增加参数传入
@@ -282,6 +284,100 @@ new_service(path2,bottom)->create_config->create_utils
 
 ## 05: fast-glob实现文件遍历功能
 
+### 查找默认配置文件路径
+
 >  上一小节中，只处理了 config 存在的时候，如果没有存在呢？我们就需要进行一个全局的搜索，有两种形式一种是 imooc-build.config.js 还有一种是 imooc-build.config.json
 >
 > [npm库：fast-glob: https://www.npmjs.com/package/fast-glob](https://www.npmjs.com/package/fast-glob)
+
+1. 安装`fast-glob`依赖库
+
+   ```bash
+   npm install fast-glob -D
+   ```
+
+2. 修改`Service.js`，修改如下
+
+   ```javascript
+   // 默认文件配置名字
+   const DEFAULT_CONFIG_NAME = ['imooc-build.config.(json|js)']
+   const fg = require('fast-glob')
+   
+   class Service {
+     constructor(opts) {
+       ...
+       // 设置绝对路径文件夹
+       this.dir = process.cwd()
+     }
+     
+     resolveConfig() {
+       if (config) {
+         ...
+       }else{
+         // 如果没有获取到配置文件的参数，就开始查询默认的文件是否存在
+         const [configFile] = fg.sync(DEFAULT_CONFIG_NAME, {
+           cwd: this.dir,
+           absolute: true,
+         })
+         configPath = configFile
+       }
+       console.log(configPath)
+     }
+   }
+   module.exports = Service
+   ```
+
+3. 如果`samples`文件夹下有这个文件`imooc-build.config.json`或者`imooc-build.config.js`
+
+4. 修改`package.json`中的配置脚本
+
+   ```json
+   {
+     "scripts": {
+       "dev": "imooc-build start --config imooc-build.config.json",
+       "dev:noconfig": "imooc-build start"
+     },
+   }
+   ```
+
+5. 运行终端，就会有如下效果
+
+   ```bash
+   $ npm run dev:noconfig
+   /Users/gaoyuan/Desktop/imooc-build/samples/imooc-build.config.json
+   ```
+
+### 没有找到默认文件逻辑处理
+
+> 如果没有找到默认文件，我们就直接退出程序
+
+1. 修改`Service.js`，文件，内容如下
+
+   ```javascript
+   const fs = require('fs')
+   
+   class Service {
+     resolveConfig() {
+       if (config) {
+         
+       }else{
+         
+       }
+       // 这里增加配置文件判断逻辑，
+       if (configPath && fs.existsSync(configPath)) {
+         console.log(configPath)
+       } else {
+         console.log('配置文件不存在，终止执行')
+         process.exit(1)
+       }
+     }
+   }
+   ```
+
+2. 修改`samples`文件夹下的配置文件名字，比如: `imooc-build.config.json`改为`imooc-build.config.json1`,
+
+3. 重新终端运行`npm run dev:noconfig`,效果如下
+
+   ```bash
+   $ npm run dev:noconfig
+   配置文件不存在，终止执行 // 直接退出了

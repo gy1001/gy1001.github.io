@@ -8,6 +8,7 @@ import { searchPlugin } from '@vuepress/plugin-search'
 import { mdEnhancePlugin } from 'vuepress-plugin-md-enhance'
 export default defineUserConfig({
   base: '/',
+  port: 9000,
   head: [['meta', { name: 'referrer', content: 'no-referrer' }]],
   locales: {
     '/': {
