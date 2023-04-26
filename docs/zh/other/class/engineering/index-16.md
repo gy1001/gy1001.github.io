@@ -159,17 +159,14 @@ new_service(path2,bottom)->create_config->create_utils
 2. 修改`startServer.js`,接收参数
 
    ```javascript
-   // 增加全局参数 config，重启服务时候需要
-   let configParams
-   
-   function runServer(args) {
+   function runServer(args = {}) {
      // 接收参数，注意这里后续参数解析会变为字符串，
      // 如果不存在时，就会变为字符串的 undefinded, "undefined"
      // 需要给个默认值
      const { config = "" } = args
      const srciprtPath = path.resolve(__dirname, './devService.js')
      // 运行脚本时也要增加参数
-     configParams = ['--port 8080', '--config ' + config]
+     const configParams = ['--port 8080', '--config ' + config]
      child = cp.fork(srciprtPath, configParams)
      child.on('exit', (code) => {
        if (code) {
@@ -180,8 +177,7 @@ new_service(path2,bottom)->create_config->create_utils
    
    function onChange(eventName, path) {
      child.kill()
-     // 传入 configParams
-     runServer(configParams)
+     runServer()
    }
    
    module.exports = function startServer(args, opts, cmd) {
@@ -853,13 +849,106 @@ new_service(path2,bottom)->create_config->create_utils
 
    ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/47ff40e2623945e6b736631be7df03f8~tplv-k3u1fbpfcp-watermark.image?)
 
+## 08：配置文件修改时自动重启服务逻辑优化
 
+### 抽离配置文件获取逻辑
 
+> 目前我们的脚手架是再监听`start/config.js`这个临时配置文件，我们需要改为监听实际运行项目中的测试文件，这里有两个部分都使用了
+>
+> * 一个是 **startServer.js** 中的 **runWatcher** 函数
+> * 一个是 **service/Service.js** 中的读取配置文件部分
 
+1. 新建`utils/index.js`,里面导出`getConfigFile`功能的函数
 
+   ```javascript
+   const DEFAULT_CONFIG_NAME = ['imooc-build.config.+(json|mjs|js)']
+   const fg = require('fast-glob')
+   function getConfigFile({ cwd = process.cwd() } = {}) {
+     const arr = fg.sync(DEFAULT_CONFIG_NAME, {
+       cwd,
+       absolute: true,
+     })
+     // 这里返回数组的最后一项，因为如果有多个匹配了,优先使用 .json 文件
+     return arr[arr.length - 1]
+   }
+   module.exports = { getConfigFile }
+   ```
 
+2. 修改`service/Service.js`中的部分
 
+   ```javascript
+   const { getConfigFile } = require('../../utils')
+   class Service {
+     async resolveConfig() {
+       if (config) {
+         if (path.isAbsolute(config)) {
+           ...
+         } else {
+           ...
+         }
+       } else {
+        	// 修改为根据方式获取
+         configPath = getConfigFile()
+       }
+     }
+   }
+   ```
 
+3. 修改`start/StartServer.js`中的`runWatcher`函数
+
+   ```javascript
+   const { getConfigFile } = require('../../utils')
+   const log = require('../../utils/log')
+   // 定义全局参数，重启时候需要记得上一次命令时候传递的参数
+   let serverArgs
+   
+   function onChange(eventName, path) {
+     log.verbose('config file changed')
+     console.log('config fill changed-----')
+     child.kill()
+     runServer(serverArgs)
+   }
+   
+   function runWatcher(args) {
+     // 启动配置监听服务
+     // 通过公共方法进行获取配置文件
+     let configPath
+     // 如果当前配置参数里面有 config 就进行监听，如果没有就是用默认文件地址
+     if (args.config) {
+       configPath = path.isAbsolute(args.config) ? args.config : path.resolve(args.config)
+     } else {
+       configPath = getConfigFile()
+     }
+     chokidar
+       .watch(configPath)
+       .on('change', onChange)
+       .on('erro', (error) => {
+         console.error('file watch error!', error)
+         process.exit(1)
+       })
+   }
+   
+   module.exports = function startServer(args, opts, cmd) {
+     console.log('start server', args)
+     // 接收参数
+     serverArgs = args
+     runServer(args)
+     // 配置文件这里要传递参数
+     runWatcher(args)
+   }
+   ```
+
+4. 此时我们重新运行终端，效果正常（运行命令：`npm run dev:debug`，此时全部日志均被打印出来，如下图）
+
+   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/061f5bcab63f4b7093dd76e5e9cd3efb~tplv-k3u1fbpfcp-watermark.image?)
+
+5. 并且此时我们监听配置文件是`samples`文件夹下的`imooc-build.config.mjs`，修改文件，比如增加`output: path.resolve('dist')` 效果如下
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/00c57352cd7042a2ae424a0049036bbe~tplv-k3u1fbpfcp-watermark.image?)
+
+6. 这里明显有问题：因为我们在`onChange`事件中打印了**两个console**，而上图中只有一个，下面就来解决
+
+### 重启服务后问题的解决
 
 
 
