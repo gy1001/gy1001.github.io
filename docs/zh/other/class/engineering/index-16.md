@@ -904,7 +904,7 @@ new_service(path2,bottom)->create_config->create_utils
    
    function onChange(eventName, path) {
      log.verbose('config file changed')
-     console.log('config fill changed-----')
+     log.info('config fill changed-----')
      child.kill()
      runServer(serverArgs)
    }
@@ -944,9 +944,9 @@ new_service(path2,bottom)->create_config->create_utils
 
 5. 并且此时我们监听配置文件是`samples`文件夹下的`imooc-build.config.mjs`，修改文件，比如增加`output: path.resolve('dist')` 效果如下
 
-   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/00c57352cd7042a2ae424a0049036bbe~tplv-k3u1fbpfcp-watermark.image?)
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ee2b7f9d39464649951c0c43cd11e02f~tplv-k3u1fbpfcp-watermark.image?)
 
-6. 这里明显有问题：因为我们在`onChange`事件中打印了**两个console**，而上图中只有一个，下面就来解决
+6. 这里明显有问题：因为我们在`onChange`事件中打印了**两个console**，而上图中只有一个，下面就来解决,很显然是`npmlog.level`被重置了
 
 ### 重启服务后问题的解决
 
