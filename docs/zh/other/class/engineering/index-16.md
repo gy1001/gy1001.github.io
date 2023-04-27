@@ -1000,7 +1000,81 @@ new_service(path2,bottom)->create_config->create_utils
 
    ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b890fd3895474c708486eda9d21802de~tplv-k3u1fbpfcp-watermark.image?)
 
+## 09：高级特性：生命周期函数hooks注册
 
+> 目前这个脚手架我们支持，在配置文件中注册钩子函数，数据格式如下
+>
+>  hooks: [
+>
+> ​    [ 'created', **function** () {},],
+>
+> ​    [ 'configResolved', **function** () { },],
+>
+>   ]
 
+1. 修改`samples`文件夹下的配置文件`samples/imooc-build.config.mjs`,添加钩子配置
 
+   ```javascript
+   export default {
+     ...
+     hooks: [
+       [ 'created', function () {
+           console.log('created')
+         },
+       ],
+       [ 'configResolved', function () {
+           console.log('configResolved')
+         },
+       ],
+     ],
+   }
+   ```
 
+2. 修改`service/Service.js`中的代码，注册钩子函数
+
+   ```javascript
+   class Service {
+     // 这里需要增加改为同步代码，解析配置后需要赋值给 this 上
+     async start() {
+       await this.resolveConfig()
+       this.registerHooks()
+     }
+     
+     async resolveConfig() {
+       ...
+       if (configPath && fs.existsSync(configPath)) {
+         ...
+         // 最后加上赋值
+         this.config = configParams
+       }else{
+         ...
+       }
+       
+     }
+       
+     // 注册钩子函数
+     registerHooks() {
+       log.verbose('解析hooks')
+       // hooks 数据结构 [["int", function()],"success", function(){}]
+       const { hooks } = this.config
+       hooks.forEach((hook) => {
+         const [key, fn] = hook
+         if (key && fn && typeof key === 'string' && typeof fn === 'function') {
+           const existHook = this.hooks[key]
+           if (!existHook) {
+             this.hooks[key] = []
+           }
+           this.hooks[key].push(fn)
+         }
+       })
+       log.verbose('hooks', this.hooks)
+     } 
+   }
+   module.exports = Service
+   ```
+
+3. 重新再`samples`终端内部运行命令`npm run dev:debug`，效果如下
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7a7c9f6171ee4706b4f0152d4446991b~tplv-k3u1fbpfcp-watermark.image?)
+
+   
