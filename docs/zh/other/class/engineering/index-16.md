@@ -1018,8 +1018,8 @@ new_service(path2,bottom)->create_config->create_utils
    export default {
      ...
      hooks: [
-       [ 'created', function () {
-           console.log('created')
+       [ 'start', function () {
+           console.log('start')
          },
        ],
        [ 'configResolved', function () {
@@ -1077,4 +1077,74 @@ new_service(path2,bottom)->create_config->create_utils
 
    ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7a7c9f6171ee4706b4f0152d4446991b~tplv-k3u1fbpfcp-watermark.image?)
 
+## 10: 实现自定义hooks的触发逻辑
+
+1. 新建`service/const.js`文件，在这里定义所有的钩子类型，初步代码如下
+
+   ```javascript
+   const HOOK_START = 'start'
    
+   module.exports = {
+     HOOK_START,
+   }
+   ```
+
+2. 修改`service/Service.js`文件，内容如下
+
+   ```javascript
+   const { HOOK_START } = require('./const')...
+   const HOOKSARR = [HOOK_START]
+   
+   class Service {
+     ...
+     async start() {
+       await this.resolveConfig()
+       this.registerHooks()
+       // 在这里我们进行触发钩子函数
+       this.emitHooks(HOOK_START)
+     }
+   	
+     // 注册钩子函数中，我们过滤掉不符合定义钩子的 key
+     registerHooks() {
+       log.verbose('解析hooks')
+       // hooks 数据结构 [["int", function()],"success", function(){}]
+       const { hooks } = this.config
+       hooks.forEach((hook) => {
+         const [key, fn] = hook
+         if (
+           key &&
+           HOOKSARR.indexOf(key) !== -1 && // 增加折行代码，过滤掉不属于我们定义的钩子
+           fn &&
+           typeof key === 'string' &&
+           typeof fn === 'function'
+         ) {
+           const existHook = this.hooks[key]
+           if (!existHook) {
+             this.hooks[key] = []
+           }
+           this.hooks[key].push(fn)
+         }
+       })
+       log.verbose('hooks', this.hooks)
+     }
+     // 触发钩子函数
+     async emitHooks(key) {
+       const hook = this.hooks[key]
+       if (hook) {
+         for (const fn of hook) {
+           try {
+             // 使用 for of 实现同步执行，并传入参数 this，根据自己需要来
+             await fn(this)
+           } catch (error) {
+             log.error(error)
+           }
+         }
+       }
+     }
+   }
+   ```
+
+3. 重新运行终端命令`npm run dev:debug`，内容如下
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e40457f919694fcf8ff2a3183beef9ae~tplv-k3u1fbpfcp-watermark.image?)
+
