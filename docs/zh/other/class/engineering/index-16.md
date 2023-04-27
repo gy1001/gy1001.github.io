@@ -826,7 +826,7 @@ new_service(path2,bottom)->create_config->create_utils
      .hook('preAction', (thisCommand, actionCommand) => {
        const { debug } = actionCommand.optsWithGlobals()
        if (debug) {
-         process.env.LOG_LEVEl = 'verbose'
+         process.env.LOG_LEVEL = 'verbose'
        }
      })
    ```
@@ -1092,7 +1092,7 @@ new_service(path2,bottom)->create_config->create_utils
 2. 修改`service/Service.js`文件，内容如下
 
    ```javascript
-   const { HOOK_START } = require('./const')...
+   const { HOOK_START } = require('./const')
    const HOOKSARR = [HOOK_START]
    
    class Service {
@@ -1197,7 +1197,6 @@ new_service(path2,bottom)->create_config->create_utils
    ```javascript
    const fs = require('fs')
    const path = require('path')
-   const log = require('./log')
    
    async function loadMoudle(modulePath) {
      const configPath = path.isAbsolute(modulePath) ? modulePath : path.resolve(modulePath)
@@ -1220,6 +1219,8 @@ new_service(path2,bottom)->create_config->create_utils
        return ''
      }
    }
+   
+   module.exports = { loadMoudle }
    ```
 
 4. 修改`Service.js`中的代码,修改部分如下
@@ -1267,4 +1268,142 @@ new_service(path2,bottom)->create_config->create_utils
    ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9bedde8585ec44cf9f9f6fd6cb424d11~tplv-k3u1fbpfcp-watermark.image?)
 
 ### json配置 hooks中加载node_modules的文件
+
+1. 修改`imooc-build.config.json`文件如下
+
+   ```json
+   {
+     "entry": "./src/index.js",
+     "plugins": [],
+     "hooks": [
+       [
+         "start",
+         "./plugins/start.hook.js"
+       ],
+       [
+         "start",
+         "./plugins/start.hook.second.mjs"
+       ],
+       [
+         "start",
+         "imooc-build-start-hook"
+       ]
+     ]
+   }
+   ```
+
+2. 接着新建文件`samples/node_modules/imooc-build-start-hook/index.js`，内容如下
+
+   ```javascript
+   module.exports =  function startHookThree() {
+     console.log('start-hooks-three')
+   }
+   ```
+
+3. 此时如果执行终端，发现会报错
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fa8e2bf846f84a95b03dcedc131d4cca~tplv-k3u1fbpfcp-watermark.image?)
+
+4. 查看上图我们得知，最后一个`hooks`配置后获得是空字符串`""`,分析原因可知是如下代码的问题`utils/index.js`中的`loadModule`函数中，根据路径判断是否为绝对路径后，然后又判断了路径是否存在，如果把路径进行打印，更改如下
+
+   ```javascript
+   async function loadMoudle(modulePath) {
+     const configPath = path.isAbsolute(modulePath) ? modulePath : path.resolve(modulePath)
+     console.log('configPath', configPath) // 增加这一行
+     ....
+   }
+   ```
+
+5. 运行终端，可以看到如下结果（显然第三个路径代码路径与我们的`node_modules`下的文件路径不一致）
+
+   ```bash
+   configPath /Users/yuangao/Desktop/imooc-build/samples/plugins/start.hook.js
+   configPath /Users/yuangao/Desktop/imooc-build/samples/plugins/start.hook.second.mjs
+   configPath /Users/yuangao/Desktop/imooc-build/samples/imooc-build-start-hook // 显然这个文件路径下没有该文件
+   ```
+
+6. 这里我们要对`loadModule`函数进行处理
+
+   ```javascript
+   async function loadMoudle(modulePath) {
+     // aaa.js ./src/aaa.js
+     let configPath
+     if (modulePath.indexOf('/') !== -1 || modulePath.indexOf('.') !== -1) {
+       // 说明他是一个路径
+       configPath = path.isAbsolute(modulePath) ? modulePath : path.resolve(modulePath)
+     } else {
+       // 它是一个包, 需要借助 require.resolve 来加载 运行命令目录下的 node_modules下的文件或者一层层往上找
+       configPath = require.resolve(modulePath, {
+         paths: [path.resolve(process.cwd())],
+       })
+     }
+     console.log('configPath', configPath)
+   }
+   ```
+
+7. 运行终端，可以看到如下结果（这里就加载成功了。钩子函数也执行成功）
+
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4700afd91ed7452fafe724a7a99dacd8~tplv-k3u1fbpfcp-watermark.image?)
+
+8. 接着我们继续修改`imooc-build.config.json`文件如下（因为默认不值 .mjs 后缀，如果是 .mjs类型我们需要配置时加上）
+
+   ```javascript
+   {
+     "entry": "./src/index.js",
+     "plugins": [],
+     "hooks": [
+       [
+         "start",
+         "./plugins/start.hook.js"
+       ],
+       [
+         "start",
+         "./plugins/start.hook.second.mjs"
+       ],
+       [
+         "start",
+         "imooc-build-start-hook"
+       ],
+       [
+         "start",
+         "imooc-build-start-hook-second/index.mjs"
+       ]
+     ]
+   }
+   ```
+
+9. 新建`samples/node_modules/imooc-build-start-hook/second/index.mjs`，内容如下
+
+   ```javascript
+   export default function startHookFour() {
+     console.log('start-hooks-four')
+   }
+   ```
+
+10. 这里我们要对`loadModule`函数进行处理（因为 `index.mjs` 中含有 `/`,但是他是一个包）,当然我觉得这里有很多种方法解决，需要根据具体的业务场景来进行处理，此处方案不一定是最好的
+
+    ```javascript
+    async function loadMoudle(modulePath) {
+      // ./src/aaa.js
+      let configPath
+      // 如果文件路径不是以 / 或者 . 开头我就认为你是一个包
+      if (modulePath.startsWith('/') || modulePath.startsWith('.')) {
+        // 说明他是一个路径
+        configPath = path.isAbsolute(modulePath)
+          ? modulePath
+          : path.resolve(modulePath)
+      } else {
+        // 它是一个包
+        configPath = require.resolve(modulePath, {
+          paths: [path.resolve(process.cwd())],
+        })
+      }
+      console.log('configPath', configPath)
+      ...
+    }
+    ```
+
+11. 运行终端，可以看到如下结果（这里就加载成功了。钩子函数也执行成功）
+
+    ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1d4a64a500a34cee82a2da17fd1cf5bb~tplv-k3u1fbpfcp-watermark.image?)
 
