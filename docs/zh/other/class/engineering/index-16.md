@@ -950,7 +950,55 @@ new_service(path2,bottom)->create_config->create_utils
 
 ### 重启服务后问题的解决
 
+1. 此时我们在`onChange`、`startServer`函数中查看两个值
 
+   ```javascript
+   function onChange(eventName, path) {
+     // 这里我们查看 process.env.LOG_LEVEL、log.level
+     console.log(process.env.LOG_LEVEL, log.level)
+     log.verbose('config file changed')
+     log.info('config fill changed-----')
+     child.kill()
+     runServer(serverArgs)
+   }
+   
+   module.exports = function startServer(args, opts, cmd) {
+     // 这里我们也进行一个查看
+     console.log(process.env.LOG_LEVEL, log.level)
+     serverArgs = args
+     // 1. 通过子进程启动一个 webpack-dev-server 服务
+     // 1.1 子进程启动可以避免主进程收到影响
+     // 1.2 子进程启动可以方便重启，解决修改配置后无法重启的问题
+     runServer(args)
+     // 2. 监听配置修改
+     runWatcher(args)
+   }
+   ```
+
+2. 重新更改配置文件，查看终端结果
+
+   ```bash
+   verbose info
+   verbose info
+   ```
+
+3. 这里可以看到`process.env.LOG_LEVEL`已经发生了更改，但是`log.level`并没有，因为这里并不是数据绑定，在钩子执行时候，`startServer.js`中的`log`已经完成了引用，后续的更改，所以重点是，在引入前进行更改
+
+4. 可以在`StartServer.js`函数中进行更改
+
+   ```javascript
+   module.exports = function startServer(args, opts, cmd) {
+     // 这里进行更改
+     log.level = process.env.LOG_LEVEL
+     serverArgs = args
+     runServer(args)
+     runWatcher(args)
+   }
+   ```
+
+5. 从新更改配置文件，就可以看到如下打印日志
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b890fd3895474c708486eda9d21802de~tplv-k3u1fbpfcp-watermark.image?)
 
 
 
