@@ -1160,7 +1160,7 @@ new_service(path2,bottom)->create_config->create_utils
 
 ### json配置 hooks中加载非node_modules的文件
 
-1. 修改`imooc-build.config .mjs`为`imooc-build.config.json`文件如下
+1. 修改`imooc-build.config.mjs`为`imooc-build.config.json`文件如下
 
    ```javascript
    {
