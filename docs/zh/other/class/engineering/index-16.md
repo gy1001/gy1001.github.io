@@ -1148,3 +1148,123 @@ new_service(path2,bottom)->create_config->create_utils
 
    ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e40457f919694fcf8ff2a3183beef9ae~tplv-k3u1fbpfcp-watermark.image?)
 
+## 11: 高级特性：json 配置支持 function 传入
+
+> 上小节中的配置文件类型是 .mjs, 内部可以直接使用 函数，可以是对于 json 配置文件呢？他应该是支持输入文件路径，如
+>
+> { "hooks": [[ "start", "xxx/xxx/文件1.js"], [ "start", "xxx/xxx/文件2.js"]] }
+>
+> 或者后面这个函数直接在 node_modules 中，这样写
+>
+> { "hooks": [[ "start", "文件1.js"], [ "start", "文件2.js"]] }
+
+### json配置 hooks中加载非node_modules的文件
+
+1. 修改`imooc-build.config .mjs`为`imooc-build.config.json`文件如下
+
+   ```javascript
+   {
+     "entry": "./src/index.js",
+     "plugins": [],
+     "hooks": [
+       [
+         "start",
+         "./plugins/start.hook.js"
+       ],
+       [
+         "start",
+         "./plugins/start.hook.second.mjs"
+       ]
+     ]
+   }
+   ```
+
+2. 新建`plugins/start.hook.js`以及`plugins/start.hook.second.mjs`，内容如下
+
+   ```javascript
+   // start.hook.js
+   module.exports = function startHookOne() {
+     console.log('start-hooks-one')
+   }
+   // start.hook.second.mjs
+   export default function startHookTwo() {
+     console.log('start-hooks-two')
+   }
+   ```
+
+3. 在`utils/index.js`中增加`loadMoudle`方法用来处理加载模块(包括是 json、js、mjs的处理),内容如下
+
+   ```javascript
+   const fs = require('fs')
+   const path = require('path')
+   const log = require('./log')
+   
+   async function loadMoudle(modulePath) {
+     const configPath = path.isAbsolute(modulePath) ? modulePath : path.resolve(modulePath)
+     if (fs.existsSync(configPath)) {
+       const isJson = configPath.endsWith('.json')
+       const isJs = configPath.endsWith('.js')
+       const isMjs = configPath.endsWith('.mjs')
+       let configParams = {}
+       if (isJson) {
+         configParams = require(configPath)
+       } else if (isJs) {
+         // 注意这里 使用了 require 方式加载，所以 js 中需要使用 cjs 标准
+         configParams = require(configPath)
+       } else if (isMjs) {
+         // mjs 类型就代表内部使用了 esModule 标准
+         configParams = (await import(configPath)).default
+       }
+       return configParams
+     } else {
+       return ''
+     }
+   }
+   ```
+
+4. 修改`Service.js`中的代码,修改部分如下
+
+   ```javascript
+   const { loadMoudle } = require('../../utils')
+   class Service {
+     ...
+     async start() {
+       await this.resolveConfig()
+       // 注册函数需要使用 同步，因为内部有使用 mjs 同步加载的可能
+       await this.registerHooks()
+       this.emitHooks(HOOK_START)
+     }
+     // 注册钩子函数
+     async registerHooks() {
+       log.verbose('解析hooks')
+       const { hooks } = this.config
+       // 修改 forEach 为 for...of
+       for (const hook of hooks) {
+         const [key, fn] = hook
+         if ( key && HOOKSARR.indexOf(key) !== -1 && fn && typeof key === 'string') {
+          	const existHook = this.hooks[key]
+           if (!existHook) {
+             this.hooks[key] = []
+           }
+           // 如果是函数类型，直接添加
+           if (typeof fn === 'function') {
+             this.hooks[key].push(fn)
+           } else if (typeof fn === 'string') {
+             // 如果是字符串类型，默认是一个文件路径，就需要进行加载调用
+             this.hooks[key].push(await loadMoudle(fn))
+           }
+         }
+       }
+       log.verbose('hooks', this.hooks)
+     }
+   }
+   
+   module.exports = Service
+   ```
+
+5. `samples`终端重新运行`npm run dev:debug`,结果如下
+
+   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9bedde8585ec44cf9f9f6fd6cb424d11~tplv-k3u1fbpfcp-watermark.image?)
+
+### json配置 hooks中加载node_modules的文件
+
