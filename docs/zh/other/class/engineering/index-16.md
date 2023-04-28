@@ -2118,5 +2118,75 @@ configPath = require.resolve(modulePath, {
 
 ### 插件间状态共享
 
+1. 我们查看配置`samples`下的配置文件中的`plugins`配置
 
+   ```javascript
+   export default {
+     ...
+     plugins: function () {
+       return [
+         'imooc-build-test',
+         [ 'imooc-build-test-two', { a: 1, b: 2 } ],
+         './plugins/imooc-build-plugin-one.js',
+         [ './plugins/imooc-build-plugin-one.js', { a: 1, b: 2, c: 3, } ],
+         // 增加参数
+         function pluginInner(api, params) {
+           console.log('this is a plugin inner func', api, params)
+         },
+       ]
+     },
+   }
+   ```
+
+2. 我们修改`plugins/imooc-build-plugin-one.js`中的代码如下
+
+   ```javascript
+   module.exports = function startPluginFirst(api, params) {
+     // 引入 setValue 函数
+     const { getWebpackConfig, setValue } = api
+     const config = getWebpackConfig()
+     config
+       .entry('index2')
+       .add('src/index2.js')
+       .end()
+       .output.filename('[name].bundle.js')
+       .path('dist')
+     // 增加一个值
+     setValue('name', {
+       name: '孙悟空',
+       value: '123456',
+       fn: function () {
+         return 'test'
+       },
+     })
+   }
+   ```
+
+3. 接着修改`samples/imooc-build.config.mjs`配置文件中的最后一个函数，修改如下
+
+   ```javascript
+   export default {
+     ...
+     plugins: function () {
+       return [
+         'imooc-build-test',
+         [ 'imooc-build-test-two', { a: 1, b: 2 } ],
+         './plugins/imooc-build-plugin-one.js',
+         [ './plugins/imooc-build-plugin-one.js', { a: 1, b: 2, c: 3, } ],
+         function pluginInner(api, params) {
+           // 导出 getValue, 并获取响应key值的value
+          	const { getValue } = api
+           const value = getValue('name')
+           console.log(value)
+         },
+       ]
+     },
+   }
+   ```
+
+4. 运行终端，效果如下
+
+   ![image-20230429001025226](/Users/yuangao/Library/Application Support/typora-user-images/image-20230429001025226.png)
+
+### 自定义hook功能实现
 
