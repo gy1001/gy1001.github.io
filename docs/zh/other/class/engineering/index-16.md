@@ -2186,7 +2186,7 @@ configPath = require.resolve(modulePath, {
 
 4. 运行终端，效果如下
 
-   ![image-20230429001025226](/Users/yuangao/Library/Application Support/typora-user-images/image-20230429001025226.png)
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/eb8bea8aff134699a4419dc4c6bf8eec~tplv-k3u1fbpfcp-watermark.image?)
 
 ### 自定义hook功能实现
 
