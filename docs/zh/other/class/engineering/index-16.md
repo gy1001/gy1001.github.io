@@ -1436,6 +1436,7 @@ configPath = require.resolve(modulePath, {
   * 也支持数组形式：第一个参数是库包，第二个是一个对象配置参数
   * 也支持数组形式：第一个参数是字符串，第二个参数是函数
   * 也支持直接是一个参数形式
+* 函数形式
 
 ### 支持字符串形式
 
@@ -1613,4 +1614,77 @@ configPath = require.resolve(modulePath, {
 
    ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/15a7a7dad9744db7aeeddc36f3597df0~tplv-k3u1fbpfcp-watermark.image?)
 
-   
+### 支持函数形式
+
+1. 这时候我们不能用`json`形式了，修改`samples/imooc-build.config.json`文件为`samples/imooc-build.config.mjs`，代码如下
+
+   ```json
+   const entry = 'src/index.js'
+   import path from 'path'
+   export default {
+     entry: path.isAbsolute(entry) ? entry : path.resolve(entry),
+     plugins: [
+       'imooc-build-test',
+       [
+         'imooc-build-test-two',
+         {
+           a: 1,
+           b: 2,
+         },
+       ],
+       './plugins/imooc-build-plugin-one.js',
+       [
+         './plugins/imooc-build-plugin-one.js',
+         {
+           a: 1,
+           b: 2,
+           c: 3,
+         },
+       ],
+       // 注意注意：这里我们有一个函数形式的插件形式
+       function pluginInner() {
+         console.log('this is a plugin inner func')
+       },
+     ],
+     hooks: [
+       [
+         'start',
+         function () {
+           console.log('start')
+         },
+       ],
+     ],
+   }
+   ```
+
+2. 修改`service/Service.js`文件内容，支持函数形式，代码如下
+
+   ```javascript
+   class Service {
+     
+     async registerPlugin() {
+       const { plugins } = this.config
+       if (plugins) {
+         if (Array.isArray(plugins)) {
+           for (const plugin of plugins) {
+             if (typeof plugin === 'string') {
+               
+             } else if (Array.isArray(plugin)) {
+               
+             }else if (typeof plugin === 'function') {
+               // 如果参数为函数，我们直接 push 即可
+               this.plugins.push({ mode: plugin })
+             }
+           }
+         }
+       }
+     }
+   }
+   ```
+
+3. 重新运行终端命令，效果如下(可以看到函数形式的参数，我们也正常添加了)
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/25b46529914149d691aa300142026d57~tplv-k3u1fbpfcp-watermark.image?)
+
+
+
