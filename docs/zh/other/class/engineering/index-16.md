@@ -1944,5 +1944,107 @@ configPath = require.resolve(modulePath, {
 
    ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1bb9be4277314586ac9a66e6e71d3a70~tplv-k3u1fbpfcp-watermark.image?)
 
+## 16：插件运行功能开发
 
+1. 修改`service/Service.js`文件，内容如下
 
+   ```javascript
+   class Service {
+     constructor(opts) {
+       ...
+       // 增加
+   		this.internalValue = {}
+     }
+     
+     ...
+     // 运行插件
+     async runPlugin() {
+       for (const plugin of this.plugins) {
+         const API = {
+           chainWebpack: this.getWebpackConfig(),
+           emitHooks: this.emitHooks,
+           setValue: this.setValue,
+           getValue: this.getValue,
+           log,
+         }
+         const { mod, params } = plugin
+         if (!mod) {
+           continue
+         }
+         const options = {
+           ...params,
+         }
+         await mod(API, options)
+       }
+     }
+   	
+     // 获取配置
+     getWebpackConfig() {
+       return this.webpackConfig
+     }
+   
+     setValue(key, value) {
+       this.internalValue[key] = value
+     }
+   
+     getValue(key) {
+       return this.internalValue[key]
+     }
+   }
+   ```
+
+2. 记者我们修改配置文件中的插件运行时候的代码，因为插件函数接收了两个参数，
+
+   ```javascript
+   // /samples/imooc-build.config.mjs
+   const entry = 'src/index.js'
+   import path from 'path'
+   export default {
+     entry: path.isAbsolute(entry) ? entry : path.resolve(entry),
+     plugins: function () {
+       return [
+         'imooc-build-test',
+         [ 'imooc-build-test-two', { a: 1, b: 2 } ],
+         './plugins/imooc-build-plugin-one.js',
+         [ './plugins/imooc-build-plugin-one.js', { a: 1, b: 2, c: 3, } ],
+         // 增加参数
+         function pluginInner(api, params) {
+           console.log('this is a plugin inner func', api, params)
+         },
+       ]
+     },
+     hooks: [
+       [ 'start', function () { console.log('start') } ],
+     ],
+   }
+   
+   // samples/plugins/imooc-build-plugin-one.js
+   // 增加接受参数
+   module.exports = function startPluginFirst(api, params) {
+     console.log('start-plugins-one', api, params)
+   }
+   ```
+
+3. 重新运行终端，效果如下
+
+   ```bash
+   gaoyuan@gaoyuandeMac samples % npm run dev:debug
+   
+   > samples@1.0.0 dev:debug
+   > imooc-build start -d
+   
+   info 开始监听文件: /Users/gaoyuan/Documents/Code/learn/MyGithub/Vue-Related/imooc-build/samples/imooc-build.config.mjs 
+   端口号8080可以使用
+   verb 解析配置文件 { port: 8080, config: '' }
+   info 解析配置文件 { port: 8080, config: '' }
+   verb 解析hooks 
+   verb hooks { start: [ [Function (anonymous)] ] }
+   start
+   this is a imooc-build-test plugin
+   this is a imooc-build-two plugin
+   start-plugins-one {...} {}
+   start-plugins-one {
+     chainWebpack: <ref *1> { ... } { a: 1, b: 2, c: 3 }
+   ```
+
+   
