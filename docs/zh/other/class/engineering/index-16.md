@@ -1686,5 +1686,84 @@ configPath = require.resolve(modulePath, {
 
    ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/25b46529914149d691aa300142026d57~tplv-k3u1fbpfcp-watermark.image?)
 
+## plugins 属性是一个函数形式
 
+配置文件中的 plugins 属性返回一个数组，返回的数组参数形式跟上述形式一致
 
+1. 修改`samples/imooc-build.config.mjs`,代码如下
+
+   ```javascript
+   const entry = 'src/index.js'
+   import path from 'path'
+   export default {
+     entry: path.isAbsolute(entry) ? entry : path.resolve(entry),
+     // plugins 属性变为一个函数
+     plugins: function () {
+       return [
+         'imooc-build-test',
+         [
+           'imooc-build-test-two',
+           {
+             a: 1,
+             b: 2,
+           },
+         ],
+         './plugins/imooc-build-plugin-one.js',
+         [
+           './plugins/imooc-build-plugin-one.js',
+           {
+             a: 1,
+             b: 2,
+             c: 3,
+           },
+         ],
+         function pluginInner() {
+           console.log('this is a plugin inner func')
+         },
+       ]
+     },
+     hooks: [
+       [
+         'start',
+         function () {
+           console.log('start')
+         },
+       ],
+     ],
+   }
+   ```
+
+2. 修改`service/Service.js`文件内容，支持函数形式，代码如下
+
+   ```javascript
+   class Service {
+     
+     async registerPlugin() 
+     	// 这里 const 修改为 let
+       let { plugins } = this.config
+       if (plugins) {
+         // 在最开始就行是否是函数判断
+         if (typeof plugins === 'function') {
+           // 如果是函数，就执行函数并返回
+           plugins = plugins()
+         }
+         // 以下逻辑和之前一样不变
+         if (Array.isArray(plugins)) {
+           for (const plugin of plugins) {
+             if (typeof plugin === 'string') {
+               
+             } else if (Array.isArray(plugin)) {
+               
+             }else if (typeof plugin === 'function') {
+               
+             }
+           }
+         }
+       }
+     }
+   }
+   ```
+
+3. 重新运行终端，效果如下（可以看到正常运行）
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/39d2c87e9c3148629c111612d150265b~tplv-k3u1fbpfcp-watermark.image?)
