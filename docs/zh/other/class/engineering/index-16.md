@@ -1673,7 +1673,7 @@ configPath = require.resolve(modulePath, {
                
              }else if (typeof plugin === 'function') {
                // 如果参数为函数，我们直接 push 即可
-               this.plugins.push({ mode: plugin })
+               this.plugins.push({ mod: plugin })
              }
            }
          }
@@ -2113,4 +2113,10 @@ configPath = require.resolve(modulePath, {
 5. 再次运行终端，得到如下效果
 
    ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ed87395f813a4880a7a5eda5d14df462~tplv-k3u1fbpfcp-watermark.image?)
+
+## 18: 插件间状态共享+自定义hook功能实现
+
+### 插件间状态共享
+
+
 
