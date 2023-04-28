@@ -1427,3 +1427,84 @@ configPath = require.resolve(modulePath, {
 })
 ```
 
+## 13: 插件注册逻辑开发
+
+对于插件逻辑，我们支持以下几种形式
+
+* 数组形式：**[[xxx, { xx: xxx}], "xxx", ['xxx', function(){ }],  function(){ } ]**, 
+  * 数组内部支持字符串形式，
+  * 也支持数组形式：第一个参数是库包，第二个是一个对象配置参数
+  * 也支持数组形式：第一个参数是字符串，第二个参数是函数
+  * 也支持直接是一个参数形式
+
+### 支持字符串形式
+
+1. 修改`samples/imooc-build.config.json`文件，增加`plugins`属性，增加代码如下
+
+   ```json
+   {
+     "plugins": [
+       "imooc-build-test"
+     ],
+   }
+   ```
+
+2. 在`samples/node_modules`文件夹下，新建`imooc-build-test/index.js`,内容如下
+
+   ```javascript
+   module.exports = function pluginFirst(){
+     console.log("this is a imooc-build-test plugin")
+   }
+   ```
+
+3. 在`service/Service.js`中增加**注册插件**和**执行插件**函数
+
+   ```javascript
+   class Service {
+     constructor(opts) {
+       ...
+       // 增加插件属性
+       this.plugins = []
+     }
+    	...
+    
+     async start(){
+       await this.resolveConfig()
+       await this.registerHooks()
+       // 触发钩子函数使用 await 改为同步
+       await this.emitHooks(HOOK_START)
+       // 增加注册插件、运行插件函数
+       await this.registerPlugin()
+       await this.runPlugin()
+     }
+   
+     // 注册插件
+     // 支持的插件形式繁多
+     // 1. 数组形式：[[xxx, { xx: xxx}], "xxx"]
+     // 2. 也支持 前面是函数名，后面是具体的函数实现：[['xxx', function(){ }]]
+     // 3. 就是一个函数 [ function(){ }, ]
+     async registerPlugin() {
+       const { plugins } = this.config
+       if (plugins) {
+         if (Array.isArray(plugins)) {
+           for (const plugin of plugins) {
+             // 这里先判断是字符串形式的情况下
+             if (typeof plugin === 'string') {
+               const module = await loadMoudle(plugin)
+               this.plugins.push(module)
+             }
+           }
+         }
+       }
+     }
+   
+     // 运行插件
+     async runPlugin() {
+       log.verbose('run plugins', this.plugins)
+     }
+   }
+   ```
+
+4. 运行终端，可以看到如下结果
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6eb424e9edd34aa2b0cf5b7021bce7ae~tplv-k3u1fbpfcp-watermark.image?)
