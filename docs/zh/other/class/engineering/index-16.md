@@ -1508,3 +1508,65 @@ configPath = require.resolve(modulePath, {
 4. 运行终端，可以看到如下结果
 
    ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6eb424e9edd34aa2b0cf5b7021bce7ae~tplv-k3u1fbpfcp-watermark.image?)
+
+### 支持字符串+入参形式
+
+1. 修改`samples/imooc-build.config.json`文件，增加代码如下
+
+   ```json
+   {
+     "plugins": [
+       "imooc-build-test",
+       // 增加数组形式的
+       [
+         "imooc-build-test-two",
+         {
+           "a": 1,
+           "b": 2
+         }
+       ]
+     ],  
+   }
+   ```
+
+2. 新建`samples/node_modules/imooc-build-test-two/index.js`文件，内容如下
+
+   ```javascript
+   module.exports = function pluginTwo(){
+     console.log("this is a imooc-build-two plugin")
+   }
+   ```
+
+3. 在`service/Service.js`增加处理代码
+
+   ```javascript
+   class Service {
+     
+     async registerPlugin() {
+       const { plugins } = this.config
+       if (plugins) {
+         if (Array.isArray(plugins)) {
+           for (const plugin of plugins) {
+             if (typeof plugin === 'string') {
+               const module = await loadMoudle(plugin)
+               // 这里我们修改为 对象形式
+               this.plugins.push({ mod: module })
+             } else if (Array.isArray(plugin)) {
+               // 如果是数组形式，就进行解构，然后加载，添加
+               const [pluginPath, pluginParams] = plugin
+               const module = await loadMoudle(pluginPath)
+               this.plugins.push({
+                 mod: module,
+                 params: pluginParams,
+               })
+             }
+           }
+         }
+       }
+     }
+   }
+   ```
+
+4. 重新运行终端，可以看到如下结果
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/492a8a6c1ecf489fb0d28de18527ab93~tplv-k3u1fbpfcp-watermark.image?)
