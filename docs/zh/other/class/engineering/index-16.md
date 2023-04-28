@@ -1372,7 +1372,7 @@ new_service(path2,bottom)->create_config->create_utils
    }
    ```
 
-9. 新建`samples/node_modules/imooc-build-start-hook/second/index.mjs`，内容如下
+9. 新建`samples/node_modules/imooc-build-start-hook-second/index.mjs`，内容如下
 
    ```javascript
    export default function startHookFour() {
@@ -1406,4 +1406,24 @@ new_service(path2,bottom)->create_config->create_utils
 11. 运行终端，可以看到如下结果（这里就加载成功了。钩子函数也执行成功）
 
     ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1d4a64a500a34cee82a2da17fd1cf5bb~tplv-k3u1fbpfcp-watermark.image?)
+
+## 12：模块加载问题修复和模块加载原理解析
+
+### 参考文章
+
+[node的路径解析require.resolve: https://juejin.cn/post/6844904055806885895](https://juejin.cn/post/6844904055806885895)
+
+[Node.js模块路径解析方法: https://juejin.cn/post/7040728919967793160](https://juejin.cn/post/7040728919967793160)
+
+> 见上节
+>
+> require.resolve：这里查找模块时，中间会调用 Module._resolveLookupPaths，如果为模块路径时，返回`parent.paths`，后续在这些模块文件夹里查找。
+
+主要点是上一小节中的如下代码，使用`require.resolve`加载模块时候，重新指定目录
+
+```javascript
+configPath = require.resolve(modulePath, {
+  paths: [path.resolve(process.cwd())],
+})
+```
 
