@@ -1767,3 +1767,82 @@ configPath = require.resolve(modulePath, {
 3. 重新运行终端，效果如下（可以看到正常运行）
 
    ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/39d2c87e9c3148629c111612d150265b~tplv-k3u1fbpfcp-watermark.image?)
+
+## 14：高级特性：webpack-chain详细讲解
+
+> [webpack-chain npm文档地址: https://www.npmjs.com/package/webpack-chain](https://www.npmjs.com/package/webpack-chain)
+
+我们经常使用的 **vue-cli** 中配置webpack 就有两种方式，一种是
+
+* 简单的配置方式: [**configureWebpack 官方文档**](https://cli.vuejs.org/zh/guide/webpack.html#%E7%AE%80%E5%8D%95%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%B9%E5%BC%8F)
+  * 该对象将会被 [webpack-merge](https://github.com/survivejs/webpack-merge) 合并入最终的 webpack 配置。
+* 链式操作 (高级)：[点击打开：官方地址](https://cli.vuejs.org/zh/guide/webpack.html#%E9%93%BE%E5%BC%8F%E6%93%8D%E4%BD%9C-%E9%AB%98%E7%BA%A7)
+  * `Vue CLI` 内部的 webpack 配置是通过 [webpack-chain](https://github.com/mozilla-neutrino/webpack-chain) 维护的。
+
+1. 安装依赖库
+
+   ```bash
+   npm install webpack-chain -D
+   ```
+
+2. 修改`service/Service.js`中增加`webpack-chain`
+
+   ```javascript
+   const Config = require('webpack-chain')
+   
+   class Service {
+     constructor(opts) {
+       ...
+       this.webpackConfig = new Config()
+     }
+     
+     async start() {
+       await this.resolveConfig()
+       // 在解析配置项后，进行注册 webpack 配置
+       await this.registerWebpackConfig()
+       await this.registerHooks()
+       await this.emitHooks(HOOK_START)
+       await this.registerPlugin()
+       await this.runPlugin()
+     }
+     
+     // 注册webpack 配置
+     registerWebpackConfig() {
+       // entry: { inedx: "index.js" }
+       this.webpackConfig
+         .entry('index')
+         .add('src/index.js')
+         .end()
+         .output.path('dist')
+         .filename('[name].bundle.js')
+       log.verbose('webpack config', this.webpackConfig.toConfig())
+     }
+   }
+   
+   module.exports = Service
+   ```
+
+3. 运行终端，可以看到如下效果（注意查看这里都是 webpack的配置相关，只不过它让我们可以用链式调用的方式来进行操作，方便了很多）
+
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/54582fc4d1c541428d52a60ec42d538d~tplv-k3u1fbpfcp-watermark.image?)
+
+4. 我们可以点击其中一个方法，比如`.entry`进入到内部查看它有哪些方式，如下图
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d08bf8d23c6f4276af4f734a0a4e4194~tplv-k3u1fbpfcp-watermark.image?)
+
+5. 当然还有其他用法
+
+   ```javascript
+   const entry = this.webpackConfig.entry('index')
+   // 清空所有的
+   entry.clear()
+   // entry 添加 src/main.js src/bundle.js
+   entry.add('src/main.js').add('src/bundle.js')
+   // entry 是一个 chainset 类型的解构，根据官网他还有以下方式：add(value)、prepend(value)、clear()、delete(value)、has(value)、values()、merge(arr)、batch(handler)、when(condition, whenTruthy, whenFalsy) 等
+   
+   ```
+
+
+
+
+
