@@ -1570,3 +1570,47 @@ configPath = require.resolve(modulePath, {
 4. 重新运行终端，可以看到如下结果
 
    ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/492a8a6c1ecf489fb0d28de18527ab93~tplv-k3u1fbpfcp-watermark.image?)
+
+### 支持文件形式+（参数）
+
+1. 修改`samples/imooc-build.config.json`文件，增加代码如下
+
+   ```json
+   {
+     "plugins": [
+       "imooc-build-test",
+       [
+         "imooc-build-test-two",
+         {
+           "a": 1,
+           "b": 2
+         }
+       ],
+      	// 这里我们增加一个文件
+       "./plugins/imooc-build-plugin-one.js",
+       // 然后在执行一个文件形式，+ 配置参数
+       [
+         "./plugins/imooc-build-plugin-one.js",
+         {
+           "a": 1,
+           "b": 2,
+           "c": 3
+         }
+       ]
+     ],
+   }
+   ```
+
+2. 新建`samples/plugins/imooc-build-plugin-one.js`文件，内容如下
+
+   ```javascript
+   module.exports = function startPluginFirst(params) {
+     console.log('start-plugins-one', params)
+   }
+   ```
+
+3. 其实目前的代码我们是支持这种形式的，运行终端，效果如下
+
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/15a7a7dad9744db7aeeddc36f3597df0~tplv-k3u1fbpfcp-watermark.image?)
+
+   
