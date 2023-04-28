@@ -1961,7 +1961,7 @@ configPath = require.resolve(modulePath, {
      async runPlugin() {
        for (const plugin of this.plugins) {
          const API = {
-           chainWebpack: this.getWebpackConfig(),
+           getWebpackConfig: this.getWebpackConfig,
            emitHooks: this.emitHooks,
            setValue: this.setValue,
            getValue: this.getValue,
@@ -2047,4 +2047,70 @@ configPath = require.resolve(modulePath, {
      chainWebpack: <ref *1> { ... } { a: 1, b: 2, c: 3 }
    ```
 
+## 17：imooc-build插件实现 webpack 配置修改
+
+接下来我们可以在某个插件中使用上一节传递的参数来修改 webpack 配置
+
+1. 比如我们修改`samples/plugins/imooc-build-plugin-one.js`文件内容如下
+
+   ```javascript
+   module.exports = function startPluginFirst(api, params) {
+     const { getWebpackConfig } = api
+     const config = getWebpackConfig()
+     config
+       .entry('index2')
+       .add('src/index2.js')
+       .end()
+       .output.filename('[name].bundle.js')
+       .path('dist')
+   }
+   ```
+
+2. 运行发现报错
+
+   ```bash
+   /Users/gaoyuan/Documents/Code/learn/MyGithub/Vue-Related/imooc-build/lib/service/Service.js:201
+       return this.webpackConfig
+                   ^
    
+   TypeError: Cannot read properties of undefined (reading 'webpackConfig')
+   ```
+
+3. 经过梳理我们发现，实际调用函数时候，是在 `imooc-build-plugin-one.js`中，此时自然 `this` 就是 `undefined`,所以会报错
+
+4. 知道了错误，我们对`Service.js`做如下更改
+
+   ```javascript
+   class Service {
+     async start() {
+       await this.resolveConfig()
+       await this.registerWebpackConfig()
+       await this.registerHooks()
+       await this.emitHooks(HOOK_START)
+       await this.registerPlugin()
+       await this.runPlugin()
+       console.log('查看最后的webpackConfig', this.webpackConfig.toConfig())
+     }
+     
+      // 运行插件
+     async runPlugin() {
+       for (const plugin of this.plugins) {
+         // 这里我们把各个方法通过 bind 来该表内部 this,
+         // 也可以把各个方法改为 箭头函数。两种方式任选其一即可
+         const API = {
+           getWebpackConfig: this.getWebpackConfig.bind(this),
+           emitHooks: this.emitHooks.bind(this),
+           setValue: this.setValue.bind(this),
+           getValue: this.getValue.bind(this),
+           log,
+         }
+         ...
+       }
+     }
+   }
+   ```
+
+5. 再次运行终端，得到如下效果
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ed87395f813a4880a7a5eda5d14df462~tplv-k3u1fbpfcp-watermark.image?)
+
