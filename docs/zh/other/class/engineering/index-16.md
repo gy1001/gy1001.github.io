@@ -1838,11 +1838,111 @@ configPath = require.resolve(modulePath, {
    entry.clear()
    // entry 添加 src/main.js src/bundle.js
    entry.add('src/main.js').add('src/bundle.js')
+   if (entry.has('src/main.js')) {
+     entry.delete('src/main.js')
+   }
    // entry 是一个 chainset 类型的解构，根据官网他还有以下方式：add(value)、prepend(value)、clear()、delete(value)、has(value)、values()、merge(arr)、batch(handler)、when(condition, whenTruthy, whenFalsy) 等
-   
    ```
 
+## 15：webpack-chain支持 loader 和 plugin
 
+### 支持 loader
+
+1. 修改`service/Service.js`，修改如下
+
+   ```javascript
+   class Service {
+      registerWebpackConfig() {
+       // entry: { inedx: "index.js" }
+       this.webpackConfig
+         .entry('index')
+         .add('src/index.js')
+         .end()
+         .output.path('dist')
+         .filename('[name].bundle.js')
+       const entry = this.webpackConfig.entry('index')
+       entry.clear()
+       entry.add('src/main.js').add('src/bundle.js')
+       if (entry.has('src/main.js')) {
+         entry.delete('src/main.js')
+       }
+       // module 中 rule 添加处理 js 
+       this.webpackConfig.module
+         .rule('lint')
+         .test('/.js$/')
+         .include.add('src')
+         .end()
+         .exclude.add('node_modules')
+         .end()
+         .use('eslint')
+         .loader('eslint-loader')
+         .options({
+           rules: {
+             semi: 'off',
+           },
+       })
+       log.verbose('webpack config', JSON.stringify(this.webpackConfig.toConfig(), null, 2),)
+     }
+   }
+   ```
+
+2. 此时运行终端，效果如下(这里我们就可以看到如下配置)
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9bcee74b767c461f88779b3e49f7024d~tplv-k3u1fbpfcp-watermark.image?)
+
+3. 这上面我们就添加了部分`loader`,我们还可以使用如下代码进行继续处理
+
+   ```javascript
+   const lintRule = this.webpackConfig.module.rule('lit') // 注意这个名字和前面一致
+   lintRule.include.clear()
+   lintRule.exclude.clear()
+   lintRule.uses.clear()
+   ```
+
+### 支持 plugin
+
+1. 修改`service/Service.js`，修改如下
+
+   ```javascript
+   class Service {
+      registerWebpackConfig() {
+       // entry: { inedx: "index.js" }
+       this.webpackConfig
+         .entry('index')
+         .add('src/index.js')
+         .end()
+         .output.path('dist')
+         .filename('[name].bundle.js')
+       const entry = this.webpackConfig.entry('index')
+       entry.clear()
+       entry.add('src/main.js').add('src/bundle.js')
+       if (entry.has('src/main.js')) {
+         entry.delete('src/main.js')
+       }
+       this.webpackConfig.module
+         .rule('lint')
+         .test('/.js$/')
+         .include.add('src')
+         .end()
+         .exclude.add('node_modules')
+         .end()
+         .use('eslint')
+         .loader('eslint-loader')
+         .options({
+           rules: {
+             semi: 'off',
+           },
+       })
+       // 添加 plugin 处理,这里的包会实时加载判断，不能为假,否则会报错
+      	this.webpackConfig.plugin('clean').use('webpack-chain', [{ root: '/dir' }])
+       log.verbose('webpack config', this.webpackConfig.toConfig())
+     }
+   }
+   ```
+
+2. 重新运行终端，效果如下（其中的 **pluigins** 就是）
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1bb9be4277314586ac9a66e6e71d3a70~tplv-k3u1fbpfcp-watermark.image?)
 
 
 
