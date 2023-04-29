@@ -2190,3 +2190,84 @@ configPath = require.resolve(modulePath, {
 
 ### 自定义hook功能实现
 
+1. 修改`service/const.js`文件内容，如下
+
+   ```javascript
+   const HOOK_START = 'start'
+   // 增加 PLUGIN_HOOK 变量
+   const PLUGIN_HOOK = 'pluginHook'
+   module.exports = {
+     HOOK_START,
+     PLUGIN_HOOK,
+   }
+   ```
+
+2. 修改`service/Service.js`文件内容，如下
+
+   ```javascript
+   const { HOOK_START, PLUGIN_HOOK } = require('./const')
+   const HOOKSARR = [HOOK_START, PLUGIN_HOOK]
+   
+   class Service {
+     constructor(opts) {
+       // 增加 log 属性挂载
+       this.log = log
+     }
+   }
+   ```
+
+3. 修改`samples/imooc-build.config.mjs`，内容如下
+
+   ```javascript
+   export default {
+     plugins: function () {
+       return [
+         'imooc-build-test',
+         [
+           'imooc-build-test-two',
+           {
+             a: 1,
+             b: 2,
+           },
+         ],
+         './plugins/imooc-build-plugin-one.js',
+         [
+           './plugins/imooc-build-plugin-one.js',
+           {
+             a: 1,
+             b: 2,
+             c: 3,
+           },
+         ],
+         function pluginInner(api, params) 
+         	// 解构出 emitHooks log  值
+           const { getValue, emitHooks, log } = api
+           const value = getValue('name')
+           log.verbose(JSON.stringify(value))
+       		// 这里使用 emitHooks 触发 pluginHook
+           emitHooks('pluginHook')
+         },
+       ]
+     },
+     hooks: [
+       [
+         'start',
+         function () {
+           console.log('start')
+         },
+       ],
+       // 注册 pluginHook 插件，接受 new Service 实例作为参数
+       [
+         'pluginHook',
+         ({ log, webpackConfig }) => {
+           log.warn('this is plugin hook')
+           log.info('pluginHook', webpackConfig.toConfig())
+         },
+       ],
+     ],
+   }
+   ```
+
+4. 重新运行终端，结果如下
+
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/565e538dfe3e4d4b946f3f504107ab47~tplv-k3u1fbpfcp-watermark.image?)
