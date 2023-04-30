@@ -2271,3 +2271,150 @@ configPath = require.resolve(modulePath, {
 4. 重新运行终端，结果如下
 
    ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/565e538dfe3e4d4b946f3f504107ab47~tplv-k3u1fbpfcp-watermark.image?)
+
+## 19：自定义 webpack 路径功能支持
+
+1. 修改`bin/imooc-build.js`中的代码，如下
+
+   ```javascript
+     program
+       .command('start')
+       .option('-c --config <config>', '配置文件路径')
+   		// 增加 custom-webpack-path 选项，以支持自定义 webpack 路径配置选型
+       .option('--custom-webpack-path <customeWebpackPath>', '自定义webpack路径')
+       .description('start server by imooc-build ')
+       .allowUnknownOption()
+       .action(startServer)
+     program
+       .command('build')
+       .option('-c --config <config>', '配置文件路径')
+   		// 增加 custom-webpack-path 选项，以支持自定义 webpack 路径配置选型
+       .option('--custom-webpack-path <customeWebpackPath>', '自定义webpack路径')
+       .description('build server by imooc-build')
+       .allowUnknownOption()
+       .action(build)
+   ```
+
+2. 这里我们需要全局安装`webpack webpack-cli` 
+
+   ``` 
+    npm install webpack webpack-cli -g
+   ```
+
+3. 运行如下命令，找到`webpack`安装目录
+
+   ```bash
+   $ which webpack 
+   /usr/local/bin/webpack
+   ```
+
+4. 在`package.json`中增加脚本命令,增加指定 `webpack` 路径功能（这个路径具体根据自己的实际路径来）
+
+   ```javascript
+   {
+     "scripts": {
+       "dev:debug_custome_webpack": "imooc-build start -d --custom-webpack-path /usr/local/bin/webpack"
+     },
+   }
+   ```
+
+5. 修改`startServer.js`代码，如下
+
+   ```javascript
+   function runServer(args = {}) {
+     // 增加 customWebpackPath 参数解构
+     const { config = '', customWebpackPath = '' } = args
+     const srciprtPath = path.resolve(__dirname, './devService.js')
+     const configParams = [
+       '--port 8080',
+       '--config ' + config,
+       // 增加 customWebpackPath 传递
+       '--customWebpackPath ' + customWebpackPath,
+     ]
+     child = cp.fork(srciprtPath, configParams)
+     child.on('exit', (code) => {
+       if (code) {
+         // 子进程退出时，主进程也进行关闭，比如：端口号被占用时选择了拒绝使用新端口号
+         process.exit(code)
+       }
+     })
+   }
+   ```
+
+6. 修改`devService.js`代码，如下
+
+   ```javascript
+   const args = {
+     port: newPort,
+     config,
+     // 增加 customWebpackPath 参数
+     customWebpackPath: paramObj.customWebpackPath || '',
+   }
+   const service = new Service(args)
+   service.start()
+   ```
+
+7. 修改`service/Service.js`中的代码
+
+   ```javascript
+   class Service {
+     
+     constructor(opts) {
+       this.webpack = ""
+     }
+     
+     async start() {
+       ...
+       this.initWebpack()
+     }
+     
+     initWebpack() {
+       // 从 config 中获取 CustomeWebpackPath 属性
+       // CustomeWebpackPath存在shi，则使用改地址应用 webpack
+       // 否则则使用 node_modules 中的 webapack
+       const { customWebpackPath } = this.args
+       if (customWebpackPath) {
+         if (fs.existsSync(customWebpackPath)) {
+           let p = customWebpackPath
+           if (!path.isAbsolute(p)) {
+             p = path.resolve(p)
+           }
+           this.webpack = require.resolve(p)
+         }
+       } else {
+         // 默认没有的话我们就从当前运行项目中查找，比如 samples 文件夹中查找
+         this.webpack = require.resolve('webpack', {
+           paths: [path.resolve(process.cwd(), 'node_modules')],
+         })
+       }
+     }
+     ...
+   }
+   ```
+
+8. 运行终端命令，我们先看脚本命令中指定`webapck`位置的时候的效果
+
+   ```bash
+   $ npm run dev:debug_custome_webpack
+   
+   > samples@1.0.0 dev:debug_custome_webpack
+   > imooc-build start -d --custom-webpack-path /usr/local/bin/webpack
+   // 最后输出的 webpack 路径
+   verb this.webpack /usr/local/lib/node_modules/webpack/bin/webpack.js
+   ```
+
+9. 我们需要再`samples`文件夹中安装`webpack`，命令如下
+
+   ```bash
+   npm install webpack -D
+   ```
+
+10. 我们运行不指定`webpack`文件路径时候的效果
+
+    ```bash
+    $ npm run dev:debug    
+    // 此路径具体跟自己使用的工具以及文件路径命名有关
+    verb this.webpack /Users/yuangao/Code/Learn/MyGithub/Vue-Related/imooc-build/samples/node_modules/.pnpm/webpack@5.81.0/node_modules/webpack/lib/index.js
+    ```
+
+    
