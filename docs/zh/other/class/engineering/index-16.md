@@ -2417,4 +2417,51 @@ configPath = require.resolve(modulePath, {
     verb this.webpack /Users/yuangao/Code/Learn/MyGithub/Vue-Related/imooc-build/samples/node_modules/.pnpm/webpack@5.81.0/node_modules/webpack/lib/index.js
     ```
 
-    
+## 20：内置插件功能实现
+
+1. 新建`imooc-build/plugins/initPlugin/index.js`，这里我们在项目中新建`plugins`目录，用来存放内置插件,这里增加`initPlugins/index.js`
+
+   ```javascript
+   // initPlugins/index.js
+   module.exports = function initPlugin(api, params) {
+     console.log('init plugin')
+   }
+   ```
+
+2. 修改`service/Service.js`文件，内容如下
+
+   ```javascript
+   const InitPlugin = require('../../plugins/initPlugin/index')
+   
+   class Service {
+     async start() {
+       await this.resolveConfig()
+       await this.registerWebpackConfig()
+       await this.registerHooks()
+       await this.emitHooks(HOOK_START)
+       await this.registerPlugin()
+       await this.runPlugin()
+       await this.initWebpack()
+        //完成 webpack 配置（借助plugin webpack.config.js）
+       // 完成 webpack-dev-server 的启动
+     }
+     async registerPlugin() {
+       let { plugins } = this.config
+       // 这里我们声明 buildInPlugins 用来存储内置的 plugins
+       const buildInPlugins = [ InitPlugin ]
+       // 然后遍历 buildPlugins, 并一一添加到 this.plugins 中
+       buildInPlugins.forEach((buildPlugin) => {
+         this.plugins.push({
+           mod: buildPlugin,
+         })
+       })
+       ...
+     }
+   }
+   ```
+
+3. 这里我们重新运行终端，命令及结果如下（这里我们看到内置的`plugins`先执行）
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9e247ec6f21c4940bf54791dcebdd9a3~tplv-k3u1fbpfcp-watermark.image?)
+
+   
