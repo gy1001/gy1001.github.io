@@ -105,4 +105,173 @@
    tsGetDistance({ x: '21', y: 1 }, { y: 2 })
    ```
 
-   
+## 03：搭建课程学习必备环境
+
+1. 安装[nodejs](https://nodejs.org/zh-cn)
+1. 安装[typeScript](https://www.typescriptlang.org/zh/)
+
+## 04：TS代码的执行原理
+
+> ts代码浏览器无法直接识别执行， 需要利用 tsc 命令先转换为 js
+
+命令
+
+* `tsc xxx.ts` ==> `xxx.js`
+
+## 05：从静态类型校验的角度理解 TypeScript
+
+### Static Type Cheker: 静态类型校验能力
+
+> 静态校验能力：一门语言，在代码执行之前，就能做错误预警，那么我们就说这门语言具备静态校验能力
+
+### TS 约等于 JS +Static Type Cheker
+
+> TS 核心要学的就是 **类型**
+
+## 06: 基础类型快速入门
+
+## 07: 基础类型快速入门
+
+## 08: 基础类型快速入门
+
+### 基础类型
+
+>  number string bollean
+
+```typescript
+const teacherName: string = "菩提老祖"
+const teacherAge: number = 1000;
+const teacherGender: boolean = true;
+```
+
+### 数组类型
+
+```typescript
+const numberArr: number[] = [1, 2, 3]
+const stringArr: string[] = ["1", "2", "3"]
+const booleanArr: Array<boolean> = [ true, false, false ] // 泛型
+```
+
+### 对象类型
+
+```typescript
+const user: { name:string, age: number } = {name:'孙悟空', age: 500}
+const userOne: { name:string, age?: number } = { name: '猪八戒' }
+```
+
+### 联合类型
+
+```typescript
+function union(id: string | number){
+  if(typeof id === "string"){ // 类型收窄 Narrowing
+    console.log(id.toUpperCase())
+  }else{
+    console.log(id)
+  }
+}
+```
+
+### 类型别名
+
+```typescript
+type User = {name: string, age: number}
+const user: User = {name:'孙悟空', age: 500}
+const user2: User = {name:'猪八戒', age: 400}
+```
+
+### any
+
+> 可以通过 tsconfig.json 中配置 
+>
+> { "compilerOptions": { "noImplicitAny": true } }
+
+```typescript
+function showMessage(message :any){
+  console.log(message)
+} 
+```
+
+### 函数类型
+
+```typescript
+// 函数的返回值是 number 类型
+function abc(message: string): number{
+  return 123
+}
+
+const def: (age: number) => number = (age: number) => age
+```
+
+### 接口类型 Interface
+
+> 它的优势：支持继承、可以多次声明（类型会合并）
+
+```typescript
+interface Student{
+  age: number
+  sex?: string
+}
+const student: Student = { age: 18, sex: 'male' }
+
+interface OldStudent extends Student {
+  name: string
+}
+const oldStudent: OldStudent = { age: 18, sex: 'male', name: '沙僧' } 
+```
+
+### 交叉类型
+
+```typescript
+type User = { name: string; age: number }
+type Employee = User & { salary: number }
+const emeployee: Employee = { name: '唐僧', age: 500, salary: 1000 }
+```
+
+### 断言 Assersion
+
+```typescript
+const dom = document.getElementById('root') as HTMLElement
+const dom1: 
+```
+
+### 字面量类型
+
+```typescript
+const str: "abcsss" = "abcsss"
+function getPositon(postion: 'left' | 'right'): string {
+  return postion
+}
+getPositon('left')
+getPositon('right')
+const truthy: true = true
+```
+
+#### 字面量习题
+
+```typescript
+function request(url: string, method: 'GET' | 'POST'): string {
+  return 'sending request'
+}
+
+const parmas: { url: string; method: string } = {
+  url: 'www.baidu.com',
+  method: 'POST',
+}
+// parmas.method 需要加上断言，否则是不符合要求的
+request(parmas.url, parmas.method as 'POST')
+```
+
+### null、undefined
+
+> `null` 和 `undefined` 都有各自的类型名称。这些类型本身没有用处，因为我们只能将 `null` 和 `undefined` 赋值给定义为 `null` 或 `undefined` 类型的变量。
+>
+> 默认情况下，`null` 和 `undefined` 是所有类型的子类型。我们可以通过在 `tsconfig.json` 文件将 `strictNullChecks` 设置为 `true` 来启用。
+
+### void
+
+```typescript
+function getNumber(): void {}
+```
+
+
+
