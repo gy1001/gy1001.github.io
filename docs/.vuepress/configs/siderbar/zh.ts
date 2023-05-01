@@ -254,7 +254,7 @@ export const sidebarZh: SidebarConfig = {
         },
         {
           text: '吃透前端工程化，大厂级实战项目以战带练',
-          collapsible: true,
+          collapsible: false,
           children: [
             '/zh/other/class/engineering/index-01.md',
             '/zh/other/class/engineering/index-02.md',
@@ -274,6 +274,11 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/engineering/index-16.md',
             '/zh/other/class/engineering/index-17.md',
           ],
+        },
+        {
+          text: '专为小白设计的TypeScript入门课',
+          collapsible: false,
+          children: ['/zh/other/class/typescript-simple/index-01.md'],
         },
       ],
     },
