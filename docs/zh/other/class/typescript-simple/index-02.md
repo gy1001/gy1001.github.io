@@ -62,4 +62,47 @@
    console.log(object.fisrtName + object.lastName) // fisrtName 在编辑器下会报红
    ```
 
+## 02：TypeScript 相对于 JavaScript 的其他优势
+
+> 上节课中我们看到 ts 中增加了一些变量类型，它可以帮助我们更容易更快的发现的问题所在
+
+### 优势
+
+* 更容易帮助我们发现程序的问题
+* 语法提示更加完善，有了类型之后，写代码非常爽
+* 语义化更强，代码可读性更高
+
+1. 新建`02/index.js`，内容代码如下
+
+   ```javascript
+   function getDistance(point1, point2) {
+     // 这里书写时进行的提示不够准确，只是编辑器记录了曾经书写过的变量或者属性
+     return [point2.x - point1.x, point2.y - point1.y]
+   }
+   
+   getDistance({ x: 1, y: 1 }, { x: 2, y: 2 })
+   ```
+
+2. 新建`02/index.ts`,内容代码如下
+
+   ```typescript
+   type Point = { x: number; y: number }
+   function tsGetDistance(point1: Point, point2: Point) {
+     // 书写时会进行属性的准确提示
+     return [point2.x - point1.x, point2.y - point1.y]
+   }
+   
+   tsGetDistance({ x: 1, y: 1 }, { x: 2, y: 2 })
+   
+   // 报错：Argument of type '{ x: number; }' is not assignable to parameter of type 'Point'.
+   //   Property 'y' is missing in type '{ x: number; }' but required in type 'Point'.ts(2345)
+   tsGetDistance({ x: 1 }, { x: 2, y: 2 })
+   // 报错：Argument of type '{ y: number; }' is not assignable to parameter of type 'Point'.
+   //  Property 'x' is missing in type '{ y: number; }' but required in type 'Point'.ts(2345)
+   tsGetDistance({ x: 1, y: 1 }, { y: 2 })
+   // 报错：Type 'string' is not assignable to type 'number'.ts(2322)
+   // demo.ts(1, 16): The expected type comes from property 'x' which is declared here on type 'Point'
+   tsGetDistance({ x: '21', y: 1 }, { y: 2 })
+   ```
+
    
