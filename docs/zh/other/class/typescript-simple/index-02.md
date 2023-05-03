@@ -273,5 +273,314 @@ request(parmas.url, parmas.method as 'POST')
 function getNumber(): void {}
 ```
 
+## 09: 类型注解和类型推断
 
+* TS开发准则：只要是变量、对象属性，都应该有一个明确地类型
+
+ ### 类型注解
+
+> 人工的告诉 TS, 变量或者对象的明确属性类型
+
+### 类型推断
+
+> 根据程序自动推断出变量或者变量属性类型
+>
+> 如果类型推断能够自动推断出来类型并符合理想，就没有必要去手写类型注解
+
+```typescript
+const userName:string = "孙悟空"
+
+const userAge = 500 ;// 类型推断为 number
+```
+
+## 10: 类型收窄
+
+### typeof 类型收窄
+
+```typescript
+function uppercase(content: string | number) {
+  if (typeof content === 'string') {
+    return content.toUpperCase()
+  }
+  return content
+}
+```
+
+### 真值收窄
+
+```typescript
+function getString(content?: string) {
+  if (content) {
+    return content.toUpperCase()
+  }
+}
+```
+
+### 相等收窄
+
+```typescript
+// 相等时候，就是 string 类型的
+function example(x: string | number, y: string | boolean) {
+  if (x === y) {
+    return x.toUpperCase()
+  }
+}
+```
+
+### 对象类型解构的代码怎么写
+
+```typescript
+function getObjectValue({ a, b }: { a: number; b: number }) {
+  return a + b
+}
+
+getObjectValue({ a: 1, b: 2 })
+```
+
+### 变量类型以定义变量时的类型为准
+
+```typescript
+let userName = '123'
+userName = 123  // 报错 
+```
+
+## 11：使用类型陈述语法实现类型收窄
+
+> animal is Fish 叫做 类型陈述语法
+
+```typescript
+type Fish = {
+  swim: () => {}
+}
+type Bird = {
+  fly: () => {}
+}
+function test(animal: Fish | Bird) {
+  if ('swim' in animal) {
+    return animal.swim()
+  }
+  return animal.fly()
+}
+
+// instanceof 语法下的类型收窄
+function test1(params: Date | string) {
+  if (params instanceof Date) {
+    return params.getTime()
+  }
+  return params.toUpperCase()
+}
+
+// 自定义函数如何实现类型收窄呢？
+// isFish 如果定义后面的返回值为 boolean, 后面 test2函数无法得知是哪种类型，会报错
+// animal is Fish 叫做 类型陈述语法
+function isFish(animal: Fish | Bird): animal is Fish {
+  if ((animal as Fish).swim) {
+    return true
+  }
+  return false
+}
+function test2(animal: Fish | Bird) {
+  if (isFish(animal)) {
+    return animal.swim()
+  }
+  return animal.fly()
+}
+```
+
+## 12: 复杂函数类型补充学习
+
+### 有属性的函数类型定义方法
+
+```typescript
+
+interface FunctionWithAttributes {
+  attr: string
+  (str: string): void
+}
+
+const test3: FunctionWithAttributes = (str: string) => {
+  console.log(str)
+}
+test3.attr = 'attributes'
+```
+
+### 构造函数的类型如何定义
+
+```typescript
+interface ClassWithConstructor {
+  new (str: string): void
+}
+
+function testOne(outerClass: ClassWithConstructor) {
+  const instance = new outerClass('new')
+}
+
+class TestOne {
+  name: string
+  constructor(str: string) {
+    this.name = str
+  }
+}
+
+testOne(TestOne) 
+```
+
+### 如何写 Date 的类型
+
+> Date 类型支持 new Date() 也支持 Date(string)
+
+```typescript
+interface DateType {
+  new (): Date
+  (dateString: string): string
+}
+```
+
+### 函数和泛型
+
+```typescript
+function getArrayFirstItem<Type>(arr: Type[]) {
+  return arr[0]
+}
+
+const numberArr = [1, 2, 3, 4]
+const resultOne = getArrayFirstItem(numberArr)
+
+const stringArr = ['1', '2', '3', '4']
+const stringOne = getArrayFirstItem(numberArr)
+```
+
+### 函数重载
+
+```typescript
+// 重载函数的定义
+function getString(str: string): string
+function getString(str: string, str1: string): number
+// 重载函数的实现
+function getString(str: string, str1?: string) {
+  if (typeof str1 === 'string') {
+    return (str + str1).length
+  }
+  return str
+}
+```
+
+## 13：对象类型的补充学习
+
+### 对象类型和对象解构语法要分离
+
+```typescript
+function showPerson({ name: nick = '孙悟空', age: old = 20, }: {
+  name: string
+  age: number
+}) {
+  console.log(nick)
+  console.log(old)
+}
+```
+
+### interface 中的 readonly 属性
+
+```typescript
+interface Person {
+  readonly name: string
+  age: number
+}
+const dell: Person = { name: '孙悟空', age: 30 }
+// 这里就会报错：Cannot assign to 'name' because it is a read-only property.
+dell.name = '猪八戒' 
+```
+
+### 如何给对象扩展属性
+
+```typescript
+interface ArrayOrObject {
+  length: number
+  [key: string]: string | number
+}
+const obj: ArrayOrObject = {
+  length: 0,
+  a: '123',
+  b: 123,
+}
+```
+
+### 对象类型的继承
+
+```typescript
+interface Animal {
+  name: string
+  age: number
+  breath: () => void
+}
+
+const animal: Animal = {
+  name: 'panda',
+  age: 1,
+  breath: () => {},
+}
+
+interface Dog extends Animal {
+  bark: () => void
+}
+const dog: Dog = {
+  name: 'wangcai',
+  age: 1,
+  breath: () => {},
+  bark: () => {},
+}
+```
+
+### 多个对象类型同时进行继承
+
+```typescript
+interface Circle {
+  radius: number
+}
+
+interface Colorful {
+  color: string
+}
+
+interface ColorfuleCircle extends Circle, Colorful {}
+
+const colorfuleCircle: ColorfuleCircle = {
+  radius: 1,
+  color: 'red',
+}
+```
+
+### 交叉类型
+
+> 更推荐上面的 interface 来实现
+
+```typescript
+type ColorfuleCircleOne = Circle & Colorful
+const colorfuleCircleOne: ColorfuleCircleOne = {
+  radius: 3,
+  color: 'blue',
+}
+```
+
+## 14：泛型数组与元组
+
+### 泛型
+
+```typescript
+interface Box<Type> {
+  content: Type
+}
+
+const box: Box<string> = { content: 'box' }
+const box1: Box<number> = { content: 100 }
+const box2: Box<boolean> = { content: true }
+```
+
+### 使用泛型类来扩展生成新的类型
+
+```typescript
+type orNull<Type> = Type | null
+const test4: orNull<string> = '111'
+const test5: orNull<string> = null
+```
 
