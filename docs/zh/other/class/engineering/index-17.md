@@ -675,4 +675,6 @@ optimization: {
    }
    ```
 
-   
+3. 在`samples`文件夹下运行终端命令，会自动打开浏览器，以及终端打印效果如下
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/226e9a936be14d91b5d7552a5c590b1a~tplv-k3u1fbpfcp-watermark.image?)
