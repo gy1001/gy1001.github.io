@@ -736,7 +736,7 @@ optimization: {
      async registerPlugin() {
        let { plugins } = this.config
        // 这里做判断，使用哪个插件文件
-       const buildInPlugins = this.args === 'start' ? [InitDevPlugin] : [InitBuildPlugin]
+       const buildInPlugins = this.cmd === 'start' ? [InitDevPlugin] : [InitBuildPlugin]
      }
    }
    ```
@@ -903,5 +903,35 @@ config.plugin('index').use(HtmlWebpackPlugin, [
 
 如果存在模板路径不一致，你可以在项目配置文件中进行修改覆盖
 
+## 13：vue3项目工程化插件开发
 
+1. 在`zbest-pc`项目中新建脚本文件
 
+   ```javascript
+   {
+     "scripts": {
+       "start:imooc-vue": "imooc-build start --config imooc-build.vue.config.json --debug"
+     }
+   }
+   ```
+
+2. 新建`imooc-build.vue.config.json`，文件内容如下
+
+   ```javascript
+   {
+     "plugins": [ "./plugins/zbestpc-vue-plugin.js" ]
+   }
+   ```
+
+3. 新建`plugins/zbestpc-vue-plugin.js`文件，内容如下
+
+   ```javascript
+   module.exports = function (api, params) {
+     console.log('i am a vue plugin')
+     // 配置内容有所修改
+     const config = api.getWebpackConfig()
+     config.entry('index').use()
+   }
+   ```
+
+   
