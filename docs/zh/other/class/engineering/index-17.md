@@ -1066,4 +1066,5 @@ config.plugin('index').use(HtmlWebpackPlugin, [
    }
    ```
 
-   
+## 15: 高级：imooc-build插件集成vue-cli构建
+
