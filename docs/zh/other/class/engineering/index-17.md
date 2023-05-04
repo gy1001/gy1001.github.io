@@ -749,11 +749,159 @@ optimization: {
    service.start()
    ```
 
+## 11: zbest-pc项目工程化脚手架移植
+
+### imooc-build 项目涉及的改动
+
+1. 修改`service/Service.js`中的错误提示
+
+   ```javascript
+   // console.log('配置文件不存在，终止执行')
+   // 改为如下
+   log.error('配置文件不存在，终止执行')
+   ```
+
+2. `initPlugin/dev.js`和`initPlugin/build.js`文件中，分别删除不需要预置的插件
+
+   ```javascript
+   // const CopyWebpackPlugin = require('copy-webpack-plugin')
+   /*
+   config.module
+       .rule('ejs')
+       .exclude.add(/node_modules/)
+       .end()
+       .test(/\.ejs$/)
+       .use('ejs-loader')
+       .options({
+         esModule: false,
+       })
+   */
    
+   // config.plugin('indexHtml').use(HtmlWebpackPlugin, [])
+   // 修改为
+   config.plugin('index').use(HtmlWebpackPlugin, [])
+   
+   /*
+    	config.module
+       .rule('ejs')
+       .exclude.add(/node_modules/)
+       .end()
+       .test(/\.ejs$/)
+       .use('ejs-loader')
+       .options({
+         esModule: false,
+       })
+   	config.plugin('loginHtml').use(HtmlWebpackPlugin, [
+       {
+         filename: 'login.html',
+         template: path.resolve(dir, './public/index.html'),
+         chunks: ['login'],
+       },
+     ])
+     config
+       .plugin('provide')
+       .use(webapck.ProvidePlugin, [{ $: 'jquery', jQuery: 'jquery' }])
+     config.plugin('CopyWebpackPlugin').use(CopyWebpackPlugin, [
+       {
+         patterns: [
+           {
+             from: path.resolve(dir, './src/img'),
+             to: path.resolve(dir, './dist/img'),
+           },
+         ],
+       },
+     ])
+   */
+   ```
 
+### zbest-pc 项目改造
 
+1. 在`zbestpc-update`项目中新建脚本命令,修改`package.json`
 
+   ```javascript
+   {
+     "scripts": {
+       "start:imooc": "imooc-build start --debug"
+     }
+   }
+   ```
 
+2. 运行终端命令提示：**配置文件不存在**
+
+3. 新建配置文件`zbestpc_update/imooc-build.config.json`，内容如下
+
+   ```json
+   {
+     "plugins": [ "./plugins/zbestpc-plugin.js" ]
+   }
+   ```
+
+4. 新建`zbestpc_update/plugins/zbestpc-plugin.js`文件，内容如下
+
+   ```javascript
+   const path = require('path')
+   const HtmlWebpackPlugin = require('html-webpack-plugin')
+   const webapck = require('webpack')
+   const CopyWebpackPlugin = require('copy-webpack-plugin')
+   
+   module.exports = function (api, params) {
+     console.log('this is zbest-pc plugin')
+     const config = api.getWebpackConfig()
+     const dir = process.cwd()
+     config.entry('login').add(path.resolve(dir, './src/login.js'))
+   
+     config.plugin('login').use(HtmlWebpackPlugin, [
+       {
+         filename: 'login.html',
+         template: path.resolve(dir, './public/login.html'),
+         chunks: ['login'],
+       },
+     ])
+   
+     config.module
+       .rule('ejs')
+       .exclude.add(/node_modules/)
+       .end()
+       .test(/\.ejs$/)
+       .use('ejs-loader')
+       .options({
+         esModule: false,
+       })
+   
+     config
+       .plugin('provide')
+       .use(webapck.ProvidePlugin, [{ $: 'jquery', jQuery: 'jquery' }])
+   
+     config.plugin('CopyWebpackPlugin').use(CopyWebpackPlugin, [
+       {
+         patterns: [
+           {
+             from: path.resolve(dir, './src/img'),
+             to: path.resolve(dir, './dist/img'),
+           },
+         ],
+       },
+     ])
+   }
+   ```
+
+5. 在`zbestpc_update`重新运行终端命令`npm run start:imooc`,可以看到正常运行，以及打开的页面正常跳转
+
+## 12：zbest-pc 项目 HtmlWebpackPlugin
+
+目前`imooc-build`项目中的默认模板配置如下
+
+```javascript
+config.plugin('index').use(HtmlWebpackPlugin, [
+  {
+    filename: 'index.html',
+    template: path.resolve(dir, './public/index.html'),
+    chunks: ['index'],
+  },
+])
+```
+
+如果存在模板路径不一致，你可以在项目配置文件中进行修改覆盖
 
 
 
