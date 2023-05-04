@@ -1,5 +1,7 @@
 # 17: 工程化脚手架：高阶实战——深入工程化脚手架插件机制+Vue插件开发
 
+> 这里我们参考之前的项目：zbestpc_update 中的配置文件，进行参考改造
+
 ## 01：webpack初始配置mode开发
 
 1. 修改`imooc-build/plugins/initPlugin/index.js`中的代码如下
@@ -160,11 +162,117 @@
 
    ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b798adc1ce524cd5b9b02d78948d8419~tplv-k3u1fbpfcp-watermark.image?)
 
-   
+## 03: webpackloader 配置移植
 
-   
+### zbestpc_update 项目中的 module:rules配置如下
 
+```javascript
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+
+
+module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+      {
+        test: /\.(png|svg|jpg|png|jpeg|gif)$/i,
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 8 * 1024,
+          },
+        },
+        generator: {
+          filename: 'img/[name].[contenthash:6][ext]', // 解决重名问题
+        },
+      },
+      {
+        test: /\.ejs$/,
+        use: [
+          {
+            loader: 'ejs-loader',
+            options: {
+              esModule: false,
+            },
+          },
+        ],
+      },
+    ],
+  },
+```
+
+### 代码移植
+
+1. 我们在内置插件中需要配置以上`rules`,其中有依赖库，我们需要在`imooc-build`项目下安装相关依赖
+
+   ```bash
+   npm install mini-css-extract-plugin css-loader ejs-loader -D
+   ```
+
+2. 修改`imooc-build/plugins/initPlugin/index.js`内容如下
+
+   ```javascript
+   const MiniCssExtractPlugin = require('mini-css-extract-plugin')
    
+   module.exports = function initPlugin(api, params) {
+   	...
+     // 配置 module
+     config.module
+       .rule('css')
+       .test(/\.css$/)
+       .exclude.add(/node_modules/)
+       .end()
+       .use('min-css')
+       .loader(MiniCssExtractPlugin.loader)
+       .end()
+       .use('css-loader')
+       .loader('css-loader')
+       .end()
+     config.module
+       .rule('asset')
+       .test(/\.(png|svg|jpg|png|jpeg|gif)$/i)
+       .type('asset')
+       .parser({
+         dataUrlCondition: {
+           maxSize: 8 * 1024,
+         },
+       })
+     config.module.rule('asset').set('generator', {
+       filename: 'img/[name].[contenthash:6][ext]', // 解决重名问题
+     })
+     // .generator({
+     //   filename: 'img/[name].[contenthash:6][ext]', // 解决重名问题
+     // })
+     config.module
+       .rule('ejs')
+       .exclude.add(/node_modules/)
+       .end()
+       .test(/\.ejs$/)
+       .use('ejs-loader')
+       .options({
+         esModule: false,
+       })
+   }
+   ```
+
+3. 修改`service/Service.js`中的打印信息,代码如下
+
+   ```javascript
+   class Service {
+     async start() {
+       ...
+       log.verbose('webpack config', this.webpackConfig.toConfig().module.rules)
+     }
+   }
+   ```
+
+4. 重新运行终端命令，结果如下
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2b8291440c93474780bfa2acb43247fc~tplv-k3u1fbpfcp-watermark.image?)
+
+
 
 
 
