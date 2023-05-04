@@ -272,9 +272,120 @@ module: {
 
    ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2b8291440c93474780bfa2acb43247fc~tplv-k3u1fbpfcp-watermark.image?)
 
+## 04：webpack plugin 配置移植
 
+### 原项目下的配置
 
+```json
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+const webapck = require('webpack')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const resolve = (dirPath) => path.resolve(__dirname, dirPath)
 
+plugins: [
+    // 增加多入口模板文件
+  new HtmlWebpackPlugin({
+    filename: 'index.html',
+    template: resolve('../public/index-vue.html'),
+    chunks: ['home'],
+  }),
+  new HtmlWebpackPlugin({
+    filename: 'login.html',
+    template: resolve('../public/index-vue.html'),
+    chunks: ['login'],
+  }),
+  new webapck.ProvidePlugin({
+    $: 'jquery',
+    jQuery: 'jquery',
+  }),
+  new CopyWebpackPlugin({
+    patterns: [
+      {
+        from: resolve('../src/img'),
+        to: resolve('../dist/img'),
+      },
+    ],
+  }),
+  new MiniCssExtractPlugin({
+    filename: 'css/[name][contenthash:8].css',
+    chunkFilename: 'css/[name].chunk.css',
+  }),
+  new CleanWebpackPlugin(),
+  new VueLoaderPlugin(),
+],
+```
 
+### 代码移植
 
+1. 在`imooc-build`项目中安装相关依赖
+
+   ```bash
+   npm install copy-webpack-plugin html-webpack-plugin clean-webpack-plugin -D
+   ```
+
+2. 修改`imooc-build/plugins/initPlugin/index.js`内容如下
+
+   ```javascript
+   const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+   const HtmlWebpackPlugin = require('html-webpack-plugin')
+   const webapck = require('webpack')
+   const CopyWebpackPlugin = require('copy-webpack-plugin')
+   const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+   
+   module.exports = function initPlugin(api, params) {
+     
+   	// 配置 plugins
+     config.plugin('MiniCssExtractPlugin').use(MiniCssExtractPlugin, [
+       {
+         filename: 'css/[name][contenthash:8].css',
+         chunkFilename: 'css/[name].chunk.css',
+       },
+     ])
+     config.plugin('indexHtml').use(HtmlWebpackPlugin, [
+       {
+         filename: 'index.html',
+         template: path.resolve(dir, './public/index-vue.html'),
+         chunks: ['home'],
+       },
+     ])
+     config.plugin('loginHtml').use(HtmlWebpackPlugin, [
+       {
+         filename: 'login.html',
+         template: path.resolve(dir, './public/index-vue.html'),
+         chunks: ['login'],
+       },
+     ])
+     config
+       .plugin('provide')
+       .use(webapck.ProvidePlugin, [{ $: 'jquery', jQuery: 'jquery' }])
+     config.plugin('CopyWebpackPlugin').use(CopyWebpackPlugin, [
+       {
+         patterns: [
+           {
+             from: path.resolve(dir, './src/img'),
+             to: path.resolve(dir, './dist/img'),
+           },
+         ],
+       },
+     ])
+     config.plugin('cleanWebpack').use(CleanWebpackPlugin, [])
+   }
+   ```
+
+3. 修改`service/Service.js`中的打印信息,代码如下
+
+   ```javascript
+   class Service {
+     async start() {
+       ...
+       log.verbose('webpack config plugins', this.webpackConfig.toConfig().plugins)
+     }
+   }
+   ```
+
+4. 重新运行终端命令，效果如下
+
+   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/be742de3efe44f928bae1d661a70699e~tplv-k3u1fbpfcp-watermark.image?)
 
