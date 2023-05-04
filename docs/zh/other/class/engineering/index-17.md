@@ -154,7 +154,7 @@
      const dir = process.cwd()
      config.entry('index').add(path.resolve(dir, './src/index.js'))
      // 设置 output
-     config.output.filename('js/[name].js').path(path.resolve(dir, '../dist'))
+     config.output.filename('js/[name].js').path(path.resolve(dir, './dist'))
    }
    ```
 
@@ -289,7 +289,7 @@ plugins: [
   new HtmlWebpackPlugin({
     filename: 'index.html',
     template: resolve('../public/index-vue.html'),
-    chunks: ['home'],
+    chunks: ['index'],
   }),
   new HtmlWebpackPlugin({
     filename: 'login.html',
@@ -346,14 +346,14 @@ plugins: [
      config.plugin('indexHtml').use(HtmlWebpackPlugin, [
        {
          filename: 'index.html',
-         template: path.resolve(dir, './public/index-vue.html'),
-         chunks: ['home'],
+         template: path.resolve(dir, './public/index.html'),
+         chunks: ['index'],
        },
      ])
      config.plugin('loginHtml').use(HtmlWebpackPlugin, [
        {
          filename: 'login.html',
-         template: path.resolve(dir, './public/index-vue.html'),
+         template: path.resolve(dir, './public/index.html'),
          chunks: ['login'],
        },
      ])
@@ -475,5 +475,65 @@ optimization: {
 
    ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/36b604f948144a909d7f68ccac574186~tplv-k3u1fbpfcp-watermark.image?)
 
+## 06: webpack构建逻辑开发
 
+1. 修改`service/Service.js`，增加`startServer`方法，代码如下(并删除无关打印)
 
+   ```javascript
+   class Service {
+     async start() {
+       ...
+       await this.startServer()
+       // log.verbose( 'webpack config optimization', this.webpackConfig.toConfig().optimization )
+     }
+   
+     async startServer() {
+       let compiler
+       try {
+         // 这来我们可能有用到自定义的 webpack
+         const selfWebapck = require(this.webpack)
+         const webpackConfig = this.webpackConfig.toConfig()
+         // 运行相关配置
+         selfWebapck(webpackConfig, (err, stats) => {})
+       } catch (error) {
+         log.error('service startServer', error)
+       }
+     }
+   }
+   ```
+
+2. 在之前的移植配置过程中，我们看到入口文件是`sample/src/public/index.html`以及相关`index.js`和`login.js`
+
+   ```html
+   // 新建 src/public/index.html
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="UTF-8" />
+       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <title>Document</title>
+     </head>
+     <body></body>
+   </html>
+   ```
+
+   ```javascript
+   // samples/src/index.js
+   console.log("i am index.js")
+   
+   // samples/src/login.js
+   console.log("i am login.js")
+   ```
+
+3. 在`samples`文件夹下，运行终端，执行命令`npm run dev:noconfig`
+
+4. 可以看到`samples`文件夹下，多产生了`dist`目录
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3d23a32bfb6b41e5bcf9975ef59ad09e~tplv-k3u1fbpfcp-watermark.image?)
+
+5. 运行`index.html`、`login.html`就可以看到相关打印信息
+
+   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/45429275ed8a4707b8e2939d4d274ce5~tplv-k3u1fbpfcp-watermark.image?)
+
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f25480b45b5d433297aa44726eb19e75~tplv-k3u1fbpfcp-watermark.image?)
