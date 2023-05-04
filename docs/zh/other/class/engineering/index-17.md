@@ -678,3 +678,82 @@ optimization: {
 3. 在`samples`文件夹下运行终端命令，会自动打开浏览器，以及终端打印效果如下
 
    ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/226e9a936be14d91b5d7552a5c590b1a~tplv-k3u1fbpfcp-watermark.image?)
+
+## 10: 文件修改监听+dev和build模式插件分离
+
+### 文件监听
+
+1. 修改`initPlugin/index.js`文件，添加`watch`处理函数
+
+   ```javascript
+   module.exports = function initPlugin(api, params) {	
+     ...
+     // 配置监听函数
+     config.watch(true)
+   }
+   ```
+
+2. 在`samples`运行终端命令，浏览器打开页面
+
+3. 修改`samples/src/index.js`,随意修改内容，可以看到终端中会重新编译，浏览器中也会重新渲染更新
+
+4. 如果此时我们新建`src/utils.js`,内容如下
+
+   ```javascript
+   export function utils() {
+     console.log('utils')
+   }
+   
+   ```
+
+5. 修改`samples/src/index.js`，并引入`utils.js`
+
+   ```javascript
+   import { utils } from './utils'
+   console.log('i am index.js')
+   utils()
+   ```
+
+6. 此时，终端和浏览器中均会重新渲染更新
+
+### dev+build模式插件分离
+
+1. 我们在`imooc-build/plugins/initPlugin`下新建`dev`和`build.js`,内容可以复制`initPlugin/index.js`内容，然后做部分删减修改
+
+2. 接着修改`service/Service.js`，修改如下
+
+   ```javascript
+   // const InitPlugin = require('../../plugins/initPlugin/index')
+   const InitDevPlugin = require('../../plugins/initPlugin/dev')
+   const InitBuildPlugin = require('../../plugins/initPlugin/build')
+   
+   class Service {
+     // 增加 cmd 参数，用来区分是 dev 还是 build，以便于区分使用哪个模式
+     constructor(cmd, opts) {
+       this.cmd = cmd || "start"
+     }
+     
+     async registerPlugin() {
+       let { plugins } = this.config
+       // 这里做判断，使用哪个插件文件
+       const buildInPlugins = this.args === 'start' ? [InitDevPlugin] : [InitBuildPlugin]
+     }
+   }
+   ```
+
+3. 修改`imooc-build/lib/start/devService.js`文件，修改内容如下
+
+   ```javascript
+   // 实例化时候，传入参数 start
+   const service = new Service("start", args)
+   service.start()
+   ```
+
+   
+
+
+
+
+
+
+
