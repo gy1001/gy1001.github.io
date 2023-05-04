@@ -926,12 +926,91 @@ config.plugin('index').use(HtmlWebpackPlugin, [
 3. 新建`plugins/zbestpc-vue-plugin.js`文件，内容如下
 
    ```javascript
+   const path = require('path')
+   const dir = process.cwd()
+   const webpack = require('webpack')
+   const { VueLoaderPlugin } = require('vue-loader')
+   const CopyWebpackPlugin = require('copy-webpack-plugin')
+   const HtmlWebpackPlugin = require('html-webpack-plugin')
+   
    module.exports = function (api, params) {
      console.log('i am a vue plugin')
      // 配置内容有所修改
      const config = api.getWebpackConfig()
-     config.entry('index').use()
+     config.entry('index').clear().add(path.resolve(dir, './src/main.js'))
+     config.entry('login').add(path.resolve(dir, './src/login.js'))
+     config.plugin('index').use(HtmlWebpackPlugin, [
+       {
+         filename: 'index.html',
+         template: path.resolve(dir, './public/index-vue.html'),
+         chunks: ['index'],
+       },
+     ])
+     config.module
+       .rule('ejs')
+       .exclude.add(/node_modules/)
+       .end()
+       .test(/\.ejs$/)
+       .use('ejs-loader')
+       .options({
+         esModule: false,
+       })
+     config.module
+       .rule('vue')
+       .exclude.add(/node_modules/)
+       .end()
+       .test(/\.vue$/)
+       .use('vue-loader')
+       .loader('vue-loader')
+   
+     config
+       .plugin('provide')
+       .use(webpack.ProvidePlugin, [{ $: 'jquery', jQuery: 'jquery' }])
+   
+     config.plugin('CopyWebpackPlugin').use(CopyWebpackPlugin, [
+       {
+         patterns: [
+           {
+             from: path.resolve(dir, './src/img'),
+             to: path.resolve(dir, './dist/img'),
+           },
+         ],
+       },
+     ])
+   
+     config.plugin('VueLoaderPlugin').use(VueLoaderPlugin)
+     config.devServer
+       .compress(true)
+       .proxy({
+         '/': {
+           target: 'http://localhost:8080',
+           // 只需要添加该方法，然后当请求的是html，则重定向到index.html
+           bypass: function (req, res, proxyOptions) {
+             if (req.headers.accept.indexOf('html') !== -1) {
+               console.log('Skipping proxy for browser request.')
+               return '/index.html'
+             }
+           },
+         },
+       })
+       .set('static', { directory: path.resolve(dir, './dist') })
    }
+   ```
+
+4. 这里我们配置了`devServer`，所以要修改`service/Service.js`中的代码
+
+5. 修改`service/Service.js`中的代码，如下
+
+   ```javascript
+   serverConfig = {
+     port: this.args.port || 9002,
+     host: this.args.host || '0.0.0.0',
+     https: this.args.https || false,
+     // 增加这一行代码，把插件中可能存在的更改应用到我们启动的 webpackDevServer 中
+     ...webpackConfig.devServer,
+   }
+   devServer = new WebpackDevServer(serverConfig, compiler)
+   
    ```
 
    
