@@ -593,3 +593,86 @@ optimization: {
 3. 再次运行，即可正常，效果如下
 
    ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5dcb54c4be8b4d30bef6f2cf411f4425~tplv-k3u1fbpfcp-watermark.image?)
+
+## 08: 工程化脚手架处理html模板
+
+上述配置代码中，我们在`initPlugin/index.js`代码中，增加了两个模板文件，并经过打包可以在`dist` 目录中看到，不过实际开发中应该会是默认是一个入口文件，这里就不在此做修改了。
+
+## 09：Webpack DevServer API启动服务开发
+
+1. 在`imooc-build`目录下安装`webpack-dev-server`
+
+   ```bash
+   npm install webpack-dev-server -D
+   ```
+
+2. 修改`service/Service.js`，增加如下代码
+
+   ```javascript
+   const WebpackDevServer = require('webpack-dev-server')
+   class Service {
+   	async startServer() {
+       let compiler
+       let devServer
+       let serverConfig
+       try {
+         const selfWebapck = require(this.webpack)
+         const webpackConfig = this.webpackConfig.toConfig()
+         compiler = selfWebapck(
+           webpackConfig,
+           // 这里回调需要注释掉，否则就会报错：ConcurrentCompilationError: You ran Webpack twice. Each instance only supports a single concurrent compilation at a time.(原因未知，临时解决办法)
+           // (err, stats) => {
+           //     if (err) {
+           //       log.error('ERROR!', err)
+           //     } else {
+           //       const result = stats.toJson({
+           //         all: false,
+           //         errors: true,
+           //         warnings: true,
+           //         timings: true,
+           //       })
+           //       if (result.errors && result.errors.length > 0) {
+           //         log.error('COMPILE ERROR')
+           //         result.errors.forEach((error) => {
+           //           log.error('ERROR MESSAGE: ', error.message)
+           //         })
+           //       } else if (result.warnings && result.warnings.length > 0) {
+           //         log.warn('COMPILE WARNING')
+           //         result.warnings.forEach((warning) => {
+           //           log.warn('WARNING MESSAGE: ', warning.message)
+           //         })
+           //       } else {
+           //         log.info(
+           //           'COMPILE SUCCESSFULLY!',
+           //           'Compile finish in ' + result.time / 1000 + 's',
+           //         )
+           //       }
+           //     }
+           // }
+         )
+         compiler.hooks.done.tap('compileHook', () => {
+           console.log('done!!!')
+         })
+         serverConfig = {
+           port: this.args.port || 9002,
+           host: this.args.host || '0.0.0.0',
+           https: this.args.https || false,
+           open: true,
+         }
+         devServer = new WebpackDevServer(serverConfig, compiler)
+         devServer.startCallback((err) => {
+           if (err) {
+             log.error('WEBPACK-DEV-SERVER ERROR!!!')
+             log.error('ERROR MESSAGE', err.toString())
+           } else {
+             log.info('WEBPACK-DEV-SERVER LANCH SUCCESSFULLY')
+           }
+         })
+       } catch (error) {
+         log.error('service startServer', error)
+       }
+     }
+   }
+   ```
+
+   
