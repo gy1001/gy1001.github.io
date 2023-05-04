@@ -276,7 +276,7 @@ module: {
 
 ### 原项目下的配置
 
-```json
+```javascript
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const webapck = require('webpack')
@@ -388,4 +388,92 @@ plugins: [
 4. 重新运行终端命令，效果如下
 
    ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/be742de3efe44f928bae1d661a70699e~tplv-k3u1fbpfcp-watermark.image?)
+
+## 05：webpack optimization配置移植
+
+### 原项目下的配置
+
+```javascript
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+
+optimization: {
+  minimize: true, // 默认开发模式下不压缩
+  usedExports: true, // treeshaking
+  minimizer: [
+    new UglifyJsPlugin({ sourceMap: false }),
+    new CssMinimizerPlugin(),
+  ],
+  splitChunks: {
+    chunks: 'all',
+    minSize: 300 * 1024,
+    name: 'common',
+    automaticNameDelimiter: '_',
+    cacheGroups: {
+      jquery: {
+        name: 'jquery',
+        test: /jquery/,
+        chunks: 'all',
+      },
+    },
+  },
+},
+```
+
+### 代码移植
+
+1. 安装相关依赖
+
+   ```bash
+   npm install css-minimizer-webpack-plugin uglifyjs-webpack-plugin -D
+   ```
+
+2. 修改`imooc-build/plugins/initPlugin/index.js`内容如下
+
+   ```javascript
+   const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+   const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+   
+   module.exports = function initPlugin(api, params) {
+     
+   	// 配置 optimization
+     config.optimization
+       .minimize(true)
+       .usedExports(true)
+       .splitChunks({
+         chunks: 'all',
+         minSize: 300 * 1024,
+         name: 'common',
+         automaticNameDelimiter: '_',
+         cacheGroups: {
+           jquery: {
+             name: 'jquery',
+             test: /jquery/,
+             chunks: 'all',
+           },
+         },
+       })
+     config.optimization
+       .minimizer('UglifyJsPlugin')
+       .use(UglifyJsPlugin, [{ sourceMap: false }])
+     config.optimization.minimizer('CssMinimizerPlugin').use(CssMinimizerPlugin)
+   }
+   ```
+
+3. 修改`service/Service.js`中的打印信息,代码如下
+
+   ```javascript
+   class Service {
+     async start() {
+       ...
+       log.verbose('webpack config optimization',this.webpackConfig.toConfig().optimization)
+     }
+   }
+   ```
+
+4. 重新运行终端命令，效果如下
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/36b604f948144a909d7f68ccac574186~tplv-k3u1fbpfcp-watermark.image?)
+
+
 
