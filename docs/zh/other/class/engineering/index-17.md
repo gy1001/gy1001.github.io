@@ -537,3 +537,59 @@ optimization: {
    ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/45429275ed8a4707b8e2939d4d274ce5~tplv-k3u1fbpfcp-watermark.image?)
 
    ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f25480b45b5d433297aa44726eb19e75~tplv-k3u1fbpfcp-watermark.image?)
+
+## 07：编译错误和警告逻辑处理+构建时间获取
+
+1. 修改`service/Service.js`，代码如下
+
+   ```javascript
+   class Service {
+     async startServer() {
+       let compiler
+       try {
+         const selfWebapck = require(this.webpack)
+         const webpackConfig = this.webpackConfig.toConfig()
+         compiler = selfWebapck(webpackConfig, (err, stats) => {
+           // 这里晚于 compiler.hooks.done.tap('compileHook' 回调执行
+           if (err) {
+             log.error('ERROR!', err)
+           } else {
+             const result = stats.toJson({
+               all: false,
+               errors: true,
+               warnings: true,
+               timings: true,
+             })
+             if (result.errors && result.errors.length > 0) {
+               log.error('COMPILE ERROR')
+               result.errors.forEach((error) => {
+                 log.error('ERROR MESSAGE: ', error.message)
+               })
+             } else if (result.warnings && result.warnings.length > 0) {
+               log.warn('COMPILE WARNING')
+               result.warnings.forEach((warning) => {
+                 log.warn('WARNING MESSAGE: ', warning.message)
+               })
+             } else {
+               log.info('COMPILE SUCCESSFULLY!', 'Compile finish in ' + result.time / 1000 + 's')
+             }
+           }
+         })
+         // 这里我们可以通过钩子执行某些回调代码
+         compiler.hooks.done.tap('compileHook', () => {
+           console.log('done!!!')
+         })
+       } catch (error) {
+         log.error('service startServer', error)
+       }
+     }
+   }
+   ```
+
+2. 在`samples`文件夹下运行终端命令`npm run dev:noconfig`，可能会有报错，根据报错信息修改即可
+
+   > 我这里遇到的问题是：src/img 文件夹找不到，我们可以把配置文件中的对这个文件夹做的处理去掉，或者新建文件夹img并需要传入一张照片
+
+3. 再次运行，即可正常，效果如下
+
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5dcb54c4be8b4d30bef6f2cf411f4425~tplv-k3u1fbpfcp-watermark.image?)
