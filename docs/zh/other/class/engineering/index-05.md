@@ -12,6 +12,7 @@
    mkdir src
    cd src
    touch index.js
+   cd ../
    mkdir public
    cd public
    touch index.html

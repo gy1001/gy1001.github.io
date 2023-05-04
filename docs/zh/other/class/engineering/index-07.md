@@ -664,7 +664,7 @@
    import Home from '../Home.vue'
    createApp(Home).mount('#app')
 
-   // src/mpa.login.js
+   // src/mpa/login.js
    import { createApp } from 'vue'
    import Login from '../Login.vue'
    createApp(Login).mount('#app')

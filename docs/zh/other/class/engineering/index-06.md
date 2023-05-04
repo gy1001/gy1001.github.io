@@ -402,13 +402,13 @@
           chunks: "all",
           minSize: 300 * 1024,
           name: "common"
-        },
-        // 增加 cacheGroups 属性
-        cacheGroups: {
-          jquery: {
-            name: 'jquery',
-            test: /jquery/,
-            chunks: 'all',
+          // 增加 cacheGroups 属性
+          cacheGroups: {
+            jquery: {
+              name: 'jquery',
+              test: /jquery/,
+              chunks: 'all',
+            },
           },
         },
       },
@@ -679,7 +679,7 @@ modulee.exports = {
       test: /\(.gif|png|jpg?g|svg|webp)$/i,
       use: [
         {
-					loader: "image-webpack-loader",
+          loader: "image-webpack-loader",
           options: {
             mozjpeg: {
               progressive: true,
