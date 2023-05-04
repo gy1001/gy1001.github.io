@@ -562,7 +562,7 @@ const colorfuleCircleOne: ColorfuleCircleOne = {
 }
 ```
 
-## 14：泛型数组与元组
+## 14：泛型数组与元组(上)
 
 ### 泛型
 
@@ -582,5 +582,428 @@ const box2: Box<boolean> = { content: true }
 type orNull<Type> = Type | null
 const test4: orNull<string> = '111'
 const test5: orNull<string> = null
+
+type oneOrMany<T> = T | T[]
+const test6: oneOrMany<string> = ['123']
+const test7: oneOrMany<string> = '123'
+
+// 多层传递组合
+type OneOrManyOrNull<T> = OrNull<OneOrMany<T>>
+const test8: OneOrManyOrNull<string> = null
+const test9: OneOrManyOrNull<string> = '123'
+const test10: OneOrManyOrNull<string> = ['123']
+```
+
+## 15：泛型数组与元组(下)
+
+### 数组和泛型
+
+```typescript
+interface SelfArray<T> {
+  [key: number]: T
+  length: number
+  pop(): T | undefined
+  push(...items: T[]): number
+}
+const NumberArr: Array<number> = [1, 2, 3, 4]
+const test11: SelfArray<number> = [2, 3, 4, 5]
+```
+
+### 数组的 readOnly 修饰符
+
+```typescript
+function doStuff(arr: readonly string[]) {
+  arr.slice()
+  // 使用push 会改变原数组，ts 会报错
+}
+```
+
+### 元组
+
+```typescript
+type Tuple = [number, string]
+const tuple: Tuple = [1, '2']
+
+type Tuple = [number, string]
+const tuple: Tuple = [1, '2']
+
+type PointTest = [number, number]
+function getPointTest([x, y]: PointTest) {
+  return x + y
+}
+const point: PointTest = [1, 2]
+getPointTest(point)
+
+// 元组也是支持 readonly 修饰符的
+```
+
+## 16：泛型中使用extends和keyof语法
+
+### 泛型中使用 extends
+
+> 可以用来解决固定参数传递需求
+
+```typescript
+interface Peroson {
+  name: string
+}
+function getName(person: Peroson) {
+  return person.name
+}
+getName({ name: '孙悟空' })
+getName({ name: '孙悟空', age: 100 }) // 就会报错
+
+// 可以进行如下修改
+function getNameNew<T extends Peroson>(person: T) {
+  return person.name
+}
+getNameNew({ name: '孙悟空' })
+getNameNew({ name: '孙悟空', age: 100 }) // 不会报错
+```
+
+### 泛型中使用 keyof
+
+```typescript
+interface Teacher {
+  name: string
+  age: number
+  sex: 'male' | 'female'
+}
+const teacher: Teacher = {
+  name: '唐僧',
+  age: 100,
+  sex: 'male',
+}
+function getTeacherInfo<T extends keyof Teacher>(teacher: Teacher, key: T) {
+  return teacher[key]
+}
+
+getTeacherInfo(teacher, 'def') // 这里乱写就会报错，只能是 Teacher 类型的 key 值
+getTeacherInfo(teacher, 'name')
+```
+
+## 17: 高阶知识点：条件类型(上)
+
+>条件类型: 是根据条件，生成一个新的类型
+
+```typescript
+interface AnimalTest {
+  breath: () => {}
+}
+interface DogTest extends AnimalTest {
+  bark: () => {}
+}
+interface Tank {
+  ph: number
+}
+
+type Example = Dog extends Animal ? string : number
+```
+
+### 使用条件类型的例子
+
+#### 使用函数重载来实现
+
+```typescript
+interface IdLable {
+  id: number
+}
+interface NameLabel {
+  name: string
+}
+// 当然使用函数重载一样可以实现，不过比较麻烦，如下
+// 如果将来在多一个 boolean 类型的参数，需要增加定义以及实现
+function createLabel(key: string): IdLable
+function createLabel(key: number): NameLabel
+function createLabel(key: string | number): IdLable | NameLabel {
+  if (typeof key === 'string') {
+    return { name: key }
+  }
+  return { id: key }
+}
+const label = createLabel('孙悟空')
+```
+
+#### 使用泛型
+
+> 使用条件类型，可以让我们的函数重载的语法更加简炼
+
+```typescript
+type IdOrNameLable<T> = T extends number ? IdLable : NameLabel
+function createLabel<T extends string | number>(key: T): IdOrNameLable<T>
+function createLabel(key: string | number): IdLable | NameLabel {
+  if (typeof key === 'string') {
+    return { name: key }
+  }
+  return { id: key }
+}
+const labelString = createLabel('孙悟空')
+const labelNumber = createLabel(1122)
+```
+
+## 18：高阶知识点: 条件类型(下)
+
+### 条件类型其他的应用场景
+
+```typescript
+type TypeOfMessageOf<T> = T extends { message: unknown } ? T['message'] : never
+type Message = TypeOfMessageOf<{ message: string }> // 此时 Type Message 是 string 类型
+type Messag1 = TypeOfMessageOf<string> // 此时 Type Message1 是 never 类型
+```
+
+如果不使用条件类型时，有如下代码
+
+> 如下代码中，Email 和 EmailMessage 中的 message 类型有重复，那么该如何优化呢？
+
+```typescript
+interface Email {
+  from: string
+  to: string
+  message: string
+}
+type EmailMessage = string
+
+const emailObject: Email = {
+  from: 'from@qq.com',
+  to: 'to@qq.com',
+  message: 'hello i send a message to you',
+}
+const email: EmailMessage = 'hello it is a message'
+```
+
+如果使用条件类型，就可以进行如下优化
+
+```typescript
+type TypeOfMessageOf<T> = T extends { message: unknown } ? T['message'] : never
+interface Email {
+  from: string
+  to: string
+  message: string
+}
+
+const emailObject: Email = {
+  from: 'from@qq.com',
+  to: 'to@qq.com',
+  message: 'hello i send a message to you',
+}
+// 这里使用泛型，最终结果 email 类型是 string 类型
+const email: TypeOfMessageOf<Email> = 'hello it is a message'
+```
+
+其他使用场景
+
+例子1：
+
+```typescript
+type GetReturnType<T> = T extends (...args: never[]) => infer ReturnType
+  ? ReturnType
+  : never
+
+type ExampleType = GetReturnType<() => string> // 推断出 ExampleType 是 string
+type ExampleType2 = GetReturnType<string> // 推断出 ExampleType 是 never
+```
+
+例子2：
+
+```typescript
+type ToArray<Type> = Type extends any ? Type[] : never
+type StringArray = ToArray<string> // 推断出 StringArray 类型是 string[]
+type StringArray1 = ToArray<string | number> // 推断出 StringArray1 类型是 number[] | string[]
+type StringArrray2 = ToArray<never> // 推断出 StringArray2 类型是 never
+```
+
+例子3：
+
+```typescript
+type ToArrayTest<T> = [T] extends [any] ? T[] : never
+type StringOrNumberArray = ToArrayTest<string | number> // 推断出 StringArray 类型是 (string | number)[]
+```
+
+## 19: 高阶知识点映射类型
+
+### 基础映射类型
+
+#### 过滤修饰符
+
+```typescript
+interface User {
+  readonly name: string
+  readonly age: number
+}
+
+type FilterReadOnly<T> = {
+  -readonly [Property in keyof T]: T[Property] // 前面通过 -readonly 变只读为可修改
+}
+
+// 此时 PublicUser 中的name、age被过滤掉了 readonly 修饰符
+type PublicUser = FilterReadOnly<User> 
+const publicUser: PublicUser = { name: '孙悟空', age: 500 }
+publicUser.name = '猪八戒'
+```
+
+#### 变可选为必选项
+
+```typescript
+interface User {
+  readonly name: string
+  readonly age: number
+  male?: boolean
+}
+
+type FilterReadOnly<T> = {
+  -readonly [Property in keyof T]-?: T[Property] // 后面可以使用 -? 来变可选为 必选
+}
+
+type PublicUser = FilterReadOnly<User> // 此时 PublicUser 中的name、age被过滤掉了 readonly 修饰符
+const publicUser: PublicUser = { name: '孙悟空', age: 500, male: true }
+publicUser.name = '猪八戒'
+```
+
+### 高级映射类型语法
+
+```typescript
+interface User {
+  name: string
+  age: number
+  male: boolean
+}
+
+type DeleteMaleProperty<T> = {
+  [Property in keyof T as Exclude<Property, 'male'>]: T[Property]
+}
+
+type UserWithoutGender = DeleteMaleProperty<User> // 类型目前是 { name: string, age: number }
+const user: UserWithoutGender = { name: '孙悟空', age: 500 }
+```
+
+例子2：字面量语法例子
+
+```typescript
+interface User {
+  name: string
+  age: number
+  male: boolean
+}
+
+// 想要构建如下的类型，
+// interface UserFunctions {
+//   getName: () => string
+//   getAge: () => number
+//   getMale: () => boolean
+// }
+
+//Capitalize: 转换字符串字面量的第一个字母为大写字母
+type GetPropertyFunctions<T> = {
+  [Property in keyof T as `get${Capitalize<string & Property>}`]: () => T[Property]
+}
+
+type UserFunctions = GetPropertyFunctions<User> // 此类型就是想要的
+```
+
+例子3：union 类型使用
+
+```typescript
+type SquareEvent = {
+  kind: 'square'
+  x: number
+  y: number
+}
+
+type CircleEvent = {
+  kind: 'circle'
+  radius: number
+}
+
+type GenerateEventsFunctions<T extends { kind: string }> = {
+  [Event in T as Event['kind']]: (event: Event) => void
+}
+
+type NewType = GenerateEventsFunctions<SquareEvent | CircleEvent>
+// 此时 NewType 类型为 { square: (event: SquareEvent) => void; circle: (event: CircleEvent) => void; }
+```
+
+## 20：类的定义与继承
+
+### 类
+
+```typescript
+class PersonTest {
+  name: string = '孙悟空'
+  getName() {
+    return this.name
+  }
+}
+const person = new PersonTest()
+console.log(person.getName())
+
+```
+
+### 继承
+
+```typescript
+class PersonTest {
+  name: string = '孙悟空'
+  getName() {
+    return this.name
+  }
+}
+class Teacher extends PersonTest {
+  getTeacherName() {
+    return '唐僧'
+  }
+  // 也可以对同名方法进行重写
+  getName() {
+    const name = super.getName() + '和' + '金蝉子'
+    return name
+  }
+}
+
+const teacherTest = new Teacher()
+console.log(teacherTest.getName())
+console.log(teacherTest.getTeacherName())
+```
+
+## 21: 类中的访问类型和构造器
+
+### 访问类型
+
+* public: 允许在类的内外(父类、子类)被调用
+* private: 允许在类内(父类)被使用
+* protected: 允许在类内(父类)及继承子类中使用
+
+### 构造器
+
+```typescript
+class PersonTestTwo {
+  //  传统写法
+  // public name: string
+  // constructor(name: string) {
+  //   this.name = name
+  // }
+  // 简化写法
+  constructor(public name: string) {
+    this.name = name
+  }
+}
+const perosonTestTwo = new PersonTestTwo('猪八戒')
+console.log(perosonTestTwo.name)
+```
+
+#### 构造器的继承
+
+```typescript
+class PersonTwo {
+  constructor(public name: string) {}
+}
+
+class TeacherTestTwo extends PersonTwo {
+  constructor(public age: number) {
+    super('teacher')
+    this.age = age
+  }
+}
+const teacherTestTwo = new TeacherTestTwo(28)
+console.log(teacherTestTwo.name)
+console.log(teacherTestTwo.age)
 ```
 
