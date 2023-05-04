@@ -1013,4 +1013,57 @@ config.plugin('index').use(HtmlWebpackPlugin, [
    
    ```
 
+## 14：通用vue插件开发和npm发布
+
+1. 新建文件夹`imooc-build-vue-plugin`文件夹，并运行终端
+
+   ```bash
+   npm init -y
+   ```
+
+2. 把原项目中相关`vue`配置的代码移动到这里文件夹下的`index.js`
+
+   ```javascript
+   const { VueLoaderPlugin } = require('vue-loader')
+   
+   module.exports = function (api, params) {
+     const config = api.getWebpackConfig()
+     config.module
+       .rule('vue')
+       .exclude.add(/node_modules/)
+       .end()
+       .test(/\.vue$/)
+       .use('vue-loader')
+       .loader('vue-loader')
+     config.plugin('VueLoaderPlugin').use(VueLoaderPlugin)
+   }
+   ```
+
+3. 安装相关依赖
+
+   ```bash
+   npm install vue-loader -S
+   ```
+
+4. 这里我们需要发布到`npm`上，这里步骤就不在赘述
+
+5. 假设我们已经发步`imooc-build-vue-plugin`库至`npm`服务上
+
+6. 我们在`imooc-build/examples/zbestpc_update`文件夹下运行终端，安装这个依赖
+
+   ```bash
+   npm install imooc-build-vue-plugin -D
+   ```
+
+7. 然后修改`zbestpc_update/imooc-build.vue.config.json`文件，引入插件，内容如下
+
+   ```json
+   {
+     "plugins": [
+       "imooc-build-vue-plugin",
+       "./plugins/imooc-build-vue-plugin.js"
+     ]
+   }
+   ```
+
    
