@@ -1068,3 +1068,156 @@ config.plugin('index').use(HtmlWebpackPlugin, [
 
 ## 15: 高级：imooc-build插件集成vue-cli构建
 
+> 目前我们的项目配置都是在我们自己手动配置的额，有没有可能使用其他集成的功能呢？比如 vue-cli，当然是是可以的
+
+我们需要新建一个 `vue 项目模板`并安装运行
+
+### 对于 Vue 项目
+
+1. `vue` 项目的启动脚本往往如下所示: 是使用`vue-cli-service`启动的
+
+   ```json
+   {
+     "scripts": {
+       "serve": "vue-cli-service serve",
+       "build": "vue-cli-service build",
+       "lint": "vue-cli-service lint",
+     },
+   }
+   ```
+
+2. 那么`vue-cli-service`的一个启动流程是什么有样子呢？我们查看`vue3-demo/node_modules/@vue/cli-service/bin/vue-cli-service.js`中的代码，大概结构如下
+
+   ```javascript
+   const Service = require('../lib/Service')
+   const service = new Service(process.env.VUE_CLI_CONTEXT || process.cwd())
+   
+   ...
+   service.run(command, args, rawArgv).catch(err => {
+     error(err)
+     process.exit(1)
+   })
+   ```
+
+3. 可以看出来这里也是用了一个`Service`文件，然后实例化，启动
+
+4. 那么我们就在这个`vue项目`根目录新建一个文件`run.js`,内容如下
+
+   ```javascript
+   const Service = require('@vue/cli-service/lib/Service')
+   const service = new Service(process.cwd())
+   
+   service.run('serve')
+   ```
+
+5. 添加脚本命令
+
+   ```javascript
+   {
+     "scripts": {
+       "run": "node run.js"
+     }
+   }
+   ```
+
+6. 打开终端，执行`npm run run `，就可以看到，程序一样正常运行了
+
+### 在 vue模板基础上使用 imooc-build
+
+1. 由于我们使用 vue-cli 会另外启动项目，我们原来的项目就需要只是解析，而不启动服务
+
+2. 修改`imooc-build/bin/imooc-build.js`文件，内容如下
+
+   ```javascript
+    program
+     .command('start')
+     .option('-c --config <config>', '配置文件路径')
+   	// 增加脚本命令 --stop-server
+     .option('--stop-server', '停止服务')
+   ```
+
+3. 修改`start/startSever.js`
+
+   ```javascript
+   function runServer(args = {}) {
+     // 增加解构 stopServer 参数
+     const { config = '', customWebpackPath = '', stopServer = false } = args
+     const srciprtPath = path.resolve(__dirname, './devService.js')
+     const configParams = [
+       '--port 8080',
+       '--config ' + config,
+       '--customWebpackPath ' + customWebpackPath,
+       // 增加 stopServer 参数
+       '--stop-server ' + stopServer,
+     ]
+     
+   }
+   ```
+
+4. 修改`start/devService.js`，代码如下
+
+   ```javascript
+   const args = {
+     port: newPort,
+     config,
+     customWebpackPath: paramObj.customWebpackPath || '',
+     // 增加参数 stopServer
+     stopServer: paramObj['stop-server'],
+   }
+   const service = new Service('start', args)
+   service.start()
+   ```
+
+5. 修改`service/Service.js`，代码如下
+
+   ```javascript
+   class Service {
+     async start() {
+       await this.resolveConfig()
+       await this.registerWebpackConfig()
+       await this.registerHooks()
+       await this.emitHooks(HOOK_START)
+       await this.registerPlugin()
+       await this.runPlugin()
+       // 如果传递进来的 stopServer 为 true，就不执行 webpack 否则就启动
+       if (!this.args.stopServer) {
+         await this.initWebpack()
+         await this.startServer()
+       }
+     }
+   }
+   ```
+
+6. 在`vue模板项目中`新建脚本命令
+
+   ```javascript
+   {
+     "scripts": {
+       "start:imooc-build": "imoooc-build start --stop-server"
+     }
+   }
+   ```
+
+7. 在`vue模板项目`根目录下新建配置文件`imooc-build.config.json`,内容如下
+
+   ```json
+   {
+     "plugins": [
+       "./run-plugin.js"
+     ]
+   }
+   ```
+
+8. 在`vue模板项目`根目录下新建`run-plugin.js`文件，内容如下
+
+   ```javascript
+   module.exports = function (api, params) {
+     const Service = require('@vue/cli-service/lib/Service')
+     const service = new Service(process.cwd())
+   
+     service.run('serve')
+   }
+   ```
+
+9. 重新运行脚本`npm run start:imooc-build `，就可以正常运行项目了。
+
