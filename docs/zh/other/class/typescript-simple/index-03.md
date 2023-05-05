@@ -202,7 +202,9 @@
    const crowller = new Crowller()
    ```
 
-   
+2. 重新运行终端，即可看到`data/course.json`文件已经被新建，并且写入了数据，多次运行，会持续写入，效果如下
+
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/55949b6b7c7647d19c15d9a278eb9c85~tplv-k3u1fbpfcp-watermark.image?)
 
 
 
