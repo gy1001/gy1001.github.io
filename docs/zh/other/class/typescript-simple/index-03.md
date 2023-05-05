@@ -59,7 +59,66 @@
 
    ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ea037ebfeae24178a3ac46e80b3cd05b~tplv-k3u1fbpfcp-watermark.image?)
 
+## 03: 使用cheerio进行数据提取
 
+> [cheerio库文档地址](https://www.npmjs.com/package/cheerio),用法类似于 jQuery
 
-​                                                                                       
+1. 安装相应依赖库
+
+   ```bash
+   npm install cheerio @types/cheerio -D
+   ```
+
+2. 修改`crowller.ts`，代码如下
+
+   ```typescript
+   // 引入 cheerio 库
+   import cheerio from 'cheerio'
+   import superagent from 'superagent'
+   // 声明一个类型
+   interface CourseInfo {
+     title: string
+     count: number
+   }
+   
+   class Crowller {
+     private sercret = 'serretKey'
+     private url = `http://www.dell-lee.com/typescript/demo.html?secret=${this.sercret}`
+     constructor() {
+       this.getRawHtml()
+     }
+     async getRawHtml() {
+       const result = await superagent.get(this.url)
+       // 获取课程信息函数
+       this.getCourseInfo(result.text)
+     }
+   
+     getCourseInfo(html: string) {
+       // 解析 html
+       const $ = cheerio.load(html)
+       // 得到想要的容器元素
+       const courseItems = $('.course-item')
+       const courseInfos: Array<CourseInfo> = []
+       // 遍历结果，得到其中的课程信息、数量
+       courseItems.map((index, element) => {
+         const descs = $(element).find('.course-desc')
+         const title = descs.eq(0).text()
+         const count = parseInt(descs.eq(1).text().split('：')[1], 10)
+         courseInfos.push({
+           title,
+           count,
+         })
+       })
+       const result = {
+         time: new Date().getTime(),
+         data: courseInfos,
+       }
+       console.log(result)
+     }
+   }
+   
+   const crowller = new Crowller()
+   ```
+
+   
 
