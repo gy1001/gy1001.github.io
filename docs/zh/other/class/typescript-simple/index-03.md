@@ -215,6 +215,7 @@
   * 调用解析器方法`analyzer`方法，返回字符串，然后写入文件
 * 新建解析器类
   * 实现`analyzer`方法，接受`html`字符串，返回处理后的字符串信息
+* 这样我们如果要解析为不同的内容时候，只需要换一个解析类返回解析的符合格式的内容即可
 
 ### 代码实现
 
@@ -319,3 +320,47 @@
 
 3. 重新运行终端，效果如常
 
+## 06：单例模式实战复习
+
+> 如何把上节中的`Analyzer`类变为单例模式
+
+1. 修改`Analyzer.ts`部分，代码如下
+
+   ```typescript
+   class Analyzer implements AnalyzerSchema {
+     // 声明一个私有属性 instance
+     private static instance: Analyzer
+     // 把 constructor 变为 private 修饰后，外部就无法通过 new 来进行实例化
+     private constructor() {}
+     // 声明一个方法，用于获取返回实例
+     static getInstance() {
+       if (!this.instance) {
+         this.instance = new Analyzer()
+       }
+       return this.instance
+     }
+     // 其他不变
+     ...
+   }
+   ```
+
+2. 修改`crowller.ts`中的调用方式
+
+   ```typescript
+   // 如果不想暴露 Crowller 中的方法，可以如下修改,使其均变为私有属性
+   class Crowller {
+     private async getRawHtml() {
+       
+     }
+     private async initSpiderProcess() {
+       
+     }
+     private writeFile(fileContent: string) {
+       
+     }
+   }
+   // const analyzer = new Analyzer()
+   const analyzer = Analyzer.getInstance()
+   ```
+
+   
