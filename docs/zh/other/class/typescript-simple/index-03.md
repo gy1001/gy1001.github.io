@@ -206,5 +206,116 @@
 
    ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/55949b6b7c7647d19c15d9a278eb9c85~tplv-k3u1fbpfcp-watermark.image?)
 
+## 05: 使用组合设计模式优化代码
 
+### 优化思路
+
+* 把公共部分抽离抽离：
+  * 获取网址内容，返回 `html`
+  * 调用解析器方法`analyzer`方法，返回字符串，然后写入文件
+* 新建解析器类
+  * 实现`analyzer`方法，接受`html`字符串，返回处理后的字符串信息
+
+### 代码实现
+
+1. 新建`src/Analyzer.ts`，代码如下
+
+   ```typescript
+   import cheerio from 'cheerio'
+   import fs from 'fs'
+   import type { AnalyzerSchema } from './crowller'
+   
+   interface CourseResult {
+     time: number
+     data: CourseInfo[]
+   }
+   
+   interface CourseInfo {
+     title: string
+     count: number
+   }
+   
+   interface FileContent {
+     [propName: number]: CourseInfo[]
+   }
+   
+   class Analyzer implements AnalyzerSchema {
+     private getCourseInfo(html: string) {
+       const $ = cheerio.load(html)
+       const courseItems = $('.course-item')
+       const courseInfos: Array<CourseInfo> = []
+       courseItems.map((index, element) => {
+         const descs = $(element).find('.course-desc')
+         const title = descs.eq(0).text()
+         const count = parseInt(descs.eq(1).text().split('：')[1], 10)
+         courseInfos.push({
+           title,
+           count,
+         })
+       })
+       return {
+         time: new Date().getTime(),
+         data: courseInfos,
+       }
+     }
+   
+     public analyzer(html: string, filePath: string) {
+       const courseResult = this.getCourseInfo(html)
+       const fileContent = this.genereateJsonContent(courseResult, filePath)
+       return JSON.stringify(fileContent, null, 2)
+     }
+   
+     genereateJsonContent(courseResult: CourseResult, filePath: string) {
+       let fileContent: FileContent = {}
+       if (fs.existsSync(filePath)) {
+         fileContent = JSON.parse(fs.readFileSync(filePath, 'utf-8'))
+       }
+       fileContent[courseResult.time] = courseResult.data
+       return fileContent
+     }
+   }
+   
+   export default Analyzer
+   ```
+
+2. 修改`src/crowller.ts`，代码如下
+
+   ```typescript
+   import superagent from 'superagent'
+   import fs from 'fs'
+   import path from 'path'
+   import Analyzer from './Analyzer'
+   
+   export interface AnalyzerSchema {
+     analyzer: (html: string, filePath: string) => string
+   }
+   
+   class Crowller {
+     private filePath = path.resolve(__dirname, '../data/course.json')
+     constructor(private url: string, private analzer: AnalyzerSchema) {
+       this.initSpiderProcess()
+     }
+     async getRawHtml() {
+       const result = await superagent.get(this.url)
+       return result.text
+     }
+   
+     async initSpiderProcess() {
+       const result = await this.getRawHtml()
+       const fileContent = this.analzer.analyzer(result, this.filePath)
+       this.writeFile(fileContent)
+     }
+   
+     writeFile(fileContent: string) {
+       fs.writeFileSync(this.filePath, fileContent)
+     }
+   }
+   const sercret = 'serretKey'
+   const url = `http://www.dell-lee.com/typescript/demo.html?secret=${sercret}`
+   
+   const analyzer = new Analyzer()
+   const crowller = new Crowller(url, analyzer)
+   ```
+
+3. 重新运行终端，效果如常
 
