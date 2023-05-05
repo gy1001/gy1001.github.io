@@ -281,6 +281,7 @@ export const sidebarZh: SidebarConfig = {
           children: [
             '/zh/other/class/typescript-simple/index-01.md',
             '/zh/other/class/typescript-simple/index-02.md',
+            '/zh/other/class/typescript-simple/index-03.md',
           ],
         },
       ],
