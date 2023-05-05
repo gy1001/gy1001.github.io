@@ -363,4 +363,93 @@
    const analyzer = Analyzer.getInstance()
    ```
 
-   
+## 07：TypeScript的编译运转过程的进一步理解
+
+> 目前我们的代码脚本是通过 ts-node 直接运行 .ts 文件产生的结果，无法直接被被人使用
+
+### 编译 ts 为 js + 实时监听编译
+
+1. 新建脚本文件命令
+
+   > tsc 命令还支持 `-w`命令，表示实时监听编译
+
+   ```json
+   {
+     "scripts": {
+       "build": "tsc -w"
+     },
+   }
+   ```
+
+2. 如果这样直接运行命令`npm run build`，我们直接在`ts`文件同级目录产生相应的`js`文件，但是如果我们想要指定一个输出目录，该如何做呢
+
+3. 可以修改`tsconfig.json`,如下
+
+   ```json
+   {
+     "compilerOptions": {
+       // 指定输出文件夹
+       "outDir": "./build",
+     }
+   }
+   ```
+
+4. 这样运行命令`npm run build`后，就会产生`build`目录，生成的`js`文件也会在其中
+
+### 使用 nodemon 监听系统变化并运行
+
+1. 安装相应依赖
+
+   ```bash
+   npm install nodemon -D
+   ```
+
+2. 修改`package.json`，添加如下脚本
+
+   > 注意：nodemon 会监听系统中的变化，然后重新运行后面的命令，如果不忽略 data/course.json ，会一直运行（因为执行 node ./build/crowller.js 后，会往 data/course.json文件中写入数据，然后监听到变化，重新运行，一直运行下去）
+
+   ```json
+   {
+     "scripts": {
+       "dev:start": "nodemon node ./build/crowller.js"
+     },
+     "nodemonConfig": {
+       "ignore": [
+         "data/*"
+       ]
+     },
+   }
+   ```
+
+3. 然后运行终端命令`npm run dev:start`就可以发现终端已经运行，如果此时修改`build/Aanlyzer.js`或者`build/crowller.js`中的代码，`nodemon`会触发脚本命令执行，然后往`course.json`中写入数据
+
+### 使用 concurrently 并行终端命令
+
+1. 目前我们需要运行两个终端命令
+
+   * `npm run build`实时监听`ts`文件的变化，生成相应的`js`文件
+   * `npm run dev:start`：实时监听`js`文件的变化，往`course.json`中写入数据
+
+2. `concurrently`可以并行运行终端命令
+
+3. 安装相应依赖
+
+   ```bash
+   npm install concurrently -D
+   ```
+
+4. 添加如下脚本命令
+
+   ```json
+   {
+     "scripts": {
+       "dev:start": "nodemon node ./build/crowller.js",
+       "dev:build": "tsc -w",
+       "start": "concurrently npm:dev:*"
+     },
+   }
+   ```
+
+5. 运行终端命令`npm run start`命令即可
+
+6. 这样我们修改任意`ts`文件，就会触发编译`js`动作，然后触发往`course.json`中写入数据
