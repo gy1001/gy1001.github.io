@@ -1051,3 +1051,24 @@ console.log(demo1 === demo2, demo2 === demo3)
 
 ## 23: 抽象类
 
+```typescript
+abstract class Geom {
+  getType() {
+    return 'Gemo'
+  }
+  // 子类必须实现这个方法
+  abstract getArea(): number
+}
+
+class CircleShap extends Geom {
+  getArea(): number {
+    return 123
+  }
+}
+class SquareShap extends Geom {
+  getArea(): number {
+    return 345
+  }
+}
+```
+
