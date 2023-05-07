@@ -477,4 +477,60 @@ declare var $: JQuery
    }
    ```
 
+## 14：模块代码的类型描述文件
+
+上一节中我们用的`jquery`是通过`cdn`的形式引入的，那么对于模块化引入的该如何写声明文件呢？
+
+1. 安装`jquery`依赖库
+
+   ```bash
+   npm install jquery -D
+   ```
+
+2. 修改`index.html`删除`jquery`引用
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="UTF-8" />
+       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <title>Document</title>
+     </head>
+     <body></body>
+     <script src="../src/page.ts"></script>
+   </html>
+   ```
+
+3. 修改`page.ts`，使用`es module`形式引入
+
+   ```typescript
+   import $ from 'jquery'
    
+   $(function () {
+     $('body').html('<h1>123</h1>')
+     new $.fn.init()
+   })
+   ```
+
+4. 修改`jquery.d.ts`内容如下
+
+   ```typescript
+   // ES6  模块化
+   declare module 'jquery' {
+     interface JqueryInstance {
+       html: (html: string) => JqueryInstance
+     }
+     declare function $(readyFunc: () => void): void
+     declare function $(selector: string): JqueryInstance
+     declare namespace $ {
+       namespace fn {
+         class init {}
+       }
+     }
+     export = $
+   }
+   ```
+
+5. 这样，模块化的类型声明就已经完成了。
