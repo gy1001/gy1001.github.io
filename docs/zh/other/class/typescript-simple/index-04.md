@@ -418,16 +418,63 @@ new Home.Page()
 
    ```typescript
    interface JqueryInstance {
-     html: (html: string) => {}
+     html: (html: string) => JqueryInstance
    }
    
    // 定义全局变量(这里定义全局变量、定义全局函数均可)
    // declare var $: (param: () => void) => void
    
    // 定义全局函数
+   // 函数重载
    declare function $(readyFunc: () => void): void
-   
    declare function $(selector: string): JqueryInstance
+   ```
+
+## 13：描述文件中的全局类型(下)
+
+### 使用interface语法来实现函数重载
+
+上节中我们使用到了函数重载，当然我们也可以使用 `interface`来实现函数重载的问题
+
+```typescript
+interface JqueryInstance {
+  html: (html: string) => JqueryInstance
+}
+// 使用 interface 语法，实现函数重载
+interface JQuery {
+  (readyFunc: () => void): void
+  (selector: string): JqueryInstance
+}
+declare var $: JQuery
+```
+
+### 对类对象、类的类型定义+命名空间的嵌套
+
+1. 修改`src/page.ts`文件，增加如下代码
+
+   ```typescript
+   $(function () {
+     $('body').html('<h1>123</h1>')
+     // 增加如下代码
+     new $.fn.init()
+   })
+   ```
+
+2. 修改`jquery.d.ts`，增加如下类型
+
+   ```typescript
+   // 使用函数重载
+   interface JqueryInstance {
+     html: (html: string) => JqueryInstance
+   }
+   declare function $(readyFunc: () => void): void
+   declare function $(selector: string): JqueryInstance
+   // 增加如下代码
+   declare namespace $ {
+     namespace fn {
+       class init {}
+     }
+   }
    ```
 
    
