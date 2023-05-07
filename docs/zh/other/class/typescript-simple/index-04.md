@@ -321,5 +321,56 @@ new Home.Page()
 
    ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/774b30885af34fbb84f01fc98b1b92a5~tplv-k3u1fbpfcp-watermark.image?)
 
-8. 
+## 10：import对应的模块化-缺代码
 
+## 11：使用Parcel打包TS代码
+
+1. 新建 `parcel-demo`文件夹，执行命令
+
+   ```bash
+   npm init -y
+   tsc --init
+   ```
+
+2. 安装相关依赖
+
+   ```bash
+   npm install parcel -D
+   ```
+
+3. 修改`package.json`，增加脚本命令如下
+
+   ```json
+   {
+     "scripts": {
+       "dev": "parcel ./public/index.html"
+     },
+   }
+   ```
+
+4. 新建`public/index.html`，内容如下
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="UTF-8" />
+       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <title>Document</title>
+     </head>
+     <body></body>
+     <script src="../src/page.ts"></script>
+   </html>
+   ```
+
+5. 新建`src/pages.ts`文件，内容如下
+
+   ```typescript
+   const teacher: string = '唐僧'
+   console.log(teacher)
+   ```
+
+6. 运行终端命令`npm run dev`，根据终端提示，打开指定服务页面，结果如下
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ec24b05253c3485896da20bad1cd096e~tplv-k3u1fbpfcp-watermark.image?)
