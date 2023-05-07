@@ -283,6 +283,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/typescript-simple/index-02.md',
             '/zh/other/class/typescript-simple/index-03.md',
             '/zh/other/class/typescript-simple/index-04.md',
+            '/zh/other/class/typescript-simple/index-05.md',
           ],
         },
       ],
