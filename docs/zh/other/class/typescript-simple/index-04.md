@@ -534,3 +534,30 @@ declare var $: JQuery
    ```
 
 5. 这样，模块化的类型声明就已经完成了。
+
+## 15 【讨论题】TypeScript 的描述文件作用
+
+## 16：泛型中keyof语法的使用
+
+```typescript
+interface Person {
+  name: string
+  age: number
+  gender: string
+}
+class Teacher {
+  constructor(private info: Person) {}
+	// 使用 keyof 来声明类型
+  getInfo<T extends keyof Person>(key: T) {
+    return this.info[key]
+  }
+}
+const teacher = new Teacher({
+  name: '唐僧',
+  age: 100,
+  gender: 'male',
+})
+const test = teacher.getInfo('name')
+console.log(test)
+```
+
