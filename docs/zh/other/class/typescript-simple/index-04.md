@@ -374,3 +374,60 @@ new Home.Page()
 6. 运行终端命令`npm run dev`，根据终端提示，打开指定服务页面，结果如下
 
    ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ec24b05253c3485896da20bad1cd096e~tplv-k3u1fbpfcp-watermark.image?)
+
+## 12：描述文件中的全局类型(上)
+
+1. 在上一节项目`parcel-demo`项目中，修改`public/index.html`，内容如下
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="UTF-8" />
+       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <title>Document</title>
+     </head>
+     <body></body>
+     // 增加引入 jquery.js
+     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.js"></script>
+     <script src="../src/page.ts"></script>
+   </html>
+   ```
+
+2. 修改`src/page/ts`，代码如下
+
+   ```typescript
+   const teacher: string = '唐僧'
+   console.log(teacher)
+   
+   $(function () {
+     $('body').html('<h1>123</h1>')
+   })
+   ```
+
+3. 这里我们增加相关`$`代码，虽然其可以在`index.html`中打开浏览器运行，但是在编译器中会提示报错
+
+   ```bash
+   Cannot find name '$'. Do you need to install type definitions for jQuery? Try `npm i --save-dev @types/jquery`.ts(2581)
+   ```
+
+4. 这里我们不通过安装文件类型库`@types/jquery`来声明`$`的类型，而是通过自定义文件的形式来声明
+
+5. 新建`jquery.d.ts`文件，增加如下内容
+
+   ```typescript
+   interface JqueryInstance {
+     html: (html: string) => {}
+   }
+   
+   // 定义全局变量(这里定义全局变量、定义全局函数均可)
+   // declare var $: (param: () => void) => void
+   
+   // 定义全局函数
+   declare function $(readyFunc: () => void): void
+   
+   declare function $(selector: string): JqueryInstance
+   ```
+
+   
