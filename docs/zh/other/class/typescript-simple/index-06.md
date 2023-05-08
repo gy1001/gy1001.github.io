@@ -419,6 +419,30 @@ console.log(test.getInfo('孙悟空', 500))
    npm i reflect-metadata -D
    ```
 
+1. 代码如下
+
+   ```typescript
+   import 'reflect-metadata'
    
+   const user = {
+     name: '唐僧',
+   }
+   // 往 user 上增加一个 data 属性 值为 test
+   Reflect.defineMetadata('data', 'test', user)
+   console.log(Reflect.getMetadata('data', user)) // test
+   
+   @Reflect.metadata('data', 'test')
+   class User {
+     @Reflect.metadata('data2', 'test2')
+     name = '唐僧'
+     @Reflect.metadata('data3', 'test3')
+     getName() {
+       return '菩提祖师'
+     }
+   }
+   console.log(Reflect.getMetadata('data', User)) // test
+   console.log(Reflect.getMetadata('data2', User.prototype, 'name')) // test2
+   console.log(Reflect.getMetadata('data3', User.prototype, 'getName')) // test3
+   ```
 
 ## 09：装饰器的执行顺序
