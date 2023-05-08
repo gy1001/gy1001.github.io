@@ -343,3 +343,47 @@
    ```
 
 4. 运行终端，自行验证逻辑即可
+
+## 05：统一接口数据结构优化代码
+
+### 增加统一登录校验中间件
+
+1. 修改`src/router.ts`，增加如下内容
+
+   ```typescript
+   import type { Request, Response, NextFunction } from 'express'
+   
+   function checkLogin(req: RequestWithBody, res: Response, next: NextFunction) {
+     const isLogin = req.session ? req.session.login : undefined
+     if (isLogin) {
+       next()
+     } else {
+       res.send('请先登录')
+     }
+   }
+   // 增加 checkLogin 中间件
+   router.get('/getData', checkLogin, (req: RequestWithBody, res: Response) => {
+     const sercret = 'serretKey'
+     const url = `http://www.dell-lee.com/typescript/demo.html?secret=${sercret}`
+     const analyzer = Analyzer.getInstance()
+     new Crowller(url, analyzer)
+     res.send('getData successful')
+   })
+   // 增加 checkLogin 中间件
+   router.get('/showData', checkLogin, (req: RequestWithBody, res: Response) => {
+     try {
+       const filePath = path.resolve(__dirname, '../data/course.json')
+       const content = fs.readFileSync(filePath, 'utf-8')
+       res.json(JSON.parse(content))
+     } catch (error) {
+       res.send('还没有爬取到内容')
+     }
+   })
+   ```
+
+2. 这样重新运行终端，打开浏览器即可进行校验
+
+### 统一接口数据结构
+
+
+
