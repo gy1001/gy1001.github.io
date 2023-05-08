@@ -411,4 +411,14 @@ console.log(test.getInfo('孙悟空', 500))
 
 ## 08：reflect-metadata
 
+> [reflect-metadata官方文档](https://www.npmjs.com/package/reflect-metadata)
+
+1. 安装依赖库
+
+   ```bash
+   npm i reflect-metadata -D
+   ```
+
+   
+
 ## 09：装饰器的执行顺序
