@@ -176,7 +176,7 @@ export const sidebarZh: SidebarConfig = {
     },
     {
       text: '读书笔记',
-      collapsible: false,
+      collapsible: true,
       children: [
         {
           text: '简书',
@@ -219,7 +219,7 @@ export const sidebarZh: SidebarConfig = {
     },
     {
       text: '课程笔记',
-      collapsible: false,
+      collapsible: true,
       children: [
         '/zh/other/class/program-basic',
         '/zh/other/class/linear-algebra',
@@ -254,7 +254,7 @@ export const sidebarZh: SidebarConfig = {
         },
         {
           text: '吃透前端工程化，大厂级实战项目以战带练',
-          collapsible: false,
+          collapsible: true,
           children: [
             '/zh/other/class/engineering/index-01.md',
             '/zh/other/class/engineering/index-02.md',
@@ -285,6 +285,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/typescript-simple/index-04.md',
             '/zh/other/class/typescript-simple/index-05.md',
             '/zh/other/class/typescript-simple/index-06.md',
+            '/zh/other/class/typescript-simple/index-07.md',
           ],
         },
       ],
