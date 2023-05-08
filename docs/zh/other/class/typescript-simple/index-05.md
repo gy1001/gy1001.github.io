@@ -106,7 +106,7 @@
      res.send(`<html>
        <body>
          <form action="/getData" method="post">
-           <input type="password" placeholder="请输入密码" />
+           <input  name="password" type="password" placeholder="请输入密码" />
            <button type="submit">提交</button>
          </form>
        </body>
@@ -232,3 +232,114 @@
 
    ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0a2d4576e1004bf2b59584d916453829~tplv-k3u1fbpfcp-watermark.image?)
 
+## 04：登陆功能的开发
+
+> 目前的程序，我们每次进入都需要输入密码，然后确认密码，这样才可以进行爬虫抓取数据，显然不太友好，我们需要增加一个登录页，登录成功后，存储用户信息，否则提示错误；下次进入,如果之前登录成功，就可以直接进行抓取爬虫
+
+1. 安装依赖库`cookie-session`
+
+   > [cookie-session 官方文档:https://www.npmjs.com/package/cookie-session](https://www.npmjs.com/package/cookie-session)
+
+   ```bash
+   npm install cookie-session -D
+   npm install @types/cookie-session -D
+   ```
+
+2. 修改`src/index.ts`，增加引入使用包
+
+   ```typescript
+   import CookieSession from 'cookie-session'
+   
+   // 在路由中间件前使用
+   app.use(
+     CookieSession({
+       name: 'session',
+       keys: ['teacher-dell'],
+       // Cookie Options
+       maxAge: 24 * 60 * 60 * 1000, // 24 hours
+     }),
+   )
+   ```
+
+3. 修改`src/router.ts`，增加内容如下
+
+   ```typescript
+   import fs from 'fs'
+   import path from 'path'
+   
+   // 修改首页，增加判断：如果登录成功过，就显示 退出、开始抓取内容
+   router.get('/', (req: Request, res: Response) => {
+     const isLogin = req.session ? req.session.login : undefined
+     if (isLogin) {
+       res.send(`<html>
+         <body>
+         <a href="/getData">开始抓取内容</a>
+         <br />
+         <a href="/logout">退出</a>
+         </body>
+       </html>`)
+       return
+     }
+     res.send(`<html>
+       <body>
+         <form action="/login" method="post">
+           <input name="password" type="password" placeholder="请输入密码" />
+           <button type="submit">提交</button>
+         </form>
+       </body>
+     </html>`)
+     res.send('hello word')
+   })
+   
+   // 增加退出登录操作
+   router.get('/logout', (req: RequestWithBody, res: Response) => {
+     if (req.session) {
+       req.session.login = false
+     }
+     res.redirect('/')
+   })
+   
+   // 增加登录页面
+   router.post('/login', (req: RequestWithBody, res: Response) => {
+     const { password } = req.body
+     const isLogin = req.session ? req.session.login : undefined
+     if (isLogin) {
+       res.send('已经登录过了')
+       return
+     }
+     if (password === '123' && req.session) {
+       req.session.login = true
+       res.send('登录成功')
+     } else {
+       res.send('登录失败')
+     }
+   })
+   
+   // 修改 getData 访问逻辑，
+   router.get('/getData', (req: RequestWithBody, res: Response) => {
+     const isLogin = req.session ? req.session.login : undefined
+     if (isLogin) {
+       const sercret = 'serretKey'
+       const url = `http://www.dell-lee.com/typescript/demo.html?secret=${sercret}`
+       // const analyzer = new Analyzer()
+       const analyzer = Analyzer.getInstance()
+       new Crowller(url, analyzer)
+       res.send('getData successful')
+     } else {
+       res.send('请登录后在进行爬取内容')
+     }
+   })
+   
+   // 增加 showData 页面
+   router.get('/showData', (req: RequestWithBody, res: Response) => {
+     try {
+       const filePath = path.resolve(__dirname, '../data/course.json')
+       const content = fs.readFileSync(filePath, 'utf-8')
+       res.json(JSON.parse(content))
+     } catch (error) {
+       res.send('还没有爬取到内容')
+     }
+   })
+   ```
+
+4. 运行终端，自行验证逻辑即可
