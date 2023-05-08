@@ -161,3 +161,74 @@
 1. `express`库的类型定义文件，`x.d.ts`文件类型描述不准确
 2. 当我们使用中间件的时候，对`req`或者`res`做了修改后，实际上并修改它的类型
 
+## 03：扩展解决Express的类型定义文件问题
+
+### 解决问题1
+
+1. 修改`src/router.js`，增加如下代码
+
+   ```typescript
+   interface RequestWithBody extends Request {
+     body: {
+       password: string | undefined
+     }
+   }
+   
+   router.post('/getData', (req: RequestWithBody, res: Response) => {
+     const { password } = req.body
+   }
+   ```
+
+2. 这样就解决了类型声明不准确的问题
+
+### 解决问题2
+
+1. 假如我们使用了一个中间件，它的作用就是在`req`上增加了一个`teacherName`属性，
+
+2. 比如：修改`src/index.ts`，增加如下代码
+
+   ```typescript
+   import type { Request, Response, NextFunction } from 'express'
+   
+   app.use((req: Request, res: Response, next: NextFunction) => {
+     req.teacherName = '唐僧'
+     next()
+   })
+   ```
+
+3. 新建`custom.d.ts`,添加内容如下
+
+   > 通过点击 Request进入声明内容，可以看到如下代码,在此基础上进行扩展即可
+   >
+   > **declare** global {
+   >
+   > ​    **namespace** Express {
+   >
+   > ​        *// These open interfaces may be extended in an application-specific manner via declaration merging.*
+   >
+   > ​        *// See for example method-override.d.ts (https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/method-override/index.d.ts)*
+   >
+   > ​        **interface** Request {}
+   >
+   > ​        **interface** Response {}
+   >
+   > ​        **interface** Locals {}
+   >
+   > ​        **interface** Application {}
+   >
+   > ​    }
+   >
+   > }
+
+   ```typescript
+   declare namespace Express {
+     interface Request {
+       teacherName: string
+     }
+   }
+   ```
+
+4. 然后此时再去看`src/index.ts`中`teacherName`的类型推断即可看到如下（可能需要重启编辑器）
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0a2d4576e1004bf2b59584d916453829~tplv-k3u1fbpfcp-watermark.image?)
+
