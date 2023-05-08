@@ -293,3 +293,36 @@ console.log(test.name) // 唐僧
 console.log((test as any).__proto__.name) // 猪八戒
 ```
 
+## 06：参数装饰器
+
+> 参数装饰器表达式会在运行时当作函数被调用，传入下列3个参数：
+>
+> 1. 对于静态成员来说是类的构造函数，对于实例成员是类的原型对象。
+> 2. 成员的名字。
+> 3. 参数在函数参数列表中的索引。
+>
+> > 注意  参数装饰器只能用来监视一个方法的参数是否被传入。
+
+```typescript
+
+function paramDecorator(target: any, method: string, paramIndex: number) {
+  // target[method] = ''
+  console.log(target, method, paramIndex)
+}
+class Test {
+  getInfo(@paramDecorator name: string, age: number) {
+    return `${name}的年龄是${age}`
+  }
+}
+
+const test = new Test()
+console.log(test.getInfo('孙悟空', 500))
+```
+
+## 07：装饰器实际使用的小例子
+
+
+
+## 08：reflect-metadata
+
+## 09：装饰器的执行顺序
