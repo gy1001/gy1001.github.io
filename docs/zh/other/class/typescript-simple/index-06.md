@@ -186,3 +186,36 @@ console.log(test.getName()) // 我是新的值
 
 ## 04: 访问器的装饰器
 
+[官网文档:https://www.tslang.cn/docs/handbook/decorators.html](https://www.tslang.cn/docs/handbook/decorators.html)
+
+> 注意: TypeScript不允许同时装饰一个成员的`get`和`set`访问器。取而代之的是，一个成员的所有装饰的必须应用在文档顺序的第一个访问器上。这是因为，在装饰器应用于一个*属性描述符*时，它联合了`get`和`set`访问器，而不是分开声明的。
+
+```typescript
+function visiDecorator(
+  target: any,
+  key: string,
+  descriptor: PropertyDescriptor,
+) {
+  descriptor.writable = false
+}
+
+class Test {
+  private _name: string
+  constructor(name: string) {
+    this._name = name
+  }
+  get name() {
+    return this._name
+  }
+  @visiDecorator
+  set name(name: string) {
+    this._name = name
+  }
+}
+
+const test = new Test('唐僧')
+// 此时因为 descriptor.writable = false 所以这里运行会报错
+// test.name = '1123'
+console.log(test.name) // 1123
+```
+
