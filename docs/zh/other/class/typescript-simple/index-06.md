@@ -219,3 +219,77 @@ const test = new Test('唐僧')
 console.log(test.name) // 1123
 ```
 
+## 05: 属性的装饰器
+
+> 属性装饰器表达式会在运行时当作函数被调用，传入下列2个参数：
+>
+> 1. 对于静态成员来说是类的构造函数，对于实例成员是类的原型对象。
+> 2. 成员的名字。
+
+### 如何限制修改属性
+
+```typescript
+// 注意属性装饰器函数的返回值是 any 或者 void
+function nameDecorator(target: any, key: string): any {
+  console.log(target, key)
+  const descriptor: PropertyDescriptor = {
+    writable: false,
+  }
+  return descriptor
+}
+
+class Test {
+  @nameDecorator
+  name = '唐僧'
+}
+
+const test = new Test()
+setTimeout(() => {
+  test.name = '猪八戒' // 这里导致错误
+}, 1000)
+console.log(test.name)
+```
+
+### 注意点
+
+> 属性装饰器中：使用   target[key] = xxx 修改的是原型上的属性
+
+```typescript
+// 装饰器这里修改的是原型上的 name
+function nameDecorator(target: any, key: string): any {
+  target[key] = '菩提祖师'
+}
+// 这里的属性 name 是放在了实例中
+class Test {
+  @nameDecorator
+  name = '唐僧'
+}
+
+const test = new Test()
+// 这里调用时候肯定先从实例上寻找
+console.log(test.name) // 唐僧
+console.log((test as any).__proto__.name) // 菩提祖师
+```
+
+如下操作也是如此
+
+```typescript
+function nameDecorator(target: any, key: string): any {
+  // target[key] = '菩提祖师'
+  return {
+    writable: true,
+    value: '猪八戒',
+  }
+}
+// 这里的属性 name 是放在了实例中
+class Test {
+  @nameDecorator
+  name = '唐僧'
+}
+
+const test = new Test()
+// 这里调用时候肯定先从实例上寻找
+console.log(test.name) // 唐僧
+console.log((test as any).__proto__.name) // 猪八戒
+```
+
