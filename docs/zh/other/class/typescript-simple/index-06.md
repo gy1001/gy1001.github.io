@@ -321,7 +321,93 @@ console.log(test.getInfo('孙悟空', 500))
 
 ## 07：装饰器实际使用的小例子
 
+1. 不使用装饰器的小例子（这里需要多次使用 try...catch... ）
 
+   ```typescript
+   const userInfo: any = undefined
+   class Test {
+     getName() {
+       try {
+         return userInfo.name
+       } catch (error) {
+         console.log('userInfo.name 不存在')
+       }
+     }
+     getAge() {
+       try {
+         return userInfo.age
+       } catch (error) {
+         console.log('userInfo.age 不存在')
+       }
+     }
+   }
+   
+   const test = new Test()
+   console.log(test.getName())
+   ```
+
+2. 使用装饰器优化后的代码
+
+   ```typescript
+   // 使用装饰器后，我们就实现了复用
+   function catchError(target: any, key: string, descriptor: PropertyDescriptor) {
+     const fn = descriptor.value
+     descriptor.value = function () {
+       try {
+         fn()
+       } catch (error: any) {
+         console.log(error.message)
+       }
+     }
+   }
+   const userInfo: any = undefined
+   class Test {
+     @catchError
+     getName() {
+       return userInfo.name
+     }
+     @catchError
+     getAge() {
+       return userInfo.age
+     }
+   }
+   
+   const test = new Test()
+   console.log(test.getName())
+   console.log(test.getAge())
+   ```
+
+3. 也可以对装饰器函数传入参数，来实现自定义提示语
+
+   ```typescript
+   function catchError(msg: string) {
+     return function (target: any, key: string, descriptor: PropertyDescriptor) {
+       const fn = descriptor.value
+       descriptor.value = function () {
+         try {
+           fn()
+         } catch (e) {
+           console.log(msg)
+         }
+       }
+     }
+   }
+   const userInfo: any = undefined
+   class Test {
+     @catchError('userInfo.name 不存在')
+     getName() {
+       return userInfo.name
+     }
+     @catchError('userInfo.age 不存在')
+     getAge() {
+       return userInfo.age
+     }
+   }
+   
+   const test = new Test()
+   console.log(test.getName())
+   console.log(test.getAge())
+   ```
 
 ## 08：reflect-metadata
 
