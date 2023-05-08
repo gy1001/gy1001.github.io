@@ -446,3 +446,32 @@ console.log(test.getInfo('孙悟空', 500))
    ```
 
 ## 09：装饰器的执行顺序
+
+### 方法装饰器 先于 类装饰器
+
+```typescript
+import 'reflect-metadata'
+
+function showData(target: typeof User) {
+  console.log(Reflect.getMetadata('data', target.prototype, 'getName')) // name
+  console.log(Reflect.getMetadata('data', target.prototype, 'getAge')) // age
+  console.log(Reflect.getMetadata('generData', target.prototype, 'getGender')) // gender
+}
+
+function setData(dataKey: string, msg: string) {
+  return function (target: User, key: string) {
+    Reflect.defineMetadata(dataKey, msg, target, key)
+  }
+}
+
+@showData
+class User {
+  @Reflect.metadata('data', 'name')
+  getName() {}
+  @Reflect.metadata('data', 'age')
+  getAge() {}
+  @setData('generData', 'gender')
+  getGender() {}
+}
+```
+
