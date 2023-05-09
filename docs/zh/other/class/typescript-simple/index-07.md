@@ -105,4 +105,47 @@
    }
    ```
 
-   
+## 02：通过装饰器实现项目路由功能
+
+> 上一节中我们在 decorator.ts 文件中注册了路由配置以及方法，并进行了导出，但是 express 还没有使用
+
+1. 修改`src/index.ts`
+
+   ```typescript
+   // import router from './router'
+   import './controller/LoginController' // 引入类控制器，触发装饰器
+   // 引入新的路由，这里就注册了 / /login 两个 get  路由
+   import { router } from './controller/decorator'
+   ```
+
+2. 重新运行终端命令`npm run start`,就可以在浏览器里`http://localhost:7001/login`和`http://localhost:7001/`看到相应的内容，跳转其他路由目前都会报错
+
+   ​	![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2639064958934c0ca93ecdf673d0719c~tplv-k3u1fbpfcp-watermark.image?)
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5b9396aecb634e069b4f952a0ca969b1~tplv-k3u1fbpfcp-watermark.image?)
+
+   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5e9d6339e98e434a9c9e05c3860f4182~tplv-k3u1fbpfcp-watermark.image?)
+
+3. 修改`LoginController.ts`，引入`/logout`（因为它也是 `get`方式，且没有中间件）
+
+   ```typescript
+   @loginDecorator
+   class LoginController {
+     @get('/logout')
+     logout(req: RequestWithBody, res: Response) {
+       if (req.session) {
+         req.session.login = false
+         res.json(getResponseData(true))
+       } else {
+         res.json(getResponseData(false, '退出失败'))
+       }
+     }
+   }
+   ```
+
+4. 这样在浏览器里打开`http://localhost:7001/logout`就可以看到接口也是正常访问、返回
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1c8147bb305d414781e609e33c03be08~tplv-k3u1fbpfcp-watermark.image?)
+
+
+
