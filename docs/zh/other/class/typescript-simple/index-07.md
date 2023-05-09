@@ -548,4 +548,97 @@
    http://localhost:7001/logout
    ```
 
+## 06: 练习题如何在一个方法上使用多个装饰器
+
+### 目前的效果展示
+
+1. 修改`src/controller/CrowellerController.ts`中的方法，给`getData`方法增加一个中间件
+
+   ```typescript
+   function checkLogin( req: RequestWithBody, res: Response, next: NextFunction): void {
+     // 增加一行打印信息
+     console.log('checkLogin middleware')
+   }
    
+   function test(req: RequestWithBody, res: Response, next: NextFunction) {
+     console.log('test middleware')
+     next()
+   }
+   
+   @decoratorController('/abc')
+   export default class CroweController {
+     @get('/getData')
+     @useMiddleware(checkLogin)
+     // 增加使用 中间件 test  
+     @useMiddleware(test)
+     getData(req: RequestWithBody, res: Response): void {
+       
+     }
+   }
+   ```
+
+2. 这里我们运行终端，打开浏览器`http://localhost:7001/abc/getData`,然后终端中就可以看到打印信息(只有一条，且是最上面的那个中间件)
+
+   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4ab7ebedcec044918b91062a2e91d160~tplv-k3u1fbpfcp-watermark.image?)
+
+### 解决方法
+
+1. 修改`scr/decorator/use.ts`中的代码
+
+   ```typescript
+   export function useMiddleware(middleware: RequestHandler) {
+     return function (target: any, key: string, descriptor: PropertyDescriptor) {
+       descriptor.enumerable = true
+       // 我们先取出来之前已经存储的中间件，如果没有就是 []
+       const middlewares = Reflect.getMetadata('middleware', target, key) || []
+       Reflect.defineMetadata(
+         'middleware',
+         // 对原有的中间件 和 传递进来的中间件进行合并
+         middlewares.concat(middleware),
+         target,
+         key,
+       )
+     }
+   }
+   ```
+
+2. 修改`src/decorator/controller.ts`中的代码
+
+   ```typescript
+   
+   export function decoratorController(rootPath: string) {
+     return function (target: new (...args: any[]) => any) {
+       for (let key in target.prototype) {
+         const path: string = Reflect.getMetadata('path', target.prototype, key)
+         const fullPath = rootPath === '/' ? path : rootPath + path
+         const method: Methods = Reflect.getMetadata(
+           'method',
+           target.prototype,
+           key,
+         )
+         // 修改中间件变量以及类型
+         const middlewares: RequestHandler[] = Reflect.getMetadata(
+           'middleware',
+           target.prototype,
+           key,
+         )
+         const handler = target.prototype[key]
+         if (fullPath && method && handler) {
+           if (middlewares) {
+             // 这里展开中间件
+             router[method](fullPath, ...middlewares, handler)
+           } else {
+             router[method](fullPath, handler)
+           }
+         }
+       }
+     }
+   }
+   ```
+
+3. 重新运行终端，打开浏览器`http://localhost:7001/abc/getData`可以看到如下结果
+
+   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5842dccc7dc34e14b6e1c5d9f5f8d008~tplv-k3u1fbpfcp-watermark.image?)
+
+
+
