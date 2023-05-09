@@ -342,5 +342,108 @@
 
 4. 终端运行`npm run start`，可以在浏览器里进行校验
 
+## 05：代码结构优化
 
+### 目录结构优化
+
+1. 新建`src/decorator`文件夹，内部结果如下
+
+   ```bash
+   --src
+   	--decorator
+   		--controller.ts
+   		--index.ts
+   		--rquest.ts
+   		--use.ts
+   ```
+
+2. 内容分别如下
+
+   ```typescript
+   // controller.ts
+   import { Methods } from '../types/index'
+   import router from '../router'
+   
+   export function decoratorController(target: any) {
+     for (let key in target.prototype) {
+       const path = Reflect.getMetadata('path', target.prototype, key)
+       const method: Methods = Reflect.getMetadata('method', target.prototype, key)
+       const middleware = Reflect.getMetadata('middleware', target.prototype, key)
+       const handler = target.prototype[key]
+       if (path && method && handler) {
+         if (middleware) {
+           router[method](path, middleware, handler)
+         } else {
+           router[method](path, handler)
+         }
+       }
+     }
+   }
+   
+   // index.ts
+   export * from './controller'
+   export * from './request'
+   export * from './use'
+   
+   // request.ts
+   import { Methods } from '../types/index'
+   
+   function getRequstMethod(method: Methods) {
+     return function (path: string) {
+       return function (target: any, key: string, descriptor: PropertyDescriptor) {
+         // 这里需要设置为可枚举的，类装饰器中的遍历才会能够取得
+         descriptor.enumerable = true
+         Reflect.defineMetadata('path', path, target, key)
+         Reflect.defineMetadata('method', method, target, key)
+       }
+     }
+   }
+   export const get = getRequstMethod(Methods.GET)
+   export const post = getRequstMethod(Methods.POST)
+   export const put = getRequstMethod(Methods.PUT)
+   export const del = getRequstMethod(Methods.DELETE)
+   
+   // use.ts
+   import type { RequestHandler } from 'express'
+   
+   export function useMiddleware(middleware: RequestHandler) {
+     return function (target: any, key: string, descriptor: PropertyDescriptor) {
+       descriptor.enumerable = true
+       Reflect.defineMetadata('middleware', middleware, target, key)
+     }
+   }
+   ```
+
+3. 修改`src/controller/LoginController.ts`,代码中的引入方式
+
+   ```typescript
+   // import { decoratorController, get, post } from './decorator' 
+   // 修改为如下一行代码
+   import { decoratorController, get, post } from '../decorator'
+   ```
+
+4. 修改`src/controller/CrowellerController.ts`代码中的引入方式
+
+   ```typescript
+   // import { get, decoratorController, useMiddleware } from './decorator'
+   // 改为如下一行
+   import { get, decoratorController, useMiddleware } from '../decorator'
+   ```
+
+5. 修改`src/router.ts`，代码如下
+
+   ```typescript
+   import { Router } from 'express'
+   export default Router()
+   ```
+
+6. 修改`src/index.ts`中的引入`router`方式
+
+   ```typescript
+   // import { router } from './controller/decorator'
+   // 改为如下一行
+   import router from './router'
+   ```
+
+7. 重新运行`npm run start`,效果如常
 
