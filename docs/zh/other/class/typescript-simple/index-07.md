@@ -245,3 +245,102 @@
 
 ## 04：中间件装饰器的编写
 
+1. 新建`src/controller/CrowllerController.ts`，内容如下
+
+   > 注意：我们这里使用了 中间件装饰器 useMiddleware、showData中的文件路径有所变动
+
+   ```typescript
+   import type { Request, Response, NextFunction } from 'express'
+   import fs from 'fs'
+   import path from 'path'
+   import Analyzer from '../Analyzer'
+   import Crowller from '../crowller'
+   import { getResponseData } from '../utils/index'
+   import { get, decoratorController, useMiddleware } from './decorator'
+   
+   interface RequestWithBody extends Request {
+     body: {
+       password: string | undefined
+     }
+   }
+   
+   function checkLogin(req: RequestWithBody, res: Response, next: NextFunction) {
+     const isLogin = req.session ? req.session.login : undefined
+     if (isLogin) {
+       next()
+     } else {
+       res.json(getResponseData(null, '请先登录'))
+     }
+   }
+   
+   @decoratorController
+   export default class CroweController {
+     @get('/getData')
+     @useMiddleware(checkLogin)
+     getData(req: RequestWithBody, res: Response) {
+       const sercret = 'serretKey'
+       const url = `http://www.dell-lee.com/typescript/demo.html?secret=${sercret}`
+       const analyzer = Analyzer.getInstance()
+       new Crowller(url, analyzer)
+       res.json(getResponseData(true))
+     }
+   
+     @useMiddleware(checkLogin)
+     @get('/showData')
+     showData(req: RequestWithBody, res: Response) {
+       try {
+         // 这里的路径有所变动
+         const filePath = path.resolve(__dirname, '../../data/course.json')
+         const content = fs.readFileSync(filePath, 'utf-8')
+         res.json(getResponseData(JSON.parse(content)))
+       } catch (error) {
+         res.json(getResponseData(false, '还没有爬取到内容'))
+       }
+     }
+   }
+   ```
+
+2. 修改`src/controller/decorator.ts`,增加中间件修饰符`useMiddleware`方法
+
+   ```typescript
+   import type { RequestHandler } from 'express'
+   
+   export function decoratorController(target: any) {
+     for (let key in target.prototype) {
+       const path = Reflect.getMetadata('path', target.prototype, key)
+       const method: Methods = Reflect.getMetadata('method', target.prototype, key)
+       // 增加获取 middleware 中间件的方式
+       const middleware = Reflect.getMetadata('middleware', target.prototype, key)
+       const handler = target.prototype[key]
+       if (path && method && handler) {
+         // 如果有中间件，就使用
+         if (middleware) {
+           router[method](path, middleware, handler)
+         } else {
+           router[method](path, handler)
+         }
+       }
+     }
+   }
+   
+   // 中间件类型是一个函数，可以定义为 RequestHandler
+   export function useMiddleware(middleware: RequestHandler) {
+     return function (target: any, key: string, descriptor: PropertyDescriptor) {
+       descriptor.enumerable = true
+       Reflect.defineMetadata('middleware', middleware, target, key)
+     }
+   }
+   ```
+
+3. 修改`src/index.ts`,引入`CrowllerController.ts`
+
+   ```typescript
+   // 引入 CrowllerController.ts 需要在引入路由之前
+   import './controller/CrowellerController'
+   import { router } from './controller/decorator'
+   ```
+
+4. 终端运行`npm run start`，可以在浏览器里进行校验
+
+
+
