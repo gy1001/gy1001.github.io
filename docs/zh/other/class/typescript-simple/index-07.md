@@ -29,7 +29,7 @@
    import type { Request, Response } from 'express'
    import { getResponseData } from '../utils/index'
    import 'reflect-metadata'
-   import { loginDecorator, get } from './decorator'
+   import { decoratorController, get } from './decorator'
    
    interface RequestWithBody extends Request {
      body: {
@@ -37,7 +37,7 @@
      }
    }
    
-   @loginDecorator
+   @decoratorController
    class LoginController {
      @get('/')
      home(req: Request, res: Response) {
@@ -87,7 +87,7 @@
    export const router = Router()
    
    // 类装饰器，统一从类的原型上拿到 path下的不同路由地址以及方法
-   export function loginDecorator(target: any) {
+   export function decoratorController(target: any) {
      for (let key in target.prototype) {
        const path = Reflect.getMetadata('path', target.prototype, key)
        const handler = target.prototype[key]
@@ -97,9 +97,9 @@
    }
    // 这里我们处理 get 装饰器
    export function get(path: string) {
-     return function (target: any, key: string, desciptopr: PropertyDescriptor) {
+     return function (target: any, key: string, descriptor: PropertyDescriptor) {
        // 这里需要设置为可枚举的，类装饰器中的遍历才会能够取得
-       desciptopr.enumerable = true
+       descriptor.enumerable = true
        return Reflect.defineMetadata('path', path, target, key)
      }
    }
@@ -129,7 +129,7 @@
 3. 修改`LoginController.ts`，引入`/logout`（因为它也是 `get`方式，且没有中间件）
 
    ```typescript
-   @loginDecorator
+   @decoratorController
    class LoginController {
      @get('/logout')
      logout(req: RequestWithBody, res: Response) {
@@ -156,7 +156,7 @@
    ```typescript
    import { post } from './decorator'
    
-   @loginDecorator
+   @decoratorController
    class LoginController {
      @post('/login')
      login(req: RequestWithBody, res: Response) {
@@ -170,7 +170,7 @@
    ```typescript
    import { Methods } from '../types/index'
    
-   export function loginDecorator(target: any) {
+   export function decoratorController(target: any) {
      for (let key in target.prototype) {
        const path = Reflect.getMetadata('path', target.prototype, key)
        // 取出来当前 method
@@ -184,9 +184,9 @@
    }
    
    export function get(path: string) {
-     return function (target: any, key: string, desciptopr: PropertyDescriptor) {
+     return function (target: any, key: string, descriptor: PropertyDescriptor) {
        // 这里需要设置为可枚举的，类装饰器中的遍历才会能够取得
-       desciptopr.enumerable = true
+       descriptor.enumerable = true
        Reflect.defineMetadata('path', path, target, key)
        // 这里增加设置一个属性 method,值为 get 
        Reflect.defineMetadata('method', 'get', target, key)
@@ -194,8 +194,8 @@
    }
    
    export function post(path: string) {
-     return function (target: any, key: string, desciptopr: PropertyDescriptor) {
-       desciptopr.enumerable = true
+     return function (target: any, key: string, descriptor: PropertyDescriptor) {
+       descriptor.enumerable = true
        Reflect.defineMetadata('path', path, target, key)
        // 这里增加设置一个属性 method,值为 post
        Reflect.defineMetadata('method', 'post', target, key)
@@ -218,9 +218,9 @@
    // src/decorator.ts
    function getRequstMethod(method: Methods) {
      return function (path: string) {
-       return function (target: any, key: string, desciptopr: PropertyDescriptor) {
+       return function (target: any, key: string, descriptor: PropertyDescriptor) {
          // 这里需要设置为可枚举的，类装饰器中的遍历才会能够取得
-         desciptopr.enumerable = true
+         descriptor.enumerable = true
          Reflect.defineMetadata('path', path, target, key)
          Reflect.defineMetadata('method', method, target, key)
        }
@@ -243,5 +243,5 @@
 
 6. 重新运行`npm run start`,页面效果不变
 
-
+## 04：中间件装饰器的编写
 

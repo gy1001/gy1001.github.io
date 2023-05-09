@@ -1,6 +1,6 @@
 # 05-使用 Express 框架开发数据爬取及展示接口
 
-## 01：Express基础项目结构搭建
+## 01：Express 基础项目结构搭建
 
 1. 修改原有项目`03-demo`中的爬虫项目
 
@@ -12,7 +12,7 @@
        "dev:start": "nodemon node ./build/index.js",
        "dev:build": "tsc -w",
        "start": "tsc && concurrently npm:dev:*"
-     },
+     }
    }
    ```
 
@@ -30,7 +30,7 @@
    import router from './router'
    const app = express()
    app.use(router)
-   
+
    app.listen(7001, () => {
      console.log('server is running')
    })
@@ -43,24 +43,24 @@
    import type { Request, Response } from 'express'
    import Analyzer from './Analyzer'
    import Crowller from './crowller'
-   
+
    const router = Router()
-   
+
    router.get('/', (req: Request, res: Response) => {
      res.send('hello word')
    })
-   
+
    router.get('/getData', (req: Request, res: Response) => {
      const sercret = 'serretKey'
      const url = `http://www.dell-lee.com/typescript/demo.html?secret=${sercret}`
-   
+
      // const analyzer = new Analyzer()
      const analyzer = Analyzer.getInstance()
      new Crowller(url, analyzer)
-   
+
      res.send('getData successful')
    })
-   
+
    export default router
    ```
 
@@ -68,10 +68,10 @@
 
    ```typescript
    // import Analyzer from './Analyzer'
-   
+
    // const sercret = 'serretKey'
    // const url = `http://www.dell-lee.com/typescript/demo.html?secret=${sercret}`
-   
+
    // const analyzer = Analyzer.getInstance()
    export default Crowller
    ```
@@ -82,7 +82,7 @@
 
 8. 然后访问一次`localhost:7001/getData`，就会执行爬取并抓取数据一次。
 
-## 02：使用TS编写常规express代码遇到的问题
+## 02：使用 TS 编写常规 express 代码遇到的问题
 
 ### 遇到的问题
 
@@ -113,7 +113,7 @@
      </html>`)
      res.send('hello word')
    })
-   
+
    // 从 body 中拿到 password，如果是 "123"就进行爬虫抓取并写入数据，否则就提示失败
    router.post('/getData', (req: Request, res: Response) => {
      if (req.body.password === '123') {
@@ -139,7 +139,7 @@
 
    ```typescript
    import bodyParser from 'body-parser'
-   
+
    const app = express()
    // 此中间件需要在 router 中间件前面使用
    app.use(bodyParser.urlencoded({ extended: false }))
@@ -161,9 +161,9 @@
 1. `express`库的类型定义文件，`x.d.ts`文件类型描述不准确
 2. 当我们使用中间件的时候，对`req`或者`res`做了修改后，实际上并修改它的类型
 
-## 03：扩展解决Express的类型定义文件问题
+## 03：扩展解决 Express 的类型定义文件问题
 
-### 解决问题1
+### 解决问题 1
 
 1. 修改`src/router.js`，增加如下代码
 
@@ -173,7 +173,7 @@
        password: string | undefined
      }
    }
-   
+
    router.post('/getData', (req: RequestWithBody, res: Response) => {
      const { password } = req.body
    }
@@ -181,7 +181,7 @@
 
 2. 这样就解决了类型声明不准确的问题
 
-### 解决问题2
+### 解决问题 2
 
 1. 假如我们使用了一个中间件，它的作用就是在`req`上增加了一个`teacherName`属性，
 
@@ -189,7 +189,7 @@
 
    ```typescript
    import type { Request, Response, NextFunction } from 'express'
-   
+
    app.use((req: Request, res: Response, next: NextFunction) => {
      req.teacherName = '唐僧'
      next()
@@ -198,25 +198,25 @@
 
 3. 新建`custom.d.ts`,添加内容如下
 
-   > 通过点击 Request进入声明内容，可以看到如下代码,在此基础上进行扩展即可
+   > 通过点击 Request 进入声明内容，可以看到如下代码,在此基础上进行扩展即可
    >
    > **declare** global {
    >
-   > ​    **namespace** Express {
+   > ​ **namespace** Express {
    >
-   > ​        *// These open interfaces may be extended in an application-specific manner via declaration merging.*
+   > ​ _// These open interfaces may be extended in an application-specific manner via declaration merging._
    >
-   > ​        *// See for example method-override.d.ts (https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/method-override/index.d.ts)*
+   > ​ _// See for example method-override.d.ts (https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/method-override/index.d.ts)_
    >
-   > ​        **interface** Request {}
+   > ​ **interface** Request {}
    >
-   > ​        **interface** Response {}
+   > ​ **interface** Response {}
    >
-   > ​        **interface** Locals {}
+   > ​ **interface** Locals {}
    >
-   > ​        **interface** Application {}
+   > ​ **interface** Application {}
    >
-   > ​    }
+   > ​ }
    >
    > }
 
@@ -249,7 +249,7 @@
 
    ```typescript
    import CookieSession from 'cookie-session'
-   
+
    // 在路由中间件前使用
    app.use(
      CookieSession({
@@ -266,7 +266,7 @@
    ```typescript
    import fs from 'fs'
    import path from 'path'
-   
+
    // 修改首页，增加判断：如果登录成功过，就显示 退出、开始抓取内容
    router.get('/', (req: Request, res: Response) => {
      const isLogin = req.session ? req.session.login : undefined
@@ -290,7 +290,7 @@
      </html>`)
      res.send('hello word')
    })
-   
+
    // 增加退出登录操作
    router.get('/logout', (req: RequestWithBody, res: Response) => {
      if (req.session) {
@@ -298,7 +298,7 @@
      }
      res.redirect('/')
    })
-   
+
    // 增加登录页面
    router.post('/login', (req: RequestWithBody, res: Response) => {
      const { password } = req.body
@@ -314,7 +314,7 @@
        res.send('登录失败')
      }
    })
-   
+
    // 修改 getData 访问逻辑，
    router.get('/getData', (req: RequestWithBody, res: Response) => {
      const isLogin = req.session ? req.session.login : undefined
@@ -329,7 +329,7 @@
        res.send('请登录后在进行爬取内容')
      }
    })
-   
+
    // 增加 showData 页面
    router.get('/showData', (req: RequestWithBody, res: Response) => {
      try {
@@ -352,8 +352,12 @@
 
    ```typescript
    import type { Request, Response, NextFunction } from 'express'
-   
-   function checkLogin(req: RequestWithBody, res: Response, next: NextFunction) {
+
+   function checkLogin(
+     req: RequestWithBody,
+     res: Response,
+     next: NextFunction,
+   ) {
      const isLogin = req.session ? req.session.login : undefined
      if (isLogin) {
        next()
@@ -370,15 +374,19 @@
      res.send('getData successful')
    })
    // 增加 checkLogin 中间件
-   router.get('/showData', checkLogin, (req: RequestWithBody, res: Response) => {
-     try {
-       const filePath = path.resolve(__dirname, '../data/course.json')
-       const content = fs.readFileSync(filePath, 'utf-8')
-       res.json(JSON.parse(content))
-     } catch (error) {
-       res.send('还没有爬取到内容')
-     }
-   })
+   router.get(
+     '/showData',
+     checkLogin,
+     (req: RequestWithBody, res: Response) => {
+       try {
+         const filePath = path.resolve(__dirname, '../data/course.json')
+         const content = fs.readFileSync(filePath, 'utf-8')
+         res.json(JSON.parse(content))
+       } catch (error) {
+         res.send('还没有爬取到内容')
+       }
+     },
+   )
    ```
 
 2. 这样重新运行终端，打开浏览器即可进行校验
@@ -419,16 +427,20 @@
    import Crowller from './crowller'
    // 引入 getResponseData 函数
    import { getResponseData } from './utils/index'
-   
+
    const router = Router()
-   
+
    interface RequestWithBody extends Request {
      body: {
        password: string | undefined
      }
    }
-   
-   function checkLogin(req: RequestWithBody, res: Response, next: NextFunction) {
+
+   function checkLogin(
+     req: RequestWithBody,
+     res: Response,
+     next: NextFunction,
+   ) {
      const isLogin = req.session ? req.session.login : undefined
      if (isLogin) {
        next()
@@ -437,7 +449,7 @@
        res.json(getResponseData(null, '请先登录'))
      }
    }
-   
+
    router.get('/', (req: Request, res: Response) => {
      const isLogin = req.session ? req.session.login : undefined
      if (isLogin) {
@@ -460,7 +472,7 @@
      </html>`)
      res.send('hello word')
    })
-   
+
    router.get('/logout', (req: RequestWithBody, res: Response) => {
      if (req.session) {
        req.session.login = false
@@ -468,7 +480,7 @@
      // res.redirect('/')
      res.json(getResponseData(true))
    })
-   
+
    router.post('/login', (req: RequestWithBody, res: Response) => {
      const { password } = req.body
      const isLogin = req.session ? req.session.login : undefined
@@ -486,7 +498,7 @@
        res.json(getResponseData(false, '登录失败'))
      }
    })
-   
+
    router.get('/getData', checkLogin, (req: RequestWithBody, res: Response) => {
      const sercret = 'serretKey'
      const url = `http://www.dell-lee.com/typescript/demo.html?secret=${sercret}`
@@ -496,20 +508,21 @@
      // res.send('getData successful')
      res.json(getResponseData(true))
    })
-   
-   router.get('/showData', checkLogin, (req: RequestWithBody, res: Response) => {
-     try {
-       const filePath = path.resolve(__dirname, '../data/course.json')
-       const content = fs.readFileSync(filePath, 'utf-8')
-       res.json(JSON.parse(content))
-     } catch (error) {
-       // res.send('还没有爬取到内容')
-       res.json(getResponseData(false, '还没有爬取到内容'))
-     }
-   })
-   
+
+   router.get(
+     '/showData',
+     checkLogin,
+     (req: RequestWithBody, res: Response) => {
+       try {
+         const filePath = path.resolve(__dirname, '../data/course.json')
+         const content = fs.readFileSync(filePath, 'utf-8')
+         res.json(getResponseData(JSON.parse(content)))
+       } catch (error) {
+         // res.send('还没有爬取到内容')
+         res.json(getResponseData(false, '还没有爬取到内容'))
+       }
+     },
+   )
+
    export default router
    ```
-
-   
-
