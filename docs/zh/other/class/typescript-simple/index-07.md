@@ -447,3 +447,44 @@
 
 7. 重新运行`npm run start`,效果如常
 
+### 函数、变量类型的优化
+
+* 函数返回值是 undefined 的写上 void
+
+  ```typescript
+  // 如下
+  function checkLogin( req: RequestWithBody, res: Response, next: NextFunction ): void {
+  	...
+  }
+  ```
+
+* `LoginControlle.ts`中的公共部分抽离为方法
+
+  ```typescript
+  @decoratorController
+  class LoginController {
+    static isLogin(req: RequestWithBody) {
+      return !!(req.session ? req.session.login : undefined)
+    }
+    
+    @get('/')
+    home(req: RequestWithBody, res: Response): void {
+      const isLogin = LoginController.isLogin(req)
+      if (isLogin) { ... }
+    }
+    
+    @post('/login')
+    login(req: RequestWithBody, res: Response): void {
+      const { password } = req.body
+      const isLogin = LoginController.isLogin(req)
+    }
+  }
+  ```
+
+* 等等
+
+### 类装饰器的优化
+
+> 目前我们的类装饰器，并不支持传入前缀路径，如果想支持，该如何修改呢？
+
+1. 
