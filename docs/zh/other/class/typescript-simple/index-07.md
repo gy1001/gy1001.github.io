@@ -487,4 +487,65 @@
 
 > 目前我们的类装饰器，并不支持传入前缀路径，如果想支持，该如何修改呢？
 
-1. 
+1. 修改`src/LoginController.ts`，如下
+
+   ```typescript
+   @decoratorController('/')
+   class LoginController { 
+     
+   }
+   ```
+
+2. 修改`src/CrowellerController.ts`，如下
+
+   ```typescript
+   @decoratorController('/abc')
+   export default class CroweController {
+   
+   }
+   ```
+
+3. 修改`src/decorator/controller.ts`，代码如下
+
+   ```typescript
+   export function decoratorController(rootPath: string) {
+     return function (target: new (...args: any[]) => any) {
+       for (let key in target.prototype) {
+         const path: string = Reflect.getMetadata('path', target.prototype, key)
+         // 增加路径判断逻辑
+         const fullPath = rootPath === '/' ? path : rootPath + path
+         const method: Methods = Reflect.getMetadata(
+           'method',
+           target.prototype,
+           key,
+         )
+         const middleware: RequestHandler = Reflect.getMetadata(
+           'middleware',
+           target.prototype,
+           key,
+         )
+         const handler = target.prototype[key]
+         // 注册路由地址使用新的 fullPath 变量
+         if (fullPath && method && handler) {
+           if (middleware) {
+             router[method](fullPath, middleware, handler)
+           } else {
+             router[method](fullPath, handler)
+           }
+         }
+       }
+     }
+   }
+   ```
+
+4. 重新运行`npm run start,`路由地址变为以下几个
+
+   ```bash
+   http://localhost:7001/abc/showData
+   http://localhost:7001/abc/getData
+   http://localhost:7001/
+   http://localhost:7001/login
+   http://localhost:7001/logout
+   ```
+
+   
