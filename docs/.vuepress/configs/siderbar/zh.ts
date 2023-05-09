@@ -219,7 +219,7 @@ export const sidebarZh: SidebarConfig = {
     },
     {
       text: '课程笔记',
-      collapsible: true,
+      collapsible: false,
       children: [
         '/zh/other/class/program-basic',
         '/zh/other/class/linear-algebra',
@@ -287,6 +287,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/typescript-simple/index-06.md',
             '/zh/other/class/typescript-simple/index-07.md',
             '/zh/other/class/typescript-simple/index-08.md',
+            '/zh/other/class/typescript-simple/index-09.md',
           ],
         },
       ],
