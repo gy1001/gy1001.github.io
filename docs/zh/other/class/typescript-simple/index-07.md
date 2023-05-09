@@ -145,5 +145,103 @@
 
    ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1c8147bb305d414781e609e33c03be08~tplv-k3u1fbpfcp-watermark.image?)
 
+## 03：多种请求方法装饰器的生成
+
+> 现在我们只处理了 get 请求，并没有处理 post 处理
+
+1. 我们目前的`login`使用的是`get`请求，之前的路由用的是`post`请求，这里我们修改`login`为`post`请求
+
+2. 修改`src/LoginController.ts`，代码如下
+
+   ```typescript
+   import { post } from './decorator'
+   
+   @loginDecorator
+   class LoginController {
+     @post('/login')
+     login(req: RequestWithBody, res: Response) {
+       ....
+     }
+   }
+   ```
+
+3. 接着修改`src/decorator.ts`文件，这里要导出一个`post`方式
+
+   ```typescript
+   import { Methods } from '../types/index'
+   
+   export function loginDecorator(target: any) {
+     for (let key in target.prototype) {
+       const path = Reflect.getMetadata('path', target.prototype, key)
+       // 取出来当前 method
+       const method: Methods = Reflect.getMetadata('method', target.prototype, key)
+       const handler = target.prototype[key]
+       // 注册到路由中
+       if (path && method && handler) {
+         router[method](path, handler)
+       }
+     }
+   }
+   
+   export function get(path: string) {
+     return function (target: any, key: string, desciptopr: PropertyDescriptor) {
+       // 这里需要设置为可枚举的，类装饰器中的遍历才会能够取得
+       desciptopr.enumerable = true
+       Reflect.defineMetadata('path', path, target, key)
+       // 这里增加设置一个属性 method,值为 get 
+       Reflect.defineMetadata('method', 'get', target, key)
+     }
+   }
+   
+   export function post(path: string) {
+     return function (target: any, key: string, desciptopr: PropertyDescriptor) {
+       desciptopr.enumerable = true
+       Reflect.defineMetadata('path', path, target, key)
+       // 这里增加设置一个属性 method,值为 post
+       Reflect.defineMetadata('method', 'post', target, key)
+     }
+   }
+   ```
+
+4. 新建`src/types/index.ts`,内容如下
+
+   ```typescript
+   export enum Methods {
+     get = 'get',
+     post = 'post',
+   }
+   ```
+
+5. 我们对`src/decorator.ts`中为`get、post`方法等做一个优化处理，因为后续可能会有一个`put、delete`等方法
+
+   ```typescript
+   // src/decorator.ts
+   function getRequstMethod(method: Methods) {
+     return function (path: string) {
+       return function (target: any, key: string, desciptopr: PropertyDescriptor) {
+         // 这里需要设置为可枚举的，类装饰器中的遍历才会能够取得
+         desciptopr.enumerable = true
+         Reflect.defineMetadata('path', path, target, key)
+         Reflect.defineMetadata('method', method, target, key)
+       }
+     }
+   }
+   
+   export const get = getRequstMethod(Methods.GET)
+   export const post = getRequstMethod(Methods.POST)
+   export const put = getRequstMethod(Methods.PUT)
+   export const del = getRequstMethod(Methods.DELETE)
+   
+   // src/types/index.ts
+   export enum Methods {
+     GET = 'get',
+     POST = 'post',
+     DELETE = 'delete',
+     PUT = 'put',
+   }
+   ```
+
+6. 重新运行`npm run start`,页面效果不变
+
 
 
