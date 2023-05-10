@@ -51,3 +51,69 @@ ESBuild的实现
 [SWC官方文档](https://swc.rs/docs/getting-started)
 
 [新一代的编译工具 SWC](https://juejin.cn/post/7052644023651008548)
+
+## 02: vite从零开发原生js项目
+
+### 原生 js 项目
+
+项目地址：[https://github.com/gy1001/Vue-Related](https://github.com/gy1001/Vue-Related)中的 Vite/01-vite-demo 项目
+
+1. 在`01-vite-demo`项目中运行终端命令，执行初始化
+
+   ```bash
+   npm init -y
+   ```
+
+2. 新建`index.html`,代码如下
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="UTF-8" />
+       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <title>Vite Test</title>
+     </head>
+     <body>
+       <div>this is vite test page</div>
+     </body>
+     <script src="./src/index.js"></script>
+   </html>
+   ```
+
+3. 新建`src/inedx.js`、`src/utils.js`文件
+
+   ```javascript
+   // src/index.js
+   import utils from './utils.js'
+   console.log('hello vite')
+   utils()
+   
+   
+   // src/utils.js
+   export default function () {
+     console.log('utils')
+   }
+   ```
+
+4. 此时运行`index.html`至浏览器中，就会报错，内容如下
+
+   ```bash
+   Uncaught SyntaxError: Cannot use import statement outside a module
+   ```
+
+5. 此时修改`index.html`中的引入方式
+
+   ```html
+   <script type="module" src="./src/index.js"></script>
+   ```
+
+6. 然后使用`vscode`的`live server`功能打开`index.html`就可以看到页面正常显示运行
+
+   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/52eab433d5064eb38faf5d1d89a5d69a~tplv-k3u1fbpfcp-watermark.image?)
+
+### 使用 vite
+
+
+
