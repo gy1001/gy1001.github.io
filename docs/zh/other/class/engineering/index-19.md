@@ -297,3 +297,107 @@ ESBuild的实现
 
 9. 终端运行`npm run dev`,打开指定地址`http://localhost:5173/`至浏览器即可
 
+## 05：vite支持react18项目开发
+
+1. 新建`03-vite-react18`文件夹
+
+2. 执行以下命令
+
+   ```bash
+   npm init -y
+   npm install react react-dom -S
+   npm install vite less -D
+   npm install @vitejs/plugin-react -D 
+   ```
+
+3. 新建`src/index.jsx`
+
+   ```javascript
+   import React from 'react'
+   import { createRoot } from 'react-dom/client'
+   import Button from './Buton'
+   import './index.less'
+   
+   function App() {
+     return (
+       <div className='test'>
+         this is vite page
+         <div className='test-2'>this is test2</div>
+         <Button></Button>
+       </div>
+     )
+   }
+   const container = document.getElementById('app')
+   const root = createRoot(container)
+   root.render(React.createElement(App))
+   ```
+
+4. 新建`src/Button.jsx`，
+
+   ```javascript
+   export default function Button() {
+     const handler = () => {
+       alert('click')
+     }
+     return <button onClick={handler}>我是按钮</button>
+   }
+   ```
+
+5. 新建`src/index.less`
+
+   ```less
+   .test{
+     color: red;
+     .test-2{
+       color: yellow;
+     }
+   }
+   ```
+
+6. 根目录下新建`index.html`
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="UTF-8" />
+       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <title>Document</title>
+     </head>
+     <body>
+       <div id="app"></div>
+     </body>
+     <script type="module" src="./src/index.jsx"></script>
+   </html>
+   ```
+
+7. 新建`vite.config.js`
+
+   ```javascript
+   import { defineConfig } from 'vite'
+   import pluginReact from '@vitejs/plugin-react'
+   export default defineConfig({
+     plugins: [pluginReact()],
+   })
+   ```
+
+8. 修改`package.json`，增加脚本命令
+
+   ```json
+   {
+     "scripts": {
+       "dev": "vite",
+       "build": "vite build",
+       "preview": "vite preview"
+     },
+   }
+   ```
+
+9. 运行`pnpm run dev`，可以看到效果如下(按钮点击有点击效果)
+
+   ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/35a5a20eaab64ef49a4c3d267bfbdcc1~tplv-k3u1fbpfcp-watermark.image?)
+
+10. 运行`pnpm run build`打包正常
+
+11. 然后执行`pnpm run preview`运行正常
