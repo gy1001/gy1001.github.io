@@ -401,3 +401,33 @@ ESBuild的实现
 10. 运行`pnpm run build`打包正常
 
 11. 然后执行`pnpm run preview`运行正常
+
+## 06：如何让vite打包代码支持低版本浏览器运行？
+
+> [官方插件 @vitejs/plugin-legacy: 为打包后的文件提供传统浏览器兼容性支持。](https://github.com/vitejs/vite/tree/main/packages/plugin-legacy)
+
+1. 回到`02-vite-vue3`项目中，安装依赖库
+
+   ```bash
+   npm install @vitejs/plugin-legacy -D
+   ```
+
+2. 修改`vite.config.js`，增加如下内容
+
+   ```javascript
+   import legacyPlugin from '@vitejs/plugin-legacy'
+   
+   export default defineConfig({
+     plugins: [
+       legacyPlugin({
+         targets: ['defaults', 'not IE 11'],
+       }),
+     ],
+   })
+   ```
+
+3. 这样执行`npm run build`后，我们看到以下效果
+
+   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/592ee433194848c8b2192c53cd68ea07~tplv-k3u1fbpfcp-watermark.image?)
+
+4. 打包后的结果多了个`polyfills-legacy-2fc23d6e.js`显然他是用来处理兼容性的
