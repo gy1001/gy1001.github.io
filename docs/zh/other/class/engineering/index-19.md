@@ -172,7 +172,35 @@ ESBuild的实现
 
 3. 也可以运行`npm run preview` 来查看
 
-   > 注意：这里必须先打包产生 dist文件，因为默认会使用 dist 目录来作为资源目录
+   > 注意：这里必须先打包产生 dist 文件，因为默认会使用 dist 目录来作为资源目录
 
 ### vite 配置文件
 
+1. 新建`vite.config.js`文件，具体内容如下
+
+   ```javascript
+   import { defineConfig } from 'vite'
+   
+   export default defineConfig({
+     base: '/test', // 文件路径会增加 test 
+   })
+   ```
+
+2. 执行以下命令
+
+   ```bash
+   npm run build
+   npm run preview
+   ```
+
+3. 可以看到如下结果
+
+   ```bash
+   gaoyuan@gaoyuandeMac 01-vite-demo % npm run preview
+   
+   > 01-vite-demo@1.0.0 preview
+   > vite preview
+   
+     ➜  Local:   http://localhost:4173/test
+     ➜  Network: use --host to expose
+   ```
