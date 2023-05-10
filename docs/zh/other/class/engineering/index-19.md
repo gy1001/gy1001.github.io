@@ -441,3 +441,92 @@ ESBuild的实现
    ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e07838e9a6ae4a5788ff05529c6e82b1~tplv-k3u1fbpfcp-watermark.image?)
 
 2. 然后进入项目，执行`npm install`，其他根据提示操作即可
+
+## 08：破解vite插件机制
+
+### 插件
+
+> Vite 可以使用插件进行扩展，这得益于 Rollup 优秀的插件接口设计和一部分 Vite 独有的额外选项。这意味着 Vite 用户可以利用 Rollup 插件的强大生态系统，同时根据需要也能够扩展开发服务器和 SSR 功能
+
+### 插件的使用方式
+
+#### 使用 vite 插件
+
+1. 安装依赖
+
+   ```bash
+   npm i -D @vitejs/plugin-legacy
+   ```
+
+2. 在`vite.config.js`引入模块并添加配置
+
+   ```javascript
+   import legacy from "@vitejs/plugin-legacy"
+   export default defineConfig({
+     plugins: [
+       legacy({
+         targets: ["defaults", "not IE 11"]
+       })
+     ]
+   })
+   ```
+
+#### 使用 rollup 插件
+
+##### vue
+
+1. 安装依赖
+
+   > rollup-plugin-visualizer: 构建分析，打包之后，会在根目录默认生成一个 stats.html 文件
+
+   ```bash
+   npm install rollup-plugin-visualizer
+   ```
+
+2. 在 `vite.config.js` 中引入模块并添加配置
+
+   ```javascript
+   export default defineConfig({
+     plugins: [
+       vue(),
+       visualizer()
+     ]
+   })
+   ```
+
+3. 也可以**强制插件排序**
+
+   - `pre`：在 Vite 核心插件之前调用该插件
+   - 默认：在 Vite 核心插件之后调用该插件
+   - `post`：在 Vite 构建插件之后调用该插件
+
+   ```javascript
+   export default defineConfig({
+     plugins: [
+       vue(),
+       { 
+         ...visualizer(),
+         enforce: 'pre',
+       }
+     ]
+   })
+   ```
+
+4. 也可以**按需应用**
+
+   > 默认情况下插件在开发 (serve) 和生产 (build) 模式中都会调用。如果插件在服务或构建期间按需使用，请使用 `apply` 属性指明它们仅在 `'build'` 或 `'serve'` 模式时调用：
+
+   ```javascript
+   export default defineConfig({
+     plugins: [
+       vue(),
+       { 
+         ...visualizer(),
+         enforce: 'pre',
+         apply: 'build',
+       }
+     ]
+   })
+   ```
+
+   
