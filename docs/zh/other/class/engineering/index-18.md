@@ -292,5 +292,32 @@
     import Button from "./Button.js"
     ```
 
-    
+## 05：Babel 编译原理解析
 
+> [Babel 是一个 JavaScript 编译器，官方文档地址](https://babel.docschina.org/)
+
+**babel的三个主要处理步骤：解析parse、转换transform、生成generate**
+
+[babel 编译原理参考文档](https://juejin.cn/post/6844904055945314312)
+
+### 解析
+
+解析步骤接收代码并输出 AST,这个步骤分为两个阶段：**词法分析**、**语法分析**
+
+#### 词法分析
+
+词法分析阶段把字符串形式的代码转换为 **令牌（tokens）** 流。.
+
+#### 语法分析
+
+语法分析阶段会把一个令牌流转换成 AST 的形式。 这个阶段会使用令牌中的信息把它们转换成一个 AST 的表述结构，这样更易于后续的操作。
+
+### 转换
+
+[转换](https://link.juejin.cn/?target=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FProgram_transformation)步骤接收 AST 并对其进行遍历，在此过程中对节点进行添加、更新及移除等操作。 这是 Babel 或是其他编译器中最复杂的过程 同时也是插件将要介入工作的部分
+
+### 生成
+
+[代码生成](https://link.juejin.cn/?target=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FCode_generation_(compiler))步骤把最终（经过一系列转换之后）的 AST 转换成字符串形式的代码，同时还会创建[源码映射（source maps）](https://link.juejin.cn/?target=http%3A%2F%2Fwww.html5rocks.com%2Fen%2Ftutorials%2Fdevelopertools%2Fsourcemaps%2F)。.
+
+代码生成其实很简单：深度优先遍历整个 AST，然后构建可以表示转换后代码的字符串。
