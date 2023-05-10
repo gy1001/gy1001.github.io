@@ -431,3 +431,13 @@ ESBuild的实现
    ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/592ee433194848c8b2192c53cd68ea07~tplv-k3u1fbpfcp-watermark.image?)
 
 4. 打包后的结果多了个`polyfills-legacy-2fc23d6e.js`显然他是用来处理兼容性的
+
+## 07：vite vue+react官方项目模板搭建
+
+[官方文档：搭建第一个 Vite 项目](https://cn.vitejs.dev/guide/#scaffolding-your-first-vite-project)
+
+1. 执行命令`npm create vite@latest`, 然后按照提示操作即可！
+
+   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e07838e9a6ae4a5788ff05529c6e82b1~tplv-k3u1fbpfcp-watermark.image?)
+
+2. 然后进入项目，执行`npm install`，其他根据提示操作即可
