@@ -321,3 +321,53 @@
 [代码生成](https://link.juejin.cn/?target=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FCode_generation_(compiler))步骤把最终（经过一系列转换之后）的 AST 转换成字符串形式的代码，同时还会创建[源码映射（source maps）](https://link.juejin.cn/?target=http%3A%2F%2Fwww.html5rocks.com%2Fen%2Ftutorials%2Fdevelopertools%2Fsourcemaps%2F)。.
 
 代码生成其实很简单：深度优先遍历整个 AST，然后构建可以表示转换后代码的字符串。
+
+## 06：super-tiny-compiler编译器原理分析
+
+> [super-tiny-compiler项目地址](https://github.com/jamiebuilds/the-super-tiny-compiler/tree/master)
+
+1. 可以如下如下两个文件
+
+   ```shell
+   - test.js
+   - the-super-tiny-compiler.js
+   ```
+
+2. 其中`test.js`,代码如下
+
+   ```javascript
+   const {
+     tokenizer, // token 化
+     parser, // 生成 AST
+     transformer, // 生成新的 AST
+     codeGenerator, // 生成源码
+     compiler, // 编译
+   } = require('./the-super-tiny-compiler');
+   const assert = require('assert');
+   
+   const input  = '(add 2 (subtract 4 2))';
+   const output = 'add(2, subtract(4, 2));';
+   
+   ```
+
+## 07：super-tiny-compiler编译器之词法解析
+
+## 08：super-tiny-compiler编译器之AST生成
+
+## 09: super-tiny-compiler编译器之AST转换
+
+## 10: Super-tiny-compiler编译器之代码生成
+
+## 11：Babel typescript预设功能详解
+
+## 12：Babel preset混合实现tsx编译
+
+## 13：webpack+babel-loader实现模块化+jsx编译
+
+## 14：CRA项目初始化+react-scripts启动源码分析
+
+## 15：zbestpc项目移植React 
+
+## 16：zbestpc项目集成ReactRouter
+
+## 17：react项目集成工程化脚手架
