@@ -115,5 +115,28 @@ ESBuild的实现
 
 ### 使用 vite
 
+1. 安装相关依赖库
 
+   ```bash
+   npm install vite -D
+   ```
+
+2. 修改`package.json`中的脚本命令
+
+   ```json
+   {
+     "scripts": {
+       "dev": "vite"
+     },
+   }
+   ```
+
+3. 终端运行`npm run dev`,根据提示打开指定地址` http://localhost:5173/`
+
+4. 运行至浏览器中，可以正常显示
+
+5. 这里我们看到以下几点优势
+
+   * 启动非常快速
+   * 基本不需要配置，便可以启动
 
