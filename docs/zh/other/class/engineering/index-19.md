@@ -140,3 +140,39 @@ ESBuild的实现
    * 启动非常快速
    * 基本不需要配置，便可以启动
 
+## 03：vite如何打包和发布原生js项目？
+
+### vite 基本命令
+
+1. 修改`package.json`文件，增加脚本命令
+
+   ```json
+   {
+     "scripts": {
+       "build": "vite build",
+       "preview": "vite preview"
+     },
+   }
+   ```
+
+2. 终端运行`npm run build`即可看到打包结果
+
+   ```bash
+   gaoyuan@gaoyuandeMac 01-vite-demo % npm run build
+   
+   > 01-vite-demo@1.0.0 build
+   > vite build
+   
+   vite v4.3.5 building for production...
+   ✓ 4 modules transformed.
+   dist/index.html                0.40 kB │ gzip: 0.28 kB
+   dist/assets/index-57edac96.js  0.78 kB │ gzip: 0.43 kB
+   ✓ built in 112ms
+   ```
+
+3. 也可以运行`npm run preview` 来查看
+
+   > 注意：这里必须先打包产生 dist文件，因为默认会使用 dist 目录来作为资源目录
+
+### vite 配置文件
+
