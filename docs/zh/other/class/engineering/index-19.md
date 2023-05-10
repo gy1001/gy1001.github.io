@@ -204,3 +204,96 @@ ESBuild的实现
      ➜  Local:   http://localhost:4173/test
      ➜  Network: use --host to expose
    ```
+
+## 04：vite支持vue3项目开发
+
+1. 新建`02-vite-vue3`文件夹
+
+2. 执行以下命令
+
+   ```bash
+   npm init -y
+   npm install vue vite @vitejs/plugin-vue less -D
+   ```
+
+3. 新建`src/main.js`,内容如下
+
+   ```javascript
+   import { createApp } from 'vue'
+   import App from './App.vue'
+   
+   createApp(App).mount('#app')
+   ```
+
+4. 新建`src/App.vue`
+
+   ```vue
+   <template>
+     <div class="test">
+       this is vite page
+       <div class="test-2">this is test2</div>
+     </div>
+   </template>
+   
+   <script>
+   export default {}
+   </script>
+   
+   <style lang="less" scoped>
+   @import './index.less';
+   </style>
+   ```
+
+5. 新建`src/index.less`,内容如下
+
+   ```less
+   .test{
+     color: red;
+     .test-2{
+       color: yellow;
+     }
+   }
+   ```
+
+6. 新建`index.html`文件，内容如下
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="UTF-8" />
+       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <title>Vite Test</title>
+     </head>
+     <body>
+       <div id="app"></div>
+     </body>
+     <script type="module" src="./src/main.js"></script>
+   </html>
+   ```
+
+7. 新建`vite.config.js`，内容如下
+
+   ```javascript
+   import { defineConfig } from 'vite'
+   import pluginVue from '@vitejs/plugin-vue'
+   export default defineConfig({
+     plugins: [pluginVue()],
+   })
+   ```
+
+8. 修改`package.json`中的脚本命令
+
+   ```json
+   {
+     "scripts": {
+       "dev": "vite",
+       "build": "vite build",
+       "preview": "vite preview"
+     },
+   }
+   ```
+
+9. 终端运行`npm run dev`,打开指定地址`http://localhost:5173/`至浏览器即可
+
