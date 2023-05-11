@@ -316,5 +316,91 @@
 
 8. 重新运行`npm run vite-build`发现打包成功
 
+## 04：vite+vue3项目移植
 
+## 05：工程化脚手架 build 命令开发
 
+1. 修改`imooc-build/lib/build/buildServer.js`中的代码，修改如下
+
+   ```javascript
+   const Service = require('../service/Service')
+   module.exports = async function build(arg, opts, cmd) {
+     const args = {
+       customWebpackPath: arg.customWebpackPath || '',
+       stopServer: !!arg.stopServer,
+     }
+     process.env.NODE_ENV = 'production'
+     const service = new Service('build', args)
+     service.build()
+   }
+   ```
+
+2. 修改`service/Service.js`，增加如下代码
+
+   ```javascript
+   class Service {
+     
+     async build() {
+       await this.resolveConfig()
+       await this.registerWebpackConfig()
+       await this.registerHooks()
+       await this.emitHooks(HOOK_START)
+       await this.registerPlugin()
+       await this.runPlugin()
+       if (!this.args.stopServer) {
+         await this.initWebpack()
+         await this.doBuileService()
+       }
+     }
+     
+     doBuileService() {
+       let compiler
+       try {
+         const selfWebapck = require(this.webpack)
+         const webpackConfig = this.webpackConfig.toConfig()
+         compiler = selfWebapck(webpackConfig, (err, stats) => {
+           if (err) {
+             log.error('ERROR!', err)
+           } else {
+             const result = stats.toJson({
+               all: false,
+               errors: true,
+               warnings: true,
+               timings: true,
+             })
+             if (result.errors && result.errors.length > 0) {
+               log.error('COMPILE ERROR')
+               result.errors.forEach((error) => {
+                 log.error('ERROR MESSAGE: ', error.message)
+               })
+             } else if (result.warnings && result.warnings.length > 0) {
+               log.warn('COMPILE WARNING')
+               result.warnings.forEach((warning) => {
+                 log.warn('WARNING MESSAGE: ', warning.message)
+               })
+             } else {
+               log.info(
+                 'COMPILE SUCCESSFULLY!',
+                 'Compile finish in ' + result.time / 1000 + 's',
+               )
+             }
+           }
+         })
+       } catch (error) {
+         log.error('service startServer', error)
+       }
+     }
+   }
+   ```
+
+3. 修改`imooc-build/examples/zbestpc_update/package.json`文件，增加打包命令
+
+   ```json
+   {
+     "scripts": {
+       "build:imooc": "imooc-build build"
+     }
+   }
+   ```
+
+4. 在`examples/zbestpc_update`中运行终端命令`npm run build:imooc`即可看到产生了`dist`文件夹
