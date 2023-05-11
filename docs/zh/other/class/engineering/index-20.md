@@ -227,3 +227,32 @@
    ```
 
 3. 配置完成后，刷新页面，发现模板文件没有渲染，但是如果修改`src/index.js`中添加打印代码，可以在控制台中实时看到
+
+4. 注意安装时候提示
+
+   ```shell
+   $ pnpm install rollup-plugin-inject -S
+    WARN  deprecated rollup-plugin-inject@3.0.2: This package has been deprecated and is no longer maintained. Please use @rollup/plugin-inject.
+   ```
+
+5. 这里我们执行以下命令
+
+   ```bash
+   npm uninstall rollup-plugin-inject
+   npm install @rollup/plugin-inject -S
+   ```
+
+6. 修改`vite.config.js`，修改如下
+
+   ```javascript
+   // import inject from "rollup-plugin-inject"
+   import inject from "@rollup/plugin-inject"
+   plugins: [
+     inject({
+       $: 'jquery',
+       jQuery: 'jquery',
+     }),
+   ],
+   ```
+
+7. 配置完成后，刷新页面，发现模板文件没有渲染，但是如果修改`src/index.js`中添加打印代码，可以在控制台中实时看到
