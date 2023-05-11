@@ -1,8 +1,8 @@
-# 17: 工程化脚手架：高阶实战——深入工程化脚手架插件机制+Vue插件开发
+# 17: 工程化脚手架：高阶实战——深入工程化脚手架插件机制+Vue 插件开发
 
 > 这里我们参考之前的项目：zbestpc_update 中的配置文件，进行参考改造
 
-## 01：webpack初始配置mode开发
+## 01：webpack 初始配置 mode 开发
 
 1. 修改`imooc-build/plugins/initPlugin/index.js`中的代码如下
 
@@ -15,7 +15,7 @@
      // 获取构建模式，默认为 development
      const mode = process.env.IMOOC_BUILD_MODE || 'development'
      config.mode(mode)
-     console.log("mode", config.toConfig())
+     console.log('mode', config.toConfig())
    }
    ```
 
@@ -29,7 +29,7 @@
 
    ```json
    {
-      "dev:env": "cross-env IMOOC_BUILD_MODE=production imooc-build start -d"
+     "dev:env": "cross-env IMOOC_BUILD_MODE=production imooc-build start -d"
    }
    ```
 
@@ -56,7 +56,7 @@
        // 增加如下代码
        log.verbose('webpack config', this.webpackConfig.toConfig())
      }
-     
+
      // 先注释掉 registerWebpackConfig 方法内部代码
      registerWebpackConfig() {
        // entry: { inedx: "index.js" }
@@ -105,7 +105,7 @@
 
    ```javascript
    const path = require('path')
-   
+
    module.exports = function initPlugin(api, params) {
      console.log('init plugin')
      const { getWebpackConfig } = api
@@ -127,10 +127,7 @@
      const dir = process.cwd()
      const config = getWebpackConfig()
      // 增加 login 入口文件
-     config
-       .entry('login')
-       .add(path.resolve(dir, 'src/login.js'))
-       .end()
+     config.entry('login').add(path.resolve(dir, 'src/login.js')).end()
    }
    ```
 
@@ -144,7 +141,7 @@
 
    ```javascript
    const path = require('path')
-   
+
    module.exports = function initPlugin(api, params) {
      console.log('init plugin')
      const { getWebpackConfig } = api
@@ -164,7 +161,7 @@
 
 ## 03: webpackloader 配置移植
 
-### zbestpc_update 项目中的 module:rules配置如下
+### zbestpc_update 项目中的 module:rules 配置如下
 
 ```javascript
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
@@ -215,7 +212,7 @@ module: {
 
    ```javascript
    const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-   
+
    module.exports = function initPlugin(api, params) {
    	...
      // 配置 module
@@ -333,10 +330,9 @@ plugins: [
    const webapck = require('webpack')
    const CopyWebpackPlugin = require('copy-webpack-plugin')
    const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-   
+
    module.exports = function initPlugin(api, params) {
-     
-   	// 配置 plugins
+     // 配置 plugins
      config.plugin('MiniCssExtractPlugin').use(MiniCssExtractPlugin, [
        {
          filename: 'css/[name][contenthash:8].css',
@@ -389,7 +385,7 @@ plugins: [
 
    ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/be742de3efe44f928bae1d661a70699e~tplv-k3u1fbpfcp-watermark.image?)
 
-## 05：webpack optimization配置移植
+## 05：webpack optimization 配置移植
 
 ### 原项目下的配置
 
@@ -433,10 +429,9 @@ optimization: {
    ```javascript
    const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
    const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
-   
+
    module.exports = function initPlugin(api, params) {
-     
-   	// 配置 optimization
+     // 配置 optimization
      config.optimization
        .minimize(true)
        .usedExports(true)
@@ -475,7 +470,7 @@ optimization: {
 
    ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/36b604f948144a909d7f68ccac574186~tplv-k3u1fbpfcp-watermark.image?)
 
-## 06: webpack构建逻辑开发
+## 06: webpack 构建逻辑开发
 
 1. 修改`service/Service.js`，增加`startServer`方法，代码如下(并删除无关打印)
 
@@ -486,7 +481,7 @@ optimization: {
        await this.startServer()
        // log.verbose( 'webpack config optimization', this.webpackConfig.toConfig().optimization )
      }
-   
+
      async startServer() {
        let compiler
        try {
@@ -520,10 +515,10 @@ optimization: {
 
    ```javascript
    // samples/src/index.js
-   console.log("i am index.js")
-   
+   console.log('i am index.js')
+
    // samples/src/login.js
-   console.log("i am login.js")
+   console.log('i am login.js')
    ```
 
 3. 在`samples`文件夹下，运行终端，执行命令`npm run dev:noconfig`
@@ -571,7 +566,10 @@ optimization: {
                  log.warn('WARNING MESSAGE: ', warning.message)
                })
              } else {
-               log.info('COMPILE SUCCESSFULLY!', 'Compile finish in ' + result.time / 1000 + 's')
+               log.info(
+                 'COMPILE SUCCESSFULLY!',
+                 'Compile finish in ' + result.time / 1000 + 's',
+               )
              }
            }
          })
@@ -588,17 +586,17 @@ optimization: {
 
 2. 在`samples`文件夹下运行终端命令`npm run dev:noconfig`，可能会有报错，根据报错信息修改即可
 
-   > 我这里遇到的问题是：src/img 文件夹找不到，我们可以把配置文件中的对这个文件夹做的处理去掉，或者新建文件夹img并需要传入一张照片
+   > 我这里遇到的问题是：src/img 文件夹找不到，我们可以把配置文件中的对这个文件夹做的处理去掉，或者新建文件夹 img 并需要传入一张照片
 
 3. 再次运行，即可正常，效果如下
 
    ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5dcb54c4be8b4d30bef6f2cf411f4425~tplv-k3u1fbpfcp-watermark.image?)
 
-## 08: 工程化脚手架处理html模板
+## 08: 工程化脚手架处理 html 模板
 
 上述配置代码中，我们在`initPlugin/index.js`代码中，增加了两个模板文件，并经过打包可以在`dist` 目录中看到，不过实际开发中应该会是默认是一个入口文件，这里就不在此做修改了。
 
-## 09：Webpack DevServer API启动服务开发
+## 09：Webpack DevServer API 启动服务开发
 
 1. 在`imooc-build`目录下安装`webpack-dev-server`
 
@@ -611,7 +609,7 @@ optimization: {
    ```javascript
    const WebpackDevServer = require('webpack-dev-server')
    class Service {
-   	async startServer() {
+     async startServer() {
        let compiler
        let devServer
        let serverConfig
@@ -679,14 +677,14 @@ optimization: {
 
    ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/226e9a936be14d91b5d7552a5c590b1a~tplv-k3u1fbpfcp-watermark.image?)
 
-## 10: 文件修改监听+dev和build模式插件分离
+## 10: 文件修改监听+dev 和 build 模式插件分离
 
 ### 文件监听
 
 1. 修改`initPlugin/index.js`文件，添加`watch`处理函数
 
    ```javascript
-   module.exports = function initPlugin(api, params) {	
+   module.exports = function initPlugin(api, params) {
      ...
      // 配置监听函数
      config.watch(true)
@@ -703,7 +701,6 @@ optimization: {
    export function utils() {
      console.log('utils')
    }
-   
    ```
 
 5. 修改`samples/src/index.js`，并引入`utils.js`
@@ -716,7 +713,7 @@ optimization: {
 
 6. 此时，终端和浏览器中均会重新渲染更新
 
-### dev+build模式插件分离
+### dev+build 模式插件分离
 
 1. 我们在`imooc-build/plugins/initPlugin`下新建`dev`和`build.js`,内容可以复制`initPlugin/index.js`内容，然后做部分删减修改
 
@@ -726,17 +723,18 @@ optimization: {
    // const InitPlugin = require('../../plugins/initPlugin/index')
    const InitDevPlugin = require('../../plugins/initPlugin/dev')
    const InitBuildPlugin = require('../../plugins/initPlugin/build')
-   
+
    class Service {
      // 增加 cmd 参数，用来区分是 dev 还是 build，以便于区分使用哪个模式
      constructor(cmd, opts) {
-       this.cmd = cmd || "start"
+       this.cmd = cmd || 'start'
      }
-     
+
      async registerPlugin() {
        let { plugins } = this.config
        // 这里做判断，使用哪个插件文件
-       const buildInPlugins = this.cmd === 'start' ? [InitDevPlugin] : [InitBuildPlugin]
+       const buildInPlugins =
+         this.cmd === 'start' ? [InitDevPlugin] : [InitBuildPlugin]
      }
    }
    ```
@@ -745,11 +743,11 @@ optimization: {
 
    ```javascript
    // 实例化时候，传入参数 start
-   const service = new Service("start", args)
+   const service = new Service('start', args)
    service.start()
    ```
 
-## 11: zbest-pc项目工程化脚手架移植
+## 11: zbest-pc 项目工程化脚手架移植
 
 ### imooc-build 项目涉及的改动
 
@@ -776,11 +774,11 @@ optimization: {
          esModule: false,
        })
    */
-   
+
    // config.plugin('indexHtml').use(HtmlWebpackPlugin, [])
    // 修改为
    config.plugin('index').use(HtmlWebpackPlugin, [])
-   
+
    /*
     	config.module
        .rule('ejs')
@@ -832,7 +830,7 @@ optimization: {
 
    ```json
    {
-     "plugins": [ "./plugins/zbestpc-plugin.js" ]
+     "plugins": ["./plugins/zbestpc-plugin.js"]
    }
    ```
 
@@ -843,13 +841,13 @@ optimization: {
    const HtmlWebpackPlugin = require('html-webpack-plugin')
    const webapck = require('webpack')
    const CopyWebpackPlugin = require('copy-webpack-plugin')
-   
+
    module.exports = function (api, params) {
      console.log('this is zbest-pc plugin')
      const config = api.getWebpackConfig()
      const dir = process.cwd()
      config.entry('login').add(path.resolve(dir, './src/login.js'))
-   
+
      config.plugin('login').use(HtmlWebpackPlugin, [
        {
          filename: 'login.html',
@@ -857,7 +855,7 @@ optimization: {
          chunks: ['login'],
        },
      ])
-   
+
      config.module
        .rule('ejs')
        .exclude.add(/node_modules/)
@@ -867,11 +865,11 @@ optimization: {
        .options({
          esModule: false,
        })
-   
+
      config
        .plugin('provide')
        .use(webapck.ProvidePlugin, [{ $: 'jquery', jQuery: 'jquery' }])
-   
+
      config.plugin('CopyWebpackPlugin').use(CopyWebpackPlugin, [
        {
          patterns: [
@@ -903,7 +901,7 @@ config.plugin('index').use(HtmlWebpackPlugin, [
 
 如果存在模板路径不一致，你可以在项目配置文件中进行修改覆盖
 
-## 13：vue3项目工程化插件开发
+## 13：vue3 项目工程化插件开发
 
 1. 在`zbest-pc`项目中新建脚本文件
 
@@ -932,7 +930,7 @@ config.plugin('index').use(HtmlWebpackPlugin, [
    const { VueLoaderPlugin } = require('vue-loader')
    const CopyWebpackPlugin = require('copy-webpack-plugin')
    const HtmlWebpackPlugin = require('html-webpack-plugin')
-   
+
    module.exports = function (api, params) {
      console.log('i am a vue plugin')
      // 配置内容有所修改
@@ -962,11 +960,11 @@ config.plugin('index').use(HtmlWebpackPlugin, [
        .test(/\.vue$/)
        .use('vue-loader')
        .loader('vue-loader')
-   
+
      config
        .plugin('provide')
        .use(webpack.ProvidePlugin, [{ $: 'jquery', jQuery: 'jquery' }])
-   
+
      config.plugin('CopyWebpackPlugin').use(CopyWebpackPlugin, [
        {
          patterns: [
@@ -977,7 +975,7 @@ config.plugin('index').use(HtmlWebpackPlugin, [
          ],
        },
      ])
-   
+
      config.plugin('VueLoaderPlugin').use(VueLoaderPlugin)
      config.devServer
        .compress(true)
@@ -1010,10 +1008,9 @@ config.plugin('index').use(HtmlWebpackPlugin, [
      ...webpackConfig.devServer,
    }
    devServer = new WebpackDevServer(serverConfig, compiler)
-   
    ```
 
-## 14：通用vue插件开发和npm发布
+## 14：通用 vue 插件开发和 npm 发布
 
 1. 新建文件夹`imooc-build-vue-plugin`文件夹，并运行终端
 
@@ -1025,7 +1022,7 @@ config.plugin('index').use(HtmlWebpackPlugin, [
 
    ```javascript
    const { VueLoaderPlugin } = require('vue-loader')
-   
+
    module.exports = function (api, params) {
      const config = api.getWebpackConfig()
      config.module
@@ -1066,7 +1063,7 @@ config.plugin('index').use(HtmlWebpackPlugin, [
    }
    ```
 
-## 15: 高级：imooc-build插件集成vue-cli构建
+## 15: 高级：imooc-build 插件集成 vue-cli 构建
 
 > 目前我们的项目配置都是在我们自己手动配置的额，有没有可能使用其他集成的功能呢？比如 vue-cli，当然是是可以的
 
@@ -1081,8 +1078,8 @@ config.plugin('index').use(HtmlWebpackPlugin, [
      "scripts": {
        "serve": "vue-cli-service serve",
        "build": "vue-cli-service build",
-       "lint": "vue-cli-service lint",
-     },
+       "lint": "vue-cli-service lint"
+     }
    }
    ```
 
@@ -1091,7 +1088,7 @@ config.plugin('index').use(HtmlWebpackPlugin, [
    ```javascript
    const Service = require('../lib/Service')
    const service = new Service(process.env.VUE_CLI_CONTEXT || process.cwd())
-   
+
    ...
    service.run(command, args, rawArgv).catch(err => {
      error(err)
@@ -1106,7 +1103,7 @@ config.plugin('index').use(HtmlWebpackPlugin, [
    ```javascript
    const Service = require('@vue/cli-service/lib/Service')
    const service = new Service(process.cwd())
-   
+
    service.run('serve')
    ```
 
@@ -1122,17 +1119,17 @@ config.plugin('index').use(HtmlWebpackPlugin, [
 
 6. 打开终端，执行`npm run run `，就可以看到，程序一样正常运行了
 
-### 在 vue模板基础上使用 imooc-build
+### 在 vue 模板基础上使用 imooc-build
 
 1. 由于我们使用 vue-cli 会另外启动项目，我们原来的项目就需要只是解析，而不启动服务
 
 2. 修改`imooc-build/bin/imooc-build.js`文件，内容如下
 
    ```javascript
-    program
+   program
      .command('start')
      .option('-c --config <config>', '配置文件路径')
-   	// 增加脚本命令 --stop-server
+     // 增加脚本命令 --stop-server
      .option('--stop-server', '停止服务')
    ```
 
@@ -1148,9 +1145,8 @@ config.plugin('index').use(HtmlWebpackPlugin, [
        '--config ' + config,
        '--customWebpackPath ' + customWebpackPath,
        // 增加 stopServer 参数
-       '--stop-server ' + stopServer,
+       '--stop-server ' + (!!stopServer ? true : ''),
      ]
-     
    }
    ```
 
@@ -1202,9 +1198,7 @@ config.plugin('index').use(HtmlWebpackPlugin, [
 
    ```json
    {
-     "plugins": [
-       "./run-plugin.js"
-     ]
+     "plugins": ["./run-plugin.js"]
    }
    ```
 
@@ -1214,10 +1208,9 @@ config.plugin('index').use(HtmlWebpackPlugin, [
    module.exports = function (api, params) {
      const Service = require('@vue/cli-service/lib/Service')
      const service = new Service(process.cwd())
-   
+
      service.run('serve')
    }
    ```
 
 9. 重新运行脚本`npm run start:imooc-build `，就可以正常运行项目了。
-
