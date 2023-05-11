@@ -19,3 +19,100 @@
 * 监控前端性能
 * 优化前端性能
 
+## 02：深入剖析前端性能监控原理（上）
+
+![img](https://pic2.zhimg.com/v2-9f63018694b9b4471e28295ddb675a91_r.jpg)
+
+## 03：深入剖析前端性能监控原理（下）
+
+## 04：如何监控前端性能 ？
+
+### 前端性能监控
+
+####  原理
+
+* 核心指标：fp、fcp、fmp
+
+* 监控方法：
+
+  * Performance
+    * PerformanceNavigation
+    * PerformanceTiming
+    * PerformanceNavigationTiming
+  * PerformanceCbServer
+
+  > [https://developer.mozilla.org/zh-CN/docs/Web/API/Performance_API/Navigation_timing](https://developer.mozilla.org/zh-CN/docs/Web/API/Performance_API/Navigation_timing)
+
+### 代码实操
+
+1. 我们新建一个页面`performance-test.html `
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="UTF-8" />
+       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <title>performance-test</title>
+     </head>
+     <body></body>
+     <script>
+       window.onload = function () {
+         console.log(JSON.stringify(window.performance, null, 2))
+         const {
+           domainLookupStart,
+           domainLookupEnd,
+           domComplete,
+           domLoading,
+           loadEventEnd,
+           loadEventStart,
+         } = window.performance.timing
+         console.log('dns获取时间', domainLookupEnd - domainLookupStart)
+         console.log('dom获取时间', domComplete - domLoading)
+         console.log('dom渲染时间', loadEventEnd, loadEventStart) // 这时还没渲染，不准确
+       }
+     </script>
+   </html>
+   ```
+
+2. 运行至浏览器结果如下
+
+   ```shell
+   {
+     "timeOrigin": 1683795983810.5,
+     "timing": {
+       "connectStart": 1683795983810,
+       "navigationStart": 1683795983810,
+       "secureConnectionStart": 0,
+       "fetchStart": 1683795983810,
+       "domContentLoadedEventStart": 1683795983821,
+       "responseStart": 1683795983810,
+       "domInteractive": 1683795983821,
+       "domainLookupEnd": 1683795983810,
+       "responseEnd": 1683795983814,
+       "redirectStart": 0,
+       "requestStart": 1683795983810,
+       "unloadEventEnd": 1683795983817,
+       "unloadEventStart": 1683795983817,
+       "domLoading": 1683795983818,
+       "domComplete": 1683795983821,
+       "domainLookupStart": 1683795983810,
+       "loadEventStart": 1683795983821,
+       "domContentLoadedEventEnd": 1683795983821,
+       "loadEventEnd": 0,
+       "redirectEnd": 0,
+       "connectEnd": 1683795983810
+     },
+     "navigation": {
+       "type": 1,
+       "redirectCount": 0
+     }
+   }
+   
+   dns获取时间 0
+   performance-test.html:23 dom获取时间 3
+   performance-test.html:24 dom渲染时间 0 1683795983821
+   ```
+
+   
