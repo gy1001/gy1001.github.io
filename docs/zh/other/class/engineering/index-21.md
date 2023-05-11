@@ -231,18 +231,6 @@ The **Largest Contentful Paint** (LCP) performance metric provides the render ti
      <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
      <script>
        window.onload = function () {
-         // console.log(JSON.stringify(window.performance, null, 2))
-         // const {
-         //   domainLookupStart,
-         //   domainLookupEnd,
-         //   domComplete,
-         //   domLoading,
-         //   loadEventEnd,
-         //   loadEventStart,
-         // } = window.performance.timing
-         // console.log('dns获取时间', domainLookupEnd - domainLookupStart)
-         // console.log('dom获取时间', domComplete - domLoading)
-         // console.log(dom渲染时间', loadEventEnd, loadEventStart) // 这时还没渲染，不准确
          const perfEntries = window.performance.getEntries()
          const paint = window.performance.getEntriesByType('paint')
          const fp = paint.find((e) => e.name === 'first-paint').startTime
@@ -256,3 +244,298 @@ The **Largest Contentful Paint** (LCP) performance metric provides the render ti
    ```
 
 2. 强刷浏览器，就可以看到控制台中打印的时间数据
+
+## 07：性能监控和性能度量之 Performance Observe
+
+> 目前我们的时间获取都是在 window.onload 回调中，有很多数据并不能准确的拿到。那么该如何操作呢？
+
+### 前端的 DOM 加载性能
+
+1. 修改`performance-test.html`,代码如下
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="UTF-8" />
+       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <title>performance-test</title>
+     </head>
+     <script>
+       function callback(list, ob) {
+         list.getEntries().forEach((e) => {
+           console.log(e)
+         })
+       }
+       let observer = new PerformanceObserver(callback)
+       // 这里可以看到的前端 DOM 加载性能
+       observer.observe({ entryTypes: ['element'] })
+     </script>
+     <body>
+       // img 需要增加属性 elementtiming="big-image"
+       <img
+         src="https://lf3-cdn-tos.bytescm.com/obj/static/xitu_juejin_web/e08da34488b114bd4c665ba2fa520a31.svg"
+         alt=""
+         elementtiming="big-image"
+       />
+     </body>
+     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+   </html>
+   ```
+
+2. 运行至浏览器，打开控制看，结果如下
+
+   ```shell
+   {
+       "name": "image-paint",
+       "entryType": "element",
+       "startTime": 153.60000000009313,
+       "duration": 0,
+       "renderTime": 153.60000000009313,
+       "loadTime": 141.60000000009313,
+       "intersectionRect": {
+           "x": 8,
+           "y": 8,
+           "width": 137,
+           "height": 28,
+           "top": 8,
+           "right": 145,
+           "bottom": 36,
+           "left": 8
+       },
+       "identifier": "big-image",
+       "naturalWidth": 137,
+       "naturalHeight": 28,
+       "id": "",
+       "url": "https://lf3-cdn-tos.bytescm.com/obj/static/xitu_juejin_web/e08da34488b114bd4c665ba2fa520a31.svg"
+   }
+   ```
+
+### navigation: 前端模板/文档(HTML)加载性能
+
+1. 修改`performance-test.html`,代码如下
+
+   ```html
+   <script>
+   	// 修改 entryTypes 为 navigation
+     observer.observe({ entryTypes: ['navigation'] })
+   </script>
+   ```
+
+2. 运行至浏览器，打开控制看，结果如下
+
+   ```shell
+   {
+       "name": "",
+       "entryType": "navigation",
+       "startTime": 0,
+       "duration": 1669.7000000001863,
+       "initiatorType": "navigation",
+       "nextHopProtocol": "",
+       "renderBlockingStatus": "non-blocking",
+       "workerStart": 0,
+       "redirectStart": 0,
+       "redirectEnd": 0,
+       "fetchStart": 0.39999999990686774,
+       "domainLookupStart": 0.39999999990686774,
+       "domainLookupEnd": 0.39999999990686774,
+       "connectStart": 0.39999999990686774,
+       "secureConnectionStart": 0,
+       "connectEnd": 0.39999999990686774,
+       "requestStart": 0.39999999990686774,
+       "responseStart": 0.39999999990686774,
+       "responseEnd": 2.2999999998137355,
+       "transferSize": 300,
+       "encodedBodySize": 0,
+       "decodedBodySize": 0,
+       "responseStatus": 0,
+       "serverTiming": [],
+       "unloadEventStart": 5.2999999998137355,
+       "unloadEventEnd": 5.2999999998137355,
+       "domInteractive": 1668.6000000000931,
+       "domContentLoadedEventStart": 1668.6000000000931,
+       "domContentLoadedEventEnd": 1668.7999999998137,
+       "domComplete": 1669.7000000001863,
+       "loadEventStart": 1669.7000000001863,
+       "loadEventEnd": 1669.7000000001863,
+       "type": "reload",
+       "redirectCount": 0,
+       "activationStart": 0
+   }
+   ```
+
+### resource: 前端HTML模板和资源的加载性能
+
+1. 修改`performance-test.html`,代码如下
+
+   ```html
+   <script>
+   	// 修改 entryTypes 为 resouce
+     observer.observe({ entryTypes: ['resource'] })
+   </script>
+   ```
+
+2. 运行至浏览器，打开控制看，结果如下
+
+   ```shell
+   {
+       "name": "https://lf3-cdn-tos.bytescm.com/obj/static/xitu_juejin_web/e08da34488b114bd4c665ba2fa520a31.svg",
+       "entryType": "resource",
+       "startTime": 12.100000000093132,
+       "duration": 22.100000000093132,
+       "initiatorType": "img",
+       "nextHopProtocol": "h2",
+       "renderBlockingStatus": "non-blocking",
+       "workerStart": 0,
+       "redirectStart": 0,
+       "redirectEnd": 0,
+       "fetchStart": 12.100000000093132,
+       "domainLookupStart": 12.100000000093132,
+       "domainLookupEnd": 12.100000000093132,
+       "connectStart": 12.100000000093132,
+       "secureConnectionStart": 12.100000000093132,
+       "connectEnd": 12.100000000093132,
+       "requestStart": 32.10000000009313,
+       "responseStart": 32.60000000009313,
+       "responseEnd": 34.200000000186265,
+       "transferSize": 0,
+       "encodedBodySize": 1452,
+       "decodedBodySize": 3234,
+       "responseStatus": 0,
+       "serverTiming": [
+           {
+               "name": "cdn-cache",
+               "duration": 0,
+               "description": "HIT"
+           },
+           {
+               "name": "edge",
+               "duration": 1,
+               "description": ""
+           }
+       ]
+   }
+   
+   {
+       "name": "https://code.jquery.com/jquery-3.6.4.min.js",
+       "entryType": "resource",
+       "startTime": 12.600000000093132,
+       "duration": 34.700000000186265,
+       "initiatorType": "script",
+       "nextHopProtocol": "",
+       "renderBlockingStatus": "non-blocking",
+       "workerStart": 0,
+       "redirectStart": 0,
+       "redirectEnd": 0,
+       "fetchStart": 12.600000000093132,
+       "domainLookupStart": 0,
+       "domainLookupEnd": 0,
+       "connectStart": 0,
+       "secureConnectionStart": 0,
+       "connectEnd": 0,
+       "requestStart": 0,
+       "responseStart": 0,
+       "responseEnd": 47.3000000002794,
+       "transferSize": 0,
+       "encodedBodySize": 0,
+       "decodedBodySize": 0,
+       "responseStatus": 0,
+       "serverTiming": []
+   }
+   ```
+
+### mark 和 measure: 前端性能的度量
+
+1. 修改`performance-test.html`,代码如下
+
+   ```html
+   <script>
+   	// 修改 entryTypes 为 resouce
+     observer.observe({ entryTypes: ['mark', "measure"] })
+   </script>
+   <script>
+       // 以一个标志开始。
+       performance.mark('mySetTimeout-start')
+       // 等待一些时间。
+       setTimeout(function () {
+         // 标志时间的结束。
+         performance.mark('mySetTimeout-end')
+         // 测量两个不同的标志。
+         performance.measure(
+           'mySetTimeout',
+           'mySetTimeout-start',
+           'mySetTimeout-end',
+         )
+         // 清除存储的标志位
+         performance.clearMarks()
+         performance.clearMeasures()
+       }, 1000)
+     </script>
+   ```
+
+2. 运行至浏览器，打开控制看，结果如下
+
+   ```shell
+   {
+       "name": "mySetTimeout-start",
+       "entryType": "mark",
+       "startTime": 51,
+       "duration": 0
+   }
+   
+   {
+       "name": "mySetTimeout",
+       "entryType": "measure",
+       "startTime": 51,
+       "duration": 1005.8999999999069 // 两者执行时间差
+   }
+   
+   {
+       "name": "mySetTimeout-end",
+       "entryType": "mark",
+       "startTime": 1056.8999999999069,
+       "duration": 0
+   }
+   ```
+
+### paint：Either `'first-paint'` or `'first-contentful-paint'`.
+
+1. 修改`performance-test.html`,代码如下
+
+   ```html
+   <script>
+   	// 修改 entryTypes 为 resouce
+     observer.observe({ entryTypes: ['paint'] })
+   </script>
+   ```
+
+2. 运行至浏览器，强制刷新，打开控制看，结果如下
+
+   ```shell
+   {
+       "name": "first-paint",
+       "entryType": "paint",
+       "startTime": 151.90000000037253,
+       "duration": 0
+   }
+   {
+       "name": "first-contentful-paint",
+       "entryType": "paint",
+       "startTime": 151.90000000037253,
+       "duration": 0
+   }
+   ```
+
+## 08：ChromePerformance用法教学
+
+### 工具
+
+* Chrome Performance
+* 前端性能监控平台
+
+## 09：分享前端性能监控平台架构设计
+
+### 如何构建前端性能监控平台
+
+![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f3830de380fd46e8888f492322e2d430~tplv-k3u1fbpfcp-watermark.image?)
