@@ -404,3 +404,12 @@
    ```
 
 4. 在`examples/zbestpc_update`中运行终端命令`npm run build:imooc`即可看到产生了`dist`文件夹
+
+## 06：zbestpc项目build命令改造
+
+## 07：工程化脚手架vite插件开发
+
+[参考文档：https://cn.vitejs.dev/guide/api-javascript.html](https://cn.vitejs.dev/guide/api-javascript.html)
+
+## 08：zbestpc项目移植imooc-build+vite脚手架
+
