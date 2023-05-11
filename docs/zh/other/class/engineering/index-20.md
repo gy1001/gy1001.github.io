@@ -256,3 +256,65 @@
    ```
 
 7. 配置完成后，刷新页面，发现模板文件没有渲染，但是如果修改`src/index.js`中添加打印代码，可以在控制台中实时看到
+
+## 03：模板文件编译和注入
+
+1. 添加模板插件
+
+   ```bash
+   npm install vite-plugin-html -D
+   ```
+
+2. 修改`vite.config.js` ,引入插件
+
+   ```javascript
+   import { createHtmlPlugin } from 'vite-plugin-html'
+   
+   plugins: [
+     createHtmlPlugin({
+       entry: './src/index.js',
+       filname: 'index.html',
+       template: 'index-vite.html',
+     }),
+   ],
+   ```
+
+3. 根目录下新建`index-vite.html`,把`public/index.html`文件内容拷贝进来，并导入相应`index.js`
+
+   ```html
+   <script type="module" src="/src/index.js"></script>
+   ```
+
+4. 项目中如果使用 ejs ，我们先把 ejs 中的模板拷贝进来，后续抽离为一个组件
+
+5. 目前运行终端，页面中显示了，但是图片都没有显示，可以修改一下图片地址，`img/`改为`../src/img/`,然后图片就可以正常显示了
+
+6. 执行`npm run vite-build`时候报错，
+
+   ```shell
+   Error: Missing "./legacy-polyfills" export in "vite" package
+   ```
+
+   
+
+6. 推测是版本依赖不一致,执行以下命令
+
+   ```bash
+   npm uninstall @vitejs/plugin-legacy
+   npm install @vitejs/plugin-legacy -D
+   ```
+
+7. 修改`vite.config.js`中的打包输出路径
+
+   ```javascript
+   {
+     build: {
+       outDir: 'dist', // 产出目录
+     }
+   }
+   ```
+
+8. 重新运行`npm run vite-build`发现打包成功
+
+
+
