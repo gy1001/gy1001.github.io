@@ -279,7 +279,7 @@ export const sidebarZh: SidebarConfig = {
         },
         {
           text: '专为小白设计的TypeScript入门课',
-          collapsible: false,
+          collapsible: true,
           children: [
             '/zh/other/class/typescript-simple/index-01.md',
             '/zh/other/class/typescript-simple/index-02.md',
