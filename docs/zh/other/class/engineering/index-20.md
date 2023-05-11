@@ -196,3 +196,34 @@
    ```
 
 9. 再次运行`npm run vite-dev`就可以看到，服务正常启动了
+
+10. 打开浏览器。报错信息如下
+
+    ```bash
+    Uncaught ReferenceError: $ is not defined
+    ```
+
+11. 我们下一节进行修复进行修复
+
+## 02：rollup-plugin-inject解决全局变量注入
+
+1. 安装插件，并添加配置
+
+   ```bash
+   npm install rollup-plugin-inject -S
+   ```
+
+2. 修改`vite.config.js`,添加如下配置
+
+   ```javascript
+   import inject from "rollup-plugin-inject"
+   
+   plugins: [
+     inject({
+       $: 'jquery',
+       jQuery: 'jquery',
+     }),
+   ],
+   ```
+
+3. 配置完成后，刷新页面，发现模板文件没有渲染，但是如果修改`src/index.js`中添加打印代码，可以在控制台中实时看到
