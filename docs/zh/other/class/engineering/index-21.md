@@ -191,5 +191,68 @@
 
    ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ae21dde109234dc38a2d9e8adf8a7bab~tplv-k3u1fbpfcp-watermark.image?)
 
-7. 
+## 06：性能指标核心概念讲解：fp、fcp和lcp
 
+### FP: First Paint
+
+First Paint, part of the Paint Timing API, is the time between navigator and when the browser renders the first pixels to the screen, rendering anything that is visually different from what was on the screen prior to navigation. It answers the queston "Is that happening ?"
+
+[https://developer.mozilla.org/en-US/docs/Glossary/First_paint](https://developer.mozilla.org/en-US/docs/Glossary/First_paint)
+
+### FCP: First contentful paint
+
+**First Contentful Paint** (FCP) is when the browser renders the first bit of content from the DOM, providing the first feedback to the user that the page is actually loading. The question "Is it happening?" is "yes" when the first contentful paint completes.
+
+[https://developer.mozilla.org/en-US/docs/Glossary/First_contentful_paint](https://developer.mozilla.org/en-US/docs/Glossary/First_contentful_paint)
+
+### LCP: Largest Contentful Paint
+
+The **Largest Contentful Paint** (LCP) performance metric provides the render time of the largest image or text block visible within the viewport, recorded from when the page first begins to load.
+
+[https://developer.mozilla.org/en-US/docs/Glossary/Largest_contentful_paint](https://developer.mozilla.org/en-US/docs/Glossary/Largest_contentful_paint)
+
+1. 修改`performance-test.html`,代码如下
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="UTF-8" />
+       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <title>performance-test</title>
+     </head>
+     <body>
+       <img
+         src="https://lf3-cdn-tos.bytescm.com/obj/static/xitu_juejin_web/e08da34488b114bd4c665ba2fa520a31.svg"
+         alt=""
+       />
+     </body>
+     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+     <script>
+       window.onload = function () {
+         // console.log(JSON.stringify(window.performance, null, 2))
+         // const {
+         //   domainLookupStart,
+         //   domainLookupEnd,
+         //   domComplete,
+         //   domLoading,
+         //   loadEventEnd,
+         //   loadEventStart,
+         // } = window.performance.timing
+         // console.log('dns获取时间', domainLookupEnd - domainLookupStart)
+         // console.log('dom获取时间', domComplete - domLoading)
+         // console.log(dom渲染时间', loadEventEnd, loadEventStart) // 这时还没渲染，不准确
+         const perfEntries = window.performance.getEntries()
+         const paint = window.performance.getEntriesByType('paint')
+         const fp = paint.find((e) => e.name === 'first-paint').startTime
+         const fcp = paint.find(
+           (e) => e.name === 'first-contentful-paint',
+         ).startTime
+         console.log(fp, fcp)
+       }
+     </script>
+   </html>
+   ```
+
+2. 强刷浏览器，就可以看到控制台中打印的时间数据
