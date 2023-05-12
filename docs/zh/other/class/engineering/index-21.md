@@ -20,8 +20,8 @@
 
 核心是两步
 
-* 监控前端性能
-* 优化前端性能
+- 监控前端性能
+- 优化前端性能
 
 ## 02：深入剖析前端性能监控原理（上）
 
@@ -33,17 +33,17 @@
 
 ### 前端性能监控
 
-####  原理
+#### 原理
 
-* 核心指标：fp、fcp、fmp
+- 核心指标：fp、fcp、fmp
 
-* 监控方法：
+- 监控方法：
 
-  * Performance
-    * PerformanceNavigation
-    * PerformanceTiming
-    * PerformanceNavigationTiming
-  * PerformanceCbServer
+  - Performance
+    - PerformanceNavigation
+    - PerformanceTiming
+    - PerformanceNavigationTiming
+  - PerformanceCbServer
 
   > [https://developer.mozilla.org/zh-CN/docs/Web/API/Performance_API/Navigation_timing](https://developer.mozilla.org/zh-CN/docs/Web/API/Performance_API/Navigation_timing)
 
@@ -191,7 +191,7 @@
 
    ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ae21dde109234dc38a2d9e8adf8a7bab~tplv-k3u1fbpfcp-watermark.image?)
 
-## 06：性能指标核心概念讲解：fp、fcp和lcp
+## 06：性能指标核心概念讲解：fp、fcp 和 lcp
 
 ### FP: First Paint
 
@@ -318,7 +318,7 @@ The **Largest Contentful Paint** (LCP) performance metric provides the render ti
 
    ```html
    <script>
-   	// 修改 entryTypes 为 navigation
+     // 修改 entryTypes 为 navigation
      observer.observe({ entryTypes: ['navigation'] })
    </script>
    ```
@@ -365,13 +365,13 @@ The **Largest Contentful Paint** (LCP) performance metric provides the render ti
    }
    ```
 
-### resource: 前端HTML模板和资源的加载性能
+### resource: 前端 HTML 模板和资源的加载性能
 
 1. 修改`performance-test.html`,代码如下
 
    ```html
    <script>
-   	// 修改 entryTypes 为 resouce
+     // 修改 entryTypes 为 resouce
      observer.observe({ entryTypes: ['resource'] })
    </script>
    ```
@@ -451,27 +451,27 @@ The **Largest Contentful Paint** (LCP) performance metric provides the render ti
 
    ```html
    <script>
-   	// 修改 entryTypes 为 resouce
-     observer.observe({ entryTypes: ['mark', "measure"] })
+     // 修改 entryTypes 为 resouce
+     observer.observe({ entryTypes: ['mark', 'measure'] })
    </script>
    <script>
-       // 以一个标志开始。
-       performance.mark('mySetTimeout-start')
-       // 等待一些时间。
-       setTimeout(function () {
-         // 标志时间的结束。
-         performance.mark('mySetTimeout-end')
-         // 测量两个不同的标志。
-         performance.measure(
-           'mySetTimeout',
-           'mySetTimeout-start',
-           'mySetTimeout-end',
-         )
-         // 清除存储的标志位
-         performance.clearMarks()
-         performance.clearMeasures()
-       }, 1000)
-     </script>
+     // 以一个标志开始。
+     performance.mark('mySetTimeout-start')
+     // 等待一些时间。
+     setTimeout(function () {
+       // 标志时间的结束。
+       performance.mark('mySetTimeout-end')
+       // 测量两个不同的标志。
+       performance.measure(
+         'mySetTimeout',
+         'mySetTimeout-start',
+         'mySetTimeout-end',
+       )
+       // 清除存储的标志位
+       performance.clearMarks()
+       performance.clearMeasures()
+     }, 1000)
+   </script>
    ```
 
 2. 运行至浏览器，打开控制看，结果如下
@@ -505,7 +505,7 @@ The **Largest Contentful Paint** (LCP) performance metric provides the render ti
 
    ```html
    <script>
-   	// 修改 entryTypes 为 resouce
+     // 修改 entryTypes 为 resouce
      observer.observe({ entryTypes: ['paint'] })
    </script>
    ```
@@ -527,15 +527,32 @@ The **Largest Contentful Paint** (LCP) performance metric provides the render ti
    }
    ```
 
-## 08：ChromePerformance用法教学
+## 08：ChromePerformance 用法教学
 
 ### 工具
 
-* Chrome Performance
-* 前端性能监控平台
+- Chrome Performance
+- 前端性能监控平台
 
 ## 09：分享前端性能监控平台架构设计
 
 ### 如何构建前端性能监控平台
 
 ![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f3830de380fd46e8888f492322e2d430~tplv-k3u1fbpfcp-watermark.image?)
+
+## 10：前端性能优化方法总结
+
+- 减少请求次数
+- 减小资源大小
+- 提高响应速度和加载速度（`HTTP` 请求：强缓存和协商缓存）、
+- DNS缓存
+- 提升 `TCP` 链接速度（服务器宽带和性能、客户端网络带宽和性能、中间件服务器和优化）
+- 请求优化（请求头内容精简）
+- 相应优化(gzip压缩)
+- DOM优化（script 放后，style放前）
+- 优化资源加载时机
+  - 异步请求 js(`defer`、`async`)
+
+- 优化加载方式
+
+[参考文档: web前端性能优化总结](https://blog.csdn.net/mahoking/article/details/51472697)
