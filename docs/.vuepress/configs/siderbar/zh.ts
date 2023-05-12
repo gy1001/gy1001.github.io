@@ -300,7 +300,10 @@ export const sidebarZh: SidebarConfig = {
         {
           text: 'TS 从入门到深度掌握，晋级TypeScript高手',
           collapsible: true,
-          children: ['/zh/other/class/typescript-advanced/index-01.md'],
+          children: [
+            '/zh/other/class/typescript-advanced/index-01.md',
+            '/zh/other/class/typescript-advanced/index-02.md',
+          ],
         },
       ],
     },
