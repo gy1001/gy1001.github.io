@@ -303,6 +303,7 @@ export const sidebarZh: SidebarConfig = {
           children: [
             '/zh/other/class/typescript-advanced/index-01.md',
             '/zh/other/class/typescript-advanced/index-02.md',
+            '/zh/other/class/typescript-advanced/index-03.md',
           ],
         },
       ],
