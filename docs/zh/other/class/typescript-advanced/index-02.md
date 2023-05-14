@@ -297,3 +297,225 @@ export enum EnumAuditStats {
 }
 ```
 
+##  13：any，unknown 的两点区别和多个应用场景
+
+> any 和 unknown 在开发中和第三方包源码底层经常看到，弄清楚它们的场景也很重要
+
+### 特点
+
+#### 相同点
+
+* any 和 unknown 可以是任何类的父类，所以任何类型的变量都可以赋值给 any 或者 unknown 类型的变量
+
+#### 不同点
+
+* any 可以是任何类的子类，但是 unknown 不可以，所以 any 类型的变量都可以赋值给其他类型的变量
+* 不能拿 unknown 类型的变量来获取任何属性和方法，但是 any 类型的变量可以获取任意名称的属性和任意名称的方法
+
+### any 比较典型的应用场景
+
+1. 自定义守卫
+2. 需要进行 as any 类型断言的场景
+
+```typescript
+// Vue3 源码片段
+// any 的应用场景 --自定义守卫使用 any
+export function isRef(r: any): r is Ref {
+  return Boolean(r && r.__v_isRef === true) // any 类型的 r 参数在函数内部获取属性
+}
+```
+
+### unknown 一般用做函数参数
+
+> 用来接受任意类型的变量实参，但是在函数内部只用于再次传递或者输出结果，不获取属性的场景
+
+```typescript
+// Vue3 源码片段 ref 的 unknown 参数
+export function ref(value: unknown) {
+  return createRef(value) // 函数内部只用于再次传递值，而不获取属性
+}
+```
+
+## 14：深入理解接口+真实应用场景
+
+> 接口：另一种定义对象类型的类型
+
+### 接口应用场景
+
+1. 一些第三方或者框架底层源码中有大量的接口类型
+2. 提供方法的对象类型的参数时使用
+3. 为多个同类别的**类**提供统一的方法和属性声明
+
+### 如何定义接口
+
+```typescript
+interface Product {
+  name: string
+  price: number
+  account: number
+  buy(): void
+}
+
+let P: Product = {
+  name: 'iphone',
+  price: 1000,
+  account: 10,
+  buy() {
+    console.log('buying')
+  },
+}
+```
+
+### 继承接口
+
+> 新的接口只是在原来接口继承之上增加了一些属性或者方法，这时就用接口继承
+
+## 15：可索引签名和 2 个容易忽略的重要细节
+
+> 注意细节：
+>
+> * 键名类型需要注意
+> * 可索引签名的值类型需要是兼容其他属性的值的类型
+
+```typescript
+interface Product {
+  name: string
+  price: number
+  account: number
+  buy(): void
+  // 可索引签名
+  [x: string]: any
+}
+
+let P: Product = {
+  name: 'iphone',
+  price: 1000,
+  account: 10,
+  buy() {
+    console.log('buying')
+  },
+  age: 500,
+}
+```
+
+## 16：索引访问类型，索引访问类型的深入扩展
+
+```typescript
+
+const symid = Symbol('productNo')
+interface Product {
+  name: string
+  price: number
+  account: number
+  buy(): string
+  [symid]: number | string
+}
+type A = Product['price'] // number
+type B = Product['price' | 'name'] // string | number
+type S = Product[typeof symid] // number | string
+type PKeys = keyof Product // "name" | "price" | "account" | "buy" || typeof  symid
+let pKeys: PKeys = 'name'
+
+type AllKeys<T> = T extends any ? T : never
+type Pkeys2 = AllKeys<keyof Product> // typeof symid | "name" | "price" | "account" | "buy"
+```
+
+## 17: 视频作业：容易被忽略的 ts 类型
+
+> 说说你理解的 void
+
+## 18: null 和 undefined + 相关重要细节
+
+> javascript 中 null 表示什么都没有，表示一个空对象引用
+
+在 JavaScript 中
+
+```javascript
+let obj = null
+console.log(typeof null) // object
+
+// 声明一个变量，但是没有赋值，该变量的值为 undefined
+var x
+console.log("x:", x)
+console.log(typeof undefined) // undefined 
+```
+
+在 Typescript 中
+
+```typescript
+let str: string | undefined
+console.log('str: ', str)
+```
+
+undefined 的一些应用
+
+```typescript
+// 参数可选后，会解析为： (parameter) data: string | undefined
+function fn(data?: string) {}
+fn()
+```
+
+那些数据类型可以接收 undefined
+
+```typescript
+// any unknown undefined 可以接收 undefined
+// any unknown null 可以接收 null
+let data: undefined = undefined
+let data1: any = undefined
+let data2: unknown = undefined
+```
+
+## 19：看似简单的取值为何总抛出错误？
+
+```typescript
+let obj = { username: '唐僧', age: 240 }
+let username = 'username'
+// username = '猪八戒'
+let u = obj[username] // 推到出来：u: any，因为 username 可以变为其他值，比如 猪八戒
+
+// 可改为如下
+let obj = { username: '唐僧', age: 240 }
+const username = 'username'
+let u = obj[username] // 推到出来：u: string
+```
+
+```typescript
+let obj: object = { username: '唐僧', age: 240 }
+const username = 'username'
+let u = obj[username] // 推到出来：u: any
+```
+
+## 20: TS 函数和 TS 函数类型，rest 参数
+
+### TS 函数
+
+```typescript
+// 返回值类型可以省略，因为会推导出类
+function info(name: string, age: number): number {
+  return 3
+}
+
+info('唐僧', 100)
+```
+
+### TS 函数类型
+
+```typescript
+type InfoFunType = (name: string, age: number) => number
+
+let info2: InfoFunType = function (name, age) {
+  return 3
+}
+info2('孙悟空', 500)
+```
+
+### rest 参数
+
+```typescript
+type InfoFunType = (name: string, age: number, ...rest: any) => any
+let info2: InfoFunType = function (name, age, ...rest) {
+  return rest
+}
+info2('孙悟空', 500, 122, '撒旦法撒旦', '如来佛祖')
+```
+
