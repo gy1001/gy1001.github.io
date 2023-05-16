@@ -29,7 +29,7 @@ function Car(brandNo, price, type) {
 }
 ```
 
-## 04：TS 相关 JS：深入ES5 原型继承和组合继承
+## 04：TS 相关 JS：深入 ES5 原型继承和组合继承
 
 ```javascript
 function Vechile(brandNo, price) {
@@ -61,7 +61,6 @@ bus.sale()
 > 上一节中我们使用 一个父类的实例对象作为子类的原型指向，这里面父类的实例对象上有两个属性 brandNo, price 就会浪费空间，
 
 ```javascript
-
 function Vechile(brandNo, price) {
   this.brandNo = brandNo
   this.price = price
