@@ -305,6 +305,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/typescript-advanced/index-02.md',
             '/zh/other/class/typescript-advanced/index-03.md',
             '/zh/other/class/typescript-advanced/index-06.md',
+            '/zh/other/class/typescript-advanced/index-07.md',
           ],
         },
       ],
