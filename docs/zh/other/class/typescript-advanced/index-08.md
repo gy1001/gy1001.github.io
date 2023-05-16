@@ -121,6 +121,7 @@ var pattern1 = /[\u4e00-\u9fa5]/g
 ```
 
 ```typescript
+// 中文排序
 const chineseArr = ['武汉', '石家庄', '郑州', '太原', '济南', '沈阳', '大连']
 
 function sortChinese(arr: Array<string>): Array<string> {
@@ -141,3 +142,114 @@ function isChinese(arr: Array<string>): boolean {
 }
 ```
 
+## 06：深入理解为什么要用泛型函数重载
+
+```typescript
+// 字符串排序
+function strSelfSort(str: string) {
+  const strArr = str.split('')
+  const strSortArr = quickSort(strArr)
+  return strSortArr.join('')
+}
+```
+
+结合以上写的方法，综合代码如下
+
+```typescript
+function sort<T>(data: T): Array<any> | string | undefined {
+  if (data instanceof Array) {
+    if (isChinese(data)) {
+      return sortChinese(data)
+    } else {
+      return quickSort(data)
+    }
+  } else if (typeof data === 'string') {
+    return strSelfSort(data)
+  }
+}
+
+console.log(sort(chineseArr)) // [ '大连', '济南','沈阳', '石家庄','太原', '武汉','郑州']
+console.log(sort('srcfgfdf')) // cdfffgrs
+```
+
+## 07: 视频作业——泛型函数中分化出来子功能
+
+## 10: 深入泛型工厂函数类型和拓展知识
+
+### 泛型工厂函数类型定义
+
+> 可以代表任意一个类构造函数的函数类型
+
+```typescript
+class CommercialBank {
+  public address: string = '北京'
+  public name: string = '王五'
+  static count: number
+  constructor(name: string, address: string) {
+    this.address = address
+    this.name = name
+  }
+  loan(): void {
+    console.log(this.name + ' 银行贷款')
+  }
+}
+
+// 注意这里的 new
+type ConstructorType = new (...args: any) => CommercialBank
+let CommericalBankInstance: ConstructorType = CommercialBank
+
+const customer = new CommericalBankInstance('孙悟空', '水帘洞')
+customer.loan() // 孙悟空 银行贷款
+```
+
+## 11: 泛型工厂函数类型的真实应用
+
+> 如何使用泛型工厂函数类型，来为所有的类提供一个通用的构造器，目前在构造器中先不关心参数，只是在创建实例时候打印一条日志信息（通用的语句），其实它是装饰器的一个雏形（类似的一个思想）
+
+```typescript
+class CommercialBank {
+  public address: string = '北京'
+  public name: string = '王五'
+  static count: number
+  constructor(name: string, address: string) {
+    this.address = address
+    this.name = name
+  }
+  loan(): void {
+    console.log(this.name + ' 银行贷款')
+  }
+}
+// 注意这里的 new
+type ConstructorType = new (...args: any) => any
+interface ConstructroInter {
+  new (...args: any): any
+}
+// 使用接口、type声明类型，效果是相同的
+// function createFactoryConstructor(constructorType: new (...args: any) => any) {
+// function createFactoryConstructor(constructorType: ConstructorType) {
+function createFactoryConstructor(constructorType: ConstructroInter) {
+  console.log(constructorType.name + ' 被创建了')
+  new constructorType()
+}
+createFactoryConstructor(CommercialBank) // 执行时候，会打印：CommercialBank 被创建了
+```
+
+## 12: 交叉类型
+
+### 交叉类型
+
+```typescript
+type Obj1 = { a: string; b: number }
+type Obj2 = { c: number; d: string }
+type Obj3 = Obj1 & Obj2 // 两者的并集
+const o3: Obj3 = { a: '唐僧', b: 11, c: 33, d: '金蝉子' }
+
+// 交叉类型表示取两个类型的并集，用在基本类型上是没有意义的，等同于声明了never
+type Obj4 = string & number // 推断出：type Obj4 = never
+```
+
+## 13: 通用交叉方法
+
+## 14: 代码实战演练
+
+> 如何用交叉类型 **+** 方法重载  **+** 泛型 **rest** 参数合参并 **n** 多个对象。 
