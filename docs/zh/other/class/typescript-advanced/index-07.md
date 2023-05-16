@@ -146,6 +146,8 @@ console.log(obj.value) // 100
 
 ## 07：高频使用的泛型赋值——反向为泛型赋值
 
+> 上一节中最后我们知道前面的类型 "age" 确定后，后面的传递参数值就确定了，必须是 age，由此可以进行反向推导赋值
+
 ```typescript
 class ObjectRefImpl<T extends object, K extends keyof T> {
   public readonly __v_isRef = true
