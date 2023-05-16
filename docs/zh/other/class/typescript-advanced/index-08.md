@@ -5,7 +5,10 @@
 不适用函数重载时候，如果一个函数返回多个类型，使用时候，我们需要使用类型断言才能进行有效的准确提示，显得繁琐，并且不够灵活(假如增加新的类型返回，仍然需要类型断言新的类型)
 
 ```typescript
-enum MessageTypes {  Image = "image", Audio = "audio" }
+enum MessageTypes {
+  Image = 'image',
+  Audio = 'audio',
+}
 type Message = { id: number; type: MessageTypes; sendMessage: string }
 const messages: Message[] = [
   { id: 1, type: MessageTypes.Audio, sendMessage: '你好啊' },
@@ -52,7 +55,9 @@ const messages: Message[] = [
 function searchMsg(condition: MessageTypes): Message[] // 重载签名
 function searchMsg(condition: number): Message // 重载签名
 // 实现签名
-function searchMsg(condition: MessageTypes | number): Message | Message[] | undefined {
+function searchMsg(
+  condition: MessageTypes | number,
+): Message | Message[] | undefined {
   if (typeof condition === 'number') {
     return messages.find((item) => item.id === condition)
   }
@@ -60,7 +65,10 @@ function searchMsg(condition: MessageTypes | number): Message | Message[] | unde
 }
 // 这里可以直接进行.语法操作，有提示
 console.log(searchMsg(1).id)
-const result = searchMsg(MessageTypes.Audio).map((item) => ({ ...item, name: 'xx' }))
+const result = searchMsg(MessageTypes.Audio).map((item) => ({
+  ...item,
+  name: 'xx',
+}))
 ```
 
 ## 03: 盘点函数重载最重要的要点
@@ -110,5 +118,26 @@ console.log(quickSort(chineseArr)) // [1,  1,  2,  3,  5,  7, 9, 11, 11, 19, 30,
 
 ```typescript
 var pattern1 = /[\u4e00-\u9fa5]/g
+```
+
+```typescript
+const chineseArr = ['武汉', '石家庄', '郑州', '太原', '济南', '沈阳', '大连']
+
+function sortChinese(arr: Array<string>): Array<string> {
+  return arr.sort(function (preStr, curStr) {
+    return preStr.localeCompare(curStr, 'zh-CN')
+  })
+}
+
+console.log(sortChinese(chineseArr)) // [ '大连', '济南','沈阳', '石家庄','太原', '武汉','郑州']
+```
+
+如何将两个排序结合起来呢？需要判断是否是中文
+
+```typescript
+function isChinese(arr: Array<string>): boolean {
+  var pattern = /[\u4e00-\u9fa5]/g
+  return chineseArr.some((item) => pattern.test(item))
+}
 ```
 
