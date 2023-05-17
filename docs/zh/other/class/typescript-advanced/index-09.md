@@ -1,4 +1,4 @@
-# 09- 在真实应用中深入掌握 TS 高阶技能
+# 
 
 ## 01:infer——深入 infer 和 infer 的三种应用
 
@@ -717,7 +717,58 @@ getSubItemsFromArr(arr, 'stuNo', 'stuName')
 
 ## 25: 作业：百度复杂面试题
 
+### **作业：百度复杂面试题:综合运用 综 infer，映射类型, keyof ，泛型约束来实现。 **
 
+**已知条件1：接口和类 ：**
+
+```typescript
+interface Action<T = any> {
+  type: string
+  payload?: T
+}
+class FoodModule {
+  public static topic: string
+  public count!: number
+  delay(promise: Promise<number>) {
+    return promise.then((second: number) => ({
+      type: 'delay',
+      payload: `延迟 ${second} 秒`,
+    }))
+  }
+  searchFoodByCity(action: Action<String>) {
+    return {
+      payload: action.payload,
+      type: 'searchFoodByCity',
+    }
+  }
+}
+```
+
+**已知条件2**
+
+```typescript
+// 下面是 FoodModule 类的 delay 和 searchFoodByCity 方法的泛型类型 分别是：
+type asyncMethod<T, U> = (input: Promise<T>) => Promise<Action<U>> // delay方法类型
+type syncMethod<T, U> = (action: Action<T>) => Action<U> // searchFoodByCity方法类型
+```
+
+**要求实现1：根据上面两个已知条件，综合利用 ： infer,keyof, in keyof 来得到下面类型：**
+
+```typescript
+type asyncMethodConnect<T, U> = (input: T) => Action<U> // delay方法类型
+type syncMethodConnect<T, U> = (action: T) => Action<U> // searchFoodByCity方法类型
+```
+
+**要求实现2： 根据上面两个已知条件和实现 1，最终获取到下面类型。 **
+
+```typescript
+type LastResult = {
+  delay: asyncMethodConnect<number, string>
+  searchFoodByCity: syncMethodConnect<String, String>
+}
+```
+
+**本体难度系数较高，但能很好的巩固知识并提升对知识的理解，请同学们先仔细思考再做**
 
 ## 26: 本章总结
 
