@@ -298,7 +298,7 @@ export const sidebarZh: SidebarConfig = {
           ],
         },
         {
-          text: 'TS 从入门到深度掌握，晋级TypeScript高手',
+          text: '晋级TypeScript高手，成为抢手的前端开发人才',
           collapsible: true,
           children: [
             '/zh/other/class/typescript-advanced/index-01.md',
@@ -311,6 +311,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/typescript-advanced/index-08.md',
             '/zh/other/class/typescript-advanced/index-09.md',
             '/zh/other/class/typescript-advanced/index-10.md',
+            '/zh/other/class/typescript-advanced/index-11.md',
           ],
         },
       ],

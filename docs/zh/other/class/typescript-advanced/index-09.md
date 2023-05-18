@@ -1,4 +1,4 @@
-# 
+# 09-深入 infer、TS 高级类型、泛型再进阶【全方位深度掌握 TS 泛型】
 
 ## 01:infer——深入 infer 和 infer 的三种应用
 
@@ -71,8 +71,8 @@ export function unref<T>(ref: T): T extends Ref<infer V> ? V : T {
   return isRef(ref) ? (ref.value as an) : ref
 }
 
-unref( ref(3) ) // 3
-unref( { age: 23 } ) // { age: 23 }
+unref(ref(3)) // 3
+unref({ age: 23 }) // { age: 23 }
 ```
 
 ## 04: 类型体操准备——Vue3 源码中的复杂类型体操准备：先理解 in keyof
@@ -103,7 +103,9 @@ type CustKeyValsType = {
 // 否则进一步判断是否为Ref的'子集'，进一步UnwrapRefSimple
 export type UnwrapRef<T> = T extends ComputedRef<infer V>
   ? UnwrapRefSimple<V>
-  : T extends Ref<infer V> ? UnwrapRefSimple<V> : UnwrapRefSimple<T>
+  : T extends Ref<infer V>
+  ? UnwrapRefSimple<V>
+  : UnwrapRefSimple<T>
 
 // 我是分割线
 
@@ -111,7 +113,11 @@ export type UnwrapRef<T> = T extends ComputedRef<infer V>
 // 否则判断是否为数组的'子集'，不是的话视为object，调用UnwrappedObject
 type UnwrapRefSimple<T> = T extends Function | CollectionTypes | BaseTypes | Ref
   ? T
-  : T extends Array<any> ? T : T extends object ? UnwrappedObject<T> : T
+  : T extends Array<any>
+  ? T
+  : T extends object
+  ? UnwrappedObject<T>
+  : T
 
 // 我是分割线
 // 调用UnwrapRef，产生递归效果，解决了ts类型递归
@@ -121,9 +127,9 @@ type UnwrappedObject<T> = { [P in keyof T]: UnwrapRef<T[P]> } & SymbolExtract<T>
 如上源码，测试代码如下
 
 ```typescript
-const urf:UnwrapRef<Ref<string>> //推导出： const urf:string
-const urf1:UnwrapRef<string> //推导出： const urf:string
-const urf2: UnwrapRef<{ name: Ref<string>, age: Ref<number>  }> // 推导出 const urf2: { name: string, age: number }
+const urf: UnwrapRef<Ref<string>> //推导出： const urf:string
+const urf1: UnwrapRef<string> //推导出： const urf:string
+const urf2: UnwrapRef<{ name: Ref<string>; age: Ref<number> }> // 推导出 const urf2: { name: string, age: number }
 ```
 
 ## 06: TS 条件类型——容易混淆的问题，条件类型的好处
@@ -162,7 +168,7 @@ type AppAttrToObj<T, K extends string, V> = {
   [P in keyof T | K]: P extends keyof T ? T[P] : V
 }
 
-type Test = AppAttrToObj<Customer, 'weixn', string> 
+type Test = AppAttrToObj<Customer, 'weixn', string>
 // 推导出 type Test = { name: string, weixn: string, degree: number, phone: string }
 // 这样原有类型身上就可以添加属性
 ```
@@ -190,7 +196,12 @@ type Modules = {
 如何书写一种如下类型,使其类型为
 
 ```typescript
-type GetKeysMenu = "menu/setActiveIndex" | "menu/setCollapse" | "tabs/seteditableTabsValue" | "tabs/setTabs" | "tabs/setTabsList"
+type GetKeysMenu =
+  | 'menu/setActiveIndex'
+  | 'menu/setCollapse'
+  | 'tabs/seteditableTabsValue'
+  | 'tabs/setTabs'
+  | 'tabs/setTabsList'
 ```
 
 ### 补充知识
@@ -204,11 +215,11 @@ type P2 = Person[keyof Person] // number | string
 
 解释：
 
-1. Person['key'] 是查询类型(Lookup Types), 可以获取到对应属性类型的类型； 
+1. Person['key'] 是查询类型(Lookup Types), 可以获取到对应属性类型的类型；
 
-2. Person[keyof Person]本质上是执行 Person['id' | 'name' | 'age']； 
+2. Person[keyof Person]本质上是执行 Person['id' | 'name' | 'age']；
 
-3. 由于联合类型具有分布式的特性，Person['id' | 'name' | 'age'] 变成了 Person['id'] ｜ Person['name'] ｜ Person['age']； 
+3. 由于联合类型具有分布式的特性，Person['id' | 'name' | 'age'] 变成了 Person['id'] ｜ Person['name'] ｜ Person['age']；
 
 4. 最后得到的结果就是 number | string.
 
@@ -255,7 +266,7 @@ type ModulesSplceKeysNew<T> = {
   [Key in keyof T]: TestMB<Key, keyof T[Key]>
 }[keyof T]
 // [keyof T]跟在对象后面表示舍弃前面的 key
-type GetKeysMenu = ModulesSplceKeysNew<Modules> 
+type GetKeysMenu = ModulesSplceKeysNew<Modules>
 // type GetKeysMenu = "menu/setActiveIndex" | "menu/setCollapse" | "tabs/seteditableTabsValue" | "tabs/setTabs" | "tabs/setTabsList"
 ```
 
@@ -279,7 +290,7 @@ type TestExclude3 = Exclude<string | number | boolean, string | number> // type 
 
 ## 11：技巧性解决 keyof 不能直观看到结果的问题
 
-````typescript
+```typescript
 interface Customer {
   name: string
   degree: number
@@ -290,7 +301,7 @@ type Keys = keyof Customer // type Keys = keyof Customer 这里不能直观的�
 // 解决办法
 type DirectKeys<T> = T extends any ? T : never
 type KeysNew = DirectKeys<keyof Customer> // type KeysNew = "name" | "degree" | "phone"
-````
+```
 
 ## 12：Record 类型和 Record 类型存在的意义
 
@@ -330,12 +341,12 @@ function isPlainObject(data: Record<string, any>) {
 
 ## 15: 扩展：Record 和 Map 对比
 
-1. Record 是属于一个轻量级的 type 类型,Map 相对 Record 是重量级。 
+1. Record 是属于一个轻量级的 type 类型,Map 相对 Record 是重量级。
 
-2. Map 不能像 Record 一样直接转换为普通的对象，来应对只有查询的实际问题，只是为了频繁的查询去 new 一个 Map 是 一种不必要的浪费。 
+2. Map 不能像 Record 一样直接转换为普通的对象，来应对只有查询的实际问题，只是为了频繁的查询去 new 一个 Map 是 一种不必要的浪费。
 
-3. 如果读取数据和显示数据频繁，就应该采用 Record。 
-4. 如果增删改比较多，那还是使用 Map。 
+3. 如果读取数据和显示数据频繁，就应该采用 Record。
+4. 如果增删改比较多，那还是使用 Map。
 
 ## 16: 视频作业：Record 扁平化的子数组对象
 
@@ -498,8 +509,10 @@ type DegreeTodoThree = DegreeThree<Todo>
 ### 代码合并优化
 
 ```typescript
-type Degree<T> = { 
-  [P in keyof T as T[P] extends Function ? `do${Capitalize<P & string>}` : never]: T[P] 
+type Degree<T> = {
+  [P in keyof T as T[P] extends Function
+    ? `do${Capitalize<P & string>}`
+    : never]: T[P]
 }
 type DegreeTodo = Degree<Todo>
 // type DegreeTodoThree = { doAdd: () => number, doDel: () => number, doUpt: () => number }
@@ -511,7 +524,7 @@ type DegreeTodo = Degree<Todo>
 
 ### 发现问题
 
-````typescript
+```typescript
 type Degree<T> = {
   [P in keyof T as T[P] extends Function
     ? `do${Capitalize<P & string>}`
@@ -530,7 +543,7 @@ type TestArr = {
   ...
 }
  */
-````
+```
 
 ### 优化代码
 
@@ -635,8 +648,8 @@ type TodoRequired = {
 ```typescript
 // Make all properties in T optional
 type Partial<T> = {
-  [P in keyof T]?: T[P];
-};
+  [P in keyof T]?: T[P]
+}
 ```
 
 ```typescript
@@ -659,7 +672,7 @@ type TodoRequired = Partial<Todo>
 ```typescript
 // Make all properties in T readonly
 type Readonly<T> = {
-  readonly [P in keyof T]: T[P];
+  readonly [P in keyof T]: T[P]
 }
 ```
 
@@ -711,15 +724,14 @@ getSubItemsFromArr(arr, 'stuNo', 'stuName')
 ### 代码实现
 
 ```typescript
+
 ```
-
-
 
 ## 25: 作业：百度复杂面试题
 
 ### **作业：百度复杂面试题:综合运用 综 infer，映射类型, keyof ，泛型约束来实现。 **
 
-**已知条件1：接口和类 ：**
+**已知条件 1：接口和类 ：**
 
 ```typescript
 interface Action<T = any> {
@@ -744,7 +756,7 @@ class FoodModule {
 }
 ```
 
-**已知条件2**
+**已知条件 2**
 
 ```typescript
 // 下面是 FoodModule 类的 delay 和 searchFoodByCity 方法的泛型类型 分别是：
@@ -752,14 +764,14 @@ type asyncMethod<T, U> = (input: Promise<T>) => Promise<Action<U>> // delay方�
 type syncMethod<T, U> = (action: Action<T>) => Action<U> // searchFoodByCity方法类型
 ```
 
-**要求实现1：根据上面两个已知条件，综合利用 ： infer,keyof, in keyof 来得到下面类型：**
+**要求实现 1：根据上面两个已知条件，综合利用 ： infer,keyof, in keyof 来得到下面类型：**
 
 ```typescript
 type asyncMethodConnect<T, U> = (input: T) => Action<U> // delay方法类型
 type syncMethodConnect<T, U> = (action: T) => Action<U> // searchFoodByCity方法类型
 ```
 
-**要求实现2： 根据上面两个已知条件和实现 1，最终获取到下面类型。 **
+**要求实现 2： 根据上面两个已知条件和实现 1，最终获取到下面类型。 **
 
 ```typescript
 type LastResult = {
@@ -779,6 +791,6 @@ type LastResult = {
 3. 条件类型：条件类型，条件类型的复杂应用
 4. in keyof 实战中的应用
 5. TS 高级类型：Extract、Exclude、Record、Pick、Omit、Capitalize
-6. 映射类型： in 
+6. 映射类型： in
 7. 诡异的复杂映射机制
 8. TS 高级辅助类型：ReadOnly Required Paritial
