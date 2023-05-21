@@ -1,26 +1,36 @@
-# 06-深入 TS“ 三板斧”—类型守卫，类型转换，自定义守卫+真实应用场景
+# 06-TS 高频使用技能: 类型断言、类型守卫、自定义守卫+ 多态+类型守卫组合应用
 
 ## 01：本章概述
 
-* 类型守卫
-* 类型转换
-* 类型守卫相关：typeof 局现性和替代方案
-* 类型守卫+应用
-* 自定义守卫
-* 自定义守卫晋级
+- 类型守卫
+- 类型转换
+- 类型守卫相关：typeof 局现性和替代方案
+- 类型守卫+应用
+- 自定义守卫
+- 自定义守卫晋级
 
-## 02：类型断言、类型转换、应用场景
+## 02:【TS类型断言、转换应用】 类型断言的9种使用场景 1 
 
 ### 类型断言
 
-语法格式： A 数据类型的变量 as B 数据类型
+#### 定义：
+
+把两种能有重叠关系的数据类型进行相互转换的一种 ts 语法，把其中一种数据类型转换成另外一种数据类型。类型断言和类型转换产生的效果一样，但是语法格式不同
+
+#### TS类型断言语法格式
+
+A 数据类型的变量 as B 数据类型。A数据类型和 B 数据类型必须具有重叠关系
 
 ```typescript
-let b:B
-let c:C = b as C
+let b: B
+let c: C = b as C
 ```
 
 **理解：**是绕过 TS 编译检查，类型断言就是对编译器说：我就是这个类型了，无序检查
+
+#### 重要细节：理解重叠关系
+
+1. 如果 A、B是类并且具有继承关系
 
 ### 类型断言使用场景
 
@@ -29,12 +39,12 @@ let c:C = b as C
 > 编译器强制一个类型转换为另外一个类型
 
 ```typescript
- // 使用<>运算符进行类型转换
-let a: typeA;
-let b = <typeB>a;
+// 使用<>运算符进行类型转换
+let a: typeA
+let b = <typeB>a
 
-let input = <HTMLInputElement>document.querySelector('input[type=text]');
-console.log(input.value);
+let input = <HTMLInputElement>document.querySelector('input[type=text]')
+console.log(input.value)
 ```
 
 ## 03: 类型守卫相关 JS ：typeof 局限性和替代方案【常见面试题】
@@ -64,16 +74,16 @@ console.log(Object.prototype.toString.call(map)) // [object Map]
 
 ### 为什么要使用类型守卫
 
-**类型守卫定义: **在语句的块级作用域【if语句或者条目运算表达式内】缩小变量的一种类型推断的行为
+**类型守卫定义: **在语句的块级作用域【if 语句或者条目运算表达式内】缩小变量的一种类型推断的行为
 
 **类型守卫产生时机：**条件语句中遇到下列条件关键字时，会在语句的块级作用域内缩小变量的类型，这种类型推断的行为成为**类型守卫（Type Guard）**.类型守卫可以帮助我们在块级作用域中获得更为需要的精确变量类型
 
-* 实例判断：`instanceof`
-* 属性或者实例方法判断：`in`
-* 类型判断：`typeof`
-* 字面量相等判断：`==`、`===`、`!=`、`!==`
+- 实例判断：`instanceof`
+- 属性或者实例方法判断：`in`
+- 类型判断：`typeof`
+- 字面量相等判断：`==`、`===`、`!=`、`!==`
 
-## 05：TS 自定义守卫和2个真实应用场景
+## 05：TS 自定义守卫和 2 个真实应用场景
 
 ### 自定义类型守卫格式
 
@@ -102,7 +112,6 @@ export function isRef<r:any>:r is Ref{
 
 ```typescript
 function isPromise(value: any): value is Promise<any> {
-   return value instanceof Promise;
+  return value instanceof Promise
 }
 ```
-
