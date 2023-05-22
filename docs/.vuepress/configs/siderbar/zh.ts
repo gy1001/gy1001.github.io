@@ -338,7 +338,10 @@ export const sidebarZh: SidebarConfig = {
         {
           text: '破解JavaScript高级玩法，成为精通 JS 的原生专家',
           collapsible: true,
-          children: ['/zh/other/class/crack-js/index-01.md'],
+          children: [
+            '/zh/other/class/crack-js/index-01.md',
+            '/zh/other/class/crack-js/index-02.md',
+          ],
         },
       ],
     },
