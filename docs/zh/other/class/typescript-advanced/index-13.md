@@ -39,7 +39,7 @@ export { RejectType, ResolveType, Executor }
 ```typescript
 // 新建 promise.ts 
 import { Executor, RejectType, ResolveType } from './actiontype'
-export default class Promiose<T = any> {
+export default class MyPromise<T = any> {
   public resolve!: ResolveType
   public reject!: RejectType
   public status!: string
@@ -82,9 +82,9 @@ export default class Promiose<T = any> {
 
 ```typescript
 // 新建 test.ts
-import Promiose from './Promise'
+import MyPromise from './Promise'
 
-let promise = new Promiose((resolve, reject) => {
+let promise = new MyPromise((resolve, reject) => {
   resolve('成功了')
   reject("失败了")
 })
@@ -110,7 +110,7 @@ then 函数执行成功回调
 ## 03: resolve 方法 执行失败后的处理
 
 ```typescript
-export default class Promiose<T = any> {
+export default class MyPromise<T = any> {
   constructor(executor: Executor) {
     this.resolve = (value: any): any => {
       if (this.status === 'pending') {
@@ -151,7 +151,7 @@ then 函数执行失败回调
 2. 修改`then`回调，实现代码如下
 
    ```typescript
-   export default class Promiose<T = any> {
+   export default class MyPromise<T = any> {
      
      then(resolveInThen: ResolveType, rejectInThen: RejectType) {
        // 返回 Promise 
@@ -174,9 +174,9 @@ then 函数执行失败回调
 
    ```typescript
    // test.ts
-   import Promiose from './Promise'
+   import MyPromise from './Promise'
    
-   let promise = new Promiose((resolve, reject) => {
+   let promise = new MyPromise((resolve, reject) => {
      resolve('成功了')
    })
    promise
@@ -228,9 +228,9 @@ then 函数执行失败回调
 1. 我们修改测试文件`test.ts`，代码如下
 
    ```typescript
-   import Promiose from './Promise'
+   import MyPromise from './Promise'
    
-   let promise = new Promiose((resolve, reject) => {
+   let promise = new MyPromise((resolve, reject) => {
      setTimeout(() => {
        resolve('成功了')
      }, 1000)
@@ -251,7 +251,7 @@ then 函数执行失败回调
 2. 修改`Promise.ts`，代码如下
 
    ```typescript
-   export default class Promiose<T = any> {
+   export default class MyPromise<T = any> {
      // 增加成功回调属性、失败回调属性
    	public resolve_then_callbacks: (() => void)[] = []
      public reject_then_callbacks: (() => void)[] = []
@@ -285,7 +285,7 @@ then 函数执行失败回调
      }
      // then 回调这里增加处理异步回调存储处理
      then(resolveInThen: ResolveType, rejectInThen: RejectType) {
-       return new Promise((resolve: ResolveType, reject: RejectType) => {
+       return new MyPromise((resolve: ResolveType, reject: RejectType) => {
          if (this.status === 'success') {
           
          } else if (this.status === 'fail') {
@@ -356,10 +356,10 @@ then 函数执行失败回调
 2. 修改`Promise.ts`,代码如下
 
    ```typescript
-   export default class Promiose<T = any> {
+   export default class MyPromise<T = any> {
     
      then(resolveInThen: ResolveType, rejectInThen: RejectType) {
-       return new Promise((resolve: ResolveType, reject: RejectType) => {
+       return new MyPromise((resolve: ResolveType, reject: RejectType) => {
          if (this.status === 'success') {
           
          } else if (this.status === 'fail') {
@@ -392,6 +392,111 @@ then 函数执行失败回调
    第二个then 执行成功了 ok1
    第三个then 执行成功了 resolve2
    resolveData3 resolve2
+   ```
+
+## 07: 构建多异步+级联 then【第一种实现方式】
+
+1. 修改测试代码`test.ts` ,代码如下
+
+   ```typescript
+   import MyPromise from './Promise'
+   
+   let promise = new MyPromise((resolve, reject) => {
+     setTimeout(() => {
+       resolve('成功了')
+     }, 1000)
+   })
+   
+   promise
+     .then(
+       (resolve) => {
+         console.log('then 第一个then成功了')
+         // 模拟宏任务异步执行过程
+         return new MyPromise((resolve) => {
+           setTimeout(() => {
+             resolve('第二个异步操作')
+           }, 1000)
+         })
+       },
+       (reject) => {
+         console.log('then 第一个then 失败了')
+         return 'fail1'
+       },
+     )
+     .then(
+       (resolveData2: any) => {
+         console.log('第二个then 执行成功了', resolveData2)
+         return 'resolve2'
+       },
+       (rejectData2: any) => {
+         console.log('第二个then 执行失败了了', rejectData2)
+         return 'reject2'
+       },
+     )
+     .then(
+       (resolveData3: any) => {
+         console.log('第三个then 执行成功了', resolveData3)
+         console.log('resolveData3', resolveData3)
+       },
+       (rejectData3: any) => {
+         console.log('第三个then 执行失败了了', rejectData3)
+         console.log('rejectData3', rejectData3)
+       },
+     )
+   ```
+
+2. 修改`Promise.ts`，代码如下
+
+   ```typescript
+   export default class MyPromise {
+     
+      then(resolveInThen: ResolveType, rejectInThen: RejectType) {
+       return new MyPromise((resolve: ResolveType, reject: RejectType) => {
+         if (this.status === 'success') {
+           
+         } else if (this.status === 'fail') {
+           
+         } else if (this.status === 'pending') {
+           this.resolve_then_callbacks.push(() => {
+             let result: any = resolveInThen(this.resolve_executor_value)
+             if (isMyPromise(result)) {
+               // 使用定时器来处理
+               setTimeout(() => {
+                 resolve(result.resolve_executor_value)
+               }, 5)
+             } else {
+               console.log('then中函数 resolve 参数执行的结果', result)
+               resolve(result)
+             }
+           })
+           this.reject_then_callbacks.push(() => {
+             let result = rejectInThen(this.reject_executor_value)
+             console.log('then中函数 reject 参数执行的结果', result)
+             reject(result)
+           })
+         }
+       })    
+     })
+   }
+   ```
+
+3. 重新执行命令`ts-node test.ts,`定时器执行后，过一段时间, 可以看到如下信息
+
+   ```shell
+   // 1s 后先执行
+   status change: pending => resolve 成功了
+   then 第一个then成功了
+   status change: pending => resolve undefined
+   第二个then 执行成功了 undefined
+   then中函数 resolve 参数执行的结果 resolve2
+   status change: pending => resolve resolve2
+   第三个then 执行成功了 resolve2
+   resolveData3 resolve2
+   then中函数 resolve 参数执行的结果 resolve3
+   status change: pending => resolve resolve3
+   
+   // 5ms 后在执行
+   status change: pending => resolve 第二个异步操作
    ```
 
    
