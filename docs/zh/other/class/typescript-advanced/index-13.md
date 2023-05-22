@@ -478,6 +478,18 @@ then 函数执行失败回调
        })    
      })
    }
+   
+   function isMyPromise(val: any): val is MyPromise {
+     return isObject(val) && isFunction(val.then)
+   }
+   
+   function isObject(val: any): val is Record<any, any> {
+     return !!(val !== null && typeof val === 'object')
+   }
+   
+   function isFunction(data: any): data is Function {
+     return typeof data === 'function'
+   }
    ```
 
 3. 重新执行命令`ts-node test.ts,`定时器执行后，过一段时间, 可以看到如下信息
@@ -499,4 +511,63 @@ then 函数执行失败回调
    status change: pending => resolve 第二个异步操作
    ```
 
-   
+## 08 优化上节代码
+
+```typescript
+// 修改 Promise.ts 
+import { Executor, RejectType, ResolveType } from './actiontype'
+export default class MyPromise {
+  public resolve!: ResolveType
+  public reject!: RejectType
+  public status!: string
+  public resolve_executor_value!: any
+  public reject_executor_value!: any
+  public resolve_then_callbacks: (() => void)[] = []
+  public reject_then_callbacks: (() => void)[] = []
+  constructor(executor: Executor) {
+    
+  }
+
+  then(resolveInThen: ResolveType, rejectInThen: RejectType) {
+    return new MyPromise((resolve: ResolveType, reject: RejectType) => {
+      if (this.status === 'success') {
+      } else if (this.status === 'fail') {
+        
+      } else if (this.status === 'pending') {
+        this.processManyAsyncAndSync(
+          resolveInThen,
+          rejectInThen,
+          resolve,
+          reject,
+        )
+      }
+    })
+  }
+
+  // 执行同步或者异步
+  processManyAsyncAndSync(
+    resolveInThen: ResolveType,
+    rejectInThen: RejectType,
+    resolve: ResolveType,
+    reject: RejectType,
+  ) {
+    this.resolve_then_callbacks.push(() => {
+      let result: any = resolveInThen(this.resolve_executor_value)
+      if (isMyPromise(result)) {
+        setTimeout(() => {
+          resolve(result.resolve_executor_value)
+        }, 5)
+      } else {
+        console.log('then中函数 resolve 参数执行的结果', result)
+        resolve(result)
+      }
+    })
+    this.reject_then_callbacks.push(() => {
+      let result = rejectInThen(this.reject_executor_value)
+      console.log('then中函数 reject 参数执行的结果', result)
+      reject(result)
+    })
+  }
+}
+```
+
