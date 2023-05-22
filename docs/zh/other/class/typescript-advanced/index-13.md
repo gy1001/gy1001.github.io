@@ -43,12 +43,15 @@ export default class Promiose<T = any> {
   public resolve!: ResolveType
   public reject!: RejectType
   public status!: string
+  public resolve_executor_value!: any
+  public reject_executor_value!: any
   constructor(executor: Executor) {
     this.status = 'pending' // 起始等待状态
     this.resolve = (value: any): any => {
       // 状态为初始状态时候，才会触发
       if (this.status === 'pending') {
         this.status = 'success'
+        this.resolve_executor_value = value
         console.log('status change: pending => resolve', value)
       }
     }
@@ -57,9 +60,20 @@ export default class Promiose<T = any> {
       if (this.status === 'pending') {
         this.status = 'fail'
         console.log('status change: pending => reject', value)
+        this.reject_executor_value = value
       }
     }
     executor(this.resolve, this.reject)
+  }
+  
+  then(resolveInThen: ResolveType, rejectInThen: RejectType) {
+    if (this.status === 'success') {
+      console.log('resolveInThen 被执行了')
+      resolveInThen(this.resolve_executor_value)
+    } else if (this.status === 'fail') {
+      console.log('rejectInThen 被执行了')
+      rejectInThen(this.reject_executor_value)
+    }
   }
 }
 ```
@@ -70,17 +84,28 @@ export default class Promiose<T = any> {
 // 新建 test.ts
 import Promiose from './Promise'
 
-let Promise = new Promiose((resolve, reject) => {
+let promise = new Promiose((resolve, reject) => {
   resolve('成功了')
   reject("失败了")
 })
+
+promise.then(
+  (resolve) => {
+    console.log('then 函数执行成功回调')
+  },
+  (reject) => {
+    console.log('then 函数执行失败回调')
+  },
+)
 ```
 
 执行命令`ts-node test.ts,`可以看到如下信息
 
 ```shell
 status change: pending => resolve 成功了
+resolveInThen 被执行了
+then 函数执行成功回调
 ```
 
-
+## 03:【 手写源码 】 同步级联 then 方法实现
 
