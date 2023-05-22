@@ -273,7 +273,7 @@ p.then(
   },
   (error1) => {
     console.log('error1', error1)
-  }
+  },
 )
 ```
 
@@ -334,6 +334,25 @@ Promise.prototype.then = function (onResolved, onRejected) {
     })
   }
 }
+
+let p = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve('ok')
+    // reject('error')
+    // throw 'error'
+  }, 1000)
+})
+p.then(
+  (value1) => {
+    console.log('value1', value1)
+  },
+  (error1) => {
+    console.log('error1', error1)
+  },
+)
+p.then((value2) => {
+  console.log('value2', value2)
+})
 ```
 
 ## 9、同步封装状态 then 方法结果返回
@@ -389,7 +408,7 @@ Promise.prototype.then = function (onResolved, onRejected) {
             },
             (e) => {
               reject(e)
-            }
+            },
           )
         } else {
           // 结果的对象状态为成功
@@ -423,14 +442,14 @@ p.then(
   },
   (error1) => {
     console.log('error1', error1)
-  }
+  },
 ).then(
   (value) => {
     console.log('result2', value)
   },
   (error) => {
     console.log('error2', error)
-  }
+  },
 )
 ```
 
@@ -487,7 +506,7 @@ Promise.prototype.then = function (onResolved, onRejected) {
             },
             (e) => {
               reject(e)
-            }
+            },
           )
         } else {
           // 结果的对象状态为成功
@@ -515,7 +534,7 @@ Promise.prototype.then = function (onResolved, onRejected) {
                 },
                 (e) => {
                   reject(e)
-                }
+                },
               )
             } else {
               resolve(result)
@@ -534,7 +553,7 @@ Promise.prototype.then = function (onResolved, onRejected) {
                 },
                 (e) => {
                   reject(e)
-                }
+                },
               )
             } else {
               reject(result)
@@ -565,7 +584,7 @@ const result = p
     },
     (error1) => {
       console.log('error1', error1)
-    }
+    },
   )
   .then(
     (value) => {
@@ -573,7 +592,7 @@ const result = p
     },
     (error) => {
       console.log('error2', error)
-    }
+    },
   )
 console.log(result)
 ```
@@ -754,7 +773,7 @@ Promise.prototype.then = function (onResolved, onRejected) {
             },
             (e) => {
               reject(e)
-            }
+            },
           )
         } else {
           resolve(result)
@@ -799,7 +818,7 @@ const result = p
     },
     (error1) => {
       console.log('error1', error1)
-    }
+    },
   )
   .then(
     (res) => {
@@ -807,7 +826,7 @@ const result = p
     },
     (error2) => {
       console.log('error2', error2)
-    }
+    },
   )
   .then((res3) => {
     console.log('res3', res3)
@@ -864,7 +883,6 @@ Promise.prototype.then = function (onResolved, onRejected) {
       throw reason
     }
   }
-  1
   if (typeof onResolved !== 'function') {
     onResolved = (value) => value
   }
@@ -879,7 +897,7 @@ Promise.prototype.then = function (onResolved, onRejected) {
             },
             (e) => {
               reject(e)
-            }
+            },
           )
         } else {
           resolve(result)
@@ -920,7 +938,7 @@ Promise.resolve = function (resultVal) {
         },
         (err) => {
           reject(err)
-        }
+        },
       )
     } else {
       resolve(resultVal)
@@ -933,7 +951,7 @@ console.log(p1)
 const p2 = Promise.resolve(
   new Promise((resolve, reject) => {
     reject('error我是错误信息')
-  })
+  }),
 )
 console.log(p2)
 const p3 = Promise.resolve(Promise.resolve('我是成功信息'))
@@ -987,7 +1005,6 @@ Promise.prototype.then = function (onResolved, onRejected) {
       throw reason
     }
   }
-  1
   if (typeof onResolved !== 'function') {
     onResolved = (value) => value
   }
@@ -1002,7 +1019,7 @@ Promise.prototype.then = function (onResolved, onRejected) {
             },
             (e) => {
               reject(e)
-            }
+            },
           )
         } else {
           resolve(result)
@@ -1043,7 +1060,7 @@ Promise.resolve = function (resultVal) {
         },
         (err) => {
           reject(err)
-        }
+        },
       )
     } else {
       resolve(resultVal)
@@ -1076,7 +1093,7 @@ console.log(p1)
 const p2 = Promise.reject(
   new Promise((resolve, reject) => {
     reject('error我是错误信息')
-  })
+  }),
 )
 console.log(p2)
 const p3 = Promise.reject(Promise.resolve('我是resolve信息'))
@@ -1132,7 +1149,6 @@ Promise.prototype.then = function (onResolved, onRejected) {
       throw reason
     }
   }
-  1
   if (typeof onResolved !== 'function') {
     onResolved = (value) => value
   }
@@ -1147,7 +1163,7 @@ Promise.prototype.then = function (onResolved, onRejected) {
             },
             (e) => {
               reject(e)
-            }
+            },
           )
         } else {
           resolve(result)
@@ -1186,7 +1202,7 @@ Promise.resolve = function (resultVal) {
         },
         (err) => {
           reject(err)
-        }
+        },
       )
     } else {
       resolve(resultVal)
@@ -1219,7 +1235,7 @@ Promise.all = function (promises) {
         },
         (err) => {
           reject(err)
-        }
+        },
       )
     }
   })
@@ -1282,7 +1298,6 @@ Promise.prototype.then = function (onResolved, onRejected) {
       throw reason
     }
   }
-  1
   if (typeof onResolved !== 'function') {
     onResolved = (value) => value
   }
@@ -1297,7 +1312,7 @@ Promise.prototype.then = function (onResolved, onRejected) {
             },
             (e) => {
               reject(e)
-            }
+            },
           )
         } else {
           resolve(result)
@@ -1336,7 +1351,7 @@ Promise.resolve = function (resultVal) {
         },
         (err) => {
           reject(err)
-        }
+        },
       )
     } else {
       resolve(resultVal)
@@ -1364,7 +1379,7 @@ Promise.all = function (promises) {
         },
         (err) => {
           reject(err)
-        }
+        },
       )
     }
   })
@@ -1379,7 +1394,7 @@ Promise.race = function (promises) {
         },
         (error) => {
           reject(error)
-        }
+        },
       )
     }
   })
@@ -1462,7 +1477,6 @@ Promise.prototype.then = function (onResolved, onRejected) {
       throw reason
     }
   }
-  1
   if (typeof onResolved !== 'function') {
     onResolved = (value) => value
   }
@@ -1477,7 +1491,7 @@ Promise.prototype.then = function (onResolved, onRejected) {
             },
             (e) => {
               reject(e)
-            }
+            },
           )
         } else {
           resolve(result)
@@ -1522,7 +1536,7 @@ Promise.resolve = function (resultVal) {
         },
         (err) => {
           reject(err)
-        }
+        },
       )
     } else {
       resolve(resultVal)
@@ -1550,7 +1564,7 @@ Promise.all = function (promises) {
         },
         (err) => {
           reject(err)
-        }
+        },
       )
     }
   })
@@ -1565,11 +1579,23 @@ Promise.race = function (promises) {
         },
         (error) => {
           reject(error)
-        }
+        },
       )
     }
   })
 }
+
+// 存在的问题：下面代码的执行顺序应该是 11 33 22，但是自定义then函数中导致的顺序执行有误，所以需要解决
+const p1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve('OK')
+  }, 1000)
+  console.log(11)
+})
+p1.then((value) => {
+  console.log(22)
+})
+console.log(33)
 ```
 
 ## 18、class 版本的实现
@@ -1624,7 +1650,6 @@ class Promise {
         throw reason
       }
     }
-    1
     if (typeof onResolved !== 'function') {
       onResolved = (value) => value
     }
