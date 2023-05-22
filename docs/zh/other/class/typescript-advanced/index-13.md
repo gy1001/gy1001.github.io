@@ -643,5 +643,69 @@ export default class MyPromise {
 
 重新执行命令`ts-node test.ts`，信息同上
 
-## 10：
+## 10：Promise.all 源码实现
 
+1. 修改`test.ts`,代码如下
+
+   ```typescript
+   
+   let promise1 = new MyPromise((resolve) => {
+     resolve('第一个promise')
+   })
+   
+   let promise2 = new MyPromise((resolve) => {
+     resolve('第二个promise')
+   })
+   
+   let promise3 = new MyPromise((resolve) => {
+     resolve('第三个promise')
+   })
+   
+   MyPromise.all([promise1, promise2, promise3]).then(
+     (res) => {
+       console.log(res)
+     },
+     (error) => {
+       console.log(error)
+     },
+   )
+   ```
+
+2. 修改`Promise.ts`后，代码如下
+
+   ```typescript
+   export default class MyPromise {
+     static all(promises: MyPromise[]): MyPromise {
+       return new MyPromise((resolve, reject) => {
+         const resolveArr: any[] = []
+         promises.forEach((promise, index) => {
+           promise.then(
+             (resolveSuccess) => {
+               processData(resolveSuccess, index)
+             },
+             (rejectFail) => {
+               // 只要有一个失败就执行失败回调
+               reject(rejectFail)
+             },
+           )
+         })
+   
+         function processData(resolveSuccess: any, index: number) {
+           resolveArr[index] = resolveSuccess
+           // 所有的 promise 对象全部 resolve 之后
+           if (index === promises.length - 1) {
+             resolve(resolveArr)
+           }
+         }
+       })
+     }
+   }
+   ```
+
+3. 重新执行命令`ts-node test.ts`，信息如下
+
+   ```shell
+   [ '第一个promise', '第二个promise', '第三个promise' ]
+   ```
+
+   
