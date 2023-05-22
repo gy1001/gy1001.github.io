@@ -146,3 +146,81 @@ then 函数执行失败回调
 
 ## 04: 同步级联 then 方法实现
 
+1. 把上一节测试代码`value[10] = '100'`删掉
+
+2. 修改`then`回调，实现代码如下
+
+   ```typescript
+   export default class Promiose<T = any> {
+     
+     then(resolveInThen: ResolveType, rejectInThen: RejectType) {
+       // 返回 Promise 
+       return new Promise((resolve: ResolveType, reject: RejectType) => {
+         if (this.status === 'success') {
+           console.log('resolveInThen 被执行了')
+           const result = resolveInThen(this.resolve_executor_value)
+           resolve(result)
+         } else if (this.status === 'fail') {
+           console.log('rejectInThen 被执行了')
+           const rejectValue = rejectInThen(this.reject_executor_value)
+           reject(rejectValue)
+         }
+       })
+     }
+   }
+   ```
+
+3. 修改测试类如下
+
+   ```typescript
+   // test.ts
+   import Promiose from './Promise'
+   
+   let promise = new Promiose((resolve, reject) => {
+     resolve('成功了')
+   })
+   promise
+     .then(
+       (resolve) => {
+         console.log('then 函数执行成功回调')
+         return 'ok1'
+       },
+       (reject) => {
+         console.log('then 函数执行失败回调')
+         return 'fail1'
+       },
+     )
+     .then(
+       (resolveData2: any) => {
+         console.log('第二个then 执行成功了', resolveData2)
+         return 'resolve2'
+       },
+       (rejectData2: any) => {
+         console.log('第二个then 执行失败了了', rejectData2)
+         return 'reject2'
+       },
+     )
+     .then(
+       (resolveData3: any) => {
+         console.log('第三个then 执行成功了', resolveData3)
+         console.log('resolveData3', resolveData3)
+       },
+       (rejectData3: any) => {
+         console.log('第三个then 执行失败了了', rejectData3)
+         console.log('rejectData3', rejectData3)
+       },
+     )
+   ```
+
+4. 重新执行命令`ts-node test.ts,`可以看到如下信息
+
+   ```shell
+   status change: pending => resolve 成功了
+   resolveInThen 被执行了
+   then 函数执行成功回调
+   第二个then 执行成功了 ok1
+   第三个then 执行成功了 resolve2
+   resolveData3 resolve2
+   ```
+
+   
