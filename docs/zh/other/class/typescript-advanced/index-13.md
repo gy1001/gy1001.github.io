@@ -307,4 +307,91 @@ then 函数执行失败回调
    }
    ```
 
+3. 重新执行命令`ts-node test.ts,`可以看到如下信息
+
+   ```shell
+   status change: pending => resolve 成功了
+   then 函数执行成功回调
+   then中函数 resolve 参数执行的结果 ok1
+   ```
+
+## 06：实现单级异步+级联 then 方法 +难点化解
+
+1. 修改`test.ts`,代码如下
+
+   ```typescript
+   promise
+     .then(
+       (resolve) => {
+         console.log('then 函数执行成功回调')
+         return 'ok1'
+       },
+       (reject) => {
+         console.log('then 函数执行失败回调')
+         return 'fail1'
+       },
+     )
+     .then(
+       (resolveData2: any) => {
+         console.log('第二个then 执行成功了', resolveData2)
+         return 'resolve2'
+       },
+       (rejectData2: any) => {
+         console.log('第二个then 执行失败了了', rejectData2)
+         return 'reject2'
+       },
+     )
+     .then(
+       (resolveData3: any) => {
+         console.log('第三个then 执行成功了', resolveData3)
+         console.log('resolveData3', resolveData3)
+       },
+       (rejectData3: any) => {
+         console.log('第三个then 执行失败了了', rejectData3)
+         console.log('rejectData3', rejectData3)
+       },
+     )
+   ```
+
+2. 修改`Promise.ts`,代码如下
+
+   ```typescript
+   export default class Promiose<T = any> {
+    
+     then(resolveInThen: ResolveType, rejectInThen: RejectType) {
+       return new Promise((resolve: ResolveType, reject: RejectType) => {
+         if (this.status === 'success') {
+          
+         } else if (this.status === 'fail') {
+           
+         } else if (this.status === 'pending') {
+           // 存储成功回调
+           this.resolve_then_callbacks.push(() => {
+             let result = resolveInThen(this.resolve_executor_value)
+             console.log('then中函数 resolve 参数执行的结果', result)
+             resolve(result)
+           })
+           // 存储失败回调
+           this.reject_then_callbacks.push(() => {
+             let result = rejectInThen(this.reject_executor_value)
+             console.log('then中函数 reject 参数执行的结果', result)
+             reject(result)
+           })
+         }
+       })
+     }
+   }
+   ```
+
+3. 重新执行命令`ts-node test.ts,`定时器执行后，过一段时间, 可以看到如下信息
+
+   ```shell
+   status change: pending => resolve 成功了
+   then 函数执行成功回调
+   then中函数 resolve 参数执行的结果 ok1
+   第二个then 执行成功了 ok1
+   第三个then 执行成功了 resolve2
+   resolveData3 resolve2
+   ```
+
    
