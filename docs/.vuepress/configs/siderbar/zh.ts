@@ -50,6 +50,7 @@ export const sidebarZh: SidebarConfig = {
     },
     {
       text: '源码解读',
+
       children: [
         '/zh/skill/front/source/axios.md',
         '/zh/skill/front/source/promise.md',
@@ -57,6 +58,7 @@ export const sidebarZh: SidebarConfig = {
         '/zh/skill/front/source/jquery.md',
         {
           text: 'Vue源码',
+          collapsible: false,
           children: [
             '/zh/skill/front/source/vue/mustache.md',
             '/zh/skill/front/source/vue/diff.md',
