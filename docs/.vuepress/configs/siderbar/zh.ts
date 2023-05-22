@@ -66,6 +66,14 @@ export const sidebarZh: SidebarConfig = {
             '/zh/skill/front/source/vue/vue-question.md',
           ],
         },
+        {
+          text: 'Vuex源码',
+          children: ['/zh/skill/front/source/vuex.md'],
+        },
+        {
+          text: '自定义Router',
+          children: ['/zh/skill/front/source/router.md'],
+        },
       ],
     },
     {
