@@ -223,4 +223,88 @@ then 函数执行失败回调
    resolveData3 resolve2
    ```
 
+## 05: 实现单级异步+单级 then 方法
+
+1. 我们修改测试文件`test.ts`，代码如下
+
+   ```typescript
+   import Promiose from './Promise'
+   
+   let promise = new Promiose((resolve, reject) => {
+     setTimeout(() => {
+       resolve('成功了')
+     }, 1000)
+   })
+   // 本节我们先实现单级
+   promise.then(
+     (resolve) => {
+       console.log('then 函数执行成功回调')
+       return 'ok1'
+     },
+     (reject) => {
+       console.log('then 函数执行失败回调')
+       return 'fail1'
+     },
+   )
+   ```
+
+2. 修改`Promise.ts`，代码如下
+
+   ```typescript
+   export default class Promiose<T = any> {
+     // 增加成功回调属性、失败回调属性
+   	public resolve_then_callbacks: (() => void)[] = []
+     public reject_then_callbacks: (() => void)[] = []
+     
+     constructor(executor: Executor) {
+       this.status = 'pending'
+       
+       this.resolve = (value: any): any => {
+         if (this.status === 'pending') {
+           this.status = 'success'
+           this.resolve_executor_value = value
+           console.log('status change: pending => resolve', value)
+           // 增加成功回调代码处理
+           this.resolve_then_callbacks.forEach((callback) => {
+             callback()
+           })
+         }
+       }
+       
+      	this.reject = (value: any): any => {
+         if (this.status === 'pending') {
+           this.status = 'fail'
+           console.log('status change: pending => reject', value)
+           this.reject_executor_value = value
+           // 增加失败回调代码处理
+           this.reject_then_callbacks.forEach((callback) => {
+             callback()
+           })
+         }
+       }
+     }
+     // then 回调这里增加处理异步回调存储处理
+     then(resolveInThen: ResolveType, rejectInThen: RejectType) {
+       return new Promise((resolve: ResolveType, reject: RejectType) => {
+         if (this.status === 'success') {
+          
+         } else if (this.status === 'fail') {
+           
+         } else if (this.status === 'pending') {
+           // 存储成功回调
+           this.resolve_then_callbacks.push(() => {
+             let result = resolveInThen(this.resolve_executor_value)
+             console.log('then中函数 resolve 参数执行的结果', result)
+           })
+           // 存储失败回调
+           this.reject_then_callbacks.push(() => {
+             let result = rejectInThen(this.reject_executor_value)
+             console.log('then中函数 reject 参数执行的结果', result)
+           })
+         }
+       })
+     }
+   }
+   ```
+
    
