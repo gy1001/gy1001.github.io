@@ -1,6 +1,6 @@
 # 13- 运用 TS 手写 Promise 源码
 
-## 01:【准备】Promise 的三种状态和注意细节
+## 01：Promise 的三种状态和注意细节
 
 **Promise的三种状态**：pending resolve reject。 pending 就是等待，resolve 可以理解为成功，reject 可以理解为拒绝
 
@@ -16,7 +16,7 @@
 
 **其他也执行 reject 的场景**：正在执行 resolve()方法报错，也进入 reject 失败状态
 
-## 02:【 手写源码】 Promise 第一步—— Promise 回调 +then 初步 实现
+## 02：Promise 第一步—— Promise 回调 +then 初步 实现
 
 课程安排
 
@@ -107,5 +107,42 @@ resolveInThen 被执行了
 then 函数执行成功回调
 ```
 
-## 03:【 手写源码 】 同步级联 then 方法实现
+## 03: resolve 方法 执行失败后的处理
+
+```typescript
+export default class Promiose<T = any> {
+  constructor(executor: Executor) {
+    this.resolve = (value: any): any => {
+      if (this.status === 'pending') {
+				// ....
+        value[10] = '100' // 模拟错误
+      }
+    }
+    this.reject = (value: any): any => {
+  
+    }
+    try {
+      // 执行函数
+      executor(this.resolve, this.reject)
+    } catch (error: any) {
+      this.status = 'pending'
+      // 失败则直接执行 reject 函数
+      this.reject(error.toString())
+      // throw new Error('程序终止...')
+    }
+  }
+
+  then(resolveInThen: ResolveType, rejectInThen: RejectType) { }
+}
+```
+
+重新执行命令`ts-node test.ts,`可以看到如下信息
+
+```shell
+status change: pending => reject TypeError: Cannot create property '10' on string '成功了'
+rejectInThen 被执行了
+then 函数执行失败回调
+```
+
+## 04: 同步级联 then 方法实现
 
