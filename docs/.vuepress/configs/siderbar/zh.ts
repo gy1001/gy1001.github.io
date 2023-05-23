@@ -341,6 +341,7 @@ export const sidebarZh: SidebarConfig = {
           children: [
             '/zh/other/class/crack-js/index-01.md',
             '/zh/other/class/crack-js/index-02.md',
+            '/zh/other/class/crack-js/index-03.md',
           ],
         },
       ],
