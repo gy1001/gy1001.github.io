@@ -650,7 +650,9 @@ function format_with_array(number) {
 console.log(format_with_array(9398222.02)) // 9,398,222.02 
 ```
 
-###  正则现行断言等
+###  正则
+
+* 基本原理：先行断言 + 分组
 
 | 名字                   | 表达式        | 作用                   |
 | ---------------------- | ------------- | ---------------------- |
@@ -680,4 +682,111 @@ function format_with_array(number) {
 }
 console.log(format_with_array(9398222.02)) // 9,398,222.02
 ```
+
+### ECMA 规范
+
+| 规范     | 说明                                                       |
+| -------- | ---------------------------------------------------------- |
+| ECMA-262 | ECMAScript规范                                             |
+| ECMA-402 | 国际化 API 规范                                            |
+| ECMA-404 | JSON数据交换语法                                           |
+| ECMA-419 | 嵌入式系统 API 规范                                        |
+| ECMA-414 | ECMAScript 相关的标准有哪些？即 ECMA-262 ECMA-402 ECMA-404 |
+
+### Intl.NumberFormat
+
+* 语法：new Intl.NumberFormat([locales[, options]])
+* 基本功能：国际化的数字处理方案，他可以用来显示不同国家对数字的处理偏好
+
+```javascript
+// 使用默认配置选项
+function format_with_Intl(number) {
+  return new Intl.NumberFormat('en-us').format(number)
+}
+
+console.log(format_with_Intl(9398222.02))
+```
+
+```javascript
+function format_with_Intl(
+  number,
+  minimumFractionDigits,
+  maximumFractionDigits,
+) {
+  minimumFractionDigits = minimumFractionDigits || 2
+  maximumFractionDigits = maximumFractionDigits || 2
+  maximumFractionDigits = Math.max(minimumFractionDigits, maximumFractionDigits)
+  return new Intl.NumberFormat('en-us', {
+    maximumSignificantDigits: maximumFractionDigits || 2,
+    minimumFractionDigits: minimumFractionDigits || 2,
+  }).format(number)
+}
+```
+
+### toLocalString
+
+* 功能：其能把数字转为特定语言环境下的表示字符串
+* 语法：numObj.toLocaleString([locales[, options]])
+
+### 性能大比拼
+
+| 方法名                | 思路                                   | 性能         | 备注                         |
+| --------------------- | -------------------------------------- | ------------ | ---------------------------- |
+| fromat_with_array     | 数字转为字符串，整数部分低位往高位遍历 | T2           |                              |
+| format_with_substring | 数字转字符串，整数部分高位往低位遍历   | T2           |                              |
+| format_with_mod       | 求模添加"，" 求余计算是否可以结束      | T0（最佳）   |                              |
+| format_with_regex     | 先行断言+分组                          | T2           |                              |
+| Intl.NumberFormat     | 规范数字国际化，en-us                  | T2或者下水道 | ECMA-402标准，初始化成本很大 |
+| toLocaleString        | 底层调用 Intl.NumberFormat一丘之貉     | T2或者下水道 | 设置小数后性能变大非常大     |
+
+## 05：[] + [], [] + {}, {} + [], {} + {} 
+
+* 如果操作数是对象，则对象会转换为原始值
+
+* 如果其中一个操作数字是字符串的话，另一个操作数也会转换为字符串，进行字符串拼接
+
+* 否则，两个操作数都将转换为数字或者NaN，进行假加法操作
+
+* 思考题
+
+  ```javascript
+  10n + 10 // Uncaught TypeError: Cannot mix BigInt and other types, use explicit conversions
+  Symbol.for("a") + 10 // Uncaught TypeError: Cannot convert a Symbol value to a number
+  ```
+
+### 对象转换为原始数据类型的值
+
+* Symbol.ToPrimitive
+* Object.prototype.valueOf
+* Object.prototype.toString
+
+### []的原始值
+
+* typeof \[\]\[Symbol.ToPrimitive\] : undefined
+* \[\].valueOf(): \[\]
+* \[\].toString(): ""
+
+### {} 的原始值
+
+* typeof \{\}\[Symbol.ToPrimitive\] : undefined
+* \({\}).valueOf(): \{\}
+* \({\}).toString(): "[object Object]"
+
+### [] + [] 
+
+* \[\].toString() + \[\].toString()  = "" + ""  = ""
+
+### [] + {} 
+
+* \[\].toString() +\({\}).toString()  = "" + "[object Object]"  = "[object Object]"
+
+### {} + []
+
+* ({}) + [] = \({\}).toString() + \[\].toString()  = "[object Object]"
+* \{\} + [] = \{\}; + [] = +[] = 0
+
+### {} + {}
+
+* {} + {} =  +"[object Object]" = NaN
+* ({})+({}) = '\[object Object\]\[object Object\]'
 
