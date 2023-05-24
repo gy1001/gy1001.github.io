@@ -343,6 +343,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/crack-js/index-02.md',
             '/zh/other/class/crack-js/index-03.md',
             '/zh/other/class/crack-js/index-04.md',
+            '/zh/other/class/crack-js/index-05.md',
           ],
         },
       ],
