@@ -893,5 +893,439 @@ function getNoEnumerable(_obj) {
 console.log(getNoEnumerable(person))
 ```
 
-## 05：对象的隐式类型转换和注意事项 
+## 05：对象的隐式类型转换和注意事项
+
+### 显式类型转换
+
+* 显式转换：主要通过 JS 定义的转换方法进行转换
+* String、Object 等
+* parseInt、parstFloat 等
+* 显式调用 toString 等
+
+### 隐式转换
+
+* 隐式转换：编译器自动完成类型转换的方式就称为隐式转换
+* 总是**期望**返回基本类型值
+
+### 什么时候会发生隐式类型转换
+
+* 二元 + 运算符
+
+* 关系运算符：< > <= >= ==
+
+* 逻辑：！ if/while 三目条件
+
+* 属性遍历：for in 等
+
+* 模板字符串
+
+  ```javascript
+  const obj = {
+    value: 10,
+    toString: function () {
+      return this.value + 10
+    },
+    valueOf: function () {
+      return this.value
+    },
+  }
+  
+  obj[obj] = obj.value
+  
+  console.log('keys:', Object.keys(obj))
+  console.log('${obj}:', `${obj}`)
+  console.log('obj + 1:', obj + 1)
+  console.log('obj + "":', obj + '')
+  
+  // 输出如下内容
+  keys: [ '20', 'value', 'toString', 'valueOf' ]
+  ${obj}: 20
+  obj + 1: 11
+  obj + "": 10
+  ```
+
+### 对象隐式转换三大扛把子
+
+* Symbol.toPrimitive
+* Object.prototype.valueOf
+* Object.prototype.toString
+
+### 对象隐式转换规则
+
+* 如果 【Symbol.toPrimitive】(hint)方法存在，优先调用，无视 valueOf 和 toString 方法
+
+* 否则，如果期望是 "string" ----- 优先调用 obj.toString() 如果返回不是原始值，继续调用 obj.valueOf()
+
+* 否则，如果期望是 number 或者 default ------ 先调用 obj.valueOf() 如果返回不是原始值，继续调用 obj.toString()
+
+  ```javascript
+  const obj = {
+    [Symbol.toPrimitive](hint) {
+      if (hint == "number") {
+        return 10;
+      }
+      if (hint == "string") {
+        return "hello";
+      }
+      return true;
+    }
+  };
+  
+  console.log(+obj);     // 10      -- hint 参数值是 "number"
+  console.log(`${obj}`); // "hello" -- hint 参数值是 "string"
+  console.log(obj + ""); // "true"  -- hint 参数值是 "default"
+  ```
+
+### 提个问题
+
+* 如果未定义 【Symbol.toPrimitive】,期望是 string, toString 和 valueOf 都没有返回原始值:: 报错异常
+
+```javascript
+const obj = {
+  value: 10,
+  valueOf() {
+    return this
+  },
+  toString() {
+    return this
+  },
+}
+
+console.log(10 + obj) // TypeError: Cannot convert object to primitive value
+```
+
+### Symbol.toPrimitive(hint)
+
+* hint - "string"
+* hint - "number"
+* hint - "default"
+
+### hint - string
+
+* window.alert(obj)
+* 模板字符串`${obj}`
+* test[obj] = 123
+
+```javascript
+const obj = {
+  [Symbol.toPrimitive](hint) {
+    if (hint == 'number') {
+      return 10
+    }
+    if (hint == 'string') {
+      return 'hello'
+    }
+    return true
+  },
+}
+// alert, 浏览器
+// window.alert(obj);
+// ${}
+console.log(`${obj}`) // hello
+// 属性键
+obj[obj] = 123
+console.log(Object.keys(obj)) // [ 'hello' ] 
+```
+
+### hint - number
+
+* 一元 + ， 位移
+* \- \* / 关系运算
+* Math.pow String.prototype.slice 等很多内部方法
+
+```javascript
+const obj = {
+  [Symbol.toPrimitive](hint) {
+    if (hint == 'number') {
+      return 10
+    }
+    if (hint == 'string') {
+      return 'hello'
+    }
+    return true
+  },
+}
+
+// 一元+
+console.log('一元+:', +obj) // 一元+: 10
+
+// 位移运算符
+console.log('位移运算符', obj >> 0) // 位移运算符 10
+
+//除减算法, 没有 + 法，之前已经单独说过转换规则
+console.log('减法:', 5 - obj) // 减法: -5
+console.log('乘法:', 5 * obj) // 乘法: 50
+console.log('除法:', 5 / obj) // 除法: 0.5
+
+//逻辑 大于，小于，大于等于, 没有等于， 有自己的一套规则
+console.log('大于:', 5 > obj) // 大于: false
+console.log('大于等于:', 5 >= obj) // 大于等于: false
+
+// 其他期望是整数的方法
+console.log('Math.pow:', Math.pow(2, obj)) // Math.pow: 1024
+```
+
+### hint-default
+
+* 二元 +
+* == !=
+
+```javascript
+const obj = {
+  [Symbol.toPrimitive](hint) {
+    if (hint == 'number') {
+      return 10
+    }
+    if (hint == 'string') {
+      return 'hello'
+    }
+    return true
+  },
+}
+
+console.log('相加:', 5 + obj) // 相加: 6
+console.log('等等与:', 5 == obj) // 等等与: false
+console.log('不等于:', 5 != obj) // 不等于: true
+```
+
+### valueOf
+
+```javascript
+// Array
+let arr = [1, 2, 5]
+// Object
+let user = {
+  name: 'Jason',
+  age: 24,
+}
+// Date 返回时间撮
+let now = new Date()
+// Function
+function fun() {
+  return 10
+}
+
+console.log('Array:', arr.valueOf()) // Array: [ 1, 2, 5 ]
+console.log('Object:', user.valueOf()) // Object: { name: 'Jason', age: 24 }
+console.log('Date:', now.valueOf()) // Date: 1684893505844
+console.log('Function:', fun.valueOf()) // Function: [Function: fun]
+
+```
+
+### toString
+
+```javascript
+// Array
+let arr = [1, 2, 5]
+// Object
+let user = {
+  name: 'Jason',
+  age: 24,
+}
+
+//Date
+let now = new Date()
+
+// Function
+function fun() {
+  return 10
+}
+console.log('Array:', arr.toString()) // Array: 1,2,5
+console.log('Object:', user.toString()) // Object: [object Object]
+console.log('Date:', now.toString()) // Date: Wed May 24 2023 09:59:27 GMT+0800 (China Standard Time)
+console.log('Function:', fun.toString()) //  Function: function fun() { return 10 }
+
+// hint 是  default， valueOf => toString
+console.log(1 + now) // 1Wed May 24 2023 09:59:27 GMT+0800 (China Standard Time)
+```
+
+### 误区：
+
+* === !== 是否会触发隐式转换：不会
+* == != 宽松比较是否触发隐式转换：也不一定，两个对象进行比较时是进行严格等判断的，其他情况下会触发隐式转换
+
+```javascript
+const obj1 = {
+  [Symbol.toPrimitive](hint) {
+    if (hint == 'number') {
+      return 10
+    }
+    if (hint == 'string') {
+      return 'hello'
+    }
+    return true
+  },
+}
+
+const obj2 = {
+  [Symbol.toPrimitive](hint) {
+    if (hint == 'number') {
+      return 10
+    }
+    if (hint == 'string') {
+      return 'hello'
+    }
+    return true
+  },
+}
+
+console.log('宽松比较: 对象和数字', obj1 == true) // 宽松比较: 对象和数字 true
+console.log('宽松比较 两个对象:', obj1 == obj2) // 宽松比较 两个对象: false
+console.log('严等:', obj1 === obj2) // 严等: false
+console.log('不等:', obj1 != obj2) // 不等: true
+```
+
+```javascript
+const user = {
+  name: 'John',
+  age: 10,
+  toString() {
+    return this.name
+  },
+  valueOf() {
+    return this.age
+  },
+}
+
+console.log('user:', +user) //  user: 10
+console.log('user:', `${user}`) // user: John
+```
+
+```javascript
+const user = {
+  name: 'John',
+  age: 10,
+  toString() {
+    return this.name
+  },
+  valueOf() {
+    // return this.age
+    return this
+  },
+}
+
+console.log('user:', +user) //  user: NaN
+console.log('user:', `${user}`) // user: John
+```
+
+```javascript
+const user = {
+  name: 'John',
+  age: 10,
+  toString() {
+    return this.name
+  },
+}
+console.log('user:', +user) // user: NaN
+```
+
+```javascript
+const user = {
+  name: 'John',
+  age: 10,
+  toString() {
+    // return this.name
+    return this
+  },
+}
+
+console.log('user:', `${user}`) 
+// TypeError: Cannot convert object to primitive value
+```
+
+```javascript
+const user = {
+  name: 'John',
+  age: 10,
+  // toString() {
+  //     // return this.name;
+  //     return this;
+  // },
+  valueOf() {
+    return this.age
+  },
+}
+// 这是以为自身没有 toString 方法，原型上还有
+console.log('user:', `${user}`) //  user: [object Object]
+```
+
+```javascript
+const user = {
+  name: 'John',
+  age: 10,
+  // toString() {
+  //     // return this.name;
+  //     return this;
+  // },
+  valueOf() {
+    return this.age
+  },
+}
+// 消除原型上的 toString 
+Object.prototype.toString = undefined
+console.log('user:', `${user}`) // user: 10
+```
+
+### 特殊的 Date
+
+* hint 是 default, 是**优先调用的 toString, 然后调用 valueOf**
+
+```javascript
+const date = new Date()
+
+console.log('date toString:', date.toString()) 
+// date toString: Wed May 24 2023 10:29:08 GMT+0800 (China Standard Time)
+
+console.log('date valueOf:', date.valueOf())
+// date valueOf: 1684895455945
+
+console.log(`date number:`, +date)
+// date number: 1684895455945
+
+console.log(`date str:`, `${date}`)
+// date str: Wed May 24 2023 10:30:55 GMT+0800 (China Standard Time)
+
+console.log(`date +:`, date + 1)
+// date +: Wed May 24 2023 10:30:55 GMT+0800 (China Standard Time)1
+```
+
+### 练习题一
+
+```javascript
+const arr = [4, 10]
+arr[Symbol.toPrimitive] = function (hint) {
+  return hint
+}
+arr.valueOf = function () {
+  return this
+}
+
+const obj = {}
+
+console.log(+arr + obj + arr + obj)
+// NaN[object Object]default[object Object]
+console.log(NaN + obj)
+// NaN[object Object]
+
+console.log({} + arr)
+// [object Object]default
+```
+
+### 练习题二
+
+> 注意：这里一个是对象和对象比较，一个是对象 和 原始值比较
+
+```javascript
+const val = [] == ![];
+
+[+val, [] + 1] == [1, 1] + []
+// [1, '1'] == [1, 1] + ''
+// '1, 1'
+
+[+val, [] + 1] == [1, '1']
+// [1, '1']  == [1, '1']
+
+console.log([+val, [] + 1] == [1, '1']) // false
+console.log([+val, [] + 1] == [1, 1] + []) // true
+```
 
