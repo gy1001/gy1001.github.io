@@ -897,27 +897,27 @@ console.log(getNoEnumerable(person))
 
 ### 显式类型转换
 
-* 显式转换：主要通过 JS 定义的转换方法进行转换
-* String、Object 等
-* parseInt、parstFloat 等
-* 显式调用 toString 等
+- 显式转换：主要通过 JS 定义的转换方法进行转换
+- String、Object 等
+- parseInt、parstFloat 等
+- 显式调用 toString 等
 
 ### 隐式转换
 
-* 隐式转换：编译器自动完成类型转换的方式就称为隐式转换
-* 总是**期望**返回基本类型值
+- 隐式转换：编译器自动完成类型转换的方式就称为隐式转换
+- 总是**期望**返回基本类型值
 
 ### 什么时候会发生隐式类型转换
 
-* 二元 + 运算符
+- 二元 + 运算符
 
-* 关系运算符：< > <= >= ==
+- 关系运算符：< > <= >= ==
 
-* 逻辑：！ if/while 三目条件
+- 逻辑：！ if/while 三目条件
 
-* 属性遍历：for in 等
+- 属性遍历：for in 等
 
-* 模板字符串
+- 模板字符串
 
   ```javascript
   const obj = {
@@ -946,39 +946,39 @@ console.log(getNoEnumerable(person))
 
 ### 对象隐式转换三大扛把子
 
-* Symbol.toPrimitive
-* Object.prototype.valueOf
-* Object.prototype.toString
+- Symbol.toPrimitive
+- Object.prototype.valueOf
+- Object.prototype.toString
 
 ### 对象隐式转换规则
 
-* 如果 【Symbol.toPrimitive】(hint)方法存在，优先调用，无视 valueOf 和 toString 方法
+- 如果 【Symbol.toPrimitive】(hint)方法存在，优先调用，无视 valueOf 和 toString 方法
 
-* 否则，如果期望是 "string" ----- 优先调用 obj.toString() 如果返回不是原始值，继续调用 obj.valueOf()
+- 否则，如果期望是 "string" ----- 优先调用 obj.toString() 如果返回不是原始值，继续调用 obj.valueOf()
 
-* 否则，如果期望是 number 或者 default ------ 先调用 obj.valueOf() 如果返回不是原始值，继续调用 obj.toString()
+- 否则，如果期望是 number 或者 default ------ 先调用 obj.valueOf() 如果返回不是原始值，继续调用 obj.toString()
 
   ```javascript
   const obj = {
     [Symbol.toPrimitive](hint) {
-      if (hint == "number") {
-        return 10;
+      if (hint == 'number') {
+        return 10
       }
-      if (hint == "string") {
-        return "hello";
+      if (hint == 'string') {
+        return 'hello'
       }
-      return true;
-    }
-  };
+      return true
+    },
+  }
   
-  console.log(+obj);     // 10      -- hint 参数值是 "number"
-  console.log(`${obj}`); // "hello" -- hint 参数值是 "string"
-  console.log(obj + ""); // "true"  -- hint 参数值是 "default"
+  console.log(+obj) // 10      -- hint 参数值是 "number"
+  console.log(`${obj}`) // "hello" -- hint 参数值是 "string"
+  console.log(obj + '') // "true"  -- hint 参数值是 "default"
   ```
 
 ### 提个问题
 
-* 如果未定义 【Symbol.toPrimitive】,期望是 string, toString 和 valueOf 都没有返回原始值:: 报错异常
+- 如果未定义 【Symbol.toPrimitive】,期望是 string, toString 和 valueOf 都没有返回原始值:: 报错异常
 
 ```javascript
 const obj = {
@@ -996,15 +996,15 @@ console.log(10 + obj) // TypeError: Cannot convert object to primitive value
 
 ### Symbol.toPrimitive(hint)
 
-* hint - "string"
-* hint - "number"
-* hint - "default"
+- hint - "string"
+- hint - "number"
+- hint - "default"
 
 ### hint - string
 
-* window.alert(obj)
-* 模板字符串`${obj}`
-* test[obj] = 123
+- window.alert(obj)
+- 模板字符串`${obj}`
+- test[obj] = 123
 
 ```javascript
 const obj = {
@@ -1024,14 +1024,14 @@ const obj = {
 console.log(`${obj}`) // hello
 // 属性键
 obj[obj] = 123
-console.log(Object.keys(obj)) // [ 'hello' ] 
+console.log(Object.keys(obj)) // [ 'hello' ]
 ```
 
 ### hint - number
 
-* 一元 + ， 位移
-* \- \* / 关系运算
-* Math.pow String.prototype.slice 等很多内部方法
+- 一元 + ， 位移
+- \- \* / 关系运算
+- Math.pow String.prototype.slice 等很多内部方法
 
 ```javascript
 const obj = {
@@ -1067,8 +1067,8 @@ console.log('Math.pow:', Math.pow(2, obj)) // Math.pow: 1024
 
 ### hint-default
 
-* 二元 +
-* == !=
+- 二元 +
+- == !=
 
 ```javascript
 const obj = {
@@ -1109,7 +1109,6 @@ console.log('Array:', arr.valueOf()) // Array: [ 1, 2, 5 ]
 console.log('Object:', user.valueOf()) // Object: { name: 'Jason', age: 24 }
 console.log('Date:', now.valueOf()) // Date: 1684893505844
 console.log('Function:', fun.valueOf()) // Function: [Function: fun]
-
 ```
 
 ### toString
@@ -1141,8 +1140,8 @@ console.log(1 + now) // 1Wed May 24 2023 09:59:27 GMT+0800 (China Standard Time)
 
 ### 误区：
 
-* === !== 是否会触发隐式转换：不会
-* == != 宽松比较是否触发隐式转换：也不一定，两个对象进行比较时是进行严格等判断的，其他情况下会触发隐式转换
+- === !== 是否会触发隐式转换：不会
+- == != 宽松比较是否触发隐式转换：也不一定，两个对象进行比较时是进行严格等判断的，其他情况下会触发隐式转换
 
 ```javascript
 const obj1 = {
@@ -1229,7 +1228,7 @@ const user = {
   },
 }
 
-console.log('user:', `${user}`) 
+console.log('user:', `${user}`)
 // TypeError: Cannot convert object to primitive value
 ```
 
@@ -1261,19 +1260,19 @@ const user = {
     return this.age
   },
 }
-// 消除原型上的 toString 
+// 消除原型上的 toString
 Object.prototype.toString = undefined
 console.log('user:', `${user}`) // user: 10
 ```
 
 ### 特殊的 Date
 
-* hint 是 default, 是**优先调用的 toString, 然后调用 valueOf**
+- hint 是 default, 是**优先调用的 toString, 然后调用 valueOf**
 
 ```javascript
 const date = new Date()
 
-console.log('date toString:', date.toString()) 
+console.log('date toString:', date.toString())
 // date toString: Wed May 24 2023 10:29:08 GMT+0800 (China Standard Time)
 
 console.log('date valueOf:', date.valueOf())
@@ -1316,16 +1315,1372 @@ console.log({} + arr)
 > 注意：这里一个是对象和对象比较，一个是对象 和 原始值比较
 
 ```javascript
-const val = [] == ![];
+const val = [] == ![]
 
-[+val, [] + 1] == [1, 1] + []
-// [1, '1'] == [1, 1] + ''
-// '1, 1'
+;([+val, [] + 1] ==
+  [1, 1] +
+    [][
+      // [1, '1'] == [1, 1] + ''
+      // '1, 1'
 
-[+val, [] + 1] == [1, '1']
+      (+val, [] + 1)
+    ]) ==
+  [1, '1']
 // [1, '1']  == [1, '1']
 
 console.log([+val, [] + 1] == [1, '1']) // false
 console.log([+val, [] + 1] == [1, 1] + []) // true
 ```
+
+## 06: 吃透 JSON 和 toJSON，互相转换不再是问题
+
+### JSON 对象
+
+- 严格意义上 JSON 对象是不合理的，JSON 是文本协议
+- 全局作用域下 JSON， 名为 JSON，是 Object 对象
+
+### 一个问题
+
+```javascript
+// 它是 JSON 对象吗 ？？
+var obj = {
+  name: 'tom',
+  [Symbol.for('sex')]: 1,
+}
+
+// 答案：它不是，它是一个对象字面量
+```
+
+### JSON 格式
+
+- JSON 是一种轻量级的、基于文本的、与语言无关的语法，用于定义数据交换格式
+- 它来源于 ECMAScript 编程语言，但是独立于编程语言
+
+### 对象字面量
+
+- 是创建对象的一种快捷方式，英文名：object literal
+- 对应还有：函数字面量，数字字面量等
+- 字面量的性能是优于使用 new 构建
+
+### JSON 特征
+
+- JSON 就是一种字符串，使用特定的符号标注
+- {} 双括号表示对象
+- [] 中括号表示数组
+- "" 双引号表示属性键或者值
+
+### JSON 键
+
+- 只能是字符串
+- 必须使用双引号包裹
+
+### JOSN 值
+
+必须是 object、array number string true false null
+
+最后一行不能添加逗号 ,
+
+### 合格的 JSON
+
+```javascript
+;`["你", "我", "她"]``{ "name": "帅哥", "age": 12 }``{ "IDS": ["123", "456"] }``{ "name": null }``{}``[]`
+```
+
+### 不合格的 JSON
+
+```javascript
+;`
+{
+    "name":"帅哥",
+    [Symbol.for("sex")]: 1  // 键只能是字符串，这里不是
+}``
+{ 
+  name: "帅哥", // 键只能是字符串，这里不是
+  'age': 32    // 键必须使用双引号，这里不是
+} ``
+{
+    "name": "帅哥",
+    "age": undefined  // undefined 这个值在 json 中不允许，可以是 "undefined"
+}``[-10, 0xDDFF]` // 只允许十进制，且没有键或者值
+`
+{ 
+  "name": "牙膏",
+  "created": new Date(),   // 值不能是 Date 类型
+  "price": 18
+  "getPrice": function() { // 值不能是函数类型
+      return this.price;
+  }
+}``
+{
+   "name":"帅哥",
+   "age": 32,  // 最后一个属性不能有逗号
+}
+`
+```
+
+### JSON.parse
+
+- 注意：第二个参数函数 reciver(k, v) 如果返回 undefined 会被忽略这个属性
+
+  ```javascript
+  const jsonStr = `
+  	{ 
+    	"name": "帅哥", 
+    	"age":  18, 
+      "isFans": true,
+      "IDCard": "xxxxxxxxxxxxxxxxxx"
+     }
+  `
+  // 保密身份证
+  var obj = JSON.parse(jsonStr, function (key, value) {
+    if (key == 'IDCard') {
+      return undefined
+    } else {
+      return value
+    }
+  })
+
+  console.log(obj) // { name: '帅哥', age: 18, isFans: true }
+  ```
+
+- 注意：遍历的顺序
+
+  ```javascript
+  var jsonStr = `{
+      "name": "牙膏",
+      "count": 10, 
+      "orderDetail": {
+          "createTime": 1632996519781,
+          "orderId": 8632996519781,
+          "more": {
+              "desc": "描述"
+          }
+      }
+  }`
+
+  JSON.parse(jsonStr, function (k, v) {
+    console.log('key:', k)
+    return v
+  })
+  // key: name
+  // key: count
+  // key: createTime
+  // key: orderId
+  // key: desc
+  // key: more
+  // key: orderDetail
+  // key:
+  ```
+
+- 注意：this
+
+  ```javascript
+  // this
+  var jsonStr = `{
+      "name": "牙膏",
+      "count": 10, 
+      "orderDetail": {
+          "createTime": 1632996519781,
+          "orderId": 8632996519781
+      }
+  }`
+  
+  JSON.parse(jsonStr, function (k, v) {
+    console.log('key:', k, ',this:', this)
+    return v
+  })
+  /*
+  key: name ,this: {
+    name: '牙膏',
+    count: 10,
+    orderDetail: { createTime: 1632996519781, orderId: 8632996519781 }
+  }
+  key: count ,this: {
+    name: '牙膏',
+    count: 10,
+    orderDetail: { createTime: 1632996519781, orderId: 8632996519781 }
+  }
+  key: createTime ,this: { createTime: 1632996519781, orderId: 8632996519781 }
+  key: orderId ,this: { createTime: 1632996519781, orderId: 8632996519781 }
+  key: orderDetail ,this: {
+    name: '牙膏',
+    count: 10,
+    orderDetail: { createTime: 1632996519781, orderId: 8632996519781 }
+  }
+  key:  ,this: {
+    '': {
+      name: '牙膏',
+      count: 10,
+      orderDetail: { createTime: 1632996519781, orderId: 8632996519781 }
+    }
+  }
+  
+  */
+  ```
+
+### JOSN.stringfy()
+
+- 语法：JSON.stringify(value, [, replacer [, space]])
+- 第二个参数 replacer: 过滤属性或者处理值
+- 第三个参数 space: 空格，美化输出格式
+
+### JOSN.stringfy() 第二个参数 replacer
+
+- 如果该参数是一个函数：则在序列化过程中，被序列化的值的每个属性都会讲过该函数的转换和处理
+- 如果该参数是一个数组，则只有包含在这个数组中的属性名才会被序列化到最终的 JSON 字符串中
+- 如果该参数为 null 或者未提供，则对象所有的属性都会被序列化
+
+```javascript
+//replacer 方法
+var person = {
+  name: '帅哥',
+  age: 45,
+  birth: '1990-01-01',
+}
+var jsonString = JSON.stringify(person, function (key, value) {
+  if (typeof value === 'string') {
+    return undefined
+  }
+  return value
+})
+
+console.log(jsonString) // {"age":45}
+
+var person = {
+  name: '帅哥',
+  age: 45,
+  birth: '1990-01-01',
+}
+
+//replacer 数组
+console.log(JSON.stringify(person, ['name', 'age'])) // { "name": "帅哥","age": 45 }
+```
+
+### JSON.stringify() 第三个参数 space
+
+* 如果参数是个数字，他代表有多少的空格；上限为 10，该值若小于 1，则意味着没有空格
+* 如果该参数为字符串（当字符串长度超过 10个字母，取其前 10个字母），该字符串将被作为空格
+* 如果该参数没有提供：(或者为 null), 将没有空格
+
+```javascript
+//space 美化格式
+var person = {
+  name: '帅哥',
+  age: 45,
+  birth: '1990-01-01',
+}
+const a = JSON.stringify(person)
+console.log(a) // {"name":"帅哥","age":45,"birth":"1990-01-01"}
+
+var person = {
+  name: '帅哥',
+  age: 45,
+  birth: '1990-01-01',
+}
+const c = JSON.stringify(person, null, '\t')
+console.log(c)
+/**
+{
+	"name": "帅哥",
+	"age": 45,
+	"birth": "1990-01-01"
+}
+*/
+```
+
+### 规则 - undefined、任意的函数、symbol
+
+* 作为对象属性值，会被自动忽略
+
+  ```javascript
+  // 自动忽略
+  const data = {
+    a: 'test1',
+    b: undefined,
+    c: Symbol('test2'),
+    fn: function () {
+      return true
+    },
+  }
+  console.log(JSON.stringify(data)) // {"a":"test1"}
+  ```
+
+* 作为数组，序列化返回 null
+
+  ```javascript
+  //数组返回null
+  const data = [
+    'test1',
+    undefined,
+    function aa() {
+      return true
+    },
+    Symbol('test2'),
+  ]
+  console.log(JSON.stringify(data)) // ["test1",null,null,null]
+  ```
+
+* 单独序列化时，返回 undefined
+
+  ```javascript
+  //返回undefined
+  const a1 = JSON.stringify(function a() {
+    console.log('test1')
+  })
+  console.log('a1==', a1) // a1== undefined
+  const a2 = JSON.stringify(undefined)
+  console.log('a2==', a2) // a2== undefined
+  const a3 = JSON.stringify(Symbol('test2'))
+  console.log('a3==', a3) // a3== undefined
+  ```
+
+### JSON.stringify 其他规则
+
+* Date 返回 ISO 字符串
+
+  ```javascript
+  //Date
+  console.log(JSON.stringify({ now: new Date() }))
+  // {"now":"2023-05-24T03:54:03.618Z"}
+  ```
+
+* 循环引用报错
+
+  ```javascript
+  //循环引用报错
+  const obj = {
+    name: 'loopObj',
+  }
+  const loopObj = {
+    obj,
+  }
+  // 对象之间形成循环引用，形成闭环
+  obj.loopObj = loopObj
+  
+  // 封装一个深拷贝的函数
+  function deepClone(obj) {
+    return JSON.parse(JSON.stringify(obj))
+  }
+  // 执行深拷贝，抛出错误
+  deepClone(obj)
+  
+  // TypeError: Converting circular structure to JSON
+  //    --> starting at object with constructor 'Object'
+  ```
+
+* NaN Infinity null 都会作为 null
+
+  ```javascript
+  // NaN 和 Infinity 以及null
+  console.log(JSON.stringify(NaN)) // null
+  console.log(JSON.stringify(Infinity)) // null
+  console.log(JSON.stringify(null)) // null
+  ```
+
+* 对象类型的原始值类型数据转换为对应的原始值
+
+  ```javascript
+  // 转换为对应的原始值
+  console.log(
+    JSON.stringify([new Number(2), new String('test'), new Boolean(false)]),
+  )
+  // [2,"test",false]
+  ```
+
+* BigInt 报错
+
+  ```javascript
+  var c = {
+    test: 1n,
+  }
+  console.log(JSON.stringify(c))
+  // TypeError: Do not know how to serialize a BigInt
+  ```
+
+* Map/Set/WeakMap等对象，仅序列化可枚举属性
+
+  ```javascript
+  //仅序列化可枚举属性
+  const a = JSON.stringify(
+    Object.create(null, {
+      test1: { value: 'testa', enumerable: false },
+      test2: { value: 'testb', enumerable: true },
+    }),
+  )
+  console.log(a) // {"test2":"testb"}
+
+### toJSON
+
+* 对象拥有 toJSON 方法，toJSON 会覆盖对象默认的序列化行为
+
+```javascript
+var product = {
+  name: '牙膏',
+  count: 10,
+  orderDetail: {
+    createTime: 1632996519781,
+    orderId: 8632996519781,
+  },
+  toJSON() {
+    return {
+      name: '牙膏',
+    }
+  },
+}
+
+console.log(JSON.stringify(product)) // '{"name":"牙膏"}
+```
+
+### 讨论题
+
+* JSON.parse(JSON.stringify(obj))深度复制的局限性
+
+```javascript
+const deepClone = function (obj) {
+    return JSON.parse(JSON.stringify(obj))
+}
+```
+
+## 07: 学习自检, 你能得几分
+
+### 题目一：
+
+```javascript
+const obj = {},
+  objA = { propertyA: 'A' },
+  objB = { propertyB: 'B' }
+
+obj[objA] = 'objectA'
+obj[objB] = 'ObjectB'
+
+for (let [p, v] of Object.entries(obj)) {
+  console.log('p:', p, ', v:', v)
+}
+// p: [object Object] , v: ObjectB
+```
+
+### 知识点
+
+* Object.entries: 迭代器，能获取键值对数组
+* 对象键的特性：本质上是字符串，如果是数字，用数字和数字字符串一致
+* 隐式转换：对象的隐式转换，Symbol.toPrimitvie valueOf toString 
+
+```javascript
+const obj = {},
+  objA = {
+    propertyA: 'A',
+    toString() {
+      return 'objA'
+    },
+  },
+  objB = {
+    propertyB: 'B',
+    valueOf() {
+      return 'objB'
+    },
+  }
+
+obj[objA] = 'objectA'
+obj[objB] = 'ObjectB'
+console.log('' + objA) // objA
+console.log('' + objB) // objB
+
+for (let [p, v] of Object.entries(obj)) {
+  console.log('p:', p, ', v:', v)
+}
+// p: objA , v: objectA
+// p: [object Object] , v: ObjectB 注意注意注意注意
+```
+
+### 题目二
+
+```javascript
+const person = {
+  name: '二哈',
+}
+const person2 = Object.create(person)
+delete person2.name
+
+console.log(person2.name) // 二哈
+```
+
+### 题目三
+
+```javascript
+const val = (+{} + [])[+[]]
+console.log(val) // N
+
+/*
+(+{} + [])[+[]]
+// +{}  => NaN
+(NaN + [])[+[]]
+// [] 隐式转换 ''
+(NaN + '')[+[]]
+// NaN + '' => 'NaN'
+('NaN')[+[]]
+// +[] => 0
+('NaN')[0]
+// 'N'
+*/
+```
+
+### 题目四
+
+```javascript
+const proto = {
+  name: '原型',
+  arr: [1, 2],
+}
+const person = Object.create(proto)
+person.name = '实例'
+person.arr.push(3)
+
+console.log(person.name) // 实例
+console.log(proto.name) // 原型
+
+console.log(person.arr) // [1,2,3]
+console.log(proto.arr) // [1,2,3]
+```
+
+### 题目五
+
+```javascript
+const toString = Object.prototype.toString
+function getObjectType(obj) {
+  return toString.call(obj).slice(8, -1)
+}
+const obj = String.prototype
+console.log(typeof obj) // object
+console.log(getObjectType(obj)) // [Object String].slice(8, -1) = String
+```
+
+### 题目六
+
+> javascript总是严格的按照从左到右计算表达式。
+
+```javascript
+let a = { n: 1 }
+a.x = a = { n: 2 }
+
+// 求a.x
+console.log(a.x) // undefined
+console.log(a) // { n: 2 }
+```
+
+### 题目七
+
+```javascript
+const proto = {
+  name: 'p_parent',
+  type: 'p_object',
+  [Symbol.for('p_address')]: '地球',
+}
+
+const ins = Object.create(proto)
+// 通过 defineProperty 声明的属性，默认是不可枚举的
+Object.defineProperty(ins, 'age', {
+  value: 18,
+})
+ins.sex = 1
+ins[Symbol.for('say')] = function () {
+  console.log('say')
+}
+
+const inKeys = []
+for (let p in ins) {
+  inKeys.push(p)
+}
+
+console.log(inKeys)
+// [ 'sex', 'name', 'type' ]
+console.log(Reflect.ownKeys(ins)) // 不能获取原型上的属性
+// [ 'age', 'sex', Symbol(say) ]
+console.log(ins)
+// { sex: 1, [Symbol(say)]: [Function (anonymous)] }
+```
+
+## 08：对象的多种克隆方式以及注意事项
+
+### 克隆的意义和常见场景
+
+* 意义：保证原数据的完整性和独立性
+* 常见场景: 复制数据、函数入参、class 构造函数等
+
+### 克隆分类
+
+* 浅克隆
+* 深克隆
+
+### 浅克隆
+
+#### 特点
+
+* 只克隆对象的第一层级
+* 如果属性值是原始数据类型，拷贝其值，也就是我们常说的值拷贝
+* 如果属性值是引用类型，拷贝其内存地址，也就是我们常说的引用拷贝
+
+#### 常用的浅克隆方式
+
+* ES6 拓展运算符号：...
+* Object.assign
+* for in 和其他的一层遍历复制
+
+```javascript
+// 浅克隆：拓展运算符
+const person = {
+  name: '帅哥',
+  age: 18,
+  getName: function () {
+    return this.name
+  },
+  address: {
+    province: '北京',
+  },
+}
+
+const person2 = { ...person }
+
+person2.name = '帅哥2'
+person2.getName = function () {
+  return `person2` + this.name
+}
+person2.address.province = '上海'
+
+console.log('person.name:', person.name)
+console.log('person.getName:', person.getName.toString())
+/**
+person.name: 帅哥
+person.getName: function () {
+    return this.name
+  }
+person.address.province: 上海
+*/
+```
+
+```javascript
+// 浅克隆 for...in一层
+const person = {
+  name: '帅哥',
+  age: 18,
+  getName: function () {
+    return this.name
+  },
+  address: {
+    province: '北京',
+  },
+}
+
+const hasOwn = Object.prototype.hasOwnProperty
+function clone(obj) {
+  const result = {}
+  for (let p in obj) {
+    if (hasOwn.call(obj, p)) {
+      result[p] = obj[p]
+    }
+  }
+  return result
+}
+var person2 = clone(person)
+
+person2.name = '帅哥2'
+person2.getName = function () {
+  return `person2` + this.name
+}
+person2.address.province = '上海'
+
+console.log('person.name:', person.name)
+console.log('person.getName:', person.getName.toString())
+console.log('person.address.province:', person.address.province)
+/*
+person.name: 帅哥
+person.getName: function () {
+    return this.name
+  }
+person.address.province: 上海
+*/
+```
+
+#### 数组常用的浅克隆
+
+* ES6 的拓展运算符...
+* slice
+* [].concat
+
+```javascript
+const arr = [1, 2, 3]
+// 拓展运算符
+const arr2 = [...arr]
+const arr3 = arr.slice(0)
+const arr4 = [].concat(arr)
+
+console.log('arr', arr)
+console.log('arr2', arr2, arr2 == arr)
+console.log('arr3', arr3, arr3 == arr)
+console.log('arr4', arr4, arr4 == arr)
+/**
+arr [ 1, 2, 3 ]
+arr2 [ 1, 2, 3 ] false
+arr3 [ 1, 2, 3 ] false
+arr4 [ 1, 2, 3 ] false 
+*/
+```
+
+### 深克隆
+
+#### 特点
+
+* 克隆对象的每个层级
+* 如果属性值是原始值类型，拷贝其值，也就是我们常说的值拷贝
+* 如果属性值是引用类型，就递归拷贝
+
+#### JSON.stringify + JSON.parse
+
+* 优点：纯天然，无污染
+* 缺点
+  * 性能差
+  * 具有局限性
+* 局限性：
+  * 只能复制普通健的属性，Symbol类型的无能为力
+  * 循环引用对象，比如 Window 不能复制
+  * 函数，Date, Regex, Blob 等类型不能复制
+
+```javascript
+function clone(obj) {
+  return JSON.parse(JSON.stringify(obj))
+}
+
+const a = clone({ a: 1, c: { b: 2 } }) // {a:1,c:{b:2}}
+console.log('common object:', a)
+// common object: { a: 1, c: { b: 2 } }
+
+// 时间：转为字符串
+console.log('date:', clone({ date: new Date() })) // {date: '2021-09-26T08:23:40.517Z'}
+// date: { date: '2023-05-24T07:38:02.486Z' }
+
+// 正则： 变为了空对象  异常
+console.log('regex', clone({ regex: /[0-9]/ })) // {regex: {…}}
+// regex { regex: {} }
+
+// Blob: 变为空对象， 异常
+console.log('blob:', clone({ blob: new Blob(['123']) })) // {blob: {…}}
+// blob: { "blob": {} }
+
+// 函数
+console.log('function:', clone({ fn() {} })) // {}
+// function: {}
+
+// window
+console.log(clone(window)) // Uncaught TypeError: Converting circular structure to JSON
+// Uncaught TypeError: Converting circular structure to JSON
+```
+
+#### 消息通讯
+
+* window.postMessage
+* Broadcast Channel
+* Shared Worker
+* Message Channel
+
+```html
+<!DOCTYPE html>
+
+<body>
+  <script>
+    let chId = 0
+    function clone(data) {
+      chId++
+      var cname = `__clone__${chId}`
+      var ch1 = new BroadcastChannel(cname)
+      var ch2 = new BroadcastChannel(cname)
+      return new Promise((resolve) => {
+        ch2.addEventListener("message", ev => resolve(ev.data),
+          { once: true })
+        ch1.postMessage(data)
+      })
+    }
+    // 复制对象： 正确
+    var obj1 = { a: { b: 1 } }
+    clone(obj1).then(function (o) {
+      console.log("克隆普通对象:")
+      console.log(o, o === obj1)
+      console.log("")
+    })
+
+    // 复制时间： 正确, 依旧能调用getFullYear方法
+    var obj2 = {
+      a: new Date()
+    }
+    clone(obj2)
+      .then(function (o) {
+        console.log("克隆对象:包含时间")
+        console.log(o, o === obj2, o.a.getFullYear())
+        console.log("")
+      })
+
+
+    // 复制正则, 正确，依旧能调用正则的test方法
+    var obj3 = {
+      a: /[0-9]/
+    }
+    clone(obj3)
+      .then(function (o) {
+        console.log("克隆对象:包含正则")
+        console.log(o, o === obj3, o.a.test(1))
+        console.log("")
+      })
+
+
+    // 复制Blob, 正确，依旧还是Blob类型
+    var obj4 = {
+      a: new Blob(["123"])
+    }
+    clone(obj4)
+      .then(function (o) {
+        console.log("克隆对象:包含Blob")
+        console.log(o, o === obj3, o.a instanceof Blob)
+        console.log("")
+      })
+
+
+    // 复制 window，异常
+    var obj5 = {
+      a: 1,
+      window
+    }
+    clone(obj5).then(function (o) {
+      console.log(o, o === obj5)
+    }).catch(err => {
+      console.log("克隆window:", err)
+    })
+
+
+    // 复制自定义函数, 异常
+    var obj6 = {
+      a: 1,
+      fn: function fn() { return false },
+    }
+    clone(obj6)
+      .then(o => console.log(o, o === obj6))
+      .catch(err => {
+        console.log("克隆window:", err)
+      })
+  </script>
+  <div>BroadcastChannel</div>
+</body>
+
+</html>
+```
+
+#### 基于消息通讯克隆的局限
+
+* 循环引用对象不能复制：如 Windows
+* 函数不能复制
+* 同步变成异步
+
+#### 手写简单版深度克隆
+
+```javascript
+const { hasOwnProperty } = Object.prototype
+
+function isObject(obj) {
+  return obj !== null && typeof obj == 'object'
+}
+
+function isArray(obj) {
+  return Array.isArray(obj)
+}
+
+function hasOwn(obj, key) {
+  return hasOwnProperty.call(obj, key)
+}
+
+function deepClone(obj) {
+  if (!isObject(obj)) return obj
+  let data
+
+  if (isArray(obj)) {
+    data = []
+    for (let i = 0; i < obj.length; i++) {
+      data[i] = deepClone(obj[i])
+    }
+  } else if (isObject(obj)) {
+    data = {}
+    for (let key in obj) {
+      if (hasOwn(obj, key)) {
+        data[key] = deepClone(obj[key])
+      }
+    }
+  }
+  return data
+}
+
+const arr = [1, 2]
+arr.ccc = 'ccc'
+
+var obj1 = {
+  name: 'obj1',
+  age: 18,
+  date: new Date(),
+  arr,
+}
+const a = deepClone(obj1)
+console.log(a)
+// { name: 'obj1', age: 18, date: {}, arr: [ 1, 2 ] }
+// arr上的 ccc属性丢失，以及 date 数据类型丢失
+```
+
+#### 优化简单版本深度克隆
+
+> 还存在的问题：
+>
+> 1. 循环引用没有处理
+> 2. 递归：可能爆栈
+> 3. 特殊类型未做处理，比如 blod date等
+
+```javascript
+const { hasOwnProperty } = Object.prototype
+
+function isObject(obj) {
+  return obj !== null && typeof obj == 'object'
+}
+
+function isArray(obj) {
+  return Array.isArray(obj)
+}
+
+function hasOwn(obj, key) {
+  return hasOwnProperty.call(obj, key)
+}
+
+function deepClone(obj) {
+  if (!isObject(obj)) return obj
+  const data = isArray(obj) ? [] : {}
+  for (let key in obj) {
+    const val = obj[key]
+    if (hasOwn(obj, key)) {
+      data[key] = deepClone(val)
+    }
+  }
+  return data
+}
+
+const arr = [1, 2]
+arr.ccc = 'ccc'
+
+var obj1 = {
+  name: 'obj1',
+  age: 18,
+  date: new Date(),
+  arr,
+}
+const a = deepClone(obj1)
+console.log(a) // { name: 'obj1', age: 18, date: {}, arr: [ 1, 2, ccc: 'ccc' ] }
+
+// // 循环引用
+// var obj2 = {
+//     name: "obj2"
+// };
+// obj2[obj2] = obj2;
+// deepClone(obj2)
+
+```
+
+#### Jquery中的 Jquery.extends
+
+```javascript
+jQuery.extend = jQuery.fn.extend = function () {
+  var options,
+    name,
+    src,
+    copy,
+    copyIsArray,
+    clone,
+    target = arguments[0] || {},
+    i = 1,
+    length = arguments.length,
+    deep = false
+
+  // Handle a deep copy situation
+  if (typeof target === 'boolean') {
+    deep = target
+
+    // Skip the boolean and the target
+    target = arguments[i] || {}
+    i++
+  }
+
+  // Handle case when target is a string or something (possible in deep copy)
+  if (typeof target !== 'object' && typeof target !== 'function') {
+    target = {}
+  }
+
+  // Extend jQuery itself if only one argument is passed
+  if (i === length) {
+    target = this
+    i--
+  }
+
+  for (; i < length; i++) {
+    // Only deal with non-null/undefined values
+    if ((options = arguments[i]) != null) {
+      // Extend the base object
+      for (name in options) {
+        copy = options[name]
+
+        // Prevent Object.prototype pollution
+        // Prevent never-ending loop
+        if (name === '__proto__' || target === copy) {
+          continue
+        }
+
+        // Recurse if we're merging plain objects or arrays
+        if (
+          deep &&
+          copy &&
+          (jQuery.isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))
+        ) {
+          src = target[name]
+
+          // Ensure proper type for the source value
+          if (copyIsArray && !Array.isArray(src)) {
+            clone = []
+          } else if (!copyIsArray && !jQuery.isPlainObject(src)) {
+            clone = {}
+          } else {
+            clone = src
+          }
+          copyIsArray = false
+
+          // Never move original objects, clone them
+          target[name] = jQuery.extend(deep, clone, copy)
+
+          // Don't bring in undefined values
+        } else if (copy !== undefined) {
+          target[name] = copy
+        }
+      }
+    }
+  }
+
+  // Return the modified object
+  return target
+}
+```
+
+#### 深度复制-循环引用
+
+* 循环引用问题解决（WeakMap）
+
+```javascript
+const { hasOwnProperty } = Object.prototype
+function isObject(obj) {
+  return obj !== null && typeof obj == 'object'
+}
+function isArray(obj) {
+  return Array.isArray(obj)
+}
+function hasOwn(obj, key) {
+  return hasOwnProperty.call(obj, key)
+}
+
+function deepClone(obj) {
+  const wmap = new WeakMap()
+  wmap.set(obj, 1)
+
+  function deepCloneInner() {
+    if (!isObject(obj)) return obj
+    const data = isArray(obj) ? [] : {}
+    for (let key in obj) {
+      const val = obj[key]
+      if (hasOwn(obj, key)) {
+        // 原始数据类型
+        if (!isObject(val)) {
+          data[key] = val
+          continue
+        }
+        if (wmap.has(val)) {
+          continue
+        }
+        wmap.set(val, 1)
+        data[key] = deepCloneInner(val)
+      }
+    }
+    return data
+  }
+
+  return deepCloneInner(obj)
+}
+
+// 循环引用
+var obj2 = {
+  name: 'obj2',
+}
+obj2['obj2'] = obj2
+console.log(deepClone(obj2))
+```
+
+#### 深度复制-爆栈问题
+
+* 爆栈问题解决（循环代替递归）
+
+```javascript
+const { toString, hasOwnProperty } = Object.prototype
+function hasOwnProp(obj, property) {
+  return hasOwnProperty.call(obj, property)
+}
+function getType(obj) {
+  return toString.call(obj).slice(8, -1).toLowerCase()
+}
+function isObject(obj) {
+  return getType(obj) === 'object'
+}
+function isArray(arr) {
+  return getType(arr) === 'array'
+}
+function isCloneObject(obj) {
+  return isObject(obj) || isArray(obj)
+}
+// 循环
+function cloneDeep(x) {
+  // 先设置默认值
+  let root = x
+
+  if (isArray(x)) {
+    root = []
+  } else if (isObject(x)) {
+    root = {}
+  }
+
+  // 循环数组
+  const loopList = [
+    {
+      parent: root,
+      key: undefined,
+      data: x,
+    },
+  ]
+
+  while (loopList.length) {
+    // 深度优先
+
+    // 出栈
+    const node = loopList.pop()
+    const parent = node.parent
+    const key = node.key
+    const data = node.data
+
+    // 初始化赋值目标，key为undefined则拷贝到父元素，否则拷贝到子元素
+    let res = parent
+    if (typeof key !== 'undefined') {
+      res = parent[key] = isArray(data) ? [] : {}
+    }
+
+    if (isArray(data)) {
+      for (let i = 0; i < data.length; i++) {
+        // 避免一层死循环 a.b = a
+        if (data[i] === data) {
+          res[i] = res
+        } else if (isCloneObject(data[i])) {
+          // 需要深度复制的属性值
+          // 下一次循环， 入栈
+          loopList.push({
+            parent: res,
+            key: i,
+            data: data[i],
+          })
+        } else {
+          res[i] = data[i]
+        }
+      }
+    } else if (isObject(data)) {
+      for (let k in data) {
+        if (hasOwnProp(data, k)) {
+          // 避免一层死循环 a.b = a
+          if (data[k] === data) {
+            res[k] = res
+          } else if (isCloneObject(data[k])) {
+            // 需要深度复制的属性值
+            // 下一次循环
+            loopList.push({
+              parent: res,
+              key: k,
+              data: data[k],
+            })
+          } else {
+            res[k] = data[k]
+          }
+        }
+      }
+    }
+  }
+
+  return root
+}
+
+// console.log(cloneDeep({ a: 1, b: { fn: function () { } } }));
+function createData(deep) {
+  var data = {}
+  var temp = data
+
+  for (var i = 0; i < deep; i++) {
+    temp = temp['data'] = {}
+    temp[i + 1] = i + 1
+  }
+
+  return data
+}
+
+const data = createData(10000)
+// const f=JSON.parse(JSON.stringify(data));
+// console.log(JSON.parse(JSON.stringify(data)));
+
+// clone deep
+const f = cloneDeep(data)
+console.log('f==', f)
+```
+
+#### 思考：特殊类型处理
+
+* Map Set Blob 等
+* 提示：构造函数识别
+
+### 浅克隆 vs 深克隆
+
+| 方法方式 | 优点         | 缺点                       | 备注                               |
+| -------- | ------------ | -------------------------- | ---------------------------------- |
+| 浅克隆   | 性能高       | 数据可能不完全独立         | 一层属性全是值类型，等同于深度克隆 |
+| 深克隆   | 不影响原对象 | 性能低，时间和空间消耗更大 | 保持数据独立行，让函数无副作用等   |
+
+### 终极版本的深克隆
+
+```javascript
+const { toString, hasOwnProperty } = Object.prototype
+
+function hasOwnProp(obj, property) {
+  return hasOwnProperty.call(obj, property)
+}
+
+function getType(obj) {
+  return toString.call(obj).slice(8, -1).toLowerCase()
+}
+
+function isObject(obj) {
+  return getType(obj) === 'object'
+}
+
+function isArray(arr) {
+  return getType(arr) === 'array'
+}
+
+function isCloneObject(obj) {
+  return isObject(obj) || isArray(obj)
+}
+
+function cloneDeep(x) {
+  //使用WeakMap
+  let uniqueData = new WeakMap()
+  let root = x
+
+  if (isArray(x)) {
+    root = []
+  } else if (isObject(x)) {
+    root = {}
+  }
+
+  // 循环数组
+  const loopList = [
+    {
+      parent: root,
+      key: undefined,
+      data: x,
+    },
+  ]
+
+  while (loopList.length) {
+    // 深度优先
+    const node = loopList.pop()
+    const parent = node.parent
+    const key = node.key
+    const source = node.data
+
+    // 初始化赋值目标，key为undefined则拷贝到父元素，否则拷贝到子元素
+    let target = parent
+    if (typeof key !== 'undefined') {
+      target = parent[key] = isArray(source) ? [] : {}
+    }
+
+    // 复杂数据需要缓存操作
+    if (isCloneObject(source)) {
+      // 命中缓存，直接返回缓存数据
+      let uniqueTarget = uniqueData.get(source)
+      if (uniqueTarget) {
+        parent[key] = uniqueTarget
+        continue // 中断本次循环
+      }
+
+      // 未命中缓存，保存到缓存
+      uniqueData.set(source, target)
+    }
+
+    if (isArray(source)) {
+      for (let i = 0; i < source.length; i++) {
+        if (isCloneObject(source[i])) {
+          // 下一次循环
+          loopList.push({
+            parent: target,
+            key: i,
+            data: source[i],
+          })
+        } else {
+          target[i] = source[i]
+        }
+      }
+    } else if (isObject(source)) {
+      for (let k in source) {
+        if (hasOwnProp(source, k)) {
+          if (isCloneObject(source[k])) {
+            // 下一次循环
+            loopList.push({
+              parent: target,
+              key: k,
+              data: source[k],
+            })
+          } else {
+            target[k] = source[k]
+          }
+        }
+      }
+    }
+  }
+
+  uniqueData = null
+  return root
+}
+
+var obj = {
+  p1: 'p1',
+  p2: [
+    'p22',
+    {
+      p23: undefined,
+      p24: 666,
+    },
+  ],
+  null: null,
+  p4: new RegExp(),
+  p3: undefined,
+  func: function () {
+    console.log('func')
+    return 1
+  },
+  Symbol: Symbol(2),
+  bigint: BigInt(100),
+}
+obj.loop = obj
+
+const f = cloneDeep(obj)
+console.log('f==', f)
+```
+
+
 
