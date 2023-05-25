@@ -1544,3 +1544,736 @@ console.log(result)
 }
 ```
 
+## 06：手写数组的多个方法（上）
+
+### Array.isArray
+
+#### 基本使用
+
+* 作用：确认传递的值是否是一个 Array
+
+  ```javascript
+  const arr = ['1']
+  
+  const log = console.log
+  log('isArray:', Array.isArray(arr)) // isArray: true
+  ```
+
+#### 非基本使用
+
+```javascript
+const arr = ['1']
+const proxy = new Proxy(arr, {})
+const log = console.log
+
+log('isArray:', Array.isArray(proxy)) // isArray: true
+```
+
+原型上的代码示例
+
+```javascript
+const arr = ['1']
+const proxy = new Proxy(arr, {})
+const log = console.log
+
+log('__proto__:', proxy.__proto__ === Array.prototype) // __proto__: true
+log('instanceof:', proxy instanceof Array) // instanceof: true
+console.log('-------------------')
+log('toString', Object.prototype.toString.call(Proxy)) // toString [object Function]
+log('Proxy.prototype:', Proxy.prototype) // Proxy.prototype: undefined
+log('proxy instanceof Proxy:', proxy instanceof Proxy) // TypeError: Function has non-object prototype 'undefined' in instanceof check
+```
+
+#### Proxy 的玄机
+
+* Proxy 是函数，但是本身没有 prototype
+* Proxy 不改变被代理对象的外在表现
+
+### Array.isArray-手写推荐写法
+
+* Object.prototype.toString
+* typeof + instanceof
+* constructor
+
+```javascript
+// 手写 toString
+Array.isArray = function (obj) {
+  return Object.prototype.toString.call(obj) === '[object Array]'
+}
+
+const arr = ['1']
+const proxy = new Proxy(arr, {})
+
+const log = console.log
+log(Array.isArray(arr)) // true
+log(Array.isArray(proxy)) // true
+```
+
+```javascript
+// typeof + instanceof
+Array.isArray = function (obj) {
+  if (typeof obj !== 'object' || obj === null) {
+    return false
+  }
+  return obj instanceof Array
+}
+
+const arr = ['1']
+const proxy = new Proxy(arr, {})
+const log = console.log
+log(Array.isArray(arr)) // true
+log(Array.isArray(proxy)) // true
+```
+
+#### Array.isArray 其他实现思路
+
+| 方法               | 基础数据 | 引用关系 | 注意事项                 |
+| ------------------ | -------- | -------- | ------------------------ |
+| typeof             | 可       | 不可     | NaN, object document.all |
+| constructor        | 可(部分) | 不可     | 可以被改写               |
+| instanceof         | 不可     | 可       | 右边构造函数 或者 class  |
+| isPrototypeOf      | 不可     | 可       |                          |
+| toString           | 可       | 可       | 小心内置原型             |
+| 鸭子类型           |          | 可       | 不得以或者兼容           |
+| Symbol.toStringTag | 不可     | 可       | 识别自定义类型           |
+| 等比较             | 可       | 可       | 特殊对象                 |
+
+### Array.prototype.entries 
+
+#### 基本使用
+
+* 作用：返回一个新的 Aray Iterator 对象，该对象包含数组中每个索引的键值/对
+
+```javascript
+const arr = [1, undefined, null, {}]
+
+console.log(arr.entries())
+// next访问
+const iter = arr.entries()
+console.log('next:', iter.next())
+
+// for of迭代
+for (let [k, v] of arr.entries()) {
+  console.log(k, v)
+}
+
+// 打印信息如下
+Object [Array Iterator] {}
+next: { value: [ 0, 1 ], done: false }
+0 1
+1 undefined
+2 null
+3 {}
+```
+
+#### entries next 返回
+
+```javascript
+const arr = [1, 2, 3]
+
+const iter = arr.entries()
+
+console.log('iter.next():', iter.next())
+console.log('iter.next():', iter.next())
+console.log('iter.next():', iter.next())
+console.log('iter.next():', iter.next())
+
+// 打印如下
+iter.next(): { value: [ 0, 1 ], done: false }
+iter.next(): { value: [ 1, 2 ], done: false }
+iter.next(): { value: [ 2, 3 ], done: false }
+iter.next(): { value: undefined, done: true }
+```
+
+#### entries iterator next
+
+```javascript
+Array.prototype.entries = function () {
+  const O = Object(this)
+  let index = 0
+  const length = O.length
+  return {
+    next() {
+      if (index < length) {
+        return { value: [index, O[index++]], done: false }
+      }
+      return { value: undefined, done: true }
+    },
+  }
+}
+
+const arr = [1, 2, 3]
+
+const iter = arr.entries()
+console.log('iter.next().value:', iter.next().value)
+console.log('iter.next().value:', iter.next().value)
+console.log('iter.next().value:', iter.next().value)
+
+for (let [k, v] of arr.entries()) {
+  console.log(`k:${k}`, `v:${v}`)
+}
+
+// 打印如下
+iter.next().value: [ 0, 1 ]
+iter.next().value: [ 1, 2 ]
+iter.next().value: [ 2, 3 ]
+
+TypeError: arr.entries is not a function or its return value is not iterable
+```
+
+#### entries iterator symbol
+
+```javascript
+Array.prototype.entries = function () {
+  const O = Object(this)
+  let index = 0
+  const length = O.length
+
+  function next() {
+    if (index < length) {
+      return { value: [index, O[index++]], done: false }
+    }
+    return { value: undefined, done: true }
+  }
+  return {
+    next,
+    [Symbol.iterator]() {
+      return {
+        next,
+      }
+    },
+  }
+}
+
+const arr = [1, 2, 3]
+
+const iter = arr.entries()
+console.log('iter.next().value:', iter.next().value)
+console.log('iter.next().value:', iter.next().value)
+console.log('iter.next().value:', iter.next().value)
+
+for (let [k, v] of arr.entries()) {
+  console.log(`k:${k}`, `v:${v}`)
+}
+
+
+// 打印如下
+iter.next().value: [ 0, 1 ]
+iter.next().value: [ 1, 2 ]
+iter.next().value: [ 2, 3 ]
+k:0 v:1
+k:1 v:2
+k:2 v:3
+```
+
+#### entries iterator proto
+
+```javascript
+Array.prototype[Symbol.iterator] = function () {
+  const O = Object(this)
+  let index = 0
+  const length = O.length
+
+  function next() {
+    if (index < length) {
+      return { value: O[index++], done: false }
+    }
+    return { value: undefined, done: true }
+  }
+
+  return {
+    next,
+  }
+}
+
+Array.prototype.entries = function () {
+  const O = Object(this)
+  const length = O.length
+  var entries = []
+
+  for (var i = 0; i < length; i++) {
+    entries.push([i, O[i]])
+  }
+
+  const itr = this[Symbol.iterator].bind(entries)()
+  return {
+    next: itr.next,
+    [Symbol.iterator]() {
+      return itr
+    },
+  }
+}
+
+Array.prototype.keys = function () {
+  const O = Object(this)
+  const length = O.length
+  var keys = []
+
+  for (var i = 0; i < length; i++) {
+    keys.push([i])
+  }
+
+  const itr = this[Symbol.iterator].bind(keys)()
+  return {
+    next: itr.next,
+    [Symbol.iterator]() {
+      return itr
+    },
+  }
+}
+
+const arr = [1, 2, 3]
+
+var iter = arr.entries()
+console.log('iter.next().value:', iter.next().value)
+console.log('iter.next().value:', iter.next().value)
+console.log('iter.next().value:', iter.next().value)
+
+for (let [k, v] of arr.entries()) {
+  console.log(`k:${k}`, `v:${v}`)
+}
+
+var iter = arr.keys()
+console.log('iter.next().value:', iter.next().value)
+console.log('iter.next().value:', iter.next().value)
+console.log('iter.next().value:', iter.next().value)
+
+for (let k of arr.keys()) {
+  console.log(`k:${k}`)
+}
+
+// 打印如下
+iter.next().value: [ 0, 1 ]
+iter.next().value: [ 1, 2 ]
+iter.next().value: [ 2, 3 ]
+k:0 v:1
+k:1 v:2
+k:2 v:3
+iter.next().value: [ 0 ]
+iter.next().value: [ 1 ]
+iter.next().value: [ 2 ]
+k:0
+k:1
+k:2
+```
+
+#### 考察知识点
+
+* 迭代器的本质和实现
+* ES6 Symbol 符号
+* 逻辑复用
+
+### Array.prototype.includes
+
+#### 基本用法
+
+```javascript
+const arr = [1, 2, 3, { a: 1 }, null, undefined, NaN, '']
+
+console.log('includes null:', arr.includes(null))
+console.log('indexOf null:', arr.indexOf(null))
+console.log('includes NaN:', arr.includes(NaN))
+console.log('indexOf NaN:', arr.indexOf(NaN))
+
+// 打印如下
+includes null: true
+indexOf null: 4
+includes NaN: true
+indexOf NaN: -1
+```
+
+#### 手写实现
+
+```javascript
+Number.isNaN = function (param) {
+  if (typeof param === 'number') {
+    return isNaN(param)
+  }
+  return false
+}
+
+Array.prototype.includes = function (item, fromIndex) {
+  // call, apply调用，严格模式
+  if (this == null) {
+    throw new TypeError('无效的this')
+  }
+  var O = Object(this)
+
+  var len = O.length >> 0
+  if (len <= 0) {
+    return false
+  }
+
+  const isNAN = Number.isNaN(item)
+  for (let i = 0; i < len; i++) {
+    if (O[i] === item) {
+      return true
+    } else if (isNAN && Number.isNaN(O[i])) {
+      return true
+    }
+  }
+  return false
+}
+
+const obj = { a: 3 }
+const arr = [1, 2, 3, { a: 1 }, null, undefined, NaN, '', 0, obj, obj]
+
+console.log('includes null:', arr.includes(null))
+console.log('includes NaN:', arr.includes(NaN))
+
+// 打印如下
+includes null: true
+includes NaN: true
+```
+
+#### .includes 第二个参数
+
+[相关协议：https://tc39.es/ecma262/#sec-properties-of-the-array-prototype-object](https://tc39.es/ecma262/#sec-properties-of-the-array-prototype-object)
+
+* 转为整数：ToIntegerOrInfinity
+* +Infinity, -Infinity
+* 可以是负数
+
+```javascript
+Number.isNaN = function (params) {
+  if (typeof params === 'number') {
+    return isNaN(params)
+  }
+  return false
+}
+
+function ToIntegerOrInfinity(argument) {
+  var num = Number(argument)
+  // + 0 和 -0
+  if (Number.isNaN(num) || num == 0) {
+    return 0
+  }
+  if (num === Infinity || num == -Infinity) {
+    return num
+  }
+  var inter = Math.floor(Math.abs(num))
+  if (num < 0) {
+    inter = -inter
+  }
+  return inter
+}
+
+Array.prototype.includes = function (item, fromIndex) {
+  // call, apply调用，严格模式
+  if (this == null) {
+    throw new TypeError('无效的this')
+  }
+  var O = Object(this)
+
+  var len = O.length >> 0
+  if (len <= 0) {
+    return false
+  }
+
+  var n = ToIntegerOrInfinity(fromIndex)
+  if (fromIndex === undefined) {
+    n = 0
+  }
+  if (n === +Infinity) {
+    return false
+  }
+  if (n === -Infinity) {
+    n = 0
+  }
+
+  var k = n >= 0 ? n : len + n
+  if (k < 0) {
+    k = 0
+  }
+
+  const isNAN = Number.isNaN(item)
+  for (let i = k; i < len; i++) {
+    if (O[i] === item) {
+      return true
+    } else if (isNAN && Number.isNaN(O[i])) {
+      return true
+    }
+  }
+  return false
+}
+
+const arr = ['a', 'b', 'c']
+console.log('arr include -100->0:', arr.includes('c', -100))
+console.log('arr include -100->0:', arr.includes('a', -1))
+console.log('arr include 1:', arr.includes('a', -Infinity))
+console.log('arr include 1:', arr.includes('a', Infinity))
+
+// 打印如下
+arr include -100->0: true
+arr include -100->0: false
+arr include 1: true
+arr include 1: false
+```
+
+#### 考察知识点
+
+* 协议标准
+* Infinity 无穷
+* 特殊值 NaN
+
+### Array.from
+
+* 第一次参数 arrayLike: 类数组对象 或者 可遍历对象（Map,Set）等
+* 第二个参数：mapFn 可选参数，在最后生成数组后执行一次 map 方法后返回
+* 第三个参数：thisArg 可选参数，实际是 Array.from(obj).map(mapFn, thisArg)
+
+#### 特殊值的处理如下
+
+```javascript
+console.log('Array.from:', Array.from({}))
+console.log('Array.from:', Array.from(''))
+console.log('Array.from:', Array.from({ a: 1, length: '10' }))
+console.log('Array.from:', Array.from({ a: 1, length: 'ss' }))
+console.log('Array.from:', Array.from([NaN, null, undefined, 0]))
+
+// console.log("Array.from:", Array.from({ 0: 1, 1: 2, length: max - 1 }));
+// console.log("Array.from:", Array.from({ 0: 1, 1: 2, length: max }));
+console.log('Array.from: end')
+
+// 打印如下
+Array.from: []
+Array.from: []
+Array.from: [
+  undefined, undefined,
+  undefined, undefined,
+  undefined, undefined,
+  undefined, undefined,
+  undefined, undefined
+]
+Array.from: []
+Array.from: [ NaN, null, undefined, 0 ]
+Array.from: end
+```
+
+#### 数组大小验证
+
+```javascript
+const max = Math.pow(2, 32)
+console.log('Array.from:', Array.from({ 0: 1, 1: 2, length: max - 1 }))
+console.log('Array.from:', Array.from({ 0: 1, 1: 2, length: max }))
+```
+
+#### 实现
+
+```javascript
+//类数组的特征
+var maxSafeInteger = Math.pow(2, 32) - 1
+
+var ToIntegerOrInfinity = function (value) {
+  var number = Number(value)
+  if (isNaN(number)) {
+    return 0
+  }
+  if (number === 0 || !isFinite(number)) {
+    return number
+  }
+  return (number > 0 ? 1 : -1) * Math.floor(Math.abs(number))
+}
+
+var ToLength = function (value) {
+  var len = ToIntegerOrInfinity(value)
+  return Math.min(Math.max(len, 0), maxSafeInteger)
+}
+
+var isCallable = function (fn) {
+  return typeof fn === 'function' || toStr.call(fn) === '[object Function]'
+}
+
+Array.from = function (arrayLike, mapFn, thisArg) {
+  var C = this
+  //判断对象是否为空
+  if (arrayLike == null) {
+    throw new TypeError(
+      'Array.from requires an array-like object - not null or undefined',
+    )
+  }
+  //检查mapFn是否是方法
+  if (typeof mapFn !== 'function' && typeof mapFn !== 'undefined') {
+    throw new TypeError(mapFn + 'is not a function')
+  }
+  var items = Object(arrayLike)
+  //判断 length 为数字，并且在有效范围内。
+  var len = ToLength(items.length)
+  if (len <= 0) return []
+  var A = isCallable(C) ? Object(new C(len)) : new Array(len)
+  for (var i = 0; i < len; i++) {
+    var value = items[i]
+    if (mapFn) {
+      A[i] =
+        typeof thisArg === 'undefined'
+          ? mapFn(value, i)
+          : mapFn.call(thisArg, value, i)
+    } else {
+      A[i] = value
+    }
+  }
+  return A
+}
+
+// console.log("Array.from:", Array.from({ a: 1, length: "10" }));
+// console.log("Array.from:", Array.from({ a: 1, length: "ss" }));
+
+// console.log("Array.from:", Array.from({ 0: 1, 1: 2, 4: 5, length: 4 }, x => x + x));
+
+function MyArray(length) {
+  const len = length * 2
+  return new Array(len)
+}
+
+function MyObject(length) {
+  return {
+    length,
+  }
+}
+
+console.log('Array.from:MyArray', Array.from.call(MyArray, { length: 5 }))
+console.log('Array.from:MyObject', Array.from.call(MyObject, { length: 5 }))
+
+```
+
+#### 注意点
+
+* 类数组的特征
+* length 为字符串的处理
+* from 函数本身 this 也是可以被改写的
+
+### Array.prototype.flat
+
+#### 基本功能
+
+* 指定的深度递归遍历数组，并将所有元素与遍历到的子数组中的元素合并为一个新数组返回
+
+```javascript
+const array = [1, 3, 4, [4, 5], [6, [7, 8]], [, ,], [undefined, null, NaN]]
+
+console.log('flat 1:', array.flat(1))
+console.log('flat 2:', array.flat(2))
+// 打印如下
+flat 1: [ 1, 3, 4, 4, 5, 6, [ 7, 8 ], undefined, null, NaN ]
+flat 2: [ 1, 3, 4, 4, 5, 6, 7, 8, undefined, null, NaN ]
+```
+
+#### 网络版本
+
+> 存在的问题：
+>
+> 1：躺平的深度不够
+>
+> 2：性能如何呢？
+>
+> 3：会丢数据
+
+```javascript
+const array = [1, [1, , ,]]
+
+const flat = (arr) => {
+  return arr.reduce((pre, cur) => {
+    return pre.concat(Array.isArray(cur) ? flat(cur) : cur)
+  }, [])
+}
+
+console.log(flat(array)
+// [ 1, 1 ]
+```
+
+#### 正规实现版本
+
+```javascript
+var array = [
+  1,
+  3,
+  [4, 5],
+  [6, [7, 8, [9, , 10]]],
+  [, ,],
+  [undefined, null, NaN],
+]
+
+var has = Object.prototype.hasOwnProperty
+
+var maxSafeInteger = Math.pow(2, 32) - 1
+
+var toInteger = function (value) {
+  const number = Number(value)
+  if (isNaN(number)) {
+    return 0
+  }
+  if (number === 0 || !isFinite(number)) {
+    return number
+  }
+  return (number > 0 ? 1 : -1) * Math.floor(Math.abs(number))
+}
+
+var toLength = function (value) {
+  var len = toInteger(value)
+  return Math.min(Math.max(len, 0), maxSafeInteger)
+}
+
+var push = Array.prototype.push
+
+Array.prototype.flat = function (deep) {
+  var O = Object(this)
+  var sourceLen = toLength(O.length)
+  var depthNum = 1
+  if (deep !== undefined) {
+    depthNum = toLength(deep)
+  }
+  if (depthNum <= 0) {
+    return O
+  }
+  var arr = []
+
+  var val
+  for (var i = 0; i < sourceLen; i++) {
+    if (has.call(O, i)) {
+      val = O[i]
+      if (Array.isArray(val)) {
+        push.apply(arr, val.flat(depthNum - 1))
+      } else {
+        arr.push(val)
+      }
+    } else {
+      arr.push(undefined)
+    }
+  }
+
+  return arr
+}
+
+console.log(array.flat(2))
+
+// 打印如下
+[
+  1,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  [ 9, <1 empty item>, 10 ],
+  undefined,
+  undefined,
+  undefined,
+  null,
+  NaN
+]
+```
+
+#### 考察知识点
+
+* 递归
+* 性能
+* 空值
+
+### Array.prototype.flat 的三个思考题
+
+* 目前是基于递归实现，如何进一步优化性能
+* 不基于递归如何实现
+* 类数组在 flat 的实现
+
+## 08：数据合并 
