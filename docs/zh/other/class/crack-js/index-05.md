@@ -1212,7 +1212,7 @@ console.log('max:', max + ',min:' + min)
 
 ```
 
-### 05：数组高级用法（下）
+## 05：数组高级用法（下）
 
 ### queryString
 
@@ -1220,6 +1220,12 @@ console.log('max:', max + ',min:' + min)
 
 * 作用：页面传递参数
 * 规律：地址 url 问号？拼接的键值对
+
+#### queryString 规律
+
+* "?" 之后
+* "&" 分割得到一组键值对
+* "=" 分割键和值
 
 #### 现代 Web API 查询 queryString
 
@@ -1314,3 +1320,227 @@ console.log('max:', max + ',min:' + min)
 </body>
 </html>
 ```
+
+### 举个例子：折上折
+
+* 优惠1: 9折
+* 优惠2：200减50
+
+#### 青铜版
+
+```javascript
+function discount(x) {
+  return x * 0.9
+}
+
+function reduce(x) {
+  return x > 200 ? x - 50 : x
+}
+
+const print = console.log
+// 享受九折
+print(reduce(discount(100))) // 90
+// 享受九折 + 满减
+print(reduce(discount(250))) // 175
+```
+
+#### 黄金版
+
+```javascript
+function discount(x) {
+  return x * 0.9
+}
+function reduce(x) {
+  return x > 200 ? x - 50 : x
+}
+function getPriceMethod(discount, reduce) {
+  return function _getPrice(x) {
+    return reduce(discount(x))
+  }
+}
+const method = getPriceMethod(discount, reduce)
+const print = console.log
+
+print(method(100)) // 90
+print(method(250)) // 175
+```
+
+#### 王者版
+
+> 如果再来一个折，上述就需要进行极大的修改，假如我们只需要传入折扣函数，上一个折扣函数的值作为下一个折扣参数的入参值，就极大的提高了可扩展性。那么该如何修改呢？
+
+```javascript
+function compose(...funcs) {
+  if (funcs.length === 0) {
+    return arg => arg
+  }
+  // 这里通过 reduce 实现函数以此拿上一个函数的返回值作为入参
+  // 注意 b(a(...args))) 与 a(b(...args))导致的顺序执行的差异性
+  return funcs.reduce((a, b) => (...args) => b(a(...args)))
+}
+
+function discount(x) {
+  console.log('discount')
+  return x * 0.9
+}
+function reduce(x) {
+  console.log('reduce')
+  return x > 200 ? x - 50 : x
+}
+function discountPlus(x) {
+  console.log('discountPlus')
+  return x * 0.95
+}
+const getPrice = compose(discount, reduce, discountPlus );
+const print = console.log;
+
+print(getPrice(200)) // discount reduce discountPlus 171
+print(getPrice(250)) // discount reduce discountPlus 166.25
+```
+
+### 例子二：
+
+1. 先进行登录
+2. 获取用户信息
+3. 通过上一步中的用户 id 获取用户订单
+
+```typescript
+// 伪代码
+function login(): Promise<any> { }
+function getUserInfo(): Promise<any> { }
+function getOrders(): Promise<any> { }
+
+function async orders(loginData) {
+	const loginRes = await login(loginData)
+  const userRes = await login(loginRes)
+  const orderRes = await login(userRes)
+}
+```
+
+```javascript
+// 订单：Promise 顺序执行
+function runPromises(promiseCreators, initData) {
+  return promiseCreators.reduce(function (promise, next) {
+    return promise.then((data) => next(data))
+  }, Promise.resolve(initData))
+}
+
+const initData = { name: 'name', pwd: 'pwd' }
+
+Promise.resolve(initData)
+  .then((data) => login(data))
+  .then((data) => getUserInfo(data))
+  .then((data) => getOrders(data))
+  .then((data) => console.log('orders', data))
+
+function login(data) {
+  console.log('login: data', data)
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      return resolve({
+        token: 'token',
+      })
+    }, 500)
+  })
+}
+
+function getUserInfo(data) {
+  console.log('getUserInfo: data', data)
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      return resolve({
+        name: 'user-1',
+        id: 988,
+      })
+    }, 300)
+  })
+}
+
+function getOrders(data) {
+  console.log('getOrders: data', data)
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      return resolve([
+        {
+          orderId: 1,
+          productId: 100,
+          price: 100,
+        },
+      ])
+    }, 100)
+  })
+}
+
+// runPromises([login, getUserInfo, getOrders],
+//     initData)
+//     .then(res => {
+//         console.log("res", res);
+//     })
+
+
+// 执行结果如下
+login: data { name: 'name', pwd: 'pwd' }
+getUserInfo: data { token: 'token' }
+getOrders: data { name: 'user-1', id: 988 }
+orders [ { orderId: 1, productId: 100, price: 100 } ]
+```
+
+### 数组分组
+
+* 含义：数据按照某个特性归类
+
+```javascript
+const hasOwn = Object.prototype.hasOwnProperty
+function group(arr, fn) {
+  // 不是数组
+  if (!Array.isArray(arr)) {
+    return arr
+  }
+  // 不是函数
+  if (typeof fn !== 'function') {
+    throw new TypeError('fn必须是一个函数')
+  }
+  var v
+  return arr.reduce((obj, cur, index) => {
+    v = fn(cur, index)
+    if (!hasOwn.call(obj, v)) {
+      obj[v] = []
+    }
+    obj[v].push(cur)
+    return obj
+  }, {})
+}
+
+// 按照长度分组
+let result = group(['apple', 'pear', 'orange', 'peach'], (v) => v.length)
+console.log(result)
+
+// 按照份数分组
+result = group(
+  [
+    {
+      name: 'tom',
+      score: 60,
+    },
+    {
+      name: 'Jim',
+      score: 40,
+    },
+    {
+      name: 'Nick',
+      score: 88,
+    },
+  ],
+  (v) => v.score >= 60,
+)
+
+console.log(result)
+
+// 结算结果如下
+{ '4': [ 'pear' ], '5': [ 'apple', 'peach' ], '6': [ 'orange' ] }
+{
+  true: [ { name: 'tom', score: 60 }, { name: 'Nick', score: 88 } ],
+  false: [ { name: 'Jim', score: 40 } ]
+}
+```
+
