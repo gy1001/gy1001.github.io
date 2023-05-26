@@ -440,3 +440,386 @@ for (var i = 0; i < 5; i++) {
   setTimeout(console.log, i * 1000, i)
 }
 ```
+
+## 02：name,length,caller等重要却少被关注的属性
+
+### Function.name
+
+> 函数的 `name` 属性可用于在调试工具或错误消息中标识该函数。
+
+```javascript
+function sum(num1, num2) {
+  return num1 + num2
+}
+
+console.log('name:', sum.name) // name: sum
+```
+
+#### Function.name 总结
+
+```javascript
+// 函数声明的名称: name 属性会返回函数的名称。
+function doSomething() { }
+doSomething.name;  // "doSomething"
+
+//构造函数的名称: 使用new Function(...)语法创建的函数或只是 Function(...) create Function对象及其名称为“anonymous”。
+(new Function).name; // "anonymous"
+
+// 推断函数名称: 变量和方法可以从句法位置推断匿名函数的名称（ECMAScript 2015 中新增）。
+var f = function() {};
+var object = {
+  someMethod: function() {}
+};
+
+console.log(f.name); // "f"
+console.log(object.someMethod.name); // "someMethod"
+
+// 你可以在 函数表达式中定义函数的名称：
+var object = {
+  someMethod: function object_someMethod() {}
+};
+
+console.log(object.someMethod.name); // "object_someMethod"
+
+try { object_someMethod } catch(e) { alert(e); }
+// ReferenceError: object_someMethod is not defined
+
+// 你不能更改函数的名称，此属性是只读的： 
+
+//简写方法的名称
+var o = { foo(){} };
+o.foo.name; // "foo";
+
+// 绑定函数的名称: Function.bind() 所创建的函数将会在函数的名称前加上"bound " 。
+function foo() {};
+foo.bind({}).name; // "bound foo"
+
+// getters 和 setters 的函数名: 当通过 get 和 set 访问器来存取属性时，"get" 或 "set" 会出现在函数名称前。
+var o = {
+  get foo(){},
+  set foo(x){}
+};
+
+var descriptor = Object.getOwnPropertyDescriptor(o, "foo");
+descriptor.get.name; // "get foo"
+descriptor.set.name; // "set foo";
+
+// 类中的函数名称: 你可以使用obj.constructor.name来检查对象的“类”（但请务必阅读以下警告）：
+function Foo() {}  // ES2015 Syntax: class Foo {}
+var fooInstance = new Foo();
+console.log(fooInstance.constructor.name); // logs "Foo"
+
+// Symbol 作为函数名称: 如果Symbol 被用于函数名称，并且这个 symbol 具有相应的描述符，那么方法的名字就是方括号中的描述符。
+var sym1 = Symbol("foo");
+var sym2 = Symbol();
+var o = {
+  [sym1]: function(){},
+  [sym2]: function(){}
+};
+o[sym1].name; // "[foo]"
+o[sym2].name; // ""
+
+```
+
+### Function.length 定义
+
+* length 是函数对象的一个属性值，指该函数有多少个必须要换入的参数，即形参的个数
+* 不包含剩余参数
+* 不包含有默认值的参数
+* bind 之后的length：length -  bind 的参数个数
+
+```javascript
+function sum(num1, num2) {
+  return num1 + num2
+}
+
+console.log('length:', sum.length) // length: 2
+```
+
+```javascript
+// 与 arguments.length 的区别
+function sum(num1, num2) {
+  console.log('arguments.length:', arguments.length)
+  return num1 + num2
+}
+console.log('length:', sum.length)
+
+sum(1, 2, 3, 4) 
+
+// 打印结果如下
+length: 2
+arguments.length: 4
+```
+
+```javascript
+// 不包含剩余参数
+function sum(num1, num2, ...args) {
+  console.log('...args:', ...args)
+  return num1 + num2
+}
+
+console.log('length:', sum.length) // length: 2
+```
+
+```javascript
+// 不包含有默认值的参数
+function sum(num1 = 1, num2 = 1) {
+  return num1 + num2
+}
+
+console.log('length:', sum.length)
+//length: 0
+```
+
+```javascript
+// 仅包含第一个具有默认值之前的参数个数
+function sum(num1, num2 = 1, num3) {
+  return num1 + num2 + num3
+}
+
+console.log('length:', sum.length) // length: 1
+```
+
+```javascript
+// bind之后的length
+function sum(num1, num2, num3) {
+  return num1 + num2 + num3
+}
+
+console.log('sum.length', sum.length)
+
+const boundSum0 = sum.bind(null)
+console.log('boundSum0.length:', boundSum0.length)
+
+const boundSum1 = sum.bind(null, 1)
+console.log('boundSum1.length:', boundSum1.length)
+
+const boundSum2 = sum.bind(null, 1, 2)
+console.log('boundSum2.length:', boundSum2.length)
+
+const boundSum3 = sum.bind(null, 1, 2, 3)
+console.log('boundSum3.length:', boundSum3.length)
+
+const boundSum4 = sum.bind(null, 1, 2, 3, 4)
+console.log('boundSum4.length:', boundSum4.length)
+
+// 打印如下
+sum.length 3
+boundSum0.length: 3
+boundSum1.length: 2
+boundSum2.length: 1
+boundSum3.length: 0
+boundSum4.length: 0
+```
+
+#### 与 arguments.length 的区别
+
+* arguments.length 是实际参数长度
+* Function.length 是形参的长度
+
+#### 用途
+
+* 柯里化
+
+### Function.caller
+
+#### 特性
+
+* 该特性为非标准，尽量不要在生产环境中使用
+* 定义：返回调用特定函数的函数
+* 全局作用域内被调用，返回 null
+* 函数内部作用域调用，指向调用它的那个函数
+
+```javascript
+function sum(num1, num2) {
+  console.log('caller:', sum.caller)
+  return num1 + num2
+}
+
+sum(1, 2)
+
+function doSum() {
+  sum(1, 2)
+}
+
+doSum()
+
+// 打印结果如下
+caller: [Function (anonymous)]
+caller: [Function: doSum]
+```
+
+```javascript
+// caller node
+function sum(num1, num2) {
+  console.log('caller:', sum.caller.toString)
+  return num1 + num2
+}
+
+sum(1, 2)
+
+function doSum() {
+  sum(1, 2)
+}
+
+doSum()
+
+// 执行结果如下
+caller: [Function: toString]
+caller: [Function: toString]
+```
+
+#### 严格模式下
+
+* caller callee arguments 属性都不可用
+
+```javascript
+function sum(num1, num2) {
+  'use strict'
+  console.log('caller:', sum.caller.toString())
+  return num1 + num2
+}
+
+sum(1, 2)
+
+// TypeError: 'caller', 'callee', and 'arguments' properties may not be accessed on strict mode functions or the arguments objects for calls to them
+```
+
+#### 用途
+
+* 调用栈信息收集
+* 调用环境检查
+
+```javascript
+// 调用栈信息收集
+function getStack(fn) {
+  const stacks = []
+  let caller = fn.caller
+  while (caller) {
+    stacks.unshift(caller.name)
+    caller = caller.caller
+  }
+  return stacks
+}
+
+function a() {
+  console.log('a')
+  const stacks = getStack(a)
+  console.log('stacks:', stacks)
+}
+
+function b() {
+  a()
+  console.log('b')
+}
+
+function c() {
+  b()
+  console.log('c')
+}
+
+c()
+
+// 执行结果如下
+a
+stacks: [ '', 'c', 'b' ]
+b
+c
+```
+
+```javascript
+// 检查调用环境
+function getCaller(fun) {
+  const caller = fun.caller
+  if (caller == null) {
+    console.log('caller is global context')
+  } else {
+    console.log('caller.name:' + caller)
+  }
+  return fun.caller
+}
+
+function add() {
+  getCaller(add)
+}
+
+add()
+
+// 结果如下（node中，在浏览器中是不同的效果）
+caller.name:function (exports, require, module, __filename, __dirname) {
+function getCaller(fun) {
+  const caller = fun.caller
+  if (caller == null) {
+    console.log('caller is global context')
+  } else {
+    console.log('caller.name:' + caller)
+  }
+  return fun.caller
+}
+
+function add() {
+  getCaller(add)
+}
+
+add()
+
+}
+```
+
+### arguments.callee
+
+* 包含正在执行的函数
+* 严格模式禁止使用
+
+#### 起源
+
+* 匿名函数递归问题
+
+```javascript
+function sumTotal(n) {
+  if (n == 1) return 1
+  return sumTotal(n - 1) + n
+}
+
+console.log([5, 10, 20].map(sumTotal)) // [ 15, 55, 210 ]
+
+// [5, 10, 20].map(function (n) {
+//     if (n == 1) return 1;
+//     return /*这里写什么呢？没有方法名*/(n - 1) + n;
+// })
+```
+
+```javascript
+// 匿名函数
+const result = [5, 10, 20].map(function (n) {
+  if (n == 1) return 1
+  return arguments.callee(n - 1) + n
+})
+
+console.log('arguments.callee:', result)
+// arguments.callee: [ 15, 55, 210 ]
+```
+
+#### 注意点：
+
+* 递归调用以后会获取到不同的 this 值
+
+```javascript
+var global = this
+
+var test = function (recursed) {
+  console.log('this:', this)
+  if (!recursed) {
+    return arguments.callee(true)
+  }
+  if (this !== global) {
+    console.log('This is: ' + this)
+  } else {
+    console.log('This is the global')
+  }
+}
+
+test()
+```
+
+![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/918328e562374f94bad1e8fb07e7a3fe~tplv-k3u1fbpfcp-watermark.image?)
