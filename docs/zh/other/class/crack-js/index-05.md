@@ -2277,3 +2277,459 @@ console.log(array.flat(2))
 * 类数组在 flat 的实现
 
 ## 08：数据合并 
+
+### 模拟场景
+
+```javascript
+// data.js
+export const usersInfo = Array.from({ length: 200 }, (val, index) => {
+  return {
+    uid: `${index + 1}`,
+    name: `user-name-${index}`,
+    age: index + 10,
+    avatar: `http://www.my-avatar.com/${index + 1}`,
+  }
+})
+
+export const scoresInfo = Array.from({ length: 10 }, (val, index) => {
+  return {
+    uid: `${index + 191}`,
+    score: ~~(Math.random() * 10000),
+    comments: ~~(Math.random() * 10000),
+    stars: ~~(Math.random() * 1000),
+  }
+})
+// 那么如何根据 uid 把 scoresInfo 的数据合并到 usersInfo 中
+```
+
+### 基础版本
+
+* 缺点：遍历次数太多，太低效
+
+```typescript
+// 双循环
+import * as data from './data.js'
+const { usersInfo, scoresInfo } = data
+
+console.time('merge data')
+for (let i = 0; i < usersInfo.length; i++) {
+  var user: any = usersInfo[i]
+  for (let j = 0; j < scoresInfo.length; j++) {
+    var score = scoresInfo[j]
+    if (user.uid == score.uid) {
+      user.score = score.score
+      user.comments = score.comments
+      user.stars = score.stars
+    }
+  }
+}
+console.timeEnd('merge data')
+console.log(usersInfo)
+```
+
+### hash 基础版本
+
+* 方案：数组转换为对象，数组查找变为属性查找
+* 一次循环，性能已经得到了大幅度提升(耗时 0.1ms-0.7ms)
+
+```typescript
+import * as data from './data.js'
+
+const { usersInfo, scoresInfo } = data
+console.time('merge data')
+
+const scoreMap = scoresInfo.reduce((obj, cur) => {
+  obj[cur.uid] = cur
+  return obj
+}, Object.create(null))
+
+for (let i = 0; i < usersInfo.length; i++) {
+  const user: any = usersInfo[i]
+  const score = scoreMap[user.uid]
+
+  if (score != null) {
+    user.score = score.score
+    user.comments = score.comments
+    user.stars = score.stars
+  }
+}
+console.timeEnd('merge data')
+console.log(usersInfo)
+```
+
+### hash 跳出版
+
+* 
+
+```typescript
+import * as data from './data.js'
+const { usersInfo, scoresInfo } = data
+console.time('merge data')
+const scoreMap = scoresInfo.reduce((obj, cur) => {
+  obj[cur.uid] = cur
+  return obj
+}, Object.create(null))
+
+// 被合并数据的条数
+const len = scoresInfo.length
+// 已合并的条数
+let count = 0
+// 已遍历的次数
+let walkCount = 0
+for (let i = 0; i < usersInfo.length; i++) {
+  const user: any = usersInfo[i]
+  const score = scoreMap[user.uid]
+
+  walkCount++
+  if (score != null) {
+    count++
+    user.score = score.score
+    user.comments = score.comments
+    user.stars = score.stars
+
+    if (count >= len) {
+      break
+    }
+  }
+}
+
+console.timeEnd('merge data')
+console.log(
+  `合并完毕:遍历次数${walkCount}, 实际命中次数${count}, 预期命中次数${len}`,
+)
+console.log(usersInfo)
+```
+
+### hash 基础版-跳出-倒序
+
+* 在跳出版的基础上，一个是从前向后，一个是从后往前
+* 适应场景：分页拉取数据，新数据添加在最后，倒序更快
+
+```javascript
+import * as data from './data.js'
+const { usersInfo, scoresInfo } = data
+console.time('merge data')
+
+const scoreMap = scoresInfo.reduce((obj, cur) => {
+  obj[cur.uid] = cur
+  return obj
+}, Object.create(null))
+
+const len = scoresInfo.length
+let count = 0
+let walkCount = 0
+// 循环顺序发生变化
+for (let i = usersInfo.length - 1; i >= 0; i--) {
+  const user: any = usersInfo[i]
+  const score = scoreMap[user.uid]
+
+  walkCount++
+  if (score != null) {
+    count++
+    user.score = score.score
+    user.comments = score.comments
+    user.stars = score.stars
+
+    if (count >= len) {
+      break
+    }
+  }
+}
+console.timeEnd('merge data')
+console.log(
+  `合并完毕：遍历次数${walkCount}, 实际命中次数${count}, 预期命中次数${len}`,
+)
+console.log(usersInfo)
+```
+
+### 怎么样抽离，应付各种场景
+
+* 倒序遍历
+* 顺序遍历
+* 合并多级属性
+
+#### 求取开源
+
+* underscore 和 lodash
+* array-union, array-merge-by-key, deep-merger
+* ...
+
+#### 多级属性合并
+
+* 属性的读取和设置（lodash）
+
+  ```javascript
+  // get
+  var object = { a: [{ b: { c: 3 } }] }
+  
+  _get(object, 'a[0].b.c')
+  // 3
+  _get(object, ['a', '0', 'b', 'c'])
+  // 3
+  _get(object, 'a.b.c', 'default')
+  // default
+  
+  // set
+  var object = { a: [{ b: { c: 3 } }] }
+  _.set(object, 'a[0].b.c', 4)
+  console.log(object.a[0].b.c)
+  // 4
+  
+  _.set(object, ['x', '0', 'y', 'z'], 5)
+  console.log(object.x[0].y.z)
+  // 5
+  ```
+
+* 拿来主义
+
+  * stringToPath: 路径转换为数组
+
+    ```typescript
+    // https://github.com/lodash/lodash/blob/master/.internal/stringToPath.js
+    
+    const charCodeOfDot = '.'.charCodeAt(0)
+    const reEscapeChar = /\\(\\)?/g
+    const rePropName = RegExp(
+      // Match anything that isn't a dot or bracket.
+      '[^.[\\]]+' +
+        '|' +
+        // Or match property names within brackets.
+        '\\[(?:' +
+        // Match a non-string expression.
+        '([^"\'][^[]*)' +
+        '|' +
+        // Or match strings (supports escaping characters).
+        '(["\'])((?:(?!\\2)[^\\\\]|\\\\.)*?)\\2' +
+        ')\\]' +
+        '|' +
+        // Or match "" as the space between consecutive dots or empty brackets.
+        '(?=(?:\\.|\\[\\])(?:\\.|\\[\\]|$))',
+      'g',
+    )
+    
+    /**
+     * Converts `string` to a property path array.
+     *
+     * @private
+     * @param {string} string The string to convert.
+     * @returns {Array} Returns the property path array.
+     */
+    const stringToPath = (string: string) => {
+      const result = []
+      if (string.charCodeAt(0) === charCodeOfDot) {
+        result.push('')
+      }
+      string.replace(rePropName, ((match, expression, quote, subString) => {
+        let key = match
+        if (quote) {
+          key = subString.replace(reEscapeChar, '$1')
+        } else if (expression) {
+          key = expression.trim()
+        }
+        result.push(key)
+      }) as any)
+      return result
+    }
+    
+    export default stringToPath
+    ```
+
+  * getProperty：读属性
+
+  * setProperty: 设属性
+
+    ```javascript
+    import { isIndexLike, isObject } from '.'
+    import stringToPath from './string'
+    
+    /**
+     * 获取对象属性
+     * https://github.com/lodash/lodash/blob/master/.internal/baseGet.js
+     * @param obj
+     * @param key
+     * @param defaultValue
+     * @returns
+     */
+    function getProperty(obj: Object, key: string, defaultValue: any = undefined) {
+      if (!isObject(obj)) {
+        return defaultValue
+      }
+    
+      const path = stringToPath(key)
+    
+      let index = 0
+      const length = path.length
+    
+      while (obj != null && index < length) {
+        obj = obj[path[index++]]
+      }
+      return index && index == length ? obj : undefined || defaultValue
+    }
+    
+    /**
+     * 设置属性值
+     * https://github.com/lodash/lodash/blob/master/.internal/baseSet.js
+     * @param obj
+     * @param path
+     * @param value
+     * @returns
+     */
+    function setProperty(obj: Object, path: string, value: any = undefined) {
+      if (!isObject(obj)) {
+        return obj
+      }
+      const keys = stringToPath(path)
+    
+      const length = keys.length
+      const lastIndex = length - 1
+    
+      let index = -1
+      let nested = obj
+    
+      while (nested != null && ++index < length) {
+        const key = keys[index]
+        let newValue = value
+    
+        if (index != lastIndex) {
+          const objValue = nested[key]
+          newValue = undefined
+          if (newValue === undefined) {
+            newValue = isObject(objValue)
+              ? objValue
+              : isIndexLike[keys[index + 1]]
+              ? []
+              : {}
+          }
+        }
+        nested[key] = newValue
+        nested = nested[key]
+      }
+      return obj
+    }
+    
+    /**
+     * 提取属性生成新的对象
+     */
+    function extractObject(object: Object, kMap: Record<string, string> = null) {
+      if (object === null || typeof object !== 'object') {
+        return object
+      }
+    
+      const ret = Object.create(null)
+      if (kMap == null) {
+        return Object.assign(ret, object)
+      }
+      Object.keys(kMap).reduce((obj: Object, key: string) => {
+        // 只复制自己有的属性
+        if (object.hasOwnProperty(key)) {
+          setProperty(obj, kMap[key], getProperty(object, key))
+        }
+        return obj
+      }, ret)
+    
+      return ret
+    }
+    
+    /**
+     * 合并对象生成新的对象
+     * // TODO:: 无限合并
+     * @param obj1
+     * @param obj2
+     * @param ob1KMap
+     * @param ob2KMap
+     * @returns
+     */
+    export function mergeObject<T = any, S = any, R = any>(
+      obj1: T,
+      obj2: S,
+      ob1KMap: Record<string, string> = null,
+      ob2KMap: Record<string, string> = null,
+    ): R {
+      const ret = Object.create(null)
+    
+      Object.assign(ret, extractObject(obj1, ob1KMap))
+    
+      Object.assign(ret, extractObject(obj2, ob2KMap))
+    
+      return ret
+    }
+    ```
+
+* 正序和倒序(迭代器)
+
+  * 传统方式：if/else + 两个 for while 数组的 forEach reduce 等
+  * 弊端：逻辑判断倒叙和逆序，代码可读性变差
+  * 解决方案：自己实现迭代器：hasNext 和 current
+
+  ```javascript
+  // 迭代器 1
+  function getStepIter(min, max, desc) {
+    let start = desc ? max : min
+    let end = desc ? min : max
+  
+    if (desc) {
+      return {
+        hasNext() {
+          return start >= end
+        },
+        get current() {
+          return start
+        },
+        next() {
+          return --start
+        },
+      }
+    }
+  
+    return {
+      hasNext() {
+        return end >= start
+      },
+      get current() {
+        return start
+      },
+      next() {
+        return ++start
+      },
+    }
+  }
+  
+  // 迭代器 2
+  function getStepIter(min, max, desc) {
+    let [start, end, step] = desc ? [max, min, -1] : [min, max, 1]
+    const hasNext = () => (desc ? start >= end : end >= start)
+    return {
+      hasNext() {
+        return hasNext()
+      },
+      get current() {
+        return start
+      },
+      next() {
+        return (start += step)
+      },
+    }
+  }
+  
+  var arr = [11, 22, 33, 44, 55, 66]
+  
+  const stepIter = getStepIter(0, arr.length - 1, false)
+  while (stepIter.hasNext()) {
+    console.log(stepIter.current, arr[stepIter.current])
+    stepIter.next()
+  }
+  ```
+
+### 具体实现
+
+* 源码实现移步：[arrayMerge:https://github.com/TehShrike/deepmerge/tree/master](https://github.com/TehShrike/deepmerge/tree/master)
+* 数据合并演示
+
+### 数组合并-思考
+
+* 按照 ES6 标准实现迭代器
+* 当前版本还有哪些改进方案
+* 当前的版本还有什么问题？应该怎么解决
+
+
+
