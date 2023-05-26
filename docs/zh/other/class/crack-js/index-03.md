@@ -321,11 +321,11 @@ var Person = /*#__PURE__*/ (function () {
   // 读取信息
   console.log(Object.getOwnPropertyDescriptor(obj, 'name'))
   // { "writable": false, "enumerable": false, "configurable": false }
-  
+
   // 这里由 true 改为 false 成功了
   当 configurable 为 false，且 writable 为 false 时，调用 Object.defineProperty()方法修改 writable 为 true 时会报错。
   当 configurable 为 false，且 writable 为 true 时，调用 Object.defineProperty() 方法修改 writable 为 false 时会修改成功，不会报错。
-  
+
   ```
 
   ```javascript
@@ -563,7 +563,7 @@ var Person = /*#__PURE__*/ (function () {
   // 普通函数
   function a() {}
   console.log(a.__proto__.__proto__.__proto__) // null
-  
+
   // 作为构造函数
   function Person() {}
   var person = new Person()
@@ -628,7 +628,7 @@ var Person = /*#__PURE__*/ (function () {
     }
     return chains
   }
-  
+
   console.log(getPrototypeChains(Function)) // ['[object Function]', '[object Object]', '[object Null]']
   console.log(getPrototypeChains(Object)) // ['[object Function]', '[object Object]', '[object Null]']
   ```
@@ -929,14 +929,14 @@ console.log(getNoEnumerable(person))
       return this.value
     },
   }
-  
+
   obj[obj] = obj.value
-  
+
   console.log('keys:', Object.keys(obj))
   console.log('${obj}:', `${obj}`)
   console.log('obj + 1:', obj + 1)
   console.log('obj + "":', obj + '')
-  
+
   // 输出如下内容
   keys: [ '20', 'value', 'toString', 'valueOf' ]
   ${obj}: 20
@@ -970,7 +970,7 @@ console.log(getNoEnumerable(person))
       return true
     },
   }
-  
+
   console.log(+obj) // 10      -- hint 参数值是 "number"
   console.log(`${obj}`) // "hello" -- hint 参数值是 "string"
   console.log(obj + '') // "true"  -- hint 参数值是 "default"
@@ -1484,7 +1484,7 @@ var obj = {
           "orderId": 8632996519781
       }
   }`
-  
+
   JSON.parse(jsonStr, function (k, v) {
     console.log('key:', k, ',this:', this)
     return v
@@ -1558,9 +1558,9 @@ console.log(JSON.stringify(person, ['name', 'age'])) // { "name": "帅哥","age"
 
 ### JSON.stringify() 第三个参数 space
 
-* 如果参数是个数字，他代表有多少的空格；上限为 10，该值若小于 1，则意味着没有空格
-* 如果该参数为字符串（当字符串长度超过 10个字母，取其前 10个字母），该字符串将被作为空格
-* 如果该参数没有提供：(或者为 null), 将没有空格
+- 如果参数是个数字，他代表有多少的空格；上限为 10，该值若小于 1，则意味着没有空格
+- 如果该参数为字符串（当字符串长度超过 10 个字母，取其前 10 个字母），该字符串将被作为空格
+- 如果该参数没有提供：(或者为 null), 将没有空格
 
 ```javascript
 //space 美化格式
@@ -1590,7 +1590,7 @@ console.log(c)
 
 ### 规则 - undefined、任意的函数、symbol
 
-* 作为对象属性值，会被自动忽略
+- 作为对象属性值，会被自动忽略
 
   ```javascript
   // 自动忽略
@@ -1605,7 +1605,7 @@ console.log(c)
   console.log(JSON.stringify(data)) // {"a":"test1"}
   ```
 
-* 作为数组，序列化返回 null
+- 作为数组，序列化返回 null
 
   ```javascript
   //数组返回null
@@ -1620,7 +1620,7 @@ console.log(c)
   console.log(JSON.stringify(data)) // ["test1",null,null,null]
   ```
 
-* 单独序列化时，返回 undefined
+- 单独序列化时，返回 undefined
 
   ```javascript
   //返回undefined
@@ -1636,7 +1636,7 @@ console.log(c)
 
 ### JSON.stringify 其他规则
 
-* Date 返回 ISO 字符串
+- Date 返回 ISO 字符串
 
   ```javascript
   //Date
@@ -1644,7 +1644,7 @@ console.log(c)
   // {"now":"2023-05-24T03:54:03.618Z"}
   ```
 
-* 循环引用报错
+- 循环引用报错
 
   ```javascript
   //循环引用报错
@@ -1656,19 +1656,19 @@ console.log(c)
   }
   // 对象之间形成循环引用，形成闭环
   obj.loopObj = loopObj
-  
+
   // 封装一个深拷贝的函数
   function deepClone(obj) {
     return JSON.parse(JSON.stringify(obj))
   }
   // 执行深拷贝，抛出错误
   deepClone(obj)
-  
+
   // TypeError: Converting circular structure to JSON
   //    --> starting at object with constructor 'Object'
   ```
 
-* NaN Infinity null 都会作为 null
+- NaN Infinity null 都会作为 null
 
   ```javascript
   // NaN 和 Infinity 以及null
@@ -1677,7 +1677,7 @@ console.log(c)
   console.log(JSON.stringify(null)) // null
   ```
 
-* 对象类型的原始值类型数据转换为对应的原始值
+- 对象类型的原始值类型数据转换为对应的原始值
 
   ```javascript
   // 转换为对应的原始值
@@ -1687,7 +1687,7 @@ console.log(c)
   // [2,"test",false]
   ```
 
-* BigInt 报错
+- BigInt 报错
 
   ```javascript
   var c = {
@@ -1697,7 +1697,7 @@ console.log(c)
   // TypeError: Do not know how to serialize a BigInt
   ```
 
-* Map/Set/WeakMap等对象，仅序列化可枚举属性
+- Map/Set/WeakMap 等对象，仅序列化可枚举属性
 
   ```javascript
   //仅序列化可枚举属性
@@ -1708,10 +1708,11 @@ console.log(c)
     }),
   )
   console.log(a) // {"test2":"testb"}
+  ```
 
 ### toJSON
 
-* 对象拥有 toJSON 方法，toJSON 会覆盖对象默认的序列化行为
+- 对象拥有 toJSON 方法，toJSON 会覆盖对象默认的序列化行为
 
 ```javascript
 var product = {
@@ -1733,11 +1734,11 @@ console.log(JSON.stringify(product)) // '{"name":"牙膏"}
 
 ### 讨论题
 
-* JSON.parse(JSON.stringify(obj))深度复制的局限性
+- JSON.parse(JSON.stringify(obj))深度复制的局限性
 
 ```javascript
 const deepClone = function (obj) {
-    return JSON.parse(JSON.stringify(obj))
+  return JSON.parse(JSON.stringify(obj))
 }
 ```
 
@@ -1761,9 +1762,9 @@ for (let [p, v] of Object.entries(obj)) {
 
 ### 知识点
 
-* Object.entries: 迭代器，能获取键值对数组
-* 对象键的特性：本质上是字符串，如果是数字，用数字和数字字符串一致
-* 隐式转换：对象的隐式转换，Symbol.toPrimitvie valueOf toString 
+- Object.entries: 迭代器，能获取键值对数组
+- 对象键的特性：本质上是字符串，如果是数字，用数字和数字字符串一致
+- 隐式转换：对象的隐式转换，Symbol.toPrimitvie valueOf toString
 
 ```javascript
 const obj = {},
@@ -1856,15 +1857,17 @@ console.log(getObjectType(obj)) // [Object String].slice(8, -1) = String
 
 ### 题目六
 
-> javascript总是严格的按照从左到右计算表达式。
+> javascript 总是严格的按照从左到右计算表达式。
 
 ```javascript
 let a = { n: 1 }
+let b = a
 a.x = a = { n: 2 }
 
 // 求a.x
 console.log(a.x) // undefined
 console.log(a) // { n: 2 }
+console.log(b) //  { n: 1; x: { n: 2 } }
 ```
 
 ### 题目七
@@ -1903,27 +1906,27 @@ console.log(ins)
 
 ### 克隆的意义和常见场景
 
-* 意义：保证原数据的完整性和独立性
-* 常见场景: 复制数据、函数入参、class 构造函数等
+- 意义：保证原数据的完整性和独立性
+- 常见场景: 复制数据、函数入参、class 构造函数等
 
 ### 克隆分类
 
-* 浅克隆
-* 深克隆
+- 浅克隆
+- 深克隆
 
 ### 浅克隆
 
 #### 特点
 
-* 只克隆对象的第一层级
-* 如果属性值是原始数据类型，拷贝其值，也就是我们常说的值拷贝
-* 如果属性值是引用类型，拷贝其内存地址，也就是我们常说的引用拷贝
+- 只克隆对象的第一层级
+- 如果属性值是原始数据类型，拷贝其值，也就是我们常说的值拷贝
+- 如果属性值是引用类型，拷贝其内存地址，也就是我们常说的引用拷贝
 
 #### 常用的浅克隆方式
 
-* ES6 拓展运算符号：...
-* Object.assign
-* for in 和其他的一层遍历复制
+- ES6 拓展运算符号：...
+- Object.assign
+- for in 和其他的一层遍历复制
 
 ```javascript
 // 浅克隆：拓展运算符
@@ -2002,9 +2005,9 @@ person.address.province: 上海
 
 #### 数组常用的浅克隆
 
-* ES6 的拓展运算符...
-* slice
-* [].concat
+- ES6 的拓展运算符...
+- slice
+- [].concat
 
 ```javascript
 const arr = [1, 2, 3]
@@ -2029,20 +2032,20 @@ arr4 [ 1, 2, 3 ] false
 
 #### 特点
 
-* 克隆对象的每个层级
-* 如果属性值是原始值类型，拷贝其值，也就是我们常说的值拷贝
-* 如果属性值是引用类型，就递归拷贝
+- 克隆对象的每个层级
+- 如果属性值是原始值类型，拷贝其值，也就是我们常说的值拷贝
+- 如果属性值是引用类型，就递归拷贝
 
 #### JSON.stringify + JSON.parse
 
-* 优点：纯天然，无污染
-* 缺点
-  * 性能差
-  * 具有局限性
-* 局限性：
-  * 只能复制普通健的属性，Symbol类型的无能为力
-  * 循环引用对象，比如 Window 不能复制
-  * 函数，Date, Regex, Blob 等类型不能复制
+- 优点：纯天然，无污染
+- 缺点
+  - 性能差
+  - 具有局限性
+- 局限性：
+  - 只能复制普通健的属性，Symbol 类型的无能为力
+  - 循环引用对象，比如 Window 不能复制
+  - 函数，Date, Regex, Blob 等类型不能复制
 
 ```javascript
 function clone(obj) {
@@ -2076,10 +2079,10 @@ console.log(clone(window)) // Uncaught TypeError: Converting circular structure 
 
 #### 消息通讯
 
-* window.postMessage
-* Broadcast Channel
-* Shared Worker
-* Message Channel
+- window.postMessage
+- Broadcast Channel
+- Shared Worker
+- Message Channel
 
 ```html
 <!DOCTYPE html>
@@ -2173,9 +2176,9 @@ console.log(clone(window)) // Uncaught TypeError: Converting circular structure 
 
 #### 基于消息通讯克隆的局限
 
-* 循环引用对象不能复制：如 Windows
-* 函数不能复制
-* 同步变成异步
+- 循环引用对象不能复制：如 Windows
+- 函数不能复制
+- 同步变成异步
 
 #### 手写简单版深度克隆
 
@@ -2235,7 +2238,7 @@ console.log(a)
 >
 > 1. 循环引用没有处理
 > 2. 递归：可能爆栈
-> 3. 特殊类型未做处理，比如 blod date等
+> 3. 特殊类型未做处理，比如 blod date 等
 
 ```javascript
 const { hasOwnProperty } = Object.prototype
@@ -2282,10 +2285,9 @@ console.log(a) // { name: 'obj1', age: 18, date: {}, arr: [ 1, 2, ccc: 'ccc' ] }
 // };
 // obj2[obj2] = obj2;
 // deepClone(obj2)
-
 ```
 
-#### Jquery中的 Jquery.extends
+#### Jquery 中的 Jquery.extends
 
 ```javascript
 jQuery.extend = jQuery.fn.extend = function () {
@@ -2369,7 +2371,7 @@ jQuery.extend = jQuery.fn.extend = function () {
 
 #### 深度复制-循环引用
 
-* 循环引用问题解决（WeakMap）
+- 循环引用问题解决（WeakMap）
 
 ```javascript
 const { hasOwnProperty } = Object.prototype
@@ -2421,7 +2423,7 @@ console.log(deepClone(obj2))
 
 #### 深度复制-爆栈问题
 
-* 爆栈问题解决（循环代替递归）
+- 爆栈问题解决（循环代替递归）
 
 ```javascript
 const { toString, hasOwnProperty } = Object.prototype
@@ -2541,8 +2543,8 @@ console.log('f==', f)
 
 #### 思考：特殊类型处理
 
-* Map Set Blob 等
-* 提示：构造函数识别
+- Map Set Blob 等
+- 提示：构造函数识别
 
 ### 浅克隆 vs 深克隆
 
@@ -2681,6 +2683,3 @@ obj.loop = obj
 const f = cloneDeep(obj)
 console.log('f==', f)
 ```
-
-
-
