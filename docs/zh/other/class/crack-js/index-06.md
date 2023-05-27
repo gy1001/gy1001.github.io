@@ -2992,3 +2992,488 @@ MyQuery('.myclass')
   .attr('title', '哈哈')
 ```
 
+## 10: 深入了解动态解析和执行函数
+
+### 动态解析和执行两匹骏马
+
+* eval
+* new Function
+
+### eval
+
+* 功能：会将传入的字符串当做 JavaScript 代码进行执行
+* 语法： eval(string)
+* 基本使用：eval("2+2")
+
+### eval 试用场景
+
+1. 系统内部的 setTimeout 或者 setInterval
+2. JSON 字符串对象
+3. 前端模板
+4. 动态生成函数或者变量
+5. 有需要跳出严格模式的场景
+6. 其他场景
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    tTimeout('console.log("setTimeout:", Date.now())', 1000)
+    tInterval('console.log("setInterval", Date.now())', 3000)
+  </script>
+</body>
+
+</html>
+```
+
+```javascript
+// 计时器, 浏览器中执行
+// setTimeout('console.log("setTimeout:", Date.now())', 1000)
+// setInterval('console.log("setInterval", Date.now())', 5000)
+
+console.log()
+// JSON字符串转对象
+var jsonStr = `{a:1, b:1}`
+var obj = eval('(' + jsonStr + ')')
+console.log('eval json:', obj, typeof obj)
+
+// 生成函数
+var sumAdd = eval(`(function add(num1, num2){
+    return num1 + num2
+}
+)`)
+console.log('sumAdd:', sumAdd(10, 20))
+
+// 数字数组相加
+var arr = [1, 2, 3, 7, 9]
+var r = eval(arr.join('+'))
+console.log('数组相加:', r)
+
+// 获取全局对象
+var globalThis = (function () {
+  return (void 0, eval)('this')
+})()
+
+console.log('globalThis:', globalThis)
+
+// 结果如下
+eval json: {a: 1, b: 1} object
+sumAdd: 30
+数组相加: 22
+globalThis: Window {window: Window, self: Window, document: document, name: '', location: Location, …}
+```
+
+```html
+// debug
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+</head>
+
+<body>
+  <script>
+    var sumAdd = eval(`(function add(num1, num2){
+          console.log(this, num1, num2);
+          debugger;
+          return num1 + num1
+        }
+      )`)
+    console.log("sumAdd", sumAdd)
+    debugger
+    sumAdd(10, 20);
+
+  </script>
+</body>
+
+</html>
+```
+
+### eval 注意事项
+
+* 安全性
+* 调试困难
+* 性能低
+* 过于神秘，不好把握（分为直接调用和间接调用）
+* 可读性可维护性也比较差
+
+### 直接调用和间接调用
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    var name = "全局的name"
+    function test() {
+      var name = "local的name"
+      console.log(eval(`name`)) // 直接调用, 直接调用时有正常的作用域链
+      console.log(window.eval(`name`)) // 间接调用，只有全局的作用域
+    }
+
+    test();
+  </script>
+</body>
+
+</html>
+
+// 执行后打印结果如下
+local的name
+全局的name
+```
+
+| 调用方式 | 作用域           | 是否是严格模式 |
+| -------- | ---------------- | -------------- |
+| 直接调用 | ”正常的作用域链“ | 继承当前       |
+| 间接调用 | ”只有全局作用域“ | 非严格模式     |
+
+### eval 直接调用
+
+* eval
+* (eval)
+* eval = window.eval
+* {eval} = window
+* with({eval})
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+    var name = "全局的name"
+    var log = console.log
+
+    // 直接调用
+    function test1() {
+      var name = "local的name"
+      log(eval('name'))
+    }
+
+    // 直接分组
+    function test2() {
+      var name = "local的name"
+      log((eval)('name'))
+    }
+
+    // 直接复制，不修改名字
+    function test3() {
+      var name = "local的name"
+
+      var eval = window.eval
+      log(eval('name'))
+    }
+
+    // 解构不修改名字
+    function test4() {
+      var name = "local的name"
+
+      // 切记，不能修改名字
+      const { eval } = window
+      log(eval('name'))
+    }
+
+    // with
+    function test5() {
+      var name = "local的name"
+      with ({ eval }) {
+        log(eval('name'))
+      }
+    }
+
+    test1()
+    test2()
+    test3()
+    test4()
+    test5();
+  </script>
+</body>
+
+</html>
+
+// 输出如下
+local的name
+local的name
+local的name
+local的name
+local的name
+```
+
+```html
+// 间接调用
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+    var name = "全局的name"
+    var log = console.log
+
+    // ,分组
+    function test1() {
+      var name = "local的name"
+      log((0, eval)('name'))
+    }
+
+    // 直接复制，修改名字
+    function test2() {
+      var name = "local的name"
+
+      var eval = window.eval
+      var eval2 = eval
+      log(eval2('name'))
+    }
+
+    // 解构修改名字
+    function test3() {
+      var name = "local的name"
+
+      // 切记，不能修改名字
+      const { eval: eval2 } = window
+      log(eval2('name'))
+    }
+
+    test1()
+    test2()
+    test3();
+  </script>
+</body>
+
+</html>
+
+// 打印结果如下
+全局的name
+全局的name
+全局的name
+```
+
+### new Function
+
+* 作用：创建一个新的 Function
+* 语法：`new Function([ arg1[,arg2,[...argN]],] functionBody)`
+* 基本使用：`new Function("a", "b", "return a + b")(10,20)`
+
+### new Function 经典案例
+
+* webpack 的事件通知系统 tapable
+* fast-josn-stringify
+
+### new Function 注意事项
+
+* new Function 基于全局环境创建
+* 方法的 name 属性是 "anonymous"
+
+```javascript
+const fnStr = `console.log("name:", name)`
+
+global.name = 'global的name'
+
+var obj = {
+  test() {
+    var name = 'test的name'
+    const fn = new Function(fnStr)
+    fn()
+  },
+  testEval() {
+    var name = 'testEval的name'
+    const fn = eval(`(function() {${fnStr}})`)
+    fn()
+  },
+}
+
+obj.test() // name: global的name
+obj.testEval() // name: testEval的name
+```
+
+```javascript
+// 对象上的调用
+global.name = 'global的name'
+var fn = new Function(`console.log("name:", this.name)`)
+
+var obj = {
+  name: 'obj的name',
+  fn,
+}
+fn() // name: global的name
+obj.fn() // name: obj的name
+```
+
+### new Function 经典应用
+
+* 获取全局 this
+* 在线代码运行器
+* 模板引擎
+
+```javascript
+var globalObj = new Function('return this')()
+console.log(globalObj === global)
+```
+
+```html
+// 在线代码运行器
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>在线代码编辑器</title>
+  <style>
+    textarea {
+      overflow-y: auto;
+      font-size: 22px;
+    }
+  </style>
+</head>
+
+<body>
+  <div> <button type="button" id="btn">运行</button></div>
+  <textarea id="code" rows="30" cols="80"></textarea>
+  <div id="result"></div>
+  <script>
+
+    var scriptStr = `
+function sum(num1, num2){
+    return num1+ num2
+}
+return sum(10,20)
+        `
+    var codeEl = document.getElementById("code")
+    var resultEl = document.getElementById("result")
+    var btnEl = document.getElementById("btn")
+
+    codeEl.value = scriptStr
+
+    function createFun(body) {
+      return new Function(body)
+    }
+
+    btnEl.addEventListener("click", () => {
+      const fn = createFun(codeEl.value)
+      var result = fn()
+      resultEl.innerHTML = result
+    })
+  </script>
+</body>
+</html>
+```
+
+```html
+// 模板引擎
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>模板</title>
+</head>
+
+<body>
+  <div id="template">
+    <div>名字:${name}</div>
+    <div>年龄:${age}</div>
+    <div>性别:${sex}</div>
+    <div>性别:${c.b}</div>
+    <div>商品:${products.join(",")}</div>
+  </div>
+  <script>
+    function parse(source, data) {
+      return new Function('data', `
+                with(data){
+                    return \`${source}\`
+                }
+            `)(data)
+    }
+
+    const result = parse(template.innerHTML, {
+      name: "帅哥",
+      age: 18,
+      sex: "男",
+      products: ["杯子", "瓜子"],
+      c: {
+        b: "哈哈"
+      }
+    })
+
+    template.innerHTML = result;
+  </script>
+</body>
+
+</html>
+```
+
+### eval VS new Function
+
+| 名字         | 相同点                                                       | 不同点                                                       |
+| ------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| eval         | 1. 动态编译和执行<br />2. 调试困难<br />3. 可读可维护性比较差<br />4. 可以被禁用 | 1. 直接调用和间接调用运行环境不一样<br />2. 安全性低<br />3. 不仅仅局限于创建环境 |
+| new Function | 1. 动态编译和执行<br />2. 调试困难<br />3. 可读可维护性比较差<br />4. 可以被禁用 | 1. 被创建于全局环境                                          |
+
+### 课后练习题
+
+* 创建一个函数，动态执行异步代码
+
+```javascript
+var fn = createAsyncFun(`
+    const res = await fetch("/");
+    console.log("res:");
+    return res.text();
+`)
+fn()
+  .then((res) => {
+    console.log('res:', res)
+  })
+  .catch((err) => {
+    console.log('err:', err)
+  })
+```
+
+```javascript
+var AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
+
+function createAsyncFun(...args) {
+  return new AsyncFunction(...args)
+}
+```
+
