@@ -2322,3 +2322,403 @@ prototype的name
 * 构造函数 this 使用前，必须先调用 super 方法
 * 注意箭头函数形式的属性
 * class 若是想在原型上添加非函数的属性，还得依赖 prototype
+
+## 08: 柯里化：整体到部分。反柯里化呢？
+
+[函数式编程 — 柯里化与偏函数](https://juejin.cn/post/6846687600917348365)
+
+### 柯里化
+
+* 定义：柯里化是一个 N 元函数转换为 N 个一元函数，它持续的返回一个新的函数，直到所有的参数用尽为止，然后柯里化链中最后一个函数被返回并且执行时，才会全部执行
+* 元：指的是函数参数的数量
+* 一句话：柯里化其实就是一种函数转换，多元函数转换为一元函数
+
+### 简单的例子
+
+```javascript
+function calcSum(num1, num2, num3) {
+  return num1 + num2 + num3
+}
+
+function curryCalcSum(num1) {
+  return function (num2) {
+    return function (num3) {
+      return num1 + num2 + num3
+    }
+  }
+}
+
+console.log('calcSum:', calcSum(3, 4, 5)) // 12
+console.log('curryCalcSum:', curryCalcSum(3)(4)(5)) // 12
+```
+
+### 怎么实现通用柯里化
+
+* 接受一个需要柯里化的方法
+* 存放多次函数调用的参数
+* 函数树木不够原函数参数数目，不调用原函数，返回新的函数继续接受下一个参数，反之调用函数
+
+### 智能版本
+
+```javascript
+var slice = Array.prototype.slice
+var curry = function (fn) {
+  var args = slice.call(arguments, 1)
+  return _curry.apply(this, [fn, fn.length].concat(args))
+}
+
+function _curry(fn, len) {
+  var oArgs = slice.call(arguments, 2)
+  return function () {
+    var args = oArgs.concat(slice.call(arguments))
+    if (args.length >= len) {
+      return fn.apply(this, args)
+    } else {
+      return _curry.apply(this, [fn, len].concat(args))
+    }
+  }
+}
+
+//使用
+function calcSum(num1, num2, num3) {
+  return num1 + num2 + num3
+}
+const calcSumCurry = curry(calcSum, 3)
+
+const log = console.log
+log(calcSumCurry(4, 5))
+log(calcSumCurry(4)(5))
+
+// 但是这样有缺陷，就是函数不能设置默认参数，否则会出现问题，如下会报错
+function calcSum(num1, num2 = 2, num3) {
+  return num1 + num2 + num3
+}
+```
+
+### 手动 + 智能版本
+
+```javascript
+var slice = Array.prototype.slice
+var curry = function (fn, length) {
+  var args = slice.call(arguments, 2)
+  return _curry.apply(this, [fn, length || fn.length].concat(args))
+}
+
+function _curry(fn, len) {
+  var oArgs = slice.call(arguments, 2)
+  return function () {
+    var args = oArgs.concat(slice.call(arguments))
+    if (args.length >= len) {
+      return fn.apply(this, args)
+    } else {
+      return _curry.apply(this, [fn, len].concat(args))
+    }
+  }
+}
+
+//使用
+function calcSum() {
+  return [...arguments].reduce((pre, value, index) => {
+    return pre + value
+  }, 0)
+}
+
+const calcSumCurry = curry(calcSum, 3, 3)
+
+console.log(calcSumCurry(4, 5)) // 12
+console.log(calcSumCurry(4)(5)) // 12
+```
+
+### 手动 + 智能版本存在的问题？
+
+```javascript
+var slice = Array.prototype.slice
+var curry = function (fn, length) {
+  var args = slice.call(arguments, 2)
+  return _curry.apply(this, [fn, length || fn.length].concat(args))
+}
+
+function _curry(fn, len) {
+  var oArgs = slice.call(arguments, 2)
+  return function () {
+    var args = slice.call(arguments).concat(oArgs)
+    if (args.length >= len) {
+      return fn.apply(this, args)
+    } else {
+      return _curry.apply(this, [fn, len].concat(args))
+    }
+  }
+}
+
+//使用
+function calcSum() {
+  return [...arguments].reduce((pre, value, index) => {
+    return pre + value
+  }, 0)
+}
+const calcSumCurry = curry(calcSum, 3, 3)
+console.log(calcSumCurry(4, 5)) // 12
+// 参数多传递: 如果多传递参数，就会报错
+console.log(calcSumCurry(4, 5)(6)) // TypeError: calcSumCurry(...) is not a function
+```
+
+### 改进：柯里化变体
+
+```javascript
+// 最后没有参数传递时候，就认为是最后的调用
+function curry(fn) {
+  const curArgs = []
+  return function () {
+    if (arguments.length === 0) {
+      return fn.apply(this, curArgs)
+    }
+    Array.prototype.push.apply(curArgs, [].slice.call(arguments))
+    return arguments.callee
+  }
+}
+function calcSum() {
+  return [...arguments].reduce((pre, value, index) => {
+    return pre + value
+  }, 0)
+}
+const fn = curry(calcSum)
+console.log('执行添加:', fn(2, 3)(5)(8)()) // 执行添加: 18
+// console.log("手动调用:", fn())
+```
+
+### 改进：柯里化变体2
+
+```javascript
+var slice = Array.prototype.slice
+// 也支持传递参数个数
+var curry = function (fn, length) {
+  var args = slice.call(arguments, 2)
+  return _curry.apply(this, [fn, length || fn.length].concat(args))
+}
+
+function _curry(fn, len) {
+  var oArgs = slice.call(arguments, 2)
+  return function () {
+    var args = oArgs.concat(slice.call(arguments))
+    // 不传递参数时候，进行判断
+    if (arguments.length === 0) {
+      if (args.length >= len) {
+        return fn.apply(this, args)
+      }
+      // 不够时候就进行提示
+      return console.warn('curry:参数长度不足')
+    } else {
+      return _curry.apply(this, [fn, len].concat(args))
+    }
+  }
+}
+
+function calcSum() {
+  return [...arguments].reduce((pre, value, index) => {
+    return pre + value
+  }, 0)
+}
+
+const fn = curry(calcSum, 5)
+console.log('执行添加:', fn(2, 3)(5)())
+console.log('手动调用:', fn())
+```
+
+### 占位符版本
+
+```javascript
+// lodash: https://www.lodashjs.com/docs/lodash.curry
+
+var abc = function(a, b, c) {
+  return [a, b, c];
+};
+ 
+var curried = _.curry(abc);
+ 
+curried(1)(2)(3);
+// => [1, 2, 3]
+ 
+curried(1, 2)(3);
+// => [1, 2, 3]
+ 
+curried(1, 2, 3);
+// => [1, 2, 3]
+ 
+// Curried with placeholders.
+curried(1)(_, 3)(2); // 占位符版本
+// => [1, 2, 3]
+```
+
+### 柯里化的作用
+
+* 参数复用，逻辑复用
+* 延迟计算、执行
+
+```javascript
+var slice = Array.prototype.slice
+var curry = function (fn, length) {
+  var args = slice.call(arguments, 2)
+  return _curry.apply(this, [fn, length || fn.length].concat(args))
+}
+
+function _curry(fn, len) {
+  var oArgs = slice.call(arguments, 2)
+  return function () {
+    var args = oArgs.concat(slice.call(arguments))
+    if (args.length >= len) {
+      return fn.apply(this, args)
+    } else {
+      return _curry.apply(this, [fn, len].concat(args))
+    }
+  }
+}
+
+function log(logLevel, msg) {
+  console.log(`${logLevel}:${msg}:::${Date.now()}`)
+}
+
+//柯里化log 方法
+const curryLog = curry(log)
+const debugLog = curryLog('debug')
+const errLog = curryLog('error')
+
+//复用参数debug
+debugLog('testDebug1')
+debugLog('testDebug2')
+
+//复用参数error
+errLog('testError1')
+errLog('testError2')
+```
+
+### 偏函数
+
+* 偏函数就是固定一部分参数，然后产生更小单元的函数
+* 简单理解就是：分为两次传递参数
+
+```javascript
+function calcSum(num1, num2, num3) {
+  return num1 + num2 + num3
+}
+
+function curryCalcSum(num1) {
+  return function (num2, num3) {
+    return num1 + num2 + num3
+  }
+}
+
+const pCalcSum = curryCalcSum(10)
+
+console.log(pCalcSum(11, 12)) // 33
+console.log(pCalcSum(15, 20)) // 45 
+console.log(pCalcSum(22, 30)) // 62
+```
+
+```javascript
+// 通用偏函数
+function partial(fn) {
+  const args = [].slice.call(arguments, 1)
+  return function () {
+    const newArgs = args.concat([].slice.call(arguments))
+    return fn.apply(this, newArgs)
+  }
+}
+
+function calcSum(num1, num2, num3) {
+  return num1 + num2 + num3
+}
+const pCalcSum = partial(calcSum, 10)
+
+console.log(pCalcSum(11, 12)) // 33
+```
+
+### 偏函数与柯里化的区别
+
+* 柯里化是将一个多参数转换为单参数的函数，将一个 N 元函数转换为 N 个一元函数
+* 偏函数是固定一部分参数（一个或者多个参数），将一个 N 元函数转换成一个 N - X 函数
+
+### 反柯里化
+
+* 一句话就是：非我之物，为我所用。是一种拿来主义
+* 反柯里化的作用就是扩大适用性，使原来作为特定对象所拥有的功能的函数可以被任意对象使用
+
+```javascript
+// 反柯里化基础版
+function unCurry(fn) {
+  return function (context) {
+    return fn.apply(context, Array.prototype.slice.call(arguments, 1))
+  }
+}
+```
+
+```javascript
+// 反柯里化其他版本
+Function.prototype.unCurry = function () {
+  var self = this
+  return function () {
+    return Function.prototype.call.apply(self, arguments)
+  }
+}
+Function.prototype.unCurry = function () {
+  return this.call.bind(this)
+}
+Function.prototype.unCurry = function () {
+  return (...args) => this.call(...args)
+}
+```
+
+```javascript
+// 反柯里化高级版本
+Function.prototype.unCurry = function () {
+  var self = this
+  return function () {
+    return Function.prototype.call.apply(self, arguments)
+  }
+}
+```
+
+#### 实际应用
+
+```javascript
+// 数组push
+Function.prototype.unCurry = function () {
+  const self = this
+  return function () {
+    return Function.prototype.call.apply(self, arguments)
+  }
+}
+
+const push = Array.prototype.push.unCurry()
+const obj = {}
+push(obj, 4, 5, 6)
+console.log(obj) // { '0': 4, '1': 5, '2': 6, length: 3 }
+```
+
+### 反柯里化使用场景
+
+* 借用数组方法
+* 复制数组
+
+```javascript
+// 复制数组
+Function.prototype.unCurry = function () {
+  const self = this
+  return function () {
+    return Function.prototype.call.apply(self, arguments)
+  }
+}
+
+const clone = Array.prototype.slice.unCurry()
+var a = [1, 2, 3]
+var b = clone(a)
+
+console.log('a==b:', a === b)
+console.log(a, b)
+
+// 打印如下
+a==b: false
+[ 1, 2, 3 ] [ 1, 2, 3 ]
+```
+
+
+
