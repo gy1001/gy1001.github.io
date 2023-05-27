@@ -3477,3 +3477,469 @@ function createAsyncFun(...args) {
 }
 ```
 
+## 11: 手写call居然隐藏十大知识点
+
+### 手写的思路
+
+* 某个方法进行call 调用时，等同于把方法作为 call 的第一个参数某个属性，并进行调用
+* fn.call(obj, ...args) ===> obj.fn= fn; obj.fn(...args)
+
+### 网红版本1
+
+```javascript
+Function.prototype.call = function (context) {
+  context = context || window
+  context['fn'] = this
+  let arg = [...arguments].slice(1)
+  const r = context['fn'](...arg)
+  delete context['fn']
+  return r
+}
+```
+
+### 网红版本2
+
+```javascript
+Function.prototype.call = function (context) {
+  context =
+    context == null || context == undefined ? window : new Object(context)
+  context.fn = this
+  var arr = []
+  for (var i = 1; i < arguments.length; i++) {
+    arr.push('arguments[' + i + ']')
+  }
+  var r = eval('context.fn(' + arr + ')')
+  delete context.fn
+  return r
+}
+```
+
+### 版本2中存在的问题
+
+* this 是不是可以被调用
+* undefined 安不安全
+* window 作为默认上下文，过于武断
+* eval 一定会被运行执行吗？
+* delete context.fn 有没有副作用？
+* ...
+
+### call --MDN
+
+> function.call(thisArg, arg1, arg2, ...)
+>
+> ```
+> thisArg
+> ```
+>
+> 可选的。在 *`function`* 函数运行时使用的 `this` 值。请注意，`this`可能不是该方法看到的实际值：如果这个函数处于[非严格模式](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Strict_mode)下，则指定为 `null` 或 `undefined` 时会自动替换为指向全局对象，原始值会被包装。
+>
+> ```
+> arg1, arg2, ...
+> ```
+>
+> 指定的参数列表。
+
+#### this 可以被调用
+
+```javascript
+// 浏览器中执行
+var obj = Object.create(Function.prototype)
+
+Function.prototype.call = function (context) {
+  context =
+    context == null || context == undefined ? window : new Object(context)
+  context.fn = this
+
+  console.log('this', typeof this)
+  return
+  var arr = []
+  for (var i = 1; i < arguments.length; i++) {
+    arr.push('arguments[' + i + ']')
+  }
+  var r = eval('context.fn(' + arr + ')')
+  delete context.fn
+  return r
+}
+
+obj.call({})
+```
+
+#### 不可靠的 undefined
+
+* 有可能被改写
+* 尽量使用 void 0
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <a href="javascript:void(0)">不要点击我</a>
+  <script>
+    ; void function (msg) {
+      console.log(msg)
+    }("你好啊");
+  </script>
+</body>
+
+</html>
+```
+
+#### 环境识别
+
+* 浏览器环境
+* nodejs 环境
+* 综合判断
+
+```javascript
+var getGlobal = function () {
+    if (typeof self !== 'undefined') { return self; }
+    if (typeof window !== 'undefined') { return window; }
+    if (typeof global !== 'undefined') { return global; }
+    throw new Error('unable to locate global object');
+};
+
+console.log("global:", getGlobal());
+```
+
+#### 严格模式
+
+* 是否支持严格模式
+* 是否处于严格模式
+
+```javascript
+// 严格模式下全局 this 是 undefined,据此可以判断是不是支持严格模式
+var hasStrictMode = (function () {
+  'use strict'
+  return this == undefined
+})()
+
+console.log(hasStrictMode)
+```
+
+```javascript
+// 是否处于严格模式
+// "use strict"
+
+var isStrict = (function () {
+  return this === undefined
+})()
+
+function test() {
+  // 'use strict'
+  console.log('isStrict:', isStrict)
+  console.log(arguments.callee) // 严格模式下不允许访问 arguments.callee
+}
+
+console.log(test.toString()) // 也可以通过判断函数的字符串开头是不是 "use stricts"来判断函数内部，是不是处于严格模式下
+```
+
+#### 函数副作用
+
+* 函数调用后，破坏了源对象
+
+```javascript
+Function.prototype.call = function (context) {
+  context =
+    context == null || context == undefined ? window : new Object(context)
+  context.fn = this
+  var arr = []
+  for (var i = 1; i < arguments.length; i++) {
+    arr.push('arguments[' + i + ']')
+  }
+  var r = eval('context.fn(' + arr + ')')
+  delete context.fn
+  return r
+}
+
+var context = {
+  fn: 'i am fn',
+  msg: 'i am msg',
+}
+function log() {
+  console.log('msg:', this.msg)
+}
+log.call(context)
+console.log('fn:', context.fn) // fn: undedined
+```
+
+### 基于eval 的实现
+
+* 有没有严格模式
+* 支不支持严格模式
+* 获取全局对象
+* 判断是不是函数
+* 包装上下文
+* 生成属性名
+* 拼接动态参数
+* 。。。
+
+```javascript
+var hasStrictMode = (function () {
+  'use strict'
+  return this == undefined
+})()
+
+var isStrictMode = function () {
+  return this === undefined
+}
+
+var getGlobal = function () {
+  if (typeof self !== 'undefined') {
+    return self
+  }
+  if (typeof window !== 'undefined') {
+    return window
+  }
+  if (typeof global !== 'undefined') {
+    return global
+  }
+  throw new Error('unable to locate global object')
+}
+
+function isFunction(fn) {
+  return (
+    typeof fn === 'function' ||
+    Object.prototype.toString.call(fn) === '[object Function]'
+  )
+}
+
+function getContext(context) {
+  // 是否是严格模式
+  var isStrict = isStrictMode()
+  // 没有严格模式，或者有严格模式但不处于严格模式
+  if (!hasStrictMode || (hasStrictMode && !isStrict)) {
+    return context === null || context === void 0
+      ? getGlobal()
+      : Object(context)
+  }
+
+  // 严格模式下, 妥协方案
+  return Object(context)
+}
+
+Function.prototype.call = function (context) {
+  // 不可以被调用
+  if (!isFunction(this)) {
+    throw new TypeError(this + ' is not a function')
+  }
+
+  // 获取上下文
+  var ctx = getContext(context)
+
+  // 更为稳妥的是创建唯一ID, 以及检查是否有重名
+  var propertyName = '__fn__' + Math.random() + '_' + new Date().getTime()
+  var originVal
+  var hasOriginVal = isFunction(ctx.hasOwnProperty)
+    ? ctx.hasOwnProperty(propertyName)
+    : false
+  if (hasOriginVal) {
+    originVal = ctx[propertyName]
+  }
+
+  ctx[propertyName] = this
+
+  // 采用string拼接
+  var argStr = ''
+  var len = arguments.length
+  for (var i = 1; i < len; i++) {
+    argStr += i === len - 1 ? 'arguments[' + i + ']' : 'arguments[' + i + '],'
+  }
+  var r = eval('ctx["' + propertyName + '"](' + argStr + ')')
+
+  // 还原现场
+  if (hasOriginVal) {
+    ctx[propertyName] = originVal
+  } else {
+    delete ctx[propertyName]
+  }
+
+  return r
+}
+
+// 测试
+function log() {
+  console.log('name:', this.name)
+}
+
+log.call({ name: 'name' })
+// name: name
+```
+
+### 基于 eval 的实现的问题
+
+* 严格模式下的妥协
+* 属性名依旧是可能重名
+* eval 可能被禁用
+
+### 基于 new Function 的实现
+
+* 动态参数
+
+```javascript
+// 动态参数函数
+function createFun(argsLength) {
+  // return ctx[propertyName](arg1, arg2, arg3,...)
+  // 拼接函数
+  var code = 'return ctx[propertyName]('
+  // 拼接参数, 第二个起是参数
+  for (var i = 0; i < argsLength; i++) {
+    if (i > 0) {
+      code += ','
+    }
+    code += 'args[' + i + ']'
+  }
+  code += ')'
+  return new Function('ctx', 'propertyName', 'args', code)
+}
+
+console.log(createFun(3).toString())
+
+/*
+ƒ anonymous(ctx,propertyName,args
+) {
+return ctx[propertyName](args[0],args[1],args[2])
+}
+*/
+
+var obj = {
+  log(...args) {
+    console.log('msgs:', ...args)
+  },
+}
+
+function log(...args) {
+  createFun(args.length)(obj, 'log', [...args])
+}
+
+log('msg1', 'msg2', 'msg3')
+
+// 打印结果如下
+function anonymous(ctx,propertyName,args) {
+	return ctx[propertyName](args[0],args[1],args[2])
+}
+msgs: msg1 msg2 msg3
+```
+
+```javascript
+// 最终版本的实现
+var hasStrictMode = (function () {
+  'use strict'
+  return this == undefined
+})()
+
+var isStrictMode = function () {
+  return this === undefined
+}
+
+var getGlobal = function () {
+  if (typeof self !== 'undefined') {
+    return self
+  }
+  if (typeof window !== 'undefined') {
+    return window
+  }
+  if (typeof global !== 'undefined') {
+    return global
+  }
+  throw new Error('unable to locate global object')
+}
+
+function isFunction(fn) {
+  return (
+    typeof fn === 'function' ||
+    Object.prototype.toString.call(fn) === '[object Function]'
+  )
+}
+
+function getContext(context) {
+  var isStrict = isStrictMode()
+
+  if (!hasStrictMode || (hasStrictMode && !isStrict)) {
+    return context === null || context === void 0
+      ? getGlobal()
+      : Object(context)
+  }
+  // 严格模式下, 妥协方案
+  return Object(context)
+}
+
+function createFun(argsLength) {
+  // return ctx[propertyName](arg1, arg2, arg3,...)
+  // 拼接函数
+  var code = 'return ctx[propertyName]('
+
+  // 拼接参数, 第二个起是参数
+  for (var i = 0; i < argsLength; i++) {
+    if (i > 0) {
+      code += ','
+    }
+    code += 'args[' + i + ']'
+  }
+  code += ')'
+
+  return new Function('ctx', 'propertyName', 'args', code)
+}
+
+Function.prototype.call = function (context) {
+  // 不可以被调用
+  if (typeof this !== 'function') {
+    throw new TypeError(this + ' is not a function')
+  }
+
+  // 获取上下文
+  var ctx = getContext(context)
+
+  // 更为稳妥的是创建唯一ID, 以及检查是否有重名
+  var propertyName = '__fn__' + Math.random() + '_' + new Date().getTime()
+  var originVal
+  var hasOriginVal = isFunction(ctx.hasOwnProperty)
+    ? ctx.hasOwnProperty(propertyName)
+    : false
+  if (hasOriginVal) {
+    originVal = ctx[propertyName]
+  }
+
+  ctx[propertyName] = this
+
+  var argArr = []
+  var len = arguments.length
+  for (var i = 1; i < len; i++) {
+    argArr[i - 1] = arguments[i]
+  }
+
+  var r = createFun(len - 1)(ctx, propertyName, argArr)
+
+  // 还原现场
+  if (hasOriginVal) {
+    ctx[propertyName] = originVal
+  } else {
+    delete ctx[propertyName]
+  }
+  return r
+}
+
+function getName() {
+  console.log(this.name, arguments[0], arguments[1])
+}
+
+getName.call({ name: '哈哈' }, 1, 2)
+// 哈哈 1 2
+```
+
+### 基于 new Function 的实现存在的问题
+
+* 对象可能被冻结，Object.freeze
+
+### 课后练习
+
+* 如何有效的判断被执行的函数是否在严格模式下运行
+* 如果解决传入的 thisArg 被冻结的问题
+
