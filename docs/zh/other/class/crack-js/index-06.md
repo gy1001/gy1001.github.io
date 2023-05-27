@@ -2720,5 +2720,275 @@ a==b: false
 [ 1, 2, 3 ] [ 1, 2, 3 ]
 ```
 
+```javascript
+// 发送事件
+Function.prototype.unCurry = function () {
+  const self = this
+  return function () {
+    return Function.prototype.call.apply(self, arguments)
+  }
+}
 
+const dispatch = EventTarget.prototype.dispatchEvent.unCurry()
+
+window.addEventListener('event-x', (ev) => {
+  console.log('event-x', ev.detail) // event-x ok
+})
+
+dispatch(window, new CustomEvent('event-x', { detail: 'ok' }))
+```
+
+## 09：链式调用的本质
+
+### 熟知的案例
+
+* jQuery
+* 数组
+* ES6异步大杀器 Promise
+* EventEmitter
+
+```javascript
+// jquery
+$('.testNode').css('color', 'red').show(200).removeClass('class1')
+```
+
+```javascript
+// 数组
+[1, 2, 3, 4].filter(filterFn).map(mapFn).join('')
+```
+
+```javascript
+// promise
+fetch(url)
+    .then(res => res.json())
+    .then(result => { })
+    .then(result => { })
+```
+
+```javascript
+// EventEmitter
+const EventEmitter = require('events')
+const emitter = new EventEmitter()
+
+emitter
+  .on('message', function () {
+    console.log('message')
+  })
+  .on('message1', function () {
+    console.log('message1')
+  })
+
+emitter.emit('message')
+emitter.emit('message1')
+```
+
+### 链式调用的本质
+
+* 返回对象本身
+* 返回同类型的实例对象
+
+### 其他优秀案例
+
+* 2万多 star 的 RxJs
+* 5万多 star 的 lodash
+* 9万多 star 的 axios
+
+### 链式调用的优点
+
+* 可读性强，语义好理解
+* 代码简洁
+* 易于维护
+
+### 链式调用的缺点
+
+* 对程序员要求高
+* 调试起来不太方便
+* 消耗可能大
+
+### 链式调用适用场景
+
+* 需要多次计算或者赋值
+* 逻辑上有特定的顺序
+* 相似业务的集中处理
+
+### 实战练习一：写一个计算器
+
+* 第一种：返回本身
+* 第二种：返回同类型对象实例
+
+```javascript
+// 返回 this
+class Calculator {
+  constructor(val) {
+    this.val = val
+  }
+
+  double() {
+    this.val = this.val * 2
+    return this
+  }
+
+  add(num) {
+    this.val = this.val + num
+    return this
+  }
+
+  minus(num) {
+    this.val = this.val - num
+    return this
+  }
+
+  multi(num) {
+    this.val = this.val * num
+    return this
+  }
+
+  divide(num) {
+    this.val = this.val / num
+    return this
+  }
+
+  pow(num) {
+    this.val = Math.pow(this.val, num)
+    return this
+  }
+
+  // ES5 getter, 表现得像个属性，实则是一个方法
+  get value() {
+    return this.val
+  }
+}
+
+const cal = new Calculator(10)
+
+const val = cal
+  .add(10) // 20
+  .minus(5) // 15
+  .double() // 30
+  .multi(10) // 300
+  .divide(2) // 150
+  .pow(2).value // 22500
+console.log(val) // 22500
+```
+
+```javascript
+// 返回同类型对象实例
+class Calculator {
+  constructor(val) {
+    this.val = val
+  }
+
+  double() {
+    const val = this.val * 2
+    return new Calculator(val)
+  }
+
+  add(num) {
+    const val = this.val + num
+    return new Calculator(val)
+  }
+
+  minus(num) {
+    const val = this.val - num
+    return new Calculator(val)
+  }
+
+  multi(num) {
+    const val = this.val * num
+    return new Calculator(val)
+  }
+
+  divide(num) {
+    const val = this.val / num
+    return new Calculator(val)
+  }
+
+  pow(num) {
+    const val = Math.pow(this.val, num)
+    return new Calculator(val)
+  }
+
+  get value() {
+    return this.val
+  }
+}
+
+const cal = new Calculator(10)
+
+const val = cal
+  .add(10) // 20
+  .minus(5) // 15
+  .double() // 30
+  .multi(10) // 300
+  .divide(2) // 150
+  .pow(2).value // 22500
+console.log(val) // 22500
+```
+
+### 其他类似的方案
+
+* compose 或者 pipe
+
+```javascript
+function double(val) {
+  return val * 2
+}
+
+function add(val, num) {
+  return val + num
+}
+
+function minus(val, num) {
+  return val - num
+}
+
+function multi(val, num) {
+  return val * num
+}
+
+function divide(val, num) {
+  return val / num
+}
+
+function pow(val, num) {
+  return Math.pow(val, num)
+}
+
+function pipe(...funcs) {
+  if (funcs.length === 0) {
+    return (arg) => arg
+  }
+
+  if (funcs.length === 1) {
+    return funcs[0]
+  }
+  return funcs.reduceRight(
+    (a, b) =>
+      (...args) =>
+        a(b(...args)),
+  )
+}
+
+const cal = pipe(
+  (val) => add(val, 10),
+  (val) => minus(val, 5),
+  double,
+  (val) => multi(val, 10),
+  (val) => divide(val, 2),
+  (val) => pow(val, 2),
+)
+
+console.log(cal(10))
+```
+
+### 练习题
+
+* 手写一个简单的 MyQuery ,实现类似功能
+
+```javascript
+MyQuery('.myclass')
+  .addClass('classA')
+  .style({ height: '100px' })
+  .attr('title', '哈哈')
+```
 
