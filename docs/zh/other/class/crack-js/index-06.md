@@ -1376,5 +1376,196 @@ person.logName()
 // person window window
 ```
 
-## 04: 神奇的call.call, call.call.call
+## 04: 神奇的 call.call, call.call.call
+
+### call的美好回忆
+
+```javascript
+function a() {
+  console.log(this, 'a')
+}
+function b() {
+  console.log(this, 'b')
+}
+
+a.call(b)
+// [Function: b] a
+```
+
+### 小试牛刀
+
+```javascript
+function a() {
+  console.log(this, 'a')
+}
+function b() {
+  console.log(this, 'b')
+}
+
+a.call(b)
+a.call.call(b, 'b')
+
+// 打印如下
+ƒ b() { console.log(this, 'b') } 'a'
+String {'b'} 'b'
+```
+
+### 升级
+
+```javascript
+function a() {
+  console.log(this, typeof this, 'a')
+}
+function b() {
+  console.log(this, typeof this, 'b')
+}
+a.call.call(b, 'b')
+a.call.call.call(b, 'b')
+a.call.call.call.call(b, 'b')
+
+// 打印结果如下
+String {'b'} 'object' 'b'
+String {'b'} 'object' 'b'
+String {'b'} 'object' 'b'
+```
+
+### 以上代码带来的疑问？
+
+* 为什么被调用的是 b函数
+* 为什么 this 是 String{'b'}
+* 为什么 2，3，4 个 call 的结果是一样 
+
+#### call 和 this 的简单回顾
+
+* call: 使用一个指定的 this 值和单独给出的一个或者多个参数来调用一个函数
+* this: 执行上下文的一个变量
+* this: 有另外一种不严谨的说法，**this指向调用者**
+
+#### call 的一种虚拟语法
+
+* fn.call(obj, ...args) === (obj.fn = fn, obj.fn(...args))
+
+```javascript
+function getName() {
+  return this.name
+}
+
+var obj = {
+  name: 'name',
+}
+
+getName.call(obj)
+
+// 等同于
+obj.getName = getName
+obj.getName()
+
+```
+
+#### 解答：为什么 2 3 4 个call的结果是一样的？
+
+* a.call(b): a被调用
+* a.call.call(b): a.call 被调用
+* a.call.call.call(b): a.call.call 被调用
+
+```javascript
+a.call = Function.prototype.call // true
+a.call === a.call.call // true
+a.call === a.call.call.call // true
+```
+
+```javascript
+function a() {
+  console.log(this, 'a')
+}
+function b() {
+  console.log(this, 'b')
+}
+
+var log = console.log
+
+log(a.call === Function.prototype.call) // true
+log(a.call === a.call.call) // true
+log(a.call === a.call.call.call) // true
+```
+
+#### 解答：为什么被调用的事 b 函数
+
+```javascript
+function a() {
+  console.log(this, 'a')
+}
+function b() {
+  console.log(this, 'b')
+}
+
+// (a.call).call(b, 'b')
+
+// 公式：fun.call(obj, ...args)  ===  (  obj.fun = fun; obj.fun(...args) )
+// 1. 一个函数进行call调用，等同于在一个对象上执行该函数
+// 等于在b对象上调用 a.call函数
+// 2. a.call === Function.prototype.call
+var call = Function.prototype.call
+
+// (a.call).call(b, 'b')
+// call === a.call === Function.prototype.call;
+// 等同于 在b调用call函数
+b.fn = call
+b.fn('b')
+b.call('b')
+```
+
+#### 解答：为什么 this 是 String{'b'}
+
+* this：在非严格模式下，Objec 包装
+* this：在严格模式下，任意值（传递什么是什么）
+
+```javascript
+// 严格模式下
+'use strict'
+function a() {
+  console.log(this, 'a')
+}
+function b() {
+  console.log(this, 'b')
+}
+
+// (a.call).call(b, 'b')
+
+// 公式：fun.call(obj, ...args)  ===  (  obj.fun = fun; obj.fun(...args) )
+// 1. 一个函数进行call调用，等同于在一个对象上执行该函数
+// 等于在b对象上调用 a.call函数
+// 2. a.call === Function.prototype.call
+var call = Function.prototype.call
+
+// (a.call).call(b, 'b')
+// call === a.call === Function.prototype.call;
+// 等同于 在b调用call函数
+b.fn = call
+b.fn('b')
+b.call('b')
+
+// 打印如下
+b b
+b b
+```
+
+### 万能的函数调用方法
+
+```javascript
+var call = Function.prototype.call.call.bind(Function.prototype.call)
+
+var person = {
+  hello() {
+    console.log('hello', this.name)
+  },
+}
+
+call(person.hello, { name: 'tom' }) // hello tom
+```
+
+### 小结
+
+* call 简单吗 ？
+* 复杂的都是简单的组合体
 
