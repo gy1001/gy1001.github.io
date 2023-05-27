@@ -1729,3 +1729,596 @@ function PropsHOC(WrappedComponent) {
 * 所谓的幂等性，是分布式环境下的一个常见问题，一般是指我们在进行多次操作时，所得到的结果是一样的，即多次运算结果是一致的。
 
   也就是说，用户对于同一操作，无论是发起一次请求还是多次请求，最终的执行结果是一致的，不会因为多次点击而产生副作用。
+
+[什么是幂等？如何解决幂等性问题？](https://www.zhihu.com/question/534651475)
+
+## 06：深入理解原型链与继承
+
+[彻底搞懂Function，Object，__proto__，prototype之间的关系](https://juejin.cn/post/6844903930216841230)
+
+### 深入浅出原型链
+
+### 原型
+
+#### 原型是"借"来的
+
+* 原型不是 JavaScript 首创
+* 借鉴 Self 语言，基于原型(prototype)的实现继承机制
+
+#### 原型解决了什么问题
+
+* 实现继承
+* 共享数据，减少空间占用，节省内存
+
+```javascript
+function Person(name, age) {
+  this.name = name
+  this.age = age
+  this.getName = function () {
+    return this.name
+  }
+  this.getAge = function () {
+    return this.age
+  }
+}
+
+var person = new Person()
+var person2 = new Person()
+
+console.log(person.getName === person2.getName) // false
+```
+
+```javascript
+// 使用原型后
+function Person(name, age) {
+  this.name = name
+  this.age = age
+}
+Person.prototype.getName = function () {
+  return this.name
+}
+Person.prototype.getAge = function () {
+  return this.age
+}
+
+var person = new Person()
+var person2 = new Person()
+
+console.log(person.getName === person2.getName) // true
+```
+
+#### 原型三件套
+
+* prototype
+* \_\_proto\_\_
+* constructor
+
+##### prototype
+
+* 无处不在
+* 本质就是一个普通对象
+
+```javascript
+var obj = {}
+console.log(obj.toString()) // [object Object]
+// toString 方法是不是来自原型
+console.log(obj.toString === Object.prototype.toString) // true
+console.log(obj instanceof Object) // true
+```
+
+##### \_\_proto\_\_
+
+* \_\_proto\_\_：\_\_proto\_\_ 属性是一个访问器属性（一个 getter 函数和一个 setter 函数），暴露了通过它访问的对象的内部[[prototype]] 一个对象或者 null
+* 等于 构造函数的原型 prototype
+* 推荐使用 Object.getPrototypeof
+
+```javascript
+var des = Object.getOwnPropertyDescriptor(Object.prototype, '__proto__')
+console.log(des)
+
+// __proto__ 构造函数的原型
+var obj = {}
+console.log(obj.__proto__ === obj.constructor.prototype)
+
+// Object.getPrototypeOf 替代
+console.log(Object.getPrototypeOf(obj) === obj.__proto__)
+
+// 打印结果如下
+{
+  get: [Function: get __proto__],
+  set: [Function: set __proto__],
+  enumerable: false,
+  configurable: true
+}
+true
+true
+```
+
+##### constructor
+
+```javascript
+var obj = {}
+console.log(obj.constructor === Object) // true
+```
+
+#### 谁都有谁
+
+* prototype 属性本质就是一个普通对象
+* 普通对象有 \_\_proto\_\_ 属性
+* 普通函数或者 class 既有 prototype 属性，又有 \_\_proto\_\_ 属性
+
+#### prototype \_\_proto\_\_ constructor 小结
+
+* prototype
+  * 函数或者 class 的共享属性
+  * 作用：节约内存、实现继承
+  * 本质就是一个普通的对象
+* \_\_proto\_\_
+  * 构造函数的原型
+  * Object.prototype.\_\_proto\_\_ = null
+  * 基于此形成原型链
+* constructor
+  * 实现对象的构造函数
+  * 可以被更改
+  * 普通对象，其在原型上
+
+### 原型链
+
+```javascript
+function Person(name, age) {
+  this.name = name
+  this.age = age
+}
+
+Person.prototype.getName = function () {
+  return this.name
+}
+
+Person.prototype.getAge = function () {
+  return this.age
+}
+
+var person = new Person()
+console.log(person.toString()) // [object Object]
+
+// 完成的原型链
+person.__proto__ => Person.prototype
+Person.prototype.__proto__ => Object.prototype
+Object.prototype.__proto__ => null
+```
+
+#### 原型链的尽头
+
+* 原型链的尽头是 `null`: `Object.prototype.__proto__ = null`
+
+#### 万法始祖
+
+![原型经典图.jpg](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/57ecdd6d4edb4ac58b346fb0bb4a4cc0~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp?)
+
+```javascript
+function Person(name, age) {
+  this.name = name
+  this.age = age
+}
+Person.prototype.getName = function () {
+  return this.name
+}
+Person.prototype.getAge = function () {
+  return this.age
+}
+
+var person = new Person()
+
+// var log = console.log;
+// log(person.__proto__ ===  Person.prototype);
+// log(Person.prototype.__proto__ ===  Object.prototype);
+// log(Object.prototype.__proto__ ===  null);
+```
+
+### 知识点总结
+
+* 函数最终的本质上是对象
+* 普通对象有 `constructor` 指向自己的构造函数，可以被改变，不一样安全
+* 函数和 `class` 的 `prototype.constructor` 指向函数自身
+* `Function 、Object、 Regexp、 Error` 等本质上都是函数，`Function.constructor === Function`
+* 普通对象都有`__proto__` ，其等于构造函数的原型，推荐使用 `Object.getPrototypeOf`
+* 所有普通对象的构造函数都是` Function ES6`有出现的函数种类 `AsyncFunction` `GeneratorFunction`
+* 原型链的尽头是`null`: `Object.prototype.__proto__ = null`
+* `Function.__proto__` 指向 `Function.prototype`
+
+### 趣味知识
+
+* 普通对象的二次`__proto__`是 null
+* 普通函数的三次`__proto__`是 null
+* 如果是经历 `n` 次显式继承，被实例化的普通对象，`n+3`层的`__proto__`是 null
+
+```javascript
+var obj = {}
+var log = console.log
+log(obj.__proto__.__proto__) // null
+```
+
+```javascript
+function a() {}
+function A() {}
+var log = console.log
+log(a.__proto__.__proto__.__proto__) // null
+log(new A().__proto__.__proto__.__proto__) // null
+```
+
+Javascript规定，`Function.prototype.__proto__ === Object.prototype`,`Object.prototype.__proto__ === null`，是原型链有终点。也就是在原型链的终点处有2个特殊情况。
+
+```javascript
+// 传统的被继承后
+function Grandpa() {}
+function Parent() {}
+Parent.prototype = new Grandpa()
+
+function Child() {}
+Child.prototype = new Parent()
+
+var child = new Child()
+
+var log = console.log
+//  2 + 3
+log(child.__proto__.__proto__.__proto__.__proto__.__proto__) // null
+// 以下为求解过程
+console.log(child.__proto__ === Child.prototype) // true
+console.log(child.__proto__.__proto__ === Parent.prototype) // true
+console.log(child.__proto__.__proto__.__proto__ === Grandpa.prototype) // true
+console.log(child.__proto__.__proto__.__proto__.__proto__ === Object.prototype) // true
+```
+
+```javascript
+class Grandpa {}
+class Parent extends Grandpa {}
+class Child extends Parent {}
+var child = new Child()
+
+var log = console.log
+//  2 + 3
+log(child.__proto__.__proto__.__proto__.__proto__.__proto__) // null
+```
+
+### 纯净对象
+
+#### 特点
+
+* 什么是纯净对象，就是干干净净的对象，没有原型
+* 怎么创建：Object.create(null)
+
+#### 优点
+
+* 空间上，少了原型链的信息，必然节省空间
+* 时间上，没有原型链，查找一步到位
+
+```javascript
+var obj = Object.create(null)
+console.log(obj.__proto__) // undefined
+console.log(obj.toString) // undefined
+
+for (var p in obj) {
+  console.log(p)
+}
+```
+
+### 课后练习
+
+* 推导：如果是经历过 n 次显式继承，被实例化后的普通对象，n + 3 层的`__proto__`是 null
+
+## 07: 组合和继承，谁与争锋 
+
+> 优先使用组合
+
+### 组合（has-a 关系）
+
+* 在一个 类/对象 内使用其他的 类/对象
+* has-a：包含关系，体现的是**整体和部分**的思想
+* **黑盒复用**：对象的内部细节不可见，知道怎么使用就可以了
+
+```javascript
+class Logger {
+  log() {
+    console.log(...arguments)
+  }
+  error() {
+    console.error(...arguments)
+  }
+}
+
+class Reporter {
+  constructor(logger) {
+    this.logger = logger || new Logger()
+  }
+  report() {
+    // TODO:
+    this.logger.log('report')
+  }
+}
+
+var reporter = new Reporter()
+reporter.report()
+```
+
+### 组合的优点
+
+* 功能相对独立，松耦合
+* 扩展性好
+* 复合单一职责，复用性好
+* 支持动态组合，即程序运行中组合
+* 具备按需组装的能力
+
+### 组合的缺点
+
+* 使用上相对继承，更加复杂一些
+* 容易产生过多的类、对象
+
+### 继承(is - a 关系)
+
+* 继承是 is-a 的关系，比如人是动物
+* 白盒复用：你需要了解父类的实现细节，从而决定怎么重写父类的方法
+
+```javascript
+// 继承
+class Logger {
+  log() {
+    console.log(...arguments)
+  }
+  error() {
+    console.error(...arguments)
+  }
+}
+
+class Reporter extends Logger {
+  report() {
+    // TODO:
+    this.log('report')
+  }
+}
+
+var reporter = new Reporter()
+reporter.report()
+```
+
+### 继承的优点
+
+* 初始化简单，子类自动具备父类的能力
+* 无需显式初始化父类
+
+### 继承的缺点
+
+* 继承层级多时，会导致代码混乱，可读性变差
+* 耦合紧
+* 扩展性相对组合较差
+
+### 组合和继承的最终目的
+
+* 逻辑复用，代码复用
+
+### 多态
+
+* 事物在运行过程中存在不同的状态
+
+### 多态形成的条件
+
+* 需要有继承关系
+* 子类重写父类的方法
+* 父类指向子类
+
+```typescript
+class Animal {
+  eat() {
+    console.log('Animal is eating')
+  }
+}
+
+class Person extends Animal {
+  eat() {
+    console.log('Person is eating')
+  }
+}
+
+var animal: Animal = new Animal()
+animal.eat()
+
+var person: Animal = new Person()
+person.eat()
+```
+
+### 何时使用谁
+
+* 有多态的需求的时候，考虑使用继承
+* 如果有多重继承的需求，考虑使用组合
+* 既有多态又有多重继承，考虑使用继承+组合
+
+### ES5中的继承方式
+
+* 原型链继承
+* 构造函数继承
+* 原型式继承
+* 组合继承
+* 寄生式继承
+* **寄生组合继承**
+
+```javascript
+// 寄生组合继承
+function Animal(options) {
+  this.age = options.age || 0
+  this.sex = options.sex || 1
+  this.testProperties = [1, 2, 3]
+}
+
+Animal.prototype.eat = function (something) {
+  console.log('eat:', something)
+}
+
+function Person(options) {
+  // 初始化父类, 独立各自的属性
+  Animal.call(this, options)
+  this.name = options.name || ''
+}
+
+// 设置原型
+Person.prototype = Object.create(Animal.prototype)
+// 修复构造函数
+Person.prototype.constructor = Person
+
+Person.prototype.eat = function eat(something) {
+  console.log(this.name, ':is eating', something)
+}
+Person.prototype.walk = function walk() {
+  console.log(this.name, ':is waking')
+}
+
+var person = new Person({ sex: 1, age: 18, name: '小红' })
+person.eat('大米')
+person.walk()
+person.testProperties.push('4') // person.testProperties 进行更改，不会影响 person2.testProperties
+
+var person2 = new Person({ sex: 1, age: 18, name: '小红' })
+console.log(person2.testProperties)
+
+// 打印如下
+小红 :is eating 大米
+小红 :is waking
+[ 1, 2, 3 ]
+```
+
+### 寄生组合继承解决的问题
+
+* 各个实例的属性独立，不会发生修改一个实例，影响另外一个实例
+* 实例化过程中没有多余的函数调用
+* 原型上的 constructor 属性指向正确的构造函数
+
+### 继承的一种变体：mixin
+
+* mixin: 混入
+* 把属性拷贝到原型，让其实例也有相应的属性
+
+```javascript
+class Logger {
+  log() {
+    console.log('Logger::', ...arguments)
+  }
+}
+
+class Animal {
+  eat() {
+    console.log('Animal:: is eating')
+  }
+}
+
+class Person extends Animal {
+  walk() {
+    console.log('Person:: is walking')
+  }
+}
+
+const whiteList = ['constructor']
+function mixin(targetProto, sourceProto) {
+  const keys = Object.getOwnPropertyNames(sourceProto)
+  keys.forEach((k) => {
+    if (whiteList.indexOf(k) <= 0) {
+      targetProto[k] = sourceProto[k]
+    }
+  })
+}
+
+mixin(Person.prototype, Logger.prototype)
+
+console.log(Person.prototype)
+var person = new Person()
+person.log('log test')
+
+// 打印结果如下
+Animal { log: [Function: log] }
+Logger:: log test
+```
+
+### ES6实现继承
+
+* extends 关键字
+* super 访问父类
+
+```javascript
+class Animal {
+  constructor(options) {
+    this.age = options.age || 0
+    this.sex = options.sex || 1
+  }
+
+  eat(something) {
+    console.log('eat:', something)
+  }
+}
+
+class Person extends Animal {
+  // 私有变量
+  #friends = []
+
+  constructor(options) {
+    super(options)
+    this.name = options.name || name
+  }
+  eat(something) {
+    console.log(this.name, 'eat:', something)
+  }
+  // 这样写是原型方法
+  run() {
+    return `${this.name}正在跑步`
+  }
+	// 这样写是实例方法
+  say = () => {
+    console.log('say==', say)
+  }
+}
+
+var p1 = new Person({ name: '张三' })
+console.log('name:', p1.name)
+p1.eat('鲍鱼')
+// console.log("p1.friends:", p1.friends, p1.#friends)
+console.log(Object.getOwnPropertyNames(p1.__proto__))
+
+// 结果如下
+name: 张三
+张三 eat: 鲍鱼
+[ 'constructor', 'eat', 'run' ]
+```
+
+```javascript
+// es6 添加原型上的属性 
+class Animal {
+  constructor() {
+    this.name = 'animal'
+  }
+
+  eat() {
+    console.log('eat')
+  }
+
+  get gname() {
+    return 'getter name'
+  }
+}
+Animal.prototype.name = 'prototype的name'
+
+class Person extends Animal {}
+
+var person = new Person()
+console.log(person.name)
+console.log(person.gname)
+console.log(person.__proto__.eat)
+console.log(person.__proto__.name)
+
+// 打印如下
+animal
+getter name
+[Function: eat]
+prototype的name
+```
+
+### ES6继承注意点
+
+* 构造函数 this 使用前，必须先调用 super 方法
+* 注意箭头函数形式的属性
+* class 若是想在原型上添加非函数的属性，还得依赖 prototype
