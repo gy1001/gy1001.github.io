@@ -823,3 +823,558 @@ test()
 ```
 
 ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/918328e562374f94bad1e8fb07e7a3fe~tplv-k3u1fbpfcp-watermark.image?)
+
+## 03: 函数的this之全解析
+
+### this 是什么
+
+* 执行上下文（global function 或者 eval）的一个属性
+* 在非严格模式下，总是指向一个对象
+* 在严格模式下可以是任意值
+
+#### 绑定规则
+
+* 默认绑定
+* 隐式绑定
+* 显式绑定
+* new
+* 箭头函数
+
+#### 默认绑定
+
+##### 非严格模式
+
+* 浏览器：this 指向 window
+* nodejs: this 指向 globel
+
+##### 严格模式
+
+* 浏览器：undefined
+* nodejs: undefined
+
+```javascript
+// 非严格模式
+var name = '哈士奇'
+function getName() {
+  console.log('this:', this)
+  return this.name
+}
+console.log('name:', getName())
+console.log('this:', this)
+```
+
+```javascript
+// 严格模式
+'use strict'
+var name = '哈士奇'
+function getName() {
+  console.log('this:', this === global, this)
+  return this.name
+}
+
+console.log('this:', this)
+console.log('name:', getName())
+```
+
+### 隐式绑定
+
+* 作为某个对象的属性被调用的时候
+
+```javascript
+var name = '哈士奇'
+function getName() {
+  console.log('this:', this)
+  return this.name
+}
+
+var person = {
+  name: 'person的name',
+  getName,
+}
+
+console.log('name:', person.getName())
+
+// 打印结果如下
+this: { name: 'person的name', getName: [Function: getName] }
+name: person的name
+```
+
+```javascript
+var name = '哈士奇'
+function getName() {
+  console.log('this:', this)
+  return this.name
+}
+var person1 = {
+  name: 'person1的name',
+  getName,
+}
+var person2 = {
+  name: 'person2的name',
+  getName,
+}
+
+console.log(person1.getName())
+console.log(person2.getName())
+
+// 打印结果如下
+this: { name: 'person1的name', getName: [Function: getName] }
+person1的name
+this: { name: 'person2的name', getName: [Function: getName] }
+person2的name
+```
+
+```javascript
+// 多层属性时候
+var name = '哈士奇'
+function getName() {
+  console.log('this:', this)
+  return this.name
+}
+const person1 = {
+  name: 'person1的name',
+  getName,
+  person2: {
+    name: 'person2的name',
+    getName,
+  },
+}
+
+console.log(person1.getName())
+console.log(person1.person2.getName())
+
+// 打印结果如下
+this: {
+  name: 'person1的name',
+  getName: [Function: getName],
+  person2: { name: 'person2的name', getName: [Function: getName] }
+}
+person1的name
+this: { name: 'person2的name', getName: [Function: getName] }
+person2的name
+```
+
+### 一些神秘的隐式绑定
+
+* EventTarget, FileReader 等
+* 
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <button id="btn" type="button">按钮</button>
+  <script>
+    btn.addEventListener("click", function () {
+      console.log("this:btn", this)   // btn
+    })
+
+
+    var request = new XMLHttpRequest()
+    request.open("GET", "./")
+    request.send()
+    request.onloadend = function () {
+      console.log("this:XMLHttpRequest", this)  // XMLHttpRequest
+    }
+  </script>
+</body>
+
+</html>
+
+// 执行结果如下
+this:XMLHttpRequest XMLHttpRequest {onreadystatechange: null, readyState: 4, timeout: 0, withCredentials: false, upload: XMLHttpRequestUpload, …}
+
+// 点击按钮后，打印如下
+this:btn <button id="btn" type="button">按钮</button>
+```
+
+### 显式绑定
+
+* 显式表达谁是 this
+* Function.prototype.call
+* Function.prototype.apply
+* Function.prototype.bind
+* 属性绑定符
+
+```javascript
+// call 
+var obj = { name: '张三' }
+
+function logName() {
+  console.log(this.name, this)
+}
+logName.call(obj)
+// 张三 { name: '张三' }
+```
+
+```javascript
+// apply
+var obj = { name: '张三' }
+
+function logName() {
+  console.log(this.name, this)
+}
+logName.apply(obj)
+// 张三 { name: '张三' }
+```
+
+```javascript
+// bind
+var obj = { name: '张三' }
+
+function logName() {
+  console.log(this.name, this)
+}
+var bindLogName = logName.bind(obj)
+bindLogName()
+// 张三 { name: '张三' }
+```
+
+````javascript
+// 连续 bind 只有第一次生效
+var person1 = {
+  name: 'name1',
+}
+var person2 = {
+  name: 'name2',
+}
+
+function getName() {
+  console.log(this)
+  return this.name
+}
+
+console.log(getName.bind(person1).bind(person2)())
+
+// 打印结果如下
+{ name: 'name1' }
+name1
+````
+
+```javascript
+// bind 额外的传递参数
+function add(num1, num2, num3, num4) {
+  return num1 + num2 + num3 + num4
+}
+
+const add2 = add.bind(null, 10, 20)
+console.log(add2(30, 40)) // 100
+```
+
+```javascript
+// 传递 null undefined 时使用默认的绑定规则
+// 浏览器中执行
+
+var name = '全局的name'
+function getName() {
+  return this.name
+}
+
+const log = console.log
+log(getName.call(null))
+log(getName.call(undefined))
+
+log(getName.call({ name: 'name' }))
+
+// 在浏览器中执行结果如下
+全局的name
+全局的name
+name
+```
+
+### 属性绑定符号冒号::
+
+```javascript
+function logName() {
+  console.log(this.name, this)
+}
+;({ name: '123' })::logName() // 需要 babel 转换
+//等同于 logName.call({name:"123"})
+```
+
+```javascript
+// 也可以连续使用
+function getPerson() {
+  return this.person
+}
+
+function getName() {
+  return this.name
+}
+
+var obj = {
+  person: {
+    name: 'Tom',
+  },
+}
+
+obj::getPerson()::getName()
+```
+
+### new 
+
+* 实例化一个函数或者 ES6 的 class
+* 对于 Function return 会影响返回值
+  * return 非对象时，实际返回系统内部的对象
+  * return 对象时，实际返回该对象
+
+```javascript
+function Person(name) {
+  this.name = name
+
+  this.getName = function () {
+    return this.name
+  }
+}
+
+var person = new Person('二哈')
+console.log(person.getName()) // 二哈
+```
+
+```javascript
+// new return 
+function MyObject() {
+  this.name = 'myObject'
+}
+
+function MyObject2() {
+  this.name = 'myObject'
+  return {
+    name: 'myObject2',
+  }
+}
+
+function MyObject3() {
+  this.name = 'myObject3'
+  return undefined
+}
+
+console.log(new MyObject())
+console.log(new MyObject2())
+console.log(new MyObject3())
+
+// 打印如下
+MyObject { name: 'myObject' }
+{ name: 'myObject2' }
+MyObject3 { name: 'myObject3' }
+```
+
+#### new 解密
+
+* 创建一个空对象
+* 设置空对象的原型
+* 指向构造函数的方法，把相关属性和方法添加到对象上
+* 返回对象。如果构造函数返回的值是对象类型，就直接返回该对象，反之返回第一步创建的对象
+
+```javascript
+// 模拟 new
+const slice = Array.prototype.slice
+function newObject(constructor) {
+  var args = slice.call(arguments, 1)
+  var obj = {} // 1
+  obj.__proto__ = constructor.prototype // 2
+  var res = constructor.apply(obj, args) //3
+  return res instanceof Object ? res : obj //4
+}
+
+function Person(name) {
+  this.name = name
+}
+
+function Person2(name) {
+  this.name = name
+  return {
+    name: '超级帅哥',
+  }
+}
+
+var person = newObject(Person, '帅哥')
+var person2 = newObject(Person2, '帅哥')
+console.log(person.name) // 帅哥
+console.log(person2.name) // 超级帅哥
+```
+
+### 箭头函数
+
+#### 特点
+
+* 简单
+* 没有自己的 this, arguments, super, new.target
+* 适合需要匿名函数的地方
+* 不能用于构造函数
+
+```javascript
+// 浏览器中执行
+var log = console.log
+var name = '全局的name'
+var getName = () => this.name
+log(getName()) // 全局的name
+
+var person = {
+  name: 'person的name',
+  getName: () => this.name,
+}
+log(person.getName())  // 全局的name
+
+var person2 = {
+  name: 'person2的name',
+  getPerson() {
+    return {
+      getName: () => this.name,
+    }
+  },
+}
+log(person2.getPerson().getName()) // person2的name
+```
+
+```javascript
+// 嵌套下的箭头函数
+class Person {
+  constructor(name) {
+    this.name = name
+  }
+
+  getName() {
+    return {
+      getName2: () => ({
+        getName3: () => ({
+          getName4: () => this.name,
+        }),
+      }),
+    }
+  }
+}
+
+var log = console.log
+var p = new Person('person的name')
+log(p.getName().getName2().getName3().getName4())
+// person的name
+```
+
+```javascript
+// 箭头函数的this 是上层作用域的 this，如果上层 this 发生了变化，箭头函数的 this 自然也会发生变化
+// 浏览器中执行
+var name = 'global.name'
+var person = {
+  name: 'person.name',
+  getName() {
+    return () => this.name
+  },
+}
+
+var log = console.log
+log(person.getName()()) // person.name
+log(person.getName.call({ name: 'name' })()) // name 
+```
+
+### this 绑定的优先级
+
+1. 箭头函数
+2. 显式绑定
+3. new
+4. 隐式绑定
+5. 默认绑定
+
+### 练习题
+
+#### 1
+
+```javascript
+var name = 'window'
+var obj = { name: '张三' }
+
+function logName() {
+  console.log(this.name)
+}
+
+function logName2() {
+  'use strict'
+  console.log(this.name)
+}
+
+var person = {
+  name: 'person',
+  logName,
+  logName2: () => logName(),
+}
+
+logName()
+person.logName()
+person.logName2()
+logName.bind(obj)()
+logName2()
+
+// 浏览器下结果如下
+window
+person
+window
+张三
+VM580:10 Uncaught TypeError: Cannot read properties of undefined (reading 'name') at logName2 (<anonymous>:10:20)
+```
+
+### 动态this
+
+```javascript
+// 浏览器中执行
+var name = 'window'
+function logName() {
+  console.log(this.name, this)
+}
+
+function logName2() {
+  'use strict'
+  console.log('this:', this)
+}
+
+var person = {
+  name: 'person',
+  logName,
+}
+
+logName()
+logName2()
+person.logName()
+// 打印结果如下
+// window Window {window: Window, self: Window, document: document, name: 'window', location: Location, …}
+// this: undefined
+// person {name: 'person', logName: ƒ}
+```
+
+### 锁定 this 的方式
+
+* bind
+* 箭头函数
+
+### 课后思考题
+
+* 被显式绑定后，能不能解除绑定????
+
+```javascript
+// 浏览器
+var name = 'window'
+var obj = { name: '张三' }
+
+function logName() {
+  console.log(this.name)
+}
+
+var person = { name: 'person', logName }
+
+// 升级版本
+person.logName()
+;(1, person.logName)();
+(false || person.logName)()
+
+// person window window
+```
+
+## 04: 神奇的call.call, call.call.call
+
