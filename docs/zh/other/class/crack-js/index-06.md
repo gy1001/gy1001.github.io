@@ -34,13 +34,13 @@ gName: global的name
 
 #### 上下文
 
-* 全局执行上下文
-* 函数执行上下文
-* eval 函数执行上下文
+- 全局执行上下文
+- 函数执行上下文
+- eval 函数执行上下文
 
 #### 执行栈（调用栈）
 
-* 是一种拥有(后进先出)数据结构的栈，被用来存储代码运行时创建的所有执行上下文
+- 是一种拥有(后进先出)数据结构的栈，被用来存储代码运行时创建的所有执行上下文
 
 ```javascript
 function outer() {
@@ -114,11 +114,11 @@ sum(10464)
 
 ### 作用域
 
-* 作用域：一个独立的区域。主要的用途就是隔离变量
+- 作用域：一个独立的区域。主要的用途就是隔离变量
 
-* 全局作用域
-* 函数作用域
-* 块作用域（ES6）
+- 全局作用域
+- 函数作用域
+- 块作用域（ES6）
 
 ```javascript
 // 全局作用域
@@ -192,7 +192,7 @@ console.log('let:', j)
 
 #### 作用域链
 
-* 作用域也可以根据代码层次分层，以便子作用域可以访问父级作用域，而不能从父作用域引用子作用域中的变量和引用
+- 作用域也可以根据代码层次分层，以便子作用域可以访问父级作用域，而不能从父作用域引用子作用域中的变量和引用
 
 ```javascript
 var a = 1
@@ -215,7 +215,7 @@ test1()
 
 ### 变量提升
 
-* 访问“后”声明的变量
+- 访问“后”声明的变量
 
 ```javascript
 console.log('num1=', num1)
@@ -236,12 +236,11 @@ console.log('num2=', num2)
 // num1=1;
 // num2=2;
 
-
 // 运行结果
-num1= undefined
-num2= undefined
-num1= 1
-num2= 2
+num1 = undefined
+num2 = undefined
+num1 = 1
+num2 = 2
 ```
 
 ```javascript
@@ -258,7 +257,7 @@ function name() {
 
 ### 暂时性死去
 
-* let、const 变量显式赋值之前不能对变量进行读写，否则就会报错
+- let、const 变量显式赋值之前不能对变量进行读写，否则就会报错
 
 ```javascript
 var num = 1
@@ -272,20 +271,17 @@ var num = 1
 
 ### 闭包
 
-* 内部函数访问了上层作用域链中的变量对象
+- 内部函数访问了上层作用域链中的变量对象
 
 ```javascript
 // setTimeout函数不止有第三个参数，后面甚至可以紧跟无数个参数！三个以后得参数可以作为前面的回调函数的附加参数.
 
 for (var i = 0; i < 5; ++i) {
-  setTimeout(
-    function () {
-      console.log(i + ' ')
-    },
-    100
-  )
+  setTimeout(function () {
+    console.log(i + ' ')
+  }, 100)
 }
-// 5 5 5 5 5 
+// 5 5 5 5 5
 
 for (var i = 0; i < 5; ++i) {
   setTimeout(
@@ -303,120 +299,104 @@ for (var i = 0; i < 5; ++i) {
 // 闭包
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
+  <body>
+    <script>
+      var globalScope = '全局作用域'
 
-<body>
-  <script>
-    var globalScope = "全局作用域"
-
-    function checkScope() {
-      var a = 1
-      var b = 1
-      console.log("b:", b)
-      function returnFun() {
-        return a++
+      function checkScope() {
+        var a = 1
+        var b = 1
+        console.log('b:', b)
+        function returnFun() {
+          return a++
+        }
+        return returnFun
       }
-      return returnFun
-    }
 
-    var test = checkScope()
+      var test = checkScope()
 
-    const a1 = test()
-    console.log("a1:", a1)
+      const a1 = test()
+      console.log('a1:', a1)
 
-    const a2 = test()
-    console.log("a2:", a2)
+      const a2 = test()
+      console.log('a2:', a2)
 
-    const a3 = test()
-    console.log("a3:", a3);
-
-  </script>
-</body>
-
+      const a3 = test()
+      console.log('a3:', a3)
+    </script>
+  </body>
 </html>
 
-// 执行效果如下
-b: 1
-a1: 1
-a2: 2
-a3: 3
+// 执行效果如下 b: 1 a1: 1 a2: 2 a3: 3
 ```
 
 ```html
 // 闭包
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
+  <body>
+    <script>
+      var globalScope = '全局作用域'
 
-<body>
-  <script>
-    var globalScope = "全局作用域"
-
-    function checkScope() {
-      var a = 1
-      var b = 1
-      console.log("b:", b)
-      function returnFun() {
-        return a++
+      function checkScope() {
+        var a = 1
+        var b = 1
+        console.log('b:', b)
+        function returnFun() {
+          return a++
+        }
+        return returnFun
       }
-      return returnFun
-    }
 
-    var test = checkScope()
+      var test = checkScope()
 
-    const a1 = test()
-    console.log("a1:", a1)
+      const a1 = test()
+      console.log('a1:', a1)
 
-    const a2 = test()
-    console.log("a2:", a2)
+      const a2 = test()
+      console.log('a2:', a2)
 
-    const a3 = test()
-    console.log("a3:", a3)
+      const a3 = test()
+      console.log('a3:', a3)
 
-
-    var test1 = checkScope()
-    const a4 = test1()
-    console.log("test1 a4:", a4);
-  </script>
-</body>
-
+      var test1 = checkScope()
+      const a4 = test1()
+      console.log('test1 a4:', a4)
+    </script>
+  </body>
 </html>
 
-// 执行结果如下 
-b: 1
-a1: 1
-a2: 2
-a3: 3
-b: 1
-a4: 1
+// 执行结果如下 b: 1 a1: 1 a2: 2 a3: 3 b: 1 a4: 1
 ```
 
 ### IIFE
 
-* Immediately Invoked Function Expressions 也就是立即调用函数表达式
+- Immediately Invoked Function Expressions 也就是立即调用函数表达式
 
 ```javascript
 ;(function (num1, num2) {
   console.log(num1 + num2)
 })(7, 9)
-;((function (num1, num2) {
+;(function (num1, num2) {
   console.log(num1 + num2)
-})(7, 9))
-;+ function (num1, num2) {
+})(7, 9)
+;+(function (num1, num2) {
   console.log(num1 + num2)
-}(7, 9)
+})(7, 9)
 // + 也可以是 - void 等运算符
 ```
 
@@ -441,7 +421,7 @@ for (var i = 0; i < 5; i++) {
 }
 ```
 
-## 02：name,length,caller等重要却少被关注的属性
+## 02：name,length,caller 等重要却少被关注的属性
 
 ### Function.name
 
@@ -459,74 +439,77 @@ console.log('name:', sum.name) // name: sum
 
 ```javascript
 // 函数声明的名称: name 属性会返回函数的名称。
-function doSomething() { }
-doSomething.name;  // "doSomething"
+function doSomething() {}
+doSomething.name // "doSomething"
 
 //构造函数的名称: 使用new Function(...)语法创建的函数或只是 Function(...) create Function对象及其名称为“anonymous”。
-(new Function).name; // "anonymous"
+new Function().name // "anonymous"
 
 // 推断函数名称: 变量和方法可以从句法位置推断匿名函数的名称（ECMAScript 2015 中新增）。
-var f = function() {};
+var f = function () {}
 var object = {
-  someMethod: function() {}
-};
+  someMethod: function () {},
+}
 
-console.log(f.name); // "f"
-console.log(object.someMethod.name); // "someMethod"
+console.log(f.name) // "f"
+console.log(object.someMethod.name) // "someMethod"
 
 // 你可以在 函数表达式中定义函数的名称：
 var object = {
-  someMethod: function object_someMethod() {}
-};
+  someMethod: function object_someMethod() {},
+}
 
-console.log(object.someMethod.name); // "object_someMethod"
+console.log(object.someMethod.name) // "object_someMethod"
 
-try { object_someMethod } catch(e) { alert(e); }
+try {
+  object_someMethod
+} catch (e) {
+  alert(e)
+}
 // ReferenceError: object_someMethod is not defined
 
-// 你不能更改函数的名称，此属性是只读的： 
+// 你不能更改函数的名称，此属性是只读的：
 
 //简写方法的名称
-var o = { foo(){} };
-o.foo.name; // "foo";
+var o = { foo() {} }
+o.foo.name // "foo";
 
 // 绑定函数的名称: Function.bind() 所创建的函数将会在函数的名称前加上"bound " 。
-function foo() {};
-foo.bind({}).name; // "bound foo"
+function foo() {}
+foo.bind({}).name // "bound foo"
 
 // getters 和 setters 的函数名: 当通过 get 和 set 访问器来存取属性时，"get" 或 "set" 会出现在函数名称前。
 var o = {
-  get foo(){},
-  set foo(x){}
-};
+  get foo() {},
+  set foo(x) {},
+}
 
-var descriptor = Object.getOwnPropertyDescriptor(o, "foo");
-descriptor.get.name; // "get foo"
-descriptor.set.name; // "set foo";
+var descriptor = Object.getOwnPropertyDescriptor(o, 'foo')
+descriptor.get.name // "get foo"
+descriptor.set.name // "set foo";
 
 // 类中的函数名称: 你可以使用obj.constructor.name来检查对象的“类”（但请务必阅读以下警告）：
-function Foo() {}  // ES2015 Syntax: class Foo {}
-var fooInstance = new Foo();
-console.log(fooInstance.constructor.name); // logs "Foo"
+function Foo() {} // ES2015 Syntax: class Foo {}
+var fooInstance = new Foo()
+console.log(fooInstance.constructor.name) // logs "Foo"
 
 // Symbol 作为函数名称: 如果Symbol 被用于函数名称，并且这个 symbol 具有相应的描述符，那么方法的名字就是方括号中的描述符。
-var sym1 = Symbol("foo");
-var sym2 = Symbol();
+var sym1 = Symbol('foo')
+var sym2 = Symbol()
 var o = {
-  [sym1]: function(){},
-  [sym2]: function(){}
-};
-o[sym1].name; // "[foo]"
-o[sym2].name; // ""
-
+  [sym1]: function () {},
+  [sym2]: function () {},
+}
+o[sym1].name // "[foo]"
+o[sym2].name // ""
 ```
 
 ### Function.length 定义
 
-* length 是函数对象的一个属性值，指该函数有多少个必须要换入的参数，即形参的个数
-* 不包含剩余参数
-* 不包含有默认值的参数
-* bind 之后的length：length -  bind 的参数个数
+- length 是函数对象的一个属性值，指该函数有多少个必须要换入的参数，即形参的个数
+- 不包含剩余参数
+- 不包含有默认值的参数
+- bind 之后的 length：length - bind 的参数个数
 
 ```javascript
 function sum(num1, num2) {
@@ -544,7 +527,7 @@ function sum(num1, num2) {
 }
 console.log('length:', sum.length)
 
-sum(1, 2, 3, 4) 
+sum(1, 2, 3, 4)
 
 // 打印结果如下
 length: 2
@@ -614,21 +597,21 @@ boundSum4.length: 0
 
 #### 与 arguments.length 的区别
 
-* arguments.length 是实际参数长度
-* Function.length 是形参的长度
+- arguments.length 是实际参数长度
+- Function.length 是形参的长度
 
 #### 用途
 
-* 柯里化
+- 柯里化
 
 ### Function.caller
 
 #### 特性
 
-* 该特性为非标准，尽量不要在生产环境中使用
-* 定义：返回调用特定函数的函数
-* 全局作用域内被调用，返回 null
-* 函数内部作用域调用，指向调用它的那个函数
+- 该特性为非标准，尽量不要在生产环境中使用
+- 定义：返回调用特定函数的函数
+- 全局作用域内被调用，返回 null
+- 函数内部作用域调用，指向调用它的那个函数
 
 ```javascript
 function sum(num1, num2) {
@@ -671,7 +654,7 @@ caller: [Function: toString]
 
 #### 严格模式下
 
-* caller callee arguments 属性都不可用
+- caller callee arguments 属性都不可用
 
 ```javascript
 function sum(num1, num2) {
@@ -687,8 +670,8 @@ sum(1, 2)
 
 #### 用途
 
-* 调用栈信息收集
-* 调用环境检查
+- 调用栈信息收集
+- 调用环境检查
 
 ```javascript
 // 调用栈信息收集
@@ -722,7 +705,7 @@ c()
 
 // 执行结果如下
 a
-stacks: [ '', 'c', 'b' ]
+stacks: ['', 'c', 'b']
 b
 c
 ```
@@ -768,12 +751,12 @@ add()
 
 ### arguments.callee
 
-* 包含正在执行的函数
-* 严格模式禁止使用
+- 包含正在执行的函数
+- 严格模式禁止使用
 
 #### 起源
 
-* 匿名函数递归问题
+- 匿名函数递归问题
 
 ```javascript
 function sumTotal(n) {
@@ -802,7 +785,7 @@ console.log('arguments.callee:', result)
 
 #### 注意点：
 
-* 递归调用以后会获取到不同的 this 值
+- 递归调用以后会获取到不同的 this 值
 
 ```javascript
 var global = this
@@ -824,33 +807,33 @@ test()
 
 ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/918328e562374f94bad1e8fb07e7a3fe~tplv-k3u1fbpfcp-watermark.image?)
 
-## 03: 函数的this之全解析
+## 03: 函数的 this 之全解析
 
 ### this 是什么
 
-* 执行上下文（global function 或者 eval）的一个属性
-* 在非严格模式下，总是指向一个对象
-* 在严格模式下可以是任意值
+- 执行上下文（global function 或者 eval）的一个属性
+- 在非严格模式下，总是指向一个对象
+- 在严格模式下可以是任意值
 
 #### 绑定规则
 
-* 默认绑定
-* 隐式绑定
-* 显式绑定
-* new
-* 箭头函数
+- 默认绑定
+- 隐式绑定
+- 显式绑定
+- new
+- 箭头函数
 
 #### 默认绑定
 
 ##### 非严格模式
 
-* 浏览器：this 指向 window
-* nodejs: this 指向 globel
+- 浏览器：this 指向 window
+- nodejs: this 指向 globel
 
 ##### 严格模式
 
-* 浏览器：undefined
-* nodejs: undefined
+- 浏览器：undefined
+- nodejs: undefined
 
 ```javascript
 // 非严格模式
@@ -878,7 +861,7 @@ console.log('name:', getName())
 
 ### 隐式绑定
 
-* 作为某个对象的属性被调用的时候
+- 作为某个对象的属性被调用的时候
 
 ```javascript
 var name = '哈士奇'
@@ -956,56 +939,52 @@ person2的name
 
 ### 一些神秘的隐式绑定
 
-* EventTarget, FileReader 等
-* 
+- EventTarget, FileReader 等
+-
 
 ```html
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
+  <body>
+    <button id="btn" type="button">按钮</button>
+    <script>
+      btn.addEventListener('click', function () {
+        console.log('this:btn', this) // btn
+      })
 
-<body>
-  <button id="btn" type="button">按钮</button>
-  <script>
-    btn.addEventListener("click", function () {
-      console.log("this:btn", this)   // btn
-    })
-
-
-    var request = new XMLHttpRequest()
-    request.open("GET", "./")
-    request.send()
-    request.onloadend = function () {
-      console.log("this:XMLHttpRequest", this)  // XMLHttpRequest
-    }
-  </script>
-</body>
-
+      var request = new XMLHttpRequest()
+      request.open('GET', './')
+      request.send()
+      request.onloadend = function () {
+        console.log('this:XMLHttpRequest', this) // XMLHttpRequest
+      }
+    </script>
+  </body>
 </html>
 
-// 执行结果如下
-this:XMLHttpRequest XMLHttpRequest {onreadystatechange: null, readyState: 4, timeout: 0, withCredentials: false, upload: XMLHttpRequestUpload, …}
-
-// 点击按钮后，打印如下
-this:btn <button id="btn" type="button">按钮</button>
+// 执行结果如下 this:XMLHttpRequest XMLHttpRequest {onreadystatechange: null,
+readyState: 4, timeout: 0, withCredentials: false, upload:
+XMLHttpRequestUpload, …} // 点击按钮后，打印如下 this:btn
+<button id="btn" type="button">按钮</button>
 ```
 
 ### 显式绑定
 
-* 显式表达谁是 this
-* Function.prototype.call
-* Function.prototype.apply
-* Function.prototype.bind
-* 属性绑定符
+- 显式表达谁是 this
+- Function.prototype.call
+- Function.prototype.apply
+- Function.prototype.bind
+- 属性绑定符
 
 ```javascript
-// call 
+// call
 var obj = { name: '张三' }
 
 function logName() {
@@ -1038,7 +1017,7 @@ bindLogName()
 // 张三 { name: '张三' }
 ```
 
-````javascript
+```javascript
 // 连续 bind 只有第一次生效
 var person1 = {
   name: 'name1',
@@ -1055,9 +1034,11 @@ function getName() {
 console.log(getName.bind(person1).bind(person2)())
 
 // 打印结果如下
-{ name: 'name1' }
+{
+  name: 'name1'
+}
 name1
-````
+```
 
 ```javascript
 // bind 额外的传递参数
@@ -1119,12 +1100,12 @@ var obj = {
 obj::getPerson()::getName()
 ```
 
-### new 
+### new
 
-* 实例化一个函数或者 ES6 的 class
-* 对于 Function return 会影响返回值
-  * return 非对象时，实际返回系统内部的对象
-  * return 对象时，实际返回该对象
+- 实例化一个函数或者 ES6 的 class
+- 对于 Function return 会影响返回值
+  - return 非对象时，实际返回系统内部的对象
+  - return 对象时，实际返回该对象
 
 ```javascript
 function Person(name) {
@@ -1140,7 +1121,7 @@ console.log(person.getName()) // 二哈
 ```
 
 ```javascript
-// new return 
+// new return
 function MyObject() {
   this.name = 'myObject'
 }
@@ -1169,10 +1150,10 @@ MyObject3 { name: 'myObject3' }
 
 #### new 解密
 
-* 创建一个空对象
-* 设置空对象的原型
-* 指向构造函数的方法，把相关属性和方法添加到对象上
-* 返回对象。如果构造函数返回的值是对象类型，就直接返回该对象，反之返回第一步创建的对象
+- 创建一个空对象
+- 设置空对象的原型
+- 指向构造函数的方法，把相关属性和方法添加到对象上
+- 返回对象。如果构造函数返回的值是对象类型，就直接返回该对象，反之返回第一步创建的对象
 
 ```javascript
 // 模拟 new
@@ -1206,10 +1187,10 @@ console.log(person2.name) // 超级帅哥
 
 #### 特点
 
-* 简单
-* 没有自己的 this, arguments, super, new.target
-* 适合需要匿名函数的地方
-* 不能用于构造函数
+- 简单
+- 没有自己的 this, arguments, super, new.target
+- 适合需要匿名函数的地方
+- 不能用于构造函数
 
 ```javascript
 // 浏览器中执行
@@ -1222,7 +1203,7 @@ var person = {
   name: 'person的name',
   getName: () => this.name,
 }
-log(person.getName())  // 全局的name
+log(person.getName()) // 全局的name
 
 var person2 = {
   name: 'person2的name',
@@ -1272,7 +1253,7 @@ var person = {
 
 var log = console.log
 log(person.getName()()) // person.name
-log(person.getName.call({ name: 'name' })()) // name 
+log(person.getName.call({ name: 'name' })()) // name
 ```
 
 ### this 绑定的优先级
@@ -1320,7 +1301,7 @@ window
 VM580:10 Uncaught TypeError: Cannot read properties of undefined (reading 'name') at logName2 (<anonymous>:10:20)
 ```
 
-### 动态this
+### 动态 this
 
 ```javascript
 // 浏览器中执行
@@ -1350,12 +1331,12 @@ person.logName()
 
 ### 锁定 this 的方式
 
-* bind
-* 箭头函数
+- bind
+- 箭头函数
 
 ### 课后思考题
 
-* 被显式绑定后，能不能解除绑定????
+- 被显式绑定后，能不能解除绑定????
 
 ```javascript
 // 浏览器
@@ -1370,15 +1351,15 @@ var person = { name: 'person', logName }
 
 // 升级版本
 person.logName()
-;(1, person.logName)();
-(false || person.logName)()
+;(1, person.logName)()
+;(false || person.logName)()
 
 // person window window
 ```
 
 ## 04: 神奇的 call.call, call.call.call
 
-### call的美好回忆
+### call 的美好回忆
 
 ```javascript
 function a() {
@@ -1431,19 +1412,19 @@ String {'b'} 'object' 'b'
 
 ### 以上代码带来的疑问？
 
-* 为什么被调用的是 b函数
-* 为什么 this 是 String{'b'}
-* 为什么 2，3，4 个 call 的结果是一样 
+- 为什么被调用的是 b 函数
+- 为什么 this 是 String{'b'}
+- 为什么 2，3，4 个 call 的结果是一样
 
 #### call 和 this 的简单回顾
 
-* call: 使用一个指定的 this 值和单独给出的一个或者多个参数来调用一个函数
-* this: 执行上下文的一个变量
-* this: 有另外一种不严谨的说法，**this指向调用者**
+- call: 使用一个指定的 this 值和单独给出的一个或者多个参数来调用一个函数
+- this: 执行上下文的一个变量
+- this: 有另外一种不严谨的说法，**this 指向调用者**
 
 #### call 的一种虚拟语法
 
-* fn.call(obj, ...args) === (obj.fn = fn, obj.fn(...args))
+- fn.call(obj, ...args) === (obj.fn = fn, obj.fn(...args))
 
 ```javascript
 function getName() {
@@ -1459,14 +1440,13 @@ getName.call(obj)
 // 等同于
 obj.getName = getName
 obj.getName()
-
 ```
 
-#### 解答：为什么 2 3 4 个call的结果是一样的？
+#### 解答：为什么 2 3 4 个 call 的结果是一样的？
 
-* a.call(b): a被调用
-* a.call.call(b): a.call 被调用
-* a.call.call.call(b): a.call.call 被调用
+- a.call(b): a 被调用
+- a.call.call(b): a.call 被调用
+- a.call.call.call(b): a.call.call 被调用
 
 ```javascript
 a.call = Function.prototype.call // true
@@ -1517,8 +1497,8 @@ b.call('b')
 
 #### 解答：为什么 this 是 String{'b'}
 
-* this：在非严格模式下，Objec 包装
-* this：在严格模式下，任意值（传递什么是什么）
+- this：在非严格模式下，Objec 包装
+- this：在严格模式下，任意值（传递什么是什么）
 
 ```javascript
 // 严格模式下
@@ -1566,6 +1546,186 @@ call(person.hello, { name: 'tom' }) // hello tom
 
 ### 小结
 
-* call 简单吗 ？
-* 复杂的都是简单的组合体
+- call 简单吗 ？
+- 复杂的都是简单的组合体
 
+## 05：纯函数，副作用，高阶函数等函数式编程概念
+
+### 编程范式 - 面向过程编程
+
+* 特点：主要采取过程调用或者函数调用的方式来进行流程控制。流程则由包含一系列运算步骤的过程，子过程，方法或者函数来控制
+* 代表：C 语言等
+
+### 编程范式 - 面向过程编程
+
+* 特点：它将对象作为程序的基本单元，将程序和数据封装其中，以提高软件的重用性、灵活性和扩展性，对象里的程序可以访问及经常修改对象相关联的数据。在面向对象程序编程里，计算机程序会被设计成彼此相关的对象
+* 代表：Python、C++ Java C# 等
+
+### 编程范式 - 纯函数编程
+
+* 特点：函数式编程更加强调程序执行的结果而非执行的过程，倡导利用若干简单的执行单元计算结果不断渐进，逐层推导复杂的运算，而不是设计一个复杂的执行过程
+* 代表：Haskell Scala等
+
+### 函数式编程的优点
+
+* 代码简洁，优雅
+* 语法灵活，复用性高
+* 容易测试
+* 容易升级
+* 并发友好
+* 可维护性好
+
+### 纯函数
+
+* 定义：纯函数就是相同的输入，永远得到相同的输出，并且没有任何副作用
+* **同入同出**
+* **无副作用**
+
+```javascript
+var a = 1
+
+// 不是纯函数
+function sum(num1, num2) {
+  return num1 + num2 + a
+}
+
+console.log('a=1:', sum(1, 2))
+a = 3
+console.log('a=2:', sum(1, 2))
+// 结果如下
+a=1: 4
+a=2: 6
+```
+
+```javascript
+var arr = [1, 2, 3]
+
+const log = console.log
+
+// 纯
+log(arr.slice(0), arr)
+log(arr.slice(0), arr)
+
+// 不纯
+log(arr.splice(0), arr)
+log(arr.splice(0), arr)
+
+// 结果如下
+[ 1, 2, 3 ] [ 1, 2, 3 ]
+[ 1, 2, 3 ] [ 1, 2, 3 ]
+[ 1, 2, 3 ] []
+[] []
+```
+
+### 纯函数的优点
+
+* 安全：无副作用，不破坏外面的状态
+* 可测试：入参固定，输出固定，好断言
+* 可缓存：同入同出，便于缓存，提升效率
+
+### 函数的副作用
+
+#### 定义
+
+* 定义：函数调用时，除了返回函数值以外，还对外界产生附加的影响
+
+#### 副作用包含哪些呢？
+
+* 修改了变量
+* 修改了入参
+* 输出了日志
+* 操作了 DOM
+* 发送了 Http 请求
+* 操作客户端存储
+* 与 service worker、iframe 通讯
+* 其他不该做的事情
+
+```javascript
+// 修改了变量
+var rate = 1;
+function sum(sum1, sum2) {
+    rate = 2;
+    return sum1 + sum2
+}
+
+var log = console.log;
+log("rate:", rate); // rate: 1
+sum(1, 2);
+log("rate:", rate); // rate: 2
+```
+
+```javascript
+// 修改了入参
+function getName(obj) {
+  obj.age = 10
+  return obj.name
+}
+
+var obj = {
+  name: 'obj的name',
+  age: 20,
+}
+
+var log = console.log
+log('age:', obj.age)
+getName(obj)
+log('age:', obj.age)
+// 打印如下
+age: 20
+age: 10
+```
+
+### 高阶函数
+
+#### 特点
+
+* 定义：就是一个接受函数作为参数或者函数作为输出返回的函数
+* 特征：函数入参，函数作为返回值，满足任一条件即可
+
+#### 数组中经常用到的高阶函数
+
+* Array.prototype.filter
+* Array.prototype.find
+* Array.prototype.map
+
+#### 高阶函数的应用
+
+* 柯里化
+* Function.prototype.bind
+
+```javascript
+// 柯里化
+function curryingAdd(num1) {
+  return function (num2) {
+    return num1 + num2
+  }
+}
+```
+
+#### 高阶函数衍生：高阶组件
+
+* 定义：包装了另外一个组件的组件
+
+```javascript
+function PropsHOC(WrappedComponent) {
+  return class extends React.Component {
+    render() {
+      return <WrappedComponent {...this.props} />
+    }
+  }
+}
+```
+
+### 其他函数式编程的概念
+
+* compose（组合），pipe(管道)
+* 偏函数，柯里化
+* chain 链式调用
+
+### 思考题
+
+#### 幂等性和纯函数的相似和区别
+
+* 所谓的幂等性，是分布式环境下的一个常见问题，一般是指我们在进行多次操作时，所得到的结果是一样的，即多次运算结果是一致的。
+
+  也就是说，用户对于同一操作，无论是发起一次请求还是多次请求，最终的执行结果是一致的，不会因为多次点击而产生副作用。
