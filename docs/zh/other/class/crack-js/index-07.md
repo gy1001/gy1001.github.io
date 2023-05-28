@@ -2302,3 +2302,341 @@ gap: 243.19999999925494
 * Document.adoptNode
 * Document.importNode
 * Node.cloneNode
+
+## 05：自定义元素：web component, 任性的开始
+
+### 两个问题
+
+* vue slot 和 scoped css 借鉴了谁的思想
+* scoped CSS 在 vue 里面的实现原理是什么
+
+### vue scoped css
+
+![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ab90f0e078f549e9892f24c2eea28008~tplv-k3u1fbpfcp-watermark.image?)
+
+### web component 使用步骤
+
+* 编写 Web Component 组件
+* 注册 Web Component 组件
+* 使用
+
+### 一个简单的例子
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>demo</title>
+</head>
+
+<body>
+  <my-text></my-text>
+  <div></div>
+  <!-- 放在后面不行 -->
+  <my-text></my-text>
+  <script>
+    class MyText extends HTMLElement {
+      constructor() {
+        super()
+        this.append("我的文本")
+      }
+    }
+    window.customElements.define("my-text", MyText);
+  </script>
+</body>
+
+</html>
+```
+
+### web Component 三项主要技术
+
+* Custom elements （自定义元素）
+* HTML templates （HTML模板）
+* shadow DOM （影子 DOM）
+
+### Custom elements：自定义元素
+
+* 自主定制元素：是独立的元素，它不继承其他内建的 HTML 元素。你可以直接把它们写成 HTML 标签的形式，来在页面上使用。例如我们刚才自定义的 `<my-text>`
+* 自定义内置元素：继承于基本的 HTML 元素。指定所需扩展的元素。使用时，需要通过 is 属性指定 custom element 的名称
+* 继承与内置的元素
+* 注册的时候指定 extends 的属性
+* 节点用 is 指定 name. **其必须包含一个短横线**，所以`<my-text>`和`<my-text-text>`是合法的name,而 `<text>`、`<my_text>`、`<myText>`不行
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <p color="red" is="color-p"> 这是color-p的内容 </p>
+  <script>
+    class ColorP extends HTMLParagraphElement {
+      constructor() {
+        super()
+        this.style.color = this.getAttribute("color")
+        console.log(this.style.color)
+      }
+    }
+    window.customElements.define("color-p", ColorP, { extends: "p" });
+  </script>
+</body>
+
+</html>
+```
+
+### 位置问题
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>demo</title>
+</head>
+
+<body>
+  <my-text></my-text>
+  <script>
+    class MyText extends HTMLElement {
+      constructor() {
+        super()
+        this.append("我的文本")
+      }
+    }
+    window.customElements.define("my-text", MyText);
+  </script>
+  <!-- 放在后面不行 -->
+  <my-text></my-text>
+</body>
+
+</html>
+```
+
+### 延迟注册
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>demo</title>
+</head>
+
+<body>
+  <my-text></my-text>
+  <script>
+    class MyText extends HTMLElement {
+      constructor() {
+        super()
+        this.append("我的文本")
+      }
+    }
+    // window.customElements.define("my-text", MyText);
+    setTimeout(() => window.customElements.define("my-text", MyText))
+  </script>
+  <div></div>
+  <my-text></my-text>
+</body>
+
+</html>
+```
+
+###  在 connectedCallback 声明周期中使用
+
+> 这样就不会受位置影响了
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>demo</title>
+</head>
+
+<body>
+  <my-text></my-text>
+  <script>
+    class MyText extends HTMLElement {
+      constructor() {
+        super()
+
+      }
+      connectedCallback() {
+        this.append("我的文本")
+      }
+    }
+    window.customElements.define("my-text", MyText);
+  </script>
+  <div></div>
+  <my-text></my-text>
+</body>
+
+</html>
+```
+
+### 生命周期
+
+* connectedCallback: 插入文档时
+* disconnectedCallback: 从文档删除时
+* adoptedCallback: 被移动新文档时
+* attributeChangedCallback: 属性变化时
+
+### 动作触发的生命周期
+
+#### 插入的时候
+
+* 触发 attributeChangedCallback
+* 触发 connectedCallback
+
+#### 属性更新时
+
+* attributeChangedCallback
+
+#### 删除时
+
+* disconnectedCallback
+
+#### 跨文档移动时
+
+* 触发 disconnectedCallback
+* 触发 adoptedCallback
+* 触发 connectedCallback
+
+### 生命周期：attributeChangedCallback
+
+* 配合 observedAttributess 属性一起使用，指定监听的属性
+* 使用 setAtrribute 方法更新属性
+
+### 生命周期：connectedCallback
+
+* 对节点的操作应该位于此生命周期
+* 可能被多次触发。比如删除后又添加到文档中，所以 disconnectedCallback 可配置做清理工作
+
+```html
+// 生命周期 + 属性接受.html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>demo</title>
+</head>
+
+<body>
+  <div id="container1">
+    <p is="my-text" text="大家好" id="myText"></p>
+  </div>
+  <div id="container2">
+  </div>
+  <div>
+    <button id="btnUpdateText">更新属性</button><br />
+    <button id="btnRemove">删除节点</button>
+    <button id="btnRestore">恢复节点</button>
+  </div>
+  <script>
+    class MyText extends HTMLParagraphElement {
+      constructor() {
+        super()
+      }
+
+      connectedCallback() {
+        console.log("生命周期:connectedCallback")
+        this.append("我说:" + this.getAttribute("text"))
+      }
+
+      disconnectedCallback() {
+        console.log("生命周期:disconnectedCallback")
+        this.innerHTML = ""
+      }
+
+      static get observedAttributes() {
+        // return [''];
+        return ['text']
+      }
+
+      attributeChangedCallback(name, oldValue, newValue) {
+        console.log("生命周期:attributeChangedCallback", name, oldValue, newValue)
+        // 先触发changed再触发 connectedCallback
+        // 所以这里判断是不是一次触发 changed
+        // 第一次的话，交给connectedCallback处理
+        if (oldValue != null) {
+          this.replaceChildren("我说:" + newValue)
+        }
+      }
+
+      adoptedCallback() {
+        console.log("生命周期:adoptedCallback")
+      }
+    }
+
+    window.customElements.define("my-text", MyText, { extends: "p" })
+
+    var myTextEl = document.getElementById("myText")
+    btnUpdateText.addEventListener("click", function (e) {
+      myTextEl.setAttribute("text", "随机的文本" + Math.random())
+    })
+
+    btnRemove.addEventListener("click", function (e) {
+      myTextEl.remove()
+    })
+
+    btnRestore.addEventListener("click", function (e) {
+      container1.appendChild(myTextEl)
+    });
+
+  </script>
+</body>
+
+</html>
+```
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="container"></div>
+  <button id="btnAdopt">adoptNode</button>
+  <iframe id="ifr" src="./生命周期 + 属性接受.html">
+  </iframe>
+  <script type="text/javascript">
+    btnAdopt.addEventListener("click", function (e) {
+      const textNode = ifr.contentWindow.document.getElementById("myText")
+      container.appendChild(document.adoptNode(textNode))
+    })
+  </script>
+</body>
+
+</html>
+```
+
+### 创建节点的痛点
+
