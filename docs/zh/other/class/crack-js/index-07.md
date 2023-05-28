@@ -412,3 +412,533 @@ NodeList(5) [text, comment, text, span, text]
 </html>
 ```
 
+## 02：玩转Node节点：查询和遍历，5种方式无敌手
+
+### Node 和 Element
+
+* Node 是一个接口，我们称其为节点吧
+* Element 是通用性的基类，nodeType 为1，是Node的一类实现，其子类我们统称为元素
+* Node 还有很多其他的实现，比如文本、注释等
+
+### HTMLCollection 和 NodeList
+
+* HTMLCollection: Element 子类的集合
+* NodeList：所有 Node 子类的集合
+* 我们约定：HTMLCollection 是元素集合，NodeList 是节点列表
+
+### getElementById
+
+* 作用：根据元素的id属性值进行节点查询，返回单一元素
+* 属于高效的查询
+* 语法：document.getElementById(id)
+
+### getElementById 的注意事项
+
+* 只返回元素，nodeType 为 1 的 Element
+* id 是大小敏感的字符串
+* 如果有多个元素有相同 id, 只返回第一个元素
+* 此方法仅仅存在 Document 的实例上，常见于 document 上
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="root"></div>
+  <div id="root"></div>
+  <div id="Root"></div>
+  <script>
+    var log = console.log
+    // 只获得一个
+    log("root:", document.getElementById("root"))
+    // 区分大小写
+    log("Root.id:", document.getElementById("Root").id)
+  </script>
+</body>
+
+</html>
+```
+
+### getElementsByClassName
+
+* 作用：根据指定的类名查询元素
+* 语法：document.getElementsByClassName(names)
+* 语法：rootElement.getElementsByName(names)
+
+### getElementsByClassName 的注意事项
+
+* 返回结果是**实时**元素的集合，但是不是数组
+* 可以同时匹配多个 class, class 类名通过空格分隔。匹配的是 and 的关系
+* 元素均拥有此方法，不限于 document
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="outer" id="outer">
+    <ul class="list list-1">
+      <li class="item item2 item3">list-one</li>
+      <li class="item">list-two</li>
+      <li class="item">list-three</li>
+    </ul>
+  </div>
+  <div class="outer2" id="outer"></div>
+  <script>
+    var log = console.log
+    // Element可以调用
+    const items2 = document.getElementById("outer").getElementsByClassName("item")
+    // 多个class
+    const items3 = document.getElementsByClassName("item item3")
+    console.log(items2) // HTMLCollection(3) [li.item.item2.item3, li.item, li.item]
+    console.log(items3) // HTMLCollection [li.item.item2.item3]
+  </script>
+</body>
+</html>
+```
+
+### getElementsByName
+
+* 作用：根据指定的 name 属性查询元素
+* 语法：语法：document.getElementsByName(name)
+
+### getElementsByName 的注意事项
+
+* 返回的是 实时 的节点集合 NodeList
+* 包括不能被解析的节点
+* 此方法仅仅存在 Document 的实例上，常见于 document 上
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="outer" id="outer">
+        <ul class="list list-1">
+            <li name="li-item" class="item item2 item3">list-one</li>
+            <li class="item">list-two</li>
+            <li class="item">list-three</li>
+        </ul>
+    </div>
+    <div class="outer2" id="outer"></div>
+    <ccc name="ccc">ccc</ccc>
+    <script>
+        var log = console.log
+        // Element 上不存在调用
+        var getElementsByName = document.getElementById("outer").getElementsByName
+        console.log("getElementsByName:", getElementsByName) // getElementsByName: undefined
+        // 查询能被解析的节点
+        var items3 = document.getElementsByName("ccc")
+        console.log(items3) // NodeList(1)
+    </script>
+</body>
+
+</html>
+```
+
+### getElementsByTagName
+
+* 作用：根据指定的标签查询元素
+* 语法：document.getElementsByTagName(tagName)
+
+### getElementsByTagName 的注意事项
+
+* 返回的是实时的元素集合
+* tagName 可以是 *，代表所有元素
+* Webkit 旧版本内核的浏览器中可能返回的是一个 NodeList
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="outer" id="outer">
+        <ul class="list list-1">
+            <li name="li-item" class="item item2 item3">list-one</li>
+            <li class="item">list-two</li>
+            <li class="item">list-three</li>
+        </ul>
+    </div>
+    <div class="outer2" id="outer"></div>
+    <ccc name="ccc">ccc</ccc>
+    <script>
+        var log = console.log
+        var outerEl = document.getElementById("outer")
+        // Element也有此方法
+        var items2 = outerEl.getElementsByTagName("li")
+        // 查询能被解析的节点
+        var items3 = document.getElementsByTagName("ccc")
+        // 功效等同于 document.all
+        console.log(document.getElementsByTagName("*").length === document.all.length) // true
+
+    </script>
+</body>
+
+</html>
+```
+
+### querySelector
+
+* 作用：根据 css 选择器进行节点查询，返回匹配的第一个元素 Element
+* 语法：document.querySelector(selectors)
+
+### querySelector 的注意事项
+
+* 仅仅返回匹配的第一个元素 Element
+* 如果传入的不是有效的 CSS 选择器字符串，会抛出异常。故不是绝对安全的方法
+* 元素均有此方法，不限于 document
+* 注意 css 选择器字符串的转义字符
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="outer" id="outer">
+        <ul class="list list-1">
+            <li name="li-item" class="item item2 item3">list-one</li>
+            <li class="item">list-two</li>
+            <li class="item">list-three</li>
+        </ul>
+    </div>
+    <div class="outer2" id="outer"></div>
+    <div id="foo\bar">ccc</div>
+    <script>
+        var log = console.log
+
+        var outerEl = document.getElementById("outer")
+        // Element也有此方法
+        var items2 = outerEl.querySelector("li")
+        // 你必须将它转义两次（一次是为 JavaScript 字符串转义，另一次是为 querySelector 转义）
+        var items3 = document.querySelector("#foo\\\\bar") // <div id="foo\bar">ccc</div>
+
+        // 不满足css选择器，异常
+        var items4 = document.querySelector("sdasd:::sdsd") // 抛出异常
+
+    </script>
+</body>
+
+</html>
+```
+
+### querySelectorAll
+
+* 根据 css 选择器进行节点查询，返回节点列表 NodeList
+
+### querySelectorAll 的注意事项
+
+* 其返回的是静态的 NodeList, 随后对 DOM 元素的改动不会影响其集合的内容
+* querySelectorAll 可能返回的不是你期望的值，定心丸：scope
+* 元素均有此方法，不限于 document
+
+```html
+// querySelectorAll static
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="outer" id="outer">
+        <ul class="list list-1">
+            <li name="li-item" class="item item2 item3">list-one</li>
+            <li class="item">list-two</li>
+            <li class="item">list-three</li>
+        </ul>
+    </div>
+    <div class="outer2" id="outer"></div>
+    <div id="foo\bar">ccc</div>
+    <script>
+        var nodeList = document.querySelectorAll(".item")
+        console.log("len:", nodeList.length)  // 3
+
+        // 添加新的元素
+        var liEl = document.createElement("li")
+        liEl.className = "item"
+        liEl.innerHTML = "list-for"
+        document.querySelector(".list").appendChild(liEl)
+
+        console.log("len:", nodeList.length) //3 
+
+        console.log("query again:", document.querySelectorAll(".item").length) // query again: 4
+    </script>
+</body>
+
+</html>
+```
+
+```html
+// querySelectorAll scope
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="outer">
+    <div class="select">
+      <div class="inner">
+      </div>
+    </div>
+  </div>
+  <script>
+    var select = document.querySelector('.select')
+    var inner = select.querySelectorAll('.outer .inner')
+    console.log("inner.length:", inner.length) // 1, not 0!
+
+    var select2 = document.querySelector('.select')
+    var inner2 = select.querySelectorAll(':scope .outer .inner')
+    console.log("inner2.length:", inner2.length) // 0
+  </script>
+</body>
+
+</html>
+```
+
+### 动态
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="outer" id="outer">
+        <ul class="list list-1">
+            <li name="li-item" class="item item2 item3">list-one</li>
+            <li class="item">list-two</li>
+            <li class="item">list-three</li>
+        </ul>
+    </div>
+    <div class="outer2" id="outer"></div>
+    <div id="foo\bar">ccc</div>
+    <script>
+        var nodeList = document.getElementsByClassName("item")
+        console.log("len:", nodeList.length)  // 3
+
+        // 添加新的元素
+        var liEl = document.createElement("li")
+        liEl.className = "item"
+        liEl.innerHTML = "list-for"
+        document.querySelector(".list").appendChild(liEl)
+
+        console.log("len:", nodeList.length) //4 
+
+    </script>
+</body>
+
+</html>
+```
+
+### 汇总
+
+| 方法名                 | 单个元素 | 节点列表 | 元素集合 | 元素也拥有 | 实时更新 |
+| ---------------------- | -------- | -------- | -------- | ---------- | -------- |
+| getElementById         | 是       |          |          |            |          |
+| querySelector          | 是       |          |          | 是         |          |
+| getElementsByClassName |          |          | 是       | 是         | 是       |
+| getElementsByName      |          | 是       |          |            | 是       |
+| getElementsByTagName   |          |          | 是       | 是         | 是       |
+| querySelectorAll       |          | 是       |          | 是         |          |
+
+### 一些特殊查询属性
+
+* document.all 所有的元素
+* document.images 所有的图片元素
+* document.forms 所有的 form 表单元素
+* document.scripts 所有脚本元素
+* document.links 所有具有 href 的 area(热点) 和 a 元素
+* documents.fonts 所有字体
+* document.styleSheets 所有css 的 link 和 style 元素
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="/static/css/main.55b68e13.chunk.css" rel="stylesheet">
+    <style>
+        html,
+        body {}
+    </style>
+</head>
+
+<body>
+    <script>
+        console.log("document.styleSheets:", document.styleSheets);
+    </script>
+</body>
+
+</html>
+```
+
+### 怎么查询伪元素
+
+* 答案：不能
+* 但是你可以通过 window.getComputedStyle 来获取其样式
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <style>
+    .nihao::before {
+        content: '你好，';
+    }
+  </style>
+  <div class="nihao" id="nihao"> Tom </div>
+  <script>
+    var content = window.getComputedStyle(nihao, "before")["content"]
+    console.log(content); // "你好，"
+  </script>
+</body>
+</html>
+```
+
+### 元素集合和 NodeList 遍历
+
+* for/while 遍历
+* NodeList.prototype.forEach 
+* 转为数组遍历：Array.from、Array.prototype.slice，拓展运算符等
+
+### 某个节点/元素所有子节点/元素遍历
+
+* children 或者 childNodes
+
+* NodeIterator 或者 TreeWalker
+
+### NodeIterator VS TreeWalker
+
+* TreeWalker 是 NodeIterator 的一个更高级的版本
+* 额外支持一些方法：parentNode, firstChild，lastChild, nextSibling
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="outer" id="outer">
+    <!-- 测试-->
+    <ul class="list list-1">
+      <li name="li-item" class="item item2 item3">list-one</li>
+      <li class="item">list-two</li>
+      <li class="item">list-three</li>
+    </ul>
+  </div>
+  <div class="outer2" id="outer"></div>
+  <div id="foo\bar">ccc</div>
+  <script>
+    const iterator = document.createNodeIterator(
+      document.getElementById("outer"),
+      NodeFilter.SHOW_ELEMENT,
+      {
+        acceptNode(node) {
+          return node.tagName === 'LI' ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
+        }
+      }
+    )
+    var currentNode
+    while (currentNode = iterator.nextNode()) {
+      console.log(currentNode.innerText)
+    }
+
+  </script>
+</body>nk,
+
+</html>
+```
+
+### 总结
+
+#### 查询
+
+* getElementById
+* querySelector
+* getElementsByClassName
+* getElementsByName
+* getElementsByTagName
+* querySelectorAll
+
+### 遍历
+
+#### 元素集合和NodeList比那里
+
+* for/while遍历
+* NodeList.prototype.forEach 
+* 转为数组遍历：Array.from、Array.prototype.slice，拓展运算符等
+
+#### 某个节点/元素所有子节点/元素遍历
+
+* children 或者 childNodes
+
+* NodeIterator 或者 TreeWalker
