@@ -1665,3 +1665,640 @@ function clearChildNodes(node) {
 </html>
 ```
 
+## 04: 慧眼区分几个近亲属性
+
+### innerText VS Node.textContent
+
+* HTMLElement.innerText：表示一个节点以及后代被**渲染**的文本内容
+* Node.textContent 表示一个节点以及其后代节点的文本内容
+
+### innerText 与 Node.textContent 的区别
+
+| aa                                                        | Node.textContent | HTMLElement.innerText |
+| --------------------------------------------------------- | ---------------- | --------------------- |
+| style<br />script 标签<br />隐藏的类容(比如display: none) | 包含             | 不包含                |
+| `<br/ >`                                                  | 无效             | 有效                  |
+| \t \r \n 等                                               | 有效             | 剔除                  |
+| 连续空格                                                  | 有效             | 合兵为一个            |
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      margin: 0
+    }
+
+    h3 {
+      margin-top: 0;
+      margin-bottom: 0
+    }
+  </style>
+</head>
+
+<body>
+  <div style="display: flex">
+    <p id="source">
+      <style>
+        #source {
+          color: red;
+          font-size: 30px;
+        }
+      </style>
+      <script>
+        document.getElementById("source");
+      </script> JS <br /> 进阶 实战 空格<br /> 讲解 下一层. <span style="display:none">隐藏文本</span>
+    </p>
+    <div>
+      <xmp>
+        <style>
+          #source {
+            color: red;
+            font-size: 20px;
+          }
+        </style>
+        <script>
+          document.getElementById("source");
+        </script> JS <br /> 进阶 实战 空格<br /> 讲解 下一层. <span style="display:none">隐藏文本</span>
+      </xmp>
+    </div>
+  </div>
+  <div style="display: flex">
+    <div>
+      <h3>Node.textContent:</h3>
+      <textarea id="textContentOutput" rows="15" cols="50" readonly></textarea>
+    </div>
+    <div>
+      <h3>HTMLElement.innerText:</h3>
+      <textarea id="innerTextOutput" rows="15" cols="50" readonly></textarea>
+    </div>
+  </div>
+  <script>
+    const source = document.getElementById('source')
+    const textContentOutput = document.getElementById('textContentOutput')
+    const innerTextOutput = document.getElementById('innerTextOutput')
+
+    textContentOutput.innerHTML = source.textContent
+    innerTextOutput.innerHTML = source.innerText;
+  </script>
+</body>
+
+</html>
+```
+
+### 总结
+
+* 最大区别：innerText 可操作已经被渲染的内容，而 textContent 不会
+* innerText 受样式影响会触发浏览器绘制部分或者全部页面，带来性能问题，尽可能使用 textContent
+
+### Node.nodeValue VS value:nodeValue
+
+* 对于 text，comment, 和 CDATA 节点来说，nodeValue 返回该节点的文本内容
+* 对于 attribute 节点来说，返回改属性的属性值
+
+### value
+
+* 特定的一些 HTMLElement 元素，用 value 属性获取其值
+* HTMLInputElelement、HTELTextAreaElement、HTMLButtonElement、HTMLDataElement、HlMLSelectElement等.value
+
+### Node.nodeValue与value的区别
+
+* nodeValue 是文本节点，属性节点，注释节点等类型的节点用来取文本/值的属性
+* value 是特定的元素节点用来取值的属性
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="elementNode">elementNodeText</div>
+  <div id="textNode">textNodeText</div>
+  <div id="attrNode" test="1">attrNodeText</div>
+  <script>
+    console.log("document.nodeValue:", document.nodeName, "=nodeType=", document.nodeType, "=nodeValue=", document.nodeValue)
+    const text = document.getElementById("elementNode")
+    console.log("elementNode:", text.nodeName, "=nodeType=", text.nodeType, "=nodeValue=", text.nodeValue)
+
+    const textNode = document.getElementById("textNode")
+    console.log("textNode:", textNode.childNodes[0].nodeName, "=nodeType=", textNode.childNodes[0].nodeType, "=nodeValue=", textNode.childNodes[0].nodeValue)
+
+
+    const attrNode = document.getElementById("attrNode")
+    const attrNode1 = attrNode.getAttributeNode("test")
+    console.log("attrNode:", attrNode1.nodeName, "=nodeType=", attrNode1.nodeType, "=nodeValue=", attrNode1.nodeValue);
+
+  </script>
+</body>
+
+</html>
+
+// 打印结果如下
+document.nodeValue: #document =nodeType= 9 =nodeValue= null
+elementNode: DIV =nodeType= 1 =nodeValue= null
+textNode: #text =nodeType= 3 =nodeValue= textNodeText
+attrNode: test =nodeType= 2 =nodeValue= 1
+```
+
+### clientWidth,offsetWidth,scrollWidth 
+
+* 内容：content
+* 内边距：padding
+* 边框：border
+* 外边距：margin
+* 滚动条
+
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3b975a2f533b449db2ae0c8b2f031f63~tplv-k3u1fbpfcp-watermark.image?)
+
+### clientWidth
+
+* Element.clientWidth（元素宽度）
+* width + 左右 padding (不包含 border, margin, 滚动条)
+
+### offsetWidth
+
+* HTMLElement.offsetWidth（元素布局宽度）
+* width + 左右 padding + 左右 border + 滚动条 (不包含 margin)
+
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ddf05a16b1a04136a7bc21948ae33137~tplv-k3u1fbpfcp-watermark.image?)
+
+### scrollWidth
+
+* Element.scrollWidth(元素内容宽度)
+* scrollWidth 是测量元素内容宽度，包括由于 overflow 溢出而在屏幕上 **不可见的内容**
+
+| 分类                   | Element.clientWidth | HTMLElelemt.offsetWidth | Element.scrollWidth |
+| ---------------------- | ------------------- | ----------------------- | ------------------- |
+| 作用于                 | 元素自身            | 元素布局                | 元素的内容          |
+| width                  | 包含                | 包含                    | 包含                |
+| padding                | 包含                | 包含                    | 包含                |
+| border                 |                     | 包含                    |                     |
+| margin                 |                     |                         |                     |
+| 滚动条                 |                     | 包含                    |                     |
+| 元素 overflow 溢出内容 |                     |                         | 包含                |
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    /* .scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    .scrollbar::-webkit-scrollbar-thumb {
+      border-radius: 5px;
+      background: #82adda;
+    }
+    .scrollbar::-webkit-scrollbar-track {
+      border-radius: 3px;
+      background: #0e2e6a;
+    } */
+    .box {
+        box-sizing: content-box;
+        position: relative;
+        width: 300px;
+        height: 300px;
+        overflow: auto;
+        border: 5px solid blue;
+        padding: 10px;
+        margin: 0 40px;
+        background: yellow;
+    }
+
+    .content {
+        position: relative;
+        width: 1000px;
+        height: 150px;
+        background: red;
+        color: #fff;
+        font-size: 30px;
+    }
+</style>
+
+<body>
+    <div id="box" class="box scrollbar">
+        <div class="content"> 内容展示-js进阶实战，js进阶实战，js进阶实战，js进阶实战，js进阶实战，js进阶实战，js进阶实战，js进阶实战，js进阶实战，js进阶实战，js进阶实战，js进阶实战
+        </div>
+    </div>
+    <script>
+        const box = document.getElementById("box")
+        console.log("clientWidth==", box.clientWidth)
+        console.log("offsetWidth==", box.offsetWidth)
+        console.log("scrollWidth==", box.scrollWidth);
+    </script>
+</body>
+
+</html>
+
+clientWidth== 320
+offsetWidth== 330
+scrollWidth== 1020
+```
+
+### 节点位置关系-Node.comparaDocumentPosition
+
+* 定义：比较当前节点与任意文档中的另一个节点的位置关系
+
+* 语法：compareMask = node.compareDocumentPosition(otherNode)
+
+* 返回值是一个觉有以下值的位掩码
+
+  | 常量名                                    | 十进制值 | 含义                   |
+  | ----------------------------------------- | -------- | ---------------------- |
+  | DOCUMENT_POSITION_DISCONNECTED            | 1        | 不在同一文档中         |
+  | DOCUMENT_POSITION_PRECEDING               | 2        | otherNode在node 之前   |
+  | DOCUMENT_POSITION_FOLLOWING               | 4        | otherNode在node 之后   |
+  | DOCUMENT_POSITION_CONTAINS                | 8        | otherNode 包含 node    |
+  | DOCUMENT_POSITION_CONTAINED_BY            | 16       | otherNode 被 node 包含 |
+  | DOCUMENT_POSITION_IMPLEMENATION_SPECUIFIC | 32       | 待定                   |
+
+### 节点位置关系-Node.contains
+
+* 定义：返回的是一个布尔值，来表示传入的节点是否为该节点的后代节点
+
+###  节点位置关系-总结
+
+* comparaDocumentPosition 返回的是数字，带组合意义的数据，不仅仅可以返回包含，还可以返回在之前之后等信息
+* contains 返回的是布尔值，仅仅告诉你是否有包含关系
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>节点位置关系</title>
+</head>
+
+<body>
+    <div id="parent">
+        <div id="child"></div>
+    </div>
+    <script>
+        const pEl = document.getElementById("parent")
+        const cEl = document.getElementById("child")
+        // node.compareDocumentPosition(otherNode )
+        // 不在同一文档中        1
+        // otherNode在node之前  2
+        // otherNode在node之后 	4  ✔
+        // otherNode包含node    8
+        // otherNode被node包含  16 ✔
+        console.log("compareDocumentPosition:", pEl.compareDocumentPosition(cEl))  // 20
+
+        console.log("contains:", pEl.contains(cEl)); // true
+    </script>
+</body>
+
+</html>
+```
+
+### 大小/位置-Element.getBoundingClientRect
+
+* 定义：返回元素的大小以及其相对可视化窗口（视口）的位置
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <style>
+        #container {
+            top: 100px;
+            left: 100px;
+            position: relative;
+            width: 100px;
+            height: 100px;
+            background-color: red;
+        }
+    </style>
+    <div id="container">
+    </div>
+    <div>
+        <button id="btnGet">获取</button>
+    </div>
+    <script>
+        btnGet.addEventListener("click", function () {
+            const rect = container.getBoundingClientRect()
+            console.log(rect)
+        })
+    </script>
+</body>
+
+</html>
+
+// 结果如下
+{
+    "x": 108,
+    "y": 108,
+    "width": 100,
+    "height": 100,
+    "top": 108,
+    "right": 208,
+    "bottom": 208,
+    "left": 108
+}
+```
+
+### 大小/位置-Element.getClientRects
+
+* 定义：返回盒子的边界矩形集合
+* 定义：对于行内元素，**元素内部的每一行都会有一个边框**，对于块级元素，如果里面没有其他元素，一整块元素只有一个边框
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .multi-client-rects {
+      display: inline-block;
+      width: 100px;
+      position: relative;
+    }
+  </style>
+</head>
+
+<body>
+  <p class="single-client-rects">
+    <span>Paragraph that spans single line</span>
+  </p>
+  <p class="multi-client-rects">
+    <span>Paragraph that spans multiple lines</span>
+  </p>
+  <div>
+    <button id="btnAddByBorder">添加边框(Border)</button>
+    <button id="btnAddByRect">添加边框(DOMRect)</button>
+  </div>
+  <script>
+
+    const $ = (selector) => document.querySelector(selector)
+
+    var elSingle = $(".single-client-rects span")
+    var elMulti = $(".multi-client-rects span")
+
+    console.log("elSingle length:", elSingle.getClientRects().length)
+    console.log("elMulti length:", elMulti.getClientRects().length)
+
+
+    console.log("elSingle ClientRects:", elSingle.getClientRects())
+    console.log("elMulti ClientRects:", elMulti.getClientRects())
+
+    btnAddByRect.addEventListener("click", function () {
+      addBorder(elMulti)
+    })
+
+    btnAddByBorder.addEventListener("click", function () {
+      elMulti.style.cssText = "border:solid 1px red;"
+    })
+
+    function addBorder(el) {
+      var rects = el.getClientRects()
+
+      var scrollEl = document.scrollingElement
+      for (var i = 0; i != rects.length; i++) {
+        var rect = rects[i]
+        var elDiv = document.createElement('div')
+        elDiv.style.position = 'absolute'
+        elDiv.style.border = '1px solid red'
+        var scrollTop = scrollEl.scrollTop
+        var scrollLeft = scrollEl.scrollLeft
+        elDiv.style.margin = elDiv.style.padding = '0'
+        elDiv.style.top = (rect.top + scrollTop) + 'px'
+        elDiv.style.left = (rect.left + scrollLeft) + 'px'
+
+        // 减掉border的2px
+        elDiv.style.width = (rect.width - 2) + 'px'
+        elDiv.style.height = (rect.height - 2) + 'px'
+        document.body.appendChild(elDiv)
+      }
+    }
+
+
+  </script>
+</body>
+
+</html>
+```
+
+### 加载完毕事件监听-window.onload
+
+* 定义：在文档装载完成后会触发 load 事件，此时，在文档中的所有对象都在 DOM 中，所有图片，脚本，链接以及子框架都完成了装载
+
+### 加载完毕事件监听-DOMContentLoaded
+
+* 定义：当初始化的 HTML 文档被完全加载和解析完成之后， DOMContentLoaded 事件被触发，而无需等待样式表、图像和子框架(iframe)的完全加载
+
+* jQuery的方法
+
+  ```javascript
+  $(function(){
+    // codes
+  })
+  ```
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <img
+    src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fup.enterdesk.com%2Fedpic_source%2F34%2F03%2Fd0%2F3403d0bf98ee104cf69fc25f0bb35f9d.jpg&refer=http%3A%2F%2Fup.enterdesk.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1647851046&t=7d6765ebd76d9c3292878f94384e62f1">
+  <script>
+    let contentLoadedTime
+    let onloadTime
+    document.addEventListener('DOMContentLoaded', function () {
+      console.log('DOMContentLoaded:')
+      contentLoadedTime = performance.now()
+    })
+    window.onload = function () {
+      console.log('onload:')
+      onloadTime = performance.now()
+
+      console.log('gap:', onloadTime - contentLoadedTime)
+    }
+  </script>
+</body>
+
+</html>
+
+// 运行打印如下
+DOMContentLoaded:
+onload:
+gap: 243.19999999925494
+```
+
+### 节点复制
+
+* Document.adoptNode
+* Document.importNode
+* Document.cloneNode
+
+### Node.cloneNode 注意点
+
+* cloneNode deep 参数在不同版本的浏览器实现中，默认值可能不一样，所以强烈建议写上值
+* cloneNode 会克隆一个元素节点会拷贝它所有的属性以及属性值，当然也就包括了属性上绑定的事件(比如onclick="alert(1)"), 但不拷贝那些使用addEventListener 方法或者 node.onclick = fn 这用 JavaScript 动态绑定的事件
+
+### 节点复制总结
+
+* adoptNode 从外部文档进行拷贝
+* importNode 从外部文档进行拷贝，并从外部文档删除
+* cloneNode 从本文档进行复制，有浅复制和深复制
+
+### 添加节点 append appendChild
+
+* Node.appendChild 将一个节点附加到指定父节点的子节点列表的末尾处
+* Element.append 在 parentNode 的最后一个子节点之后插入一组 Node 对象或者 DOMString 对象
+
+### 添加节点 append appendChild 的区别
+
+|                    | Element.append | Element.appendChild |
+| ------------------ | -------------- | ------------------- |
+| 允许追加 DOMString | 是             | 否                  |
+| 允许追加 Node 对象 | 是             | 是                  |
+| 返回值             | 没有           | 追加的 Node 对象    |
+| 追加节点个数       | 多个           | 一个                |
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script>
+        function createEl(type, innerHTML) {
+            const el = document.createElement(type)
+            el.innerHTML = innerHTML
+            return el
+        }
+        const rootEl = document.getElementById("root")
+
+        rootEl.append("我们", createEl("div", "都是"), "好孩子");
+    </script>
+</body>
+
+</html>
+```
+
+### 子节点集合 childNodes children
+
+* Node.childNodes：节点的子节点集合，包括元素节点、文本节点、注释节点等
+* Element.children：返回的只是节点的元素节点列表，即 nodeType 为 1 的节点
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="root"> 1 <span>2</span> 3 <!-- <div></div> -->
+        <!CDATA[[ 4 ]]>
+    </div>
+    <script>
+        const rootEl = document.getElementById("root")
+        console.log(rootEl.children) // HTMLCollection(1)
+        console.log(rootEl.childNodes); // NodeList(7)
+    </script>
+</body>
+
+</html>
+```
+
+### 本节内容
+
+#### 文本
+
+* HTMLElement.innerText
+* Node.textContent
+
+#### 节点值
+
+* value
+* Node.nodeValue
+
+#### 宽高
+
+* Element.clientWidth/clientHeight
+* HTMLElement.offsetWidth/offsetHeight
+* Element.scrollWidth/scrollHeight
+
+#### 位置关系
+
+* Node.contains
+* Node.compareDocumentPosition
+
+#### 大小/位置
+
+* Element.getBoundingClientRect
+* Element.getClientRects
+
+#### 加载
+
+* window.onload
+* DOMContentLoaded
+
+#### 子节点集合
+
+* Node.childNodes
+* Element.children
+
+#### 添加节点
+
+* Node.appendChild
+* Element.append
+
+#### 克隆/导入
+
+* Document.adoptNode
+* Document.importNode
+* Node.cloneNode
