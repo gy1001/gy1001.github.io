@@ -3272,3 +3272,589 @@ xxx.css
 
 * 组件库: 例如[fluentui web components](https://github.com/microsoft/fluentui). [fast-github](https://github.com/microsoft/fast)
 * 微前端
+
+## 06: DOM事件原理和避坑指南
+
+### DOM 树：这个很关键
+
+```html
+<div>Hello world!</div>
+```
+
+![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a733dd9f1d114e50885502eeb5cbd8ac~tplv-k3u1fbpfcp-watermark.image?)
+
+### window 和 document 的关系
+
+* BOM（Browser Object Model）：浏览器对象模型，没有相关标准，一些和网页无关的浏览器功能。如：window、location、navigator、screen、histroy 等对象
+* DOM（Document Object Model）:文档对象模型，W3C的标准，HTML和 XML文档的编程接口
+* window 属于 BOM， document 是 DOM 中的核心，但是 window 引用这 document, 仅此而已。
+
+### DOM0 级的事件
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <button id="btn1" onclick="console.log('按钮1被点击了')">按钮1(代码)</button>
+    </div>
+    <div>
+      <button onclick="onClick2()">按钮2(函数)</button>
+    </div>
+    <div>
+      <button onclick="console.log(this.className,this);" class="button3">
+        按钮3(this)
+      </button>
+    </div>
+
+    <div>
+      <button onclick="onClick4()" class="button3">按钮4(全局作用域)</button>
+    </div>
+
+    <script>
+      function onClick2() {
+        console.log("按钮2被点击了");
+      }
+
+      ;(function () {
+        function onClick4() {
+          console.log("按钮4被点击了");
+        }
+      })();
+    </script>
+  </body>
+</html>
+```
+
+### DOM0 级的事件的优点
+
+* 效率高
+* 节点上 onclick 属性被 Node.cloneNode 克隆，通过 JS 赋值的 onclick 不可以
+* 移除事件非常简单
+* 兼容性好
+
+### DOM0 级的事件注意事项
+
+* 事件处理函数中，this 是当前的节点
+* 如果调用函数，会在全局作用域查找
+* 唯一性，只能定义一个的事件回调函数
+
+#### DOM0 事件在节点被复制时候的表现
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="sourceZone">
+      <div>原始区域:</div>
+
+      <div id="sourceButtons">
+        <div>
+          <button class="btn1" onclick="console.log('按钮1被点击了')">
+            按钮1(代码)
+          </button>
+        </div>
+        <div>
+          <button class="btn2">按钮2(函数)</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="copyZone">
+      <div>复制区域:</div>
+    </div>
+    <script>
+      document.querySelector(".btn2").onclick = onClick2;
+      copyZone.append(sourceButtons.cloneNode(true));
+      function onClick2() {
+        console.log("按钮2被点击了");
+      }
+      (function () {
+        function onClick4() {
+          console.log("按钮4被点击了");
+        }
+      })();
+    </script>
+  </body>
+</html>
+```
+
+### DOM2 级的事件
+
+![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/066b27dc6585413bb469dc82f0a30b08~tplv-k3u1fbpfcp-watermark.image?)
+
+### DOM2级的事件：事件注册
+
+* 语法
+
+  ```javascript
+  target.addEventListener(type, listener, useCapture)
+  target.addEventListener(type, listener, options)
+  ```
+
+* useCapture：true. 捕获阶段传播到目标的时候触发，反之冒泡阶段传到目标时候触发。默认值 false, 即冒泡时
+
+```html
+// 事件捕获冒泡
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+</head>
+
+<body>
+  <button id="btn">按钮</button>
+
+  <script>
+     window.addEventListener("click", function () {
+      console.log("捕获:window")
+    }, true)
+
+    document.addEventListener("click", function () {
+      console.log("捕获:document");
+    }, true)
+
+    btn.addEventListener(
+      "click",
+      function (ev) {
+        console.log("捕获:btn");
+      },
+      true
+    );
+
+    btn.addEventListener("click", function (ev) {
+      console.log("冒泡:btn");
+    });
+
+    document.addEventListener("click", function () {
+      console.log("冒泡:document");
+    })
+
+    window.addEventListener("click", function () {
+      console.log("捕获:window")
+    })
+  </script>
+</body>
+
+</html>
+```
+
+### DOM2 级的事件：强大的 options
+
+* 语法：`target.addEventListener(type, listener, options)`
+
+#### options: once
+
+* 是否只相应一次
+* 最典型的应用就是视频播放，现代浏览器可能需要用户参与后，视频才可以有声音播放
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <button id="btn">按钮</button>
+    <script>
+      btn.addEventListener(
+        'click',
+        function () {
+          console.log('按钮被点击了')
+        },
+        {
+          once: true,
+        },
+      )
+    </script>
+
+    <video id="video" controls width="250" autoplay>
+      <source
+        src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm"
+        type="video/webm"
+      />
+
+      <source
+        src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
+        type="video/mp4"
+      />
+
+      Sorry, your browser doesn't support embedded videos.
+    </video>
+
+    <script>
+      document.addEventListener(
+        'click',
+        () => {
+          console.log('播放视频喽')
+          video.play()
+        },
+        {
+          once: true,
+        },
+      )
+    </script>
+  </body>
+</html>
+```
+
+#### options: passive
+
+* 设置为 true 时，事件处理不会调用 preventDefault()
+* 某些触摸事件（以及其他）的事件监听器在尝试处理滚动时，可能阻止浏览器的主程序，从而导致滚动处理期间性能可能大大降低。
+
+```javascript
+var elem = document.getElementById("elem")
+elem.addEventListener("touchmove", function listener(){
+  // do something
+}, { passive: true })
+```
+
+#### options: signal
+
+* AbortSignal, 该 AbortSignal 的 abort() 方法被调用时，监听器会被移除
+* AbortSignal 也被用于取消 fetch 请求
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <button id="btn">按钮</button>
+
+    <script>
+      var controller = new AbortController()
+      var signal = controller.signal
+			// 点击第二次时候，就不会再有响应了
+      btn.addEventListener(
+        'click',
+        (ev) => {
+          console.log('按钮被点击了')
+          controller.abort()
+        },
+        {
+          signal,
+        },
+      )
+    </script>
+  </body>
+</html>
+```
+
+### DOM2级的事件：有趣的 useCapture
+
+* 如果这个参数相同并且事件回调函数相同，事件不会被添加
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="btn">按钮</button>
+
+    <script>
+      function onClick() {
+        console.log('按钮被点击了')
+      }
+      // capture选项都是false, 只有一个添加成功
+      btn.addEventListener('click', onClick)
+      btn.addEventListener('click', onClick)
+
+      // capture选项都是true, 只有一个添加成功
+      btn.addEventListener('click', onClick, {
+        capture: true,
+      })
+      btn.addEventListener('click', onClick, {
+        capture: true,
+        once: true,
+      })
+    </script>
+  </body>
+</html>
+```
+
+### DOM2级的事件：event.preventDefault
+
+* 阻止默认的行为，比如有 href 的属性的 a 标签不会跳转，checkbox 的选中不会生效等
+* 事件依旧还会继续传播
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <div>
+      <a id="linkMK" target="_blank" href="https://www.imooc.com/">
+        跳转到慕课
+      </a>
+    </div>
+    <div>
+      <input id="ckBox" type="checkbox" /><label for="ckBox">我统一</label>
+    </div>
+
+    <script>
+      linkMK.addEventListener('click', function (ev) {
+        ev.preventDefault();
+      })
+
+      ckBox.addEventListener('click', function (ev) {
+        ev.preventDefault();
+      })
+    </script>
+  </body>
+</html>
+```
+
+### DOM2级的事件：event.stopPropagation
+
+* 阻止捕获和冒泡阶段中当前事件的进一步传播
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+</head>
+
+<body>
+  <button id="btn">按钮</button>
+
+  <script>
+    btn.addEventListener("click", function (ev) {
+      console.log("冒泡:btn");
+    });
+
+    btn.addEventListener(
+      "click",
+      function (ev) {
+        console.log("捕获:btn");
+      },
+      true
+    );
+
+    document.addEventListener("click", function () {
+      console.log("冒泡:document");
+    })
+
+    document.addEventListener("click", function (ev) {
+      console.log("捕获:document");
+      ev.stopPropagation();
+    }, true)
+
+  </script>
+</body>
+
+</html>
+```
+
+### DOM2级的事件：event.stopImmediatePropagation
+
+* 阻止监听同一事件的其他事件监听器被调用
+* 
+
+![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0f23b6a55aca4d539f323b9d831f1e98~tplv-k3u1fbpfcp-watermark.image?)
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+</head>
+
+<body>
+  <button id="btn">按钮</button>
+
+  <script>
+    btn.addEventListener("click", function (ev) {
+      console.log("冒泡:btn");
+    });
+
+    btn.addEventListener(
+      "click",
+      function (ev) {
+        console.log("捕获:btn 1");
+      },
+      true
+    );
+
+    btn.addEventListener(
+      "click",
+      function (ev) {
+         ev.stopImmediatePropagation();
+        // ev.stopPropagation();
+        console.log("捕获:btn 2");
+      },
+      true
+    );
+
+    btn.addEventListener(
+      "click",
+      function (ev) {
+        console.log("捕获:btn 3");
+      },
+      true
+    );
+
+
+    document.addEventListener("click", function () {
+      console.log("冒泡:document");
+    })
+
+    document.addEventListener("click", function (ev) {
+      console.log("捕获:document");
+    }, true)
+
+  </script>
+</body>
+
+</html>
+```
+
+### DOM2级的事件：event.target 和 event.currentTarget
+
+* target：触发事件的元素，谁触发
+* currentTarget: 事件绑定的元素，谁监听的事件监听函数
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="btn">按钮</button>
+
+    <script>
+      btn.addEventListener("click", function (ev) {
+      });
+
+      document.addEventListener("click", function(ev){
+        console.log("ev.target:", ev.target,)
+        console.log("ev.currentTarget:", ev.currentTarget)
+      })
+
+    </script>
+  </body>
+</html>
+
+```
+
+### DOM2级的事件：事件委托
+
+* 利用事件传播的机制，利用外层节点处理事件的思路
+* 优点
+  * 减少内存消耗
+  * "动态性" 更好
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .btn-buy {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <ul id="ulList">
+      <li>
+        <div>白菜</div>
+        <a class="btn-buy" data-id="1">购买</a>
+      </li>
+      <li>
+        <div>萝卜</div>
+        <a class="btn-buy" data-id="2">购买</a>
+      </li>
+    </ul>
+
+    <script>
+      ulList.addEventListener('click', function (ev) {
+        // console.log("ev", ev)
+        // 识别节点
+        if (ev.target.classList.contains('btn-buy')) {
+          console.log('商品id:', ev.target.dataset.id)
+        }
+      })
+    </script>
+  </body>
+</html>
+
+```
+
+### DOM3 级别事件
+
+* DOM3 Events 在 DOM2 Events 基础上重新定义了事件，并增加了新的事件类型
+
+1. 用户界面事件( UIEvent ) : 涉及与BOM交互的通用浏览器事件。比如: load、scroll
+2. 焦点事件( FocusEvent ) : 在元素获得和失去焦点时触发。比如focus,blur
+3. 鼠标事件( MouseEvent )
+4. 滚轮事件( WheelEvent ) : 使用鼠标滚轮(或类似设备)时触发。比如 : mousewheel
+5. 输入事件( InputEvent ) : 向文档中输入文本时触发。
+6. 键盘事件 ( KeyboardEvent): 使用键盘在页面上执行某些操作时触发，比如如 : keydown、keypress
+
+7. 合成事件( CompositionEvent) : 在使用某种IME (Input Method Editor,输入法编辑器)输入字符时触
+   发。
+
+### 注意事项和建议
+
+1. DOM0 级事件一定程序上可以复制
+2. DOM0 级别事件不可复制
+3. 合理利用选型 once
+4. 合理利用选项 passive 提升性能
+5. capture 选型相同和事件回调函数相同时，事件不会被重复添加
+6. 因为都是继承于 EventTarget, 任何一个节点都是事件中心
+7. 合理利用事件代理
