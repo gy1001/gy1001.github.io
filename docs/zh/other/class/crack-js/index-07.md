@@ -2640,3 +2640,635 @@ gap: 243.19999999925494
 
 ### 创建节点的痛点
 
+* 使用 JS 对象模型创建节点过于复杂
+* ES6 字符串模板，不友好，缺乏提示灯
+* 复用性差
+
+```html
+// ES6 模板字符串
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>demo</title>
+  </head>
+
+  <body>
+    <product-item
+      name="关东煮"
+      img="//img10.360buyimg.com/seckillcms/s200x200_jfs/t1/121953/18/20515/175357/61e7dc79Ee0acbf20/4f4f56abd2ea2f75.jpg!cc_200x200.webp"
+      ,
+      price="49.8"
+    ></product-item>
+
+    <script>
+      class ProductItem extends HTMLElement {
+        constructor() {
+          super()
+        }
+
+        connectedCallback() {
+          const content = `
+                    <img class="img" src="https://misc.360buyimg.com/lib/skin/e/i/error-jd.gif" />
+                    <div class="name"></div>
+                    <div class="price"></div>
+                `
+          this.innerHTML = content
+          this.querySelector('.img').src = this.getAttribute('img')
+          this.querySelector('.name').innerText = this.getAttribute('name')
+          this.querySelector('.price').innerText = this.getAttribute('price')
+        }
+      }
+      window.customElements.define('product-item', ProductItem)
+    </script>
+  </body>
+</html>
+```
+
+```html
+// template
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>demo</title>
+  </head>
+
+  <body>
+    <template id="tpl-product-item">
+      <img
+        class="img"
+        src="https://misc.360buyimg.com/lib/skin/e/i/error-jd.gif"
+      />
+      <div class="name"></div>
+      <div class="price"></div>
+    </template>
+
+    <product-item
+      name="关东煮"
+      img="//img10.360buyimg.com/seckillcms/s200x200_jfs/t1/121953/18/20515/175357/61e7dc79Ee0acbf20/4f4f56abd2ea2f75.jpg!cc_200x200.webp"
+      ,
+      price="49.8"
+    ></product-item>
+
+    <script>
+      class ProductItem extends HTMLElement {
+        constructor() {
+          super()
+        }
+
+        connectedCallback() {
+          const content = document
+            .getElementById('tpl-product-item')
+            .content.cloneNode(true)
+          this.append(content)
+          this.querySelector('.img').src = this.getAttribute('img')
+          this.querySelector('.name').innerText = this.getAttribute('name')
+          this.querySelector('.price').innerText = this.getAttribute('price')
+        }
+      }
+      window.customElements.define('product-item', ProductItem)
+    </script>
+  </body>
+</html>
+```
+
+### HTML templates
+
+```html
+<template id="tpl-test">
+  <style type="text/css">
+      .title {
+          color: red;
+      }
+  </style>
+  <div class="title">标题</div>
+  <slot name="slot-des">默认内容</slot>
+</template>
+
+<test-item>
+  <div slot="slot-des">不是默认内容哦</div>
+</test-item>
+```
+
+#### slot
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <template id="tpl-test">
+      <style type="text/css">
+        .title {
+          color: red;
+        }
+      </style>
+      <div class="title">标题</div>
+      <slot name="slot-des">默认内容</slot>
+    </template>
+
+    <test-item>
+      <div slot="slot-des">不是默认内容哦</div>
+    </test-item>
+
+    <script>
+      class TestItem extends HTMLElement {
+        constructor() {
+          super()
+        }
+
+        connectedCallback() {
+          const content = document
+            .getElementById('tpl-test')
+            .content.cloneNode(true)
+
+          // 结果呢？ 不生效
+          this.append(content)
+          //
+          // const shadow = this.attachShadow({mode: "open"});
+          // shadow.append(content);
+        }
+      }
+      window.customElements.define('test-item', TestItem)
+    </script>
+  </body>
+</html>
+
+```
+
+#### slot shadowdom
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <template id="tpl-test">
+      <style type="text/css">
+        .title {
+          color: red;
+        }
+      </style>
+      <div class="title">标题</div>
+      <slot name="slot-des">默认内容</slot>
+    </template>
+
+    <test-item>
+      <div slot="slot-des">不是默认内容哦</div>
+    </test-item>
+
+    <script>
+      class TestItem extends HTMLElement {
+        constructor() {
+          super()
+        }
+
+        connectedCallback() {
+          const content = document
+            .getElementById('tpl-test')
+            .content.cloneNode(true)
+
+          // 结果呢？ 不生效
+          // this.append(content);
+          //
+          const shadow = this.attachShadow({ mode: 'open' })
+          shadow.append(content)
+        }
+      }
+      window.customElements.define('test-item', TestItem)
+    </script>
+  </body>
+</html>
+```
+
+### video中就有 shadowDom
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>
+```
+
+打开浏览器设置中的`Show user agent shadow DOM`
+
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/84af833f891b47dc80474771a4e48000~tplv-k3u1fbpfcp-watermark.image?)
+
+然后查看元素可以看到如下
+
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/85c22284c1424b6586616f556eb99a74~tplv-k3u1fbpfcp-watermark.image?)
+
+### 一些概念
+
+* Document Tree
+* shadow Tree
+* shadow root
+* shadow host 
+* ...
+
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ae8c040e932e40ef844cea8807a866ae~tplv-k3u1fbpfcp-watermark.image?)
+
+### 样式隔离
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <my-item></my-item>
+    <my-item-s></my-item-s>
+    <div class="container">My item</div>
+    <div class="container2">My item</div>
+
+    <style>
+      .container {
+        color: blue;
+      }
+    </style>
+    <template id="tpl-my-item">
+      <style>
+        .container {
+          color: red;
+        }
+
+        .container2 {
+          color: blue;
+        }
+      </style>
+      <div class="container">My Item</div>
+    </template>
+
+    <script>
+      class MyItem extends HTMLElement {
+        constructor() {
+          super()
+        }
+
+        connectedCallback() {
+          const content = document
+            .getElementById('tpl-my-item')
+            .content.cloneNode(true)
+          this.append(content)
+        }
+      }
+
+      class MyItemShadow extends HTMLElement {
+        constructor() {
+          super()
+        }
+
+        connectedCallback() {
+          const content = document
+            .getElementById('tpl-my-item')
+            .content.cloneNode(true)
+
+          const shadow = this.attachShadow({ mode: 'open' })
+
+          shadow.append(content)
+        }
+      }
+
+      window.customElements.define('my-item', MyItem)
+      window.customElements.define('my-item-s', MyItemShadow)
+    </script>
+  </body>
+</html>
+
+```
+
+### Shadow DOM 的可访问性
+
+* 影子 DOM，其内部样式不共享
+* 影子 DOM，其内部元素不可以直接被访问到
+
+### 一个重要的参数
+
+* open: shadow root 元素可以从 js 外部访问根节点
+* closed: 拒绝从 js 外部访问关闭的 shadow root 节点
+
+```javascript
+const shadow = this.attachShadow({ mode: 'closed' })
+
+const shadow = this.attachShadow({ mode: 'open' })
+```
+
+```html
+// closed
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <template id="tpl-note">
+      <style>
+        .title {
+          color: red;
+          font-size: 22px;
+          font-weight: bold;
+        }
+
+        .des {
+          color: #999;
+        }
+      </style>
+      <div class="title"></div>
+      <div class="des"></div>
+    </template>
+
+    <note-item
+      class="note-item"
+      title="冬奥会"
+      ,
+      des="中国队加油! 祝贺运动员们获得好成绩......."
+    ></note-item>
+
+    <script>
+      class NoteItem extends HTMLElement {
+        constructor() {
+          super()
+        }
+
+        connectedCallback() {
+          const content = document
+            .getElementById('tpl-note')
+            .content.cloneNode(true)
+
+          const shadow = this.attachShadow({ mode: 'closed' }) // 分别改为 open、closed 看看效果
+          shadow.append(content)
+
+          shadow.querySelector('.title').textContent =
+            this.getAttribute('title')
+          shadow.querySelector('.des').textContent = this.getAttribute('des')
+        }
+      }
+      window.customElements.define('note-item', NoteItem)
+    </script>
+  </body>
+</html>
+```
+
+### 引用外部样式
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <my-item-s></my-item-s>
+    <div class="container">My item</div>
+    <div class="container2">My item</div>
+    <template id="tpl-my-item">
+      <div class="container">My Item</div>
+    </template>
+
+    <script>
+      class MyItemShadow extends HTMLElement {
+        constructor() {
+          super()
+        }
+        connectedCallback() {
+          const content = document
+            .getElementById('tpl-my-item')
+            .content.cloneNode(true)
+
+          const shadow = this.attachShadow({ mode: 'open' })
+
+          shadow.append(content)
+
+          const linkElem = document.createElement('link')
+          linkElem.setAttribute('rel', 'stylesheet')
+          linkElem.setAttribute('href', 'xxxx.css')
+          shadow.appendChild(linkElem)
+        }
+      }
+
+      window.customElements.define('my-item-s', MyItemShadow)
+    </script>
+  </body>
+</html>
+
+xxx.css
+
+.container {
+    color: red;
+}
+
+.container2 {
+    color: blue;
+}
+```
+
+```html
+// 第二种
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <my-item-s></my-item-s>
+    <div class="container">My item</div>
+    <div class="container2">My item</div>
+    <template id="tpl-my-item">
+      <link rel="stylesheet" href="4.css" />
+      <div class="container">My Item</div>
+    </template>
+
+    <script>
+      class MyItemShadow extends HTMLElement {
+        constructor() {
+          super()
+        }
+        connectedCallback() {
+          const content = document
+            .getElementById('tpl-my-item')
+            .content.cloneNode(true)
+
+          const shadow = this.attachShadow({ mode: 'open' })
+
+          shadow.append(content)
+
+          // const linkElem = document.createElement('link');
+          // linkElem.setAttribute('rel', 'stylesheet');
+          // linkElem.setAttribute('href', '4.css');
+          // shadow.appendChild(linkElem);
+        }
+      }
+
+      window.customElements.define('my-item-s', MyItemShadow)
+    </script>
+  </body>
+</html>
+
+```
+
+### 动态创建 Web Component 组件节点例子
+
+* 获取商品
+* 动态创建元素节点
+* 点击商品，跳转（事件）
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+  </head>
+
+  <body>
+    <div id="product-list" style="display: flex"></div>
+
+    <template id="product-item">
+      <style>
+        .product-item {
+          margin-left: 15px;
+          cursor: pointer;
+        }
+
+        .img {
+          width: 100px;
+        }
+
+        .name {
+          text-align: center;
+        }
+
+        .price {
+          color: #999;
+          text-align: center;
+        }
+      </style>
+      <div class="product-item">
+        <img
+          class="img"
+          src="https://misc.360buyimg.com/lib/skin/e/i/error-jd.gif"
+        />
+        <div class="name"></div>
+        <div class="price"></div>
+      </div>
+    </template>
+
+    <script>
+      class ProductItemElement extends HTMLElement {
+        constructor(props) {
+          super(props)
+          this.addEventListener('click', () => {
+            window.open(`https://item.jd.com/${this.id}.html`)
+          })
+        }
+
+        connectedCallback() {
+          var shadow = this.attachShadow({ mode: 'open' })
+          var doc = document
+          var templateElem = doc.getElementById('product-item')
+          var content = templateElem.content.cloneNode(true)
+
+          content.querySelector('.img').src = this.img
+          content.querySelector('.name').innerText = this.name
+          content.querySelector('.price').innerText = this.price
+
+          shadow.appendChild(content)
+        }
+      }
+      window.customElements.define('product-item', ProductItemElement)
+    </script>
+
+    <script>
+      var products = [
+        {
+          name: '关东煮',
+          img: '//img10.360buyimg.com/seckillcms/s200x200_jfs/t1/121953/18/20515/175357/61e7dc79Ee0acbf20/4f4f56abd2ea2f75.jpg!cc_200x200.webp',
+          id: '10026249568453',
+          price: 49.8,
+        },
+        {
+          name: '土鸡蛋',
+          img: '//img11.360buyimg.com/seckillcms/s200x200_jfs/t1/172777/32/27438/130981/61fbd2e0E236000e0/7f5284367e2f5da6.jpg!cc_200x200.webp',
+          id: '10024773802639',
+          price: 49.8,
+        },
+        {
+          name: '东北蜜枣粽子',
+          img: '//img20.360buyimg.com/seckillcms/s200x200_jfs/t1/129546/31/19459/110768/60b1f4b4Efd47366c/3a5b80c5193bc6ce.jpg!cc_200x200.webp',
+          id: '10035808728318',
+          price: 15,
+        },
+      ]
+
+      var proList = document.getElementById('product-list')
+
+      function createProductItem(attrs) {
+        const el = document.createElement('product-item')
+        el.img = attrs.img
+        el.name = attrs.name
+        el.price = attrs.price
+        el.id = attrs.id
+        return el
+      }
+      var elList = products.map(createProductItem)
+      proList.append.apply(proList, elList)
+    </script>
+  </body>
+</html>
+```
+
+### web component的优点
+
+* W3C web 标准
+* 主流浏览器均以支持，兼容性相对较好
+* 天然模块化，自带样式隔离
+* 开箱即用
+
+### web Component 的前景
+
+* 组件库: 例如[fluentui web components](https://github.com/microsoft/fluentui). [fast-github](https://github.com/microsoft/fast)
+* 微前端
