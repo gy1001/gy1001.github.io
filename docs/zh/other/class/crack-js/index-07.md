@@ -3858,3 +3858,402 @@ elem.addEventListener("touchmove", function listener(){
 5. capture 选型相同和事件回调函数相同时，事件不会被重复添加
 6. 因为都是继承于 EventTarget, 任何一个节点都是事件中心
 7. 合理利用事件代理
+
+## 07: 自定义事件，满足个性化需求，增加代码灵活度
+
+[MDN事件参考](https://developer.mozilla.org/zh-CN/docs/Web/Events#%E4%BA%8B%E4%BB%B6%E7%B4%A2%E5%BC%95)
+
+### 内置的事件类型
+
+* 比如点击保存按钮，这就是点击事件(click)
+* 某个文本失去焦点后检查输入的内容是否合法，这是 blur 事件
+* 鼠标滚动页，页面滚动的，这就是 mousewhell 事件
+* 等等
+
+### 触发内置事件
+
+* element.[eventType]\(\)
+
+  ```javascript
+   aEl.click()
+  ```
+
+* new [Event] + dispatchEvent
+
+```html
+// 文件下载 onclick
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <button type="button" id="btnDownload">下载文件</button>
+    </div>
+    <script>
+      function createBlob(content, type) {
+        var blob = new Blob([content], { type })
+        return blob
+      }
+
+      function downloadFile(filename, content, type = 'text/plain') {
+        var aEl = document.createElement('a')
+        // 指定下载文件名
+        aEl.download = filename
+        const blob = createBlob(content, type)
+        // 生成url地址
+        const url = URL.createObjectURL(blob)
+        console.log(url) // blob:http://127.0.0.1:5500/828e9f73-7bb8-4549-9f0a-70220a7aac86
+        aEl.href = url
+        document.body.appendChild(aEl)
+        // 触发点击事件
+        aEl.click()
+        document.body.removeChild(aEl)
+        // 释放url
+        URL.revokeObjectURL(url)
+      }
+      const content = '测试的文本'
+      btnDownload.addEventListener('click', function () {
+        console.log('点击饿了')
+        downloadFile('测试.txt', content)
+      })
+    </script>
+  </body>
+</html>
+// 根据文件名 blob:http://127.0.0.1:5500/828e9f73-7bb8-4549-9f0a-70220a7aac86
+可以延伸出一个生成 uid 的方法
+uid = URL.createObjectURL(new Blob([''])).split("/").pop()
+```
+
+```html
+// 文件下载 dispatchEvent
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <div>
+      <button type="button" id="btnDownload">下载文件</button>
+    </div>
+
+    <script>
+      function createBlob(content, type) {
+        var blob = new Blob([content], { type })
+        return blob
+      }
+
+      function downloadFile(filename, content, type = 'text/plain') {
+        var aEl = document.createElement('a')
+        // 指定下载文件名
+        aEl.download = filename
+
+        const blob = createBlob(content, type)
+        // 生成url地址
+        const url = URL.createObjectURL(blob)
+        console.log(url)
+        aEl.href = url
+        document.body.appendChild(aEl)
+
+        // ----------触发点击事件-------------------
+        var event = new MouseEvent('click')
+        aEl.dispatchEvent(event)
+        document.body.removeChild(aEl)
+
+        // 释放url
+        URL.revokeObjectURL(url)
+      }
+
+      const content = '测试的文本'
+      btnDownload.addEventListener('click', function () {
+        console.log('点击饿了')
+        downloadFile('测试.txt', content)
+      })
+    </script>
+  </body>
+</html>
+```
+
+### 自定义事件
+
+```javascript
+btnTrigger.addEventListener('myEvent', function () {
+  console.log('DOM2: myEvent')
+})
+```
+
+### 触发自定义事件
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <div id="divWrapper">
+      <button type="button" id="btnTrigger">触发事件</button>
+    </div>
+
+    <script>
+      btnTrigger.addEventListener('myEvent', function () {
+        console.log('DOM2: myEvent') // 这个会被触发
+      })
+
+      btnTrigger.onmyEvent = function (event) {
+        console.log('DOM0: myEvent') // 不会被触发
+      }
+
+      var event = new Event('myEvent')
+      btnTrigger.dispatchEvent(event)
+    </script>
+  </body>
+</html>
+```
+
+### 自定义事件三种方式
+
+* document.createEvent (已废弃)
+* new Event()
+* new CustomEvent() **推荐使用**
+
+### document.createEvent (已废弃)
+
+> MDN: [Document.createEvent()](https://developer.mozilla.org/zh-CN/docs/Web/API/Document/createEvent)
+
+* 语法：`var event = document.createEvent(type);`
+* `event` 就是被创建的 [Event](https://developer.mozilla.org/zh-CN/docs/Web/API/Event) 对象。
+* `type` 是一个字符串，表示要创建的事件类型。事件类型可能包括`"UIEvents"`、`"MouseEvents"`、`"MutationEvents"` 或者 `"HTMLEvents"`。请查看[注意](https://developer.mozilla.org/zh-CN/docs/Web/API/Document/createEvent#注意)小节获取详细信息。
+
+### new Event
+
+* 语法：` event = new Event(typeArg, eventInit);`
+
+* 参数
+
+  > **typeArg**: 是[`DOMString`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String) 类型，表示所创建事件的名称。
+  >
+  > **eventInit**可选是 `EventInit` 类型的字典，接受以下字段：
+  >
+  > - `"bubbles"`，可选，[`Boolean`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Boolean)类型，默认值为 `false`，表示该事件是否冒泡。
+  > - `"cancelable"`，可选，[`Boolean`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Boolean)类型，默认值为 `false`，表示该事件能否被取消。
+  > - `"composed"`，可选，[`Boolean`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Boolean)类型，默认值为 `false`，指示事件是否会在影子 DOM 根节点之外触发侦听器。
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <div class="container">
+      <button id="btn">开始吧</button>
+    </div>
+
+    <div>
+      <div>
+        流程1:
+        <div id="step1"></div>
+      </div>
+      <div>
+        流程2:
+        <div id="step2"></div>
+      </div>
+    </div>
+
+    <script>
+      function dispatchEE(target, type) {
+        var event = new Event(type)
+        target.dispatchEvent(event)
+      }
+
+      btn.addEventListener('click', function () {
+        // 做了很多的工作
+        setTimeout(() => {
+          dispatchEE(step1, 'step-1')
+        }, 2000)
+      })
+
+      // 解耦
+      step1.addEventListener('step-1', function () {
+        step1.textContent = '流程1进行中......'
+        setTimeout(() => {
+          dispatchEE(step2, 'step-2')
+        }, 2000)
+      })
+
+      // 解耦
+      step2.addEventListener('step-2', function () {
+        step2.textContent = '流程2进行中......'
+        setTimeout(() => {
+          dispatchEE(window, 'finished')
+        }, 2000)
+      })
+
+      window.addEventListener('finished', function () {
+        alert('finished successfully')
+      })
+    </script>
+  </body>
+</html>
+```
+
+### new CustomEvent()
+
+> 可以传递数据
+
+* 语法：` event = new CustomEvent(typeArg, customEventInit);` 
+
+* 参数
+
+  > **typeArg**:一个表示 event 名字的字符串
+  >
+  > **customEventInit**: Is a `CustomEventInit` dictionary, having the following fields: 一个字典类型参数，有如下字段
+  >
+  > - `"detail"`, optional and defaulting to `null`, of type any, that is a event-dependant value associated with the event. 可选的默认值是 null 的任意类型数据，是一个与 event 相关的值
+  > - bubbles 一个布尔值，表示该事件能否冒泡。来自 [`EventInit`](https://developer.mozilla.org/zh-CN/docs/Web/API/Event/Event)。注意：测试 chrome 默认为不冒泡。
+  > - cancelable 一个布尔值，表示该事件是否可以取消。来自 [`EventInit`](https://developer.mozilla.org/zh-CN/docs/Web/API/Event/Event)
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <div class="container">
+      <button id="btn">开始吧</button>
+    </div>
+
+    <div>
+      <div>
+        流程1:
+        <div id="step1"></div>
+      </div>
+      <div>
+        流程2:
+        <div id="step2"></div>
+      </div>
+    </div>
+
+    <script>
+      function dispatchEE(target, type, data) {
+        var event = new CustomEvent(type, {
+          detail: data,
+        })
+        target.dispatchEvent(event)
+      }
+
+      btn.addEventListener('click', function () {
+        // 做了很多的工作
+        setTimeout(() => {
+          dispatchEE(step1, 'step-1', { param: 'step1的启动参数' })
+        }, 2000)
+      })
+
+      // 解耦
+      step1.addEventListener('step-1', function (ev) {
+        step1.textContent = '流程1进行中......,参数:' + ev.detail.param
+        setTimeout(() => {
+          dispatchEE(step2, 'step-2', { param: 'step2的启动参数' })
+        }, 2000)
+      })
+
+      // 解耦
+      step2.addEventListener('step-2', function (ev) {
+        step2.textContent = '流程2进行中......,参数:' + ev.detail.param
+        setTimeout(() => {
+          dispatchEE(window, 'finished', '我是结果')
+        }, 2000)
+      })
+
+      window.addEventListener('finished', function (ev) {
+        alert('finished successfully,结果:' + ev.detail)
+      })
+    </script>
+  </body>
+</html>
+```
+
+### CustomEvent 兼容
+
+```javascript
+;(function () {
+  if (typeof CustomEvent !== 'function') {
+    var CustomEvent = function (event, params) {
+      params = params || {
+        bubbles: false,
+        cancelable: false,
+        detail: undefined,
+      }
+      var evt = document.createEvent('CustomEvent')
+      evt.initCustomEvent(
+        event,
+        params.bubbles,
+        params.cancelable,
+        params.detail,
+      )
+      return evt
+    }
+    CustomEvent.prototype = window.Event.prototype
+    window.CustomEvent = CustomEvent
+  }
+})()
+```
+
+### new Event 与 new CustomEvent 区别
+
+* 从继承关系来看，CustomEvent 是 Event 的扩展
+* 参数支持，Event 适合简单的自定义事件，CustomEvent 支持传递数据的自定义事件
+
+### 本质
+
+* 事件模式本质上和**观察者模式**是相同的，所以凡是能够用到观察者这种模式的情形，就可以使用事件来解决
+现在我们来列举一个简单的情形并实现它
+
+#### 例子
+
+> 情景：有一个数组arr，每当这个数组添加新的元素之后，我们都要重新打印它一次
+> 实现
+
+```javascript
+let arr = []
+
+function add(detail) {
+  document.dispatchEvent(
+    new CustomEvent("onAdd", {
+      detail
+    })
+  )
+}
+// 监听添加事件
+document.addEventListener("onAdd", (e) => {
+  e.detail ? arr.push(e.detail.age) : null
+  console.log(arr)
+})
+// 触发事件
+add()
+add({ age: 18 })
+```
+
+如果不使用这种模式，我们在数组改变之后就得手动打印数组。当然，在不需要监听这个事件之后，我们得通过removeEventListener（用法和addEventListener相同）取消对这个事件得监听
