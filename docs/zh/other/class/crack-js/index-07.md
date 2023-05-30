@@ -4817,6 +4817,226 @@ function createAni() {
 
 ```javascript
 // 第三种
+btnAdd.addEventListener('click', createAni)
+function createAni() {
+  var div = document.createElement('div')
+  div.className = 'ani'
+  container.appendChild(div)
 
+  div.style.left = '0px'
+  window.getComputedStyle(div).height // 加上这行代码就会有动画
+  // window.getComputedStyle(div).accentColor // 加上这行代码也可以
+  div.style.left = '200px'
+}
 ```
 
+### 总结
+
+1. 样式来源
+   * 浏览器样式
+   * 浏览器用户自定义样式
+   * link 引入的外部样式
+   * style 节点
+   * style 属性：内联样式
+2. 样式优先级
+   * 内联样式
+   * ID 选择器
+   * 类 选择器
+   * 标签选择器
+3. 操作节点上的属性
+   * style 属性是驼峰语法
+   * style.cssText 批量修改
+   * import! 也是可以生效的
+4. 节点 classList 和 className 属性
+   * 对比
+   * DOMTokenList.toggle
+5. 操作 style 标签内容
+   * 本质还是 Node 节点
+   * 对象模型
+   * 动态创建 style 节点
+   * 操作已有的 style 节点
+6. 操作外部引入样式
+   * 动态引入外部样式
+   * 更改外部引入的样式
+7. window.getComputeStyle
+   * 值不一定等于设置的值
+   * 可以获取伪类样式
+   * 获取一些属性会引起重绘
+   * 重绘、重排
+
+## 09: 3行，6行，8行代码实现订阅发布中心
+
+### 订阅发布中心
+
+* 是一种消息通知机制，也是一种发布订阅模式的实际应用
+* 应用场景：公众号消息，短信提醒等
+* 前端四大手写题目之一
+
+### 最基础的订阅发布中心
+
+* on: 订阅
+* once: 订阅，但仅仅接受一次通知
+* off: 取消订阅
+* emit: 派发事件，通知订阅者
+
+### 3 行代码版本
+
+```javascript
+// 4 行版本
+window._on = window.addEventListener
+window._off = window.removeEventListener
+// 上两行可以简写为一行，称为 3行代码
+//  (window._on = window.addEventListener, window._off = window.removeEventListener);
+
+window._emit = (type, data) =>  window.dispatchEvent(new CustomEvent(type, { detail: data }))
+window._once = (type, listener) => window.addEventListener(type, listener, { once: true, capture: true })
+```
+
+```javascript
+function onEventX(ev) {
+  console.log('event-x 收到数据:', ev.detail)
+}
+
+// 订阅
+window._on('event-x', onEventX)
+window._once('event-once', (ev) => console.log('event-once 收到数据:', ev.detail))
+
+// once
+window._emit('event-once', { uid: -100, message: 'you love me' })
+window._emit('event-once', { uid: -100, message: 'you love me' })
+// 订阅和取消订阅
+window._emit('event-x', { uid: 100, message: 'i love you' })
+window._off('event-x', onEventX)
+window._emit('event-x', { uid: 100, message: 'i love you' })
+```
+
+### 原理浅析
+
+* window 是表象，根源是 EventTarget 
+* document 和 元素节点也是继承于 EventTarget
+* XMLHttpRequest, WebSocket 也继承于 EventTarget
+
+### EventTarget
+
+`EventTarget` 接口由可以接收事件、并且可以创建侦听器的对象实现。换句话说，任何事件目标都会实现与该接口有关的这三个方法。
+
+[`Element`](https://developer.mozilla.org/zh-CN/docs/Web/API/Element) 及其子项、[`document`](https://developer.mozilla.org/zh-CN/docs/Web/API/Document) 和 [`window`](https://developer.mozilla.org/zh-CN/docs/Web/API/Window) 是最常见的事件目标，但其他对象也可以是事件目标。比如 [`XMLHttpRequest`](https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest)、[`AudioNode`](https://developer.mozilla.org/zh-CN/docs/Web/API/AudioNode) 和 [`AudioContext`](https://developer.mozilla.org/zh-CN/docs/Web/API/AudioContext) 等等。
+
+许多事件目标（包括 `element`、`document` 和 `window`）都支持通过 `onevent` 特性和属性设置[事件处理程序 (en-US)](https://developer.mozilla.org/en-US/docs/Web/Events/Event_handlers)。
+
+#### [构造函数](https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget#构造函数)
+
+- [`EventTarget()`](https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/EventTarget)
+
+  创建一个新的 `EventTarget` 对象实例。
+
+#### [方法](https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget#方法)
+
+- [`EventTarget.addEventListener()`](https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/addEventListener)
+
+  在 `EventTarget` 上注册特定事件类型的事件处理程序。
+
+- [`EventTarget.removeEventListener()`](https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/removeEventListener)
+
+  `EventTarget` 中删除事件侦听器。
+
+- [`EventTarget.dispatchEvent()`](https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/dispatchEvent)
+
+  将事件分派到此 `EventTarget`。
+
+### 3 行代码存在的问题
+
+1. 不能多实例化
+2. 挂载 window 上太丑了
+3. 不能传递多参数
+4. 参数从 ev.detail 上获取，不合理
+5. 不能再 node.js 中使用
+6. 。。。
+
+### 6 行版本
+
+```javascript
+class EventEmitter extends EventTarget {
+  on = this.addEventListener
+  off = this.removeEventListener
+  emit = (type, data) =>  this.dispatchEvent(new CustomEvent(type, { detail: data }))
+  once = (type, listener) => this.on(type, listener, { once: true, capture: true })
+}
+```
+
+```javascript
+var emitter = new EventEmitter()
+function onEventX(ev) {
+  console.log('event-x 收到数据:', ev.detail)
+}
+
+// 订阅
+emitter.on('event-x', onEventX)
+emitter.once('event-once', (ev) =>
+  console.log('event-once 收到数据:', ev.detail),
+)
+
+// 发布
+emitter.emit('event-once', { uid: -100, message: 'you love me' })
+emitter.emit('event-once', { uid: -100, message: 'you love me' })
+
+emitter.emit('event-x', { uid: 100, message: 'i love you' })
+emitter.off('event-x', onEventX)
+emitter.emit('event-x', { uid: 100, message: 'i love you' })
+```
+
+### 6 行代码版本存在的问题
+
+* e.detail 上获取参数
+* 不能传递多个参数
+
+### 8 行代码版本
+
+```javascript
+class EventEmitter extends EventTarget {
+  on = (type, listener, options) =>
+    this.addEventListener(
+      type,
+      function wrap(e) {
+        return (
+          // 添加函数指向包裹函数
+          // apply 调用，可以传递数组
+          (listener.__wrap__ = wrap), listener.apply(this, e.detail || [])
+        )
+      },
+      options,
+    )
+
+  off = (type, listener) => this.removeEventListener(type, listener.__wrap__) // 删除的事包裹函数
+  emit = (type, ...args) => this.dispatchEvent(new CustomEvent(type, { detail: args })) // 剩余参数，接收一个数组参数
+  once = (type, listener) => this.on(type, listener, { once: true, capture: true })
+}
+```
+
+```javascript
+var emitter = new EventEmitter()
+function onEventX(uid, msg) {
+  console.log('event-x 收到数据:', this, uid, msg)
+}
+
+// 订阅
+emitter.on('event-x', onEventX)
+emitter.once('event-once', (uid, msg) =>
+  console.log('event-once 收到数据:', uid, msg),
+)
+
+// 发布
+emitter.emit('event-once', -100, 'you love me')
+emitter.emit('event-once', -100, 'you love me')
+
+emitter.emit('event-x', 100, 'i love you')
+emitter.off('event-x', onEventX)
+emitter.emit('event-x', 100, 'i love you')
+```
+
+### 核心知识点
+
+* EventTarget
+* CustomEvent
+* 分组运算符
+* 高阶函数
