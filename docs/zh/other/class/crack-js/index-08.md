@@ -12,52 +12,52 @@
 
 - 主要是为了方便使用 this
 
-```javascript
-;(this === this.window(this即window, 其有window属性)) === this.window.window
-// 去掉this
-window === window.window
-```
+  ```javascript
+  ;(this === this.window(this即window, 其有window属性)) === this.window.window
+  // 去掉this
+  window === window.window
+  ```
 
-```javascript
-const log = console.log
-log(window === window.window) // true
-log(window.window === window.window.window) // true
-log(window.window.window === window.window.window.window) // true
+  ```javascript
+  const log = console.log
+  log(window === window.window) // true
+  log(window.window === window.window.window) // true
+  log(window.window.window === window.window.window.window) // true
 
-window === window.window // true
-window.window === window.window.window // true
-window.window.window === window.window.window.window // true
+  window === window.window // true
+  window.window === window.window.window // true
+  window.window.window === window.window.window.window // true
 
-this === window // true
-```
+  this === window // true
+  ```
 
 #### 如何输出全局对象上的 aName 属性
 
-```javascript
-var xxxx = this
-var aName = 'global的name'
-function a() {
-  var aName = 'local的name'
-  // 从xxxx上访问
-  console.log(xxxx.name)
-}
-a()
-alert('哈哈')
-```
+  ```javascript
+  var xxxx = this
+  var aName = 'global的name'
+  function a() {
+    var aName = 'local的name'
+    // 从xxxx上访问
+    console.log(xxxx.name)
+  }
+  a()
+  alert('哈哈')
+  ```
 
 解决办法如下
 
-```javascript
-var xxxx = this
-var aName = 'global的name'
-function a() {
-  var aName = 'local的name'
-  // 从xxxx上访问
-  console.log(xxxx.name)
-}
-a()
-alert('哈哈')
-```
+  ```javascript
+  var xxxx = this
+  var aName = 'global的name'
+  function a() {
+    var aName = 'local的name'
+    // 从xxxx上访问
+    console.log(xxxx.name)
+  }
+  a()
+  alert('哈哈')
+  ```
 
 ### window.isSecureContext
 
@@ -108,97 +108,38 @@ alert('哈哈')
 - window.open: 可以打开一个新空白窗口或者指定地址的新窗口
 - opner: 返回当前窗口的那个窗口的引用，如果是同源，可以直接调用其窗体的方法
 
-```javascript
-let windowObjectReference = window.open(strUrl, strWindowName, [
-  strWindowFeatures,
-])
-```
+  ```javascript
+  let windowObjectReference = window.open(strUrl, strWindowName, [
+    strWindowFeatures,
+  ])
+  ```
 
 #### 使用 window.open 打开新页面，并关闭打开的页面
 
-```html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+  ```html
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Document</title>
 
-    <style>
-      button {
-        font-size: 28px;
-      }
-    </style>
-  </head>
+      <style>
+        button {
+          font-size: 28px;
+        }
+      </style>
+    </head>
 
-  <body>
-    <div>
-      <button type="button" id="btnOpen">打开新窗口</button>
-      <button type="button" id="btnClose">关闭</button>
-    </div>
+    <body>
+      <div>
+        <button type="button" id="btnOpen">打开新窗口</button>
+        <button type="button" id="btnClose">关闭</button>
+      </div>
 
-    <script>
-      let winRef
-      let strWindowFeatures = `
-        menubar=yes,
-        location=yes,
-        resizable=yes,
-        scrollbars=yes,
-        status=no,
-        left=100px,
-        top=100px,
-      `
-
-      btnOpen.addEventListener('click', function () {
-        winRef = window.open(
-          'https://www.imooc.com',
-          '慕课网',
-          strWindowFeatures,
-        )
-      })
-
-      btnClose.addEventListener('click', function () {
-        winRef && winRef.close()
-      })
-    </script>
-  </body>
-</html>
-```
-
-#### 同源页面相互调用方法
-
-以下两个页面，在同源页面可以实现，页面方法相互调用
-
-```html
-// 父窗口
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <style>
-      body {
-        font-size: 28px;
-      }
-
-      button {
-        font-size: 28px;
-      }
-    </style>
-  </head>
-
-  <body>
-    <div>父窗口</div>
-
-    <button id="btnOpen">打开子窗口</button>
-    <button id="btnInvoke">调用子窗口方法</button>
-
-    <script>
-      let winRef
-      btnOpen.addEventListener('click', function () {
+      <script>
+        let winRef
         let strWindowFeatures = `
           menubar=yes,
           location=yes,
@@ -208,69 +149,128 @@ let windowObjectReference = window.open(strUrl, strWindowName, [
           left=100px,
           top=100px,
         `
-        winRef = window.open('./ifr.html', '慕课网', strWindowFeatures)
-      })
 
-      function parentMethod() {
-        alert('父窗口方法执行调用')
-      }
+        btnOpen.addEventListener('click', function () {
+          winRef = window.open(
+            'https://www.imooc.com',
+            '慕课网',
+            strWindowFeatures,
+          )
+        })
 
-      btnInvoke.addEventListener('click', function () {
-        winRef && winRef.childMethod()
-      })
-    </script>
-  </body>
-</html>
+        btnClose.addEventListener('click', function () {
+          winRef && winRef.close()
+        })
+      </script>
+    </body>
+  </html>
+  ```
 
-// ifr.html 子窗口
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <style>
-      body {
-        font-size: 28px;
-      }
+#### 同源页面相互调用方法
 
-      button {
-        font-size: 28px;
-      }
-    </style>
-  </head>
+以下两个页面，在同源页面可以实现，页面方法相互调用
 
-  <body>
-    <div>子窗口</div>
+  ```html
+  // 父窗口
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Document</title>
+      <style>
+        body {
+          font-size: 28px;
+        }
 
-    <button id="btnInvoke">调用父窗口方法</button>
+        button {
+          font-size: 28px;
+        }
+      </style>
+    </head>
 
-    <script>
-      function childMethod() {
-        alert('子窗口方法执行调用')
-      }
+    <body>
+      <div>父窗口</div>
 
-      btnInvoke.addEventListener('click', function () {
-        window && window.opener && window.opener.parentMethod()
-      })
-    </script>
-  </body>
-</html>
-```
+      <button id="btnOpen">打开子窗口</button>
+      <button id="btnInvoke">调用子窗口方法</button>
+
+      <script>
+        let winRef
+        btnOpen.addEventListener('click', function () {
+          let strWindowFeatures = `
+            menubar=yes,
+            location=yes,
+            resizable=yes,
+            scrollbars=yes,
+            status=no,
+            left=100px,
+            top=100px,
+          `
+          winRef = window.open('./ifr.html', '慕课网', strWindowFeatures)
+        })
+
+        function parentMethod() {
+          alert('父窗口方法执行调用')
+        }
+
+        btnInvoke.addEventListener('click', function () {
+          winRef && winRef.childMethod()
+        })
+      </script>
+    </body>
+  </html>
+
+  // ifr.html 子窗口
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Document</title>
+      <style>
+        body {
+          font-size: 28px;
+        }
+
+        button {
+          font-size: 28px;
+        }
+      </style>
+    </head>
+
+    <body>
+      <div>子窗口</div>
+
+      <button id="btnInvoke">调用父窗口方法</button>
+
+      <script>
+        function childMethod() {
+          alert('子窗口方法执行调用')
+        }
+
+        btnInvoke.addEventListener('click', function () {
+          window && window.opener && window.opener.parentMethod()
+        })
+      </script>
+    </body>
+  </html>
+  ```
 
 ### 窗体可见性
 
 #### focus + blur 事件
 
-```javascript
-window.addEventListener('focus', function () {
-  console.log('i am focused')
-})
-window.addEventListener('blur', function () {
-  console.log('i am blurred')
-})
-```
+  ```javascript
+  window.addEventListener('focus', function () {
+    console.log('i am focused')
+  })
+  window.addEventListener('blur', function () {
+    console.log('i am blurred')
+  })
+  ```
 
 #### document.hidden
 
@@ -334,67 +334,67 @@ document.addEventListener('visibilitychange', function () {
 - 设置 scrollTop, scrollLeft 等
 - 设置锚点
 
-```html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>滚动锚点</title>
-    <style></style>
-  </head>
+  ```html
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>滚动锚点</title>
+      <style></style>
+    </head>
 
-  <body>
-    <div style="position: fixed; top: 0; right: 0">
-      <a href="#div1">滚动到Div1</a>
-      <a href="#div2">滚动到a标签</a>
-    </div>
+    <body>
+      <div style="position: fixed; top: 0; right: 0">
+        <a href="#div1">滚动到Div1</a>
+        <a href="#div2">滚动到a标签</a>
+      </div>
 
-    <div style="height: 500px"></div>
-    <div id="div1" style="height: 500px">div1的内容</div>
-    <a name="div2" style="height: 500px; display: block">a的内容</a>
-  </body>
-</html>
-```
+      <div style="height: 500px"></div>
+      <div id="div1" style="height: 500px">div1的内容</div>
+      <a name="div2" style="height: 500px; display: block">a的内容</a>
+    </body>
+  </html>
+  ```
 
 ### window.matchMedia()
 
 - 可用于判定 Document 是否匹配媒体查询
 - 监控一个 document 来判定它匹配了或者停止匹配了此媒体查询
 
-```html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <style>
-      * {
-        font-size: 30px;
-      }
-    </style>
-  </head>
+  ```html
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Document</title>
+      <style>
+        * {
+          font-size: 30px;
+        }
+      </style>
+    </head>
 
-  <body>
-    <div>
-      (min-width: 600px):
-      <span style="color: red" id="mq-value"> </span>
-    </div>
-    <script>
-      let mql = window.matchMedia('(min-width: 600px)')
-      document.querySelector('#mq-value').innerText = mql.matches
-      // 监听变化
-      mql.addEventListener('change', function () {
-        mql = window.matchMedia('(min-width: 600px)')
+    <body>
+      <div>
+        (min-width: 600px):
+        <span style="color: red" id="mq-value"> </span>
+      </div>
+      <script>
+        let mql = window.matchMedia('(min-width: 600px)')
         document.querySelector('#mq-value').innerText = mql.matches
-      })
-    </script>
-  </body>
-</html>
-```
+        // 监听变化
+        mql.addEventListener('change', function () {
+          mql = window.matchMedia('(min-width: 600px)')
+          document.querySelector('#mq-value').innerText = mql.matches
+        })
+      </script>
+    </body>
+  </html>
+  ```
 
 ### window.getSelection()
 
@@ -402,172 +402,168 @@ document.addEventListener('visibilitychange', function () {
 - 可使用 Document.activeElement 来返回当前的焦点元素
 - 另外一个等价方法：Document.getSelection() 两个方法等价
 
-```html
-以下示例，会不断输出当前选中的文本
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <style>
-      body {
-        font-size: 22px;
-        margin: 50px;
-      }
-    </style>
-  </head>
-  <body>
-    <div>我们都是好孩子，最最善良的孩子。</div>
-    <div>好好学习，天天向上。</div>
-    <input value="JS高级进阶" />
-    <div style="margin-top: 50px"></div>
-    选中的内容：
-    <div id="selectedContent"></div>
-    <script>
-      setInterval(function () {
-        selectedContent.textContent = window.getSelection().toString()
-      }, 3000)
-    </script>
-  </body>
-</html>
-```
+  ```html
+  以下示例，会不断输出当前选中的文本
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Document</title>
+      <style>
+        body {
+          font-size: 22px;
+          margin: 50px;
+        }
+      </style>
+    </head>
+    <body>
+      <div>我们都是好孩子，最最善良的孩子。</div>
+      <div>好好学习，天天向上。</div>
+      <input value="JS高级进阶" />
+      <div style="margin-top: 50px"></div>
+      选中的内容：
+      <div id="selectedContent"></div>
+      <script>
+        setInterval(function () {
+          selectedContent.textContent = window.getSelection().toString()
+        }, 3000)
+      </script>
+    </body>
+  </html>
+  ```
 
 ### window.frameElement
 
 - 返回嵌入当前 window 对象的元素的元素(比如 ifame 或者 object). 如果当前 window 对象已经是顶层窗口，则返回 null
 - 例子：window.frameElement 获得 iframe 节点，然后设置其 src 属性，实现调整
 
-```html
-// 父页面
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body>
-    <div>
-      <iframe src="./ifr.html"></iframe>
-    </div>
-  </body>
-</html>
+  ```html
+  // 父页面
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Document</title>
+    </head>
+    <body>
+      <div>
+        <iframe src="./ifr.html"></iframe>
+      </div>
+    </body>
+  </html>
 
-// ifr.html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <style>
-      body {
-        font-size: 28px;
-      }
-    </style>
-  </head>
-  <body>
-    iframe 1
-    <script>
-      setTimeout(function () {
-        window.frameElement.src = './ifr2.html'
-      }, 5000)
-    </script>
-  </body>
-</html>
+  // ifr.html
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Document</title>
+      <style>
+        body {
+          font-size: 28px;
+        }
+      </style>
+    </head>
+    <body>
+      iframe 1
+      <script>
+        setTimeout(function () {
+          window.frameElement.src = './ifr2.html'
+        }, 5000)
+      </script>
+    </body>
+  </html>
 
-// ifr2.html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <style>
-      body {
-        font-size: 28px;
-      }
-    </style>
-  </head>
+  // ifr2.html
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Document</title>
+      <style>
+        body {
+          font-size: 28px;
+        }
+      </style>
+    </head>
 
-  <body>
-    iframe 2
-    <script>
-      setTimeout(function () {
-        window.frameElement.src = './ifr.html'
-      }, 5000)
-    </script>
-  </body>
-</html>
-```
+    <body>
+      iframe 2
+      <script>
+        setTimeout(function () {
+          window.frameElement.src = './ifr.html'
+        }, 5000)
+      </script>
+    </body>
+  </html>
+  ```
 
 ### 网络状态
 
 - window.onoffline = fn
 - window.ononline = fn
-- window.addEventListener("online", fn)
+- window.addEventListener("offline", fn)
 - window.addEventListener('online', fn)
 
-```javascript
-message.innerHTML += `i am ${navigator.onLine ? 'online' : 'offline'}<br />`
+  ```javascript
+  message.innerHTML += `i am ${navigator.onLine ? 'online' : 'offline'}<br />`
 
-window.onoffline = function () {
-  message.innerHTML += 'i am offline <br />'
-}
+  window.onoffline = function () {
+    message.innerHTML += 'i am offline <br />'
+  }
 
-window.ononline = function () {
-  message.innerHTML += 'i am online <br />'
-}
+  window.ononline = function () {
+    message.innerHTML += 'i am online <br />'
+  }
 
-window.addEventListener('offline', (event) => {
-  console.log('网络连接已断开。')
-})
+  window.addEventListener('offline', (event) => {
+    console.log('网络连接已断开。')
+  })
 
-window.addEventListener('online', (event) => {
-  console.log('You are now connected to the network.')
-})
-```
+  window.addEventListener('online', (event) => {
+    console.log('You are now connected to the network.')
+  })
+  ```
 
 ### window.print 打印
 
 - 打开打印对话框打印当前文档
 
 ### window.print 样式设置
-
-```css
-// 第一种： 媒体查询
-@media print {
-  .content1 {
-    color: green;
-    font-size: 18px;
+- 第一种： 媒体查询
+  ```css
+  @media print {
+    .content1 {
+      color: green;
+      font-size: 18px;
+    }
   }
-}
-```
-
-```css
-// 第二种：设置 style ，media = "print"
-<style media="print">
-  .content1 {
-    color: green;
-    font-size: 18px
-  }
-</style>
-```
-
-```html
-// 第三种，link 中增加 media="print" 属性
-<link rel="stylesheet" href="./print.css" media="print" />
-```
-
-```css
-// 第四种： 使用 @import 时候，后面写明 print
-@import url('print.css') print;
-```
+  ```
+- 第二种：设置 style ，media = "print"
+  ```html
+  <style media="print">
+    .content1 {
+      color: green;
+      font-size: 18px
+    }
+  </style>
+  ```
+- 第三种，link 中增加 media="print" 属性
+  ```html
+  <link rel="stylesheet" href="./print.css" media="print" />
+  ```
+- 第四种： 使用 @import 时候，后面写明 print
+  ```css
+  @import url('print.css') print;
+  ```
 
 ### window.print 打印局部内容？？？
 
