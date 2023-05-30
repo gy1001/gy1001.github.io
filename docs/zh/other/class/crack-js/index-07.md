@@ -4257,3 +4257,566 @@ add({ age: 18 })
 ```
 
 如果不使用这种模式，我们在数组改变之后就得手动打印数组。当然，在不需要监听这个事件之后，我们得通过removeEventListener（用法和addEventListener相同）取消对这个事件得监听
+
+## 08：JS操作样式，也可以非常丝滑
+
+### 样式来源
+
+* 浏览器默认样式
+* 浏览器用户自定义样式
+* link 引入的外部样式
+* style 标签
+* style 属性：内联样式
+
+### 用户代理样式（就是浏览器默认样式）
+
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/00abbcda39c541b98c20a0546cd74833~tplv-k3u1fbpfcp-watermark.image?)
+
+### 样式优先级
+
+1. 内联样式: `style = "color: red"`
+2. ID 选择器: `#id {  }`
+3. 类和伪类选择器: `.div { } `
+4. 标签选择器：`div { }`
+5. 通配符选择器: *
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <button type="button" id="btnAddClass">添加class</button>
+      <button type="button" id="btnAddID">添加id</button>
+      <button type="button" id="btnAddStyle">添加内联样式</button>
+    </div>
+    <div id="container">
+      <div>文字</div>
+    </div>
+    <style>
+      #test-div {
+        color: blue;
+      }
+      .test-div {
+        color: green;
+      }
+      div {
+        color: pink;
+      }
+    </style>
+
+    <script>
+      const el = container.firstElementChild
+      // style="color:red" id="test-div" class="test-div"
+
+      // 添加class
+      btnAddClass.addEventListener('click', function () {
+        el.classList.add('test-div')
+      })
+      // 添加id
+      btnAddID.addEventListener('click', function () {
+        // 或者 el.setAttribute("id","test-div")
+        el.id = 'test-div'
+      })
+      // 添加内联样式
+      btnAddStyle.addEventListener('click', function () {
+        // 或者 el.setAttribute("id","test-div")
+        el.style.color = 'red'
+      })
+    </script>
+  </body>
+</html>
+```
+
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4f2c6577d46b4fecaf637edf7ccbf0cf~tplv-k3u1fbpfcp-watermark.image?)
+
+### 操作元素节点上的 style 属性
+
+* style 属性名是驼峰语法
+* style.cssText 是批量赋值
+* import! 也是可以生效的
+
+```javascript
+el.style.backgroundColor = 'red'
+el.style.fontSize = '30px'
+```
+
+```javascript
+const el = document.getElementById('test-div')
+el.style.cssText = 'background-color: green !important; font-size: 40px;'
+```
+
+### 操作节点 classList & className 属性
+
+| 属性      | 值类型              | 方法                         |
+| --------- | ------------------- | ---------------------------- |
+| className | 字符串              | 字符串具备的方法             |
+| classList | DOMTokenList 类数组 | add,remove,contains,toggle等 |
+
+### 使用 classList 的 toggle 方法
+
+* 定义：从列表中删除一个给定的标记，并返回 false. 如果标记不存在，则添加并且函数返回 true
+
+* 语法：`el.classList.toggle(token ,force)`
+
+* 参数：
+
+  > `token`: 一个字符串，表示你想要 toggle 的标记。
+  >
+  > `force` 可选, 如果包含该值，设置后会将方法变成 **单向操作**。如果设置为 `false`，*仅*会删除标记列表中匹配的给定标记，且不会再度添加。如果设置为 `true`，*仅*在标记列表中添加给定标记，且不会再度删除。
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <div>
+      <button type="button" id="btnToggleFalse">toggle(false)</button>
+      <button type="button" id="btnToggleTrue">toggle(true)</button>
+    </div>
+
+    <div id="container">
+      <div>文字</div>
+    </div>
+    <style>
+      .test-div {
+        color: red;
+      }
+    </style>
+
+    <script>
+      const el = container.firstElementChild
+      // toggle false
+      btnToggleFalse.addEventListener('click', function () {
+        el.classList.toggle('test-div')
+      })
+      // toggle true
+      btnToggleTrue.addEventListener('click', function () {
+        el.classList.toggle('test-div', true)
+      })
+    </script>
+  </body>
+</html>
+```
+
+### 操作 style 节点内容
+
+* 本质还是 Node 节点
+* 所以可以直接替换节点内容
+
+```html
+// style节点正则替换内容
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style id="ss-test">
+      .div {
+        background-color: red;
+        font-size: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <button id="btnReplace" type="button">替换</button>
+    </div>
+    <div class="div">文本</div>
+    <script>
+      const ssEl = document.getElementById("ss-test");
+      btnReplace.addEventListener("click", function () {
+        ssEl.textContent = ssEl.textContent.replace(
+          "background-color: red",
+          "background-color: blue"
+        );
+      });
+    </script>
+  </body>
+</html>
+```
+
+### 创建 style 节点操作
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+  </head>
+
+  <body>
+    <div>
+      <button type="button" id="btnAdd">添加style节点</button>
+    </div>
+    <div class="div">文本</div>
+
+    <script>
+      document
+        .getElementById('btnAdd')
+        .addEventListener('click', createStyleNode)
+
+      function createStyleNode() {
+        const styleNode = document.createElement('style')
+        // 设置textContent
+        styleNode.textContent = `
+          .div {
+              background-color: red;
+              font-size: 30px;
+          }
+        `
+        document.head.appendChild(styleNode)
+
+        // append
+        // styleNode.append(`
+        //      .div {
+        //          background-color: red;
+        //          font-size: 30px;
+        //      }
+        // `)
+        document.head.appendChild(styleNode)
+      }
+    </script>
+  </body>
+</html>
+```
+
+### 操作已有的 style 节点： 
+
+* CSSOM: CSS Object Model 是一组允许用 JavaScript 操作 CSS 的 API。它是继 DOM 和 HTML API 之后，又一个操作 CSS 的接口，从而能够动态地读取和修改 CSS 样式
+
+### 部分 CSSOM 关系图
+
+![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a702816c049445e49918c9e4e0030386~tplv-k3u1fbpfcp-watermark.image?)
+
+![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4309c613b4ea46289cc241b5e8c397a7~tplv-k3u1fbpfcp-watermark.image?)
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+  </head>
+
+  <body>
+    <div>
+      <button type="button" id="btnUpdate">更改style节点</button>
+    </div>
+    <div class="div">文本</div>
+
+    <style id="ss-test">
+      .div {
+        background-color: red;
+        font-size: 30px;
+      }
+      div {
+        font-size: 26px;
+      }
+    </style>
+
+    <script>
+      document
+        .getElementById('btnUpdate')
+        .addEventListener('click', updateStyleNode)
+
+      function updateStyleNode() {
+        const styleSheets = Array.from(document.styleSheets)
+        // ownerNode获得styleSheet对应的节点
+        const st = styleSheets.find((s) => s.ownerNode.id === 'ss-test')
+        // 选过选择器找到对应的rule
+        const rule = Array.from(st.rules).find((r) => r.selectorText === '.div')
+
+        // 兼容性
+        const styleMap = rule.styleMap
+        styleMap.set('background-color', 'blue')
+      }
+    </script>
+  </body>
+</html>
+
+```
+
+### 外部引入的样式也是 CSSStyleSheet
+
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ab823e8461fc48878ebf7ccd67c496b7~tplv-k3u1fbpfcp-watermark.image?)
+
+### 操作外部样式
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+    <link rel="stylesheet" href="./abc.css" />
+    <link rel="stylesheet" href="./abc2.css" />
+  </head>
+
+  <body>
+    <div>
+      <button type="button" id="btnUpdate">更改style节点</button>
+    </div>
+    <div class="div">文本</div>
+
+    <style>
+      .a {
+      }
+    </style>
+    <script>
+      document
+        .getElementById('btnUpdate')
+        .addEventListener('click', updateStyleNode)
+
+      function updateStyleNode() {
+        const styleSheets = Array.from(document.styleSheets)
+        const st = styleSheets.find((s) => s.href.endsWith('abc.css'))
+        const rule = Array.from(st.rules).find((r) => r.selectorText === '.div')
+
+        // 兼容性
+        const styleMap = rule.styleMap
+        styleMap.set('background-color', 'green')
+      }
+    </script>
+  </body>
+</html>
+
+// abc.css
+.div {
+  background-color: red;
+  font-size: 30px;
+}
+
+div {
+  font-size: 26px
+}
+
+// abc2.css
+.div {
+  background-color: red;
+  font-size: 30px;
+}
+
+div {
+  font-size: 26px;
+}
+```
+
+### 动态创建 link 节点引入样式
+
+```javascript
+function importCssByUrl (url){
+  const link = document.createElement("link")
+  link.type = "text/css"
+  link.rel = "stylesheet"
+  link.href = url
+  document.head.appendChild(link)
+}
+```
+
+### window.getComputeStyle
+
+> MDN: [https://developer.mozilla.org/zh-CN/docs/Web/API/Window/getComputedStyle](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/getComputedStyle)
+
+* 返回一个对象，该对象在应用活动样式表并解析这些值可能包含的任何基本计算后报告元素的所有 CSS 属性的值
+
+* 语法：`let style= window.getComputedStyle(element, [pseudoElt])`
+
+* 参数：
+
+  > element: 用于获取计算样式的[`Element`](https://developer.mozilla.org/zh-CN/docs/Web/API/Element)。
+  >
+  > pseudoElt 可选, 指定一个要匹配的伪元素的字符串。必须对普通元素省略（或`null`）。
+
+### window.getComputeStyle 注意事项
+
+* 计算后的样式不等同于 css 文件，style 标签和属性设置的样式的值
+* 可以获取到伪类样式
+* 此方法会引起重排
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <div id="div-test" class="div">文本</div>
+    <hr />
+    <div>
+      样式的值
+      <pre>
+        .div {
+          font-size: 1.6rem;
+          transform:rotate(2deg);
+        }
+      </pre>
+    </div>
+    <hr />
+    <div>
+      getComputedStyle的值:
+      <pre id="divGc"></pre>
+    </div>
+    <style>
+      .div {
+        font-size: 1.6rem;
+        transform: rotate(2deg);
+      }
+    </style>
+
+    <script>
+      const divEl = document.getElementById('div-test')
+      const styleDeclaration = window.getComputedStyle(divEl)
+      const fontSize = styleDeclaration.fontSize
+      const transform = styleDeclaration.transform
+
+      divGc.textContent = `
+        fontSize: ${fontSize}
+        transform: ${transform}
+    `
+    </script>
+  </body>
+</html>
+
+// 最终页面显示内容如下
+
+getComputedStyle的值:
+  fontSize: 25.6px
+  transform: matrix(0.999391, 0.0348995, -0.0348995, 0.999391, 0, 0)    
+```
+
+```html
+// 获取伪类
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <div id="ddddd">
+      <div id="div-test" class="div">文本</div>
+    </div>
+
+    <hr />
+    <div>
+      伪类的样式:
+      <pre id="divGc"></pre>
+    </div>
+    <style>
+      .div:before {
+        content: '(你好)';
+        font-size: 1.6rem;
+      }
+    </style>
+
+    <script>
+      const divEl = document.getElementById('div-test')
+      const styleDeclaration = window.getComputedStyle(divEl, 'before')
+      const fontSize = styleDeclaration.fontSize
+      const content = styleDeclaration.content
+
+      divGc.textContent = `
+        fontSize: ${fontSize}
+        content: ${content}
+      `
+    </script>
+  </body>
+</html>
+
+伪类的样式:
+  fontSize: 25.6px
+  content: "(你好)"
+```
+
+### 重排与重绘
+
+* 重排：元素的尺寸、结构或者 某些属性发生变化时，浏览器重新渲染部分或全部文档的过程称为重排。
+* 重绘：元素样式的改变并不影响它在文档流中的位置或者尺寸的时候，例如：color, background-color, outline-color 等，浏览器会重新绘制元素，这个过程称为重绘
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <div>
+      <button id="btnAdd">动态创建节点并动画</button>
+    </div>
+    <div id="container"></div>
+    <style>
+      .ani {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: blue;
+        transition: all 3s;
+      }
+    </style>
+  </body>
+</html>
+```
+
+```javascript
+// 第一种
+btnAdd.addEventListener('click', createAni)
+function createAni() {
+  var div = document.createElement('div')
+  div.className = 'ani'
+  container.appendChild(div)
+  div.style.left = '0px'
+  // 这样不会有动画
+  div.style.left = '200px'
+}
+```
+
+```javascript
+// 第二种
+btnAdd.addEventListener('click', createAni)
+function createAni() {
+  var div = document.createElement('div')
+  div.className = 'ani'
+  container.appendChild(div)
+  div.style.left = '0px'
+  // 有动画
+  setTimeout(() => {
+    div.style.left = '200px'
+  }, 0)
+}
+```
+
+```javascript
+// 第三种
+
+```
+
