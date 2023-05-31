@@ -1932,3 +1932,374 @@ console.log(
 )
 ```
 
+## 04: navigator，可不止步于设备识别 
+
+### navigator.userAgent 妙用
+
+* 识别是否是微信内置浏览器
+
+  ```javascript
+  //android
+  //mozilla/5.0 (linux; u; android 4.1.2; zh-cn; mi-one plus build/jzo54k) applewebkit/534.30 (khtml, like gecko) version/4.0 mobile safari/534.30 micromessenger/5.0.1.352
+  
+  //ios
+  //mozilla/5.0 (iphone; cpu iphone os 5_1_1 like mac os x) applewebkit/534.46 (khtml, like gecko) mobile/9b206 micromessenger/5.0
+  
+  function isWX() {
+    var ua = window.navigator.userAgent.toLowerCase()
+    return ua.match(/MicroMessenger/i) == 'micromessenger'
+  }
+  
+  if ('serviceWorker' in navigator) {
+    // Supported!
+  }
+  ```
+
+* 解析 userAgent 库： [ua-parser-js](https://www.npmjs.com/package/ua-parser-js)
+
+### navigator.onLine (在线状态)
+
+* 定义：返回浏览器的在线状态，true || false
+* 使用：结合 `document.ononline` 与 `document.onoffline` 网络变化
+
+#### 示例：网络变化
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    #net-change {
+      font-size: 50px;
+    }
+  </style>
+
+  <body>
+    <div id="net-change"></div>
+    <script>
+      function netChangeStatus(online) {
+        const netChangeEl = document.getElementById('net-change')
+        if (online) {
+          netChangeEl.innerText = `你是在线状态`
+        } else {
+          netChangeEl.innerText = `哥们你掉线了`
+        }
+      }
+      netChangeStatus(navigator.onLine)
+      window.addEventListener('online', () => {
+        netChangeStatus(true)
+      })
+      window.addEventListener('offline', () => {
+        netChangeStatus(false)
+      })
+    </script>
+  </body>
+</html>
+```
+
+### navigator.clipboard
+
+* 返回剪切板对象
+* 注意：必须是安全上下文（localhost, https, wss, file等）
+* 注意：使用 window.isSecureContext 检测安全上下文
+
+> MDN: [https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/clipboard](https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/clipboard)
+
+#### 示例：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        font-size: 28px;
+      }
+    </style>
+  </head>
+
+  <button id="btnCopy">复制</button>
+
+  <body>
+    <script>
+      // 需要人为的触发
+      function copyToClipboard(textToCopy) {
+        if (navigator.clipboard && window.isSecureContext) {
+          return navigator.clipboard.writeText(textToCopy)
+        } else {
+          console.log('其他方式复制')
+        }
+      }
+
+      btnCopy.onclick = function () {
+        copyToClipboard('需要拷贝的内容')
+          .then(() => console.log('拷贝成功'))
+          .catch(() => console.log('拷贝失败'))
+      }
+    </script>
+  </body>
+</html>
+```
+
+### navigator.cookieEnabled(cookie)
+
+* 定义：返回当前页面是否启用了 cookie
+
+### navigator.serviceWorker(Service Worker)
+
+* 定义：返回关联文件的 ServiceWorkerContainer 对象，提供对 ServiceWorker 的注册、删除、升级和通信访问
+* 注意：必须是安全上下文（localhost, https, wss, file等）
+
+#### serviceWorker 应用场景
+
+* 后台数据同步
+* 集中处理计算成本高的数据更新
+* 性能增强，用于获取用户需要的资源
+
+[https://mdn.github.io/dom-examples/service-worker/simple-service-worker/](https://mdn.github.io/dom-examples/service-worker/simple-service-worker/)
+
+#### 判断是否支持-navigator.serviceWorker
+
+```javascript
+if ('serviceWorker' in navigator) {
+  // Supported!
+}
+```
+
+### navigator.mediaDevices（媒体设备）
+
+* 定义：返回一个 MediaDevices 对象，用户获取媒体信息设备
+* 应用场景：H5 调用摄像头识别二维码，共享屏幕等
+
+#### 示例1：获取媒体设备
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+        navigator.mediaDevices
+          .enumerateDevices()
+          .then(function (devices) {
+            console.log('devices==', devices)
+          })
+          .catch(function (err) {
+            console.log(err.name + ': ' + err.message)
+          })
+      }
+    </script>
+  </body>
+</html>
+```
+
+#### 示例2：共享媒体使用
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <video id="video" style="height: 800px; width: 800px" autoplay></video>
+    <button id="start">开始共享屏幕</button>
+    <button id="stop">停止共享屏幕</button>
+
+    <script>
+      const mediaOptions = {
+        video: {
+          cursor: 'always',
+        },
+        audio: false,
+      }
+
+      let videoElem = document.getElementById('video')
+
+      document.getElementById('start').addEventListener('click', function () {
+        startShareScreen()
+      })
+
+      document.getElementById('stop').addEventListener('click', function () {
+        stopShareScreen()
+      })
+
+      async function startShareScreen() {
+        try {
+          videoElem.srcObject = await navigator.mediaDevices.getDisplayMedia(
+            mediaOptions,
+          )
+        } catch (err) {
+          console.error('Error: ' + err)
+        }
+      }
+
+      function stopShareScreen(evt) {
+        let tracks = videoElem.srcObject.getTracks()
+        tracks.forEach((track) => track.stop())
+        videoElem.srcObject = null
+      }
+    </script>
+  </body>
+</html>
+```
+
+### navigator.storage（存储）
+
+> MDN: [https://developer.mozilla.org/en-US/docs/Web/API/StorageManager](https://developer.mozilla.org/en-US/docs/Web/API/StorageManager)
+
+* 定义：返回 `StorageManager` 对象，用于访问浏览器的整体存储能力
+* 注意：必须安全上下文
+* 应用：获取 storage 的存储大小以及可分配大小
+
+```javascript
+navigator.storage.estimate().then(function(estimate){
+  console.log("使用：", estimate.usage)
+  console.log("总量：", estimate.quota)
+})
+```
+
+### navigator.sendBeacon（上报数据）
+
+> MDN： [https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon](https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon)
+
+* 作用：通过 httpsPost 将少量的数据异步传输到 web 服务器上
+* 应用：她主要用于统计数据发送到 Web 服务器，同时避免了用传统技术(如：XMLHttpRequst)发送分析数据的一些问题
+
+#### 示例1：XMLHttpRequest vs sendBeacon
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    XMLHttpRequest
+    <script>
+      function log() {
+        let xhr = new XMLHttpRequest()
+        xhr.open('post', 'http://127.0.0.1:3000/report/xhr', true)
+        xhr.setRequestHeader(
+          'Content-Type',
+          'application/x-www-form-urlencoded',
+        )
+        xhr.send('xhr=1')
+      }
+
+      function sendBeacon() {
+        const data = new FormData()
+        data.append('sendB', 2)
+        navigator.sendBeacon('http://127.0.0.1:3000/report/bean', data)
+      }
+
+      window.addEventListener('unload', function (event) {
+        sendBeacon()
+      })
+
+      window.addEventListener('unload', function (event) {
+        log()
+      })
+    </script>
+  </body>
+</html>
+```
+
+### navigator.connection（网络信息）--实验
+
+* 定义：返回一个 NetworkInfomation 对象，该对象包含网络信息
+* 应用：获取当前用户的宽带信息，如网络类型，下载速度等
+
+### navigator.permissions（权限对象）--实验
+
+* 返回一个 Permissons 对象
+* 应用：获取权限信息
+
+#### 示例1：查询权限状态
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        font-size: 28px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <button id="btnQuery">查询位置权限</button>
+    <button id="btnGetLocation">获取位置信息</button>
+    <script>
+      btnQuery.onclick = function () {
+        navigator.permissions
+          .query({ name: 'geolocation' })
+          .then(function (result) {
+            if (result.state === 'granted') {
+              console.log('位置权限 granted')
+            } else if (result.state === 'prompt') {
+              console.log('位置权限 prompt')
+            }
+            console.log('位置权限:', result.state)
+          })
+          .catch((err) => {
+            console.log('err:', err)
+          })
+      }
+      var options = {
+        enableHighAccuracy: true,
+        timeout: 1200,
+        maximumAge: 0,
+      }
+
+      btnGetLocation.onclick = function () {
+        navigator.geolocation.getCurrentPosition(
+          function (pos) {
+            var crd = pos.coords
+            console.log(`Latitude : ${crd.latitude}`)
+            console.log(`Longitude: ${crd.longitude}`)
+          },
+          function (err) {
+            console.log('error', err)
+          },
+          options,
+        )
+      }
+    </script>
+  </body>
+</html>
+```
+
+### navigator.mediaSeeion（共享媒体信息）-实验
+
+* 定义：返回一个 MediaSeeion 对象，用来与浏览器共享媒体信息。比如：播放状态，标题，封面等
+* 应用：通知栏自定义媒体信息
+
