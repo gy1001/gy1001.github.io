@@ -5007,7 +5007,7 @@ class EventEmitter extends EventTarget {
       options,
     )
 
-  off = (type, listener) => this.removeEventListener(type, listener.__wrap__) // 删除的事包裹函数
+  off = (type, listener) => this.removeEventListener(type, listener.__wrap__) // 删除的是包裹函数
   emit = (type, ...args) => this.dispatchEvent(new CustomEvent(type, { detail: args })) // 剩余参数，接收一个数组参数
   once = (type, listener) => this.on(type, listener, { once: true, capture: true })
 }
