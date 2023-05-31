@@ -1618,3 +1618,10 @@ function disptach(selfPort, data) {
 | MessageChannel      | 是               |              | 是                 |
 | SharedWoeker        |                  | 是           | 是                 |
 
+## 03: location对象几个重要的知识点
+
+### 了解 location 对象
+
+> MDN: [https://developer.mozilla.org/zh-CN/docs/Web/API/Location](https://developer.mozilla.org/zh-CN/docs/Web/API/Location)
+
+* 
