@@ -1624,4 +1624,311 @@ function disptach(selfPort, data) {
 
 > MDN: [https://developer.mozilla.org/zh-CN/docs/Web/API/Location](https://developer.mozilla.org/zh-CN/docs/Web/API/Location)
 
-* 
+* href: 包含这个 URL 的 DomString
+* protocol: 协议，一般为 http https
+* host: 主机名，包括端口
+* hostname: 主机名
+* port: 端口
+* pathname: URL 中路径部分，开头包含 /
+* search: URL 参数DOMString 开头包含 ?
+* hash: URL的hash 部分，开头包含 #
+* username: URL域名前的用户名
+* password: URL域名前的密码
+* origin: 页面来源，URL中 ? 前部分
+* assign(): 加载指定 URL 内容
+* reload(): 重新加载当前页面
+* replace(): 使用新页面替换当前页面
+* toStrng(): 返回一个 DOMString 包含整个 URL 
+
+### URL拆解
+
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/650aefd62b864207ae0055c0e9da2af6~tplv-k3u1fbpfcp-watermark.image?)
+
+### 修改属性值
+
+```javascript
+//https://www.baidu.com/index.html
+
+window.location.protocol = 'https';
+window.location.host = '127.0.0.1:5500';
+window.location.hostname = '127.0.0.1';
+window.location.port = '5500';
+window.location.pathname = 'test/path';
+window.location.search = 'wd=ff';
+window.location.hash = '/home';
+window.location.href = 'http://127.0.0.1:5500/liveSeverTest.html';
+```
+
+### 修改属性值--注意点
+
+* location.orgin 属性是只读的，存在兼容性问题（IE11以下不存在）
+* **除了 hash值外，其他任意值修改都会以新 URL 重新加载**。修改这些属性值，会在浏览器的历史记录中生成一条新的历史记录
+* 修改 pathname 不用传开头 /, 修改search 不用传 ? ，修改 hash 不用传 #
+
+### host VS hostname
+
+* host 包含端口号
+* hostname 只返回域名
+* 没有端口号的 URL，host 与 hostname 相同
+
+### 访问 Locaton 对象方式
+
+* window.location
+* window.document.location
+* document.location
+* location (不推荐)
+
+### window.location.reoload
+
+* 定义：重新加载当前文档
+* 参数：false 或者 不传，浏览器可能从缓存中读取页面
+* 参数：true 强制从服务器重新下载文档（强制刷新，现代浏览器效果不太理想）
+
+### assign VS href VS replace
+
+| 属性/方法名 | 增加新纪录 |
+| ----------- | ---------- |
+| href        | 会增加     |
+| assign      | 会增加     |
+| replace     |            |
+
+```javascript
+window.location.href = 'https://www.imooc.com/'
+window.location.assign('https://www.imooc.com/')
+window.location.replace('https://www.imooc.com/')
+location.reload()
+```
+
+### window.location.href VS window.open
+
+* window.location.href 是用新的域名页调用当前页，不会开新窗口
+* window.open 用来打开新窗口或者查找已经命名的窗口，打开新窗口可能会被浏览器拦截
+
+### hash-监听方式
+
+* `window.onhashchagne = funcRef`
+* `window.addEventListener("hashchange", funcRef, false)` (推荐)
+* `<body onhashchange = "funcRef()"></body>`
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        font-size: 82px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <button id="home">#/home</button>
+    <button id="detail">#/detail</button>
+    <script>
+      const homeBtn = document.getElementById('home')
+      const detailBtn = document.getElementById('detail')
+      homeBtn.addEventListener('click', function () {
+        window.location.hash = 'home'
+      })
+
+      detailBtn.addEventListener('click', function () {
+        window.location.hash = 'test'
+      })
+
+      window.onhashchange = function hashChangeListener(e) {
+        console.log('window.onhashchange: onhashchange:')
+        console.log('oldUrl:', e.oldURL)
+        console.log('newUrl:', e.newURL)
+      }
+
+      window.addEventListener(
+        'hashchange',
+        function hashChangeListener(e) {
+          console.log('window.addEventListener: hashchange:')
+        },
+        false,
+      )
+
+      document.body.onhashchange = function hashChangeListener(e) {
+        console.log('document.body.onhashchange: onhashchange:')
+      }
+
+      // 不会执行
+      document.body.addEventListener(
+        'hashchange',
+        function hashChangeListener(e) {
+          console.log('document.addEventListener: onhashchange:')
+        },
+      )
+    </script>
+  </body>
+</html>
+```
+
+以上事件监听前三个，单独监听都会生效，但是 `window.onhashchange` 和 `document.body.onhashchange` 同事监听时，后者生效，前者不生效，所以强烈推荐使用 `window.addEventListener('hashchange', fn)`
+
+### hashChange 应用-HashRouter实现
+
+* react-rotuer 源码
+
+### URL
+
+> MDN: [https://developer.mozilla.org/zh-CN/docs/Web/API/URL](https://developer.mozilla.org/zh-CN/docs/Web/API/URL)
+
+* searchParams: 只读，访问 search 中各个查询参数
+* createObjectURL： 创建一个唯一的 blob 链接
+
+#### searchParams
+
+```javascript
+//https://coding.imooc.com/class/564.html?mc_marking=bb86c9071ed9b7cf12612a2a85203372&mc_channel=hk
+
+var urlObj = new URL(window.location.href)
+console.log('===', urlObj.searchParams)
+console.log(urlObj.searchParams.get('mc_channel'))
+```
+
+#### createObjectURL
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        font-size: 28px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <textarea
+      id="textareaScript"
+      value="`asdasds`"
+      cols="80"
+      rows="20"
+    ></textarea>
+
+    <div>
+      <button type="button" id="btnCreateScript">创建脚本</button>
+    </div>
+
+    <script>
+      textareaScript.value = `;(function(){
+            console.log("location.href:", location.href)
+        })()`
+
+      btnCreateScript.onclick = function () {
+        const scriptContent = textareaScript.value
+        const scriptEL = document.createElement('script')
+        const scriptSrc = URL.createObjectURL(new Blob([scriptContent]))
+        scriptEL.src = scriptSrc
+        document.body.appendChild(scriptEL)
+      }
+    </script>
+  </body>
+</html>
+```
+
+### URL.searchParams
+
+> MDN: [https://developer.mozilla.org/zh-CN/docs/Web/API/URLSearchParams](https://developer.mozilla.org/zh-CN/docs/Web/API/URLSearchParams)
+
+拥有一系列方法
+
+- [`URLSearchParams.append()`](https://developer.mozilla.org/zh-CN/docs/Web/API/URLSearchParams/append)
+
+  插入一个指定的键/值对作为新的搜索参数。
+
+- [`URLSearchParams.delete()`](https://developer.mozilla.org/zh-CN/docs/Web/API/URLSearchParams/delete)
+
+  从搜索参数列表里删除指定的搜索参数及其对应的值。
+
+- [`URLSearchParams.entries()`](https://developer.mozilla.org/zh-CN/docs/Web/API/URLSearchParams/entries)
+
+  返回一个[`iterator`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Iteration_protocols)可以遍历所有键/值对的对象。
+
+- [`URLSearchParams.get()`](https://developer.mozilla.org/zh-CN/docs/Web/API/URLSearchParams/get)
+
+  获取指定搜索参数的第一个值。
+
+- [`URLSearchParams.getAll()`](https://developer.mozilla.org/zh-CN/docs/Web/API/URLSearchParams/getAll)
+
+  获取指定搜索参数的所有值，返回是一个数组。
+
+- [`URLSearchParams.has()`](https://developer.mozilla.org/zh-CN/docs/Web/API/URLSearchParams/has)
+
+  返回 [`Boolean`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Boolean) 判断是否存在此搜索参数。
+
+- [`URLSearchParams.keys()`](https://developer.mozilla.org/zh-CN/docs/Web/API/URLSearchParams/keys)
+
+  返回[`iterator`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Iteration_protocols) 此对象包含了键/值对的所有键名。
+
+- [`URLSearchParams.set()`](https://developer.mozilla.org/zh-CN/docs/Web/API/URLSearchParams/set)
+
+  设置一个搜索参数的新值，假如原来有多个值将删除其他所有的值。
+
+- [`URLSearchParams.sort()`](https://developer.mozilla.org/zh-CN/docs/Web/API/URLSearchParams/sort)
+
+  按键名排序。
+
+- [`URLSearchParams.toString()`](https://developer.mozilla.org/zh-CN/docs/Web/API/URLSearchParams/toString)
+
+  返回搜索参数组成的字符串，可直接使用在 URL 上。
+
+- [`URLSearchParams.values()`](https://developer.mozilla.org/zh-CN/docs/Web/API/URLSearchParams/values)
+
+  返回[`iterator`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Iteration_protocols) 此对象包含了键/值对的所有值。
+
+### encodeURI, encodeURIComponent 系列
+
+* 定义：都是编码 URL，唯一的区别在于编码的字符范围不同
+* encodeURIComponent 不转义的字符： A-Za-z0-9-_。！~*'()
+* encodeURI 不转义的字符： A-Za-z0-9;./?:@&=+$-_.!~*'()#
+
+```javascript
+const test1 = ";,/?:@&=+$";  // 保留字符
+const test2 = "-_.!~*'()";   // 不转义字符
+const test3 = "#";           // 数字标志
+const test4 = "ABC abc 123"; // 字母数字字符和空格
+
+console.log(encodeURI(test1)); 
+console.log(encodeURI(test2)); 
+console.log(encodeURI(test3)); 
+console.log(encodeURI(test4)); 
+
+console.log("-----------encodeURIComponent------------"); 
+
+console.log(encodeURIComponent(test1)); 
+console.log(encodeURIComponent(test2)); 
+console.log(encodeURIComponent(test3)); 
+console.log(encodeURIComponent(test4)); 
+```
+
+### encodeURI, encodeURIComponent 使用场景
+
+* 如果要编码整个 URL，然后需要使用这个 URL，那么使用 encodeURI
+* 如果要编码 URL 中的参数，那么使用 encodeURIComponent 是最好的
+
+```javascript
+console.log('-----encodeURI使用场景------')
+const test1 = 'https://www.baidu.com/index.html?wd=慕课网'
+console.log('encodeURI:', encodeURI(test1))
+console.log('encodeURIComponent:', encodeURIComponent(test1))
+console.log('-----encodeURIComponent使用场景------')
+// https://www.baidu.com/index.html?go=https://www.imooc.com/
+const test2 = 'https://www.baidu.com/index.html?go='
+console.log(
+  'encodeURIComponent:',
+  test2 + encodeURIComponent('https://www.imooc.com/'),
+)
+```
+
