@@ -2301,5 +2301,138 @@ navigator.storage.estimate().then(function(estimate){
 ### navigator.mediaSeeion（共享媒体信息）-实验
 
 * 定义：返回一个 MediaSeeion 对象，用来与浏览器共享媒体信息。比如：播放状态，标题，封面等
-* 应用：通知栏自定义媒体信息
+* 应：
+
+## 04：history，网页端的方向盘
+
+### 历史记录本质上就是一个栈
+
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/24ce561d24ab4bcf935dc145f25dd802~tplv-k3u1fbpfcp-watermark.image?)
+
+### 老四样
+
+| API             | 说明                     |
+| --------------- | ------------------------ |
+| history.back    | 向后移动一页             |
+| history.forward | 向前移动一页             |
+| history.go      | 向前或者向后移动指定页数 |
+| history.length  | 当前会话中的历史页面数   |
+
+#### back & forward & length 
+
+* back: 会话历史记录中向后移动一页，如果没有上一页，则此方法调用不执行任何操作
+* forward: 会话历史记录中向前移动一页，如果没有下一页，则此方法调用不执行任何操作
+* length：返回当前会话中的历史页面数，包含当前页面在内，对于新开一个 tab 加载的页面当前属性返回值为 1
+
+> 注意：通过 window.open() 内部什么都不穿，此时 history.length 是 0
+
+#### go
+
+* 定义：在会话历史中向前或者向后移动指定页数
+* 负值表示向后移动，正值表示向前移动。**如果未向该函数传参或者等于0，则该函数与调用 location.reload() 具有相同的效果**
+* **如果需要移动的页面数，大于可以移动的页面数，不进行任何移动**
+
+### 新四样
+
+| API                  | 说明                                           |
+| -------------------- | ---------------------------------------------- |
+| history.pushState    | 向当前浏览器会话的历史堆栈中添加一个状态       |
+| history.replaceState | 修改当前历史记录状态                           |
+| history.state        | 返回在会话栈顶的状态值的拷贝                   |
+| window.onpopstate    | 当活动历史记录条目更改时，将触发 popstate 事件 |
+
+#### history.pushState
+
+* 语法：`history.pushState([state, title[, url]])`
+* **其会增加历史访问记录（即使url为空），但是不会改变页面的内容**
+* 新的URL 跟当前的 URL 必须是**同源**
+
+#### history.replaceState
+
+* 语法：`history.replaceState([stateObj, title[, url]])`
+* **是替换浏览记录栈顶的记录，不会增加栈的深度**
+* 新的URL 跟当前的 URL 必须是**同源**
+
+#### window.onpopstate
+
+* 当活动历史记录条目更改时，将触发 popstate 事件
+* 调用 **history.pushState()** 或者 **history.replaceState()** 不会触发 popState 事件
+* popstate 事件只会在浏览器某些行为下触发，比如点击后退、前进按钮（或者在 JavaScript中调用 history.back()、history.forward()、history.go()方法）
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>history新四样</title>
+    <style>
+      * {
+        font-size: 28px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div>
+      state:
+      <div id="stateValue"></div>
+      <div>历史记录长度:<span id="hlength"></span></div>
+    </div>
+    <div>
+      <br />
+      <a href="#index">#index</a><br />
+      <button type="button" id="btnPushState">pushState</button><br />
+      <button type="button" id="btnReplaceState">replaceState</button><br />
+    </div>
+
+    <script>
+      let index = 0
+      hlength.textContent = history.length
+      btnPushState.onclick = function (ev) {
+        index++
+        history.pushState(
+          { data: 'pushState' + index },
+          '',
+          `/pushState${index}.html`,
+        )
+        hlength.textContent = history.length
+      }
+
+      btnReplaceState.onclick = function (ev) {
+        history.replaceState({ data: 'replaceState' }, '', '/replaceState.html')
+        hlength.textContent = history.length
+      }
+
+      window.onpopstate = function (ev) {
+        console.log('onpopstate:')
+        stateValue.textContent = JSON.stringify(ev.state)
+        hlength.textContent = history.length
+      }
+    </script>
+  </body>
+</html>
+```
+
+#### 刷新的问题
+
+* history.pushState 方案，刷新的时候需要服务端的配合
+* **方案：就是不管你访问路由的是啥，我都返回同一份 index.html**
+
+```javascript
+// server.js
+const express = require('express')
+const path = require('path')
+
+const app = express()
+
+app.get('*', function (req, res, next) {
+  res.sendFile(path.join(__dirname, './index.html'))
+})
+
+app.listen(8086, function () {
+  console.log('listening on port 8086')
+})
+```
 
