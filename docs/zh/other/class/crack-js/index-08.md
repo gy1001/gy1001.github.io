@@ -540,7 +540,7 @@ document.addEventListener('visibilitychange', function () {
 ### window.print 样式设置
 - 第一种： 媒体查询
   ```css
-  @media print {
+  @media print {C
     .content1 {
       color: green;
       font-size: 18px;
