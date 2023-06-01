@@ -46,6 +46,7 @@ export const sidebarZh: SidebarConfig = {
       children: [
         '/zh/skill/front/mini-frame/mini-vue.md',
         '/zh/skill/front/mini-frame/mini-webpack.md',
+        '/zh/skill/front/mini-frame/mini-rorter.md',
       ],
     },
     {

@@ -1,4 +1,4 @@
-# Mini-Vue
+# mini-vue
 
 ## html 部分
 
