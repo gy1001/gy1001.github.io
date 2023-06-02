@@ -1284,3 +1284,1015 @@ server.on('connection', function connection(ws, req) {
 * 服务器突然重启
 * 服务器宕机
 * 服务器报错
+
+## 03：文件上传 & 后悔药：网络请求的取消
+
+### 网络请求的取消--服务端代码
+
+```typescript
+import http from 'http'
+import bodyParser from 'body-parser'
+import express from 'express'
+import createError from 'http-errors'
+// const multiparty = require('multiparty');
+
+const port = 3000
+
+const app = express()
+
+app.use(bodyParser.urlencoded({ extended: true }))
+const server = http.createServer(app)
+
+//设置跨域访问
+app.use(function (req, res, next) {
+  //设置允许跨域的域名，*代表允许任意域名跨域
+  //"*"
+  res.header('Access-Control-Allow-Origin', req.headers.origin)
+  //允许携带cookie
+  res.header('Access-Control-Allow-Credentials', 'true')
+  //允许的header类型
+  res.header('Access-Control-Allow-Headers', [
+    'X-PINGOTHER',
+    'content-type',
+    'Origin',
+    'X-Requested-With',
+  ])
+  //跨域允许的请求方式
+  res.header('Access-Control-Allow-Methods', 'DELETE,PUT,POST,GET,OPTIONS')
+
+  res.header('Access-Control-Max-Age', `${20}`)
+  if (req.method.toLowerCase() == 'options') res.send(200)
+  //让options尝试请求快速结束
+  else next()
+})
+
+app.post('/xhr', async (_req, _res) => {
+  console.log('xhr: 收到请求')
+  await sleep(10 * 1000)
+  _res.json({
+    code: 10000,
+  })
+})
+
+function sleep(time: number) {
+  return new Promise((resolve) => setTimeout(resolve, time))
+}
+
+app.get('/fetch', async (_req, res) => {
+  console.log('fetch:收到请求', _req.url)
+  await sleep(10 * 1000)
+  return res.json({
+    code: 10000,
+  })
+})
+
+app.get('/test2', (_req, res) => {
+  res.send('world')
+})
+
+app.get('/test4', async (_req, res) => {
+  console.log('收到请求=test4=', _req.url)
+  await sleep(30000)
+  return res.json({
+    REV: true,
+    DATA: {
+      msg: '成功',
+    },
+  })
+})
+
+server.listen(port, () => {
+  console.log('监听端口:', port)
+})
+
+// catch 404 and forward to error handler
+app.use(
+  (
+    _req: express.Request,
+    _res: express.Response,
+    next: express.NextFunction,
+  ) => {
+    const error = createError(404)
+    next(error)
+  },
+)
+
+process.on(
+  'unhandledRejection',
+  (reason: {} | null | undefined, p: Promise<any>) => {
+    console.error('自定义错误 Unhandled Rejection at:', p, 'reason:', reason)
+    // application specific logging, throwing an error, or other logic here
+  },
+)
+```
+
+### 网络请求的取消-XMLHttpRequest
+
+* XMLHttpRequest.abort()
+
+  ```javascript
+  const xhrObj = new XMLHttpRequest();
+  xhrObj.open("post", "http://127.0.0.1:3000/xhr", true);
+  xhrObj.send();
+  
+  // 取消请求
+  xhrObj.abort();
+  ```
+
+#### 代码示例
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>取消请求</title>
+    <style>
+      * {
+        font-size: 28px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div>测试ajax 界面</div>
+    <button id="btnSend">发送请求</button>
+    <button id="btnCancel">取消请求</button>
+    <script>
+      var xhrObj;
+      function sendRequest() {
+        xhrObj = new XMLHttpRequest();
+        xhrObj.withCredentials = true;
+        xhrObj.onreadystatechange = function () {
+          console.log("onreadystatechange: status=", xhrObj.status, xhrObj.readyState, xhrObj );
+          if (xhrObj.readyState == 4 && xhrObj.status == 200) {
+            console.log(xhrObj.responseText);
+          }
+        };
+        xhrObj.open("post", "http://127.0.0.1:3000/xhr", true);
+        // xhrObj.setRequestHeader("headera","b");
+        xhrObj.send();
+      }
+
+      btnSend.onclick = function () {
+        sendRequest();
+      };
+
+      btnCancel.onclick = function(){
+        xhrObj && xhrObj.abort();
+      }
+    </script>
+  </body>
+</html>
+```
+
+###  网络请求的取消-fetch
+
+* AbortController 对象的 abort()
+
+#### 代码示例
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    * {
+      font-size: 28px;
+    }
+  </style>
+  <body>
+    <div>测试fetch 界面</div>
+    <button id="btnSend">发送请求</button>
+    <button id="btnCancel">取消请求</button>
+    <script>
+      const controller = new AbortController()
+      const signal = controller.signal
+
+      function sendFetch(test) {
+        fetch('http://127.0.0.1:3000/fetch', { signal })
+          .then((response) => {
+            return response.text()
+          })
+          .then((text) => {
+            console.log(text)
+          })
+      }
+
+      btnSend.onclick = function () {
+        sendFetch()
+      }
+
+      btnCancel.onclick = function () {
+        console.log('取消请求')
+        controller.abort()
+      }
+    </script>
+  </body>
+</html>
+```
+
+### 网络请求的取消-Axios
+
+* AbortController 对象的 abort()
+
+  ```javascript
+  const controller = new AbortController()
+  
+  axios
+    .get('/foo/bar', {
+      signal: controller.signal,
+    })
+    .then(function (response) {
+      //...
+    })
+  // cancel the request
+  controller.abort()
+  ```
+
+* CancelToken（此 API 从 `v0.22.0` 开始已被弃用，不应在新项目中使用。）
+
+### 文件上传思路
+
+1. input 标签选择上传文件/拖拽方式获取文件/复制到粘贴板获取文件
+2. File Api 获取文件信息
+3. XMLHttpRequest 上传/Fetch 上传
+4. 上传数据：FormData/Blob等，服务器端：formData 使用 multipart/form-data
+
+### File 为特殊的 Blob 对象
+
+> MDN：[https://developer.mozilla.org/zh-CN/docs/Web/API/File](https://developer.mozilla.org/zh-CN/docs/Web/API/File)
+
+文件（**`File`**）接口提供有关文件的信息，并允许网页中的 JavaScript 访问其内容。
+
+通常情况下， `File` 对象是来自用户在一个 [`input`](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/input) 元素上选择文件后返回的 [`FileList`](https://developer.mozilla.org/zh-CN/docs/Web/API/FileList) 对象，也可以是来自由拖放操作生成的 [`DataTransfer`](https://developer.mozilla.org/zh-CN/docs/Web/API/DataTransfer) 对象，或者来自 [`HTMLCanvasElement`](https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLCanvasElement) 上的 `mozGetAsFile`() API。在 Gecko 中，特权代码可以创建代表任何本地文件的 File 对象，而无需用户交互（有关详细信息，请参阅[注意事项](https://developer.mozilla.org/zh-CN/docs/Web/API/File#注意事项)。
+
+**`File` 对象是特殊类型的 [`Blob`](https://developer.mozilla.org/zh-CN/docs/Web/API/Blob)**，且可以用在任意的 Blob 类型的 context 中。比如说， [`FileReader`](https://developer.mozilla.org/zh-CN/docs/Web/API/FileReader), [`URL.createObjectURL()`](https://developer.mozilla.org/zh-CN/docs/Web/API/URL/createObjectURL_static), [`createImageBitmap()` (en-US)](https://developer.mozilla.org/en-US/docs/Web/API/createImageBitmap), 及 [`XMLHttpRequest.send()`](https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest#send()) 都能处理 `Blob` 和 `File`。
+
+### 上传单个文件-客户端
+
+```html
+<input id="uploadFile" type="file" accept="image/*" />
+```
+
+* type 属性 file, 用户选择文件
+* accept 属性，规定选择文件的类型
+  * 文件扩展名：例如：".jpg .png .doc"
+  * 一个有效的 MIME 类型。但是没有扩展名(text/html, video/mp4等)
+  * audio/* 表示音频文件
+  * video/* 表示视频文件
+  * image/* 表示图片文件
+
+#### 客户端-代码示例
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>上传单个文件</title>
+    <style>
+      * {
+        font-size: 28px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <input id="uploadFile" type="file" accept="image/*" />
+
+    <button type="button" id="uploadBtn" onClick="startUpload()">
+      开始上传
+    </button>
+    <div class="progress">上传进度：<span id="progressValue">0</span></div>
+
+    <div id="uploadResult" class="result"></div>
+
+    <script>
+      const uploadFileEle = document.getElementById('uploadFile')
+      const progressValueEle = document.getElementById('progressValue')
+      const uploadResultEle = document.getElementById('uploadResult')
+
+      try {
+        function startUpload() {
+          if (!uploadFileEle.files.length) return
+          //获取文件
+          const file = uploadFileEle.files[0]
+          //创建上传数据
+          const formData = new FormData()
+          formData.append('file', file)
+          //上传文件
+          this.upload(formData)
+        }
+
+        function upload(data) {
+          const xhr = new XMLHttpRequest()
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+              const result = JSON.parse(xhr.responseText)
+              console.log('result:', result)
+              uploadResultEle.innerText = xhr.responseText
+            }
+          }
+
+          xhr.upload.onprogress = function (event) {
+            if (event.lengthComputable) {
+              progressValueEle.innerText = Math.ceil((event.loaded * 100) / event.total) + '%'
+            }
+          }
+
+          xhr.open('POST', 'http://127.0.0.1:3000/upload', true)
+          xhr.send(data)
+        }
+      } catch (e) {
+        console.log('error==', e)
+      }
+    </script>
+  </body>
+</html>
+```
+
+### 上传单个文件-服务端
+
+* 客户端使用 from-data 传递，服务器端以相同方式接收
+* multer 库用来处理 multipart/form-data
+* 服务端接收文件
+  1. 设置文件存储目录
+  2. 是否更改文件名称
+  3. 上传成功，通知客户端可访问的 url
+  4. url的产生，需要我们启动静态日志服务（上传文件保存地址）
+
+#### 服务端-代码示例
+
+```typescript
+import http from 'http'
+import bodyParser from 'body-parser'
+import express from 'express'
+import path = require('path')
+import createError from 'http-errors'
+const multer = require('multer')
+
+const port = 3000
+const app = express()
+
+// 上传成功后返回URL地址
+const resourceUrl = `http://127.0.0.1:${port}/`
+
+// 存储文件目录
+const uploadDIr = path.join(__dirname, '/upload')
+// destination 设置资源保存路径，filename 设置资源名称
+const storage = multer.diskStorage({
+  destination: async function (_req, _file, cb) {
+    cb(null, uploadDIr)
+  },
+  filename: function (_req, file, cb) {
+    // 设置文件名
+    cb(null, `${file.originalname}`)
+  },
+})
+
+const multerUpload = multer({ storage })
+
+//设置静态访问目录
+app.use(express.static(uploadDIr))
+
+app.use(bodyParser.urlencoded({ extended: true }))
+const server = http.createServer(app)
+
+//设置跨域访问
+app.use(function (req, res, next) {
+  //设置允许跨域的域名，*代表允许任意域名跨域
+  //"*"
+  res.header('Access-Control-Allow-Origin', req.headers.origin)
+  //允许携带cookie
+  res.header('Access-Control-Allow-Credentials', 'true')
+  //允许的header类型
+  res.header('Access-Control-Allow-Headers', ['content-type', 'Origin'])
+  //跨域允许的请求方式
+  res.header('Access-Control-Allow-Methods', 'DELETE,PUT,POST,GET,OPTIONS')
+
+  res.header('Access-Control-Max-Age', `${20}`)
+  if (req.method.toLowerCase() == 'options') res.send(200)
+  //让options尝试请求快速结束
+  else next()
+})
+
+app.post('/upload', multerUpload.any(), function (req, res, _next) {
+  // req.file 是 `avatar` 文件的信息
+  let urls = []
+  //获取所有已上传的文件
+  const files = (req as any).files
+
+  if (files && files.length > 0) {
+    //遍历生成url 集合返回给客户端
+    urls = files.map((item, _key) => {
+      return resourceUrl + item.originalname
+    })
+  }
+
+  return res.json({
+    REV: true,
+    DATA: {
+      url: urls,
+    },
+    MSG: '成功',
+  })
+})
+
+server.listen(port, () => {
+  console.log('监听端口:', port)
+})
+
+app.use(
+  (
+    _req: express.Request,
+    _res: express.Response,
+    next: express.NextFunction,
+  ) => {
+    const error = createError(404)
+    next(error)
+  },
+)
+
+process.on('unhandledRejection', (reason: {} | null | undefined, p: Promise<any>) => {
+   	console.error('自定义错误 Unhandled Rejection at:', p, 'reason:', reason)
+    // application specific logging, throwing an error, or other logic here
+  },
+)
+```
+
+### 多文件上传
+
+* input 属性：multiple 是否允许多个值（相关类型 email,file)
+
+#### 代码示例-客户端
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>上传多个文件</title>
+    <style>
+      * {
+        font-size: 28px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <input id="uploadFile" type="file" accept="image/*" multiple />
+    <button id="uploadBtn" onClick="startUpload()">开始上传</button>
+    <div class="progress">上传进度：<span id="progressValue">0</span></div>
+
+    <div id="uploadResult" class="result"></div>
+
+    <script>
+      const uploadFileEle = document.getElementById('uploadFile')
+      const progressValueEle = document.getElementById('progressValue')
+      const uploadResultEle = document.getElementById('uploadResult')
+
+      try {
+        function startUpload() {
+          if (!uploadFileEle.files.length) return
+          // 获取文件
+          const files = uploadFileEle.files
+          const formData = this.getUploadData(files)
+          this.upload(formData)
+        }
+
+        // 添加多个文件
+        function getUploadData(files) {
+          const formData = new FormData()
+          for (let i = 0; i < files.length; i++) {
+            const file = files[i]
+            formData.append(file.name, file)
+          }
+          return formData
+        }
+
+        function upload(data) {
+          const xhr = new XMLHttpRequest()
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+              const result = JSON.parse(xhr.responseText)
+              console.log('result:', result)
+              uploadResultEle.innerText = xhr.responseText
+            }
+          }
+
+          xhr.upload.addEventListener(
+            'progress',
+            function (event) {
+              if (event.lengthComputable) {
+                progressValueEle.innerText =
+                  Math.ceil((event.loaded * 100) / event.total) + '%'
+              }
+            },
+            false,
+          )
+
+          xhr.open('POST', 'http://127.0.0.1:3000/upload', true)
+          xhr.send(data)
+        }
+      } catch (e) {
+        console.log('error==', e)
+      }
+    </script>
+  </body>
+</html>
+```
+
+### 大文件上传-客户端
+
+![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3fcd758d3430411d88c3da8a81769918~tplv-k3u1fbpfcp-watermark.image?)
+
+### 大文件上传-客户端-切片
+
+```javascript
+/**
+ * 文件分片
+ * @param {*} file 文件
+ * @param {*} chunkSize 分片大小
+ * @returns
+ */
+const handleFileChunk = function (file, chunkSize) {
+  const fileChunkList = []
+  // 索引值
+  let curIndex = 0
+  while (curIndex < file.size) {
+    //最后一个切片以实际结束大小为准。
+    const endIndex = curIndex + chunkSize < file.size ? curIndex + chunkSize : file.size
+    const curFileChunkFile = file.slice(curIndex, endIndex)
+    curIndex += chunkSize
+    fileChunkList.push({ file: curFileChunkFile })
+  }
+  return fileChunkList
+}
+```
+
+### 大文件上传-客户端-大文件 hash
+
+```javascript
+/**
+ *
+ * 获取全部文件内容hash
+ * @param {any} fileList
+ */
+async function getFileHash(fileList) {
+  console.time('filehash')
+  const spark = new SparkMD5.ArrayBuffer()
+  //获取全部内容
+  const result = fileList.map((item, key) => {
+    return getFileContent(item.file)
+  })
+  try {
+    const contentList = await Promise.all(result)
+    for (let i = 0; i < contentList.length; i++) {
+      spark.append(contentList[i])
+    }
+    //生成指纹
+    const res = spark.end()
+    console.timeEnd('filehash')
+    return res
+  } catch (e) {
+    console.log(e)
+  }
+}
+```
+
+```javascript
+/**
+ *
+ * 获取文件内容
+ * @param {any} file
+ * @returns
+ */
+function getFileContent(file) {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader()
+    //读取文件内容
+    fileReader.readAsArrayBuffer(file)
+    fileReader.onload = (e) => {
+      //返回读取到的文件内容
+      resolve(e.target.result)
+    }
+    fileReader.onerror = (e) => {
+      reject(fileReader.error)
+      fileReader.abort()
+    }
+  })
+}
+```
+
+### 大文件上传-客户端-生成切片信息
+
+```javascript
+//给每个切片添加辅助内容信息
+const chunksInfo = fileList.map(({ file }, index) => ({
+  //整个文件hash
+  fileHash: containerHash,
+  //当前是第几个切片
+  index,
+  //文件个数
+  fileCount: fileList.length,
+  //当前切片的hash
+  hash: containerHash + '-' + index,
+  //切片内容
+  chunk: file,
+  //文件总体大小
+  totalSize: bigFile.size,
+  //单个文件大小
+  size: file.size,
+}))
+```
+
+### 大文件上传-客户端-封装单个请求
+
+```javascript
+/**
+ *
+ * 单个文件上传
+ * @param {any} {
+ *     url,
+ *     method="post",
+ *     data,
+ *     headers={},
+ * }
+ * @returns
+ */
+function singleRequest({ url, method = 'post', data, headers = {} }) {
+  return new Promise((resolve) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open(method, url)
+    Object.keys(headers).forEach((key) =>
+      xhr.setRequestHeader(key, headers[key]),
+    )
+    xhr.send(data)
+    xhr.onload = (e) => {
+      resolve({
+        data: e.target.response,
+      })
+    }
+  })
+}
+```
+
+### 大文件上传-客户端-上传所有切片
+
+```javascript
+/**
+ *
+ * 上传所有的分片
+ * @param {any} chunks
+ * @param {any} fileName
+ */
+async function uploadChunks(chunks, fileName) {
+  const requestList = chunks
+    .map(({ chunk, hash, fileHash, index, fileCount, size, totalSize }) => {
+      //生成每个切片上传的信息
+      const formData = new FormData()
+      formData.append('hash', hash)
+      formData.append('index', index)
+      formData.append('fileCount', fileCount)
+      formData.append('size', size)
+      formData.append('splitSize', DefaultChunkSize)
+      formData.append('fileName', fileName)
+      formData.append('fileHash', fileHash)
+      formData.append('chunk', chunk)
+      formData.append('totalSize', totalSize)
+      return { formData, index }
+    })
+    .map(async ({ formData, index }) =>
+      singleRequest({
+        url: 'http://127.0.0.1:3000/uploadBigFile',
+        data: formData,
+      }),
+    )
+  //全部上传
+  await Promise.all(requestList)
+}
+```
+
+### 大文件上传-服务端
+
+### 大文件上传-服务端-检查文件 hash
+
+```javascript
+const chunkDir = path.resolve(uploadDIr, fileHash)
+// 大文件存在直接返回,根据内容hash存储，可以实现后续秒传
+if (fse.existsSync(filePath)) {
+  return res.json({
+    code: 1000,
+    data: { url: `${resourceUrl}${saveFileName}` },
+    msg: '上传文件已存在',
+  })
+}
+```
+
+### 大文件上传-服务端-保存切片
+
+```javascript
+const fse = require('fs-extra')
+
+// 切片目录不存在，创建切片目录
+if (!fse.existsSync(chunkDir)) {
+  await fse.mkdirs(chunkDir)
+}
+
+const chunkFile = path.resolve(chunkDir, hash)
+if (!fse.existsSync(chunkFile)) {
+  await fse.move(chunk.path, path.resolve(chunkDir, hash))
+}
+```
+
+### 大文件上传-服务端-检车切片是否可以合并
+
+```javascript
+/**
+ *
+ * 检查切片是否可以合并
+ * @export
+ * @param {any} pathName 切片存储目录
+ * @param {any} totalCount 大文件包含切片个数
+ * @param {any} hash 大文件hash
+ * @returns
+ */
+export function checkFileIsMerge(pathName, totalCount, hash) {
+  var dirs = []
+  //同步读取切片存储目录
+  const readDir = fse.readdirSync(pathName)
+  //判断目录下切片数量 小于 总切片数，不能合并
+  if (readDir && readDir.length < totalCount)
+    return false
+    //获取目录下所有真正属于该文件的切片，以大文件hash为准
+  ;(function iterator(i) {
+    if (i == readDir.length) {
+      return
+    }
+    const curFile = fse.statSync(path.join(pathName, readDir[i]))
+    //提出目录和文件名不包含大文件hash的文件
+    if (curFile.isFile() && readDir[i].includes(hash + '')) {
+      dirs.push(readDir[i])
+    }
+    iterator(i + 1)
+  })(0)
+  //数量一直，可以合并
+  if (dirs.length === totalCount) {
+    return true
+  }
+  return false
+}
+```
+
+### 大文件上传-服务端-合并所有切片
+
+```javascript
+/**
+ *
+ * 合并所有切片
+ * @export
+ * @param {any} {
+ *     filePath:文件路径包含后缀名
+ *     fileHash:文件hash
+ *     chunkDir:切片存放的临时目录
+ *     splitSize:每个切片的大小
+ *     fileCount:文件总个数
+ *     totalSize:文件总大小
+ * }
+ * @returns
+ */
+export async function chunkMerge({
+  filePath,
+  fileHash,
+  chunkDir,
+  splitSize,
+  fileCount,
+  totalSize,
+}) {
+  const chunkPaths = await fse.readdir(chunkDir)
+  //筛选合适的切片
+  const filterPath = chunkPaths.filter((item) => {
+    return item.includes(fileHash)
+  })
+  //数量不对，抛出错误
+  if (filterPath.length !== fileCount) {
+    console.log('合并错误')
+    return
+  }
+  // 根据切片下标进行排序,方便合并
+  filterPath.sort((a, b) => a.split('-')[1] - b.split('-')[1])
+  await Promise.all(
+    chunkPaths.map((chunkPath, index) => {
+      //并发写入，需要知道开始和结束位置
+      let end = (index + 1) * splitSize
+      if (index === fileCount - 1) {
+        end = totalSize + 1
+      }
+      return pipeStream(
+        path.resolve(chunkDir, chunkPath),
+        // 指定位置创建可写流
+        fse.createWriteStream(filePath, {
+          start: index * splitSize,
+          end: end,
+        }),
+      )
+    }),
+  )
+  //删除所有切片
+  // fse.rmdirSync(chunkDir); // 合并后删除保存切片的目录
+  return filePath
+}
+```
+
+### 完整项目参见目录
+
+[大文件上传前后端示例代码](https://github.com/gy1001/Javascript/blob/main/JavaScript-Crack/09.%20%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/9.4%20%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%92%8C%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82%E7%9A%84%E5%8F%96%E6%B6%88/4.%20%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/client/index.html)
+
+### 大文件上传的思考
+
+* 大文件如何实现断点续传？
+* 大文件上传进度如何实现？
+* 内容 hash 的速度如何提升？
+
+## 04： 资源加载知多少
+
+### 页面加载的流程
+
+> 页面卸载(如果有的话) => DNS解析 => TCP链接 => HTTP请求 => 服务器响应 => 浏览器解析
+
+### 渲染流程
+
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a9f98f8edd8840faac17ea2a4db87f10~tplv-k3u1fbpfcp-watermark.image?)
+
+### 页面加载的时间
+
+* 开发者工具可以查看页面的加载时间
+
+  ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9af5e29e62524c588fe2f1a1418817d8~tplv-k3u1fbpfcp-watermark.image?)
+
+#### Navigation Timing Api
+
+> MDN: [https://developer.mozilla.org/zh-CN/docs/Web/API/Performance_API/Navigation_timing](https://developer.mozilla.org/zh-CN/docs/Web/API/Performance_API/Navigation_timing)
+
+* 提供了可用于衡量一个网络性能的数据
+
+* JS 的对象模型：PerformanceTiming 等
+
+  > 可以在控制台中输入 performance.timing 查看结果
+
+* 页面加载所需要的总时长：loadEventEnd - navigationStart
+
+* 请求返回时长：responseEnd - requestStart
+
+* DNS解析时间：domainLookupEnd - domainLookupStart
+
+![img](https://wukongdoc.tingyun.com/browser/image/1f8ef4d83266f862ee9a6c252922a686.png)
+
+### 资源加载的时间-Resource Timing API
+
+* 获取和分析应用资源加载的详细网络计时数据，比如 XMLHttpRequest，SVG,图片，或者脚本
+
+* JS 对象模型为 `PerformanceResourceTiming`
+
+* 在控制台中输入：`performance.getEntries("source")` 即可发现如下结果
+
+  ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7a5b8d3f184f452b9af49c024204f476~tplv-k3u1fbpfcp-watermark.image?)
+
+### 获取全部的加载性能数据
+
+> performance.getEntries()
+
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b16338708d5d4fc183c375c60ee7178b~tplv-k3u1fbpfcp-watermark.image?)
+
+### 用代码统计页面和资源加载性能
+
+```javascript
+function getPerformanceEntries() {
+  var p = performance.getEntries();
+  for (var i = 0; i < p.length; i++) {
+    console.log(p[i]);
+    printPerformanceEntry(p[i]);
+  }
+}
+function printPerformanceEntry(perfEntry) {
+  var properties = ["name", "entryType", "startTime", "duration"];
+  if (perfEntry.entryType === "navigation") {
+    result.innerHTML += `
+    <div>资源:${perfEntry.name}</div>
+    <div>加载时间:${perfEntry.responseEnd - perfEntry.startTime}</div><hr>
+  `;
+  } else if (perfEntry.entryType == "resource") {
+    result.innerHTML += `
+    <div>资源:${perfEntry.name}</div>
+    <div>加载时间:${perfEntry.duration}</div>
+    <hr>
+  `;
+  }
+}
+
+getPerformanceEntries();
+```
+
+### 资源加载优先级
+
+* html, css, font, 同步的 XMLHttpRequest 这三种类型的资源优先级最高
+* 在可视区的图片，script 标签，异步 XMLHttpRequest 和 fetch 等，优先级次之
+* 图片，音视频，优先级再次之
+* prefetch 预读取的资源，优先级再次之
+
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3e1de33f9a464bfd83ad289d77cf1c15~tplv-k3u1fbpfcp-watermark.image?)
+
+### 资源加载优先级注意事项
+
+* css 在 head 里面和在 body 里面的优先级不一样
+* 可视区的图片优先级高于 js, 但是 js 会优先加载
+* 可推迟加载资源：图片、视频等
+
+### 自定义优先级
+
+* link, image, iframe, script 标签均有一个属性 importance. 现在是实验性的功能
+
+  > `importance` 实验性，指示资源的相对重要性。优先级提示使用以下值委托：
+  >
+  > **`auto`**: 表示**没有偏好**。浏览器可以使用其自己的启发式方法来确定资源的优先级。
+  >
+  > **`high`**: 向浏览器指示资源具有高优先级。
+  >
+  > **`low`**: 向浏览器指示资源的优先级较低。
+  >
+  > **备注：** 只有存在 rel=“preload”或 rel=“prefetch”时，importance 属性才能用于<link>元素。
+
+#### 示例代码
+
+[资源加载优先级示例代码](https://github.com/gy1001/Javascript/blob/main/JavaScript-Crack/09.%20%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/9.5%20%E5%A6%82%E4%BD%95%E6%9B%B4%E9%AB%98%E6%95%88%E7%9A%84%E5%8A%A0%E8%BD%BD%E7%BD%91%E7%BB%9C%E8%B5%84%E6%BA%90/2.%20%E8%B5%84%E6%BA%90%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%85%88%E7%BA%A7/index.html)
+
+### CSS 不阻塞DOM的解析，阻塞页面渲染
+
+* 当 CSS 没有回来之前，我们的页面没有渲染出任何东西
+
+* 请求其实差不多同一时间发出来了，说明其了解了 DOM 后来的内容
+
+  (如下图，CSS 和 其他的 js 几乎是同一时间进行了请求)
+
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8159f59ada8b49cd8db26b2fa59f0d53~tplv-k3u1fbpfcp-watermark.image?)
+
+### JS 的执行 阻塞 DOM 解析
+
+### pre系列
+
+#### preload、prefetch、prerender、preconnect
+
+* preload: 表示用户十分有可能需要再当前浏览器中加载目标资源，所以浏览器必须预先获取和缓存对应资源
+* prefetch: 是为了提示浏览器，用户未来的浏览有可能需要加载目标资源，所以浏览器有可能通过事先获取和缓存对应资源，优化用户体验。主要用于预取将在下一次导航/页面加载中使用的资源
+* prerender: 内容被预先取出，然后在后台被浏览器渲染，就好像内容已经被渲染到一个不可见的单独的标签页。
+* preconnect: 预先建立连接（TCP）
+
+#### dns-prefetch
+
+* dns-prefetch: 是尝试在请求资源之前解析域名
+* 仅对跨域域上的 DNS 查找有效，因此请避免用它来指向您的站点
+* dns-prefetch 与 preconnect（预链接）一起使用，效果更佳。一个解析 DNS ，一个预先建立 TCP 链接
+
+```html
+<link rel="dns-prefetch" href="https://fonts.googleapis.com/">
+```
+
+#### pre 示例一览
+
+```html
+// 预加载，优先级高
+<link rel="preload" href="./assets/index.js?t=1" as="script">
+// 资源预加载，优先级低
+<link rel="prefetch" href="//xxxx.com/a,css">
+// DNS预解析
+<link rel="dns-prefetch" href="//xxx.com">
+// 预链接，建立 TCP 链接
+<link rel="preconnect" href="//www.cdn.com">
+// 预渲染，预先加载链接文档的链接
+<link rel="prerender" href="./ifr.html" />
+```
+
+### 图片的加载
+
+加快加载的方式
+
+* 压缩图片
+* 选择合适的图片格式，优先 jpg 和 webp 格式
+* 使用 CDN
+* 使用 dns-prefetch
+* 图片多的话，放不同的域名，提高并发数
+* 大图 png 交错，jpg 渐进式提高视觉体验（另一种叫做 基准式，数据将按照存储时的顺序从上到下一行一行的被显示出来）
+* 懒加载，intersecionObserver 进入可视区后再去加载图片
+* 。。。
