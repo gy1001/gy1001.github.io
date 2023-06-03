@@ -2367,3 +2367,218 @@ getPerformanceEntries();
 </html>
 ```
 
+## 05：资源加载器的设计和实现 
+
+### 什么是资源加载器
+
+* 通过程序加载资源(css、js、视频等),以便以后重复利用
+
+```javascript
+function preload(){
+  this.load.image("sky", "assets/sky.png")
+  this.load.image("ground", "assets/platform.png")
+  this.load.image("bomd", "assets/bomb.png")
+}
+```
+
+#### 资源加载器库 PreloadJS
+
+> [https://www.npmrc.cn/en/PreloadJS.html](https://www.npmrc.cn/en/PreloadJS.html)
+
+```javascript
+// 示例代码
+var queue = new createjs.LoadQueue(false);
+queue.on("fileload", handleFileComplete);
+queue.loadFile('http://createjs.com/assets/images/png/createjs-badge-dark.png');
+function handleFileComplete(event) {
+	document.body.appendChild(event.result);
+}
+```
+
+### 资源加载器的基本原理
+
+* 发送请求获取资源
+* 用 key 标记资源
+* URL.createObjectURL 生成 url,以便之后复用
+
+### 资源加载缺陷
+
+* 没有显式的版本问题
+* 没有缓存
+* 资源之间没有依赖关系
+
+### 改进资源加载器
+
+* 支持版本：用属性字段标记版本
+* 支持缓存：indexedDB
+* 支持依赖关系：一个字段标记前置依赖，比如 `react-dialog` 依赖 `[react, react-dom]`
+
+#### 资源属性设计
+
+* key: 资源的唯一标记
+* url: 资源的地址
+* ver: 资源的版本标记
+* pre: 资源加载的前置项，比如  `react-dialog` 的依赖项 `[react, react-dom]`
+
+### 资源加载器组成
+
+* `util`: 工具方法
+* `idb.js` 文件存储
+* `class Emitter`: 事件中心
+* `class CacheManger`: 缓存管理
+* `class ResourceLoader`: 资源加载和管理
+
+### 资源加载流程图
+
+![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8a554394a42f4bf3adde4d17a675ea60~tplv-k3u1fbpfcp-watermark.image?)
+
+### 工具方法：资源下载
+
+```javascript
+// 获取资源
+function fetchResource(url) {
+  return fetch(url, {
+    method: 'get',
+    responseType: 'blob',
+  })
+    .then((res) => {
+      // 小于200， 或者大于300
+      if (res.status < 200 || res.status >= 300) {
+        throw new Error(res.status + ',' + res.statusText)
+      }
+      return res
+    })
+    .then((res) => res.blob())
+}
+```
+
+### 工具方法：版本比较
+
+* 版本格式：xxx 例如 1.0.1
+
+  ```javascript
+  // 版本比较
+  function compareVersion(v1 = '', v2 = '') {
+    if (v1 == v2) {
+      return 0
+    }
+    const version1 = v1.split('.')
+    const version2 = v2.split('.')
+    const len = Math.max(version1.length, version2.length)
+  
+    while (version1.length < len) {
+      version1.push('0')
+    }
+    while (version2.length < len) {
+      version2.push('0')
+    }
+    for (let i = 0; i < len; i++) {
+      const num1 = parseInt(version1[i]) || 0
+      const num2 = parseInt(version2[i]) || 0
+      if (num1 > num2) {
+        return 1
+      } else if (num1 < num2) {
+        return -1
+      }
+    }
+    return 0
+  }
+  ```
+
+### 工具方法：对象克隆
+
+```javascript
+// 复制对象
+function cloneObject(obj) {
+  return JSON.parse(JSON.stringify(obj))
+}
+```
+
+### 工具方法：生成资源地址
+
+```javascript
+// 生成blob的地址
+function generateBlobUrl(blob) {
+  return URL.createObjectURL(blob)
+}
+```
+
+### 工具方法：验证 key
+
+* 不能为空
+* 不能重复
+
+```javascript
+// 验证key，空key？ 重复的key?
+function validateKey(resources) {
+  let failed = false
+  // 空key检查
+  const emptyKeys = resources.filter((r) => r.key == undefined || r.key == '')
+  if (emptyKeys.length > 0) {
+    failed = true
+    console.error('ResourceLoader validateKey: 资源都必须有key')
+    return failed
+  }
+  // 资源重复检查, 按照key分组
+  const results = Object.create(null)
+  resources.forEach((r) => {
+    ;(results[r.key] = results[r.key] || []).push(r)
+  })
+
+  Object.keys(results).forEach((k) => {
+    if (results[k].length > 1) {
+      console.error(
+        'key ' + k + ' 重复了,' + results[k].map((r) => r.url).join(','),
+      )
+      failed = true
+    }
+  })
+  return failed
+}
+```
+
+### 消息通知
+
+* 典型的订阅发布
+
+  ```javascript
+  class Emitter{
+    constructor(){
+      
+    }
+    emit(type, ...args){
+      
+    }
+    on(type. fn){
+      
+    }
+    off(type, fn){
+      
+    }
+  }
+  ```
+
+### 缓存管理
+
+* 统一管理本地缓存
+
+  ```javascript
+  class CacheManager{
+    cosntructor(){}
+    load(keys){}
+    get data(){}
+    get(key){}
+    isCached(key){}
+    set(key, value){}
+    clear(){}
+    del(key){}
+  }
+  ```
+
+### 资源加载核心 loader 的实现
+
+* 也就是整个流程的对应实现
+
+### 资源加载器代码项目地址
+
+[ 资源加载器](https://github.com/gy1001/Javascript/blob/main/JavaScript-Crack/09.%20%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/9.6%20%E8%B5%84%E6%BA%90%E5%8A%A0%E8%BD%BD%E5%99%A8/index.html)
