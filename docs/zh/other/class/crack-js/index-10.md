@@ -2799,3 +2799,4 @@ client:req1:res {
 
 ### 代码示例
 
+[[基于Promise的通用异步方案](https://github.com/gy1001/Javascript/tree/main/JavaScript-Crack/10. 爱上异步编程/10.4 基于Promise的通用异步方案)](https://github.com/gy1001/Javascript/blob/main/JavaScript-Crack/10.%20%E7%88%B1%E4%B8%8A%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/10.4%20%E5%9F%BA%E4%BA%8EPromise%E7%9A%84%E9%80%9A%E7%94%A8%E5%BC%82%E6%AD%A5%E6%96%B9%E6%A1%88/src/index.ts)
