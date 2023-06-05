@@ -465,3 +465,770 @@ if (typeof window.queueMicrotask !== 'function') {
   </body>
 </html>
 ```
+
+## 02：小试牛刀之宏任务和微任务
+
+### 案例一： async + await
+
+```javascript
+async function async1() {
+  console.log('async1 start')
+  await async2()
+  // .then()
+  console.log('async1 end')
+}
+async function async2() {
+  console.log('async2')
+}
+// new Promise(function(resolve, reject) {
+//     resolve(undefined);
+// })
+
+console.log('main start')
+
+setTimeout(function () {
+  console.log('setTimeout')
+})
+async1()
+new Promise(function (resolve) {
+  console.log('promise 构造')
+  resolve()
+}).then(function () {
+  console.log('promise then')
+})
+
+console.log('main end')
+
+// 宏任务：
+// 微任务：
+
+/* 输出 */
+// main start
+// async1 start
+// async2
+// promise 构造
+// main end
+// async1 end
+// promise then
+// setTimeout
+
+// js主线程 "main-start"  "async1 start"   "async2"  "promise 构造"  "main end"
+// 宏任务："setTimeout"
+// 微任务： "async1 end"  “promise then”
+```
+
+### 案例二：宏任务产生微任务
+
+```javascript
+console.log('main start')
+
+setTimeout(function setTimeout0() {
+  console.log('T1:宏任务')
+  Promise.resolve().then(() => {
+    console.log('T2:微任务')
+  })
+})
+
+new Promise(function (resolve, reject) {
+  console.log('T3:Promise 构造')
+  setTimeout(function setTimeout300() {
+    console.log('T4:宏任务')
+    resolve('T6')
+    Promise.resolve().then(() => {
+      console.log('T5:微任务')
+    })
+  }, 300)
+}).then((res) => {
+  console.log('T6:微任务')
+})
+```
+
+输出顺序如下
+
+```tex
+main start
+T3:Promise 构造
+T1:宏任务
+T2:微任务
+T4:宏任务
+T6:微任务
+T5:微任务
+```
+
+### 案例三：MessageChanner 优先级
+
+```html
+<body>
+  <button id="startMsg">BroadcastChannel 发送广播</button>
+
+  <script>
+    startMsg.onclick = function () {
+      console.log('main')
+      setTimeout(() => {
+        console.log('setTimeout 宏任务 1')
+      }, 0)
+
+      new Promise((resolve, reject) => {
+        console.log('promise 构造')
+        resolve(5)
+      }).then((data) => {
+        console.log('promise 微任务', data)
+      })
+
+      const ch = new MessageChannel()
+      ch.port1.onmessage = function (ev) {
+        console.log('收到MessageChannel消息', ev.data.msg)
+      }
+      ch.port2.postMessage({ msg: '11' })
+
+      new Promise((resolve, reject) => {
+        console.log('promise2 构造')
+        resolve(6)
+      }).then((data) => {
+        console.log('promise2 微任务', data)
+      })
+
+      setTimeout(() => {
+        console.log('setTimeout 宏任务 2')
+      }, 0)
+
+      console.log('main end')
+    }
+  </script>
+</body>
+```
+
+打印信息如下
+
+```tex
+main
+promise 构造
+promise2 构造
+main end
+promise 微任务 5 
+promise2 微任务', 6
+setTimeout 宏任务 1
+收到MessageChannel消息', 11
+setTimeout 宏任务 2
+```
+
+### 案例四：Promise
+
+```javascript
+//第一个promise
+Promise.resolve()
+  .then(() => {
+    console.log(1)
+  })
+  .then(() => {
+    console.log(3)
+    return Promise.resolve(7)
+  })
+  .then((res) => {
+    console.log(res)
+  })
+
+//第二个promise
+Promise.resolve()
+  .then(() => {
+    console.log(2)
+  })
+  .then(() => {
+    console.log(4)
+  })
+  .then(() => {
+    console.log(5)
+  })
+  .then(() => {
+    console.log(6)
+  })
+  .then(() => {
+    console.log(8)
+  })
+```
+
+输出顺序如下
+
+```text
+1 2 3 4 5 6 7 8
+```
+
+## 03：DOM事件小例子，巩固解事件循环
+
+### 回顾事件循环
+
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/12dbdf61b390488abdb12a64dd87ee8c~tplv-k3u1fbpfcp-watermark.image?)
+
+### 案例1：DOM 事件在事件循环中的执行顺序
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .outer-btn {
+        position: relative;
+        width: 300px;
+        height: 100px;
+        background: red;
+      }
+
+      .inner-btn {
+        position: relative;
+        width: 200px;
+        height: 80px;
+        background: yellow;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="outer-btn">
+      外部按钮
+      <div class="inner-btn">内部按钮</div>
+    </div>
+    <script>
+      var outerBtn = document.querySelector('.outer-btn')
+      var innerBtn = document.querySelector('.inner-btn')
+
+      new MutationObserver(function () {
+        console.log('mutate 微任务')
+      }).observe(outerBtn, {
+        //观察属性变化
+        attributes: true,
+      })
+
+      //点击方法
+      function onClick() {
+        console.log('click')
+        setTimeout(function () {
+          console.log('timeout 宏任务')
+        })
+        Promise.resolve().then(function () {
+          console.log('promise 微任务')
+        })
+
+        outerBtn.setAttribute('data-number', Math.random())
+      }
+
+      outerBtn.addEventListener('click', onClick)
+      innerBtn.addEventListener('click', onClick)
+
+      // click时：这是监听冒泡
+      // 宏任务队列：onClick(inner), onClick(outer)
+
+      // 事件循环： 执行第一个onClick(inner)
+      // 执行前：
+      // 宏任务队列：onClick(inner), onClick(outer)
+      // 微任务任务队列：
+
+      //// console.log("click");
+
+      // 执行后：
+      // 宏任务队列： onClick(outer), setTimeout
+      // 微任务任务队列：promise, mutate
+
+      //// 执行微任务输出： promise 微任务, mutate 微任务
+
+      //事件循环： 执行第二个onClick(outer)
+      // 执行前：
+      // 宏任务队列：onClick(outer), setTimeout
+      // 微任务任务队列：
+
+      //// console.log("click");
+
+      // 执行后：
+      // 宏任务队列： setTimeout, setTimeout
+      // 微任务任务队列：promise, mutate
+
+      ///// 执行微任务输出： promise 微任务, mutate 微任务
+
+      // 下一个事件循环
+      // 执行前 宏任务队列： setTimeout, setTimeout
+      //// 输出 timeout 宏任务
+      // 执行后 宏任务队列： setTimeout
+
+      // 再下一个事件循环
+      // 执行前 宏任务队列： setTimeout
+      //// 输出 timeout 宏任务
+      // 执行后 宏任务队列：
+    </script>
+  </body>
+</html>
+```
+
+输出结果如下
+
+```text
+click
+promise 微任务
+mutate 微任务
+click
+promise 微任务
+mutate 微任务
+timeout 宏任务
+timeout 宏任务
+```
+
+### 案例2：JS 点击事件对 DOM 事件影响
+
+> 代码触发的事件，会作为同步代码执行，进入队列
+
+#### element.click 主动触发
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .outer-btn {
+        position: relative;
+        width: 300px;
+        height: 100px;
+        background: red;
+      }
+
+      .inner-btn {
+        position: relative;
+        width: 200px;
+        height: 80px;
+        background: yellow;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="outer-btn">
+      外部按钮
+      <div class="inner-btn">内部按钮</div>
+    </div>
+    <script>
+      var outerBtn = document.querySelector('.outer-btn')
+      var innerBtn = document.querySelector('.inner-btn')
+
+      new MutationObserver(function () {
+        console.log('mutate 微任务')
+      }).observe(outerBtn, {
+        //观察属性变化
+        attributes: true,
+      })
+
+      //点击方法
+      function onClick(ev) {
+        console.log('click', ev.currentTarget.className)
+
+        setTimeout(function () {
+          console.log('timeout 宏任务')
+        })
+
+        Promise.resolve().then(function () {
+          console.log('promise 微任务')
+        })
+
+        outerBtn.setAttribute('data-number', Math.random())
+      }
+
+      outerBtn.addEventListener('click', onClick)
+      innerBtn.addEventListener('click', onClick)
+
+      //
+      innerBtn.click()
+
+      // 执行第一个onClick(inner)
+      // 执行前：
+      // 宏任务队列：
+      // 微任务任务队列：
+
+      //// console.log("click");
+
+      // 执行后：
+      // 宏任务队列： setTimeout
+      // 微任务任务队列：promise, mutate
+
+      // 执行第二个onClick(outer)
+      // 执行前：
+      // 宏任务队列：setTimeout
+      // 微任务任务队列：promise, mutate
+
+      //// console.log("click");
+
+      // 执行后：!!!! MutationObserver 不会再添加
+      // 宏任务队列： setTimeout, setTimeout
+      // 微任务任务队列：promise, mutate, promise,
+
+      ///// 执行微任务输出： promise 微任务, mutate 微任务,promise 微任务,
+
+      // 下一个事件循环
+      // 执行前 宏任务队列： setTimeout, setTimeout
+      //// 输出 timeout 宏任务
+      // 执行后 宏任务队列： setTimeout
+
+      // 再下一个事件循环
+      // 执行前 宏任务队列： setTimeout
+      //// 输出 timeout 宏任务
+      // 执行后 宏任务队列：
+    </script>
+  </body>
+</html>
+```
+
+执行结果如下
+
+```text
+click inner-btn
+click outer-btn
+promise 微任务
+mutate 微任务
+promise 微任务
+timeout 宏任务
+```
+
+#### element.dispatchEvent 主动触发
+
+> 同上
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .outer-btn {
+        position: relative;
+        width: 300px;
+        height: 100px;
+        background: red;
+      }
+
+      .inner-btn {
+        position: relative;
+        width: 200px;
+        height: 80px;
+        background: yellow;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="outer-btn">
+      外部按钮
+      <div class="inner-btn">内部按钮</div>
+    </div>
+    <script>
+      var outerBtn = document.querySelector('.outer-btn')
+      var innerBtn = document.querySelector('.inner-btn')
+
+      new MutationObserver(function () {
+        console.log('mutate 微任务')
+      }).observe(outerBtn, {
+        //观察属性变化
+        attributes: true,
+      })
+
+      //点击方法
+      function onClick(ev) {
+        console.log('click', ev.currentTarget.className)
+
+        setTimeout(function () {
+          console.log('timeout 宏任务')
+        })
+
+        Promise.resolve().then(function () {
+          console.log('promise 微任务')
+        })
+
+        outerBtn.setAttribute('data-number', Math.random())
+      }
+
+      outerBtn.addEventListener('click', onClick)
+      innerBtn.addEventListener('click', onClick)
+
+      //点击
+      const evObj = document.createEvent('MouseEvents')
+      evObj.initEvent('click', true, true)
+      evObj.eventType = 'message'
+      innerBtn.dispatchEvent(evObj)
+    </script>
+  </body>
+</html>
+```
+
+输出结果同上
+
+```text
+click inner-btn
+click outer-btn
+promise 微任务
+mutate 微任务
+promise 微任务
+timeout 宏任务
+```
+
+#### mutationObserver 不会重复被添加
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .outer-btn {
+        position: relative;
+        width: 300px;
+        height: 100px;
+        background: red;
+      }
+
+      .inner-btn {
+        position: relative;
+        width: 200px;
+        height: 80px;
+        background: yellow;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="outer-btn">外部按钮</div>
+    <script>
+      var outerBtn = document.querySelector('.outer-btn')
+
+      new MutationObserver(function () {
+        console.log('mutate 微任务')
+      }).observe(outerBtn, {
+        //观察属性变化
+        attributes: true,
+      })
+
+      //点击方法
+      function onClick() {
+        console.log('click')
+
+        outerBtn.setAttribute('data-number', Math.random())
+        outerBtn.setAttribute('data-number', Math.random())
+        outerBtn.setAttribute('data-number', Math.random())
+      }
+
+      outerBtn.addEventListener('click', onClick)
+    </script>
+  </body>
+</html>
+```
+
+输出结果如下
+
+```text
+click
+mutate 微任务
+```
+
+### 案例3：宏任务和微任务
+
+> 
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .option-btn {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        font-size: 20px;
+        color: #fff;
+        background: red;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div>
+      <button id="btnStart">触发按钮</button>
+    </div>
+
+    <button class="first-btn">首次点击</button>
+    <button class="second-btn">二次点击</button>
+    <script>
+      var firstBtn = document.querySelector('.first-btn')
+      var secondBtn = document.querySelector('.second-btn')
+      //同步耗时操作
+      function asyncSleep(duration) {
+        const now = Date.now()
+        while (now + duration > Date.now()) {}
+      }
+
+      firstBtn.onclick = function () {
+        console.log('firstBtn onClick', new Date().toLocaleTimeString())
+        //2. 假设需要执行3s
+        console.time('firstBtn:cost')
+        asyncSleep(3000)
+        Promise.resolve().then(() => {
+          console.log('执行 微任务 promise', new Date().toLocaleTimeString())
+          //3. 假设需要执行2s
+          console.time('promise:cost')
+          asyncSleep(2000)
+          console.timeEnd('promise:cost')
+        })
+        console.timeEnd('firstBtn:cost')
+      }
+
+      secondBtn.onclick = function () {
+        console.log('secondBtn onClick', new Date().toLocaleTimeString())
+        //4. 假设需要执行1s
+        console.time('secondBtn:cost')
+        asyncSleep(1000)
+        console.timeEnd('secondBtn:cost')
+      }
+
+      btnStart.onclick = function () {
+        //1. 假设需要执行5s
+        console.log('main:', new Date().toLocaleTimeString())
+        console.time('main:cost')
+        asyncSleep(5000)
+        console.timeEnd('main:cost')
+      }
+    </script>
+  </body>
+</html>
+```
+
+![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0ade9c1b38604650b35933557fa4a449~tplv-k3u1fbpfcp-watermark.image?)
+
+打印信息如下（依次点击，触发按钮、首次点击按钮、二次点击按钮）
+
+```tex
+main: 11:35:47
+main:cost: 4999.5 ms
+firstBtn onClick 11:35:52
+firstBtn:cost: 2999.422119140625 ms
+执行 微任务 promise 11:35:55
+promise:cost: 1999.8310546875 ms
+secondBtn onClick 11:35:57
+secondBtn:cost: 999.22509765625 ms
+```
+
+### 案例4：同步变异步
+
+#### 例子1：大量制作数据添加 dom 期间，click 事件需等待挂起
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style></style>
+  </head>
+
+  <body>
+    <button id="btnLog" class="btnLog">操作点击事件</button>
+    <button class="start">开始添加dom</button>
+    <script>
+      var startBtn = document.querySelector('.start')
+      var array = []
+      for (var i = 1; i <= 300000; i++) {
+        array.push(i) //制造300000条数据
+      }
+      console.log('数据制造完成')
+      //渲染数据
+      var renderDomList = function (data) {
+        for (var i = 0, l = data.length; i < l; i++) {
+          var div = document.createElement('div')
+          div.innerHTML = `列表${i}`
+          document.body.appendChild(div)
+        }
+      }
+
+      startBtn.onclick = function () {
+        console.log('startBtn clicked:', new Date().toLocaleTimeString())
+        renderDomList(array)
+      }
+
+      btnLog.onclick = function () {
+        console.log('btnLog clicked:', new Date().toLocaleTimeString())
+      }
+    </script>
+  </body>
+</html>
+```
+
+#### 例子2：每次渲染数据变为宏任务，可以解决上述点击延迟问题（这不是最优的）
+
+>  以下代码，数据插入渲染期间，就不会阻塞点击事件的触发
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style></style>
+  </head>
+
+  <body>
+    <button id="btnLog" class="option-btn">操作点击事件</button>
+    <button class="start">开始添加dom</button>
+    <script>
+      var startBtn = document.querySelector('.start')
+
+      const step = 200
+
+      var array = []
+      for (var i = 1; i <= 300000; i++) {
+        array.push(i) //制造300000条数据
+      }
+      console.log('数据制造完成')
+
+      //渲染数据
+      var renderDomList = function (data, startIndex, endIndex) {
+        if (startIndex < endIndex && endIndex <= data.length) {
+          setTimeout(() => {
+            for (let i = startIndex; i < endIndex; i++) {
+              var div = document.createElement('div')
+              div.innerHTML = `列表${i}`
+              document.body.appendChild(div)
+            }
+            let nextIndex =
+              endIndex + step > data.length ? data.length : endIndex + step
+            let nextStartIndex = endIndex > data.length ? data.length : endIndex
+            renderDomList(data, nextStartIndex, nextIndex)
+          }, 0)
+        }
+      }
+
+      startBtn.onclick = function () {
+        console.log('startBtn clicked:', new Date().toLocaleTimeString())
+        renderDomList(array, 0, 0 + step)
+      }
+
+      btnLog.onclick = function () {
+        console.log('btnLog clicked:', new Date().toLocaleTimeString())
+      }
+    </script>
+  </body>
+</html>
+```
+
