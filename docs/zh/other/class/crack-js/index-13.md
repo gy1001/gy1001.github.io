@@ -1269,3 +1269,1088 @@ transition-property是用来指定当元素其中一个属性改变时执行tran
 | 是否可以自动播放                    | 有        | 没有(hover 或者 js触发) |
 | 控制多个关键帧                      | 有        | 没有(只有开始和结束)    |
 
+### 动画性能vs-500个节点js动画
+
+[CSS代码示例](https://github.com/gy1001/Javascript/blob/main/JavaScript-Crack/13.%20%E8%AE%A1%E6%97%B6%E5%99%A8%E5%92%8CJS%E5%8A%A8%E7%94%BB/13.2%20%E5%9F%BA%E4%BA%8E%E4%BC%A0%E7%BB%9F%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E5%8A%A8%E7%94%BB%E5%AE%9E%E7%8E%B0/vs/css.html)
+
+[JS+requestAnimationFrame](https://github.com/gy1001/Javascript/blob/main/JavaScript-Crack/13.%20%E8%AE%A1%E6%97%B6%E5%99%A8%E5%92%8CJS%E5%8A%A8%E7%94%BB/13.2%20%E5%9F%BA%E4%BA%8E%E4%BC%A0%E7%BB%9F%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E5%8A%A8%E7%94%BB%E5%AE%9E%E7%8E%B0/vs/requestAnimationFrame.html)
+
+### 动画注意事项
+
+* css 动画可以开启 GPU 加速，js 动画同样可以设置 translate3d() 或者 matrix3d() 来开启 GPU 加速
+* GPU 有图像存储限制，一旦 GPU 的存储空间用完，速度会急剧下降
+* 不是所有 CSS 属性都能获得 GPU 加速
+* GPU 加速也有自己的开销，可以由 CSS 属性 will-change 来解决
+* 大多数 CSS 属性都会引起布局更改和重新绘制，因此尽可能优先考虑使用 opactity 和 css transforms
+
+### 如何选择
+
+* 两个状态之间的简单切换，使用 CSS 动画
+* 复杂动画，使用 JS 动画，可控性更好
+
+## 03：复杂动画也不用怕，Web Animation API
+
+### 动画手段
+
+* requsetAnimationFrame/setTimout/setInterval  + 属性改变
+* CSS3 动画
+* Web Animations API 简称 WAAPI
+
+### 示例1：落球
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>落球</title>
+    <style>
+      .ball {
+        height: 50px;
+        width: 50px;
+        border-radius: 50%;
+        margin-left: 180px;
+        background: radial-gradient(circle at 70% 30%, #0aafe6, #222222);
+        cursor: pointer;
+      }
+
+      .desk {
+        height: 200px;
+        width: 200px;
+        border-right: 1px solid #000;
+        border-top: 1px solid #000;
+      }
+    </style>
+  </head>
+
+  <body>
+    <button type="button" onclick="location.reload();">重置</button>
+    <div class="ball"></div>
+    <div class="desk"></div>
+
+    <script>
+      const ballEl = document.querySelector('.ball')
+      ballEl.addEventListener('click', function () {
+        let fallAni = ballEl.animate(
+          {
+            transform: [
+              'translate(0, 0)',
+              'translate(20px, 8px)',
+              'translate(50px, 200px)',
+            ],
+          },
+          {
+            easing: 'cubic-bezier(.68,.08,.89,-0.05)',
+            duration: 2000,
+            fill: 'forwards',
+          },
+        )
+      })
+    </script>
+  </body>
+</html>
+```
+
+### 示例2：直播的世界消息或者播报
+
+* 滑入（消息先运动到屏幕中间）
+* 暂停（如果消息过长，消息还需要匀速滚动）
+* 滑出屏幕
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>广播</title>
+    <style>
+      button {
+        font-size: 28px;
+      }
+
+      .stage {
+        height: 500px;
+        width: 800px;
+        background-color: #000;
+        position: relative;
+      }
+
+      .danmu {
+        color: #fff;
+        position: absolute;
+        top: 240px;
+        font-size: 24px;
+        width: 500px;
+        overflow: hidden;
+        height: 40px;
+        /* position: relative; */
+      }
+
+      .danmu-content {
+        position: absolute;
+        /*  不换行 */
+        /* width: 100%; */
+        white-space: nowrap;
+        text-align: center;
+        display: inline-block;
+        min-width: 500px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div>
+      <button type="button" onclick="broadcast(1)">长消息广播</button>
+      <button type="button" onclick="broadcast(0)">短消息广播</button>
+    </div>
+    <div>
+      <div class="stage"></div>
+    </div>
+
+    <script>
+      const DANMU_WIDTH = 500
+      const stageWidth = 800
+      const shortMessage = '短消息'
+      const longMessage =
+        '我是长消息我是长消息我是长消息我是长消息我是长消息我是长消息我是长消息我是长消息我是长消息我是长消息'
+
+      const stageEl = document.querySelector('.stage')
+      let danmuEl
+
+      // 创建消息节点并播报
+      function broadcast(type) {
+        danmuEl = createDanmuEl(type ? longMessage : shortMessage)
+        stageEl.appendChild(danmuEl)
+        startAnimate()
+      }
+
+      // 创建消息节点
+      function createDanmuEl(message) {
+        const el = document.createElement('div')
+        el.className = 'danmu'
+
+        const contentWrapper = document.createElement('div')
+        contentWrapper.className = 'danmu-content-wrapper'
+
+        const contentEl = document.createElement('div')
+        contentEl.className = 'danmu-content'
+        contentEl.textContent = message
+
+        contentWrapper.appendChild(contentEl)
+
+        el.appendChild(contentWrapper)
+        return el
+      }
+
+      async function startAnimate() {
+        // 滑入
+        const totalWidth = stageWidth + DANMU_WIDTH
+        const centerX = stageWidth * 0.5 - DANMU_WIDTH * 0.5
+
+        // 计算偏移量
+        const kfsIn = {
+          transform: [
+            `translateX(${totalWidth}px)`,
+            `translateX(${centerX}px)`,
+          ],
+        }
+        await danmuEl.animate(kfsIn, {
+          duration: 2000,
+          fill: 'forwards',
+          easing: 'ease-out',
+        }).finished
+
+        // 暂停部分
+        const contentEl = danmuEl.querySelector('.danmu-content')
+        // 获取消息元素的长度
+        const itemWidth = contentEl.getBoundingClientRect().width
+        // 计算需要滚动的长度
+        const gapWidth = Math.max(0, itemWidth - DANMU_WIDTH)
+        // 计算需要滚动的时间
+        const duration = Math.max(0, Math.floor(gapWidth / 200) * 1000)
+        const translateX = duration > 0 ? gapWidth : 0
+        // 偏移量
+        const kfsTxt = {
+          transform: [`translateX(0px)`, `translateX(-${gapWidth}px)`],
+        }
+        await contentEl.animate(kfsTxt, {
+          duration,
+          delay: 2000,
+          fill: 'forwards',
+          easing: 'linear',
+        }).finished
+        // 滑出
+        const kfsOut = {
+          transform: [
+            `translateX(${centerX}px)`,
+            `translateX(-${DANMU_WIDTH}px)`,
+          ],
+        }
+        await danmuEl.animate(kfsOut, {
+          duration: 2000,
+          fill: 'forwards',
+          easing: 'ease-in',
+        }).finished
+
+        if (danmuEl) {
+          stageEl.removeChild(danmuEl)
+        }
+        isAnimating = false
+      }
+    </script>
+  </body>
+</html>
+```
+
+### web Animations API 两个核心的对象
+
+* KeyframeEffect: 描述动画属性
+* Animation: 动画控制
+
+#### KeyframeEffect
+
+* 创建一组可动画的属性和值，称为关键帧。然后可以使用功能 Animation() 构造哈数来播放这些内容
+* 构造函数：着重看第二种
+* 可以显式的去创建 KeyframeEffect, 然后交付给 Animation 去播放。但是我们通常不需要这么做，有更加简单的 API, 这就是后面要说的 Element.animate
+* new KeyframeEffect(keyEffect)基于当前复制，然后多处使用
+
+```javascript
+target: 目标
+keyframes: 关键帧
+options: 动画属性
+
+new KeyframeEffect(target, keyframes)
+new KeyframeEffect(target, keyframse, options)
+new KeyframeEffect(source)
+```
+
+```javascript
+const box1ItemEl = document.querySelector('.box1')
+const kyEffect1 = new KeyframeEffect(
+  box1ItemEl,
+  {
+    transform: ['translateX(0)', 'translateX(500px)'],
+  },
+  {
+    duration: 3000,
+    fill: 'forwards',
+  },
+)
+const ky1 = new KeyframeEffect(kyEffect1)
+new Animation(ky1).play()
+```
+
+#### 示例1：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KeyframeEffect</title>
+    <style>
+      .box1,
+      .box2 {
+        height: 100px;
+        width: 100px;
+        background-color: #000;
+      }
+
+      .box2 {
+        margin-top: 50px;
+      }
+
+      #btnPlay {
+        margin-top: 50px;
+        font-size: 28px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div>
+      <div class="box1"></div>
+      <div class="box2"></div>
+    </div>
+    <div>
+      <button type="button" id="btnPlay">播放</button>
+    </div>
+
+    <script>
+      const box1ItemEl = document.querySelector('.box1')
+      const box2ItemEl = document.querySelector('.box2')
+
+      btnPlay.onclick = () => {
+        const kyEffect1 = new KeyframeEffect(
+          null,
+          {
+            transform: ['translateX(0)', 'translateX(500px)'],
+          },
+          {
+            duration: 3000,
+            fill: 'forwards',
+          },
+        )
+
+        const ky1 = new KeyframeEffect(kyEffect1)
+        ky1.target = box1ItemEl
+        new Animation(ky1).play()
+
+        const ky2 = new KeyframeEffect(kyEffect1)
+        ky2.target = box2ItemEl
+        new Animation(ky2).play()
+      }
+    </script>
+  </body>
+</html>
+```
+
+### 示例2：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KeyframeEffect</title>
+    <style>
+      .box1,
+      .box2 {
+        height: 100px;
+        width: 100px;
+        background-color: #000;
+      }
+
+      .box2 {
+        margin-top: 50px;
+      }
+
+      #btnPlay {
+        margin-top: 50px;
+        font-size: 28px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div>
+      <div class="box1"></div>
+      <div class="box2"></div>
+    </div>
+    <div>
+      <button type="button" id="btnPlay">播放</button>
+    </div>
+
+    <script>
+      const box1ItemEl = document.querySelector('.box1')
+      const box2ItemEl = document.querySelector('.box2')
+
+      btnPlay.onclick = () => {
+        const kyEffect1 = new KeyframeEffect(
+          null,
+          {
+            transform: ['translateX(0)', 'translateX(500px)'],
+          },
+          {
+            duration: 3000,
+            fill: 'forwards',
+          },
+        )
+
+        const kyEffect2 = new KeyframeEffect(
+          null,
+          {
+            transform: ['rotate(0)', 'rotate(720deg)'],
+          },
+          {
+            duration: 6000,
+            fill: 'forwards',
+          },
+        )
+        kyEffect1.target = box1ItemEl
+        kyEffect2.target = box2ItemEl
+        new Animation(kyEffect1).play()
+        new Animation(kyEffect2).play()
+      }
+    </script>
+  </body>
+</html>
+```
+
+### Animation
+
+* 提供播放控制、动画节点或者源的时间轴。可以接受使用 KeyframeEffect 构造函数创建的对象作为参数
+* 常用方法
+  * cancel(): 取消
+  * finish(): 完成
+  * pause(): 暂停
+  * play(): 播放
+  * reverse(): 逆转播放方向
+
+### Animation 事件监听
+
+* event 方式
+
+* Promise 形式
+
+  ```javascript
+  animation.onfinish = function () {
+    element.remove()
+  }
+  animation.addEventListener('finish', function () {
+    element.remove()
+  })
+  animation.finished.then(() => {
+    element.remove()
+  })
+  ```
+
+* 常用事件类型
+
+  * oncancel: 取消
+  * onfinish: 完成
+  * onremove: 删除
+
+### 便捷的 Element.animate
+
+> MDN:[https://developer.mozilla.org/zh-CN/docs/Web/API/Element/animate](https://developer.mozilla.org/zh-CN/docs/Web/API/Element/animate)
+
+* 任何 Element 都具备该方法
+
+* 语法；
+
+  ```javascript
+  animate(keyframes, options)
+  ```
+
+#### Element.animate: keyframes
+
+* 数组形式
+
+  ```javascript
+  element.animate([
+    { opactity: 1 },
+    { opactity: 0.1, offset: 0.7 },
+    { opactity: 0. }
+  ], 2000)
+  ```
+
+* 对象形式
+
+  ```javascript
+  element.animate({
+    opactity: [0, 0.9, 1],
+    offset: [0, 0.8], // [0,0.8,1]的简写
+    easing: ["ease-in", "ease-out"]
+  }, 2000)
+  ```
+
+#### Element.animate: options
+
+* 和 new KeyframeEffect(target, keyframes, options) 的第三个参数基本一致，但是多了一个可选属性，就是 id, 用来标记动画，也方便在 Element.getAnimations 结果中精确的查找
+
+#### Element.getAnimations
+
+* 我们可以通过 Element.animate 或者 创建 Animation 给 Element 添加很多动画，通过这个方法可以获得所有 Animation 的实例
+
+* 在需要批量修改参数，或者批量停止动画的时候，那可是大杀器
+
+  ```javascript
+  box1ItemEl.getAnimations().forEach(ani => ani.pause())// 暂停全部动画
+  ```
+
+#### 示例1：监听播放完成的两种形式
+
+> callback + Promise 形式
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Animation</title>
+    <style>
+      .box1,
+      .box2 {
+        height: 100px;
+        width: 100px;
+        background-color: #000;
+      }
+
+      .box2 {
+        margin-top: 50px;
+      }
+
+      #btnPlay,
+      #btnPlayPromise {
+        margin-top: 50px;
+        font-size: 28px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div>
+      <div class="box1"></div>
+      <div class="box2"></div>
+    </div>
+    <div>
+      <button type="button" id="btnPlay">播放 callback</button>
+      <button type="button" id="btnPlayPromise">播放 Promise</button>
+    </div>
+
+    <script>
+      const box1ItemEl = document.querySelector('.box1')
+      const box2ItemEl = document.querySelector('.box2')
+
+      const kyEffect = new KeyframeEffect(
+        null,
+        {
+          transform: ['translateX(0)', 'translateX(500px)'],
+        },
+        {
+          duration: 3000,
+          fill: 'forwards',
+        },
+      )
+      btnPlay.onclick = () => {
+        const ky1 = new KeyframeEffect(kyEffect)
+        ky1.target = box1ItemEl
+        const ani = new Animation(ky1)
+        ani.play()
+        ani.onfinish = function () {
+          console.log('box1 animation finished')
+        }
+        ani.addEventListener('finish', function () {
+          console.log('box1 animation finished: addEventListener')
+        })
+      }
+
+      btnPlayPromise.onclick = async () => {
+        const ky1 = new KeyframeEffect(kyEffect)
+        ky1.target = box2ItemEl
+        const ani = new Animation(ky1)
+        ani.play()
+        await ani.finished
+        console.log('box2 animation finished')
+      }
+    </script>
+  </body>
+</html>
+```
+
+#### 示例2：getAnimations
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Animation getAnimations</title>
+    <style>
+      .box1 {
+        height: 100px;
+        width: 100px;
+        background-color: #000;
+        position: absolute;
+      }
+
+      #btnPlay {
+        margin-top: 50px;
+        font-size: 28px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div style="overflow: hidden; height: 150px">
+      <div class="box1"></div>
+    </div>
+    <div>
+      <button type="button" id="btnPlay">播放</button>
+    </div>
+
+    <script>
+      const box1ItemEl = document.querySelector('.box1')
+
+      const kyEffect1 = new KeyframeEffect(
+        box1ItemEl,
+        {
+          left: ['0', '100px'],
+        },
+        {
+          duration: 3000,
+          fill: 'forwards',
+        },
+      )
+
+      const kyEffect2 = new KeyframeEffect(
+        box1ItemEl,
+        {
+          transform: ['rotate(0)', 'rotate(720deg)'],
+        },
+        {
+          duration: 6000,
+          fill: 'forwards',
+        },
+      )
+
+      btnPlay.onclick = () => {
+        new Animation(kyEffect1).play()
+        new Animation(kyEffect2).play()
+
+        Promise.all(box1ItemEl.getAnimations().map((a) => a.finished)).then(
+          function () {
+            console.log('all animations finished')
+          },
+        )
+      }
+    </script>
+  </body>
+</html>
+```
+
+### 优势
+
+* 相对 CSS 动画，更加灵活
+* 相对于 requestAnimation/setTimeout/setInterval 动画，性能更好，代码更简洁
+* 部分 API 天然支持 Promise
+
+### 与 CSS 动画参数属性键对照表
+
+| Web Animation API | CSS                       |
+| ----------------- | ------------------------- |
+| delay             | animation-delay           |
+| duration          | animation-duration        |
+| iterations        | animation-iteration-count |
+| directions        | animation-direction       |
+| easing            | animation-timing-function |
+| fill              | animation-fill-mode       |
+
+### 与 CSS 参数设置上的区别
+
+* duration 参数只支持毫秒
+* 迭代次数无限使用的 JS 是 Infinity, 不是字符串的 "infinite"
+* 默认动画的贝塞尔是 linear, 而不是 css 的 ease
+
+### 兼容性
+
+* safari 偏差
+* 如果不行，可以使用垫片 [https://github.com/web-animations/web-animations-js](https://github.com/web-animations/web-animations-js)
+
+## 04: 其他动画方案
+
+### 动画绘制技术
+
+* Canvas
+* SVG
+* HTML
+
+### Canvas
+
+#### 定义
+
+* Canvas 是 H5 新增的一个元素对象，其实就是一个画布，浏览器 js 具有相应的 API，直接绘制即可实现动画
+* 基于 Canvas 的游戏引擎
+  * Three.js
+  * Cocos
+  * LayaAir
+  * ...
+
+#### Canvas 优势
+
+* 定制型更强
+* 动画性能较高
+
+#### Canvas 劣势
+
+* 事件分发由 canvas 处理，绘制的内容事件需要自己做处理
+* 依赖于像素，无法高效保真
+* 文本渲染较弱
+* 自己编写太过麻烦
+
+### Gif 动画
+
+#### 定义
+
+* 原理：多张静态图片压缩组合在一起，长连贯播放
+
+#### Gif 动画 优势
+
+* 开发成本低
+* 沟通成本少
+* 兼容性好
+
+#### Gif 动画 劣势
+
+* 体积较大
+* 支持的透明度有限
+* 只能循环播放，不好控制
+
+### aPng 动画
+
+#### 原理
+
+> 通过算法计算帧之间的差异，只存储帧之间的差异，而不是存储全帧，使得 APNG 文件大小有显著的减少
+
+#### aPng 动画 优势
+
+* 相比 gif 可以容纳更多色彩
+* 向下兼容 png 格式图片
+* 支持透明通道
+* 体积比 gif 要小
+
+#### aPng 动画 劣势
+
+* 兼容性问题
+* 不易控制
+
+### webP 动画
+
+* WebP 是一种新的图像格式。WebP图像的尺寸缩小了大约 30%, 最重要的是在压缩率上全面超越了 gif 和 apng
+
+### 帧动画
+
+#### 定义
+
+* 通常是一张一张序列帧连续播放的效果。100张图片就需要请求100次，一般我们做成精灵图
+
+#### 帧动画优势
+
+* 适配性好
+* 开发成本中等
+
+#### 帧动画劣势
+
+* 合成的精灵图较大，不同分辨率可能失真
+
+### SVG 动画
+
+* svg 是一种用于描述二维的矢量图形，基于 XML 标记语言
+* 最重要的一点就是：它允许沿着运动路径运行。svg 有很多自己的元素标签，比如 animate 元素
+
+### lottie
+
+* lottie 可以渲染类型为：svg, canvas, html
+* 通过官方的 lottie 库，解析 lottie 的配置文件 .json 文件，然后根据设计师画图的参数，渲染出相对应的 内容
+
+### svgas
+
+* 原理:设计师将动画脚本导出，然后在对应的客户端重新合成这些位图。与Lottie的区别在于导出方式以及库解析方式不一样，都有各自的标准，SVGA 使用的是另外一套逻辑，SVGA 不关心关键顿，因为 SVGA 里面的每一顺都是关键帧! 也就是说，SVGA已经在导出动画的时候，把每一的信息都计算好了。这样，Player 也就不用关心插值计算的过程
+* 弊端：需要与设计师多次沟通，询问 ImageKey
+
+### VAP 动效
+
+* VAP(Video Animation Player) 是企鹅电竞开发，用于播放酷炫动画的实现方案
+* 相比 Webp, Apng 动图方案，具有高压缩率（素材更小）、硬件编码（解码更快）的优点
+* 相比Lottie, 能实现更复杂的动画效果（比如粒子特效）
+
+### Video 播放 mp4 视频动画
+
+```html
+<video src="xxxx" autoplay muted loop poster="xxx" controls="false"> </video>
+```
+
+## 05: 计时器面向 next 编程
+
+### 定时器
+
+* 前端常见三大定时器：setTimeout、setInterval、requestAnimationFrame
+* 多次调用规律：处理完数据后，进入**下一个**周期
+
+### 一个 setTimeout 的例子：倒计时
+
+* setTimeout 回调函数暂停时间
+* clearTimeout 暂停或者结束计时
+* 结束时，启动一个新的计时器（next)
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>setTimeout</title>
+    <style>
+      * {
+        font-size: 28px;
+      }
+
+      .wrapper {
+        margin: 50px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <span id="seconds">60</span>
+      <div>
+        <button id="btnPause">暂停</button>
+        <button id="btnContinue">继续</button>
+      </div>
+    </div>
+
+    <script>
+      const secondsEl = document.getElementById('seconds')
+      const INTERVAL = 1000
+      let ticket
+      let seconds = 60
+      function setSeconds(val) {
+        secondsEl.innerText = val
+      }
+
+      function onTimeout() {
+        seconds--
+        setSeconds(seconds)
+        ticket = setTimeout(onTimeout, INTERVAL)
+      }
+
+      ticket = setTimeout(onTimeout, INTERVAL)
+
+      document.getElementById('btnPause').addEventListener('click', () => {
+        clearTimeout(ticket)
+      })
+
+      document.getElementById('btnContinue').addEventListener('click', () => {
+        ticket = setTimeout(onTimeout, INTERVAL)
+      })
+    </script>
+  </body>
+</html>
+```
+
+### 上述例子，存在的问题？
+
+* INTERVAL ticket 和 setTimeout 满天飞，不够优雅，我们应该更关心业务的处理
+* 有多处类似的逻辑，就得重复的书写 setTimeout, 缺少复用
+* 语义不好
+
+### 一个 setTimeout 的例子：next 版本
+
+> 代码在后面
+
+* start 开始
+* next 继续
+* cancal 取消
+* continute 继续
+
+```javascript
+nextFactory.start(function (next) {
+  seconds--;
+  setSeconds(seconds);
+  next();
+});
+
+document.getElementById("btnPause").addEventListener("click", () => {
+  nextFactory.cancel();
+});
+
+document.getElementById("btnContinue").addEventListener("click", () => {
+  nextFactory.continue();
+});
+```
+
+### requestAnimationFrame：canvas 绘制
+
+* requestAnimationFrame 回调绘制时间
+* cancelAnimationFrame 取消计划
+* **新的 requestAnimationFrame 启动下次， next **
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>requestAnimationFrame</title>
+    <style>
+      * {
+        font-size: 28px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div style="margin: 50px">
+      <canvas id="canvas" height="300" width="300"></canvas>
+    </div>
+    <div>
+      <div>
+        <button id="btnPause">暂停</button>
+        <button id="btnContinue">继续</button>
+      </div>
+    </div>
+
+    <script>
+      let ticket
+      let count = 0
+
+      let lastTime
+      const canvasEl = document.getElementById('canvas')
+      const ctx = canvasEl.getContext('2d')
+      ctx.fillStyle = '#f00'
+      ctx.fillRect(0, 0, 300, 300)
+
+      function drawTime() {
+        ctx.clearRect(0, 0, 300, 300)
+        ctx.fillStyle = '#f00'
+        ctx.fillRect(0, 0, 300, 300)
+
+        ctx.fillStyle = '#000'
+        ctx.font = 'bold 20px Arial'
+        ctx.fillText(Date.now(), 100, 100)
+      }
+
+      function onRequestAnimationFrame() {
+        count++
+        drawTime()
+        const now = Date.now()
+        console.log('cost:', now - lastTime)
+        lastTime = now
+        ticket = requestAnimationFrame(onRequestAnimationFrame)
+      }
+
+      lastTime = Date.now()
+      ticket = requestAnimationFrame(onRequestAnimationFrame)
+
+      document.getElementById('btnPause').addEventListener('click', () => {
+        cancelAnimationFrame(ticket)
+      })
+
+      document.getElementById('btnContinue').addEventListener('click', () => {
+        requestAnimationFrame(onRequestAnimationFrame)
+      })
+    </script>
+  </body>
+</html>
+```
+
+### requestAnimationFrame：canvas 绘制 next 版本
+
+* start 开始
+* next 继续
+* cancal 取消
+* continute 继续
+
+```javascript
+nextFactory.start((next) => {
+  count++
+  console.log(count)
+  drawTime()
+  const now = Date.now()
+  console.log('cost:', now - lastTime)
+  lastTime = now
+  next()
+})
+
+document.getElementById('btnPause').addEventListener('click', () => {
+  nextFactory.cancel()
+})
+
+document.getElementById('btnContinue').addEventListener('click', () => {
+  nextFactory.continue()
+})
+```
+
+以上示例统一会使用 createRequestAnimationFrameGenerator方法
+
+### createTimeoutGenerator 的背后
+
+* timeoutGenerator 函数返回有 execute 与 cancel属性的对象，作为入参例化了一个 NextGenerator
+
+* NextGenerator 是核心
+
+  ```typescript
+  export function createTimeoutGenerator(interval: number = 1000) {
+    const timeoutGenerator: NextFnGenerator = function (cb: Function) {
+      let ticket: number;
+      function execute() {
+        ticket = setTimeout(cb, interval);
+      }
+      return {
+        execute,
+        cancel: function () {
+          clearTimeout(ticket);
+        },
+      } as NextFnInfo;
+    };
+    const factory = new NextGenerator(timeoutGenerator);
+    return factory;
+  }
+
+### createRequestAnimationFrameGenerator
+
+```typescript
+export function createRequestAnimationFrameGenerator() {
+  const requestAnimationFrameGenerator: NextFnGenerator = function (cb: FrameRequestCallback) {
+    let ticket: any;
+    function execute() {
+      ticket = window.requestAnimationFrame(cb);
+    }
+
+    return {
+      execute,
+      cancel: function () {
+        cancelAnimationFrame(ticket);
+      },
+    } as NextFnInfo;
+  };
+
+  const factory = new NextGenerator(requestAnimationFrameGenerator);
+  return factory;
+}
+```
+
+### 随心所欲的 next ?
+
+* 构造有 execute 与 cancel 方法的一个对象
+* 传入 NextGenerator 就拥有了 next 的能力
+
+### 翻倍的计时器
+
+* 翻倍的计时器，第一次 100ms, 第二次 200ms, 第三次 400ms
+
+```javascript
+export function createStepUpGenerator(interval: number = 1000) {
+  let isFirst = true;
+  const stepUpGenerator: NextFnGenerator = function (cb: Function) {
+    let ticket: any;
+    function execute() {
+      interval = isFirst ? interval : interval * 2;
+      ticket = setTimeout(cb, interval);
+      isFirst = false;
+    }
+
+    return {
+      execute,
+      cancel: function () {
+        clearTimeout(ticket);
+      },
+    } as NextFnInfo;
+  };
+
+  const factory = new NextGenerator(stepUpGenerator);
+  return factory;
+}
+```
+
+...
+
+### 实战代码
+
+[计时器面向next编程](https://github.com/gy1001/Javascript/blob/main/JavaScript-Crack/13.%20%E8%AE%A1%E6%97%B6%E5%99%A8%E5%92%8CJS%E5%8A%A8%E7%94%BB/13.4%20%E5%AE%9E%E6%88%98%EF%BC%9A%E8%AE%A1%E6%97%B6%E5%99%A8%E9%9D%A2%E5%90%91next%E7%BC%96%E7%A8%8B/index.ts)
