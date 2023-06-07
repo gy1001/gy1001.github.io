@@ -485,3 +485,787 @@ setTimeout(() => {
 * setTimeout 存在最低延迟时间，实现动画，无法与屏幕刷新保持步调一致
 * requestAnimationFrame 系统自动调用，保障刷新频率
 * requestIdleCallback 处理低优先级任务，空闲时调用
+
+## 02：CSS的动画实现
+
+### 参考文档
+
+[CSS3-animation动画详解: https://juejin.cn/post/6970883520168198158#heading-6](https://juejin.cn/post/6970883520168198158#heading-6)
+
+### CSS 动画实现方式
+
+* animations: 指定一组或者多组动画，每组动画之间用逗号相隔
+* transition: 指定一个或者多个 css 属性过渡效果，多个属性用逗号相隔
+
+### 内置贝塞尔函数运动效果
+
+> [MDN文档：https://developer.mozilla.org/zh-CN/docs/Glossary/Bezier_curve](https://developer.mozilla.org/zh-CN/docs/Glossary/Bezier_curve)
+
+* linear: 动画以恒定速度运行。此关键词表示缓冲函数 `cubic-bezier(0.0, 0.0, 1.0, 1.0)`。
+* ease: 动画缓慢开始，然后突然加速，最后缓慢移向目标。此关键词表示缓冲函数 `cubic-bezier(0.25, 0.1, 0.25, 1.0)`.。它与 [`ease-in-out`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/easing-function#ease-in-out) 类似，但它在开始时加速更快。
+* ease-in: 动画缓慢开始，然后逐渐加速直到结束，在结束点时突然停止。此关键词表示缓冲函数 `cubic-bezier(0.42, 0.0, 1.0, 1.0)`。
+* ease-in-out: 动画缓慢开始，然后加速，最后减速直至结束。此关键词表示缓冲函数 `cubic-bezier(0.42, 0.0, 0.58, 1.0)`。开始时，其表现与 [`ease-in`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/easing-function#ease-in) 函数类似；结束时，与 [`ease-out`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/easing-function#ease-out) 函数类似。
+* ease-out: 此动画突然开始，然后逐渐减速直至结束。此关键词表示缓冲函数 `cubic-bezier(0.0, 0.0, 0.58, 1.0)`。
+* 自定义
+
+```html
+// 各个动画对比
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>内置贝塞尔的运动</title>
+    <style>
+      * {
+        font-size: 28px;
+        color: #fff;
+        font-weight: bold;
+      }
+
+      .bg-red {
+        background-color: red;
+      }
+
+      .bg-green {
+        background-color: green;
+      }
+
+      .bg-blue {
+        background-color: blue;
+      }
+
+      .bg-sliver {
+        background-color: silver;
+      }
+
+      .bg-aqua {
+        background-color: aqua;
+      }
+
+      .transition div {
+        height: 100px;
+        width: 100px;
+        position: relative;
+        left: 0;
+      }
+
+      .transition-s {
+        transition-property: left;
+        transition-duration: 3000ms;
+      }
+
+      .transition-fn-ease {
+        transition-timing-function: ease;
+      }
+
+      .transition-fn-ease-in {
+        transition-timing-function: ease-in;
+      }
+
+      .transition-fn-linear {
+        transition-timing-function: linear;
+      }
+
+      .transition-fn-ease-out {
+        transition-timing-function: ease-out;
+      }
+
+      .transition-fn-ease-in-out {
+        transition-timing-function: ease-in-out;
+
+        /* transition-timing-function: cubic-bezier(.95,.05,.59,.75) */
+      }
+
+      .transition.ani div {
+        left: calc(100% - 100px);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="transition">
+      <div class="bg-red transition-s transition-fn-ease" data-t="ease">
+        ease
+      </div>
+      <div class="bg-green transition-s transition-fn-linear" data-t="linear">
+        linear
+      </div>
+      <div class="bg-blue transition-s transition-fn-ease-in" data-t="ease-in">
+        ease-in
+      </div>
+      <div
+        class="bg-sliver transition-s transition-fn-ease-out"
+        data-t="ease-out"
+      >
+        ease-out
+      </div>
+      <div
+        class="bg-aqua transition-s transition-fn-ease-in-out"
+        data-t="ease-in-out"
+      >
+        ease-in-out
+      </div>
+    </div>
+    <div>
+      <button id="btnStart" style="color: red">开始</button>
+    </div>
+
+    <script>
+      var el = document.querySelector('.transition')
+      document
+        .getElementById('btnStart')
+        .addEventListener('click', function () {
+          el.classList.add('ani')
+        })
+
+      document
+        .querySelector('.transition-s')
+        .addEventListener('transitionend', function () {
+          el.classList.remove('ani')
+        })
+    </script>
+  </body>
+</html>
+```
+
+### 自定义贝塞尔曲线要点
+
+* 曲线越陡峭，速度越快，反之，速度越慢
+* 控制点的位置会影响曲线形状
+
+### 贝塞尔曲线应用场景
+
+* svg
+* canvas/webgl
+* css动画
+* animation Web API
+
+### CSS 动画案例实现效果
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    * {
+      font-size: 28px;
+    }
+
+    .warp {
+      position: absolute;
+      width: 100px;
+      height: 300px;
+      border: 1px solid #f60093;
+      overflow: hidden;
+    }
+
+    .progress-in {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: red;
+      animation: 3s linear 0s progress forwards;
+      transform: translateY(100%);
+      animation-play-state: paused;
+    }
+
+    @keyframes progress {
+      from {
+        transform: translateY(100%);
+      }
+
+      to {
+        transform: translateY(0%);
+      }
+    }
+
+    #start {
+      position: absolute;
+      width: 100px;
+      left: 200px;
+    }
+  </style>
+
+  <body>
+    <div class="warp">
+      <div class="progress-in"></div>
+    </div>
+    <button id="start">开始</button>
+    <script>
+      const progressIn = document.querySelector('.progress-in')
+      start.onclick = function () {
+        // progressIn.style.animationPlayState = `running`;
+        const state = progressIn.style.animationPlayState
+        progressIn.style.animationPlayState =
+          state == `running` ? 'paused' : 'running'
+      }
+
+      progressIn.addEventListener(
+        'webkitAnimationEnd',
+        (ele) => {
+          window.alert(`动画结束`)
+        },
+        true,
+      )
+    </script>
+  </body>
+</html>
+```
+
+### CSS 动画实现-animations
+
+* animation-name: 动画名称，默认值 none, 名称代表 @keyframes 动画序列
+* animation-duration: 动画周期时长，默认为0
+* animation-timing-function: 用于定义时间函数，通过这个选项，可配置动画随时间的运动速率和轨迹。
+  * linear： 动画从头到尾的速度是相同的。
+  * ease（缓解）：**`默认值`**：动画以低速开始，然后加快，在结束前变慢。
+  * ease-in： 动画以低速开始。
+  * ease-out：动画以低速结束。
+  * ease-in-out：动画以低速开始和结束。
+  * cubic-bezier(*n*,*n*,*n*,*n*)：贝塞尔曲线（自定义数值），可到[相关网站](https://link.juejin.cn?target=https%3A%2F%2Fcubic-bezier.com%2F)可视化设置。
+* animation-delay：用于设置动画延迟时间，单位为`s`
+* `animation-iteration-count`：用于设置动画执行的次数，默认值为`1`只执行一次。
+  * 具体number数值
+  * `infinite`: 执行无限次
+* `animation-direction`用于设置动画执行方向，具体来说可设置为以下值：
+  * normal：默认值。动画按正常播放
+  * reverse：动画反向播放
+  * alternate（交替的）：动画正向交替执行（正向->反向）Loop。
+  * alternate-reverse：动画反向交替执行（反向->正向）Loop
+  * inherit：从父元素继承该属性
+* `animation-fill-mode`:用于设置动画的填充模式，主要应用的属性值为：
+  * none: 默认值。动画在动画执行前后，不会应用任何样式到目标元素。
+  * forwards: 在动画结束后（**由 animation-iteration-count 决定**），目标元素将保持应用`最后帧`动画。
+  * backwards: 在动画结束后（**由 animation-iteration-count 决定**），目标元素将保持应用`起始帧`动画。
+  * both: 动画将遵循`forwards`和`backwards`的规则，从而在两个方向上扩展动画属性。
+* **`animation-play-state`**: [CSS](https://developer.mozilla.org/zh-CN/docs/Web/CSS) 属性设置动画是运行还是暂停。
+  * running：当前**动画**正在**运行**。
+  * paused：当前**动画**已被**停止**。
+
+### CSS 动画案例实现-animation技巧使用
+
+* 动画暂停与启动：animation-play-state
+* webkit-动画的事件监听：webkit-animationEnd, webkitAnimationStart, webkitAniamtionIteration
+
+### CSS 动画实现-transition属性
+
+* transition-property: 应用过渡属性的名称，默认值为 all
+  * none: 没有过度动画
+  * all: 所有属性
+* `transition-duration`: 定义动画的过渡时间，默认值为`0s`,也就是说，如果不设置该属性，默认是没有过渡效果的。
+* `animation-timing-function`: 定义动画事件函数，`animation`族属性中也有该属性，该属性可以改变动画的执行速率以及轨迹。
+  * linear： 动画从头到尾的速度是相同的。
+  * ease（缓解）：**`默认值`**：动画以低速开始，然后加快，在结束前变慢。
+  * ease-in： 动画以低速开始。
+  * ease-out：动画以低速结束。
+  * ease-in-out：动画以低速开始和结束。
+  * cubic-bezier(*n*,*n*,*n*,*n*)：贝塞尔曲线（自定义数值），可到[相关网站](https://link.juejin.cn?target=https%3A%2F%2Fcubic-bezier.com%2F)可视化设置。
+* `transition-delay`: 用于设置动画延迟时间，单位为`s`
+
+### CSS 动画实现-transition 案例实现
+
+```css
+.progress-in {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: red;
+  opacity: 1;
+  transform: translateY(100%);
+  transition: transform 3s, opacity 3s;
+}
+```
+
+### CSS 动画实现-transition 注意事项
+
+* 不是所有的属性都可以用来做动效
+* 不支持动画的属性：background-image, float, display, position, visibility
+* 多种属性同事变化，用逗号分割，同时事件的触发次数也会是多次
+
+#### [Transition 所支持的css属性](https://www.cnblogs.com/yunkou/p/4235469.html)
+
+transition-property是用来指定当元素其中一个属性改变时执行transition效果: 所支持的属性类型如下：
+
+1. `color`: 通过红、绿、蓝和透明度组件变换（每个数值处理）如：background-`color,border-color`,`color`,`outline-color`等css属性；
+2. `length`: 真实的数字 如：`word-spacing`,`width`,`vertical-align`,`top`,`right`,`bottom`,`left`,`padding`,`outline-width`,`margin`,`min-width`,`min-height`,`max-width`,`max-height`,`line-height`,`height`,`border-width`,`border-spacing`,`background-position`等属性；
+3. `percentage`:真实的数字 如：`word-spacing`,`width`,`vertical-align`,`top`,`right`,`bottom`,`left`,`padding`,`outline-width`,`margin`,`min-width`,`min-height`,`max-width`,`max-height`,`line-height`,`height`,`border-width`,`border-spacing`,`background-position`等属性；
+4. `integer`离散步骤（整个数字），在真实的数字空间，以及使用floor()转换为整数时发生 如：`outline-offset`,`z-index`等属性；
+5. `number`真实的（浮点型）数值，如：`zoom`,`opacity`,`font-weight`,等属性；
+6. `transform` list
+7. `rectangle`:通过x, y, width 和 height（转为数值）变换，如：`crop`
+8. `visibility`: 离散步骤，在0到1数字范围之内，0表示“隐藏”，1表示完全“显示”,如：`visibility`
+9. `shadow`: 作用于color, x, y 和 blur（模糊）属性,如：`text-shadow`
+10. `gradient`: 通过每次停止时的位置和颜色进行变化。它们必须有相同的类型（放射状的或是线性的）和相同的停止数值以便执行动画,如：`background-image`
+11. paint server (SVG): 只支持下面的情况：从`gradient`到`gradient`以及`color`到`color`，然后工作与上面类似
+12. space-separated list of above:如果列表有相同的项目数值，则列表每一项按照上面的规则进行变化，否则无变化
+13. a shorthand property: 如果缩写的所有部分都可以实现动画，则会像所有单个属性变化一样变化
+
+#### transition 动画示例：普通运动动画
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    .warp {
+      position: absolute;
+      width: 100px;
+      height: 300px;
+      border: 1px solid #f60093;
+      overflow: hidden;
+    }
+
+    .progress-in {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: red;
+      opacity: 1;
+      transform: translateY(100%);
+      transition: transform 3s, opacity 3s;
+    }
+
+    #start {
+      position: absolute;
+      width: 100px;
+      height: 30px;
+      left: 200px;
+    }
+  </style>
+
+  <body>
+    <div class="warp">
+      <div class="progress-in"></div>
+    </div>
+    <button id="start">开始</button>
+    <script>
+      const progressIn = document.querySelector('.progress-in')
+      start.onclick = function () {
+        progressIn.style.transform = `translateY(0%)`
+        progressIn.style.opacity = 0.4
+      }
+
+      progressIn.addEventListener(
+        'transitionend',
+        (ele) => {
+          console.log(
+            `过渡动画完成：过渡属性${ele.propertyName}=过渡时间：${ele.elapsedTime}s`,
+          )
+        },
+        true,
+      )
+    </script>
+  </body>
+</html>
+```
+
+#### transition 动画示例2: 点击产生雪花
+
+```html
+// 雪花
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Snow</title>
+    <style>
+      body {
+        background-color: black;
+        overflow: hidden;
+        height: 100vh;
+        cursor: pointer;
+      }
+
+      .ts {
+        transition-property: all;
+        transition-timing-function: ease;
+      }
+
+      img {
+        height: 15px;
+        position: absolute;
+        top: 0;
+        left: 50vw;
+        transform: translate(-50%);
+      }
+    </style>
+  </head>
+
+  <body></body>
+  <script>
+    var animating = false
+    var created = false
+    function createSnows() {
+      if (created) {
+        return
+      }
+      for (var i = 0; i < 800; i++) {
+        var img = document.createElement('img')
+        img.src = './snow.png'
+        img.className = 'ts'
+
+        var w = 10 + Math.round(Math.random() * 30) + 'px'
+        img.style.width = w
+        img.style.height = w
+        document.body.appendChild(img)
+      }
+      created = true
+    }
+
+    function updateSnows() {
+      ;[...document.images].forEach(function (el, i) {
+        el.classList.add('ts')
+        el.style.transitionDuration =
+          3000 + Math.floor((Math.random() * i * 1000) / 800) + 'ms'
+        el.style.left =
+          50 + (Math.random() > 0.49 ? 1 : -1) * Math.random() * 200 + 'vw'
+        el.style.top = 100 + 1 * Math.round(Math.random() * 50) + 'vh'
+        el.style.transitionTimingFunction = `cubic-bezier(${Math.random().toFixed(
+          2,
+        )},${Math.random().toFixed(2)},${Math.random().toFixed(
+          2,
+        )},${Math.random().toFixed(2)})`
+      })
+    }
+
+    function resetSnows() {
+      ;[...document.images].forEach(function (el, i) {
+        el.style.transition = ''
+        el.style.top = '0'
+        el.style.left = '50vw'
+        el.classList.remove('ts')
+      })
+    }
+
+    createSnows()
+
+    document.body.addEventListener('click', function () {
+      resetSnows()
+      window.getComputedStyle(document.body)
+      requestAnimationFrame(updateSnows)
+    })
+  </script>
+</html>
+```
+
+#### transition 动画示例3：购物车抛物线
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>购物车抛物线</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+      }
+
+      body {
+        position: relative;
+      }
+
+      .container {
+        /* width: 30vw; */
+        margin: auto;
+        height: 94vh;
+        background-color: #fff4e8;
+        position: relative;
+        padding-top: 50px;
+      }
+
+      .container section {
+        display: flex;
+        margin: 8px;
+        max-width: 500px;
+        margin: auto;
+      }
+
+      .container section div {
+        align-self: center;
+      }
+
+      .container .add-car {
+        background: #e54346;
+        height: 30px;
+        text-align: center;
+        align-self: center;
+      }
+
+      .fixed-bottom {
+        position: fixed;
+        bottom: 0px;
+        z-index: 999;
+        width: 100vw;
+        height: 6vh;
+      }
+
+      .bottom-wrapper {
+        width: 30vw;
+        margin: auto;
+        border: silver solid 1px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .car {
+        height: 5vh;
+        margin-left: 10px;
+      }
+
+      .prod-img {
+        border: 1px solid #eee;
+      }
+
+      .moving-point {
+        height: 20px;
+        position: absolute;
+        display: none;
+        transform: translate(-50%, -50%);
+        z-index: 999;
+      }
+
+      @media screen and (max-width: 500px) {
+        .container section {
+          max-width: 100vw;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <section>
+        <img
+          class="prod-img"
+          src="//img10.360buyimg.com/cms/s80x80_jfs/t18700/63/435443749/91471/d622467/5a780f67Nc9f4b35b.jpg"
+        />
+        <div>花王碧柔（Biore）轻透倍护防晒乳SPF50+ PA+++ 40ml 轻透</div>
+        <img src="./add.jpg" class="add-car" />
+      </section>
+      <section>
+        <img
+          class="prod-img"
+          src="//img10.360buyimg.com/cms/s80x80_jfs/t18700/63/435443749/91471/d622467/5a780f67Nc9f4b35b.jpg"
+        />
+        <div>花王碧柔（Biore）轻透倍护防晒乳SPF50+ PA+++ 40ml 轻透</div>
+        <img src="./add.jpg" class="add-car" />
+      </section>
+      <section>
+        <img
+          class="prod-img"
+          src="//img10.360buyimg.com/cms/s80x80_jfs/t18700/63/435443749/91471/d622467/5a780f67Nc9f4b35b.jpg"
+        />
+        <div>花王碧柔（Biore）轻透倍护防晒乳SPF50+ PA+++ 40ml 轻透</div>
+        <img src="./add.jpg" class="add-car" />
+      </section>
+      <section>
+        <img
+          class="prod-img"
+          src="//img10.360buyimg.com/cms/s80x80_jfs/t18700/63/435443749/91471/d622467/5a780f67Nc9f4b35b.jpg"
+        />
+        <div>花王碧柔（Biore）轻透倍护防晒乳SPF50+ PA+++ 40ml 轻透</div>
+        <img src="./add.jpg" class="add-car" />
+      </section>
+      <section>
+        <img
+          class="prod-img"
+          src="//img10.360buyimg.com/cms/s80x80_jfs/t18700/63/435443749/91471/d622467/5a780f67Nc9f4b35b.jpg"
+        />
+        <div>花王碧柔（Biore）轻透倍护防晒乳SPF50+ PA+++ 40ml 轻透</div>
+        <img src="./add.jpg" class="add-car" />
+      </section>
+      <section>
+        <img
+          class="prod-img"
+          src="//img10.360buyimg.com/cms/s80x80_jfs/t18700/63/435443749/91471/d622467/5a780f67Nc9f4b35b.jpg"
+        />
+        <div>花王碧柔（Biore）轻透倍护防晒乳SPF50+ PA+++ 40ml 轻透</div>
+        <img src="./add.jpg" class="add-car" />
+      </section>
+    </div>
+
+    <div class="fixed-bottom">
+      <div class="bottom-wrapper">
+        <img src="./car.jpg" alt="" class="car" />
+      </div>
+    </div>
+
+    <img src="./add.jpg" alt="" class="moving-point" />
+
+    <script>
+      var animating = false
+      var carEl = document.querySelector('.car')
+      var pointEl = document.querySelector('.moving-point')
+
+      document
+        .querySelector('.container')
+        .addEventListener('click', function (ev) {
+          const el = ev.target
+          if (el.classList.contains('add-car')) {
+            if (animating) {
+              return
+            }
+            animating = true
+            reset()
+            var sourcePos = {
+              x: ev.x,
+              y: ev.y,
+            }
+
+            pointEl.style.top = numberToPx(sourcePos.y)
+            pointEl.style.left = numberToPx(sourcePos.x)
+            pointEl.style.display = 'block'
+
+            window.getComputedStyle(document.body)
+
+            requestAnimationFrame(transition)
+          }
+        })
+
+      function reset() {
+        pointEl.style.transition = ''
+      }
+
+      function transition() {
+        var targetPos = getTargetPos()
+
+        pointEl.style.transition = `top 500ms ease-in,left 500ms linear`
+        pointEl.style.top = numberToPx(targetPos.y)
+        pointEl.style.left = numberToPx(targetPos.x)
+      }
+
+      function numberToPx(n) {
+        return n + 'px'
+      }
+
+      function getTargetPos() {
+        var pos = carEl.getBoundingClientRect()
+        return {
+          x: pos.x + pos.width / 2,
+          y: pos.y + pos.height / 2,
+        }
+      }
+
+      pointEl.addEventListener('transitionend', function () {
+        animating = false
+        pointEl.style.transition = ''
+        pointEl.style.display = 'none'
+      })
+    </script>
+  </body>
+</html>
+```
+
+#### transition 动画示例4：加载进度条
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>加载进度条</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        cursor: pointer;
+      }
+      body {
+        padding-top: 100px;
+        background-color: rgba(0, 0, 0);
+      }
+      .outer {
+        margin: auto;
+        width: 90%;
+        height: 10px;
+        border-radius: 8px;
+        background-color: #000;
+        border-left: 2px solid rgba(0, 198, 255, 0.3);
+        border-top: 2px solid rgba(0, 198, 255, 0.3);
+        border-right: 2px solid rgba(0, 198, 255, 0.3);
+        border-bottom: 2px solid rgba(0, 198, 255, 0.3);
+      }
+      .inner {
+        height: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 198, 255, 1) inset;
+        width: 0;
+        border-radius: 8px;
+      }
+
+      .ts {
+        transition: width 5000ms ease 20ms;
+      }
+
+      .title {
+        text-align: center;
+        margin: 10px;
+        color: #fff;
+      }
+
+      .progress {
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="title">来来来， 点击任何地方开始加载</div>
+    <div class="outer">
+      <div class="inner"></div>
+    </div>
+
+    <script>
+      var innerEl = document.querySelector('.inner')
+      function reset() {
+        innerEl.classList.remove('progress')
+        innerEl.classList.remove('ts')
+      }
+      document.body.addEventListener('click', function () {
+        reset()
+        window.getComputedStyle(document.body)
+        requestAnimationFrame(function () {
+          innerEl.classList.add('ts')
+          if (!innerEl.classList.contains('progress')) {
+            innerEl.classList.add('progress')
+          }
+        })
+      })
+    </script>
+  </body>
+</html>
+```
+
+### animation 和 transition 的区别
+
+| 区别                                | animation | transition              |
+| ----------------------------------- | --------- | ----------------------- |
+| 动画周期                            | 有        | 有                      |
+| 动画的速度曲线                      | 有        | 有                      |
+| 动画何时开始（delay)                | 有        | 有                      |
+| 动画播放次数控制                    | 有        | 没有（只支持一次）      |
+| 是否可以逆向播放                    | 有        | 没有                    |
+| 动画暂停以及启动                    | 有        | 没有                    |
+| 设置动画停止之后位置状态(fill-mode) | 有        | 没有                    |
+| 是否可以自动播放                    | 有        | 没有(hover 或者 js触发) |
+| 控制多个关键帧                      | 有        | 没有(只有开始和结束)    |
+
