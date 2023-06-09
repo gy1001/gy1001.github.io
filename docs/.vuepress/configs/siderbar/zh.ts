@@ -367,6 +367,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/front-layout/index-01.md',
             '/zh/other/class/front-layout/index-02.md',
             '/zh/other/class/front-layout/index-03.md',
+            '/zh/other/class/front-layout/index-04.md',
           ]
         }
       ],
