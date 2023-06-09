@@ -359,6 +359,13 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/crack-js/index-17.md',
           ],
         },
+        {
+          texty:'前端主流布局系统进阶与实战',
+          collapsible: true,
+          children: [
+            '/zh/other/class/front-layout/index-01.md'
+          ]
+        }
       ],
     },
   ],
