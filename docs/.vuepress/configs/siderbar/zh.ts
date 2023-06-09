@@ -365,7 +365,8 @@ export const sidebarZh: SidebarConfig = {
           children: [
             '/zh/other/class/front-layout/README.md',
             '/zh/other/class/front-layout/index-01.md',
-            '/zh/other/class/front-layout/index-02.md'
+            '/zh/other/class/front-layout/index-02.md',
+            '/zh/other/class/front-layout/index-03.md',
           ]
         }
       ],
