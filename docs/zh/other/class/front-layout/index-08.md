@@ -152,3 +152,8 @@
 
 ## 04: 实战项目
 [源码地址](https://github.com/gy1001/Javascript/blob/main/front-layout/chapter_8/8_4/index.html)
+## 05: 章节总结
+* 掌握 CSS 文件如何划分及样式命名规范
+* 如何划分样式，使得样式更加健壮
+* 综合运用：flex、grid、@media 等知识点
+* 配合简单的 JavaScript 完成交互实现
