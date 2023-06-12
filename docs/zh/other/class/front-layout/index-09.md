@@ -364,3 +364,188 @@
 
 ## 04：视觉差布局案例实现
 
+[源码地址](https://github.com/gy1001/Javascript/blob/main/front-layout/chapter_9/9_4/1demo.html)
+
+## 05: 文字环绕布局
+
+### **利用float浮动实现文字环绕**
+
+* 假设在一个布局中有上下两个元素，如果给上面的元素添加float浮动，会使其脱离文档流，从而让下面元素跑到上面元素的后面。
+* 但是如果下面元素是一段文本的话，那么将无法跑到上面元素的后面，而是会产生文字环绕的效果。为什么会这样呢？主要是因为最初设计的初衷就是为了实现这种文字环绕的效果。
+
+```html
+<style>
+.main {
+    width: 300px;
+    border: 1px black solid;
+}
+.box {
+    width: 100px;
+    height: 100px;
+    background: pink;
+    float: left;
+    margin: 10px;
+}
+</style>
+<div class="main">
+    <div class="box"></div>
+    ^测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字$
+</div>
+```
+
+<div align=center>
+	<img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4c064ada787a4a819378f5c23b0e2168~tplv-k3u1fbpfcp-watermark.image" />
+    <div>float浮动的文字环绕</div>
+</div>
+
+* 左浮动会产生右环绕，同理右浮动会产生左环绕。但是同时出现左右环绕，目前float属性还做不到，将来float属性可能会添加一个center值，专门用来实现左右文字环绕的需求。
+
+* 当然我们可以分别实现对文字的左右环绕方式，代码如下：
+
+```html
+<style>
+.main {
+    width: 300px;
+    border: 1px black solid;
+}
+.box1, .box2 {
+    width: 100px;
+    height: 100px;
+    background: pink;
+    float: right;
+    margin: 10px;
+}
+.box2 {
+    float: left;
+}
+</style>
+<div class="main">
+    <div class="box1"></div>
+    ^测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字$
+    <div class="box2"></div>
+    ^测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字$
+</div>
+```
+
+<div align=center>
+	<img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c0ae998cfab74e478f8ee7e49a34b9aa~tplv-k3u1fbpfcp-watermark.image" />
+    <div>float浮动的文字环绕</div>
+</div>
+
+### 利用CSS Shapes模块实现文字环绕
+
+* CSS Shapes是一个CSS模块，用于定义几何形状。CSS Shapes模块可以实现不规则的文字环绕效果，需要和浮动配合使用。
+
+```html
+<style>
+.main {
+    width: 300px;
+    border: 1px black solid;
+}
+.box {
+    width: 100px;
+    height: 100px;
+    background: pink;
+    float: left;
+    margin: 10px;
+    border-radius: 50%;
+    shape-outside: margin-box;
+}
+</style>
+<div class="main">
+    <div class="box"></div>
+    ^测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字$
+</div>
+```
+
+<div align=center>
+	<img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/878419421e894c5f8fec7fa221df48dc~tplv-k3u1fbpfcp-watermark.image" />
+    <div>CSS Shapes的文字环绕</div>
+</div>
+
+* 可以看到文字会围绕这圆形的边界进行环绕，而普通的float浮动环绕是做不到的。`shape-outside`的可选值比较多：
+
+- **none** : 默认值
+- **shape-box** : 图形盒子，例如：margin-box、border-box、padding-box、content-box
+- **basic-shape** : 基本图形函数，例如：circle()、ellipse()、polygon()
+- **image** : 图像类
+
+* margin-box就是沿着元素margin区域进行环绕，border-box就是沿着元素border区域进行环绕。基本图形函数circle()就是沿着圆形区域进行环绕、ellipse()就是沿着椭圆形区域进行环绕、polygon()就是沿着自定义的折线区域进行环绕，下面是结合clip-path属性（使用裁剪方式创建元素的可显示区域）完成的一个围绕三角形区域进行的文字环绕。
+
+```css
+.box {
+    width: 100px;
+    height: 100px;
+    background: pink;
+    float: left;
+    margin: 10px;
+    clip-path: polygon(0 0, 0 100px, 100px 100px);
+    shape-outside: polygon(0 0, 0 100px, 100px 100px);
+    shape-margin: 15px;
+}
+```
+
+<div align=center>
+	<img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e51269d8dd874d46bb69666552400012~tplv-k3u1fbpfcp-watermark.image" />
+    <div>CSS Shapes的文字环绕</div>
+</div>
+
+* 还可以让文字环绕特殊图片，需要配合mask属性（遮罩）完成，而且需要在服务器环境下运行代码，因为图片的访问有浏览器的安全限制。
+
+```css
+.box {
+    width: 100px;
+    height: 164px;
+    float: left;
+    margin: 10px;
+    shape-outside: url(./birds.png);
+    shape-margin: 5px;
+    background-color: pink;
+    -webkit-mask: url(./birds.png) no-repeat;
+    mask: url(./birds.png) no-repeat;
+}
+```
+
+<div align=center>
+	<img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4219928f22a943608b3ae332ebce8750~tplv-k3u1fbpfcp-watermark.image" />
+    <div>CSS Shapes的文字环绕</div>
+</div>
+
+### 利用CSS Exclusion模块实现文字环绕
+
+* CSS Exclusion 是 Adob​​e 的另一项提议，旨在扩展CSS的现有可能性（以避免浮动的限制），并能够构建允许内联内容流入和/或围绕圆形或其他任意复杂形状的布局。
+
+* 利用CSS Exclusion模块可以实现类似于Word文档的方式，可以让文字四周环绕元素，不过CSS Exclusion模块目前浏览器的支持程度还不高，只能针对IE10+的浏览器起作用。
+
+&emsp;&emsp;CSS Exclusion模块主要使用wrap-flow属性，可选值有：start、end、both、clear等。
+
+
+```html
+<style>
+.main {
+    width: 300px;
+    border: 1px black solid;
+    position: relative;
+}
+.box {
+    width: 100px;
+    height: 100px;
+    background-color: pink;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -50px;
+    -ms-wrap-flow: both;
+    -webkit-wrap-flow: both;
+} 
+</style>
+<div class="main">
+    <div class="box"></div>
+    ^测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字$
+</div>
+```
+
+<div align=center>
+	<img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/972b286c4fa04b468d3bb5f07e4e6cfb~tplv-k3u1fbpfcp-watermark.image" />
+    <div>CSS Exclusion在IE11下的文字环绕</div>
+</div>
