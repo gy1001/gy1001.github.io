@@ -374,6 +374,14 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/front-layout/index-08.md',
             '/zh/other/class/front-layout/index-09.md',
           ]
+        },
+        {
+          text: '快速掌握前端必会的7种设计模式',
+          collapsible: true,
+          children: [
+            '/zh/other/class/design-pattern/index-01.md',
+            '/zh/other/class/design-pattern/index-02.md',
+          ]
         }
       ],
     },
