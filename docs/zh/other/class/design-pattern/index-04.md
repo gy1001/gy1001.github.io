@@ -222,3 +222,108 @@ window.$ = (selector) => {
 - 不方便链式操作，如`$('div').append($('#p1')).html()`
 - 不宜将构造函数暴露给用户，尽量高内聚、低耦合
 
+### Vue `_createElementVNode`
+
+在线编译 https://vue-next-template-explorer.netlify.app/
+
+```html
+<div>
+  <span>静态文字</span>
+  <span :id="hello" class="bar">{{ msg }}</span>
+</div>
+```
+
+会编译出很多 `_createXxx` JS 代码。这些就是工厂函数，创建 vnode 。
+
+```js
+export function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (
+    _openBlock(),
+    _createElementBlock('div', null, [
+      _createElementVNode('span', null, '静态文字'),
+      _createElementVNode(
+        'span',
+        {
+          id: _ctx.hello,
+          class: 'bar',
+        },
+        _toDisplayString(_ctx.msg),
+        9 /* TEXT, PROPS */,
+        ['id'],
+      ),
+    ])
+  )
+}
+```
+
+PS：不了解 Vue 模板编译流程的，可以去参考课程 https://coding.imooc.com/class/419.html
+
+### React `createElement`
+
+在线编译 https://www.babeljs.cn/repl
+
+在 React 中使用 JSX 语法
+
+```jsx
+const profile = (
+  <div>
+    <img src='avatar.png' className='profile' />
+    <h3>{[user.firstName, user.lastName].join(' ')}</h3>
+  </div>
+)
+```
+
+这是一种语法糖，编译之后就会是
+
+```javascript
+// 返回 vnode
+const profile = React.createElement(
+  'div',
+  null,
+  React.createElement('img', { src: 'avatar.png', className: 'profile' }),
+  React.createElement('h3', null, [user.firstName, user.lastName].join(' ')),
+)
+```
+
+其实`React.createElement`也是一个工厂，模拟代码
+
+```javascript
+class Vnode(tag, attrs, children) {
+    // ...省略内部代码...
+}
+React.createElement =  function (tag, attrs, children) {
+    return new Vnode(tag, attrs, children)
+}
+```
+
+PS：不了解 Vue 模板编译流程的，可以去参考课程 https://coding.imooc.com/class/419.html
+
+### 总结
+
+工厂模式在前端 JS 中应用非常广泛，随处可见
+
+- jQuery `$`
+
+- Vue `_createElementVNode`
+
+- React `createElement`
+
+
+## 05: 总结
+
+ 日常项目开发中，遇到 `new class` 的场景，要考虑是否可用工厂模式。
+
+### 内容回顾
+
+- 概念介绍 + 解决的问题
+- UML 类图 + 代码演示
+- 应用场景
+
+### 重要细节
+
+- TS 扩展 window 属性
+- 对 vnode 的理解
+
+### 注意事项
+
+- 遇到 `new class` 时，考虑工厂模式
