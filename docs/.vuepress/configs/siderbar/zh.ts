@@ -383,6 +383,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/design-pattern/index-02.md',
             '/zh/other/class/design-pattern/index-03.md',
             '/zh/other/class/design-pattern/index-04.md',
+            '/zh/other/class/design-pattern/index-05.md',
           ]
         }
       ],
