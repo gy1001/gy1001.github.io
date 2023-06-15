@@ -1,7 +1,7 @@
 import { defineUserConfig, defaultTheme } from 'vuepress'
 import { sidebarZh, sidebarEn } from '../.vuepress/configs/siderbar/zh'
 import { copyCodePlugin } from 'vuepress-plugin-copy-code2'
-import { photoSwipePlugin } from 'vuepress-plugin-photo-swipe'
+// import { photoSwipePlugin } from 'vuepress-plugin-photo-swipe'
 import { commentPlugin } from 'vuepress-plugin-comment2'
 import { searchPlugin } from '@vuepress/plugin-search'
 // https://vuepress-theme-hope.github.io/v2/md-enhance/guide/mermaid.html#sequence-diagram
@@ -89,7 +89,7 @@ export default defineUserConfig({
     copyCodePlugin({
       // 插件选项
     }),
-    photoSwipePlugin({}),
+    // photoSwipePlugin({}),
     commentPlugin({
       provider: 'Waline',
       serverURL: 'https://gy1001-comment.vercel.app',
