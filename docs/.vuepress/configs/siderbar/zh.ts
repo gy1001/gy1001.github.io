@@ -360,7 +360,7 @@ export const sidebarZh: SidebarConfig = {
           ],
         },
         {
-          text:'前端主流布局系统进阶与实战',
+          text: '前端主流布局系统进阶与实战',
           collapsible: true,
           children: [
             '/zh/other/class/front-layout/README.md',
@@ -373,7 +373,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/front-layout/index-07.md',
             '/zh/other/class/front-layout/index-08.md',
             '/zh/other/class/front-layout/index-09.md',
-          ]
+          ],
         },
         {
           text: '快速掌握前端必会的7种设计模式',
@@ -387,8 +387,9 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/design-pattern/index-06.md',
             '/zh/other/class/design-pattern/index-07.md',
             '/zh/other/class/design-pattern/index-08.md',
-          ]
-        }
+            '/zh/other/class/design-pattern/index-09.md',
+          ],
+        },
       ],
     },
   ],
