@@ -127,7 +127,7 @@ PS: 算法达到 O(n^2), 算法基本是不可用的
     const length = arr.length
     if (!k || length === 0) return arr
     const step = Math.abs(k % length) // abs 取绝对值
-
+  
     // O(n^2)
     for (let i = 0; i < step; i++) {
       const n = arr.pop()
@@ -144,7 +144,7 @@ PS: 算法达到 O(n^2), 算法基本是不可用的
   ```typescript
   const arr = [1, 2, 3, 4, 5, 6, 7]
   const k = 3
-
+  
   const res = rotate1(arr, k)
   ```
 
@@ -160,7 +160,7 @@ PS: 算法达到 O(n^2), 算法基本是不可用的
     const length = arr.length
     if (!k || length === 0) return arr
     const step = Math.abs(k % length) // abs 取绝对值
-
+  
     // O(1)
     const part1 = arr.slice(-step) // O(1)
     const part2 = arr.slice(0, length - step)
@@ -174,7 +174,7 @@ PS: 算法达到 O(n^2), 算法基本是不可用的
   ```typescript
   const arr = [1, 2, 3, 4, 5, 6, 7]
   const k = 3
-
+  
   const res = rotate2(arr, k)
   ```
 
@@ -223,3 +223,121 @@ PS: 算法达到 O(n^2), 算法基本是不可用的
 
 - 前端重时间、轻空间，优先考虑时间复杂度，而非空间复杂度
 - 代码是否易读，是否易沟通 —— 这个比性能更重要！人力成本永远是最贵的！！
+
+## 04: 括号匹配
+
+### 题目
+
+一个字符串内部可能包含 `{ }` `( )` `[ ]` 三种括号，判断该字符串是否是括号匹配的。<br>
+如 `(a{b}c)` 就是匹配的， `{a(b` 和 `{a(b}c)` 就是不匹配的。
+
+### 栈 Stack
+
+该题目的考察目的很明确 —— **栈**
+
+栈，先进后出，基本的 API
+
+- push
+- pop
+- length
+
+和栈相关的数据结构（后面讲）
+
+- 队列，先进先出
+- 堆，如常说的“堆栈模型”
+
+![image](./img/02/%E6%A0%88.png)
+
+### 逻辑结构和物理结构
+
+- 栈和数组有什么区别？—— **没有可比性，两者不一个级别**。就像：房子和石头有什么区别？
+
+- 栈是一种逻辑结构，一种理论模型，它可以脱离编程语言单独讲。
+
+- 数组是一种物理结构，代码的实现，不同的语言，数组语法是不一样的。
+
+- 栈可以用数组来表达，也可以用链表来表达，也可以自定义 `class MyStack {...}` 自己实现…
+
+* 在 JS 中，栈一般情况下用数组实现。
+
+### 思路
+
+- 遇到左括号 `{ ( [` 则压栈
+- 遇到右括号 `} ) ]` 则判断栈顶，相同的则出栈
+- 最后判断栈 length 是否为 0
+
+### 划重点
+
+- 栈
+- 逻辑结构和物理结构
+
+### 代码实现
+
+```typescript
+/**
+ * 判断左右括号是否匹配
+ * @param left 左括号
+ * @param right 右括号
+ */
+function isMatch(left: string, right: string): boolean {
+  if (left === '{' && right === '}') return true
+  if (left === '[' && right === ']') return true
+  if (left === '(' && right === ')') return true
+  return false
+}
+
+/**
+ * 判断是否括号匹配
+ * @param str str
+ */
+export function matchBracket(str: string): boolean {
+  const length = str.length
+  if (length === 0) return true
+
+  const stack = []
+
+  const leftSymbols = '{[('
+  const rightSymbols = '}])'
+
+  for (let i = 0; i < length; i++) {
+    const s = str[i]
+
+    if (leftSymbols.includes(s)) {
+      // 左括号，压栈
+      stack.push(s)
+    } else if (rightSymbols.includes(s)) {
+      // 右括号，判断栈顶（是否出栈）
+      const top = stack[stack.length - 1]
+      if (isMatch(top, s)) {
+        stack.pop()
+      } else {
+        // 如果一个不匹配，就直接返回 false
+        return false
+      }
+    }
+  }
+
+  return stack.length === 0
+}
+```
+
+测试代码
+
+```javascript
+const str = '{a(b[c]d)e}f'
+// const str = '{a(b[(c]d)e}f'
+// const str = '{a(b[c]d}e)f'
+const res = matchBracket(str)
+```
+
+### 性能分析
+
+- 时间复杂度 O(n)
+- 空间复杂度 O(n)
+
+> 注意：这里的 inlcudes 与字符串长度是有关系的，因为此处字符串 leftSymbols 的长度是固定的，所以我们认为时间复杂度 是 O(n)
+
+### 划重点
+
+- 栈
+- 逻辑结构 VS 物理结构
