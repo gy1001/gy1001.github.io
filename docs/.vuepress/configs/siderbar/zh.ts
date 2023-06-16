@@ -236,6 +236,11 @@ export const sidebarZh: SidebarConfig = {
         '/zh/other/class/linear-algebra',
         '/zh/other/class/vue3-learn-practice',
         '/zh/other/class/interview-front',
+        {
+          text: '2周刷完100道前端优质面试真题',
+          collapsible: true,
+          children: ['/zh/other/class/fe-interview-100/index-01.md'],
+        },
         '/zh/other/class/ts-axios',
         {
           text: '从0到1开发一款IOS APP',
