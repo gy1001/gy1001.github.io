@@ -391,6 +391,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/design-pattern/index-10.md',
             '/zh/other/class/design-pattern/index-11.md',
             '/zh/other/class/design-pattern/index-12.md',
+            '/zh/other/class/design-pattern/index-13.md',
           ],
         },
       ],
