@@ -285,9 +285,9 @@ Object.defineProperty(obj, 'y', {
     value: 300,
     configurable: true,
   })
-
+  
   delete obj.y // 不成功, 返回 false
-
+  
   // 重修修改 y 报错（而修改 z 就不报错）
   Object.defineProperty(obj, 'y', {
     value: 210,
@@ -356,11 +356,11 @@ Object.defineProperty(obj, 'y', {
     value: 300,
     enumerable: true,
   })
-
+  
   for (const key in obj) {
     console.log(key) // 'x' 'z'
   }
-
+  
   // console.log('y' in obj) // true —— 只能限制 for...in 无法限制 in
   ```
 
