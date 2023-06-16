@@ -7,23 +7,24 @@
 //   width: 300px;
 // }
 body {
-// --content-width: 1200px;
+  // --content-width: 1200px;
 }
 .waline-wrapper {
   padding: 0 !important;
 }
-.sidebar-items{
-  p,a {
+.sidebar-items {
+  p,
+  a {
     overflow: hidden;
     width: 100%;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
 }
-code{
-  background-color: rgba(0,0,0,0.12);
+code {
+  background-color: rgba(0, 0, 0, 0.12);
   margin: 0 8px;
 }
-div[class*=language-].line-numbers-mode pre{
+div[class*='language-'].line-numbers-mode pre {
   text-indent: -0.5rem;
 }

@@ -239,7 +239,10 @@ export const sidebarZh: SidebarConfig = {
         {
           text: '2周刷完100道前端优质面试真题',
           collapsible: true,
-          children: ['/zh/other/class/fe-interview-100/index-01.md'],
+          children: [
+            '/zh/other/class/fe-interview-100/index-01.md',
+            '/zh/other/class/fe-interview-100/index-02.md',
+          ],
         },
         '/zh/other/class/ts-axios',
         {
