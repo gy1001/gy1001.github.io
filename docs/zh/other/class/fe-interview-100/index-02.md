@@ -721,6 +721,294 @@ console.timeEnd('queue with array') // 431ms
 
 ### 划重点
 
-* 链表，链表 VS 数组
-* 数组结构的选择，要比算法优化更重要
-* 要有时间复杂度的敏感性，如 length 不能遍历查找
+- 链表，链表 VS 数组
+- 数组结构的选择，要比算法优化更重要
+- 要有时间复杂度的敏感性，如 length 不能遍历查找
+
+## 05：二分查找
+
+### 题目
+
+用 Javascript 实现二分查找（针对有序数组），说明它的时间复杂度
+
+### 一个故事
+
+N 年前，百度，一个复杂的后台系统出现了问题，因为太大找不到问题所在。
+一个工程师，使用二分法，很快找到了问题原因。
+
+无论多么大的数据量，一旦有了二分，便可快速搞定
+
+二分法，是算法的一个重要思维。
+
+但二分法有一个条件：**需要有序数据**。
+
+### 分析
+
+二分查找是一种固定的算法，没什么可分析的。
+
+两种实现思路
+
+- 递归 - 代码逻辑更加简洁
+- 循环 - 性能更好（就调用一次函数，而递归需要调用很多次函数，创建函数作用域会消耗时间）
+
+时间复杂度 `O(logn)`
+
+### 代码演示
+
+#### 循环
+
+```typescript
+/**
+ * 二分查找（循环）
+ * @param arr arr
+ * @param target target
+ */
+export function binarySearch1(arr: number[], target: number): number {
+  const length = arr.length
+  if (length === 0) return -1
+
+  let startIndex = 0 // 开始位置
+  let endIndex = length - 1 // 结束位置
+
+  while (startIndex <= endIndex) {
+    const midIndex = Math.floor((startIndex + endIndex) / 2)
+    const midValue = arr[midIndex]
+    if (target < midValue) {
+      // 目标值较小，则继续在左侧查找
+      endIndex = midIndex - 1
+    } else if (target > midValue) {
+      // 目标值较大，则继续在右侧查找
+      startIndex = midIndex + 1
+    } else {
+      // 相等，返回
+      return midIndex
+    }
+  }
+  return -1
+}
+```
+
+#### 递归
+
+```typescript
+/**
+ * 二分查找（递归）
+ * @param arr arr
+ * @param target target
+ * @param startIndex start index
+ * @param endIndex end index
+ */
+export function binarySearch2(
+  arr: number[],
+  target: number,
+  startIndex?: number,
+  endIndex?: number,
+): number {
+  const length = arr.length
+  if (length === 0) return -1
+
+  // 开始和结束的范围
+  if (startIndex == null) startIndex = 0
+  if (endIndex == null) endIndex = length - 1
+
+  // 如果 start 和 end 相遇，则结束
+  if (startIndex > endIndex) return -1
+
+  // 中间位置
+  const midIndex = Math.floor((startIndex + endIndex) / 2)
+  const midValue = arr[midIndex]
+
+  if (target < midValue) {
+    // 目标值较小，则继续在左侧查找
+    return binarySearch2(arr, target, startIndex, midIndex - 1)
+  } else if (target > midValue) {
+    // 目标值较大，则继续在右侧查找
+    return binarySearch2(arr, target, midIndex + 1, endIndex)
+  } else {
+    // 相等，返回
+    return midIndex
+  }
+}
+```
+
+### 功能测试
+
+```typescript
+const arr = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120]
+const target = 40
+// console.info(binarySearch2(arr, target))
+```
+
+### 性能测试
+
+```typescript
+console.time('binarySearch1')
+for (let i = 0; i < 100 * 10000; i++) {
+  binarySearch1(arr, target)
+}
+console.timeEnd('binarySearch1') // 17ms
+
+console.time('binarySearch2')
+for (let i = 0; i < 100 * 10000; i++) {
+  binarySearch2(arr, target)
+}
+console.timeEnd('binarySearch2') // 34ms
+```
+
+### 划重点
+
+- 凡有序，必二分
+- 凡二分，时间复杂度必包含 `O(logn)` !!!
+- 递归 VS 非递归
+
+## 06：两数之和
+
+### 题目
+
+输入一个递增的数字数组，和一个数字 `n` 。求和等于 `n` 的两个数字。
+
+例如输入 `[1, 2, 4, 7, 11, 15]` 和 `15` ，返回两个数 `[4, 11]`
+
+### 分析
+
+注意题目的要点
+
+\- 递增，从小打大排序
+
+\- 只需要两个数字，而不是多个
+
+### 常规思路
+
+嵌套循环，找个一个数，然后再遍历剩余的数，求和，判断。
+
+时间复杂度 `O(n^2)` ，基本不可用。
+
+### 利用递增的特性
+
+**数组是递增的**
+
+- 随便找两个数
+- 如果和大于 n ，则需要向前寻找
+- 如果和小于 n ，则需要向后寻找 —— **二分法**
+
+**双指针（指针就是索引，如数组的 index）**
+
+- i 指向头，j 指向尾， 求 i + j 的和
+- 和如果大于 n ，则说明需要减少，则 j 向前移动（递增特性）
+- 和如果小于 n ，则说明需要增加，则 i 向后移动（递增特性）
+
+**时间复杂度降低到 `O(n)`**
+
+### 代码
+
+#### 普通嵌套循环
+
+```typescript
+/**
+ * 寻找和为 n 的两个数（嵌套循环）
+ * @param arr arr
+ * @param n n
+ */
+export function findTowNumbers1(arr: number[], n: number): number[] {
+  const res: number[] = []
+
+  const length = arr.length
+  if (length === 0) return res
+
+  // O(n^2)
+  for (let i = 0; i < length - 1; i++) {
+    const n1 = arr[i]
+    let flag = false // 是否得到了结果
+
+    for (let j = i + 1; j < length; j++) {
+      const n2 = arr[j]
+
+      if (n1 + n2 === n) {
+        res.push(n1)
+        res.push(n2)
+        flag = true
+        break
+      }
+    }
+
+    if (flag) break
+  }
+
+  return res
+}
+```
+
+#### 双指针查找
+
+```typescript
+/**
+ * 查找和为 n 的两个数（双指针）
+ * @param arr arr
+ * @param n n
+ */
+export function findTowNumbers2(arr: number[], n: number): number[] {
+  const res: number[] = []
+
+  const length = arr.length
+  if (length === 0) return res
+
+  let i = 0 // 头
+  let j = length - 1 // 尾
+
+  // O(n)
+  while (i < j) {
+    const n1 = arr[i]
+    const n2 = arr[j]
+    const sum = n1 + n2
+
+    if (sum > n) {
+      // sum 大于 n ，则 j 要向前移动
+      j--
+    } else if (sum < n) {
+      // sum 小于 n ，则 i 要向后移动
+      i++
+    } else {
+      // 相等
+      res.push(n1)
+      res.push(n2)
+      break
+    }
+  }
+
+  return res
+}
+```
+
+### 代码测试
+
+#### 功能测试
+
+```typescript
+const arr = [
+  1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2,
+  1, 2, 4, 7, 11, 15,
+]
+// console.info(findTowNumbers2(arr, 15))
+```
+
+#### 性能测试
+
+```typescript
+console.time('findTowNumbers1')
+for (let i = 0; i < 100 * 10000; i++) {
+  findTowNumbers1(arr, 15)
+}
+console.timeEnd('findTowNumbers1') // 730ms
+
+console.time('findTowNumbers2')
+for (let i = 0; i < 100 * 10000; i++) {
+  findTowNumbers2(arr, 15)
+}
+console.timeEnd('findTowNumbers2') // 102
+```
+
+### 划重点
+
+- 时间复杂度 O(n^2), 是不可用的算法
+- 凡有序，必二分！！！
+- 优化嵌套循环，可以考虑 **“双指针”**
