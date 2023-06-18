@@ -451,7 +451,276 @@ export class MyQueue {
 
 ### 划重点
 
-* 队列
-* 逻辑结构 VS 物理结构
+- 队列
+- 逻辑结构 VS 物理结构
 
-* 画图，帮助梳理解题思路
+- 画图，帮助梳理解题思路
+
+## 06: 反转链表
+
+### 题目
+
+定义一个函数，输入一个单向链表的头节点，反转该链表，并输出反转之后的头节点
+
+### 链表
+
+- 链表是一种物理结构（非逻辑结构），是数组的补充。
+- 数组需要一段连续的内存空间，而链表不需要。
+
+数据结构
+
+- 单向链表 `{ value, next }`
+- 双向链表 `{ value, prev, next }`
+
+![](./img/02/链表.png)
+
+### 链表 VS 数组
+
+- 都是有序结构， 而对象、Set 是无序结构
+- 链表：查询慢 `O(n)`, 新增和删除快 `O(1)`
+- 数组：查询快 `O(1)`, 新增和删除慢 `O(n)`
+
+### 应用场景
+
+`React Fiber` 就把 `vdom` 树转换为一个链表，这样才有可能随时中断、再继续进行。
+
+如果 vdom 是树，那只能递归一次性执行完成，中间无法断开。
+
+![](./img/02/react-fiber-链表.png)
+
+### 分析
+
+反转链表，画图很好理解。没有捷径，遍历一边，重新设置 next 指向即可。
+
+但实际写代码，却并不简单，很容易造成 nextNode 丢失。
+
+因此，遍历过程中，至少要存储 3 个指针 `prevNode` `curNode` `nextNode`
+
+时间复杂度 `O(n)`
+
+### 代码展示
+
+- 根据数组创建单向链表
+
+  ```typescript
+  export interface ILinkListNode {
+    value: number
+    next?: ILinkListNode
+  }
+
+  /**
+   * 根据数组创建单向链表
+   * @param arr number arr
+   */
+  export function createLinkList(arr: number[]): ILinkListNode {
+    const length = arr.length
+    if (length === 0) throw new Error('arr is empty')
+
+    let curNode: ILinkListNode = {
+      value: arr[length - 1],
+    }
+    if (length === 1) return curNode
+
+    for (let i = length - 2; i >= 0; i--) {
+      curNode = {
+        value: arr[i],
+        next: curNode,
+      }
+    }
+
+    return curNode
+  }
+  ```
+
+- 反转单向链表
+
+  ```typescript
+  /**
+   * 反转单向链表，并返回反转之后的 head node
+   * @param listNode list head node
+   */
+  export function reverseLinkList(listNode: ILinkListNode): ILinkListNode {
+    // 定义三个指针
+    let prevNode: ILinkListNode | undefined = undefined
+    let curNode: ILinkListNode | undefined = undefined
+    let nextNode: ILinkListNode | undefined = listNode
+
+    // 以 nextNode 为主，遍历链表
+    while (nextNode) {
+      // 第一个元素，删掉 next ，防止循环引用
+      if (curNode && !prevNode) {
+        delete curNode.next
+      }
+
+      // 反转指针
+      if (curNode && prevNode) {
+        curNode.next = prevNode
+      }
+
+      // 整体向后移动指针
+      prevNode = curNode
+      curNode = nextNode
+      nextNode = nextNode?.next
+    }
+
+    // 最后一个的补充：当 nextNode 空时，此时 curNode 尚未设置 next
+    curNode!.next = prevNode
+
+    return curNode!
+  }
+  ```
+
+- 测试代码
+
+  ```typescript
+  const arr = [100, 200, 300, 400, 500]
+  const list = createLinkList(arr)
+  console.info('list:', list)
+  
+  const list1 = reverseLinkList(list)
+  console.info('list1:', list1)
+  ```
+
+### 划重点
+
+- 链表
+- 链表和数组的不同
+  - 内存占用
+  - 查询、新增、删除的效率
+- 如何保证 `nextNode` 不丢失
+- 链表的代码逻辑比较繁琐，调试成本高
+
+### 扩展
+
+思考：用数组和链表实现队列，哪个性能更好？
+
+## 07：连环问：链表和数组，哪个实现队列更快
+
+### 分析
+
+- 数组是连续存储，`push` 很块，`shift` 很慢
+- 链表是非连续存储，`add` 和 `delete`都很快，但是**查找很慢**
+
+- 结论：链表实现队列更快
+
+### 链表实现队列
+
+- 单向链表，但要同时记录 `head` 和 `tail`
+- 要从尾部 `tail` 入队，从 `head` 出队，否则出队时 `tail` 不好定位
+- `length` 要实时记录，不可遍历链表获取
+
+### 代码演示
+
+```typescript
+interface IListNode {
+  value: number
+  next: IListNode | null
+}
+
+export class MyQueue {
+  private head: IListNode | null = null
+  private tail: IListNode | null = null
+  private len = 0
+
+  /**
+   * 入队，在 tail 位置
+   * @param n number
+   */
+  add(n: number) {
+    const newNode: IListNode = {
+      value: n,
+      next: null,
+    }
+
+    // 处理 head
+    if (this.head == null) {
+      this.head = newNode
+    }
+
+    // 处理 tail
+    const tailNode = this.tail
+    if (tailNode) {
+      tailNode.next = newNode
+    }
+    this.tail = newNode
+
+    // 记录长度
+    this.len++
+  }
+
+  /**
+   * 出队，在 head 位置
+   */
+  delete(): number | null {
+    const headNode = this.head
+    if (headNode == null) return null
+    if (this.len <= 0) return null
+
+    // 取值
+    const value = headNode.value
+
+    // 处理 head
+    this.head = headNode.next
+
+    // 记录长度
+    this.len--
+
+    return value
+  }
+
+  get length(): number {
+    // length 要单独存储，不能遍历链表来获取（否则时间复杂度太高 O(n)）
+    return this.len
+  }
+}
+```
+
+### 功能测试代码
+
+```typescript
+// 功能测试
+const q = new MyQueue()
+q.add(100)
+q.add(200)
+q.add(300)
+console.info('length1', q.length)
+console.log(q.delete())
+console.info('length2', q.length)
+console.log(q.delete())
+console.info('length3', q.length)
+console.log(q.delete())
+console.info('length4', q.length)
+console.log(q.delete())
+console.info('length5', q.length)
+```
+
+### 性能测试
+
+```typescript
+// 性能测试
+const q1 = new MyQueue()
+console.time('queue with list')
+for (let i = 0; i < 10 * 10000; i++) {
+  q1.add(i)
+}
+for (let i = 0; i < 10 * 10000; i++) {
+  q1.delete()
+}
+console.timeEnd('queue with list') // 17ms
+
+const q2 = []
+console.time('queue with array')
+for (let i = 0; i < 10 * 10000; i++) {
+  q2.push(i) // 入队
+}
+for (let i = 0; i < 10 * 10000; i++) {
+  q2.shift() // 出队
+}
+console.timeEnd('queue with array') // 431ms
+```
+
+### 划重点
+
+* 链表，链表 VS 数组
+* 数组结构的选择，要比算法优化更重要
+* 要有时间复杂度的敏感性，如 length 不能遍历查找
