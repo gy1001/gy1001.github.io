@@ -1458,7 +1458,7 @@ interface IListNode {
 
 树，是一种有序的层级结构。每个节点下面可以有若干个子节点。例如常见的 DOM 树。
 
-![](./img/dom-tree.png)
+![](./img/02/dom-tree.png)
 
 ```ts
 // 树节点的数据结构
