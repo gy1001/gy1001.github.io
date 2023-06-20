@@ -1357,3 +1357,19 @@ react-router 有三种模式，设计上和 vue-router 一样
 - [browser history](https://reactrouter.com/web/api/BrowserRouter)
 - [hash history](https://reactrouter.com/web/api/HashRouter)
 - [memory history](https://reactrouter.com/web/api/MemoryRouter)
+
+## 18: 总结
+
+### 内容总结
+
+本章讲解前端技术深度相关面试题。包括 JS 内存相关，Vue 和 React 相关原理。 大厂的技术评级时，技术深度是重要的参考标准，这很重要。
+
+### 划重点
+
+- JS 相关原理
+- Vue 相关原理
+- React 相关原理
+
+### 注意事项
+
+深了就不能广，别要求太多。有 1-2 方面突出的就可以。
