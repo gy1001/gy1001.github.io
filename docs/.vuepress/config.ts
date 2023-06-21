@@ -52,11 +52,11 @@ export default defineUserConfig({
             link: '/zh/other/',
           },
           {
-            text: '休闲娱乐',
+            text: 'git地址',
             children: [
               {
-                text: '更新日志',
-                link: 'https://github.com/vuepress/vuepress-next/blob/main/CHANGELOG.md',
+                text: 'git地址',
+                link: 'https://github.com/gy1001/gy1001.github.io',
               },
             ],
           },
