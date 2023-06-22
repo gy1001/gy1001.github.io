@@ -653,9 +653,7 @@ webSocket 和 http 都是应用层，支持端对端的通讯。可以由服务�
 
 ```javascript
 const { WebSocketServer } = require('ws')
-
 const wsServer = new WebSocketServer({ port: 3000 })
-
 wsServer.on('connection', (ws) => {
   console.info('connected')
 
@@ -752,7 +750,7 @@ io.on('connection', (socket) => {
 })
 ```
 
-### 连环问：webSocket 和长轮询（长连接）的区别
+## 11：连环问：webSocket 和长轮询（长连接）的区别-扩展-创建简易聊天室
 
 - http 长轮询 - 客户端发起 http 请求，server 不立即返回，等待有结果再返回。这期间 TCP 连接不会关闭，阻塞式。（需要处理 timeout 的情况）
 - webSocket - 客户端发起请求，服务端接收，连接关闭。服务端发起请求，客户端接收，连接关闭。非阻塞。
@@ -761,4 +759,96 @@ io.on('connection', (socket) => {
 
 #### 注意：
 
-- HTTP 长轮询，需要处理 timeout ，即 timeout 之后重新发送请求
+- `HTTP 长轮询`，需要处理 `timeout` ，即 `timeout` 之后重新发送请求
+
+#### 聊天室
+
+服务端
+
+```javascript
+const { WebSocketServer } = require('ws')
+const wsServer = new WebSocketServer({ port: 3000 })
+const list = new Set()
+
+wsServer.on('connection', (curWs) => {
+  console.info('connected')
+  // 这里，不能一直被 add 。实际使用中，这里应该有一些清理缓存的机制，长期用不到的 ws 要被 delete
+  list.add(curWs)
+  curWs.on('message', (msg) => {
+    console.info('received message', msg.toString())
+    // 传递给其他客户端
+    list.forEach((ws) => {
+      if (ws === curWs) return
+      ws.send(msg.toString())
+    })
+  })
+})
+```
+
+#### 客户端
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>websocket</title>
+  </head>
+  <body>
+    <p>websocket page 1</p>
+    <button id="btn-send">发送消息</button>
+
+    <script>
+      const ws = new WebSocket('ws://127.0.0.1:3000')
+      ws.onopen = () => {
+        console.info('opened')
+        ws.send('client1 opened')
+      }
+      ws.onmessage = (event) => {
+        console.info('client1 received', event.data)
+      }
+
+      const btnSend = document.getElementById('btn-send')
+      btnSend.addEventListener('click', () => {
+        console.info('clicked')
+        ws.send('client1 time is ' + Date.now())
+      })
+    </script>
+  </body>
+</html>
+```
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>websocket</title>
+  </head>
+  <body>
+    <p>websocket page 2</p>
+    <button id="btn-send">发送消息</button>
+
+    <script>
+      const ws = new WebSocket('ws://127.0.0.1:3000')
+      ws.onopen = () => {
+        console.info('opened')
+        ws.send('client2 opened')
+      }
+      ws.onmessage = (event) => {
+        console.info('client2 received', event.data)
+      }
+
+      const btnSend = document.getElementById('btn-send')
+      btnSend.addEventListener('click', () => {
+        console.info('clicked')
+        ws.send('client2 time is ' + Date.now())
+      })
+    </script>
+  </body>
+</html>
+```
