@@ -779,8 +779,99 @@ React 默认情况下，只要父组件更新，其下所有子组件都会“�
 - 可使用 `shouldComponentUpdate` 判断
 - 或者组件直接继承 `React.PureComponent` ，相当于在 `shouldComponentUpdate` 进行 props 的**浅层**比较
 
-但此时，必须使用**不可变数据**，例如不可用 `arr.push` 而要改用 `arr.concat`。考验工程师对 JS 的熟悉程度。<br>
-代码参考 components/SimpleTodos/index.js 的 class 组件。
+  ```javascript
+  import React from 'react'
+
+  class TodoList extends React.PureComponent {
+    componentDidUpdate() {
+      // React 默认会让所有的子组件都更新，无论涉及的数据是否变化
+      console.info('list updated')
+    }
+    render() {
+      const { list = [] } = this.props
+
+      return (
+        <ul>
+          {list.map((todo) => {
+            const { id, title } = todo
+            return <li key={id}>{title}</li>
+          })}
+        </ul>
+      )
+    }
+  }
+
+  export default TodoList
+  ```
+
+* 但此时，必须使用**不可变数据**，例如不可用 `arr.push` 而要改用 `arr.concat`。考验工程师对 JS 的熟悉程度。<br>
+  代码参考 components/SimpleTodos/index.js 的 class 组件。
+
+  ```javascript
+  import React from 'react'
+  // import TodoList from './TodoList'
+  import FunctionalTodoList from './FunctionalTodoList'
+
+  class SimpleTodos extends React.Component {
+    constructor() {
+      super()
+
+      this.state = {
+        inputValue: '',
+        list: [
+          { id: 0, title: '吃饭' },
+          { id: 1, title: '睡觉' },
+        ],
+      }
+    }
+    changeInputValue = (newValue) => {
+      this.setState({
+        inputValue: newValue,
+      })
+    }
+    createTodo = () => {
+      const title = this.state.inputValue
+      if (!title) return
+
+      // 新增 todo - 正确处理 （ 不可变数据 - React ）
+      const curList = this.state.list
+      this.setState({
+        list: curList.concat({
+          id: curList.length,
+          title,
+        }),
+      })
+      // // 错误的处理示范
+      // this.state.list.push({
+      //     id: this.state.list.length,
+      //     title
+      // })
+
+      // 清空输入框
+      this.setState({
+        inputValue: '',
+      })
+    }
+    render() {
+      return (
+        <div>
+          <input
+            value={this.state.inputValue}
+            onInput={(e) => {
+              this.changeInputValue(e.target.value)
+            }}
+          />
+          <button onClick={this.createTodo}>创建</button>
+
+          {/* <TodoList list={this.state.list}></TodoList> */}
+          <FunctionalTodoList list={this.state.list} />
+        </div>
+      )
+    }
+  }
+
+  export default SimpleTodos
+  ```
 
 不可变数据也有相应的第三方库
 
@@ -793,6 +884,26 @@ PS：React 默认情况（子组件“无脑”更新）这本身并不是问题
 
 如果是函数组件，没有用 `shouldComponentUpdate` 和 `React.PureComponent` 。React 提供了 `React.memo` 来缓存组件。<br>
 代码参考 FunctionalTodoList.js
+
+```javascript
+import React from 'react'
+
+function FunctionalTodoList(props) {
+  console.log('todo list fn...')
+
+  const { list = [] } = props
+  return (
+    <ul>
+      {list.map((todo) => {
+        const { id, title } = todo
+        return <li key={id}>{title}</li>
+      })}
+    </ul>
+  )
+}
+
+export default React.memo(FunctionalTodoList)
+```
 
 `React.memo` 也支持自行比较
 
@@ -890,92 +1001,566 @@ const App = () => (
 - 路由懒加载
 - SSR
 
+### 划重点
+
+- 要彻底理解 shouleComponentUpdate 及其周边
+- 在 React 中，要让**不可变数据**深入骨髓
+
 ## 09: 连环问-你在使用 React 时遇到过哪些坑
 
-JSX 中，自定义组件命名，开头字母要大写，html 标签开头字母小写
+- 自定义组件的名称首字母要大写
 
-```jsx
-{
-  /* 原生 html 组件 */
-}
-;<input />
+  > JSX 中，自定义组件命名，开头字母要大写，html 标签开头字母小写
 
-{
-  /* 自定义组件 */
-}
-;<Input />
-```
-
-JSX 中 `for` 写成 `htmlFor` ， `class` 写成 `className`
-
-```js
-{/* for 改成 htmlFor ，class 要改为 className */}
-<label htmlFor="input-name" className="xxx">
-    姓名 <input id="input-name"/>
-<label>
-```
-
-state 作为不可变数据，不可直接修改，使用纯函数
-
-```js
-// this.state.list.push({...}) // 错误，不符合 React 规范
-this.setState({
-    list: curList.concat({...}) // 使用**不可变数据**
-})
-```
-
-JSX 中，属性要区分 JS 表达式和字符串
-
-```js
-<Demo position={1} flag={true}/>
-<Demo position="1" flag="true"/>
-```
-
-state 是异步更新的，要在 callback 中拿到最新的 state 值
-
-```js
-const curNum = this.state.num
-this.setState(
+  ```jsx
   {
-    num: curNum + 1,
-  },
-  () => {
-    console.log('newNum', this.state.num) // 正确
-  },
-)
-// console.log('newNum', this.state.num) // 错误
-```
+    /* 原生 html 组件 */
+  }
+  ;<input />
 
-React Hooks 有很多限制，注意不到就会踩坑。例如，`useEffect` 内部不能修改 state
+  {
+    /* 自定义组件 */
+  }
+  ;<Input />
+  ```
 
-```js
-function App() {
-  const [count, setCount] = useState(0)
+* JS 关键字的冲突
 
+  > JSX 中 `for` 写成 `htmlFor` ， `class` 写成 `className`
+
+  ```js
+  {/* for 改成 htmlFor ，class 要改为 className */}
+  <label htmlFor="input-name" className="xxx">
+      姓名 <input id="input-name"/>
+  <label>
+  ```
+
+* state 不可直接修改
+
+  > state 作为不可变数据，不可直接修改，使用纯函数
+
+  ```js
+  // this.state.list.push({...}) // 错误，不符合 React 规范
+  this.setState({
+    list: curList.concat({...}) // 使用**不可变数据**
+  })
+  ```
+
+- JSX 的数据类型
+
+  > JSX 中，属性要区分 JS 表达式和字符串
+
+  ```js
+  <Demo position={1} flag={true}/>
+  <Demo position="1" flag="true"/>
+  ```
+
+- setState 是异步更新的
+
+  > state 是异步更新的，要在 callback 中拿到最新的 state 值
+
+  ```js
+  const curNum = this.state.num
+  this.setState(
+    {
+      num: curNum + 1,
+    },
+    () => {
+      console.log('newNum', this.state.num) // 正确
+    },
+  )
+  // console.log('newNum', this.state.num) // 错误
+  ```
+
+* React Hooks 有很多限制，注意不到就会踩坑。例如，`useEffect` 内部不能修改 state
+
+  ```js
+  function App() {
+    const [count, setCount] = useState(0)
+
+    useEffect(() => {
+      const timer = setInterval(() => {
+        setCount(count + 1) // 如果依赖是 [] ，这里 setCount 不会成功
+      }, 1000)
+
+      return () => clearTimeout(timer)
+    }, [count]) // 只有依赖是 [count] 才可以，这样才会触发组件 update
+
+    return <div>count: {count}</div>
+  }
+
+  export default App
+  ```
+
+* useEffect 第二个参数依赖项目必须是**值类型**
+  再例如，`useEffect` 依赖项（即第二个参数）里有对象、数组，就会出现死循环。所以，依赖项里都要是值类型。<br>
+  因为 React Hooks 是通过 `Object.is` 进行依赖项的前后比较。如果是值类型，则不妨碍。
+  如果是引用类型，前后的值是不一样的（纯函数，每次新建值），就类似 `{x:100} !== {x:100}`
+
+  ```js
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCount(count + 1) // 如果依赖是 [] ，这里 setCount 不会成功
-    }, 1000)
+    // ...
+  }, [obj, arr])
+  ```
 
-    return () => clearTimeout(timer)
-  }, [count]) // 只有依赖是 [count] 才可以，这样才会触发组件 update
-
-  return <div>count: {count}</div>
-}
-
-export default App
-```
-
-再例如，`useEffect` 依赖项（即第二个参数）里有对象、数组，就会出现死循环。所以，依赖项里都要是值类型。<br>
-因为 React Hooks 是通过 `Object.is` 进行依赖项的前后比较。如果是值类型，则不妨碍。
-如果是引用类型，前后的值是不一样的（纯函数，每次新建值），就类似 `{x:100} !== {x:100}`
-
-```js
-useEffect(() => {
-  // ...
-}, [obj, arr])
-```
-
-## 面试连环问：setState 是同步还是异步？
+## 10: 面试连环问：setState 是同步还是异步？
 
 前端经典面试题。先作为思考题，后面会结合代码详细讲解。
+
+## 11: 如何统一监听 Vue 组件报错
+
+### 题目
+
+如何统一监听 Vue 组件报错？
+
+### 分析
+
+真实项目需要**闭环**，即考虑各个方面，除了基本的功能外，还要考虑性能优化、报错、统计等。
+而个人项目、课程项目一般以实现功能为主，不会考虑这么全面。所以，没有实际工作经验的同学，不会了解如此全面。
+
+### window.onerror
+
+可以监听当前页面所有的 JS 报错，jQuery 时代经常用。<br>
+注意，全局只绑定一次即可。不要放在多次渲染的组件中，这样容易绑定多次。
+
+```js
+window.onerror = function (msg, source, line, column, error) {
+  console.log('window.onerror---------', msg, source, line, column, error)
+}
+// 注意，如果用 window.addEventListener('error', event => {}) 参数不一样！！！
+```
+
+### errorCaptured 生命周期
+
+会监听所有**下级组件**的错误。可以返回 `false` 阻止向上传播，因为可能会有多个上级节点都监听错误。
+
+```js
+errorCaptured(error, instance, info) {
+  console.log('errorCaptured--------', error, instance, info)
+}
+```
+
+### errorHandler
+
+全局的错误监听，所有组件的报错都会汇总到这里来。PS：如果 `errorCaptured` 返回 `false` 则**不会**到这里。
+
+```js
+const app = createApp(App)
+app.config.errorHandler = (error, instance, info) => {
+  console.log('errorHandler--------', error, instance, info)
+}
+```
+
+请注意，`errorHandler` 会阻止错误走向 `window.onerror`。
+
+PS：还有 `warnHandler`
+
+### 异步错误
+
+组件内的异步错误 `errorHandler` 监听不到，还是需要 `window.onerror`
+
+```js
+mounted() {
+  setTimeout(() => {
+    throw new Error('setTimeout 报错')
+  }, 1000)
+},
+```
+
+### 答案
+
+方式
+
+- `errorCaptured` 监听下级组件的错误，可返回 `false` 阻止向上传播
+- `errorHandler` 监听 Vue 全局错误
+- `window.onerror` 监听其他的 JS 错误，如异步
+
+建议：结合使用
+
+- 一些重要的、复杂的、有运行风险的组件，可使用 `errorCaptured` 重点监听
+- 然后用 `errorHandler` `window.onerror` 候补全局监听，避免意外情况
+
+### 划重点
+
+- 实际工作中，三者要结合使用
+- errorCaptured 监听一些重要、有风险组件的错误
+- window.onerror 和 errorHandler 候补全局监听
+
+### 扩展
+
+Promise 未处理的错误监听要使用 `window.onunhandledrejection` ，后面会有面试题讲解。
+
+前端拿到错误监听之后，需要传递给服务端，进行错误收集和分析，然后修复 bug 。
+后面会有一道面试题专门讲解。
+
+## 12: 如何统一监听 React 组件报错
+
+### 题目
+
+如何统一监听 React 组件报错？
+
+### 分析
+
+真实项目需要**闭环**，即考虑各个方面，除了基本的功能外，还要考虑性能优化、报错、统计等。
+而个人项目、课程项目一般以实现功能为主，不会考虑这么全面。所以，没有实际工作经验的同学，不会了解如此全面。
+
+### ErrorBoundary
+
+- React 16+ 引入。可以监听所有**下级**组件报错，同时降级展示 UI 。<br>
+- 只监听组件渲染时报错，不监听 DOM 事件、异步错误
+- production 环境生效，dev 会直接抛出错误
+
+代码参考 ErrorBoundary.js 和 components/ErrorDemo
+
+```javascript
+import React from 'react'
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      error: null, // 存储当前的报错信息
+    }
+  }
+  static getDerivedStateFromError(error) {
+    // 更新 state 使下一次渲染能够显示降级后的 UI
+    console.info('getDerivedStateFromError...', error)
+    return { error }
+  }
+  componentDidCatch(error, errorInfo) {
+    // 统计上报错误信息
+    console.info('componentDidCatch...', error, errorInfo)
+  }
+  render() {
+    if (this.state.error) {
+      // 提示错误
+      return <h1>报错了</h1>
+    }
+
+    // 没有错误，就渲染子组件
+    return this.props.children
+  }
+}
+
+export default ErrorBoundary
+```
+
+建议应用到最顶层，监听全局错误
+
+```jsx
+// index.js 入口文件
+ReactDOM.render(
+  <React.StrictMode>
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
+  </React.StrictMode>,
+  document.getElementById('root'),
+)
+```
+
+函数组件中也可以使用
+
+```js
+function App(props) {
+  return <ErrorBoundary>{props.children}</ErrorBoundary>
+}
+```
+
+### dev 和 build
+
+dev 环境下无法看到 ErrorBoundary 的报错 UI 效果。会显示的提示报错信息。<br>
+`yarn build` 之后再运行，即可看到 UI 效果。
+
+### 事件报错
+
+- React 不需要 ErrorBoundary 来捕获事件处理器中的错误。与 `render` 方法和生命周期方法不同，事件处理器不会在渲染期间触发。
+- 如果你需要在事件处理器内部捕获错误，使用普通的 `try-catch` 语句。
+- 也可以使用全局的 `window.onerror` 来监听。
+
+### 异步错误
+
+ErrorBoundary 无法捕捉到异步报错，可使用 `window.onerror` 来监听。
+
+```js
+window.onerror = function (msg, source, line, column, error) {
+  console.log('window.onerror---------', msg, source, line, column, error)
+}
+// 注意，如果用 window.addEventListener('error', event => {}) 参数不一样！！！
+```
+
+### 答案
+
+- ErrorBoundary 监听组件渲染时报错
+- 事件报错使用 `try-catch` 和 `window.onerror`
+- 异步报错等使用 `window.onerror`
+
+### 扩展
+
+Promise 未处理的报错监听需要使用 `window.onunhandledrejection` ，后面会有面试题讲解。
+
+前端拿到错误监听之后，需要传递给服务端，进行错误收集和分析，然后修复 bug 。
+后面会有一道面试题专门讲解。
+
+## 13: 如果一个 H5 很慢，如何排查性能问题-通过 Chrome Performance 分析
+
+### 题目
+
+如果一个 h5 很慢，你该如何排查问题？
+
+### 分析
+
+注意审题，看面试官问的是哪方面的慢。如果他没有说清楚，你可以继续追问一下。
+
+- 加载速度慢。则考虑网页文件、数据请求的优化，即本文所讲
+- 运行卡顿，体验不流畅。则考虑内存泄漏、节流防抖、重绘重排的方面，此前面试题已经讲过
+
+### 前端性能指标
+
+能搜索到的性能指标非常多，也有很多非标准的指标。最常用的指标有如下几个：
+
+#### First Paint (FP)
+
+从开始加载到浏览器**首次绘制像素**到屏幕上的时间，也就是页面在屏幕上首次发生视觉变化的时间。但此变化可能是简单的背景色更新或不引人注意的内容，它并不表示页面内容完整性，可能会报告没有任何可见的内容被绘制的时间。
+
+#### First Contentful Paint（FCP）
+
+浏览器**首次绘制来自 DOM 的内容**的时间，内容必须是文本、图片（包含背景图）、非白色的 canvas 或 SVG，也包括带有正在加载中的 Web 字体的文本。
+
+#### First Meaningful Paint（FMP）
+
+页面的**主要内容**绘制到屏幕上的时间。这是一个更好的衡量用户感知加载体验的指标，但无法统一衡量，因为每个页面的主要内容都不太一致。<br>
+主流的分析工具都已弃用 FMP 而使用 LCP
+
+#### DomContentLoaded（DCL）
+
+即 `DOMContentLoaded` 触发时间，DOM 全部解析并渲染完。
+
+#### Largest Contentful Paint（LCP）
+
+**可视区域中最大的内容元素**呈现到屏幕上的时间，用以估算页面的主要内容对用户可见时间。
+
+#### Load（L）
+
+即 `window.onload` 触发时间，页面内容（包括图片）全部加载完成。
+
+### 性能分析工具 - Chrome devtools
+
+PS：建议在 Chrome 隐身模式测试，避免其他缓存的干扰。
+
+Performance 可以检测到上述的性能指标，并且有网页快照截图。
+
+![](./img/07/performance.png)
+
+NetWork 可以看到各个资源的加载时间
+
+![](./img/07/network.png)
+
+### 性能分析工具 - Lighthouse
+
+[Lighthouse](https://www.npmjs.com/package/lighthouse) 是非常优秀的第三方性能评测工具，支持移动端和 PC 端。
+它支持 Chrome 插件和 npm 安装，国内情况推荐使用后者。
+
+```sh
+# 安装
+npm i lighthouse -g
+
+# 检测一个网页，检测完毕之后会打开一个报告网页
+lighthouse https://imooc.com/ --view --preset=desktop # 或者 mobile
+```
+
+测试完成之后，lighthouse 给出测试报告
+
+![](./img/07/lighthouse-performance.png)
+
+并且会给出一些优化建议
+
+![](./img/07/lighthouse-sug.png)
+
+### 识别问题
+
+网页慢，到底是加载慢，还是渲染慢？—— 分清楚很重要，因为前后端不同负责。
+
+如下图是 github 的性能分析，很明显这是加载慢，渲染很快。
+
+![](./img/07/github-performance.png)
+
+### 解决方案
+
+加载慢
+
+- 优化服务端硬件配置， 使用 CDN
+- 路由懒加载，大组件异步加载 - 减少主包体积
+- 优化 HTTP 缓存策略
+- 压缩文件
+
+渲染慢（可参考“首屏优化”）
+
+- 优化服务端接口（如 Ajax 获取数据慢）
+- 继续分析，优化前端组件内部的逻辑（参考 vue react 优化）
+- 根据业务功能，继续打点监控
+- 如果是 SPA 异步加载资源，需要特别关注网络请求的时间
+- 服务端渲染 SSR
+
+### 持续跟进
+
+- 性能优化是一个循序渐进的过程，不像 bug 一次性解决
+- 持续跟进统计结果，在逐步分析性能瓶颈，持续优化
+- 可使用第三方统计服务，如阿里云 ARMS、百度统计
+
+分析、解决、测试，都是在你本地进行，网站其他用户的情况你看不到。
+所以要增加性能统计，看全局，不只看自己。
+
+JS 中有 Performance API 可供获取网页的各项性能数据，对于性能统计非常重要。
+如 `performance.timing` 可以获取网页加载各个阶段的时间戳。
+
+如果你的公司没有内部的统计服务（一般只有大厂有），没必要自研，成本太高了。可以使用第三方的统计服务，例如阿里云 ARMS 。
+
+### 答案
+
+- 通过工具分析性能参数
+- 识别问题：加载慢？渲染慢？
+- 对症下药，解决问题
+- 增加性能统计，持续跟进、优化
+
+### 划重点
+
+- 性能指标，性能检测工具
+- 使用“二分法”，可逐步找出问题根源
+- 要有监控，持续跟进的思维。解决了问题，还得保持住
+
+## 14: 工作中遇到过哪些项目难点，是如何解决的
+
+### 题目
+
+你工作经历中，印象比较深的项目难点，以及学到了什么？
+
+### 日常积累的习惯
+
+大家在日常工作和学习中，如果遇到令人头秃的问题，解决完之后一定要记录下来，这是你宝贵的财富。<br>
+如果你说自己没遇到过，那只能说明：你没有任何工作经验，甚至没有认真学习过。
+
+下面给出几个示例，我做 wangEditor 富文本编辑器时的一些问题和积累
+
+- 编辑器 embed 设计 https://juejin.cn/post/6939724738818211870
+- 编辑器扩展 module 设计 https://juejin.cn/post/6968061014046670884#heading-18
+- 编辑器拼音输入问题和 toHtml 的问题 https://juejin.cn/post/6987305803073978404#heading-33
+
+### 如果之前没积累
+
+如果此前没有积累，又要开始面试了，请抓紧回顾一下近半年让你困惑的一个问题。做程序员总会有那么几个问题折腾好久才能解决，不难找的。
+
+就抓住这一个问题（不要太多），认真复盘，详细写出一篇博客文章
+
+- 光想、光看没用，写出来才能印象深刻
+- 文章要有内容有深度，要耐心写，不要求快（找个周末，闷在家里，一天时间写出来）
+- 文章不求别人看，只求自己积累
+
+### 复盘和成长
+
+要通过问题，最终体现出自己的解决方案、复盘和成长。而不是只抛出问题
+
+### 答案模板
+
+找到一个问题，按照下面的套路回答
+
+- 描述问题：背景 + 现象 + 造成的影响
+- 问题如何被解决：分析 + 解决
+- 自己的成长：从中学到了什么，以后会怎么避免
+
+PS：这不是知识点，没法统一传授，我的经验你拿不走，只能靠你自己总结。
+
+### 示例
+
+PS：工作中有保密协议，所以只能说一些开源的，但也决定具有参考价值。
+
+以编辑器 [toHtml](https://www.wangeditor.com/v5/guide/display.html) 的问题作为一个示例，找个功能比较好理解。
+
+问题描述
+
+- 新版编辑器只能输入 JSON 格式内容，无法输入 html
+- 旧版编辑器却只能输入 html 格式
+- 影响：旧版编辑器无法直接升级到新版编辑器
+
+问题如何解决
+
+- 文档写清楚，争取大家的理解
+- 给出一些其他的升级[建议](https://github.com/wangeditor-team/wangEditor-v5/issues/233)
+- 后续会增加 `editor.dangerouslyInsertHTML` API 尽量兼容 html 格式
+
+自己的成长
+
+- 要考虑一个产品完整的输入输出，而不只考虑编辑功能
+- 要考虑旧版用户的升级成本
+- 要参考其他竞品的设计，尽量符合用户习惯
+
+## 15: 扩展：处理沟通冲突
+
+### 题目
+
+项目中有没有发生过沟通的冲突（和其他角色）？如何解决的
+
+### 分析
+
+有项目有合作，有合作就有沟通，有沟通就有冲突，这很正常。哪怕你自己单独做一个项目，你也需要和你的老板、客户沟通。
+
+面试官通过考察这个问题，就可以从侧面得知你是否有实际工作经验。
+因为即便你是一个项目的“小兵”，不是负责人，你也会参与到一些沟通和冲突中，也能说出一些所见所闻。
+
+当然，如果你之前是项目负责人，有过很多沟通和解决冲突的经验，并在面试中充分表现出来。
+相信面试官会惊喜万分（前提是技术过关），因为“技术 + 项目管理”这种复合型人才非常难得。
+
+### 常见的冲突
+
+- 需求变更：PM 或者老板提出了新的需求
+- 时间延期：上游或者自己延期了
+- 技术方案冲突：如感觉服务端给的接口格式不合理
+
+### 正视冲突
+
+从个人心理上，不要看到冲突就心烦，要拥抱变化，正视冲突。冲突是项目的一部分，就像 bug 一样，心烦没用。
+
+例如，PM 过来说要修改需求，你应该回答：**“可以呀，你组织个会议讨论一下吧，拉上各位领导，因为有可能会影响工期。”**
+
+再例如，自己开发过程中发现可能会有延期，要及早的汇报给领导：**“我的工期有风险，因为 xxx 原因，不过我会尽量保证按期完成。”**<br>
+千万不要不好意思，等延期了被领导发现了，这就不好了。
+
+### 解决冲突
+
+合作引起的冲突，最终还是要通过沟通来解决。
+
+一些不影响需求和工期的冲突，如技术方案问题，尽量私下沟通解决。实在解决不了再来领导开会。<br>
+需求变更和时间延期一定要开会解决，会议要有各个角色决定权的领导去参与。
+
+注意，无论是私下沟通还是开会，涉及到自己工作内容变动的，一定要有结论。
+最常见的就是发邮件，一定要抄送给各位相关的负责人。这些事情要公开，有记录，不要自己偷偷的就改了。
+
+### 如何规避冲突
+
+- 预估工期留有余地
+- 定期汇报个人工作进度，提前识别风险
+
+### 答案
+
+- 经常遇到哪些冲突
+- 解决冲突
+- 自己如何规避冲突
+
+PS：最好再能准备一个案例或者故事，效果会非常好，因为人都喜欢听故事。
+
+## 16: 总结
+
+### 内容总结
+
+本章讲解实际工作经验的面试题。无论是校招还是社招，企业都希望得到工作经验丰富的候选人。
+体现工作经验的有：性能分析和优化、设计模式应用、错误监听等。
+
+### 划重点
+
+- 性能优化的实践
+- 设计模式的应用
+- 错误监控的实践
+
+### 注意事项
+
+- 应届毕业生也需要工作经验 —— 你的毕业设计，实习经历
