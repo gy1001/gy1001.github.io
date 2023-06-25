@@ -753,7 +753,7 @@ fn1(20, 30)
 `bind` 生成新函数，暂不执行。而 `call` `apply` 会直接立即执行函数
 
 - 重新绑定 `this` （箭头函数不支持）
-- 传入参数
+- 传入执行参数
 
 ### 分析：如何在函数执行时绑定 this
 
@@ -769,10 +769,465 @@ fn.call({ x: 100 }, 10, 20, 30)
 fn.apply({ x: 100 }, [10, 20, 30])
 ```
 
-代码参考 call-apply.ts
+代码参考 `call-apply.ts`
+
+```typescript
+// @ts-ignore
+Function.prototype.customCall = function (context: any, ...args: any[]) {
+  if (context == null) context = globalThis
+  if (typeof context !== 'object') context = new Object(context) // 值类型，变为对象
+
+  const fnKey = Symbol() // 不会出现属性名称的覆盖
+  context[fnKey] = this // this 就是当前的函数
+
+  const res = context[fnKey](...args) // 绑定了 this
+
+  delete context[fnKey] // 清理掉 fn ，防止污染
+
+  return res
+}
+```
+
+```typescript
+// @ts-ignore
+Function.prototype.customApply = function (context: any, args: any[] = []) {
+  if (context == null) context = globalThis
+  if (typeof context !== 'object') context = new Object(context) // 值类型，变为对象
+
+  const fnKey = Symbol() // 不会出现属性名称的覆盖
+  context[fnKey] = this // this 就是当前的函数
+
+  const res = context[fnKey](...args) // 绑定了 this
+
+  delete context[fnKey] // 清理掉 fn ，防止污染
+
+  return res
+}
+```
+
+```typescript
+function fn(this: any, a: any, b: any, c: any) {
+  console.info(this, a, b, c)
+}
+// @ts-ignore
+fn.customCall({ x: 100 }, 10, 20, 30)
+// @ts-ignore
+fn.customApply({ x: 200 }, [100, 200, 300])
+```
 
 - 使用 `obj.fn` 执行，即可设置 `fn` 执行时的 `this`
 - 考虑 `context` 各种情况
 - 使用 `symbol` 类型扩展属性
 
 注意：有些同学用 `call` 来实现 `apply` （反之亦然），这样是不符合面试官期待的。
+
+### 划重点
+
+- 想用 call 实现 apply, 用 apply 实现 call 这不可取
+- 原生 call apply 的 this 如果是值类型，也会被 new Object(...)
+- Symbol 的作用
+
+## 15：手写 EventBus 自定义事件
+
+Bus 不是“车”，而是“总线”
+
+### 题目
+
+请手写 EventBus 自定义事件，实现 `no` `once` `emit` 和 `off`
+
+### EventBus 功能
+
+```js
+const event = new EventBus()
+
+function fn1(a, b) {
+  console.log('fn1', a, b)
+}
+function fn2(a, b) {
+  console.log('fn2', a, b)
+}
+function fn3(a, b) {
+  console.log('fn3', a, b)
+}
+
+event.on('key1', fn1)
+event.on('key1', fn2)
+event.once('key1', fn3)
+event.on('xxxxxx', fn3)
+
+event.emit('key1', 10, 20) // 触发 fn1 fn2 fn3
+
+event.off('key1', fn1)
+
+event.emit('key1', 100, 200) // 触发 fn2
+```
+
+### 分析
+
+- on 和 once 注册函数，存储起来
+- emit 时找到对应的函数，执行
+- off 找到对应的函数，从对象中删除
+
+### 注意区分 on 和 once
+
+- on 绑定的事件可以连续执行，除非 off
+- once 绑定的函数 emit 一次即可删除，也可以未执行而被 off
+- 数据结构上要标识出 on 和 once
+
+### 实现
+
+- `class` 结构
+- 注意区分 `on` 和 `off`
+
+代码参考 event-bus.ts
+
+```typescript
+export default class EventBus {
+  /**
+   * {
+   *    'key1': [
+   *        { fn: fn1, isOnce: false },
+   *        { fn: fn2, isOnce: false },
+   *        { fn: fn3, isOnce: true },
+   *    ]
+   *    'key2': [] // 有序
+   *    'key3': []
+   * }
+   */
+  private events: {
+    [key: string]: Array<{ fn: Function; isOnce: boolean }>
+  }
+
+  constructor() {
+    this.events = {}
+  }
+
+  on(type: string, fn: Function, isOnce: boolean = false) {
+    const events = this.events
+    if (events[type] == null) {
+      events[type] = [] // 初始化 key 的 fn 数组
+    }
+    events[type].push({ fn, isOnce })
+  }
+
+  once(type: string, fn: Function) {
+    this.on(type, fn, true)
+  }
+
+  off(type: string, fn?: Function) {
+    if (!fn) {
+      // 解绑所有 type 的函数
+      this.events[type] = []
+    } else {
+      // 解绑单个 fn
+      const fnList = this.events[type]
+      if (fnList) {
+        this.events[type] = fnList.filter((item) => item.fn !== fn)
+      }
+    }
+  }
+
+  emit(type: string, ...args: any[]) {
+    const fnList = this.events[type]
+    if (fnList == null) return
+
+    // 注意
+    this.events[type] = fnList.filter((item) => {
+      const { fn, isOnce } = item
+      fn(...args)
+
+      // once 执行一次就要被过滤掉
+      if (!isOnce) return true
+      return false
+    })
+  }
+}
+```
+
+## 16: 手写 EventBus 自定义事件-on 和 once 分开存储
+
+```typescript
+/**
+ * @description Event Bus - 拆分保存 on 和 once 事件
+ * @author 双越老师
+ */
+
+export default class EventBus2 {
+  private events: { [key: string]: Array<Function> } // { key1: [fn1, fn2], key2: [fn1, fn2] }
+  private onceEvents: { [key: string]: Array<Function> }
+
+  constructor() {
+    this.events = {}
+    this.onceEvents = {}
+  }
+
+  on(type: string, fn: Function) {
+    const events = this.events
+    if (events[type] == null) events[type] = []
+    events[type].push(fn)
+  }
+
+  once(type: string, fn: Function) {
+    const onceEvents = this.onceEvents
+    if (onceEvents[type] == null) onceEvents[type] = []
+    onceEvents[type].push(fn)
+  }
+
+  off(type: string, fn?: Function) {
+    if (!fn) {
+      // 解绑所有事件
+      this.events[type] = []
+      this.onceEvents[type] = []
+    } else {
+      // 解绑单个事件
+      const fnList = this.events[type]
+      const onceFnList = this.onceEvents[type]
+      if (fnList) {
+        this.events[type] = fnList.filter((curFn) => curFn !== fn)
+      }
+      if (onceFnList) {
+        this.onceEvents[type] = onceFnList.filter((curFn) => curFn !== fn)
+      }
+    }
+  }
+
+  emit(type: string, ...args: any[]) {
+    const fnList = this.events[type]
+    const onceFnList = this.onceEvents[type]
+
+    if (fnList) {
+      fnList.forEach((f) => f(...args))
+    }
+    if (onceFnList) {
+      onceFnList.forEach((f) => f(...args))
+
+      // once 执行一次就删除
+      this.onceEvents[type] = []
+    }
+  }
+}
+
+// const e = new EventBus2()
+
+// function fn1(a: any, b: any) { console.log('fn1', a, b) }
+// function fn2(a: any, b: any) { console.log('fn2', a, b) }
+// function fn3(a: any, b: any) { console.log('fn3', a, b) }
+
+// e.on('key1', fn1)
+// e.on('key1', fn2)
+// e.once('key1', fn3)
+// e.on('xxxxxx', fn3)
+
+// e.emit('key1', 10, 20) // 触发 fn1 fn2 fn3
+
+// e.off('key1', fn1)
+
+// e.emit('key1', 100, 200) // 触发 fn2
+```
+
+### 划重点
+
+- 区分 on 和 once
+- 合理的数据结构，比算法优化更有效
+
+## 17: 连环问：EventBus 里的数组可以换成 Set 吗？
+
+数组和 Set 比较 （除了语法 API）
+
+- 数组，有序结构，查找、中间插入、中间删除比较慢
+- Set 不可排序的，插入和删除都很快
+
+Set 初始化或者 `add` 时是一个有序结构，但它无法再次排序，没有 `index` 也没有 `sort` 等 API
+
+验证
+
+- 生成一个大数组，验证 `push` `unshift` `includes` `splice`
+- 生成一个大 Set ，验证 `add` `delete` `has`
+
+答案：**不可以，Set 是不可排序的，如再增加一些“权重”之类的需求，将不好实现。**
+
+### Map 和 Object
+
+Object 是无序的
+
+```js
+const data1 = { 1: 'aaa', 2: 'bbb', 3: 'ccc', 测试: '000' }
+Object.keys(data1) // ["1", "2", "3", "测试"]
+const data2 = { 测试: '000', 1: 'aaa', 3: 'ccc', 2: 'bbb' }
+Object.keys(data2) // ["1", "2", "3", "测试"]
+```
+
+Map 是有序的
+
+```js
+const m1 = new Map([
+  ['1', 'aaa'],
+  ['2', 'bbb'],
+  ['3', 'ccc'],
+  ['测试', '000'],
+])
+m1.forEach((val, key) => {
+  console.log(key, val)
+})
+const m2 = new Map([
+  ['测试', '000'],
+  ['1', 'aaa'],
+  ['3', 'ccc'],
+  ['2', 'bbb'],
+])
+m2.forEach((val, key) => {
+  console.log(key, val)
+})
+```
+
+另外，**Map 虽然是有序的，但它的 `get` `set` `delete` 速度非常快**，和 Object 效率一样。它是被优化过的有序结构。
+
+## 18: 用 JS 实现一个 LRU 缓存-分析数据结构特点，使用 Map
+
+### 题目
+
+用 JS 实现一个 LRU 缓存
+
+### 什么是 LRU 缓存
+
+- LRU-Least Recently Used 最近使用
+- 如果内存有限，只缓存最近使用的，删除“沉水”数据
+- 核心 API 两个：get set
+
+### LRU 使用
+
+Least Recently Used 最近最少使用<br>
+即淘汰掉最近最少使用的数据，只保留最近经常使用的资源。它是一个固定容量的缓存容器。
+
+```js
+const lruCache = new LRUCache(2) // 最大缓存长度 2
+lruCache.set(1, 1) // 缓存是 {1=1}
+lruCache.set(2, 2) // 缓存是 {1=1, 2=2}
+lruCache.get(1) // 返回 1
+lruCache.set(3, 3) // 该操作会使得关键字 2 作废，缓存是 {1=1, 3=3}
+lruCache.get(2) // 返回 null
+lruCache.set(4, 4) // 该操作会使得关键字 1 作废，缓存是 {4=4, 3=3}
+lruCache.get(1) // 返回 null
+lruCache.get(3) // 返回 3 { 4=4, 3=3}
+lruCache.get(4) // 返回 4 { 3=3, 4=4}
+```
+
+### 分析
+
+- 哈希表，即 `{ k1: v1, k2: v2, ... }` 形式。可以 `O(1)` 事件复杂度存取 `key` `value`
+- 必须是**有序的**，常用数据放在前面，“沉水”数据放在后面
+- 哈希表 + 有序，就是 MAP ---- 其他都不行
+
+JS 内置的数据结构类型 `Object` `Array` `Set` `Map` ，恰好 `Map` 符合这两条要求
+
+### Map 是有序的
+
+Map 有序，Object 无序
+
+### 实现
+
+代码参考 LRU.ts
+
+注意，`get` `set` 时都要把操作数据移动到 Map 最新的位置。
+
+```typescript
+export default class LRUCache {
+  private length: number
+  private data: Map<any, any> = new Map()
+
+  constructor(length: number) {
+    if (length < 1) throw new Error('invalid length')
+    this.length = length
+  }
+
+  set(key: any, value: any) {
+    const data = this.data
+
+    if (data.has(key)) {
+      data.delete(key)
+    }
+    data.set(key, value)
+
+    if (data.size > this.length) {
+      // 如果超出了容量，则删除 Map 最老的元素
+      // keys() 返回一个引用的迭代器对象。它包含按照顺序插入 Map 对象中每个元素的 key 值。
+      const delKey = data.keys().next().value
+      data.delete(delKey)
+    }
+  }
+
+  get(key: any): any {
+    const data = this.data
+
+    if (!data.has(key)) return null
+
+    const value = data.get(key)
+
+    data.delete(key)
+    data.set(key, value)
+
+    return value
+  }
+}
+
+// const lruCache = new LRUCache(2)
+// lruCache.set(1, 1) // {1=1}
+// lruCache.set(2, 2) // {1=1, 2=2}
+// console.info(lruCache.get(1)) // 1 {2=2, 1=1}
+// lruCache.set(3, 3) // {1=1, 3=3}
+// console.info(lruCache.get(2)) // null
+// lruCache.set(4, 4) // {3=3, 4=4}
+// console.info(lruCache.get(1)) // null
+// console.info(lruCache.get(3)) // 3 {4=4, 3=3}
+// console.info(lruCache.get(4)) // 4 {3=3, 4=4}
+```
+
+### 划重点
+
+- 如果面试时你不知道 LRU（或者其他名词），你可以问面试官
+- 考虑功能，还有考虑性能
+- 选择合理数据结构
+
+### 扩展
+
+实际项目中可以使用第三方 lib
+
+- [https://www.npmjs.com/package/quick-lru](https://www.npmjs.com/package/quick-lru)
+- [https://www.npmjs.com/package/lru-cache](https://www.npmjs.com/package/lru-cache)
+- [https://www.npmjs.com/package/tiny-lru](https://www.npmjs.com/package/tiny-lru)
+- [https://www.npmjs.com/package/mnemonist](https://www.npmjs.com/package/mnemonist)
+
+## 19:【连环问】不用 Map 实现 LRU 缓存-分析问题，使用双向链表
+
+LRU cache 是很早就有的算法，而 Map 仅仅是这几年才加入的 ES 语法。
+
+### LRU 使用 Map 是基于两个特点
+
+- 哈希表（get、set 速度表）
+- 有序
+- 可结合 Object + Array
+
+### 但是依然存在性能问题：Array 操作慢
+
+- 移出 “沉水” 数据，使用数组 shift 效率太低
+- get set 时移动数据，用数组 splice 效率太低
+
+### 改造：Array 改为双向链表
+
+数组有问题，就需要使用新的数据结构 **双向链表**
+
+```ts
+Interface INode {
+  value: any
+  next?: INode
+  prev?: INode
+}
+```
+
+双向链表可以快速移动元素。末尾新增元素 D 很简单，开头删除 A 元素也很简单。
+
+![](./img/08/双向链表-1.png)
+
+要把中间的元素 B 移动到最后（如 LRU `set` `get` 时移动数据位置），只需要修改前后的指针即可，效率很高。
+
+![](./img/08//双向链表-2.png)
