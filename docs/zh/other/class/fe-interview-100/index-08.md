@@ -755,6 +755,12 @@ fn1(20, 30)
 - 重新绑定 `this` （箭头函数不支持）
 - 传入参数
 
+### 分析：如何在函数执行时绑定 this
+
+- 如 `const obj = { x: 100, fn() { return  this.x}}`
+- 执行 obj.fn() 此时内部的 this 就指向 obj
+- 可以借此来实现 this
+
 ```js
 function fn(a, b, c) {
   console.log(this, a, b, c)
