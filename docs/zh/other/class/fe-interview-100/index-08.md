@@ -1142,12 +1142,10 @@ export default class LRUCache {
 
   set(key: any, value: any) {
     const data = this.data
-
     if (data.has(key)) {
       data.delete(key)
     }
     data.set(key, value)
-
     if (data.size > this.length) {
       // 如果超出了容量，则删除 Map 最老的元素
       // keys() 返回一个引用的迭代器对象。它包含按照顺序插入 Map 对象中每个元素的 key 值。
@@ -1158,28 +1156,24 @@ export default class LRUCache {
 
   get(key: any): any {
     const data = this.data
-
     if (!data.has(key)) return null
-
     const value = data.get(key)
-
     data.delete(key)
     data.set(key, value)
-
     return value
   }
 }
 
-// const lruCache = new LRUCache(2)
-// lruCache.set(1, 1) // {1=1}
-// lruCache.set(2, 2) // {1=1, 2=2}
-// console.info(lruCache.get(1)) // 1 {2=2, 1=1}
-// lruCache.set(3, 3) // {1=1, 3=3}
-// console.info(lruCache.get(2)) // null
-// lruCache.set(4, 4) // {3=3, 4=4}
-// console.info(lruCache.get(1)) // null
-// console.info(lruCache.get(3)) // 3 {4=4, 3=3}
-// console.info(lruCache.get(4)) // 4 {3=3, 4=4}
+const lruCache = new LRUCache(2)
+lruCache.set(1, 1) // {1=1}
+lruCache.set(2, 2) // {1=1, 2=2}
+console.info(lruCache.get(1)) // 1 {2=2, 1=1}
+lruCache.set(3, 3) // {1=1, 3=3}
+console.info(lruCache.get(2)) // null
+lruCache.set(4, 4) // {3=3, 4=4}
+console.info(lruCache.get(1)) // null
+console.info(lruCache.get(3)) // 3 {4=4, 3=3}
+console.info(lruCache.get(4)) // 4 {3=3, 4=4}
 ```
 
 ### 划重点
@@ -1205,7 +1199,18 @@ LRU cache 是很早就有的算法，而 Map 仅仅是这几年才加入的 ES �
 
 - 哈希表（get、set 速度表）
 - 有序
-- 可结合 Object + Array
+- 如果没有 map, 可结合 Object + Array
+
+```javascript
+// 执行 lru.set('a', 1) lru.set('b', 2) lru.set('c', 3) 后的数据
+
+const obj1 = { value: 1, key: 'a' }
+const obj2 = { value: 2, key: 'b' }
+const obj3 = { value: 3, key: 'c' }
+
+const data = [obj1, obj2, obj3]
+const map = { a: obj1, b: obj2, c: obj3 } // 对象，是无序列表
+```
 
 ### 但是依然存在性能问题：Array 操作慢
 
@@ -1213,6 +1218,10 @@ LRU cache 是很早就有的算法，而 Map 仅仅是这几年才加入的 ES �
 - get set 时移动数据，用数组 splice 效率太低
 
 ### 改造：Array 改为双向链表
+
+- 可快速增加元素
+- 可快速删除元素
+- 可快速移动元素
 
 数组有问题，就需要使用新的数据结构 **双向链表**
 
@@ -1230,4 +1239,371 @@ Interface INode {
 
 要把中间的元素 B 移动到最后（如 LRU `set` `get` 时移动数据位置），只需要修改前后的指针即可，效率很高。
 
-![](./img/08//双向链表-2.png)
+![](./img/08/双向链表-2.png)
+
+### 实现代码
+
+```typescript
+interface IListNode {
+  value: any
+  key: string // 存储 key ，方便删除（否则删除时就需要遍历 this.data )
+  prev?: IListNode
+  next?: IListNode
+}
+export default class LRUCache {
+  private length: number
+  private data: { [key: string]: IListNode } = {}
+  private dataLength: number = 0
+  private listHead: IListNode | null = null
+  private listTail: IListNode | null = null
+
+  constructor(length: number) {
+    if (length < 1) throw new Error('invalid length')
+    this.length = length
+  }
+
+  private moveToTail(curNode: IListNode) {
+    const tail = this.listTail
+    if (tail === curNode) return
+
+    // -------------- 1. 让 prevNode nextNode 断绝与 curNode 的关系 --------------
+    const prevNode = curNode.prev
+    const nextNode = curNode.next
+    if (prevNode) {
+      if (nextNode) {
+        prevNode.next = nextNode
+      } else {
+        delete prevNode.next
+      }
+    }
+    if (nextNode) {
+      if (prevNode) {
+        nextNode.prev = prevNode
+      } else {
+        delete nextNode.prev
+      }
+
+      if (this.listHead === curNode) this.listHead = nextNode
+    }
+
+    // -------------- 2. 让 curNode 断绝与 prevNode nextNode 的关系 --------------
+    delete curNode.prev
+    delete curNode.next
+
+    // -------------- 3. 在 list 末尾重新建立 curNode 的新关系 --------------
+    if (tail) {
+      tail.next = curNode
+      curNode.prev = tail
+    }
+    this.listTail = curNode
+  }
+
+  private tryClean() {
+    while (this.dataLength > this.length) {
+      const head = this.listHead
+      if (head == null) throw new Error('head is null')
+      const headNext = head.next
+      if (headNext == null) throw new Error('headNext is null')
+
+      // 1. 断绝 head 和 next 的关系
+      delete headNext.prev
+      delete head.next
+
+      // 2. 重新赋值 listHead
+      this.listHead = headNext
+
+      // 3. 清理 data ，重新计数
+      delete this.data[head.key]
+      this.dataLength = this.dataLength - 1
+    }
+  }
+
+  get(key: string): any {
+    const data = this.data
+    const curNode = data[key]
+
+    if (curNode == null) return null
+
+    if (this.listTail === curNode) {
+      // 本身在末尾（最新鲜的位置），直接返回 value
+      return curNode.value
+    }
+
+    // curNode 移动到末尾
+    this.moveToTail(curNode)
+
+    return curNode.value
+  }
+
+  set(key: string, value: any) {
+    const data = this.data
+    const curNode = data[key]
+
+    if (curNode == null) {
+      // 新增数据
+      const newNode: IListNode = { key, value }
+      // 移动到末尾
+      this.moveToTail(newNode)
+
+      data[key] = newNode
+      this.dataLength++
+
+      if (this.dataLength === 1) this.listHead = newNode
+    } else {
+      // 修改现有数据
+      curNode.value = value
+      // 移动到末尾
+      this.moveToTail(curNode)
+    }
+
+    // 尝试清理长度
+    this.tryClean()
+  }
+}
+
+const lruCache = new LRUCache(2)
+lruCache.set('1', 1) // {1=1}
+lruCache.set('2', 2) // {1=1, 2=2}
+console.info(lruCache.get('1')) // 1 {2=2, 1=1}
+lruCache.set('3', 3) // {1=1, 3=3}
+console.info(lruCache.get('2')) // null
+lruCache.set('4', 4) // {3=3, 4=4}
+console.info(lruCache.get('1')) // null
+console.info(lruCache.get('3')) // 3 {4=4, 3=3}
+console.info(lruCache.get('4')) // 4 {3=3, 4=4}
+```
+
+### 划重点
+
+- 数据结果设计： data、list 分别存储什么
+- 双向链表的操作非常繁琐，代码很容易写错，不容易调试
+- 链表 node 要存储 node.key, 否则需要遍历 data 删除
+- 长度也要累加
+
+## 20: 手写 JS 深拷贝-考虑各种数据类型和循环引用
+
+### 题目
+
+手写 JS 深拷贝
+
+### 分析
+
+这是一个很常见的问题，看似也很简单，但是如果考虑到“高质量代码”的要求，写起来还是挺麻烦的。<br>
+别说写代码，就本节所有的情况你能否考虑全面，这都不一定。
+
+### 错误答案 1
+
+使用 `JSON.stringify` 和 `JSON.parse`
+
+- 无法转换函数
+- 无法转换 `Map` `Set`
+- 无法转换循环引用
+
+PS：其实普通对象使用 JSON API 的运算速度很快，但功能不全
+
+### 错误答案 2
+
+使用 `Object.assign` —— 这根本就不是深拷贝，是浅拷贝 ！！！
+
+### 错误答案 3
+
+只考虑了普通的对象和数组
+
+- 无法转换 `Map` `Set`
+- 无法转换循环引用
+
+```javascript
+function cloneDeep(obj: any) {
+  if (typeof obj !== 'object' || obj == null) {
+    return obj
+  }
+  let result: any
+  if (obj instanceof Array) {
+    result = []
+  } else {
+    result = {}
+  }
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      result[key] = cloneDeep(obj[key]) // 递归调用
+    }
+  }
+  return result
+}
+
+// 功能测试
+const a: any = {
+  set: new Set([10, 20, 30]),
+  map: new Map([
+    ['x', 10],
+    ['y', 20],
+  ]),
+}
+a.self = a
+console.log(cloneDeep(a)) // 无法处理 Map Set 和循环引用
+```
+
+### 正确答案
+
+参考代码 `clone-deep.ts`
+
+```typescript
+/**
+ * 深拷贝
+ * @param obj obj
+ * @param map weakmap 为了避免循环引用
+ */
+export function cloneDeep(obj: any, map = new WeakMap()): any {
+  if (typeof obj !== 'object' || obj == null) return obj
+
+  // 避免循环引用
+  const objFromMap = map.get(obj)
+  if (objFromMap) return objFromMap
+
+  let target: any = {}
+  map.set(obj, target)
+
+  // Map
+  if (obj instanceof Map) {
+    target = new Map()
+    obj.forEach((v, k) => {
+      const v1 = cloneDeep(v, map)
+      const k1 = cloneDeep(k, map)
+      target.set(k1, v1)
+    })
+  }
+
+  // Set
+  if (obj instanceof Set) {
+    target = new Set()
+    obj.forEach((v) => {
+      const v1 = cloneDeep(v, map)
+      target.add(v1)
+    })
+  }
+
+  // Array
+  if (obj instanceof Array) {
+    target = obj.map((item) => cloneDeep(item, map))
+  }
+
+  // Object
+  for (const key in obj) {
+    const val = obj[key]
+    const val1 = cloneDeep(val, map)
+    target[key] = val1
+  }
+
+  return target
+}
+
+// 功能测试
+const a: any = {
+  set: new Set([10, 20, 30]),
+  map: new Map([
+    ['x', 10],
+    ['y', 20],
+  ]),
+  info: {
+    city: '北京',
+  },
+  fn: () => {
+    console.info(100)
+  },
+}
+a.self = a
+console.log(cloneDeep(a))
+```
+
+### 划重点
+
+- 功能完整性：考虑多种数据结构
+- 鲁棒性：考虑循环引用
+- （有时面试官不给你要求，你能否想到这几点）
+
+## 21: 扩展补充：根据一个 DOM 树，写出一个虚拟 DOM 对象
+
+### 题目
+
+讲以下 DOM 结构转换为 vnode 数据
+
+```html
+<div id="div1" style="border: 1px solid #ccc; padding: 10px;">
+  <p>一行文字<a href="xxx.html" target="_blank">链接</a></p>
+  <img src="xxx.png" alt="图片" class="image" />
+  <button click="clickHandler">点击</button>
+</div>
+```
+
+### 答案
+
+vdom 就是用 JS 对象的形式来表示 DOM 结构。vnode 即对应着 DOM 结构的一个 node 节点。
+
+```js
+const vnode = {
+  tag: 'div', // <div>
+  data: {
+    id: 'div1',
+    style: {
+      'border': '1px solid #ccc',
+      'padding': '10px'
+    }
+  },
+  children: [
+    {
+      tag: 'p', // <p>
+      data: {},
+      children: [
+        '一行文字',
+        {
+          tag: 'a', // <a>
+          data: {
+            href: 'xxx.html',
+            target: '_blank'
+          },
+          children: ['链接']
+        }
+      ]
+    },
+    {
+      tag: 'img', // <img>
+      data: {
+        className: 'image', // 注意，这里要用 className
+        src: 'xxx.png',
+        alt: '图片'
+      }
+    },
+    {
+      tag: 'button', // <button>
+      data: {
+        events: {
+          click: clickHandler
+        }
+      }
+      children: ['点击']
+    }
+  ]
+}
+```
+
+### 注意事项
+
+- vdom 结构没有固定的标准，例如 `tag` 可以改为 `name` ，`data` 可以改为 `props` 。只要能合理使用 JS 数据表达 DOM 即可。
+- `style` 和 `events` 要以对象的形式，更易读，更易扩展
+- `class` 是 ES 内置关键字，要改为 `className` 。其他的还有如 `for` 改为 `htmlFor`
+
+## 22: 总结
+
+### 内容总结
+
+本章讲解编写高质量代码的面试题，即常见的“手写代码”面试题。有比较基础的类型判断、手写 `new`，也有比较复杂的 LazyMan 和 LRU 缓存。
+
+### 划重点
+
+- 编码规范性
+- 功能完整性
+- 鲁棒性（健壮性）
+
+### 注意事项
+
+- 能写单元测试的，就直接写出来
