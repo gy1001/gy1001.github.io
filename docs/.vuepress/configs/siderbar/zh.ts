@@ -248,6 +248,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/fe-interview-100/index-06.md',
             '/zh/other/class/fe-interview-100/index-07.md',
             '/zh/other/class/fe-interview-100/index-08.md',
+            '/zh/other/class/fe-interview-100/index-09.md',
           ],
         },
         '/zh/other/class/ts-axios',
