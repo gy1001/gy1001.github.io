@@ -259,6 +259,7 @@ export const sidebarZh: SidebarConfig = {
           children: [
             '/zh/other/class/frame-project-interview/index-01.md',
             '/zh/other/class/frame-project-interview/index-02.md',
+            '/zh/other/class/frame-project-interview/index-03.md',
           ],
         },
         '/zh/other/class/ts-axios',
