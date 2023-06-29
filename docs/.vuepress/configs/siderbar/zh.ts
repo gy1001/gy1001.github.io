@@ -253,6 +253,11 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/fe-interview-100/index-11.md',
           ],
         },
+        {
+          text: '框架项目－聚焦Vue3/React/Webpack',
+          collapsible: false,
+          children: ['/zh/other/class/frame-project-interview/index-01.md'],
+        },
         '/zh/other/class/ts-axios',
         {
           text: '从0到1开发一款IOS APP',
