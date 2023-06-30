@@ -763,3 +763,672 @@ export default new Vue()
 - keep-alive
 - mixin
 - refs
+
+## 06: vue 如何自己实现 v-model
+
+```vue
+<template>
+  <div>
+    <p>vue 高级特性</p>
+    <hr />
+    <!-- 自定义 v-model -->
+    <p>{{ name }}</p>
+    <CustomVModel v-model="name" />
+  </div>
+</template>
+<script>
+import CustomVModel from './CustomVModel'
+
+export default {
+  components: {
+    CustomVModel,
+  },
+  data() {
+    return {
+      name: '双越',
+      website: {
+        url: 'http://imooc.com/',
+        title: 'imooc',
+        subTitle: '程序员的梦工厂',
+      },
+      // NextTickName: "NextTick",
+      showFormDemo: false,
+    }
+  },
+}
+</script>
+```
+
+```vue
+<!-- CustomVModel.vue -->
+<template>
+  <!-- 例如：vue 颜色选择 -->
+  <input
+    type="text"
+    :value="text1"
+    @input="$emit('change1', $event.target.value)"
+  />
+  <!--
+    1. 上面的 input 使用了 :value 而不是 v-model
+    2. 上面的 change1 和 model.event1 要对应起来
+    3. text1 属性对应起来
+    -->
+</template>
+
+<script>
+export default {
+  model: {
+    prop: 'text1', // 对应 props text1
+    event: 'change1',
+  },
+  props: {
+    text1: {
+      type: String,
+      default: '',
+    },
+  },
+}
+</script>
+```
+
+## 07: vue 组件更新之后如何获取最新 DOM
+
+### $nextTick
+
+- vue 是异步渲染的（原理部分会详细讲解）
+- data 改变之后，DOM 不会立刻渲染
+- $nextTick 会在 DOM 渲染之后再触发，以获取最新的 DOM 节点
+
+### 代码演示
+
+```vue
+<template>
+  <div id="app">
+    <ul ref="ul1">
+      <li v-for="(item, index) in list" :key="index">
+        {{ item }}
+      </li>
+    </ul>
+    <button @click="addItem">添加一项</button>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'app',
+  data() {
+    return {
+      list: ['a', 'b', 'c'],
+    }
+  },
+  methods: {
+    addItem() {
+      this.list.push(`${Date.now()}`)
+      this.list.push(`${Date.now()}`)
+      this.list.push(`${Date.now()}`)
+
+      // 1. 异步渲染，$nextTick 待 DOM 渲染完再回调
+      // 3. 页面渲染时会将 data 的修改做整合，多次 data 修改只会渲染一次
+      this.$nextTick(() => {
+        // 获取 DOM 元素
+        const ulElem = this.$refs.ul1
+        // eslint-disable-next-line
+        console.log(ulElem.childNodes.length)
+      })
+    },
+  },
+}
+</script>
+```
+
+## 08: slot
+
+- 基本使用
+- 作用域插槽
+- 具名插槽
+
+### 基本使用（默认插槽）
+
+```vue
+<template>
+  <div>
+    <p>vue 高级特性</p>
+    <hr />
+    <!-- slot -->
+    <SlotDemo :url="website.url">
+      {{ website.title }}
+    </SlotDemo>
+    <ScopedSlotDemo :url="website.url">
+      <template v-slot="slotProps">
+        {{ slotProps.slotData.title }}
+      </template>
+    </ScopedSlotDemo>
+  </div>
+</template>
+<script>
+import CustomVModel from './CustomVModel'
+import SlotDemo from './SlotDemo'
+import ScopedSlotDemo from './ScopedSlotDemo'
+
+export default {
+  components: {
+    SlotDemo,
+    ScopedSlotDemo,
+  },
+  date() {
+    return {
+      website: {
+        url: 'http://imooc.com/',
+        title: 'imooc',
+        subTitle: '程序员的梦工厂',
+      },
+    }
+  },
+}
+</script>
+```
+
+```vue
+<!-- SlotDemo.vue -->
+<template>
+  <a :href="url">
+    <slot> 默认内容，即父组件没设置内容时，这里显示 </slot>
+  </a>
+</template>
+
+<script>
+export default {
+  props: ['url'],
+  data() {
+    return {}
+  },
+}
+</script>
+```
+
+### 作用域插槽
+
+```vue
+<!-- ScopedSlotDemo.vue -->
+<template>
+  <a :href="url">
+    <slot :slotData="website">
+      {{ website.subTitle }}
+      <!-- 默认值显示 subTitle ，即父组件不传内容时 -->
+    </slot>
+  </a>
+</template>
+
+<script>
+export default {
+  props: ['url'],
+  data() {
+    return {
+      website: {
+        url: 'http://wangEditor.com/',
+        title: 'wangEditor',
+        subTitle: '轻量级富文本编辑器',
+      },
+    }
+  },
+}
+</script>
+```
+
+### slot 具名插槽
+
+```vue
+<!-- <base-layout> 组件 -->
+<div class="container">
+  <header>
+    <slot name="header"></slot>
+  </header>
+  <main>
+    <slot></slot>
+  </main>
+  <footer>
+    <slot name="footer"></slot>
+  </footer>
+</div>
+```
+
+```vue
+<base-layout>
+  <template v-slot:header>
+    <h1>Here might be a page title</h1>
+  </template>
+
+  <p>A paragraph for the main content.</p>
+  <p>And another one.</p>
+
+  <template v-slot:footer>
+    <p>Here's some contact info</p>
+  </template>
+</base-layout>
+```
+
+## 09: 动态组件
+
+- 用法：`:is="currentTabComponent"`
+
+  ```vue
+  <component v-bind:is="currentTabComponent"></component>
+  ```
+
+- 需要根据数据，动态渲染的场景。即组件类型不确定
+
+### 代码演示
+
+```vue
+<template>
+  <div>
+    <p>vue 高级特性</p>
+    <hr />
+    <!-- 动态组件 -->
+    <component :is="NextTickName" />
+    <div v-for="item in componentsArr" :key="item">
+      <component :is="item" />
+    </div>
+  </div>
+</template>
+
+<script>
+import NextTick from './NextTick'
+import Index1 from 'index1.vue'
+import Index2 from 'index2.vue'
+import Index3 from 'index3.vue'
+
+export default {
+  components: {
+    NextTick,
+    Index1,
+    Index2,
+    Index3,
+  },
+  data() {
+    return {
+      NextTickName: 'NextTick',
+      componentsArr: ['Index1', 'Index2', 'Index3'],
+    }
+  },
+}
+</script>
+```
+
+```vue
+<!-- NextTick.vue -->
+<template>
+  <div id="app">
+    <ul ref="ul1">
+      <li v-for="(item, index) in list" :key="index">
+        {{ item }}
+      </li>
+    </ul>
+    <button @click="addItem">添加一项</button>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'app',
+  data() {
+    return {
+      list: ['a', 'b', 'c'],
+    }
+  },
+  methods: {
+    addItem() {
+      this.list.push(`${Date.now()}`)
+      this.list.push(`${Date.now()}`)
+      this.list.push(`${Date.now()}`)
+
+      // 1. 异步渲染，$nextTick 待 DOM 渲染完再回调
+      // 3. 页面渲染时会将 data 的修改做整合，多次 data 修改只会渲染一次
+      this.$nextTick(() => {
+        // 获取 DOM 元素
+        const ulElem = this.$refs.ul1
+        // eslint-disable-next-line
+        console.log(ulElem.childNodes.length)
+      })
+    },
+  },
+}
+</script>
+```
+
+## 10: 异步组件: vue 如何异步加载组件
+
+- import 函数
+- 按需加载，异步加载大组件
+
+```vue
+<template>
+  <div>
+    <p>vue 高级特性</p>
+    <hr />
+    <!-- 异步组件 -->
+    <FormDemo v-if="showFormDemo" />
+    <button @click="showFormDemo = true">show form demo</button>
+  </div>
+</template>
+<script>
+export default {
+  components: { FormDemo: () => import('./FormDemo') },
+  data() {
+    return {
+      showFormDemo: false,
+    }
+  },
+}
+</script>
+```
+
+```vue
+<!-- FormDemo.vue -->
+<template>
+  <div>我是form 动态加载组件</div>
+</template>
+```
+
+## 11: keep-alive: vue 如何缓存组件
+
+- 缓存组件
+- 频繁切换，不需要重新渲染
+- Vue 常见性能优化
+
+```vue
+<template>
+  <div>
+    <button @click="changeState('A')">A</button>
+    <button @click="changeState('B')">B</button>
+    <button @click="changeState('C')">C</button>
+
+    <keep-alive>
+      <!-- tab 切换 -->
+      <KeepAliveStageA v-if="state === 'A'" />
+      <!-- 注意与 v-show 的区别 -->
+      <KeepAliveStageB v-if="state === 'B'" />
+      <KeepAliveStageC v-if="state === 'C'" />
+    </keep-alive>
+  </div>
+</template>
+
+<script>
+import KeepAliveStageA from './KeepAliveStateA'
+import KeepAliveStageB from './KeepAliveStateB'
+import KeepAliveStageC from './KeepAliveStateC'
+
+export default {
+  components: {
+    KeepAliveStageA,
+    KeepAliveStageB,
+    KeepAliveStageC,
+  },
+  data() {
+    return {
+      state: 'A',
+    }
+  },
+  methods: {
+    changeState(state) {
+      this.state = state
+    },
+  },
+}
+</script>
+```
+
+```vue
+<!-- KeepAliveStageA.vue -->
+<template>
+  <p>state A</p>
+</template>
+
+<script>
+export default {
+  mounted() {
+    // eslint-disable-next-line
+    console.log('A mounted')
+  },
+  destroyed() {
+    // eslint-disable-next-line
+    console.log('A destroyed')
+  },
+}
+</script>
+```
+
+```vue
+<!-- KeepAliveStageB.vue -->
+<template>
+  <p>state B</p>
+</template>
+
+<script>
+export default {
+  mounted() {
+    // eslint-disable-next-line
+    console.log('B mounted')
+  },
+  destroyed() {
+    // eslint-disable-next-line
+    console.log('B destroyed')
+  },
+}
+</script>
+```
+
+```vue
+<!-- KeepAliveStageC.vue -->
+<template>
+  <p>state C</p>
+</template>
+
+<script>
+export default {
+  mounted() {
+    // eslint-disable-next-line
+    console.log('C mounted')
+  },
+  destroyed() {
+    // eslint-disable-next-line
+    console.log('C destroyed')
+  },
+}
+</script>
+```
+
+## 12: mixin: vue 组件如何抽离公共逻辑
+
+- 多个组件有相同的逻辑，抽离出来
+- mixin 并不是完美的解决方案，会有一些问题
+- Vue3 提出的 composition API 旨在解决这些问题
+
+```vue
+<template>
+  <div>
+    <p>vue 高级特性</p>
+    <hr />
+
+    <!-- mixin -->
+    <MixinDemo />
+  </div>
+</template>
+<script>
+import MixinDemo from './MixinDemo'
+components: {
+    MixinDemo,
+  },
+</script>
+```
+
+```vue
+<!-- MixinDemo.vue -->
+<template>
+  <div>
+    <p>{{ name }} {{ major }} {{ city }}</p>
+    <button @click="showName">显示姓名</button>
+  </div>
+</template>
+
+<script>
+import myMixin from './mixin'
+
+export default {
+  mixins: [myMixin], // 可以添加多个，会自动合并起来
+  data() {
+    return {
+      name: '双越',
+      major: 'web 前端',
+    }
+  },
+  mounted() {
+    // eslint-disable-next-line
+    console.log('component mounted', this.name)
+  },
+}
+</script>
+```
+
+```javascript
+// mixin.js
+export default {
+  data() {
+    return {
+      city: '北京',
+    }
+  },
+  methods: {
+    showName() {
+      // eslint-disable-next-line
+      console.log(this.name)
+    },
+  },
+  mounted() {
+    // eslint-disable-next-line
+    console.log('mixin mounted', this.name)
+  },
+}
+```
+
+### mixin 的问题
+
+- 变量来源不明确， 不利于阅读
+- 多个 mixin 可能会导致命名冲突
+- mixin 和组件可能出现多对多的关系，复杂度较高
+
+> 在父组件中引入了 mixin，生命周期顺序如下：
+>
+> mixin 的 beforeCreate > 父 beforeCreate > mixin 的 created > 父 created > mixin 的 beforeMount > 父 beforeMount > 子 beforeCreate > 子 created > 子 beforeMount > 子 mounted > mixin 的 mounted >父 mounted
+
+[vue 父子组件及 mixin 生命周期执行顺序](https://www.jianshu.com/p/f0b7950b3ab0)
+
+## 13: vue 高级特性知识点小结
+
+### 特性小结
+
+- 自定义 v-model
+- $nextTick
+- slot
+- 动态组件、异步组件
+- keep-alive
+- mixin
+
+### 相关的面试技巧
+
+- 可以不太深入，但是必须知道
+- 熟练基本用法，了解使用场景
+- 最好能和自己的项目经验结合起来
+
+## 14: vuex 知识点串讲
+
+- 面试考点并不多（因为熟悉 Vue 之后，vuex 没有难度）
+- 但是基本概念、基本使用和 API 必学掌握
+- 可能会考察 state 的数据结构设计（后面会讲）
+
+### vuex 基本概念
+
+- state
+- getters
+- action
+- mutation
+
+### 用于 vue 组件
+
+- dispatch
+- commit
+- mapState
+- mapGetters
+- mapActions
+- mapMutations
+
+![](https://vuex.vuejs.org/vuex.png)
+
+## 15:vue-router 知识点串讲
+
+- 面试考点并不多（前提是熟悉 Vue）
+- 理由模式（hash、history、abstract）
+- 路由配置（动态路由、懒加载）
+
+### vue-router 路由模式
+
+- hash 模式（默认）：使用 URL hash 值来作路由。支持所有浏览器，包括不支持 HTML5 History Api 的浏览器。
+
+  > 如：`http://abc.com/#/user/10`
+
+- H5 history 模式，依赖 HTML5 History API 和服务器配置
+
+  > 如：`http://abc.com/user/10`
+
+- abstract: 支持所有 JavaScript 运行环境，如 Node.js 服务器端。如果发现没有浏览器的 API，路由会自动强制进入这个模式。
+
+### vue-router 路由模式
+
+```javascript
+const router = new VueRouter({
+  mode: 'history', // 使用 h5 history 模式
+  routes: [ ... ]
+})
+```
+
+### vue-router 路由配置 动态路由
+
+```javascript
+const User = {
+  template: '<div>{{ $route.params.id }}</div>',
+}
+
+const router = new VueRouter({
+  routes: [
+    // 动态路径参数 以冒号开头
+    { path: '/user/:id', component: User },
+  ],
+})
+```
+
+### vue-router 路由配置 懒加载
+
+```javascript
+const Foo = () => import(/* webpackChunkName: "group-foo" */ './Foo.vue')
+const Bar = () => import(/* webpackChunkName: "group-foo" */ './Bar.vue')
+const Baz = () => import(/* webpackChunkName: "group-foo" */ './Baz.vue')
+const router = new VueRouter({
+  routes: [
+    { path: '/foo', component: Foo },
+    { path: '/bar', component: Bar },
+    { path: '/baz', component: Baz },
+  ],
+})
+```
+
+### vue-router 总结
+
+- 面试考点并不多（前提是 熟悉 Vue）
+- 掌握基本概念，基本使用
+- 面试官时间有限，需考察最核心、最常用的问题，而非边界问题
+
+## 16:vue 使用-考点总结和复习
+
+- 基本使用,组件使用
+- 高级特性
+- Vuex 和 Vue-router 使用

@@ -255,7 +255,7 @@ export const sidebarZh: SidebarConfig = {
         },
         {
           text: '框架项目－聚焦Vue3/React/Webpack',
-          collapsible: false,
+          collapsible: true,
           children: [
             '/zh/other/class/frame-project-interview/index-01.md',
             '/zh/other/class/frame-project-interview/index-02.md',
