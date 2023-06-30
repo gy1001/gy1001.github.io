@@ -320,3 +320,222 @@ data.numbers.push(4) // 监听数组
 - 简洁强大的 VDom 库，易学易用
 - Vue 参考它实现的 VDom 和 Diff
 - [https://github.com/snabbdom/snabbdom](https://github.com/snabbdom/snabbdom)
+- Vue3.0 重写了 VDom 的代码，优化了性能
+- 但是 VDom 的基本理念不变，面试考点也不变
+- React VDom 的具体实现和 Vue 也不同，但是不妨碍统一学习
+
+### snabbdom 代码演示
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="container"></div>
+    <button id="btn-change">change</button>
+
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom.js"></script>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom-class.js"></script>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom-props.js"></script>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom-style.js"></script>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom-eventlisteners.js"></script>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/h.js"></script>
+    <script src="./demo1.js"></script>
+  </body>
+</html>
+```
+
+```javascript
+// demo1.js
+const snabbdom = window.snabbdom
+
+// 定义 patch
+const patch = snabbdom.init([
+  snabbdom_class,
+  snabbdom_props,
+  snabbdom_style,
+  snabbdom_eventlisteners,
+])
+
+// 定义 h
+const h = snabbdom.h
+const container = document.getElementById('container')
+
+// 生成 vnode
+const vnode = h('ul#list', {}, [
+  h('li.item', {}, 'Item 1'),
+  h('li.item', {}, 'Item 2'),
+])
+patch(container, vnode)
+
+document.getElementById('btn-change').addEventListener('click', () => {
+  // 生成 newVnode
+  const newVnode = h('ul#list', {}, [
+    h('li.item', {}, 'Item 1'),
+    h('li.item', {}, 'Item B'),
+    h('li.item', {}, 'Item 3'),
+  ])
+  patch(vnode, newVnode)
+
+  // vnode = newVnode // patch 之后，应该用新的覆盖现有的 vnode ，否则每次 change 都是新旧对比
+})
+```
+
+### table-with-vdom 代码样式
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="container"></div>
+    <button id="btn-change">change</button>
+
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom.js"></script>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom-class.js"></script>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom-props.js"></script>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom-style.js"></script>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom-eventlisteners.js"></script>
+    <script src="https://cdn.bootcss.com/snabbdom/0.7.3/h.js"></script>
+    <script type="text/javascript">
+      const snabbdom = window.snabbdom
+      // 定义关键函数 patch
+      const patch = snabbdom.init([
+        snabbdom_class,
+        snabbdom_props,
+        snabbdom_style,
+        snabbdom_eventlisteners,
+      ])
+
+      // 定义关键函数 h
+      const h = snabbdom.h
+
+      // 原始数据
+      const data = [
+        {
+          name: '张三',
+          age: '20',
+          address: '北京',
+        },
+        {
+          name: '李四',
+          age: '21',
+          address: '上海',
+        },
+        {
+          name: '王五',
+          age: '22',
+          address: '广州',
+        },
+      ]
+      // 把表头也放在 data 中
+      data.unshift({
+        name: '姓名',
+        age: '年龄',
+        address: '地址',
+      })
+
+      const container = document.getElementById('container')
+
+      // 渲染函数
+      let vnode
+      function render(data) {
+        const newVnode = h(
+          'table',
+          {},
+          data.map((item) => {
+            const tds = []
+            for (let i in item) {
+              if (item.hasOwnProperty(i)) {
+                tds.push(h('td', {}, item[i] + ''))
+              }
+            }
+            return h('tr', {}, tds)
+          }),
+        )
+
+        if (vnode) {
+          // re-render
+          patch(vnode, newVnode)
+        } else {
+          // 初次渲染
+          patch(container, newVnode)
+        }
+
+        // 存储当前的 vnode 结果
+        vnode = newVnode
+      }
+
+      // 初次渲染
+      render(data)
+
+      const btnChange = document.getElementById('btn-change')
+      btnChange.addEventListener('click', () => {
+        data[1].age = 30
+        data[2].address = '深圳'
+        // re-render
+        render(data)
+      })
+    </script>
+  </body>
+</html>
+```
+
+### snabbdom 重点总结
+
+- h 函数
+- vnode 数据结构
+- patch 函数
+
+### vdom 总结
+
+- 用 JS 模拟 DOM 结构（vnode）
+- 新旧 VNode 对比，得出最小的更新范围，最后更新 DOM
+- 数据驱动视图的模式下，有效控制 DOM 操作
+
+## 05: 虚拟 DOM-diff 算法概述
+
+### diff 算法
+
+- diff 算法是 VDom 中最核心、最关键的部分
+- diff 算法能在日常使用 Vue React 中体现出来（如 key）
+- diff 算法是前端热门话题，面试“宠儿”
+
+### diff 算法概述
+
+- diff 即对比，是一个广泛的概念，如 linux diff 命令、git diff 等
+- 两个 JS 对象之间也可以做 diff, 如：[JSON Diff and Patch: https://github.com/cujojs/jiff](https://github.com/cujojs/jiff)
+- 两棵树做 diff, 如这里的 VDom diff
+
+![](./diff.jpg)
+
+### 树 diff 的时间复杂度 O(n^3)
+
+> 将两颗树中所有的节点一一对比需要 O(n²)的复杂度，在对比过程中发现旧节点在新的树中未找到，那么就需要把旧节点删除，删除一棵树的一个节点(找到一个合适的节点放到被删除的位置)的时间复杂度为 O(n),同理添加新节点的复杂度也是 O(n),合起来 diff 两个树的复杂度就是 O(n³)
+
+- 第一，遍历 tree1
+- 第二，遍历 tree2
+- 第三 排序
+- 1000 个节点，要计算 1 亿次，算法不可用
+
+### 优化时间复杂度到 O(n)
+
+- 只比较同一层级，不跨级比较
+
+  ![](https://img2020.cnblogs.com/blog/915803/202008/915803-20200806200406059-1674663436.png)
+
+- tag 不相同，则直接删除重建，不再深度比较
+
+  ![](https://img2020.cnblogs.com/blog/915803/202008/915803-20200806201145342-575903302.png)
+
+- tag 和 key，两者都相同，则认为是相同节点，不再深度比较
+
+  > 通过 key 来标识区分相同节点
+
+  ![](https://img2020.cnblogs.com/blog/915803/202008/915803-20200806201351909-1243081644.png)
