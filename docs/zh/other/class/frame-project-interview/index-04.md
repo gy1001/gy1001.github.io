@@ -539,3 +539,9 @@ document.getElementById('btn-change').addEventListener('click', () => {
   > 通过 key 来标识区分相同节点
 
   ![](https://img2020.cnblogs.com/blog/915803/202008/915803-20200806201351909-1243081644.png)
+
+## 06: 深入 diff 算法源码-生成 vnode
+
+### snabbdom - 源码解读
+
+[https://github.com/gy1001/Javascript/tree/main/frame-project-interview/snabbdom-source](https://github.com/gy1001/Javascript/tree/main/frame-project-interview/snabbdom-source)
