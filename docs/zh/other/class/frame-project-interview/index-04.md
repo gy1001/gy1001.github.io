@@ -545,3 +545,168 @@ document.getElementById('btn-change').addEventListener('click', () => {
 ### snabbdom - 源码解读
 
 [https://github.com/gy1001/Javascript/tree/main/frame-project-interview/snabbdom-source](https://github.com/gy1001/Javascript/tree/main/frame-project-interview/snabbdom-source)
+
+### h 函数
+
+> h 函数接收不同的参数个数以及类型，然后返回的是一个 对象，里面包含了一系列相关的 dom 属性
+
+```typescript
+export function h(sel: string): VNode
+export function h(sel: string, data: VNodeData | null): VNode
+export function h(sel: string, children: VNodeChildren): VNode
+export function h(
+  sel: string,
+  data: VNodeData | null,
+  children: VNodeChildren,
+): VNode
+
+export function h(sel: any, b?: any, c?: any): VNode {
+  // ...
+  // 返回 vnode
+  return vnode(sel, data, children, text, undefined)
+}
+
+export function vnode(
+  sel: string | undefined,
+  data: any | undefined,
+  children: Array<VNode | string> | undefined,
+  text: string | undefined,
+  elm: Element | Text | undefined,
+): VNode {
+  let key = data === undefined ? undefined : data.key
+  return { sel, data, children, text, elm, key }
+}
+```
+
+### patch 函数
+
+```typescript
+// snabbdom.ts 里面
+
+// 官网展示代码，patch 函数是调用 init 函数产生的
+var patch = snabbdom.init([
+  // Init patch function with chosen modules
+  require('snabbdom/modules/class').default, // makes it easy to toggle classes
+  require('snabbdom/modules/props').default, // for setting properties on DOM elements
+  require('snabbdom/modules/style').default, // handles styling on elements with support for animations
+  require('snabbdom/modules/eventlisteners').default, // attaches event listeners
+])
+
+export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
+  ...
+  return function patch(oldVnode: VNode | Element, vnode: VNode): VNode {
+    ...
+  }
+}
+```
+
+path 函数内部代码
+
+```typescript
+// 以下为返回的 path 函数
+function patch(oldVnode: VNode | Element, vnode: VNode): VNode {
+  let i: number, elm: Node, parent: Node
+  const insertedVnodeQueue: VNodeQueue = []
+  // 执行 pre hook: https://github.com/gy1001/Javascript/tree/main/frame-project-interview/snabbdom-source#hooks
+  for (i = 0; i < cbs.pre.length; ++i) cbs.pre[i]()
+
+  // 第一个参数不是 vnode
+  if (!isVnode(oldVnode)) {
+    // 创建一个空的 vnode ，关联到这个 DOM 元素
+    oldVnode = emptyNodeAt(oldVnode)
+  }
+
+  // 相同的 vnode（key 和 sel 都相等）
+  if (sameVnode(oldVnode, vnode)) {
+    // vnode 对比
+    patchVnode(oldVnode, vnode, insertedVnodeQueue)
+
+    // 不同的 vnode ，直接删掉重建
+  } else {
+    elm = oldVnode.elm!
+    parent = api.parentNode(elm)
+
+    // 重建
+    createElm(vnode, insertedVnodeQueue)
+
+    if (parent !== null) {
+      api.insertBefore(parent, vnode.elm!, api.nextSibling(elm))
+      removeVnodes(parent, [oldVnode], 0, 0)
+    }
+  }
+
+  for (i = 0; i < insertedVnodeQueue.length; ++i) {
+    insertedVnodeQueue[i].data!.hook!.insert!(insertedVnodeQueue[i])
+  }
+  for (i = 0; i < cbs.post.length; ++i) cbs.post[i]()
+  return vnode
+}
+
+// sameVnode 函数使用了 .key 与 .sel 来进行比较
+function sameVnode(vnode1: VNode, vnode2: VNode): boolean {
+  // key 和 sel 都相等
+  // undefined === undefined // true
+  return vnode1.key === vnode2.key && vnode1.sel === vnode2.sel
+}
+```
+
+### patchVnode 函数，重点
+
+```typescript
+function patchVnode(
+  oldVnode: VNode,
+  vnode: VNode,
+  insertedVnodeQueue: VNodeQueue,
+) {
+  // 执行 prepatch hook
+  const hook = vnode.data?.hook
+  hook?.prepatch?.(oldVnode, vnode)
+
+  // 设置 vnode.elem
+  const elm = (vnode.elm = oldVnode.elm!)
+
+  // 旧 children
+  let oldCh = oldVnode.children as VNode[]
+  // 新 children
+  let ch = vnode.children as VNode[]
+
+  if (oldVnode === vnode) return
+
+  // hook 相关
+  if (vnode.data !== undefined) {
+    for (let i = 0; i < cbs.update.length; ++i) cbs.update[i](oldVnode, vnode)
+    vnode.data.hook?.update?.(oldVnode, vnode)
+  }
+
+  // vnode.text === undefined （意味着vnode.children 一般有值）
+  if (isUndef(vnode.text)) {
+    // 新旧都有 children
+    if (isDef(oldCh) && isDef(ch)) {
+      if (oldCh !== ch) updateChildren(elm, oldCh, ch, insertedVnodeQueue)
+      // 新 children 有，旧 children 无 （旧 text 有）
+    } else if (isDef(ch)) {
+      // 清空 text
+      if (isDef(oldVnode.text)) api.setTextContent(elm, '')
+      // 添加 children
+      addVnodes(elm, null, ch, 0, ch.length - 1, insertedVnodeQueue)
+      // 旧 child 有，新 child 无
+    } else if (isDef(oldCh)) {
+      // 移除 children
+      removeVnodes(elm, oldCh, 0, oldCh.length - 1)
+      // 旧 text 有
+    } else if (isDef(oldVnode.text)) {
+      api.setTextContent(elm, '')
+    }
+
+    // else : vnode.text !== undefined （vnode.children 无值）
+  } else if (oldVnode.text !== vnode.text) {
+    // 移除旧 children
+    if (isDef(oldCh)) {
+      removeVnodes(elm, oldCh, 0, oldCh.length - 1)
+    }
+    // 设置新 text
+    api.setTextContent(elm, vnode.text!)
+  }
+  hook?.postpatch?.(oldVnode, vnode)
+}
+```
