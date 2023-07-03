@@ -48,6 +48,7 @@ export const sidebarZh: SidebarConfig = {
         '/zh/skill/front/mini-frame/mini-webpack.md',
         '/zh/skill/front/mini-frame/mini-router.md',
         '/zh/skill/front/mini-frame/mini-vue-router.md',
+        '/zh/skill/front/mini-frame/mini-pinia.md',
       ],
     },
     {
