@@ -46,7 +46,9 @@ export const sidebarZh: SidebarConfig = {
       children: [
         '/zh/skill/front/mini-frame/mini-vue.md',
         '/zh/skill/front/mini-frame/mini-webpack.md',
-        '/zh/skill/front/mini-frame/mini-rorter.md',
+        '/zh/skill/front/mini-frame/mini-router.md',
+        '/zh/skill/front/mini-frame/mini-vue-router.md',
+        '/zh/skill/front/mini-frame/mini-pinia.md',
       ],
     },
     {
@@ -261,6 +263,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/frame-project-interview/index-02.md',
             '/zh/other/class/frame-project-interview/index-03.md',
             '/zh/other/class/frame-project-interview/index-04.md',
+            '/zh/other/class/frame-project-interview/index-05.md',
           ],
         },
         '/zh/other/class/ts-axios',
