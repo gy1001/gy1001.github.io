@@ -394,7 +394,7 @@ DOM 结构如下
 
 - `patch(elem, VNode)` 和 `patch(VNode, newVNode)`
 - `pathVnode` 和 `addVnodes` 和 `removeVnodes`
-- `updateChildren`(key 的重要性)
+- `updateChildren` (key 的重要性)
 
 ## 27: Vue 为何是异步渲染，$nextTick 何用
 
@@ -417,3 +417,4 @@ DOM 结构如下
 
 - 合理使用 v-show 和 v-if
 - 合理使用 computed
+- v-for 时加 key, 以及避免和 v-if 同时使用
