@@ -418,3 +418,11 @@ DOM 结构如下
 - 合理使用 v-show 和 v-if
 - 合理使用 computed
 - v-for 时加 key, 以及避免和 v-if 同时使用
+- 自定义事件、DOM 事件要及时销毁
+- 合理使用异步组件
+- 合理使用 keep-alive
+- data 层级不要太深
+- 使用 vue-loader 在开发环境做模板编译（预编译）
+- webpack 层面的优化（后面会讲）
+- 前端通用的性能优化，如图片懒加载
+- 使用 SSR
