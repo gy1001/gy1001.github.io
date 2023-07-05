@@ -177,6 +177,10 @@ unmounted
 
 ### 是什么
 
+### 最佳使用方式
+
+### 进阶，深入理解
+
 #### ref
 
 - 生成值类型的响应式数据
@@ -245,19 +249,177 @@ export default {
 </script>
 ```
 
-### 最佳使用方式
-
-### 进阶，深入理解
-
 ## 05: toRef 和 toRefs 如何使用
+
+### toRef
+
+- 针对一个响应式对象（reactive 封装）的 prop
+- 创建一个 ref, 具有响应式
+- 两者保持引用关系
+
+```vue
+<template>
+  <p>toRef demo - {{ ageRef }} - {{ state.name }} {{ state.age }}</p>
+</template>
+
+<script>
+import { ref, toRef, reactive } from 'vue'
+
+export default {
+  name: 'ToRef',
+  setup() {
+    const state = reactive({
+      age: 20,
+      name: '双越',
+    })
+
+    const age1 = computed(() => {
+      return state.age + 1
+    })
+
+    // // toRef 如果用于普通对象（非响应式对象），产出的结果不具备响应式
+    // const state = {
+    //     age: 20,
+    //     name: '双越'
+    // }
+
+    const ageRef = toRef(state, 'age')
+
+    setTimeout(() => {
+      state.age = 25
+    }, 1500)
+
+    setTimeout(() => {
+      ageRef.value = 30 // .value 修改值
+    }, 3000)
+
+    return {
+      state,
+      ageRef,
+    }
+  },
+}
+</script>
+```
+
+### toRefs
+
+- 将响应式对象（reactive）封装为普通对象
+- 对象的每个 prop 都是对应的 ref
+- 两者保持引用关系
+- 合成函数返回响应式对象
+
+```vue
+<template>
+  <p>toRefs demo {{ age }} {{ name }}</p>
+</template>
+
+<script>
+import { ref, toRef, toRefs, reactive } from 'vue'
+
+export default {
+  name: 'ToRefs',
+  setup() {
+    const state = reactive({
+      age: 20,
+      name: '双越',
+    })
+
+    const stateAsRefs = toRefs(state) // 将响应式对象，变成普通对象
+
+    // const { age: ageRef, name: nameRef } = stateAsRefs // 每个属性，都是 ref 对象
+    // return {
+    //     ageRef,
+    //     nameRef
+    // }
+
+    setTimeout(() => {
+      state.age = 25
+    }, 1500)
+
+    return stateAsRefs
+  },
+}
+</script>
+```
+
+#### 合成函数返回响应式对象
+
+```vue
+<template>
+  <p>why ref demo {{ state.age }} - {{ age1 }}</p>
+</template>
+
+<script>
+import { ref, toRef, toRefs, reactive, computed } from 'vue'
+
+function useFeatureX() {
+  const state = reactive({
+    x: 1,
+    y: 2,
+  })
+  // ...
+
+  // 返回时转换为 ref
+  return toRefs(state)
+}
+
+export default {
+  name: 'WhyRef',
+  setup() {
+    const { x, y } = useFeatureX()
+
+    const state = reactive({
+      age: 20,
+      name: '双越',
+    })
+
+    // computed 返回的是一个类似于 ref 的对象，也有 .value
+    const age1 = computed(() => {
+      return state.age + 1
+    })
+
+    setTimeout(() => {
+      state.age = 25
+    }, 1500)
+
+    return {
+      state,
+      age1,
+      x,
+      y,
+    }
+  },
+}
+</script>
+```
 
 ## 06: ref toRef 和 toRefs 的最佳使用方式
 
+- 用 reactive 做对象的响应式，用 ref 做值类型响应式
+- setup 中返回 toRefs(state), 或者 toRef(state, "xxx")
+- ref 的变量名都用 xxxRef
+- 合成函数返回响应式对象时，使用 toRefs
+
 ## 07: 为什么需要用 ref
+
+> 进入，深入理解
+
+- 返回值类型，会丢失响应式
+- 如在 setup、computed、合成函数，都有可能返回值类型
+- Vue 如不定义 ref, 用户将自造 ref, 反而混乱
 
 ## 08: 为何 ref 需要 value 属性
 
+> 进入，深入理解
+
+- ref 是一个对象（不丢失响应式），value 存储值
+- 通过 .value 属性的 get 和 set 实现响应式
+- 用于模板、reactive 时，不需要 .value 其他情况都需要
+
 ## 09: 为什么需要 toRef 和 toRefs
+
+> 进入，深入理解
 
 ## 10: vue3 升级了哪些重要功能
 
