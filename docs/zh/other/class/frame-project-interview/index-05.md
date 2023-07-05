@@ -413,7 +413,7 @@ DOM 结构如下
 
 原文链接：[https://blog.csdn.net/qq_42072086/article/details/106986201](https://blog.csdn.net/qq_42072086/article/details/106986201)
 
-## 18: vue 常见性能优化方式
+## 28: vue 常见性能优化方式
 
 - 合理使用 v-show 和 v-if
 - 合理使用 computed
