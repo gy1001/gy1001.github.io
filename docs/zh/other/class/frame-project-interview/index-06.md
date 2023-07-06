@@ -534,6 +534,160 @@ function toRefs(object) {
 
 ## 10: vue3 升级了哪些重要功能
 
+[Vue3 官方文档----Vue 3 迁移指南](https://v3-migration.vuejs.org/zh/)
+
+- createApp
+
+  ```javascript
+  // vue2.x
+  const app = new Vue({ ... })
+
+  Vue.mixin(...)
+  Vue.component(...)
+  Vue.directive(...)
+
+  // vue 3.x
+  const app = Vue.createApp({ ... })
+  app.use( ... )
+  app.mixin(...)
+  app.component(...)
+  app.directive(...)
+  ```
+
+- emits 属性
+
+  ```html
+  <!-- 父组件 -->
+  <HelloWorld :msg="msg" @sayHello="sayHello"></HelloWorld>
+  ```
+
+  ```javascript
+  export default {
+    name: 'HelloWorld',
+    props: {
+      msg: String,
+    },
+    emits: ['check'],
+    setup(props, { emit }) {
+      emit('check', 'bbb')
+    },
+  }
+  ```
+
+- 生命周期
+  - destroyed 生命周期选项被重命名为 unmounted
+  - beforeDestroy 生命周期选项被重命名为 beforeUnmount
+- 多事件
+
+  ```html
+  <button @click="one($event), two($event)"></button>
+  ```
+
+- Fragment
+  - vue2.x 组件模板
+    ```html
+    <template>
+      <div class="blog-post">
+        <h3>{{title}}</h3>
+        <div v-html="content"></div>
+      </div>
+    </template>
+    ```
+  - vue3.x 组件模板
+    ```html
+    <template>
+      <h3>{{title}}</h3>
+      <div v-html="content"></div>
+    </template>
+    ```
+- 移除 .sync
+
+  - vue2.x 组件模板
+
+    ```vue
+    <MyComponent v-bind:title.sync="title" />
+    ```
+
+  - vue3.x 组件模板
+
+    ```vue
+    <MyComponent v-model:title="title" />
+    ```
+
+- 异步组件的写法
+
+  - vue2.x 组件模板
+    ```javascript
+    new Vue({
+      // ...
+      components: {
+        'my-component': () => import('./my-async-component.vue'),
+      },
+    })
+    ```
+  - vue3.x 组件模板
+    ```javascript
+    import { createApp, defineAsyncComponent } from 'vue'
+    createApp({
+      // ...
+      components: {
+        'my-component': defineAsyncComponent(() =>
+          import('./my-async-component.vue'),
+        ),
+      },
+    })
+    ```
+
+- 移除 filter
+
+  ```html
+  <!-- 从 Vue 3.0 开始，过滤器已移除，且不再支持。 -->
+
+  <!-- vue2.x 中 -->
+  <!-- 在花括号中 -->
+  <p>{{ accountBalance | currencyUSD }}</p>
+  <!-- 在 v-bind 中 -->
+  <div v-bind:id="rawId | formatId"></div>
+  ```
+
+- Teleport
+
+  ```vue
+  <button @click="open = true">Open Modal</button>
+
+  <Teleport to="body">
+    <div v-if="open" class="modal">
+      <p>Hello from the modal!</p>
+      <button @click="open = false">Close</button>
+    </div>
+  </Teleport>
+  ```
+
+- Suspense
+
+  ```vue
+  <Suspense>
+    <!-- 具有深层异步依赖的组件 -->
+    <Dashboard />
+    
+    <!-- 在 #fallback 插槽中显示 “正在加载中” -->
+    <template #fallback>
+      Loading...
+    </template>
+  </Suspense>
+  ```
+
+- Composition API
+  - reactive
+  - ref 相关
+  - readonly
+  - watch 和 watchEffect
+  - setup
+  - 生命周期钩子函数
+- v-if 与 v-for 优先级
+  - Vue2.x 版本中在一个元素上同时使用 v-if 和 v-for 时，v-for 会优先作用。
+  - Vue3.x 版本中 v-if 总是优先于 v-for 生效。
+
 ## 11: Composition API 如何实现逻辑复用
 
 ## 12: Vue3 如何实现响应式
@@ -561,3 +715,7 @@ function toRefs(object) {
 ## 23: Composition API 和 React Hooks 的对比
 
 ## 24: vue3 考点总结
+
+```
+
+```
