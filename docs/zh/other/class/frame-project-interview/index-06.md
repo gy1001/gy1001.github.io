@@ -327,7 +327,8 @@ export default {
 
     const stateAsRefs = toRefs(state) // 将响应式对象，变成普通对象
 
-    // const { age: ageRef, name: nameRef } = stateAsRefs // 每个属性，都是 ref 对象
+    // 每个属性，都是 ref 对象
+    // const { age: ageRef, name: nameRef } = stateAsRefs
     // return {
     //     ageRef,
     //     nameRef
@@ -367,6 +368,7 @@ function useFeatureX() {
 export default {
   name: 'WhyRef',
   setup() {
+    // 可以在不失去响应性的情况下破坏结构
     const { x, y } = useFeatureX()
 
     const state = reactive({
@@ -415,11 +417,120 @@ export default {
 
 - ref 是一个对象（不丢失响应式），value 存储值
 - 通过 .value 属性的 get 和 set 实现响应式
-- 用于模板、reactive 时，不需要 .value 其他情况都需要
+- 用于模板、reactive 时，不需要 .value, 其他情况都需要
+
+```javascript
+// 错误
+function computed1(getter) {
+  let value = null
+  setTimeout(() => {
+    value = getter()
+  }, 1500)
+  return value
+}
+// 正确
+function computed2(getter) {
+  let ref = {
+    value: null,
+  }
+  setTimeout(() => {
+    ref.value = getter()
+  }, 1500)
+  return ref
+}
+
+// 测试代码1
+let a = computed1(() => 100)
+console.log(a) // null
+// 过一段时间在打印
+console.log(a) // null
+
+// 测试代码2
+let b = computed2(() => 100)
+console.log(b) // { value: null }
+// 过一段时间在打印
+console.log(b) // { value: 100 }
+```
 
 ## 09: 为什么需要 toRef 和 toRefs
 
 > 进入，深入理解
+
+[Vue3 源码系列之 ref、toRef 及 toRefs 的实现](https://juejin.cn/post/7006997092442996766)
+
+- 初衷： 在不丢失响应式的情况下，把对象数据 **分解、扩散**
+- 前提：针对的是响应式对象（reactive 封装的）非普通对象
+- 注意：它们**不创造**响应式，而是**延续**响应时
+
+### 代码实现
+
+ref 代码实现
+
+```javascript
+function ref(value) {
+  // 将普通对象变为一个对象
+  return createRef(value)
+}
+
+function createRef(newValue, shallow = false) {
+  return new RefImpl(newValue, shallow)
+}
+
+const covert = val => isObject(val) ? reactive(val) : val
+
+class RefImpl {
+  public _value; // 表示声明了一个 _value 属性，但是没有赋值
+  public __v_isRef = true;// 产生的实例会被添加  __v_isRef 表示是一个 ref 属性
+  constructor(public rawValue, public shallow){
+    // 参数中前面增加修饰符，标识此属性放到了 实例上
+    this._value = newValue
+  }
+  // 类的属性访问器
+  get value(){
+    track(this, TrackOpTypes.GET, "value")
+    return this._value
+  }
+  set value(newValue){
+    if(hasChanged(newValue, this.rawValue)){
+      this.rawValue = newValue // 新值会作为老值
+      this._value = this.shallow ? newValue : covert(newValue)
+      trigger(this, TrackOpTypes.SET, "value", newValue)
+    }
+  }
+}
+```
+
+toRef 核心源码
+
+```javascript
+// 把一个对象的值转为 ref 类型
+function toRef(target, key) {
+  return new ObjectRefImpl(target, key)
+}
+class ObjectRefImpl{
+  public __v_is_ref = true
+  constructor(public target, public key){}
+  get value(){
+    return this.target[this.key]
+  }
+  set value(newValue){
+    this.target[this.key] = newValue
+  }
+}
+```
+
+toRefs 核心源码
+
+```javascript
+function toRefs(object) {
+  // object 可能传递的是一个数组或者
+  const ref = isArray(object) ? new Array(object.length) : {}
+  for (let key in object) {
+    ret[key] = toRef(object, key)
+  }
+  return ret
+}
+```
 
 ## 10: vue3 升级了哪些重要功能
 
