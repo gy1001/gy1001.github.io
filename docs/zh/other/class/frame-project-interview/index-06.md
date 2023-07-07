@@ -902,6 +902,8 @@ const data = ['a', 'b', 'c']
 const proxyData = new Proxy(data, {
   get(target, key, receiver) {
     // 只处理本身（非原型的）属性
+    // 比如 数组的代理对象进行 push 的时候，会触发两次。分别是 get push、get length
+    // push 是原型上的方法，我们继续过滤掉，来防止多次重复触发
     const ownKeys = Reflect.ownKeys(target)
     if (ownKeys.includes(key)) {
       console.log('get', key) // 监听
@@ -912,6 +914,9 @@ const proxyData = new Proxy(data, {
   },
   set(target, key, val, receiver) {
     // 重复的数据，不处理
+    // 数组的代理对象 push 的时候，首先会触发 key:为索引值，val：为添加的新值，
+    // 然后也会触发 key：为length 的属性，此处多了一个触发 val：为新的 length值
+    // 我们可以通过 拦截 如果属性值 与 val 相同就拦截（因为 push 触发的后 length 已经更新了，后续触发 length 变化时候，进行拦截即可）
     if (val === target[key]) {
       return true
     }
@@ -930,28 +935,951 @@ const proxyData = new Proxy(data, {
 })
 ```
 
+### Reflect 的作用
+
+- 与 Proxy 能力一一对应
+- 规范化、标准化、函数式
+- 代替 Object 上的工具函数
+  ```javascript
+  const obj = { a: 100, b: 200 }
+  Object.getOwnPropertyNames(obj)
+  // ["a", "b"]
+  Reflect.ownKeys(obj)
+  // ["a", "b"]
+  ```
+
 ## 14: vue3 用 Proxy 实现响应式
+
+[Proxy 代理深层属性](https://juejin.cn/post/7088155921670471716)
+
+> 对于一个代理对象，a.b.c，如果只代理了一层，先触发 a.b 这时就会返回一个非代理对象，后续触发.c 属性并不会触发更新，所以我们在 getter 函数中通过判断拿到的结果 result 是一个对象的话，就进行 reactive(result) 处理, 代码如下
+
+```javascript
+// 创建响应式
+function reactive(target = {}) {
+  if (typeof target !== 'object' || target == null) {
+    // 不是对象或数组，则返回
+    return target
+  }
+
+  // 代理配置
+  const proxyConf = {
+    get(target, key, receiver) {
+      // 只处理本身（非原型的）属性
+      const ownKeys = Reflect.ownKeys(target)
+      if (ownKeys.includes(key)) {
+        console.log('get', key) // 监听
+      }
+
+      const result = Reflect.get(target, key, receiver)
+
+      // 深度监听
+      // 性能如何提升的？
+      // 这里并不是一次性深度监听完，而是再触发 get 的时候进行代理递归，惰性响应式
+      return reactive(result)
+    },
+    set(target, key, val, receiver) {
+      // 重复的数据，不处理
+      if (val === target[key]) {
+        return true
+      }
+
+      const ownKeys = Reflect.ownKeys(target)
+      if (ownKeys.includes(key)) {
+        console.log('已有的 key', key)
+      } else {
+        console.log('新增的 key', key)
+      }
+
+      const result = Reflect.set(target, key, val, receiver)
+      console.log('set', key, val)
+      // console.log('result', result) // true
+      return result // 是否设置成功
+    },
+    deleteProperty(target, key) {
+      const result = Reflect.deleteProperty(target, key)
+      console.log('delete property', key)
+      // console.log('result', result) // true
+      return result // 是否删除成功
+    },
+  }
+
+  // 生成代理对象
+  const observed = new Proxy(target, proxyConf)
+  return observed
+}
+
+// 测试数据
+const data = {
+  name: 'zhangsan',
+  age: 20,
+  info: {
+    city: 'beijing',
+    a: {
+      b: {
+        c: {
+          d: {
+            e: 100,
+          },
+        },
+      },
+    },
+  },
+}
+
+const proxyData = reactive(data)
+```
+
+### 总结
+
+- proxy 能规避 Object.defineProperty 的问题
+- Proxy 无法兼容所有浏览器，无法 polyfill
+
+### 注意
+
+- ES6 的拦截层可以自动处理数组的方法，是由方法决定的。
+- indexOf、includes、lastIndexOf 三个方法是不会被监听的。
+  > [从 vue3 源码重新认识数组的 indexOf, lastIndexOf, includes](https://juejin.cn/post/6854573216707706887)
+  ```javascript
+  const arrayInstrumentations: Record = {}
+  ;['includes', 'indexOf', 'lastIndexOf'].forEach(key => {
+  arrayInstrumentations[key] = function(...args): any {
+    const arr = toRaw(this) as any
+    for (let i = 0, l = (this as any).length; i < l; i++) {
+      track(arr, TrackOpTypes.GET, i + '')
+    }
+    const res = arr[key](...args)
+    if (res === -1 || res === false) {
+      return arr[key](...args.map(toRaw))
+    } else {
+      return res
+    }
+  }
+  })
+  ```
 
 ## 15: v-model 参数的用法
 
+index.vue
+
+```vue
+<template>
+  <p>{{ name }} {{ age }}</p>
+
+  <user-info v-model:name="name" v-model:age="age"></user-info>
+</template>
+
+<script>
+import { reactive, toRefs } from 'vue'
+import UserInfo from './UserInfo.vue'
+
+export default {
+  name: 'VModel',
+  components: { UserInfo },
+  setup() {
+    const state = reactive({
+      name: '双越',
+      age: '20',
+    })
+
+    return toRefs(state)
+  },
+}
+</script>
+```
+
+UserInfo.vue
+
+```vue
+<template>
+  <input :value="name" @input="$emit('update:name', $event.target.value)" />
+  <input :value="age" @input="$emit('update:age', $event.target.value)" />
+</template>
+
+<script>
+export default {
+  name: 'UserInfo',
+  props: {
+    name: String,
+    age: String,
+  },
+}
+</script>
+```
+
 ## 16: watch 和 watchEffect 的区别
+
+[vue3 中的 watch 和 watchEffect](https://blog.csdn.net/weixin_43613849/article/details/120270156)
+
+- 两者都可以监听 data 属性变化
+- watch 需要明确监听哪个属性
+- watchEffect 会根据其中的属性，自动监听变化
+
+```vue
+<template>
+  <p>watch vs watchEffect</p>
+  <p>{{ numberRef }}</p>
+  <p>{{ name }} {{ age }}</p>
+</template>
+
+<script>
+import { reactive, ref, toRefs, watch, watchEffect } from 'vue'
+
+export default {
+  name: 'Watch',
+  setup() {
+    const numberRef = ref(100)
+    const state = reactive({
+      name: '双越',
+      age: 20,
+    })
+
+    watchEffect(() => {
+      // 初始化时，一定会执行一次（收集要监听的数据）
+      console.log('hello watchEffect')
+    })
+    watchEffect(() => {
+      console.log('state.name', state.name)
+    })
+    watchEffect(() => {
+      console.log('state.age', state.age)
+    })
+    watchEffect(() => {
+      console.log('state.age', state.age)
+      console.log('state.name', state.name)
+    })
+    setTimeout(() => {
+      state.age = 25
+    }, 1500)
+    setTimeout(() => {
+      state.name = '双越A'
+    }, 3000)
+
+    // watch(numberRef, (newNumber, oldNumber) => {
+    //     console.log('ref watch', newNumber, oldNumber)
+    // }
+    // // , {
+    // //     immediate: true // 初始化之前就监听，可选
+    // // }
+    // )
+
+    // setTimeout(() => {
+    //     numberRef.value = 200
+    // }, 1500)
+
+    // watch(
+    //     // 第一个参数，确定要监听哪个属性
+    //     () => state.age,
+
+    //     // 第二个参数，回调函数
+    //     (newAge, oldAge) => {
+    //         console.log('state watch', newAge, oldAge)
+    //     },
+
+    //     // 第三个参数，配置项
+    //     {
+    //         immediate: true, // 初始化之前就监听，可选
+    //         // deep: true // 深度监听
+    //     }
+    // )
+
+    // setTimeout(() => {
+    //     state.age = 25
+    // }, 1500)
+    // setTimeout(() => {
+    //     state.name = '双越A'
+    // }, 3000)
+
+    return {
+      numberRef,
+      ...toRefs(state),
+    }
+  },
+}
+</script>
+```
 
 ## 17: setup 中如何获取组件实例
 
-## 18: 什么是 PatchFlag
+- 在 setup 中 和 其他 Composition API 没有 this
+- 可通过 getCurrentInstance 获取当前实例
+- 若使用 Options API 可照常使用 this
+
+```vue
+<template>
+  <p>get instance</p>
+</template>
+
+<script>
+import { onMounted, getCurrentInstance } from 'vue'
+
+export default {
+  name: 'GetInstance',
+  data() {
+    return {
+      x: 1,
+      y: 2,
+    }
+  },
+  setup() {
+    console.log('this1', this) // undefined
+
+    onMounted(() => {
+      console.log('this in onMounted', this)
+      console.log('x', instance.data.x)
+    })
+
+    const instance = getCurrentInstance()
+    // 这时候 x 还是 undefined ，因为 setup 声明周期比较提前
+    console.log('instance', instance)
+    console.log('x', instance.data.x)
+  },
+  mounted() {
+    console.log('this2', this)
+    console.log('y', this.y)
+  },
+}
+</script>
+```
+
+## 18: 为什么 Vue3 比 Vue2 快
+
+- Proxy 响应式
+  - 不是一次性遍历响应，而是惰性响应
+  - 等等
+- PatchFlag
+- HoistStatic
+- CacheHandler
+- SSR 优化
+- Tree-shaking
+
+## 19: 什么是 PatchFlag
+
+### PatchFlag
+
+> patchFlag 是在编译 template 模板时，给 vnode 添加的一个标识信息，这个标识信息反映了 vnode 的哪些部位绑定了动态值，这样在 runtime 阶段，可以根据 patchFlag 判断出哪些内容需要更新，实现靶向更新。
+
+```javascript
+export const enum PatchFlags {
+  // 表示vnode具有动态textContent的元素
+  TEXT = 1,
+  // 表示vnode具有动态的class
+  CLASS = 1 << 1,
+  // 表示具有动态的style
+  STYLE = 1 << 2,
+  // 表示具有动态的非class和style的props
+  PROPS = 1 << 3,
+  // 表示props具有动态的key，与CLASS、STYLE、PROPS冲突
+  FULL_PROPS = 1 << 4,
+  // 表示有监听事件(在同构期间需要添加)
+  HYDRATE_EVENTS = 1 << 5,
+  // 表示vnode是个children顺序不会改变的fragment
+  STABLE_FRAGMENT = 1 << 6,
+  // 表示children带有key的fragment
+  KEYED_FRAGMENT = 1 << 7,
+  // 表示children没有key的fragment
+  UNKEYED_FRAGMENT = 1 << 8,
+  // 表示vnode只需要非props的patch。例如只有标签中只有ref或指令
+  NEED_PATCH = 1 << 9,
+  // 表示vnode存在动态的插槽。例如动态的插槽名
+  DYNAMIC_SLOTS = 1 << 10,
+  // 表示用户在模板的根级别存在注释而创建的片段，这是一个仅用于开发的标志，因为注释在生产中被剥离
+  DEV_ROOT_FRAGMENT = 1 << 11,
+
+  // 以下都是一些特殊的flag，它们不能使用位运算进行匹配
+  // 表示vnode经过静态提升
+  HOISTED = -1,
+  // diff算法应该退出优化模式
+  BAIL = -2
+}
+```
+
+- 编译模板时，动态节点做标记
+- 标记，分为不同的类型，如 TEXT PROPS
+- DIFF 算法，可以区分静态及诶单，以及不同类型的动条节点
+
+[演示网址：https://template-explorer.vuejs.org/](https://template-explorer.vuejs.org/)
+
+template 部分
+
+```html
+<div>
+  <span>Hello World</span>
+  <span>{{ msg }}</span>
+  <span :class="name">孙悟空</span>
+  <span :class="name">{{ nickName }}</span>
+  <span :class="name" :id="id" title="齐天大圣">弼马温</span>
+</div>
+```
+
+经过动态编译后，解析为如下部分
+
+```javascript
+import {
+  createElementVNode as _createElementVNode,
+  toDisplayString as _toDisplayString,
+  normalizeClass as _normalizeClass,
+  openBlock as _openBlock,
+  createElementBlock as _createElementBlock,
+} from 'vue'
+
+export function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (
+    _openBlock(),
+    _createElementBlock('div', null, [
+      _createElementVNode('span', null, 'Hello World'),
+      _createElementVNode(
+        'span',
+        null,
+        _toDisplayString(_ctx.msg),
+        1 /* TEXT */,
+      ),
+      _createElementVNode(
+        'span',
+        {
+          class: _normalizeClass(_ctx.name),
+        },
+        '孙悟空',
+        2 /* CLASS */,
+      ),
+      _createElementVNode(
+        'span',
+        {
+          class: _normalizeClass(_ctx.name),
+        },
+        _toDisplayString(_ctx.nickName),
+        3 /* TEXT, CLASS */,
+      ),
+      _createElementVNode(
+        'span',
+        {
+          class: _normalizeClass(_ctx.name),
+          id: _ctx.id,
+          title: '齐天大圣',
+        },
+        '弼马温',
+        10 /* CLASS, PROPS */,
+        ['id'],
+      ),
+    ])
+  )
+}
+
+// Check the console for the AST
+```
+
+### shapeFlag
+
+> vnode 的 shapeFLag 属性使用二进制的方式描述了组件的类型。shapeFLag 的值的类型是个枚举：
+
+```javascript
+export const enum ShapeFlags {
+  ELEMENT = 1, // 表示一个普通的HTML元素
+  FUNCTIONAL_COMPONENT = 1 << 1, // 函数式组件
+  STATEFUL_COMPONENT = 1 << 2,  // 有状态组件
+  TEXT_CHILDREN = 1 << 3, // 子节点是文本
+  ARRAY_CHILDREN = 1 << 4, // 子节点是数组
+  SLOTS_CHILDREN = 1 << 5, // 子节点是插槽
+  TELEPORT = 1 << 6, // 表示vnode描述的是个teleport组件
+  SUSPENSE = 1 << 7, // 表示vnode描述的是个suspense组件
+  COMPONENT_SHOULD_KEEP_ALIVE = 1 << 8, // 表示需要被keep-live的有状态组件
+  COMPONENT_KEPT_ALIVE = 1 << 9, // 已经被keep-live的有状态组件
+  COMPONENT = ShapeFlags.STATEFUL_COMPONENT | ShapeFlags.FUNCTIONAL_COMPONENT // 组件，有状态组件和函数式组件的统称
+}
+```
+
+### diff 中的应用优化
+
+- vue 2.x 中
+
+  > vue2 中的 VNode 在进行更新 patch 操作 diff 过程为全量对比
+
+  ![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/61e912e49b2f45849ab36fe7b56749da~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp?)
+
+  我们看到，在发生数据更新的时候，只有 p 标签绑定的 msg 为动态值，可是在进行新旧 VNode diff 过程中，不会发生变化的节点也会参与其中进行完整的 VNode 树进行 diff。
+
+- vue 3.x 中
+
+  > 在 vue3 中，由于在 compile 阶段对 VNode 每一个元素做了对应的 PatchFlags 进行标记，所以在 diff 过程中，我们就可以根据具体哪些发生了变化，进行有目标的 diff 实现靶向更新，这正是 vue3 中 compile 和 runtime 两个阶段的巧妙结合之处。
+
+  ![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f234f546fa594a17831d5b9e7396768b~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp?)
 
 ## 19: 什么是 HoistStatic 和 CacheHandler
 
+### HoistStatic
+
+> Hoist：提升， Static: 静态
+
+[Vue3 实践指南二 —— Vue3 性能提升分析](https://juejin.cn/post/7030398495731220510)
+
+> Vue3 的编译器会将模板中的静态节点、子树、数据对象，并在生成的代码中将他们提升到渲染函数之外，一次来避免每次调用渲染函数的时候重新创建这些对象，从而大大提高内存使用率并减少垃圾回收频率。
+
+- 将静态节点的定义，提升到父级作用域，缓存起来
+- 多个相邻的静态节点，会被合并起来
+- 典型的拿空间换空间的优化策略
+
+对于上一节中的模板，编译，我们在右上角 `options` 中开启选项 `hoistStatic`，转换结果如下
+
+template 部分
+
+```html
+<div>
+  <span>Hello World</span>
+  <span>{{ msg }}</span>
+  <span :class="name">孙悟空</span>
+  <span :class="name">{{ nickName }}</span>
+  <span :class="name" :id="id" title="齐天大圣">弼马温</span>
+</div>
+```
+
+开启 hoistStatic 后的结果
+
+```javascript
+import {
+  createElementVNode as _createElementVNode,
+  toDisplayString as _toDisplayString,
+  normalizeClass as _normalizeClass,
+  openBlock as _openBlock,
+  createElementBlock as _createElementBlock,
+} from 'vue'
+
+const _hoisted_1 = /*#__PURE__*/ _createElementVNode(
+  'span',
+  null,
+  'Hello World',
+  -1 /* HOISTED */,
+)
+const _hoisted_2 = ['id']
+
+export function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (
+    _openBlock(),
+    _createElementBlock('div', null, [
+      _hoisted_1,
+      _createElementVNode(
+        'span',
+        null,
+        _toDisplayString(_ctx.msg),
+        1 /* TEXT */,
+      ),
+      _createElementVNode(
+        'span',
+        {
+          class: _normalizeClass(_ctx.name),
+        },
+        '孙悟空',
+        2 /* CLASS */,
+      ),
+      _createElementVNode(
+        'span',
+        {
+          class: _normalizeClass(_ctx.name),
+        },
+        _toDisplayString(_ctx.nickName),
+        3 /* TEXT, CLASS */,
+      ),
+      _createElementVNode(
+        'span',
+        {
+          class: _normalizeClass(_ctx.name),
+          id: _ctx.id,
+          title: '齐天大圣',
+        },
+        '弼马温',
+        10 /* CLASS, PROPS */,
+        _hoisted_2,
+      ),
+    ])
+  )
+}
+
+// Check the console for the AST
+```
+
+如果相邻的静态变量达到一定程度，就会进行合并，例如下面的模板
+
+```html
+<div>
+  <span class="foo"></span>
+  <span class="foo"></span>
+  <span class="foo"></span>
+  <span class="foo"></span>
+  <span class="foo"></span>
+  <span :class="name" :id="id" title="齐天大圣">弼马温</span>
+</div>
+```
+
+经过编译后，结果如下
+
+```javascript
+import {
+  createElementVNode as _createElementVNode,
+  normalizeClass as _normalizeClass,
+  createStaticVNode as _createStaticVNode,
+  openBlock as _openBlock,
+  createElementBlock as _createElementBlock,
+} from 'vue'
+
+const _hoisted_1 = /*#__PURE__*/ _createStaticVNode(
+  '<span class="foo"></span><span class="foo"></span><span class="foo"></span><span class="foo"></span><span class="foo"></span>',
+  5,
+)
+const _hoisted_6 = ['id']
+
+export function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (
+    _openBlock(),
+    _createElementBlock('div', null, [
+      _hoisted_1,
+      _createElementVNode(
+        'span',
+        {
+          class: _normalizeClass(_ctx.name),
+          id: _ctx.id,
+          title: '齐天大圣',
+        },
+        '弼马温',
+        10 /* CLASS, PROPS */,
+        _hoisted_6,
+      ),
+    ])
+  )
+}
+
+// Check the console for the AST
+```
+
+### CacheHandler: 事件监听缓存
+
+默认情况下 onClick 会被视为动态绑定，所以每次都会追踪他的变化。但是函数还是同一个函数所以没必要追踪，直接缓存起来复用就好了，这就是所说的事件监听缓存。Vue3 就做了这一缓存机制去提升性能。
+
+- 未开启事件缓存 CacheHandler 时的模板编译，会将 click 事件添加上 flag 类型：
+
+  ```html
+  <div>
+    <span @click="handlerClick" :class="name" :id="id" title="齐天大圣">
+      弼马温
+    </span>
+  </div>
+  ```
+
+  编译后的结果
+
+  ```javascript
+  import {
+    normalizeClass as _normalizeClass,
+    createElementVNode as _createElementVNode,
+    openBlock as _openBlock,
+    createElementBlock as _createElementBlock,
+  } from 'vue'
+
+  export function render(_ctx, _cache, $props, $setup, $data, $options) {
+    return (
+      _openBlock(),
+      _createElementBlock('div', null, [
+        _createElementVNode(
+          'span',
+          {
+            onClick: _ctx.handlerClick,
+            class: _normalizeClass(_ctx.name),
+            id: _ctx.id,
+            title: '齐天大圣',
+          },
+          '弼马温',
+          10 /* CLASS, PROPS */,
+          ['onClick', 'id'],
+        ),
+      ])
+    )
+  }
+
+  // Check the console for the AST
+  ```
+
+- 开启 cacheHandler 缓存后的结果
+
+  ```javascript
+  import {
+    normalizeClass as _normalizeClass,
+    createElementVNode as _createElementVNode,
+    openBlock as _openBlock,
+    createElementBlock as _createElementBlock,
+  } from 'vue'
+
+  export function render(_ctx, _cache, $props, $setup, $data, $options) {
+    return (
+      _openBlock(),
+      _createElementBlock('div', null, [
+        _createElementVNode(
+          'span',
+          {
+            onClick:
+              _cache[0] ||
+              (_cache[0] = (...args) =>
+                _ctx.handlerClick && _ctx.handlerClick(...args)),
+            class: _normalizeClass(_ctx.name),
+            id: _ctx.id,
+            title: '齐天大圣',
+          },
+          '弼马温',
+          10 /* CLASS, PROPS */,
+          ['id'],
+        ),
+      ])
+    )
+  }
+
+  // Check the console for the AST
+  ```
+
 ## 20: SSR 和 Tree-shaking 的优化
+
+### SSR 优化
+
+- 静态节点直接输出，绕过了 vdom
+- 动态节点，还是需要动条渲染
+
+template 部分
+
+```html
+<div>
+  <span>Hello World</span>
+  <span>{{ msg }}</span>
+  <span :class="name">孙悟空</span>
+  <span :class="name">{{ nickName }}</span>
+  <span :class="name" :id="id" title="齐天大圣">弼马温</span>
+</div>
+```
+
+经过 SSR 编译后的结果
+
+```javascript
+import { mergeProps as _mergeProps } from 'vue'
+import {
+  ssrRenderClass as _ssrRenderClass,
+  ssrRenderAttr as _ssrRenderAttr,
+  ssrRenderAttrs as _ssrRenderAttrs,
+  ssrInterpolate as _ssrInterpolate,
+} from 'vue/server-renderer'
+
+export function ssrRender(
+  _ctx,
+  _push,
+  _parent,
+  _attrs,
+  $props,
+  $setup,
+  $data,
+  $options,
+) {
+  const _cssVars = { style: { color: _ctx.color } }
+  _push(
+    `<div${_ssrRenderAttrs(
+      _mergeProps(_attrs, _cssVars),
+    )}><span>Hello World</span><span>${_ssrInterpolate(
+      _ctx.msg,
+    )}</span><span class="${_ssrRenderClass(
+      _ctx.name,
+    )}">孙悟空</span><span class="${_ssrRenderClass(
+      _ctx.name,
+    )}">${_ssrInterpolate(_ctx.nickName)}</span><span class="${_ssrRenderClass(
+      _ctx.name,
+    )}"${_ssrRenderAttr('id', _ctx.id)} title="齐天大圣">弼马温</span></div>`,
+  )
+}
+
+// Check the console for the AST
+```
+
+### Tree-shaking 的优化
+
+- 编译时，根据不同的情况，引入不同的 API
 
 ## 21: Vite 为什么启动非常快
 
+> Vite（法语意为 "快速的"，发音 /vit/，发音同 "veet"）是一种新型前端构建工具，能够显著提升前端开发体验,它主要由两部分组成：
+
+- 一个开发服务器，它基于 原生 ES 模块 提供了 丰富的内建功能，如速度快到惊人的 模块热更新（HMR）。
+- 一套构建指令，它使用 Rollup 打包你的代码，并且它是预配置的，可输出用于生产环境的高度优化过的静态资源。
+
+### Vite 是什么
+
+- 一个前端打包工具，Vite 作者发起的项目
+- 借助 Vue 的影响力，发展较快，和 webpack 竞争
+- 优势：开发环境下无序打包，启动快
+
+### Vite 为何启动快
+
+- 开发环境使用 ES6 Module, 无需打包 --- 非常快
+- 生产环境下使用 rollup, 并不会快很多
+
 ## 22: ES Module 在浏览器中的应用
+
+```javascript
+// add.js
+import print from './print.js'
+
+export default function add(a, b) {
+  print('print', 'add')
+  return a + b
+}
+
+// math.js
+export function add(a, b) {
+  return a + b
+}
+
+export function multi(a, b) {
+  return a * b
+}
+
+// print.js
+export default function (a, b) {
+  console.log(a, b)
+}
+
+// index.js
+import { add, multi } from './math.js'
+console.log('add res', add(10, 20))
+console.log('multi res', multi(10, 20))
+```
+
+### 基本演示
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ES Module demo</title>
+  </head>
+  <body>
+    <p>基本演示</p>
+
+    <script type="module">
+      import add from './src/add.js'
+
+      const res = add(1, 2)
+      console.log('add res', res)
+    </script>
+
+    <script type="module">
+      import { add, multi } from './src/math.js'
+      console.log('add res', add(10, 20))
+      console.log('multi res', multi(10, 20))
+    </script>
+  </body>
+</html>
+```
+
+### 外链引入
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ES Module demo</title>
+  </head>
+  <body>
+    <p>外链</p>
+
+    <script type="module" src="./src/index.js"></script>
+  </body>
+</html>
+```
+
+### 远程引用
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ES Module demo</title>
+  </head>
+  <body>
+    <p>远程引用</p>
+
+    <script type="module">
+      import { createStore } from 'https://unpkg.com/redux@latest/es/redux.mjs'
+      console.log('createStore', createStore)
+    </script>
+  </body>
+</html>
+```
+
+### 动态引入
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ES Module demo</title>
+  </head>
+  <body>
+    <p>动态引入</p>
+    <button id="btn1">load1</button>
+    <button id="btn2">load2</button>
+
+    <script type="module">
+      document.getElementById('btn1').addEventListener('click', async () => {
+        const add = await import('./src/add.js')
+        const res = add.default(1, 2)
+        console.log('add res', res)
+      })
+      document.getElementById('btn2').addEventListener('click', async () => {
+        const { add, multi } = await import('./src/math.js')
+        console.log('add res', add(10, 20))
+        console.log('multi res', multi(10, 20))
+      })
+    </script>
+  </body>
+</html>
+```
 
 ## 23: Composition API 和 React Hooks 的对比
 
+- 前者 setup 只会被调用一次，后者函数会被多次调用
+- 前者无需 useMemo useCallback， 因为 setup 只会调用一次
+- 前者无需顾虑调用顺序，而后者需要保证 hooks 的顺序一致
+- 前者 reactive + ref 比后者 useState，更难理解
+-
+
 ## 24: vue3 考点总结
 
-```
+### vue3 新功能
 
-```
+- createApp
+- emits 属性
+- 多事件处理
+- Fragment
+- 移除 .sync 改为 v-model 参数
+- 异步组件的引用方式
+- 移除 filter
+- Teleport
+- Suspense
+- composition API
+  - reactive
+  - ref toRef toRefs
+  - readonly
+  - computed
+  - watch/ watchEffect
+  - 钩子函数生命周期
+
+### Vue3 原理
+
+- Proxy 实现响应式
+- 编译优化
+  - patchFlag 静态标记
+  - hoistStatic 静态提升
+  - cacheHandler 缓存事件
+  - SSR 优化
+  - Tree-Shaking 优化
+- Vite
+  - Es Module
