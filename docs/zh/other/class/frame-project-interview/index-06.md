@@ -1404,7 +1404,7 @@ export const enum ShapeFlags {
 
   ![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f234f546fa594a17831d5b9e7396768b~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp?)
 
-## 19: 什么是 HoistStatic 和 CacheHandler
+## 20: 什么是 HoistStatic 和 CacheHandler
 
 ### HoistStatic
 
@@ -1632,7 +1632,7 @@ export function render(_ctx, _cache, $props, $setup, $data, $options) {
   // Check the console for the AST
   ```
 
-## 20: SSR 和 Tree-shaking 的优化
+## 21: SSR 和 Tree-shaking 的优化
 
 ### SSR 优化
 
@@ -1695,7 +1695,7 @@ export function ssrRender(
 
 - 编译时，根据不同的情况，引入不同的 API
 
-## 21: Vite 为什么启动非常快
+## 22: Vite 为什么启动非常快
 
 > Vite（法语意为 "快速的"，发音 /vit/，发音同 "veet"）是一种新型前端构建工具，能够显著提升前端开发体验,它主要由两部分组成：
 
@@ -1713,7 +1713,7 @@ export function ssrRender(
 - 开发环境使用 ES6 Module, 无需打包 --- 非常快
 - 生产环境下使用 rollup, 并不会快很多
 
-## 22: ES Module 在浏览器中的应用
+## 23: ES Module 在浏览器中的应用
 
 ```javascript
 // add.js
@@ -1843,7 +1843,7 @@ console.log('multi res', multi(10, 20))
 </html>
 ```
 
-## 23: Composition API 和 React Hooks 的对比
+## 24: Composition API 和 React Hooks 的对比
 
 - 前者 setup 只会被调用一次，后者函数会被多次调用
 - 前者无需 useMemo useCallback， 因为 setup 只会调用一次
@@ -1851,7 +1851,7 @@ console.log('multi res', multi(10, 20))
 - 前者 reactive + ref 比后者 useState，更难理解
 -
 
-## 24: vue3 考点总结
+## 25: vue3 考点总结
 
 ### vue3 新功能
 
