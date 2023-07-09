@@ -66,9 +66,46 @@
 - polyfill
 - runtime
 
+### 回顾之前的 webpack 面试题
+
+- 前端代码为何要进行构建和打包？
+- module chunk bundle 分别是什么意思，有何区别？
+- loader 和 plugin 的区别
+- webpack 如何实现懒加载？
+- webpack 常见性能优化
+- babel-runtime 和 babel-polyfill 的区别
+
 ## 02: 使用 webpack5
 
+- webpack5 主要是内部效率的优化
+- 对比 webpack4, 没有太多使用上的改动
+- 你可以直接使用 webpack5 来学习课程
+
+### webpack4 demo
+
+升级 webpack5 以及周边插件后，代码需要做出的调整：
+
+- package.json 的 dev-server 命令改了 `"dev": "webpack serve --config build/webpack.dev.js",`
+- 升级新版本 `const { merge } = require('webpack-merge')`
+- 升级新版本 `const { CleanWebpackPlugin } = require('clean-webpack-plugin')`
+- `module.rules` 中 `loader: ['xxx-loader']` 换成 `use: ['xxx-loader']`
+- `filename: 'bundle.[contenthash:8].js'` 其中 `h` 小写，不能大写
+
 ## 03: webpack 基本配置串讲
+
+- vue-cli create-react-app
+- 常用上述脚手架，而不会自己配置 webpack??
+- 则面试不会通过
+
+### webpack 基本配置
+
+- 拆分配置和 merge
+  - webpack.common.js
+  - webpack.dev.js
+  - webpack.prod.js
+- 启动本地服务
+- 处理 ES6
+- 处理样式
 
 ## 04: webpack 如何配置多入口
 
