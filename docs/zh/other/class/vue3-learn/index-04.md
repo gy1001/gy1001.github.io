@@ -365,7 +365,7 @@ obj = null
      return function get(
        target: object,
        key: string | symbol,
-       receiver: object
+       receiver: object,
      ) {
        const res = Reflect.get(target, key, receiver)
        // 这里进行依赖收集
@@ -385,7 +385,7 @@ obj = null
        target: object,
        key: string | symbol,
        newValue: unknown,
-       receiver: object
+       receiver: object,
      ) {
        const result = Reflect.set(target, key, newValue, receiver)
        // 触发依赖
@@ -584,7 +584,7 @@ effect(() => {
 
 ## 08：框架实现：track && trigger
 
-根绝我们在`packages/reactivity/scr/baseHandlers.ts`中的代码可知，当触发`getter`行为时，其实我们会触发`track`方法，进行**依赖收集**，当触发**setter**行为时，会触发`tritgger`方法，来触发依赖
+根据我们在`packages/reactivity/scr/baseHandlers.ts`中的代码可知，当触发`getter`行为时，其实我们会触发`track`方法，进行**依赖收集**，当触发**setter**行为时，会触发`tritgger`方法，来触发依赖
 
 那么这里就涉及到了两个概念
 

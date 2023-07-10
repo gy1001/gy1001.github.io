@@ -45,22 +45,21 @@ namespace.add(1, 2)
 
 ##### 缺点：
 
-###### 文件依赖的顺序
+- 文件依赖的顺序
 
-```html
-<script src="./jquery.js"></script>
-<script src="./utils.js"></script>
-// 如果 utils.js 依赖于 jquery.js， 那么引用顺序就必须是 jquery
-在前面，否则就会报错
-```
+  ```html
+  <script src="./jquery.js"></script>
+  <script src="./utils.js"></script>
+  // 如果 utils.js 依赖于 jquery.js， 那么引用顺序就必须是 jquery
+  在前面，否则就会报错
+  ```
 
-###### 外部可以随意修改内部成员
-
-```javascript
-// 例如外部调用
-utils.add = 100
-// 其他地方在调用 utils.add(1,2) 就会报错
-```
+- 外部可以随意修改内部成员
+  ```javascript
+  // 例如外部调用
+  utils.add = 100
+  // 其他地方在调用 utils.add(1,2) 就会报错
+  ```
 
 ### IIEF: 立即执行函数
 
@@ -138,7 +137,7 @@ Module.foo()
 
 1. 定义模块
 
-   根绝 CommonJS 规范，一个单独的文件就是一个模块。每一个模块都是一个单独的作用域，也就是说，在该模块内部定义的变量，无法被其他模块读取，除非定义的变量为 global 对象的属性
+根据 CommonJS 规范，一个单独的文件就是一个模块。每一个模块都是一个单独的作用域，也就是说，在该模块内部定义的变量，无法被其他模块读取，除非定义的变量为 global 对象的属性
 
 2. 模块输出
 

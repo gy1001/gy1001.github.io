@@ -373,7 +373,7 @@
    }
    ```
 
-8. 删除`dist`目录，重新打包`npm run build`，可以看到多了一个文件`vendors-node_modules_pnpm_flexslider_2_7_2_node_modules_flexslider_jquery_flexslider_js-node_-bf1d5e.5f06f1cc8de30c0397b7.js`,根绝文件名字大概可以猜到它是把`jquery、flexslider`等打包到一起
+8. 删除`dist`目录，重新打包`npm run build`，可以看到多了一个文件`vendors-node_modules_pnpm_flexslider_2_7_2_node_modules_flexslider_jquery_flexslider_js-node_-bf1d5e.5f06f1cc8de30c0397b7.js`,根据文件名字大概可以猜到它是把`jquery、flexslider`等打包到一起
 
 9. 我们可以修改文件名字,配置如下，重新打包，就可以得到`common.xxxx.js`文件
 
