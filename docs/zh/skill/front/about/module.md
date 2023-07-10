@@ -184,9 +184,13 @@ nameModule.add(1, 2)
 
 它采用异步加载方式加载模块，模块的加载不影响它后面的语句的运行，所有依赖这个模块的语句，都定义在一个回调函数中，等到加载完毕之后，这个回调函数才会执行。
 
-由于不是 JS 原生支持，使用 AMD 规范进行页面开发需要用到对应的库函数，也就是大名鼎鼎的 RequireJ，实际上 AMD 是 requireJS 在推广过程中对模块定义的规范化的产生。
+由于不是 JS 原生支持，使用 AMD 规范进行页面开发需要用到对应的库函数，也就是大名鼎鼎的 RequireJS，实际上 AMD 是 requireJS 在推广过程中对模块定义的规范化的产生。
 
 Requirejs 也是采用 require() 加载模块，但是不同于 CommonJS，它要求两个参数
+
+[RequireJS 和 AMD 规范](https://javascript.ruanyifeng.com/tool/requirejs.html)
+
+[RequireJS 用法解析](https://www.jianshu.com/p/e355aaa9ebce)
 
 ```javascript
 require([module], callback)
