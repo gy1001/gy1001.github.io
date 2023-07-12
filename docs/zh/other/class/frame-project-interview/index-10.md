@@ -748,6 +748,8 @@ module.exports = {
 
 ## 12: webpack 如何配置热更新
 
+[webpack 热更新原理(面试大概率会问)](https://juejin.cn/post/7160939003212988424)
+
 ### 自动刷新
 
 要用 webpack-devserver：
@@ -815,6 +817,13 @@ if (module.hot) {
 
 ## 13: 何时使用 DllPlugin
 
+- 前端框架如 vue react 体积大，构建慢
+- 较稳定，不常升级版本
+- 同一个版本只构建一次即可，不用每次都重新构建
+- webpack 已内置了 DllPlugin 支持, 不用额外 npm install
+- DllPlugin - 打包出 dll 文件
+- DllReferencePlugin - 使用 dll 文件
+
 [你真的需要 Webpack DllPlugin 吗？](https://www.cnblogs.com/skychx/p/webpack-dllplugin.html)
 
 > 抛弃 DLL：Vue & React 官方的共同选择: 所以说，如果项目上了 webpack 4，再使用 dll 收益并不大。我拿实际项目的代码试了一下，加入 dll 可能会有 1-2 s 的速度提升，对于整体打包时间可以说可以忽略不计。
@@ -836,25 +845,174 @@ module.exports = {
 }
 ```
 
-## 14: webpack 优化构建速度-考点总结和复习
+## 14: webpack 优化构建速度(可用于生产环境)-考点总结和复习
+
+### 可用于生产环境
+
+- 优化 babel-loader
+- IgnorePlugin
+- noParse
+- happyPack
+- ParallelUglifyPlugin
+
+### 不可用于生产环境
+
+- 自动刷新
+- 热更新
+- DllPlugin
+  > 双越： 生产环境要考虑打包的体积，和加载的性能。DllPlugin 解决的是打包的速度。这两者不一个目的。如果生产环境用了 DllPlugin ，可能会和打包体积、打包合并的逻辑，产生冲突
 
 ## 15: webpack 优化产出代码-考点串讲
 
+- 体积更小
+- 合理分包，不重复加载
+- 速度更快，内存使用更小
+
+### webpack 性能优化-产出代码
+
+- 小图片 base64 编码
+- bundle 加 hash
+- 懒加载
+- 提取公共代码
+- IgnorePlugin
+- 使用 CDN 加速
+- 使用 production
+- Scope Hosting
+
+### 使用 production
+
+- 自动开启压缩代码
+- Vue React 等会自动删除调试代码（如开发环境的 warning）
+- 启动 Tree-Shaking
+
 ## 16: 什么是 Tree-Shaking
 
-## 17: ES Module 和 Commonjs 的区别
+> 按照 webpack 官网的解释，tree shaking 通常用于描述移除 JavaScript 上下文中的未引用代码（dead-code）。它依赖于 ESM 的静态分析能力，例如 import 和 export。用大白话解释就是，如果是使用模块化开发的话，就可以删除那些引入某个模块中用不到的函数。
+>
+> 为什么叫 tree shaking， 我个人觉得这个名次叫的很形象呀。你可以将应用程序想象成一棵树。绿色表示实际用到的源码和 library，是树上活的树叶。灰色表示无用的代码，是秋天树上枯萎的树叶。为了除去死去的树叶，你必须摇动这棵树，使它们落下。
+
+## 17: ES Module 和 Commonjs
+
+- ES6 module 是静态引入，编译时引入
+- Commonjs 是动态引入，执行时引入
+- 只有 ES6 Module 才能静态分析，实现 Tree-Shaking
+
+```javascript
+let apiList = require('../config/api.js')
+if (isDev) {
+  // 可以动态引入，执行时引入
+  apiList = require('../config/api_dev.js')
+}
+```
+
+```javascript
+import apiList from '../config/api.js'
+if (isDev) {
+  // 编译时报错，只能静态引入
+  import apiList from '../config/api_dev.js'
+}
+```
 
 ## 18: 什么是 Scope Hosting?
 
+> Scope Hoisting 它可以让 webpack 打包出来的代码文件更小，运行更快，它可以被称作为 "作用域提升"。 是在 webpack3 中提出来的，当然现在 webpack4 也是支持的。
+
+scope hoisting 原理
+
+原理：将所有模块的代码按照引用顺序放在一个函数作用域里，然后适当的重命名一些变量以防止变量名冲突
+
+对比：通过 scope hoisting 可以减少函数声明代码和内存开销
+
+简单理 scope hoisting 就是把多个作用域用一个作用域取代，以减少内存消耗并减少包裹块代码，从每个模块有一个包裹函数变成只有一个包裹函数包裹所有的模块，但是有一个前提就是，当模块的引用次数大于 1 时，比如被引用了两次或以上，那么这个效果会无效，也就是被引用多次的模块在被 webpack 处理后，会被独立的包裹函数所包裹
+
+**注意**：但 scope hoisting 的启用是有前提的，如果遇到某些模块多次被其他模块引用，或者使用了动态导入的模块，或者是非 ESM 的模块，都不会有 scope hoisting。
+
+### 代码演示
+
+```javascript
+// hello.js
+export default 'hello 双越'
+
+// main.js
+import str from './hello.js'
+console.log(str)
+```
+
+默认打包结果如下
+
+```javascript
+;[
+  function (module, __webpack_exports__, __webpack_require__) {
+    var __WEBPACK_IMPORTED_MODULE_0__util_js__ = __webpack_require__(1)
+    console.log(__WEBPACK_IMPORTED_MODULE_0__util_js__['a'])
+  },
+  function (module, __webpack_exports__, __webpack_require__) {
+    __webpack_exports__['a'] = 'hello 双越'
+  },
+]
+```
+
+开启 Scope Hoisting 之后：
+
+```javascript
+;[
+  function (module, __webpack_exports__, __webpack_require__) {
+    var util = 'Hello,Webpack'
+    console.log(util)
+  },
+]
+```
+
+开启
+
+```javascript
+module.exports = {
+  resolve: {
+    // 针对 Npm 中的第三方模块优先采用 jsnext:main 中指向的 ES6 模块化语法的文件
+    mainFields: ['jsnext:main', 'browser', 'main'],
+  },
+  plugins: [
+    // 开启 Scope Hoisting 功能
+    new webpack.optimize.ModuleConcatenationPlugin(),
+  ],
+}
+```
+
 ## 19: babel 基本概念串讲
 
+- 前端开发环境必备工具
+- 同 webpack，需要了解基本的配置和使用
+- 面试考察概率不高，但要求必会
+
+### babel
+
+- 环境搭建 & 基本配置
+- babel-polyfill
+- babel-runtime
+
+### babel 环境搭建和基本配置
+
+[https://github.com/gy1001/Javascript/tree/main/frame-project-interview/babel-demo](https://github.com/gy1001/Javascript/tree/main/frame-project-interview/babel-demo)
+
+- 环境搭建
+- .babelrc 配置
+- presets 和 plugins
+
 ## 20: babel-polyfill 是什么?
+
+- 什么是 polyfill
+- 什么是 core-js 和 regenerator
+- babel-polyfill 即两者的集合
+
+### babel-polyfill 现在已被弃用
+
+- Babel 7.4 以后弃用 babel-polyfill
+- 推荐直接使用 core-js 和 regenerator
+- 但是不影响面试会考察它
 
 ## 21: babel-polyfill 如何按需引入?
 
 ## 22: babel-runtime 是什么?
-
-## 23: babel-runtime 是什么?
 
 ## 24: webpack 面试真题-前端代码为何要打包
 
@@ -863,7 +1021,3 @@ module.exports = {
 ## 26: webpack 面试真题-常见性能优化方法
 
 ## 27:【任务】从 0 配置 webpack5 开发环境
-
-```
-
-```
