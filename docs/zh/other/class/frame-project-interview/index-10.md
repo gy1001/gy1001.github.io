@@ -767,6 +767,52 @@ module.export = {
 }
 ```
 
+### 热更新
+
+- 自动刷新： 整个网页全部刷新，速度较慢
+- 自动刷新：这个那个网页全部刷新啊，转态丢失
+- 热更新：新代码生效，网页不刷新，状态不丢失
+
+> 模块热替换（Hot Module Replacement）的好处是只替换更新的部分，而不是整个页面都重新加载。
+
+模块热替换能做到在不重新加载整个网页的情况下，通过将被更新过的模块替换老的模块，再重新执行一次来实现实时预览。 模块热替换相对于默认的刷新机制能提供更快的响应和更好的开发体验。 模块热替换默认是关闭的，要开启模块热替换，你只需在启动 DevServer 时带上--hot 参数，重启 DevServer 后再去更新文件就能体验到模块热替换了。
+
+```javascript
+const HotModuleReplacementPlugin = require('webpack/lib/HotModuleReplacementPlugin')
+
+module.exports = smart(webpackCommonConf, {
+  entry: {
+    index: [
+      'webpack-dev-server/client?http://localhost:8080/',
+      'webpack/hot/dev-server',
+      path.join(srcPath, 'index.js'),
+    ],
+    other: path.join(srcPath, 'other.js'),
+  },
+  module: {},
+  plugins: [new HotModuleReplacementPlugin()],
+  devServer: {
+    port: 8080,
+    progress: true, // 显示打包的进度条
+    contentBase: distPath, // 根目录
+    open: true, // 自动打开浏览器
+    compress: true, // 启动 gzip 压缩
+
+    hot: true,
+  },
+})
+```
+
+```javascript
+// index.js要开启
+// 增加，开启热更新之后的代码逻辑
+if (module.hot) {
+  module.hot.accept('./library.js', function () {
+    // 使用更新过的 library 模块执行某些操作...
+  })
+}
+```
+
 ## 13: 何时使用 DllPlugin
 
 [你真的需要 Webpack DllPlugin 吗？](https://www.cnblogs.com/skychx/p/webpack-dllplugin.html)
