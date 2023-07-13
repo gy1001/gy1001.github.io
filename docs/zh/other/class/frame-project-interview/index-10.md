@@ -1088,10 +1088,102 @@ babel-plugin-transform-runtime 优点：
 
 [详细讲解：姜瑞涛-大佬的文章](https://www.jiangruitao.com/babel/transform-runtime/)
 
-## 24: webpack 面试真题-前端代码为何要打包
+## 24: webpack 面试真题-前端代码为何要打包和构建
+
+### 代码层面
+
+- 体积更小（tree-shaking、压缩、合并），加载更快
+- 编译高级语言或者语法（TS、ES6+、模块化、scss 等）
+- 兼容性和检查错误（polyfill、postcss、eslint）
+
+### 研发流程
+
+- 统一、高效的开发环境
+- 统一的构建流程和产出标准
+- 集成公司构建规范（提测、上线等）
+
+### 其他面试题
+
+#### module chunk bundle 的区别:
+
+[答案](#_08-module-chunk-bundle-的区别)
+
+#### loader 和 Plugin 的区别
+
+- loader 模块转换器：如 less-loader
+- plugin 扩展插件 如 HtmlWebpackPlugin
+
+#### 常见的 loader 和 plugin 有哪些
+
+- [https://www.webpackjs.com/loaders/](https://www.webpackjs.com/loaders/)
+- [https://www.webpackjs.com/plugins/]()
+
+#### babel 和 webpack 的区别
+
+- babel- JS 新语法编译工具，不关系模块化
+- webpack - 打包构建工具，是多个 loader plugin 的集合
+
+#### 如何产出一个 lib
+
+- 参考 webpack.dll.js
+- output.library
+
+```javascript
+{
+  output: {
+    // lib 的文件名
+    filename: "lodash.js",
+    // 输出 lib 到 dist 目录下
+    path: distPath,
+    // lib 的全局变量名
+    library: "lodash"
+  }
+}
+```
+
+#### babel-polyfill 和 babel-runtime 的区别
+
+- bebel-polyfill 会污染全局
+- babel-runtime 不会污染全局
+- 产生第三方 lib 要用 babel-runtime
+
+#### webpack 如何实现懒加载
+
+- import
+- 结合 Vue React 异步组件
+- 结合 Vue-router React-Router 异步加载路由
 
 ## 25: webpack 面试真题-为何 Proxy 不能被 Polyfill
 
+- 如 Class 可以用 function 模拟
+- 如 Promise 可以用 callback 来模拟
+- 但是 Proxy 的功能用 Object.defineProperty 无法模拟
+
 ## 26: webpack 面试真题-常见性能优化方法
+
+### 可用于生产环境的
+
+- 优化 babel-loader
+- IgnorePlugin
+- noParse
+- happyPack
+- ParallelUglifyPlugin
+
+### 不可用于生产环境的
+
+- 自动刷新
+- 热更新
+- DllPlugin
+
+### webpack 优化产出代码
+
+- 小图片 base64 编码
+- bundle 加 hash
+- 懒加载
+- 提供公共代码
+- 使用 CDN 加速
+- IgnorePlugin
+- 使用 production
+- Scope Hosting
 
 ## 27:【任务】从 0 配置 webpack5 开发环境
