@@ -986,6 +986,8 @@ module.exports = {
 
 ### babel
 
+[姜瑞涛的个人网站：Babel 简介](https://www.jiangruitao.com/babel/introduction/)
+
 - 环境搭建 & 基本配置
 - babel-polyfill
 - babel-runtime
@@ -1000,9 +1002,18 @@ module.exports = {
 
 ## 20: babel-polyfill 是什么?
 
+> [一文搞懂 core-js@3、@babel/polyfill、@babel/runtime、@babel/runtime-corejs3 的作用与区别](https://juejin.cn/post/7062621128229355528)
+
+> babel 只转化语法，不转换新的 API
+
 - 什么是 polyfill
+  > Polyfill 的准确意思为： 用于实现浏览器并不支持的原生 API 的代码。
 - 什么是 core-js 和 regenerator
+
 - babel-polyfill 即两者的集合
+  > 从 babel7.4 开始，官方不推荐再使用@babel/polyfill 了，因为@babel/polyfill 本身其实就是两个 npm 包的集合：core-js 与 regenerator-runtime。
+  >
+  > 官方推荐直接使用这两个 npm 包。虽然 @babel/polyfill 还在进行版本升级，但其使用的 core-js 包为 2.x.x 版本，而 core-js 这个包本身已经发布到了 3.x.x 版本了，@babel/polyfill 以后也不会使用 3.x.x 版本的包了。新版本的 core-js 实现了许多新的功能，例如数组的 includes 方法。
 
 ### babel-polyfill 现在已被弃用
 
@@ -1012,7 +1023,70 @@ module.exports = {
 
 ## 21: babel-polyfill 如何按需引入?
 
+- babel-polyfill 文件较大
+- 实际中只用到了一部分功能, 无需全量引入
+- 配置按需引入
+
+```json
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "usage",
+        "corejs": 3
+      }
+    ]
+  ]
+}
+```
+
+### babel-polyfill 的问题
+
+- 污染全局变量
+  > babel-polyfill 通过向全局对象和内置对象的 prototype 上添加方法来实现的。所以这会造成全局空间污染。
+- 如果做一个独立的 web 系统，则无所谓
+- 如果做一个第三方 lib，就会有问题（引用这个库的项目中的全局变量被污染了，也有可能会有版本的冲突）
+
+那么有没有一种办法,根据实际代码中用到的 ES6 新增 API ,来使用对应的垫片,而不是全部加载进去呢? 是的，有的。那就是 babel-runtime & babel-plugin-transform-runtime，他们可以实现按需加载。
+
 ## 22: babel-runtime 是什么?
+
+[掘金：babel polyfill 到底怎么用？](https://juejin.cn/post/6844904063402770439)
+
+### babel-runtime
+
+简单说 babel-runtime 更像是一种按需加载的实现，比如你哪里需要使用 Promise，只要在这个文件头部引入即可
+
+```javascript
+import Promise from 'babel-runtime/core-js/promise'
+```
+
+不过如果你许多文件都要使用 Promise，难道每个文件都要 import 一下吗？当然不是，Babel 官方已考虑这种情况，只需要使用 babel-plugin-transform-runtime 就可以解决手动 import 的苦恼了。
+
+### babel-plugin-transform-runtime
+
+babel-plugin-transform-runtime 装了就不需要装 babel-runtime 了，因为前者依赖后者。
+总的来说，babel-plugin-transform-runtime 就是可以在我们使用新 API 时 自动 import babel-runtime 里面的 polyfill，具体插件做了以下三件事情：
+
+- 当我们使用 async/await 时，自动引入 babel-runtime/regenerator
+- 当我们使用 ES6 的静态事件或内置对象时，自动引入 babel-runtime/core-js
+- 移除内联 babel helpers 并替换使用 babel-runtime/helpers 来替换
+
+babel-plugin-transform-runtime 优点：
+
+- 不会污染全局变量
+- 多次使用只会打包一次
+- 依赖统一按需引入,无重复引入,无多余引入
+- 避免 babel
+
+```json
+{
+  "plugins": ["tranform-runtime"]
+}
+```
+
+[详细讲解：姜瑞涛-大佬的文章](https://www.jiangruitao.com/babel/transform-runtime/)
 
 ## 24: webpack 面试真题-前端代码为何要打包
 
