@@ -266,6 +266,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/frame-project-interview/index-05.md',
             '/zh/other/class/frame-project-interview/index-06.md',
             '/zh/other/class/frame-project-interview/index-10.md',
+            '/zh/other/class/frame-project-interview/index-11.md',
           ],
         },
         '/zh/other/class/ts-axios',
