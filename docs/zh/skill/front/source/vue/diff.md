@@ -89,7 +89,7 @@
 
    ```javascript
    // index.html， 页面内容基本通用即可，不过要创建一个 <div id="container"></div
-   
+
    // index.js
    import {
      init,
@@ -99,7 +99,7 @@
      eventListenersModule,
      h,
    } from 'snabbdom'
-   
+
    const patch = init([
      // Init patch function with chosen modules
      classModule, // makes it easy to toggle classes
@@ -107,9 +107,9 @@
      styleModule, // handles styling on elements with support for animations
      eventListenersModule, // attaches event listeners
    ])
-   
+
    const container = document.getElementById('container')
-   
+
    const vnode = h(
      'div#container.two.classes',
      {
@@ -123,11 +123,11 @@
        h('span', { style: { fontWeight: 'bold' } }, 'This is bold'),
        ' and this is just normal text',
        h('a', { props: { href: '/foo' } }, "I'll take you places!"),
-     ]
+     ],
    )
    // Patch into empty DOM element – this modifies the DOM as a side effect
    patch(container, vnode)
-   
+
    const newVnode = h(
      'div#container.two.classes',
      {
@@ -141,11 +141,11 @@
        h(
          'span',
          { style: { fontWeight: 'normal', fontStyle: 'italic' } },
-         'This is now italic type'
+         'This is now italic type',
        ),
        ' and this is still just normal text',
        h('a', { props: { href: '/bar' } }, "I'll take you places!"),
-     ]
+     ],
    )
    // 3s后进行 新老节点的更新替换
    setTimeout(() => {
@@ -302,7 +302,7 @@
 
 - 最小量更新太厉害啦！真的是最小量更新！**当然，key 很重要**
 
-- **只有是同一个虚拟节点，才进行精细化比较，**否则就是暴力删除旧的、插入新的。
+- **只有是同一个虚拟节点，才进行精细化比较**, 否则就是暴力删除旧的、插入新的。
 
   - **延伸问题：如何定义是同一个虚拟节点：答：选择器相同且 key 相同**
 
@@ -359,17 +359,17 @@
 
 6. `newVNode`和`oldVNode`均有`children`（参考第 9 节）
 
-   > 更新子节点大概可以分为4种操作：更新节点、新增节点、删除节点、移动节点
+   > 更新子节点大概可以分为 4 种操作：更新节点、新增节点、删除节点、移动节点
 
-   * **创建子节点**：对于`newChildren`中的新增节点，**我们需要执行创建节点的操作，并将新创建的节点插入到`oldChildren`中所有未处理节点的前面**。当节点成功插入后，这一轮的循环就结束了。（你可能会说，插入到所有已处理节点的后面不也行吗？不是的，如果这个新节点后面也是一个新增节点呢？答：因为我们使用的是虚拟节点进行比较，而不是真实的DOM节点作对比。而对于`oldVNode`的已处理节点中不包括我们新插入的节点，所以用插入到已处理节点这样的逻辑来插入节点，就会插入一个错误的位置）
-   * **更新子节点**：两个节点是同一个节点并且为之相同，这种情况的操作。更新内容即可。
-   * **移动子节点**：移动子节点通常发生在`newChildren`中的某个节点和`oldChildren`中的某个节点是同一个节点，但是位置不同，所以在真实的DOM中需要将这个节点的位置以新虚拟节点的位置为基准进行移动。（不难发现，在`newChildren`中当前被循环到的这个节点的左边都是被处理过的，所以，**只需要把这个需要移动移动的节点移动到所有未处理节点的最前面即可**。）
-   * **删除子节点**：本质就是删除那些`oldChildren`中存在但是`newChildren`中不存在的节点。（当`newChildren`中的所有节点都被循环了一遍后，如果`oldChildren`中还有剩余的没有被处理的节点，那么这些节点就是被废弃、需要删除的节点）
-   * **优化策略**：
-     * `新前与旧前`
-     * `新后与旧后`
-     * `新后与旧前`：如果相同，说明节点被移动了位置。在真实DOM中除了做更新操作外，还需要将节点移动到`oldChildren`中所有未处理节点的最后面（为什么呢？**因为当真是DOM子节点左右两侧已经有节点被更新，只有中间这部分未处理时，新后 这个节点是未处理节点中的最后一个，所以真是DOM节点移动位置时，需要移动到oldChildren所有未处理节点的最后面。只有移动到未处理节点的最后面，它的位置才与新后者节点的位置相同**）
-     * `新前与旧后`：如果相同，说明节点被移动了位置。在真实DOM中除了做更新操作外，还需要将节点移动到`oldChildren`中所有未处理节点的最前面（为什么呢？**逻辑同上**）
+   - **创建子节点**：对于`newChildren`中的新增节点，**我们需要执行创建节点的操作，并将新创建的节点插入到`oldChildren`中所有未处理节点的前面**。当节点成功插入后，这一轮的循环就结束了。（你可能会说，插入到所有已处理节点的后面不也行吗？不是的，如果这个新节点后面也是一个新增节点呢？答：因为我们使用的是虚拟节点进行比较，而不是真实的 DOM 节点作对比。而对于`oldVNode`的已处理节点中不包括我们新插入的节点，所以用插入到已处理节点这样的逻辑来插入节点，就会插入一个错误的位置）
+   - **更新子节点**：两个节点是同一个节点并且为之相同，这种情况的操作。更新内容即可。
+   - **移动子节点**：移动子节点通常发生在`newChildren`中的某个节点和`oldChildren`中的某个节点是同一个节点，但是位置不同，所以在真实的 DOM 中需要将这个节点的位置以新虚拟节点的位置为基准进行移动。（不难发现，在`newChildren`中当前被循环到的这个节点的左边都是被处理过的，所以，**只需要把这个需要移动移动的节点移动到所有未处理节点的最前面即可**。）
+   - **删除子节点**：本质就是删除那些`oldChildren`中存在但是`newChildren`中不存在的节点。（当`newChildren`中的所有节点都被循环了一遍后，如果`oldChildren`中还有剩余的没有被处理的节点，那么这些节点就是被废弃、需要删除的节点）
+   - **优化策略**：
+     - `新前与旧前`
+     - `新后与旧后`
+     - `新后与旧前`：如果相同，说明节点被移动了位置。在真实 DOM 中除了做更新操作外，还需要将节点移动到`oldChildren`中所有未处理节点的最后面（为什么呢？**因为当真是 DOM 子节点左右两侧已经有节点被更新，只有中间这部分未处理时，新后 这个节点是未处理节点中的最后一个，所以真是 DOM 节点移动位置时，需要移动到 oldChildren 所有未处理节点的最后面。只有移动到未处理节点的最后面，它的位置才与新后者节点的位置相同**）
+     - `新前与旧后`：如果相同，说明节点被移动了位置。在真实 DOM 中除了做更新操作外，还需要将节点移动到`oldChildren`中所有未处理节点的最前面（为什么呢？**逻辑同上**）
 
 ## 5、Diff 处理新旧节点不是同一个节点时
 
@@ -415,7 +415,7 @@ function sameVNode(vnode1, vnode2) {
          {},
          [],
          undefined,
-         oldVNode
+         oldVNode,
        )
      }
      // 判断 oldVNode 和 newVNode 是不是同一个节点
@@ -578,7 +578,7 @@ function sameVNode(vnode1, vnode2) {
      patch(vnode1, vnode2)
    })
    document.body.appendChild(btn)
-   
+
    // 点击按钮后可以看到 页面内容 由虚拟节点 vnode1 产生的 DOM 换成了 由 vnode2 产生的 DOM
    ```
 
@@ -616,7 +616,7 @@ function sameVNode(vnode1, vnode2) {
          // 判断 oldVNode 有没有 children
          if (oldVNode.children !== undefined && oldVNode.children.length > 0) {
            // 老的节点有 children，此时是最复杂的情况，就是新老节点都有 children
-   
+
          } else {
            // 老的没有 children 新的有 children
            oldVNode.elm.innerText = ''
@@ -680,12 +680,12 @@ function sameVNode(vnode1, vnode2) {
 
 ### 9.2 代码实现
 
-1. 把`patch.js`中关于`精细化比较`的代码移动到新文件`patchVNode.js`中 
+1. 把`patch.js`中关于`精细化比较`的代码移动到新文件`patchVNode.js`中
 
    ```javascript
    ...
    import patchVNode from './patchVNode'
-   
+
    // 老的节点有 children，此时是最复杂的情况，就是新老节点都有 children
    function patch(oldVNode, newVNode) {
    	...
@@ -697,14 +697,14 @@ function sameVNode(vnode1, vnode2) {
      	...
      }
    }
-   
+
    ```
 
 2. 新建`patchVnode.js`，内容如下
 
    ```javascript
    import updateChildren from './updateChildren'
-   
+
    export default function patchVNode(oldVNode, newVNode) {
      // 在内存中是不是同一个节点
      if (oldVNode === newVNode) {
@@ -712,7 +712,10 @@ function sameVNode(vnode1, vnode2) {
      }
      newVNode.elm = oldVNode.elm
      // 判断 newVNode 有没有 text 属性
-     if ( newVNode.text !== undefined && (newVNode.children === undefined || newVNode.children.length === 0)) {
+     if (
+       newVNode.text !== undefined &&
+       (newVNode.children === undefined || newVNode.children.length === 0)
+     ) {
        console.log('判断 newVNode 有 text 属性')
        if (newVNode.text !== oldVNode.text) {
          // 把 oldVNode.elm 中的text 变为 newVNode 中的text(即使 oldVNode 有children属性，innerText一旦改变后，老children也就没了)
@@ -742,11 +745,11 @@ function sameVNode(vnode1, vnode2) {
 
    ```javascript
    import patchVNode from './patchVNode'
-   
+
    function checkSameVNode(vNode1, vNode2) {
      return vNode1.sel === vNode2.sel && vNode1.key === vNode2.key
    }
-   
+
    export default function updateChildren(parentElm, oldChildren, newChildren) {
      oldChildren.children = oldChildren.children || []
      newChildren.children = newChildren.children || []
@@ -808,7 +811,7 @@ function sameVNode(vnode1, vnode2) {
 ```javascript
 let keyMap;
 if(){
- ... 
+ ...
 }else {
   console.log('四种方式均没有命中')
   if (!keyMap) {
@@ -845,26 +848,29 @@ if(){
 
 1. 假如 `newStartIdx > newEndIdx`
 
-   * 说明 新字节点遍历完毕，旧子节点可能还有剩余，所以我们要对可能剩下的旧子节点进行批量删除，就是**遍历剩下的节点，逐个删除DOM**
+   - 说明 新字节点遍历完毕，旧子节点可能还有剩余，所以我们要对可能剩下的旧子节点进行批量删除，就是**遍历剩下的节点，逐个删除 DOM**
 
-   * 代码展示：
+   - 代码展示：
 
      ```javascript
      for (let index = oldStartIndex; oldStartIndex <= oldEndIndex; ++index) {
        // 主要这里 oldChildren[index] 有可能也会是 undefinded, 上节中写到
-       oldChildren[index] && oldChildren[index].parentNode.removeChild(oldChildren[index].elm);
+       oldChildren[index] &&
+         oldChildren[index].parentNode.removeChild(oldChildren[index].elm)
      }
      ```
 
 2. 假如`oldStartIdx > oldEndIdx`
 
-   * 说明 旧子节点遍历完毕，新子节点可能有剩余，所以要对剩余的新子节点处理，很明显，剩余的新子节点不存在旧子节点中
+   - 说明 旧子节点遍历完毕，新子节点可能有剩余，所以要对剩余的新子节点处理，很明显，剩余的新子节点不存在旧子节点中
 
-   * 代码展示：
+   - 代码展示：
 
      ```javascript
      console.log('新节点有剩余的，需要新增')
-     const before = newChildren[newEndIndex + 1] ? newChildren[newEndIndex + 1].elm : null
+     const before = newChildren[newEndIndex + 1]
+       ? newChildren[newEndIndex + 1].elm
+       : null
      for (let index = newStartIndex; index <= newEndIndex; index++) {
        // 如果引用节点为 null，则将指定的节点添加到指定父节点的子节点列表的末尾。
        parentElm.insertBefore(createElement(newChildren[index]), before)
@@ -879,7 +885,7 @@ if(){
    import { h } from 'snabbdom'
    import patch from './patch'
    const container = document.getElementById('container')
-   
+
    const vnode1 = h('ul', {}, [
      h('li', { key: 'A' }, 'A'),
      h('li', { key: 'B' }, 'B'),
@@ -887,7 +893,7 @@ if(){
      h('li', { key: 'E' }, 'E'),
    ])
    patch(container, vnode1)
-   
+
    // 对于不同的节点
    const vnode2 = h('ul', {}, [
      h('li', { key: 'A' }, 'A'),
@@ -912,7 +918,7 @@ if(){
    import createElement from './createElement'
    import patchVNode from './patchVNode'
    import vNode from './vnode'
-   
+
    function patch(oldVNode, newVNode) {
      // 判断第一个参数 oldVNode 是虚拟节点还是 DOM 节点
      if (oldVNode.sel === '' || oldVNode.sel === undefined) {
@@ -922,7 +928,7 @@ if(){
          {},
          [],
          undefined,
-         oldVNode
+         oldVNode,
        )
      }
      // 判断 oldVNode 和 newVNode 是不是同一个节点
@@ -939,7 +945,7 @@ if(){
        oldVNode.elm.parentNode.removeChild(oldVNode.elm)
      }
    }
-   
+
    export default patch
    ```
 
@@ -987,7 +993,7 @@ if(){
        }
        vNode.elm = domNode
      }
-   
+
      // 返回 elm，是一个纯 DOM 节点
      return vNode.elm
    }
@@ -997,7 +1003,7 @@ if(){
 
    ```javascript
    import updateChildren from './updateChildren'
-   
+
    export default function patchVNode(oldVNode, newVNode) {
      // 在内存中是不是同一个节点
      if (oldVNode === newVNode) {
@@ -1038,11 +1044,11 @@ if(){
    ```javascript
    import createElement from './createElement'
    import patchVNode from './patchVNode'
-   
+
    function checkSameVNode(vNode1, vNode2) {
      return vNode1.sel === vNode2.sel && vNode1.key === vNode2.key
    }
-   
+
    export default function updateChildren(parentElm, oldChildren, newChildren) {
      oldChildren.children = oldChildren.children || []
      newChildren.children = newChildren.children || []
@@ -1147,6 +1153,3 @@ if(){
      }
    }
    ```
-
-   
-
