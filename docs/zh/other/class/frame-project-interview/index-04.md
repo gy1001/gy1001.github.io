@@ -603,6 +603,18 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
 path 函数内部代码
 
 ```typescript
+const emptyNode = vnode('', {}, [], undefined, undefined)
+
+function sameVnode(vnode1: VNode, vnode2: VNode): boolean {
+  // key 和 sel 都相等
+  // undefined === undefined // true
+  return vnode1.key === vnode2.key && vnode1.sel === vnode2.sel
+}
+
+function isVnode(vnode: any): vnode is VNode {
+  return vnode.sel !== undefined
+}
+
 // 以下为返回的 path 函数
 function patch(oldVnode: VNode | Element, vnode: VNode): VNode {
   let i: number, elm: Node, parent: Node
@@ -653,6 +665,10 @@ function sameVnode(vnode1: VNode, vnode2: VNode): boolean {
 ### patchVnode 函数，重点
 
 ```typescript
+function isDef<A>(s: A): s is NonUndefined<A> {
+  return s !== undefined
+}
+
 function patchVnode(
   oldVnode: VNode,
   vnode: VNode,
@@ -710,3 +726,427 @@ function patchVnode(
   hook?.postpatch?.(oldVnode, vnode)
 }
 ```
+
+### updateChildren 函数
+
+```typescript
+// 返回一个对象，里面是包含所有节点的健
+function createKeyToOldIdx(
+  children: VNode[],
+  beginIdx: number,
+  endIdx: number,
+): KeyToIndexMap {
+  const map: KeyToIndexMap = {}
+  for (let i = beginIdx; i <= endIdx; ++i) {
+    const key = children[i]?.key
+    if (key !== undefined) {
+      map[key] = i
+    }
+  }
+  return map
+}
+
+function updateChildren(
+  parentElm: Node,
+  oldCh: VNode[],
+  newCh: VNode[],
+  insertedVnodeQueue: VNodeQueue,
+) {
+  let oldStartIdx = 0,
+    newStartIdx = 0
+  let oldEndIdx = oldCh.length - 1
+  let oldStartVnode = oldCh[0]
+  let oldEndVnode = oldCh[oldEndIdx]
+  let newEndIdx = newCh.length - 1
+  let newStartVnode = newCh[0]
+  let newEndVnode = newCh[newEndIdx]
+  let oldKeyToIdx: KeyToIndexMap | undefined
+  let idxInOld: number
+  let elmToMove: VNode
+  let before: any
+
+  while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
+    if (oldStartVnode == null) {
+      oldStartVnode = oldCh[++oldStartIdx] // Vnode might have been moved left
+    } else if (oldEndVnode == null) {
+      oldEndVnode = oldCh[--oldEndIdx]
+    } else if (newStartVnode == null) {
+      newStartVnode = newCh[++newStartIdx]
+    } else if (newEndVnode == null) {
+      newEndVnode = newCh[--newEndIdx]
+
+      // 开始和开始对比
+    } else if (sameVnode(oldStartVnode, newStartVnode)) {
+      patchVnode(oldStartVnode, newStartVnode, insertedVnodeQueue)
+      oldStartVnode = oldCh[++oldStartIdx]
+      newStartVnode = newCh[++newStartIdx]
+
+      // 结束和结束对比
+    } else if (sameVnode(oldEndVnode, newEndVnode)) {
+      patchVnode(oldEndVnode, newEndVnode, insertedVnodeQueue)
+      oldEndVnode = oldCh[--oldEndIdx]
+      newEndVnode = newCh[--newEndIdx]
+
+      // 开始和结束对比
+    } else if (sameVnode(oldStartVnode, newEndVnode)) {
+      // Vnode moved right
+      patchVnode(oldStartVnode, newEndVnode, insertedVnodeQueue)
+      api.insertBefore(
+        parentElm,
+        oldStartVnode.elm!,
+        api.nextSibling(oldEndVnode.elm!),
+      )
+      oldStartVnode = oldCh[++oldStartIdx]
+      newEndVnode = newCh[--newEndIdx]
+
+      // 结束和开始对比
+    } else if (sameVnode(oldEndVnode, newStartVnode)) {
+      // Vnode moved left
+      patchVnode(oldEndVnode, newStartVnode, insertedVnodeQueue)
+      api.insertBefore(parentElm, oldEndVnode.elm!, oldStartVnode.elm!)
+      oldEndVnode = oldCh[--oldEndIdx]
+      newStartVnode = newCh[++newStartIdx]
+
+      // 以上四个都未命中
+    } else {
+      if (oldKeyToIdx === undefined) {
+        oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx)
+      }
+      // 拿新节点 key ，能否对应上 oldCh 中的某个节点的 key
+      idxInOld = oldKeyToIdx[newStartVnode.key as string]
+
+      // 没对应上
+      if (isUndef(idxInOld)) {
+        // New element
+        api.insertBefore(
+          parentElm,
+          createElm(newStartVnode, insertedVnodeQueue),
+          oldStartVnode.elm!,
+        )
+        newStartVnode = newCh[++newStartIdx]
+
+        // 对应上了
+      } else {
+        // 对应上 key 的节点
+        elmToMove = oldCh[idxInOld]
+
+        // sel 是否相等（sameVnode 的条件）
+        if (elmToMove.sel !== newStartVnode.sel) {
+          // New element
+          api.insertBefore(
+            parentElm,
+            createElm(newStartVnode, insertedVnodeQueue),
+            oldStartVnode.elm!,
+          )
+
+          // sel 相等，key 相等
+        } else {
+          patchVnode(elmToMove, newStartVnode, insertedVnodeQueue)
+          oldCh[idxInOld] = undefined as any
+          api.insertBefore(parentElm, elmToMove.elm!, oldStartVnode.elm!)
+        }
+        newStartVnode = newCh[++newStartIdx]
+      }
+    }
+  }
+  if (oldStartIdx <= oldEndIdx || newStartIdx <= newEndIdx) {
+    if (oldStartIdx > oldEndIdx) {
+      before = newCh[newEndIdx + 1] == null ? null : newCh[newEndIdx + 1].elm
+      addVnodes(
+        parentElm,
+        before,
+        newCh,
+        newStartIdx,
+        newEndIdx,
+        insertedVnodeQueue,
+      )
+    } else {
+      removeVnodes(parentElm, oldCh, oldStartIdx, oldEndIdx)
+    }
+  }
+}
+```
+
+![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bee9f5f2e3924679b42032545e7f497b~tplv-k3u1fbpfcp-watermark.image?)
+
+## 07: diff 算法总结
+
+- patchVnode
+- addVnodes removeVnodes
+- updateChildren (key 的重要性)
+
+### vdom 和 diff 总结
+
+- 细节不重要，updateChildren 的过程也不重要，不要深究
+- vdom 的核心概念很重要：h、vnode、patch、diff、key 等
+- vdom 存在的价值更加重要：数据视图驱动，控制 DOM 操作
+
+## 08: 模板编译前置知识点-with 语法
+
+### 模板编译
+
+- 模板是 Vue 开发中最常用的部分，即与使用相关联的原理
+- 它不是 html，指令、插值、JS 表达式，到底是什么？
+- 面试不会直接问，但是会通过 “组件渲染和更新过程” 考察
+- 前置知识：JS 的 with 语法
+- vue template compiler 将模板编译为 render 函数
+- 执行 render 函数生成 vnode
+
+### with 语法
+
+- 使用 with 能改变 {} 内 自由变量的查找方式，将 {} 内自由变量当做 obj 的属性来查找
+- 如果找不到匹配的 obj 属性，就会报错
+- with 要慎用，它打破了作用域规则，易读性变差
+
+```javascript
+const obj = { a: 100, b: 200 }
+console.log(obj.a)
+console.log(obj.b)
+console.log(obj.c) // undefined
+```
+
+```javascript
+// 使用 with 能改变 {} 内 自由变量的查找方式，将 {} 内自由变量当做 obj 的属性来查找
+with (obj) {
+  console.log(a)
+  console.log(b)
+  console.log(c) // 会报错！
+}
+```
+
+## 09: vue 模板被编译成什么
+
+- 模板不是 html ,他有指令、插值、JS 表达式，能实现判断、循环
+- html 只是标签语言，只有 js 才能实现判断、循环（图灵完备的）
+- 因此，模板一定是转换为某种 JS 代码，即模板编译
+
+// ---------------分割线--------------
+从 vue 源码中找到缩写函数的含义
+
+```javascript
+function installRenderHelpers(target) {
+  target._o = markOnce
+  target._n = toNumber
+  target._s = toString
+  target._l = renderList
+  target._t = renderSlot
+  target._q = looseEqual
+  target._i = looseIndexOf
+  target._m = renderStatic
+  target._f = resolveFilter
+  target._k = checkKeyCodes
+  target._b = bindObjectProps
+  target._v = createTextVNode
+  target._e = createEmptyVNode
+  target._u = resolveScopedSlots
+  target._g = bindObjectListeners
+  target._d = bindDynamicKeys
+  target._p = prependModifier
+}
+```
+
+### 插值
+
+```javascript
+const compiler = require('vue-template-compiler')
+const template = `<p>{{message}}</p>`
+
+// 编译
+const res = compiler.compile(template)
+console.log(res.render)
+
+// 结果为
+// 这里的 this 对应 new Vue
+// _c: 对应 createElement, 最终的结果返回 vnode
+// _v 对应： createTextVNode
+// _s 对应 toString
+with (this) {
+  return _c('p', [_v(_s(message))])
+}
+```
+
+### 含有表达式
+
+```javascript
+const compiler = require('vue-template-compiler')
+const template = `<p>{{flag ? message : 'no message found'}}</p>`
+const res = compiler.compile(template)
+console.log(res.render)
+
+// 编译后的结果如下
+with (this) {
+  return _c('p', [_v(_s(flag ? message : 'no message found'))])
+}
+```
+
+### 属性和动态属性
+
+```javascript
+const compiler = require('vue-template-compiler')
+const template = `
+    <div id="div1" class="container">
+        <img :src="imgUrl"/>
+    </div>
+`
+const res = compiler.compile(template)
+console.log(res.render)
+
+// 编译后的结果如下
+with (this) {
+  return _c('div', { staticClass: 'container', attrs: { id: 'div1' } }, [
+    _c('img', { attrs: { src: imgUrl } }),
+  ])
+}
+```
+
+### 条件
+
+```javascript
+const compiler = require('vue-template-compiler')
+const template = `
+    <div>
+        <p v-if="flag === 'a'">A</p>
+        <p v-else>B</p>
+    </div>
+`
+const res = compiler.compile(template)
+console.log(res.render)
+
+// 编译后的结果如下
+with (this) {
+  return _c('div', [flag === 'a' ? _c('p', [_v('A')]) : _c('p', [_v('B')])])
+}
+```
+
+### 循环
+
+```javascript
+const compiler = require('vue-template-compiler')
+const template = `
+    <ul>
+        <li v-for="item in list" :key="item.id">{{item.title}}</li>
+    </ul>
+`
+const res = compiler.compile(template)
+console.log(res.render)
+
+// 编译后的结果如下
+// _l 对应 renderList
+with (this) {
+  return _c(
+    'ul',
+    _l(list, function (item) {
+      return _c('li', { key: item.id }, [_v(_s(item.title))])
+    }),
+    0,
+  )
+}
+```
+
+### v-model
+
+```javascript
+const compiler = require('vue-template-compiler')
+const template = `<input type="text" v-model="name">`
+const res = compiler.compile(template)
+console.log(res.render)
+
+// 编译后的结果如下
+// _l 对应 renderList
+with (this) {
+  return _c('input', {
+    directives: [
+      { name: 'model', rawName: 'v-model', value: name, expression: 'name' },
+    ],
+    attrs: { type: 'text' },
+    domProps: { value: name },
+    on: {
+      input: function ($event) {
+        if ($event.target.composing) return
+        name = $event.target.value
+      },
+    },
+  })
+}
+```
+
+### 事件
+
+```javascript
+const compiler = require('vue-template-compiler')
+const template = `
+    <button @click="clickHandler">submit</button>
+`
+const res = compiler.compile(template)
+console.log(res.render)
+
+// 编译后的结果如下
+// _l 对应 renderList
+with (this) {
+  return _c('button', { on: { click: clickHandler } }, [_v('submit')])
+}
+```
+
+### 模板编译
+
+- 模板编译为 render 函数，执行 render 函数返回 vnode
+- 基于 VNode 在执行 patch 和 diff
+- 使用 webpack vue-loader 会在开发环境下编译模板（重要）
+
+## 10: vue 组件可用 render 代替 template
+
+- 讲完模板编译，再讲这个 render，就比较好理解了
+- 在有些复杂情况下，不能用 template，可以考虑使用 render
+- React 一直都用 render（没有模板），和这里一样
+
+```javascript
+Vue.component('heading', {
+  // template: "xxx",
+  render: function (createElement) {
+    return createElement('h' + this.level, [
+      createElement(
+        'a',
+        {
+          attrs: {
+            name: 'headerId',
+            href: '#' + 'headerId',
+          },
+        },
+        'this is a tag',
+      ),
+    ])
+  },
+})
+```
+
+## 11: 回顾和复习已学的知识点
+
+### 组件 渲染/更新 过程
+
+- 一个组件渲染到页面，修改 data 触发更新（数据驱动视图）
+- 其背后原理是什么，需要掌握哪些要点
+- 考察对流程了解的全面程度
+
+### 回顾和复习已学的知识点
+
+- 响应式：监听 data 属性 getter 和 setter(包括数组)
+- 模板编译：模板到 render 函数，再到 vnode
+- vdom: path(elem, vnode) 和 patch(vnode, newVnode)
+
+### 组件 渲染/更新 过程
+
+- 初次渲染过程
+- 更新过程
+- 异步渲染
+
+## 12: vue 组件是如何渲染和更新的
+
+## 13: vue 组件是异步渲染的
+
+## 14: 如何用 JS 实现 hash 路由
+
+## 15: 如何用 JS 实现 H5 history 路由
+
+## 16: vue 原理-考点总结和复习
+
+## 17:【任务】vnode 之于 Vue 的作用
