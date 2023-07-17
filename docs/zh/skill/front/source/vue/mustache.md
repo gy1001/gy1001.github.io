@@ -520,21 +520,34 @@ console.log(dom1) // <h3>姓名：青峰,年龄：18</h3>
   </li>
   {{/array}}
 </ul>
+```
 
-// 相应的tokens [ ['text', '
-<ul>
-  '], [ '#', 'array', [ ['text', '
-  <li>
-    '], ['name', 'name'], ['text', '的爱好
-    <ol>
-      '], [ '#', 'hobbies', [ ['text', '
-      <li>'], ['name', '.'], ['text', '</li>
-      '], ], ], ['text', '
-    </ol>
-  </li>
-  '], ], ], ['text', '
-</ul>
-'], ]
+相应的 tokens
+
+```javascript
+;[
+  ['text', '<ul>'],
+  [
+    '#',
+    'array',
+    [
+      ['text', '<li>'],
+      ['name', 'name'],
+      ['text', '的爱好<ol>'],
+      [
+        '#',
+        'hobbies',
+        [
+          ['text', '<li>'],
+          ['name', '.'],
+          ['text', '</li>'],
+        ],
+      ],
+      ['text', '</ol></li>'],
+    ],
+  ],
+  ['text', '</ul>'],
+]
 ```
 
 > 当循环是双重时候，那么 tokens 会更深一层
