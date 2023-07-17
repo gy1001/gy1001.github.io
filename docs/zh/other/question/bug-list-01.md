@@ -518,20 +518,20 @@ vant 的 input 组件使用 clearable 属性时候，有部分手机存在点击
 
 ### 技术方案
 
-A 项目：坤元官网（www.a.com）使用了如下配置
+A 项目：官网 A（www.a.com）使用了如下配置
 
 ```nginx
  location / {
-  rewrite ^/(.*)$  http://static-cdn.kunyuanfund.com/html/kunyuan/pc/upgrade.html/$1 permanent;
+  rewrite ^/(.*)$  http://xxx.com/upgrade.html/$1 permanent;
  }
 ```
 
-B 项目: 活动项目(www.b.com) 使用了如下配置
+B 项目: 官网 B(www.b.com) 使用了如下配置
 
 > 目前容器项目由于有健康检查，如果失败，就会发布不成功。需要排除健康检查 icon，或者联系运维关闭健康检查
 
 ```nginx
-  rewrite ^(?!/favicon.ico).*  http://static-cdn.kunyuanfund.com/html/kunyuan/pc/upgrade.html;
+  rewrite ^(?!/favicon.ico).*  http://xxx.com/upgrade.html;
 ```
 
 ### 问题描述
@@ -574,7 +574,7 @@ redirect 是临时重定向, 浏览器地址会显示跳转新的 URL 地址,请
 
 permanent 是永久重定向, 浏览器地址会显示跳转新的 URL 地址, 请求日志中的状态码为 301
 
-起初我也是无法理解这俩个概念，最后经测试，会发现，服务器配置好 redirect 后，发开浏览器会重定向你需要的网站，这个时候关闭网站是会直接报出无法连接的错误,但是 permanent 永久重定向定义以后，关闭 nginx 服务器，这个时候在访问同样会成功,这就是 redirect 跟 permanent 的区别
+网友的一段话：起初我也是无法理解这俩个概念，最后经测试，会发现，服务器配置好 redirect 后，打开浏览器会重定向你需要的网站，这个时候关闭网站是会直接报出无法连接的错误,但是 permanent 永久重定向定义以后，关闭 nginx 服务器，这个时候在访问同样会成功,这就是 redirect 跟 permanent 的区别
 
 ```nginx
  rewrite ^/(.*) http://www.baidu.com/$1 redirect;
