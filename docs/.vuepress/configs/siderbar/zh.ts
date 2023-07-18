@@ -270,6 +270,11 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/frame-project-interview/index-12.md',
           ],
         },
+        {
+          text: '前端模拟面试：给你真实的求职体验和面试经验',
+          collapsible: true,
+          children: ['/zh/other/class/mock-interview/index-01.md'],
+        },
         '/zh/other/class/ts-axios',
         {
           text: '从0到1开发一款IOS APP',
