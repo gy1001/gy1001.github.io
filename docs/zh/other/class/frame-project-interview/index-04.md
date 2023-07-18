@@ -1141,12 +1141,213 @@ Vue.component('heading', {
 
 ## 12: vue 组件是如何渲染和更新的
 
+### 初次渲染过程
+
+- 解析模板为 render 函数（或在开发环境已完成，vue-loader）
+- 触发响应式，监听 data 属性 getter setter
+- 执行 render 函数，生成 vnode, patch(elem, vnode)
+  注意：执行 render 函数时候会触发 getter
+
+```vue
+<template>
+  <p>{{ message }}</p>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      message: 'hello', // 会触发 get
+      city: '北京', // 不触发 get，因为模板没有用到，即和视图没有关系
+    }
+  },
+}
+</script>
+```
+
+### 更新过程
+
+- 修改 data，触发 setter（此前 在 getter 中已被监听）
+- 重新执行 render 函数，生成 newVnode
+- patch(vnode, newVnode)
+
+### 完成流程图
+
+![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/25e57fbc69d847d69780b6a30fc0370e~tplv-k3u1fbpfcp-watermark.image?)
+
 ## 13: vue 组件是异步渲染的
+
+- 回顾 this.$nextTick
+- 汇总 data 的修改，一次性更新视图
+- 减少 DOM 操作次数，提高性能
+
+### 总结
+
+- 渲染和响应式的关系
+- 渲染和 模板编译的关系
+- 渲染和 vdom 的关系
+- 初次渲染
+- 更新过程
+- 异步渲染
 
 ## 14: 如何用 JS 实现 hash 路由
 
+### 前端路由原理
+
+- 稍微复杂一点的 spa, 都需要路由
+- vue-router 也是 vue 全家桶的标配之一
+- 属于 “和日常使用相关联的原理”，面试常考
+- 回顾 vue-router 的路由模式
+- hash
+- H5 history
+
+### hash 的特点
+
+- hash 变化会触发网页跳转，即浏览器的前进、后退
+- hash 变化不会刷新页面，SPA 必须的特点
+- hash 永远不会提交到 server 端（前端自生自灭）
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>hash test</title>
+  </head>
+  <body>
+    <p>hash test</p>
+    <button id="btn1">修改 hash</button>
+
+    <script>
+      // hash 变化，包括：
+      // a. JS 修改 url
+      // b. 手动修改 url 的 hash
+      // c. 浏览器前进、后退
+      window.onhashchange = (event) => {
+        console.log('old url', event.oldURL)
+        console.log('new url', event.newURL)
+
+        console.log('hash:', location.hash)
+      }
+
+      // 页面初次加载，获取 hash
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('hash:', location.hash)
+      })
+
+      // JS 修改 url
+      document.getElementById('btn1').addEventListener('click', () => {
+        location.href = '#/user'
+      })
+    </script>
+  </body>
+</html>
+```
+
 ## 15: 如何用 JS 实现 H5 history 路由
 
+### H5 history
+
+- 用 url 规范的路由，但跳转时不刷新页面
+- history.pushState
+- window.onPopstate
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>history API test</title>
+  </head>
+  <body>
+    <p>history API test</p>
+    <button id="btn1">修改 url</button>
+
+    <script>
+      // 页面初次加载，获取 path
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('load', location.pathname)
+      })
+
+      // 打开一个新的路由
+      // 【注意】用 pushState 方式，浏览器不会刷新页面
+      document.getElementById('btn1').addEventListener('click', () => {
+        const state = { name: 'page1' }
+        console.log('切换路由到', 'page1')
+        history.pushState(state, '', 'page1') // 重要！！
+      })
+
+      // 监听浏览器前进、后退
+      window.onpopstate = (event) => {
+        // 重要！！
+        console.log('onpopstate', event.state, location.pathname)
+      }
+
+      // 需要 server 端配合，可参考
+      // https://router.vuejs.org/zh/guide/essentials/history-mode.html#%E5%90%8E%E7%AB%AF%E9%85%8D%E7%BD%AE%E4%BE%8B%E5%AD%90
+    </script>
+  </body>
+</html>
+```
+
+### 总结
+
+- hash: window.onhashchange
+- H5 history: history.pushState 和 window.onpopstate
+- H5 history 需要后端支持
+
+### 两者支持
+
+- to B 的系统推荐使用 hash, 简单易用，对 url 规范不敏感
+- to C 的系统 可以考虑选择 H5 history, 但需要服务端支持
+- 能选择简单的，就别用复杂的，要考虑成本和收益
+
 ## 16: vue 原理-考点总结和复习
+
+- 组件化
+- 响应式
+- vdom 和 diff
+- 模板编译
+- 渲染过程
+- 前端路由
+
+### 组件化
+
+- 组件化的历史
+- 数据驱动视图
+- MVVM
+
+### 响应式
+
+- Object.defineProperty
+- 监听对象（深度），监听数组
+- Object.defineProperty 的缺点（Vue3 用 Proxy ，后面会讲）
+
+### vdom 和 diff
+
+- 应用背景
+- vnode 解构
+- snabbdom 使用： vnode h patch
+
+### 模板编译
+
+- with 语法
+- 模板编译为 render 函数
+- 执行 render 函数生成 vnode
+
+### 组件、渲染过程
+
+- 初次渲染过程
+- 更新过程
+- 异步渲染
+
+### 前端路由原理
+
+- hash
+- H5 history
+- 两者对比
 
 ## 17:【任务】vnode 之于 Vue 的作用
