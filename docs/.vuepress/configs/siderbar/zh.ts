@@ -433,6 +433,11 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/design-pattern/index-13.md',
           ],
         },
+        {
+          text: '高阶前端进阶必修，自主打造同比AntD的React组建库',
+          collapsible: true,
+          children: ['/zh/other/class/component-lib/index-01.md'],
+        },
       ],
     },
   ],
