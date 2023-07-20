@@ -440,6 +440,21 @@ export const sidebarZh: SidebarConfig = {
         },
       ],
     },
+    {
+      text: '专栏合集',
+      collapsible: true,
+      children: [
+        {
+          text: '给程序员的职场情商课',
+          collapsible: true,
+          children: [
+            '/zh/other/column/emotional-intelligence-lessons/index-01.md',
+            '/zh/other/column/emotional-intelligence-lessons/index-02.md',
+            '/zh/other/column/emotional-intelligence-lessons/index-03.md',
+          ],
+        },
+      ],
+    },
   ],
 }
 
