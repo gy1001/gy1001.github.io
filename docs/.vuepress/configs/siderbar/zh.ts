@@ -436,7 +436,10 @@ export const sidebarZh: SidebarConfig = {
         {
           text: '高阶前端进阶必修，自主打造同比AntD的React组建库',
           collapsible: true,
-          children: ['/zh/other/class/component-lib/index-01.md'],
+          children: [
+            '/zh/other/class/component-lib/index-01.md',
+            '/zh/other/class/component-lib/index-02.md',
+          ],
         },
       ],
     },
