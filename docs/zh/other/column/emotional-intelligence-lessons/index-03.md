@@ -119,4 +119,4 @@ _但是面试过程中，发现无论是对自动化的理解、对 DevOps 的�
 
 <div align=center> 
   <img src="http://img1.sycdn.imooc.com/5dfc5cb30001be0302280291.png" />
-<div align=center>
+</div>

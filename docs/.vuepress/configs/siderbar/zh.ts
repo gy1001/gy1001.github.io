@@ -451,6 +451,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/column/emotional-intelligence-lessons/index-01.md',
             '/zh/other/column/emotional-intelligence-lessons/index-02.md',
             '/zh/other/column/emotional-intelligence-lessons/index-03.md',
+            '/zh/other/column/emotional-intelligence-lessons/index-04.md',
           ],
         },
       ],
