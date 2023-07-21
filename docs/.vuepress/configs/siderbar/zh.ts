@@ -442,6 +442,18 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/component-lib/index-02.md',
           ],
         },
+        {
+          text: '渡一大师课',
+          collapsible: true,
+          children: [
+            '/zh/other/class/duyi-master/index-01.md',
+            '/zh/other/class/duyi-master/index-02.md',
+            '/zh/other/class/duyi-master/index-03.md',
+            '/zh/other/class/duyi-master/index-04.md',
+            '/zh/other/class/duyi-master/index-05.md',
+            '/zh/other/class/duyi-master/index-06.md',
+          ],
+        },
       ],
     },
     {
