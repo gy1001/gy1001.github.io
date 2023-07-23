@@ -457,7 +457,20 @@ export const sidebarZh: SidebarConfig = {
         {
           text: '前端性能优化 掌握行业实用专业前沿的解决方案',
           collapsible: true,
-          children: ['/zh/other/class/performance-optimization/index-01.md'],
+          children: [
+            '/zh/other/class/performance-optimization-standard/index-01.md',
+          ],
+        },
+        {
+          text: '前端性能优化入门与案例实战',
+          collapsible: true,
+          children: [
+            '/zh/other/class/performance-optimization-introduction/index-01.md',
+            '/zh/other/class/performance-optimization-introduction/index-02.md',
+            '/zh/other/class/performance-optimization-introduction/index-03.md',
+            '/zh/other/class/performance-optimization-introduction/index-04.md',
+            '/zh/other/class/performance-optimization-introduction/index-05.md',
+          ],
         },
       ],
     },

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // 获取所有的需要懒加载的图片
+      let lazyImages = [].slice.call(document.querySelectorAll('img.img-lazy'))
+      // 限制频繁调用
+      let active = false
+      window.addEventListener('scroll', lazyLoad)
+      function lazyLoad() {
+        if (active === false) {
+          active = true
+          setTimeout(() => {
+            lazyImages.forEach(function (lazyImage) {
+              if (
+                lazyImage.getBoundingClientRect().top <= window.innerHeight &&
+                lazyImage.getBoundingClientRect().bottom >= 0
+              ) {
+                lazyImage.src = lazyImage.dataset.src
+                lazyImage.classList.remove('img-lazy')
+                lazyImages = lazyImage.filter((image) => image !== lazyImage)
+              }
+              // 判断所有图片加载完毕，移除事件
+              if (lazyImages.length === 0) {
+                window.removeEventListener('scroll', lazyLoad)
+              }
+            })
+            active = false
+          }, 200)
+        }
+      }
+    })
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // 获取所有的需要懒加载的图片
+      let lazyImages = [].slice.call(document.querySelectorAll('img.img-lazy'))
+      if (
+        'IntersectionObserver' in window &&
+        'IntersectionObserverEntry' in window &&
+        'IntersectionRatio' in window.IntersectionObserverEntry.prototype
+      ) {
+        let lazyImageObserver = new IntersectionObserver(function (
+          entries,
+          observer,
+        ) {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              let lazyImage = entry.target
+              lazyImage.src = lazyImage.dataset.src
+              lazyImage.classList.remove('img-lazy')
+              lazyImageObserver.unobserve(lazyImage)
+            }
+          })
+        })
+        lazyImages.forEach((lazyImage) => {
+          lazyImageObserver.observe(lazyImage)
+        })
+      }
+    })
+  </script>
+</html>
