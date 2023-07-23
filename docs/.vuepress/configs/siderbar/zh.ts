@@ -454,6 +454,11 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/duyi-master/index-06.md',
           ],
         },
+        {
+          text: '前端性能优化 掌握行业实用专业前沿的解决方案',
+          collapsible: true,
+          children: ['/zh/other/class/performance-optimization/index-01.md'],
+        },
       ],
     },
     {
