@@ -472,6 +472,18 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/performance-optimization-introduction/index-05.md',
           ],
         },
+        {
+          text: '六大场景 梳理开发痛点 解锁前端进阶路',
+          collapsible: true,
+          children: [
+            '/zh/other/class/develop-point/index-01.md',
+            '/zh/other/class/develop-point/index-02.md',
+            '/zh/other/class/develop-point/index-03.md',
+            '/zh/other/class/develop-point/index-04.md',
+            '/zh/other/class/develop-point/index-05.md',
+            '/zh/other/class/develop-point/index-06.md',
+          ],
+        },
       ],
     },
     {
