@@ -172,21 +172,21 @@ app.listen(3000, () => {
 // middleware.js
 const Koa = require('koa')
 const app = new Koa()
-const middleware = function async(ctx, next){
+const middleware = function async(ctx, next) {
   console.log('this is a middleware')
-  console.log(ctx.request.path) 
+  console.log(ctx.request.path)
   next()
   console.log('this is a middleware ending')
 }
-const middleware2 = function async(ctx, next){
+const middleware2 = function async(ctx, next) {
   console.log('this is a middleware2')
-  console.log(ctx.request.path) 
+  console.log(ctx.request.path)
   next()
   console.log('this is a middleware2 ending')
 }
-const middleware3 = function async(ctx, next){
+const middleware3 = function async(ctx, next) {
   console.log('this is a middleware3')
-  console.log(ctx.request.path) 
+  console.log(ctx.request.path)
   next()
   console.log('this is a middleware3 ending')
 }
@@ -205,20 +205,106 @@ app.listen(3000, () => {
 
 ### Koad 工作原理
 
-* **执行的顺序：顺序执行**
-* 回调的顺序：反向执行
-* 先进先出
+- **执行的顺序：顺序执行**
+- 回调的顺序：反向执行
+- 先进先出
 
 ![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b5c5a6359c994812a746d448224509a0~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
 在上图中，洋葱内的每一层都表示一个独立的中间件，用于实现不同的功能，比如异常处理、缓存处理等。每次请求都会从左侧开始一层层地经过每层的中间件，当进入到最里层的中间件之后，就会从最里层的中间件开始逐层返回。因此对于每层的中间件来说，在一个 **请求和响应** 周期中，都有两个时机点来添加不同的处理逻辑。
 
-
-
 ## 04：Koa 开发热加载、ES6 语法支持
+
+1. 安装 nodemon
+
+   ```bash
+   npm install nodemon -D
+   // 直接执行 nodemon xxx.js 文件即可进行监听运行
+   nodemon index.js
+   ```
+
+2. 按照 webpack、babel 基本配置设置项目
+
+   ```bash
+   npm install webpack-cli -D
+   npm install -D clean-webpack-plugin webpack-node-externals @babel/core @babel/node @babel/preset-enve babel-loader cross-env
+   ```
+
+   ```json
+   // 安装相关依赖
+   {
+     "script": {
+       "start": "nodemon index.js",
+       "start:es6": "babel-node src/index.js", // 支持 es6 语法
+       "dev": "nodemon --exec babel-node src/index.js"
+     }
+   }
+   ```
 
 ## 05：JWT 鉴权方式：koa-jwt 集成
 
+> [https://www.npmjs.com/package/koa-jwt](https://www.npmjs.com/package/koa-jwt)
+
+```bash
+npm install koa-jwt -D
+```
+
+```javascript
+var Koa = require('koa')
+var jwt = require('koa-jwt')
+
+var app = new Koa()
+
+app.use(function (ctx, next) {
+  return next().catch((err) => {
+    if (401 == err.status) {
+      ctx.status = 401
+      ctx.body = 'Protected resource, use Authorization header to get access\n'
+    } else {
+      throw err
+    }
+  })
+})
+
+// Middleware below this line is only reached if JWT token is valid
+// unless the URL starts with '/public'
+app.use(jwt({ secret: 'shared-secret' }).unless({ path: [/^\/public/] })) // 排除这个地址，不对使用 jwt 验证
+
+// Unprotected middleware
+app.use(function (ctx, next) {
+  if (ctx.url.match(/^\/public/)) {
+    ctx.body = 'unprotected\n'
+  } else {
+    return next()
+  }
+})
+
+// Protected middleware
+app.use(function (ctx) {
+  if (ctx.url.match(/^\/api/)) {
+    ctx.body = 'protected\n'
+  }
+})
+
+app.listen(3000)
+```
+
+```
+npm-run-all 同时执行多个脚本文件
+```
+
 ## 06：动态路由加载：Routes 入口优化 require.context
+
+```javascript
+const moduleFils = require.context('./modules', true, /\.js$/)
+
+const modules = moduleFiles.keys().reduce((items, path) => {
+  const value = moduleFiles(path)
+  items.push(value.default)
+  return items
+}, [])
+
+export default combineRoutes(modules)
+```
 
 ## 07：项目作业
