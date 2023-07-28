@@ -521,6 +521,10 @@ export const sidebarZh: SidebarConfig = {
           children: [
             '/zh/other/column/git-related/index-01.md',
             '/zh/other/column/git-related/index-02.md',
+            '/zh/other/column/git-related/index-03.md',
+            '/zh/other/column/git-related/index-04.md',
+            '/zh/other/column/git-related/index-05.md',
+            '/zh/other/column/git-related/index-06.md',
           ],
         },
       ],
