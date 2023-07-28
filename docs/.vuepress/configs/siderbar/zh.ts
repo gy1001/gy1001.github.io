@@ -516,6 +516,11 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/column/emotional-intelligence-lessons/index-20.md',
           ],
         },
+        {
+          text: 'Git原理详解与实操指南',
+          collapsible: true,
+          children: ['/zh/other/column/git-related/index-01.md'],
+        },
       ],
     },
   ],
