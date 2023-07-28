@@ -63,3 +63,5 @@
 3. `Git` 在流行程度、功能丰富方面比 SVN 有优势，在学习难度上， SVN 更占据优势。
 
 [【每日面试】git 和 svn 的区别？git 相对于 svn 的好处？](https://zhuanlan.zhihu.com/p/396875968)
+
+[这才是真正的 Git——Git 内部原理揭秘！](https://zhuanlan.zhihu.com/p/96631135)
