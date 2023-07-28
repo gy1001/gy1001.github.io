@@ -120,7 +120,7 @@ Vue 的解决方法：
 
   - 效果图：
 
-    <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f7681731d30945b5a578235249f2aae7~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp?" alt="img" style="zoom:100%;float:left" />
+    <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f7681731d30945b5a578235249f2aae7~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp?" alt="img" style="float:left" />
 
 - 数组 join 法
 
@@ -477,7 +477,7 @@ console.log(dom1) // <h3>姓名：青峰,年龄：18</h3>
 
 ### 3.2 底层 tokens 思想
 
-<img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c7aa2b534b3d4246bdb17f0d82e217c5~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp?" alt="image.png" style="zoom:100%;float:left;" />
+<img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c7aa2b534b3d4246bdb17f0d82e217c5~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp?" alt="image.png" style="float:left;" />
 
 上述图片的基本流程：先将`模板字符串`编译为`tokens`, tokens 当做中间的过渡形态，然后`再将数据与tokens结合`，并`解析为DOM字符串`。
 

@@ -637,7 +637,6 @@ typeof ['a', 'b'] //"object"
 typeof { x: 100 } // "object"
 ```
 
-
 #### 2. 何时使用 === 何时使用 ==
 
 > 除了 == null 之外，其他都一律用 === 例如
@@ -691,7 +690,7 @@ console.log(obj1) // { x: 101, y: 200 }
      * 深拷贝
      * obj: 要拷贝的对象
      */
-    function deepClone (obj) {
+    function deepClone(obj) {
       // obj 是null 或者 不是数组和对象，就直接返回
       if (typeof obj !== 'object' || obj === null) {
         return obj
@@ -716,9 +715,9 @@ console.log(obj1) // { x: 101, y: 200 }
       age: 20,
       name: '孙悟空',
       address: {
-        city: '北京'
+        city: '北京',
       },
-      arr: ['a', 'b', 'c']
+      arr: ['a', 'b', 'c'],
     }
     const objB = deepClone(objA)
     const objC = objA
@@ -751,14 +750,14 @@ console.log(obj1) // { x: 101, y: 200 }
     <body></body>
     <script>
       class Student {
-        constructor (name, number) {
+        constructor(name, number) {
           this.name = name
           this.number = number
         }
-        sayHi () {
+        sayHi() {
           console.log(`姓名${this.name},学号${this.number}`)
         }
-        study () {
+        study() {
           console.log('study')
         }
       }
@@ -788,30 +787,30 @@ console.log(obj1) // { x: 101, y: 200 }
     <body></body>
     <script>
       class People {
-        constructor (name) {
+        constructor(name) {
           this.name = name
         }
-        eat () {
+        eat() {
           console.log(`${this.name} eat something`)
         }
       }
       // 子类
       class Student extends People {
-        constructor (name, number) {
+        constructor(name, number) {
           super(name)
           this.number = number
         }
-        sayHi () {
+        sayHi() {
           console.log(`姓名${this.name},学号${this.number}`)
         }
       }
       // 子类
       class Teacher extends People {
-        constructor (name, major) {
+        constructor(name, major) {
           super(name)
           this.major = major
         }
-        teach () {
+        teach() {
           console.log(`${this.name} 教授 ${this.major}`)
         }
       }
@@ -910,7 +909,7 @@ console.log(People.prototype === Student.prototype.__proto__)
   </body>
   <script>
     class jQuery {
-      constructor (selector) {
+      constructor(selector) {
         const result = document.querySelectorAll(selector)
         const length = result.length
         for (let index = 0; index < length; index++) {
@@ -918,17 +917,17 @@ console.log(People.prototype === Student.prototype.__proto__)
         }
         this.length = length
       }
-      get (index) {
+      get(index) {
         return this[index]
       }
-      each (fn) {
+      each(fn) {
         for (let index = 0; index < this.length; index++) {
           const el = this[index]
           fn(el)
         }
       }
-      on (type, fn) {
-        return this.each(elem => {
+      on(type, fn) {
+        return this.each((elem) => {
           elem.addEventListener(type, fn)
         })
       }
@@ -941,11 +940,11 @@ console.log(People.prototype === Student.prototype.__proto__)
     }
     // 复写机制（“造轮子”）
     class MyJquery extends jQuery {
-      constructor (selector) {
+      constructor(selector) {
         super(selector)
       }
       // 扩展自己的方法
-      addClass (className) {
+      addClass(className) {
         console.log('我是添加class')
       }
       // 等等
@@ -953,7 +952,7 @@ console.log(People.prototype === Student.prototype.__proto__)
 
     const $p = new jQuery('p')
     console.log($p.get(1))
-    $p.each(elem => {
+    $p.each((elem) => {
       console.log(elem.nodeName)
     })
     $p.on('click', () => {
@@ -999,11 +998,11 @@ console.log(People.prototype === Student.prototype.__proto__)
 
   ```javascript
   let a = 0
-  function fn1 () {
+  function fn1() {
     let a1 = 100
-    function fn2 () {
+    function fn2() {
       let a2 = 200
-      function fn3 () {
+      function fn3() {
         let a3 = 300
         return a1 + a2 + a3
       }
@@ -1034,7 +1033,7 @@ console.log(People.prototype === Student.prototype.__proto__)
 
 ```javascript
 // 函数作为返回值
-function create () {
+function create() {
   let a = 100
   return function () {
     console.log(a)
@@ -1044,12 +1043,12 @@ let fn = create()
 let a = 200
 fn() // 100
 // 函数作为参数
-function print (fn) {
+function print(fn) {
   let a = 20
   fn()
 }
 let a = 100
-function fn () {
+function fn() {
   console.log(a)
 }
 print(fn) // 100
@@ -1070,7 +1069,7 @@ print(fn) // 100
 - 箭头函数
 
 ```javascript
-function fn1 () {
+function fn1() {
   console.log(this)
 }
 fn1() // window
@@ -1080,38 +1079,38 @@ fn2() // { x:200 }
 
 const zhangSan = {
   name: '张三',
-  sayHi () {
+  sayHi() {
     // this 即当前对象
     console.log(this)
   },
-  wait () {
+  wait() {
     setTimeout(function () {
       // this === window
       console.log(this)
     })
-  }
+  },
 }
 const liSi = {
   name: '李四',
-  sayHi () {
+  sayHi() {
     // this 即当前对象
     console.log(this)
   },
-  wait () {
+  wait() {
     // 箭头函数中的this取的是它的上一级的作用域的 this 值
     setTimeout(() => {
       // this 即当前对象
       console.log(this)
     })
-  }
+  },
 }
 
 class People {
-  constructor (name) {
+  constructor(name) {
     this.name = name
     this.age = 20
   }
-  sayHi () {
+  sayHi() {
     console.log(this)
   }
 }
@@ -1157,7 +1156,7 @@ Function.prototype.bind1 = function () {
 
 ```javascript
 // 闭包隐藏数据，只提供 API
-function createCache () {
+function createCache() {
   const data = {} // 闭包中的数据，被隐藏，不能被外界访问
   return {
     set: function (key, val) {
@@ -1165,7 +1164,7 @@ function createCache () {
     },
     get: function (key) {
       return data[key]
-    }
+    },
   }
 }
 const c = createCache()
@@ -1249,12 +1248,12 @@ console.log(300)
 
 ```javascript
 // 获取第一份数据
-$.get(url, data1 => {
+$.get(url, (data1) => {
   console.log(data1)
   // 获取第二份数据
-  $.get(url2, data2 => {
+  $.get(url2, (data2) => {
     // 获取第三份数据
-    $.get(url3, data3 => {
+    $.get(url3, (data3) => {
       console.log(data3)
       // 还有可能获取更多的数据
     })
@@ -1265,16 +1264,16 @@ $.get(url, data1 => {
 - Promise
 
 ```javascript
-function getData (url) {
+function getData(url) {
   return new Promise((resolve, reject) => {
     $.ajax({
       url,
-      success (data) {
+      success(data) {
         resolve(data)
       },
-      error (err) {
+      error(err) {
         reject(err)
-      }
+      },
     })
   })
 }
@@ -1282,18 +1281,18 @@ const url1 = '/data1.json'
 const url2 = '/data2.json'
 const url3 = '/data3.json'
 getData(url1)
-  .then(data1 => {
+  .then((data1) => {
     console.log(data1)
     return getData(url2)
   })
-  .then(data2 => {
+  .then((data2) => {
     console.log(data2)
     return getData(url3)
   })
-  .then(data3 => {
+  .then((data3) => {
     console.log(data3)
   })
-  .catch(err => {
+  .catch((err) => {
     console.log(err)
   })
 ```
@@ -1346,7 +1345,7 @@ console.log(300)
 
 ```javascript
 const imgUrl = 'http://xxxx.xxx.com/xxx.png'
-function loadImg (imgSrc) {
+function loadImg(imgSrc) {
   return new Promise((resolve, reject) => {
     const img = document.createElement('img')
     img.onload = function () {
@@ -1359,14 +1358,14 @@ function loadImg (imgSrc) {
   })
 }
 loadImg(imgUrl)
-  .then(img => {
+  .then((img) => {
     console.log(img.width)
     return img
   })
-  .then(img => {
+  .then((img) => {
     console.log(img.height)
   })
-  .catch(err => {
+  .catch((err) => {
     console.log(err)
   })
 ```
@@ -1397,6 +1396,7 @@ console.log(5)
 #### 知识点
 
 1. event loop
+
 - js 是单线程进行的
 - 异步要基于回调来实现
 - Event Loop 就是异步回调的实现原理
@@ -1435,23 +1435,26 @@ console.log(5)
 2. promise 进阶
 3. async/await
 4. 异步的本质
+
 - async/await 是消灭异步回调的终极武器
 - JS 还是单线程，还得是有异步，还得是基于 event loop
 - async/await 只是一个语法糖，但是这颗糖真香！
+
 5. for ... of
+
 - for...in(以及 forEach for) 是常规的同步遍历
 - **for...of 常用于异步的遍历**
 
 ```javascript
-function muti (num) {
-  return new Promise(resolve => {
+function muti(num) {
+  return new Promise((resolve) => {
     setTimeout(() => {
       resolve(num * num)
     }, 1000)
   })
 }
 const nums = [1, 2, 3]
-nums.forEach(async i => {
+nums.forEach(async (i) => {
   const res = await muti(i)
   console.log(res)
 })
@@ -1593,7 +1596,7 @@ Promise.resolve()
 
 ```javascript
 // 第一题
-async function fn () {
+async function fn() {
   return 100
 }
 ;(async function () {
@@ -1649,16 +1652,16 @@ console.log(400)
 
 ```javascript
 // 据说是该题来自 头条
-async function async1 () {
+async function async1() {
   console.log('async1 start')
   await async2()
   await async3()
   console.log('async1 end')
 }
-async function async2 () {
+async function async2() {
   console.log('async2')
 }
-async function async3 () {
+async function async3() {
   console.log('async3')
 }
 console.log('script start')
@@ -1939,16 +1942,16 @@ history.forward()
 
 ```javascript
 const btn = document.getElementById('btn1')
-btn.addEventListener('click', event => {
+btn.addEventListener('click', (event) => {
   console.log('clicked')
 })
 
 // 通用事件绑定
-function bindEvent (elem, type, fn) {
+function bindEvent(elem, type, fn) {
   elem.addEventListener(type, fn)
 }
 const a = document.getElementById('link1')
-bindEvent(a, 'click', e => {
+bindEvent(a, 'click', (e) => {
   e.preventDefault() // 阻止默认行为
   // e.stopPropagation() // 阻止冒泡
   alert('clicked')
@@ -2002,7 +2005,7 @@ bindEvent(a, 'click', e => {
 
 <script>
   const div1 = document.getElementById('#div1')
-  div1.addEventListener('click', e => {
+  div1.addEventListener('click', (e) => {
     const target = e.target
     if (e.nodeName === 'P') {
       alert(target.innerHTML)
@@ -2010,25 +2013,25 @@ bindEvent(a, 'click', e => {
   })
 
   // 通用事件绑定
-  function bindEvent (elem, type, fn) {
+  function bindEvent(elem, type, fn) {
     elem.addEventListener(type, fn)
   }
 
   // 使用通用函数来进行绑定
-  bindEvent(div1, 'click', e => {
+  bindEvent(div1, 'click', (e) => {
     const target = e.target
     if (e.nodeName === 'P') {
       alert(target.innerHTML)
     }
   })
   // 代理绑定
-  function bindAgentEvent (elem, type, selector, fn) {
+  function bindAgentEvent(elem, type, selector, fn) {
     // 如果传递了三个参数
     if (fn === null || fn === undefined) {
       fn = selector
       selector = null
     }
-    elem.addEventListener(type, event => {
+    elem.addEventListener(type, (event) => {
       let target = event.target
       if (selector) {
         // 代理时
@@ -2103,7 +2106,7 @@ xhr.onreadystatechange = function () {
 }
 const postData = {
   userName: 'zhangsan',
-  password: 'xxx'
+  password: 'xxx',
 }
 xhr.send(JSON.stringify(postData))
 ```
@@ -2196,7 +2199,7 @@ response.setHeader('Access-Control-Allow-Origin', 'http://localhost:8011')
 response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With')
 response.setHeader(
   'Access-Control-Allow-Methods',
-  'PUT,POST,GET,DELETE,OPTIONS'
+  'PUT,POST,GET,DELETE,OPTIONS',
 )
 // 接收跨域的cookie
 response.setHeader('Access-Control-Allow-Credentials', 'true')
@@ -2208,7 +2211,7 @@ response.setHeader('Access-Control-Allow-Credentials', 'true')
 
 ```javascript
 // 简易版
-function ajax (url, successFn) {
+function ajax(url, successFn) {
   const xhr = new XMLHttpRequest()
   xhr.open('GET', url, true)
   xhr.onreadystatechange = function () {
@@ -2222,7 +2225,7 @@ function ajax (url, successFn) {
 }
 
 // 带 promise 的 ajax
-function ajaxPromise () {
+function ajaxPromise() {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
     xhr.open('GET', url, true)
@@ -2240,10 +2243,10 @@ function ajaxPromise () {
 }
 const url = '/getUseInfo'
 ajaxPromise(url)
-  .then(res => {
+  .then((res) => {
     console.log(res)
   })
-  .catch(err => {
+  .catch((err) => {
     console.err(err)
   })
 ```
@@ -2471,7 +2474,7 @@ ajaxPromise(url)
     - 在 Response Headers 中，服务端来进行控制
     - 控制强制缓存的逻辑
     - 例如 Cache-Control: max-age=31536000 (单位是秒)
-    - <img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy81MjQyMTI1LTA2YWMyNTFlMTUwOTk5NDkucG5n?x-oss-process=image/format,png" alt="img"  align="left" style="zoom:67%;" />
+    - <img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy81MjQyMTI1LTA2YWMyNTFlMTUwOTk5NDkucG5n?x-oss-process=image/format,png" alt="img"  align="left"  />
     - Cache-Control 的值可以分为以下集中
       - max-age: 设置缓存的最大过期时间
       - no-cache: 有本地缓存，不用强制缓存，向服务端请求
@@ -2490,7 +2493,7 @@ ajaxPromise(url)
   - 服务端缓存策略
   - 服务端潘达判断客户端资源，是否和服务端资源一样
   - 判断一致则返回 304，否则返回 200 和最新的资源
-  - <img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4d9460548b8248a0aad44849eb494156~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.image?" align="left" alt="image" style="zoom:67%;" />
+  - <img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4d9460548b8248a0aad44849eb494156~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.image?" align="left" alt="image"  />
 
   - 资源标识
     - 在 `Response Headers` 中，有两种
@@ -2504,14 +2507,14 @@ ajaxPromise(url)
 
   - http 1.0
 
-    - <img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/250bdae9421f4a238f8300e8042a7ce7~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.image?" alt="协商缓存之last-Modified" align="left" style="zoom:67%;" />
+    - <img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/250bdae9421f4a238f8300e8042a7ce7~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.image?" alt="协商缓存之last-Modified" align="left"  />
 
   - http 1.1
-    - <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/099ff22bbcb141a5b48301a319c516a5~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.image?" alt="协商缓存之Etag" align="left" style="zoom:67%;" />
+    - <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/099ff22bbcb141a5b48301a319c516a5~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.image?" alt="协商缓存之Etag" align="left"  />
 
 - **http 缓存流程图**
 
-  <img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy81MjQyMTI1LWQ1YTUxYTI0ZjlkNjlkMGQucG5n?x-oss-process=image/format,png" alt=" http缓存流程" style="zoom:67%;" />
+  <img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy81MjQyMTI1LWQ1YTUxYTI0ZjlkNjlkMGQucG5n?x-oss-process=image/format,png" alt=" http缓存流程"  />
 
 [http 面试必会的：强制缓存和协商缓存:评论有用](https://juejin.cn/post/6844903838768431118)
 
@@ -2758,7 +2761,7 @@ ajaxPromise(url)
 
           <script>
             // 封装函数 debounce
-            function debounce (fn, delay = 500) {
+            function debounce(fn, delay = 500) {
               // 这个 timer 是在 闭包 中的
               let timer = null
 
@@ -2772,7 +2775,7 @@ ajaxPromise(url)
                 }, delay)
               }
             }
-            const debounceFunc = debounce(event => {
+            const debounceFunc = debounce((event) => {
               //  如果想用 this， 这里不能用箭头函数
               console.log(event.target.value, '我是封装的debounce函数')
             }, 600)
@@ -2828,7 +2831,7 @@ ajaxPromise(url)
             })
           </script>
           <script>
-            function throttle (fn, delay) {
+            function throttle(fn, delay) {
               let throttleTimer = null
               return function () {
                 if (throttleTimer) {
@@ -2844,7 +2847,7 @@ ajaxPromise(url)
               console.log(
                 e.offsetX,
                 e.offsetY,
-                '使用 throttle 优化后的拖拽函数'
+                '使用 throttle 优化后的拖拽函数',
               )
             }, 600)
 
@@ -2915,11 +2918,11 @@ const obj2 = { a: 10, b: { x: 100, y: 200 } }
 isEqual(obj1, obj2) === true
 
 // 判断是否是对象或者数组
-function isObject (obj) {
+function isObject(obj) {
   return typeof obj === 'object' && obj !== null
 }
 // 判断是否全相等
-function isEqual (obj1, obj2) {
+function isEqual(obj1, obj2) {
   if (!isObject(obj1) || !isObject(obj2)) {
     return obj1 === obj2
   }
@@ -3066,11 +3069,11 @@ fn.apply(this, arguments)
 ```javascript
 const p1 = document.getElementById('p1')
 const bodyEl = document.body
-bindEvent(p1, 'click', e => {
+bindEvent(p1, 'click', (e) => {
   e.stopPropagation() // 注释这一行，来体会事件冒泡
   console.log('激活')
 })
-bindEvent(bodyEl, 'click', e => {
+bindEvent(bodyEl, 'click', (e) => {
   console.log('取消')
 })
 ```
@@ -3147,17 +3150,17 @@ document.addEventListener('DOMContentLoaded', function () {
 const objA = {
   a: 10,
   b: 20,
-  sum () {
+  sum() {
     return this.a + this.b
-  }
+  },
 }
 const ObjB = new Object(objA)
 const objC = new Object({
   a: 10,
   b: 20,
-  sum () {
+  sum() {
     return this.a + this.b
-  }
+  },
 })
 
 // 以下两者都是有隐式原型的
@@ -3175,9 +3178,9 @@ console.log(objE) // 是一个空对象，但是有原型
 const objF = Object.create({
   a: 10,
   b: 20,
-  sum () {
+  sum() {
     return this.a + this.b
-  }
+  },
 })
 console.log(objF, 'objF') // 是一个空对象，但是 objF 的原型 是 里面的对象
 // 如下代码
@@ -3197,7 +3200,7 @@ const user = {
   count: 1,
   getCount: function () {
     return this.count
-  }
+  },
 }
 console.log(user.getCount()) // 1 这里的 this 是 user
 const func = user.getCount
@@ -3251,7 +3254,7 @@ const reg6 = /\d+\.\d+\.\d+\.\d+/
 
 ```javascript
 let a = 100
-function test () {
+function test() {
   alert(a)
   a = 10
   alert(a)
@@ -3273,11 +3276,11 @@ String.prototype.trim = function () {
 
 ```javascript
 // 第一种
-function max () {
+function max() {
   // arguments 是一个类数组
   const nums = Array.prototype.slice.call(arguments) // 变为数组
   let max = 0
-  nums.forEach(n => {
+  nums.forEach((n) => {
     if (n > max) {
       max = n
     }
@@ -3326,7 +3329,7 @@ window.onerror = function (message, source, lineNom, colNom, error) {
 
 ```javascript
 // 传统方式: 使用正则，或者使用 拆分字符串变为数组类进行处理
-function query (name) {
+function query(name) {
   const search = location.search.substr(1) // 删除第一个符号 ？
   // 比如 search 此刻类似如下结构 search: 'a=10&b=20&c=30'
   const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i')
@@ -3339,7 +3342,7 @@ function query (name) {
 console.log("query('a')=", query('a'))
 
 // 使用 URLSearchParams， 注意浏览器兼容性
-function queryName (name) {
+function queryName(name) {
   const search = location.search
   const p = new URLSearchParams(search)
   return p.get(name)
@@ -3352,10 +3355,10 @@ console.log("query('a')=", queryName('a'))
 
 ```javascript
 // 传统方式，分析 search
-function queryToObj () {
+function queryToObj() {
   const result = {}
   const search = location.search.substr(1) // 删除第一个符号 ？
-  search.split('&').forEach(paramStr => {
+  search.split('&').forEach((paramStr) => {
     const arr = paramStr.split('=')
     const key = arr[0]
     const value = arr[1]
@@ -3365,7 +3368,7 @@ function queryToObj () {
 }
 
 // 使用 URLSearchParams
-function queryToObject () {
+function queryToObject() {
   const result = {}
   const pList = new URLSearchParams(location.search)
   pList.forEach((value, key) => {
@@ -3380,9 +3383,9 @@ function queryToObject () {
 ```javascript
 // flatten([[1,2], 3, [4,5,[6,7,[8,9,[10,11]]]]])
 // [1,2,3,4,5,6,7,8,9,10,11]
-function flatten (arr) {
+function flatten(arr) {
   // 验证 arr 中，是否还有深层数组
-  const isDeep = arr.some(item => item instanceof Array)
+  const isDeep = arr.some((item) => item instanceof Array)
   if (!isDeep) {
     return arr // 已经是 拍平状态
   }
@@ -3401,9 +3404,9 @@ console.log(res)
 - 考虑计算效率
 
 ```javascript
-function unique (arr) {
+function unique(arr) {
   const result = []
-  arr.forEach(item => {
+  arr.forEach((item) => {
     if (result.indexOf(item) < 0) {
       result.push(item)
     }
@@ -3411,7 +3414,7 @@ function unique (arr) {
   return result
 }
 // 使用 set ( 无序，不能重复)
-function unique2 (arr) {
+function unique2(arr) {
   return [...new Set(arr)]
 }
 ```
@@ -3421,7 +3424,7 @@ function unique2 (arr) {
 注意注意： **Object.assign 不是深拷贝**
 
 ```javascript
-function deepClone (obj = {}) {
+function deepClone(obj = {}) {
   // 注意 null === null 是 false 此处判断 null 用的 ==
   if (typeof obj !== 'object' || obj == null) {
     return obj
@@ -3485,7 +3488,7 @@ function deepClone (obj = {}) {
     const div1 = document.getElementById('div1')
     const div2 = document.getElementById('div2')
 
-    function animate () {
+    function animate() {
       curWidth += 3
       div1.style.width = curWidth + 'px'
       if (curWidth < maxWidth) {
@@ -3495,7 +3498,7 @@ function deepClone (obj = {}) {
     animate()
 
     // 使用 RAF
-    function animate2 () {
+    function animate2() {
       curWidth2 += 3
       div2.style.width = curWidth2 + 'px'
       if (curWidth2 < maxWidth) {

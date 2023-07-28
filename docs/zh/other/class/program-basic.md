@@ -83,7 +83,7 @@
 
 电子管如图
 
-<img src="https://mianbaoban-assets.oss-cn-shenzhen.aliyuncs.com/2021/3/iiM3Ef.png" alt="image" style="zoom:50%;" />
+<img src="https://mianbaoban-assets.oss-cn-shenzhen.aliyuncs.com/2021/3/iiM3Ef.png" alt="image"  />
 
 1. 第二次世界大战是电子管计算机产生的催化剂：英国为了解密德国海军的密文
 
@@ -110,7 +110,7 @@
 
 晶体管如图
 
-<img src="https://pic.baike.soso.com/ugc/baikepic2/11234/cut-20180402112439-1223140248_jpg_2197_1464_388950.jpg/800" alt="image" style="zoom:70%;" />
+<img src="https://pic.baike.soso.com/ugc/baikepic2/11234/cut-20180402112439-1223140248_jpg_2197_1464_388950.jpg/800" alt="image"  />
 
 1.  促使其发生的原因：贝尔实验室的三个科学家发明了晶体管
 
@@ -128,7 +128,7 @@
 
 集成电路计算机
 
-<img src="https://img2018.cnblogs.com/blog/1666949/201909/1666949-20190909164654747-1929671686.png" alt="image" style="zoom:50%;" />
+<img src="https://img2018.cnblogs.com/blog/1666949/201909/1666949-20190909164654747-1929671686.png" alt="image" />
 
 1. 促使其发生的原因：德州仪器的工程师发明了集成电路(IC)
 2. 这时候计算机的特点
@@ -175,13 +175,13 @@
 
 1. 受限于性能：单核 CPU
 
-<img src="https://img2018.cnblogs.com/blog/1666949/201909/1666949-20190909164748407-2075696834.png" alt="image" style="zoom:50%;" />
+<img src="https://img2018.cnblogs.com/blog/1666949/201909/1666949-20190909164748407-2075696834.png" alt="image" />
 
 2. 关于 CPU 的性能，有一个著名的定律——**摩尔定律：集成电路的性能，每 18~24 个月就会提升一倍**。进入 21 世纪后，随着芯片的发展，芯片里面的电路越来越复杂，越来越密集，并且热损耗也越来越高，我们没有办法解决这样的问题，因此，该定律慢慢失效了。
 
 3. 受限于单核 CPU 的性能瓶颈，于是发展出了多核 CPU。
 
- <img src="https://img2018.cnblogs.com/blog/1666949/201909/1666949-20190909164808683-1865841507.png" alt="image" style="zoom:50%;" />
+ <img src="https://img2018.cnblogs.com/blog/1666949/201909/1666949-20190909164808683-1865841507.png" alt="image" />
 
 #### 2.2.3 参考文档
 

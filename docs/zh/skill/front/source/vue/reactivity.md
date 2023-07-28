@@ -4,7 +4,7 @@
 
 ### 1.1 官方示图
 
-<img src="https://v2.cn.vuejs.org/images/data.png" alt="img" style="zoom:50%;float:left;" />
+<img src="https://v2.cn.vuejs.org/images/data.png" alt="img" style="float:left;" />
 
 ### 1.2 其他相关
 
@@ -375,7 +375,7 @@ console.log(object1.property1)
            console.warn('数组拦截器被拦截了', methodName, result)
            return result
          },
-         false
+         false,
        )
      })
      ```
@@ -453,7 +453,7 @@ console.log(object1.property1)
            if (insertedItems) ob.observeArray(insertedItems)
            return result
          },
-         false
+         false,
        )
      })
      ```
@@ -506,7 +506,7 @@ console.log(object1.property1)
 
 - 可以参考下图：([原文章地址](https://blog.csdn.net/Mikon_0703/article/details/111367773))
 
-  <img src="https://img-blog.csdnimg.cn/2020121819281311.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L01pa29uXzA3MDM=,size_16,color_FFFFFF,t_70" alt="img" style="zoom:100%;float:left;" />
+  <img src="https://img-blog.csdnimg.cn/2020121819281311.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L01pa29uXzA3MDM=,size_16,color_FFFFFF,t_70" alt="img" style="float:left;" />
 
 - 依赖就是`Watcher`。只有`Watcher`触发的`getter`才会收集依赖，哪个`Watcher`触发了`getter`，就把哪个`Watcher`收集到`Dep`中
 

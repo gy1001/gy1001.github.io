@@ -2,19 +2,19 @@
 
 > 可以简单的理解渲染，是输入一段 HTML 字符串，然后根据一套及其复杂的工序，环环相扣，精密的配合，输出一个大对象的过程。这个对象包括每一个像素点的位置、颜色等
 
-<img src="./assets/image-20230723102342637.png" alt="image-20230723102342637" style="zoom:67%;" />
+<img src="./assets/image-20230723102342637.png" alt="image-20230723102342637"  />
 
 ## 浏览器是如何渲染页面的？
 
 当浏览器的网络进程收到 HTML 文档后，会产生一个渲染任务，并将其传递给渲染主进程的消息队列。
 
-<img src="./assets/image-20230722122819660.png" alt="image-20230722122819660" style="zoom:67%;" />
+<img src="./assets/image-20230722122819660.png" alt="image-20230722122819660"  />
 
 在**事件循环机制**的作用下，渲染主进程取出消息队列中的渲染任务，开启渲染流程
 
-----
+---
 
-<img src="./assets/image-20230722122946321.png" alt="image-20230722122946321" style="zoom:67%;" />
+<img src="./assets/image-20230722122946321.png" alt="image-20230722122946321"  />
 
 整个渲染流程分为多个阶段，分别是：`HTML` 解析、样式计算、分层、绘制、分块、光栅化、绘画
 
@@ -28,23 +28,23 @@
 
 > 主要的过程就是 根据一段 HTML 字符串，得到一个 DOM（Document Object Model）树和 CSSOM（CSS Object Model）树
 
-<img src="./assets/image-20230722123223911.png" alt="image-20230722123223911" style="zoom:67%;" />
+<img src="./assets/image-20230722123223911.png" alt="image-20230722123223911"  />
 
 解析过程中遇到 `CSS` 解析 `CSS`，遇到 `JS` 执行 `JS`。为了提高解析效率，浏览器在开始解析前，会启动一个**预解析**的线程，率先下载 `HTML` 中外部的 `CSS` 文件和 外部的 `JS` 文件
 
-<img src="./assets/image-20230723104809133.png" alt="image-20230723104809133" style="zoom:67%;" />
+<img src="./assets/image-20230723104809133.png" alt="image-20230723104809133"  />
 
 如果主线程解析到 `Link` 位置，此时外部的 `CSS` 文件还没有下载解析好，主线程不会等待，继续解析后续的 `HTML`。这是以为下载和解析 `CSS` 的工作是在预解析线程中进行的。这就是 `CSS` 不会阻塞 `HTML` 解析的根本原因
 
-<img src="./assets/image-20230722234042662.png" alt="image-20230722234042662" style="zoom:67%;" />
+<img src="./assets/image-20230722234042662.png" alt="image-20230722234042662"  />
 
 如果主线程解析到 `script` 位置，会停止解析 `HTML`，转而等到 `JS` 文件下载好，并将全局代码解析执行完成后，才能继续解析 `HTML`。这是因为 `JS` 代码的执行过程中可能会修改当前的 `DOM` 树，所以 `DOM` 树的生成必须暂停。这就是 `JS` 会阻塞 `HTML` 解析的根本原因
 
-<img src="./assets/image-20230723105410594.png" alt="image-20230723105410594" style="zoom:67%;" />
+<img src="./assets/image-20230723105410594.png" alt="image-20230723105410594"  />
 
 第一步完成后，会得到 `DOM` 和 `CSSOM` 树，浏览器的默认样式、内部样式、外部样式、行内样式均包含在 `CSSOM` 树中。
 
-<img src="./assets/image-20230722123850206.png" alt="image-20230722123850206" style="zoom:67%;" />
+<img src="./assets/image-20230722123850206.png" alt="image-20230722123850206"  />
 
 ---
 
@@ -56,13 +56,13 @@
 
 这一步完成后，会得到一棵带有样式的 `DOM` 树
 
-<img src="./assets/image-20230723110656012.png" alt="image-20230723110656012" style="zoom:67%;" />
+<img src="./assets/image-20230723110656012.png" alt="image-20230723110656012"  />
 
 ---
 
 接下来是 **布局**（Layout），布局完成后会得到布局树
 
-<img src="./assets/image-20230723113902548.png" alt="image-20230723113902548" style="zoom:67%;" />
+<img src="./assets/image-20230723113902548.png" alt="image-20230723113902548"  />
 
 布局阶段会依次遍历 DOM 树的每一个节点，计算每个节点的几何信息。比如节点的宽度、**相对包含块**的位置。
 
@@ -70,19 +70,19 @@
 
 比如`display: none` 的节点没有几何信息，因此不会生成到布局树；又比如使用了伪元素选择器，虽然 DOM 树中不存在这些伪元素节点，但它们拥有几何信息，所以会生成到布局树中。还有匿名行盒、匿名块盒等等都会导致 DOM 树和布局树无法一一对应。
 
-<img src="./assets/image-20230723113937174.png" alt="image-20230723113937174" style="zoom:67%;" />
+<img src="./assets/image-20230723113937174.png" alt="image-20230723113937174"  />
 
-<img src="./assets/image-20230723114027985.png" alt="image-20230723114027985" style="zoom:67%;" />
+<img src="./assets/image-20230723114027985.png" alt="image-20230723114027985"  />
 
 行盒盒块盒不能相邻，否则会增加匿名行盒
 
-<img src="./assets/image-20230723122308529.png" alt="image-20230723122308529" style="zoom:67%;" />
+<img src="./assets/image-20230723122308529.png" alt="image-20230723122308529"  />
 
 ---
 
 下一步是 **分层**
 
-<img src="./assets/image-20230723124457773.png" alt="image-20230723124457773" style="zoom:67%;" />
+<img src="./assets/image-20230723124457773.png" alt="image-20230723124457773"  />
 
 主线程会使用一套复杂的策略对整个布局树中进行分层。
 
@@ -94,11 +94,11 @@
 
 在下一步就是**绘制**(Paint)
 
-<img src="./assets/image-20230723125244889.png" alt="image-20230723125244889" style="zoom:67%;" />
+<img src="./assets/image-20230723125244889.png" alt="image-20230723125244889"  />
 
 主线程会为每个层单独产生绘制指令集，用于描述这一层的内容该如何画出来。
 
-<img src="./assets/image-20230723125438800.png" alt="image-20230723125438800" style="zoom:67%;" />
+<img src="./assets/image-20230723125438800.png" alt="image-20230723125438800"  />
 
 ---
 
@@ -106,11 +106,11 @@
 
 合成线程首先对每个图层进行**分块**（Tiling），将其划分为更多的小区域。
 
-<img src="./assets/image-20230723130130156.png" alt="image-20230723130130156" style="zoom: 67%;" />
+<img src="./assets/image-20230723130130156.png" alt="image-20230723130130156"  />
 
 它会从线程池中拿取多个线程来完成分块工作。
 
-<img src="./assets/image-20230723130606630.png" alt="image-20230723130606630" style="zoom:67%;" />
+<img src="./assets/image-20230723130606630.png" alt="image-20230723130606630"  />
 
 ---
 
@@ -126,10 +126,6 @@ GPU 进程会开启多个线程来完成光栅化，并且优先处理靠近视�
 
 ## 什么是 reflow?
 
-
-
 ## 什么是 repaint?
-
-
 
 ## 为什么 transform?

@@ -412,7 +412,6 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/front-layout/index-07.md',
             '/zh/other/class/front-layout/index-08.md',
             '/zh/other/class/front-layout/index-09.md',
-            8,
           ],
         },
         {
@@ -519,7 +518,10 @@ export const sidebarZh: SidebarConfig = {
         {
           text: 'Git原理详解与实操指南',
           collapsible: true,
-          children: ['/zh/other/column/git-related/index-01.md'],
+          children: [
+            '/zh/other/column/git-related/index-01.md',
+            '/zh/other/column/git-related/index-02.md',
+          ],
         },
       ],
     },
