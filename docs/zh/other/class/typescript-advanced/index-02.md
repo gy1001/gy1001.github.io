@@ -1,4 +1,4 @@
-# 03- 深入 TS 核心语法+各种实战应用（上）
+# 02- 深入 TS 核心语法+各种实战应用（上）
 
 ## 01: 本章概述【先看】
 
@@ -145,7 +145,7 @@ data2 = 123 // 报错
 
 ## 08：never 的意义
 
-> 使用 never 就是避免出现未来扩展新的类没有对应类型的熟悉爱你，目的就是写出类型绝对安全的代码
+> 使用 never 就是避免出现未来扩展新的类没有对应类型的实现，目的就是写出类型绝对安全的代码
 
 ```typescript
 type DataFlow = string | number
@@ -481,8 +481,10 @@ let u = obj[username] // 推到出来：u: string
 ```typescript
 let obj: object = { username: '唐僧', age: 240 }
 const username = 'username'
-let u = obj[username] // 推到出来：u: any
+let u = obj[username] // 推到出来：u: any，编辑器中报错如下
 ```
+
+![image-20230731125651883](./assets/image-20230731125651883.png)
 
 ## 20: TS 函数和 TS 函数类型，rest 参数
 

@@ -49,7 +49,9 @@ type baseTyp2 = Car | Plane
 type TypeChild = [Car, Plane]
 ```
 
-### 2. 接口可以 extends 一个或者多个接口或者类来实现一个接口，也可以继承 type，但是 type 类型没有继承功能，但一般接口继承 类和 type 的应用场景很少见，记住这样的语法即可
+### 2. 接口可以 extends 一个或者多个接口或者类来实现一个接口，也可以继承 type
+
+> 但是 type 类型没有继承功能，但一般接口继承 类和 type 的应用场景很少见，记住这样的语法即可
 
 ```typescript
 // vue 中的源码
@@ -69,7 +71,7 @@ export interface TextNode extends Node {
 interface TextNode extends Node, Element {}
 ```
 
-### 3. 用 type 交叉类型 & 可让类型中的成员合并成一个新的 type 类型，但接口不能交叉合兵
+### 3. 用 type 交叉类型 & 可以让类型中的成员合并成一个新的 type 类型，但接口不能交叉合兵
 
 ```typescript
 type Group = { groupName: string; memberNum: number }
@@ -83,9 +85,9 @@ let data: GrounMember = {
 }
 ```
 
-### 4：接口可以声明合兵
+### 4：接口可以声明合并
 
-> 定义两个相同名称的接口会合兵声明，定义两个同名的 type 会出现编译错误
+> 定义两个相同名称的接口会合并声明，定义两个同名的 type 会出现编译错误
 
 ```typescript
 interface Error {
