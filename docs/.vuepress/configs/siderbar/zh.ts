@@ -483,6 +483,15 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/develop-point/index-06.md',
           ],
         },
+        {
+          text: '2小时搞定移动端混合开发基础入门',
+          collapsible: true,
+          children: [
+            '/zh/other/class/hyBird-app/index-01.md',
+            '/zh/other/class/hyBird-app/index-02.md',
+            '/zh/other/class/hyBird-app/index-03.md',
+          ],
+        },
       ],
     },
     {
