@@ -53,7 +53,6 @@ export const sidebarZh: SidebarConfig = {
     },
     {
       text: '源码解读',
-
       children: [
         '/zh/skill/front/source/axios.md',
         '/zh/skill/front/source/promise.md',
