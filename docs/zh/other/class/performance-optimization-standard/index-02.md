@@ -348,7 +348,6 @@ lighthouse https://www.bilibili.com/ // 它会自动绑你打开页面
    
    app.use(compression)
    app.use(express.static("build"))
-   ...
    ```
 
 5. 接着我们可以使用 performance 选项卡，来进一步查看性能（注意其中的 Timings 和 Main）
