@@ -28,11 +28,15 @@
 
 [Typora: Markdown 编辑利器](https://typora.io/)
 
+[MarkText: Markdown 编辑利器](https://github.com/marktext/marktext)
+
 [坚果云: 智能同步文件神器](https://www.jianguoyun.com/s/downloads)
 
 [ClashX: 简单轻量化的代理客户端](https://github.com/yichengchen/clashX/releases/tag/1.90.0)
 
 [Capslock+: 大大地提高你的文字编辑体验](https://capslox.com/cn/)
+
+[LocalSend:将文件共享到附近的设备。 免费、开源、跨平台。](https://localsend.org/#/)
 
 ## Android 端
 
@@ -46,6 +50,8 @@
 
 [Alist:网盘本地化](https://alist.nn.ci/zh/)
 
+[MarkText: Markdown 编辑利器](https://github.com/marktext/marktext)
+
 ## Ubuntu 端
 
 [Free Download Manager: 強大又現代的下載加速組織器。](https://www.freedownloadmanager.org/zh/)
@@ -53,3 +59,5 @@
 [Typora: Markdown 编辑利器](https://support.typora.io/Typora-on-Linux/)
 
 [坚果云: 智能同步文件神器](https://www.jianguoyun.com/s/downloads)
+
+[MarkText: Markdown 编辑利器](https://github.com/marktext/marktext)
