@@ -6,3 +6,4 @@ dist
 .history
 .idea
 yarn.lock
+.DS_Store

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -13,6 +13,7 @@
       // 限制频繁调用
       let active = false
       window.addEventListener('scroll', lazyLoad)
+
       function lazyLoad() {
         if (active === false) {
           active = true
@@ -65,7 +66,7 @@
       }
     })
   </script>
-</html>
+</html> -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -114,5 +115,46 @@
       addInteraction()
       console.log('============')
     }
+  </script>
+  <script>
+    window.addEventListener('load', function(){
+      // Time to Interactive 可交互时间
+      let timing = performance.getEntriesByType('navigation')[0]
+      // 计算 tti = domInteractive - fetchStart
+      let tti = timing.domInteractive - timing.fetchStart
+      console.log('TTI', tti)
+    })
+
+    const observer = new PerformanceObserver((list) => {
+      for(const entry of list.getEntries()) {
+        console.log(entry)
+      }
+    })
+    observer.observe({ entryTypes: ['longtask'] })
+
+    let vEvent = "visibilitychange"
+    if(document.webkiHidden !== 'undefined'){
+        // webkit 事件
+      vEvent = 'webkitvisibilitychange'
+    }
+
+    function  visibilityChange(){
+      if(document.hidden || document.webkitHidden){
+        // 页面不可见
+        console.log('Web page is hidden')
+      } else {
+        // 页面可见
+        console.log('Web page is visible')
+      }
+    }
+    document.addEventListener(vEvent, visibilityChange)
+
+    let connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection
+    let type = connection.effectiveType
+    function updateConnectionStatus(){
+      console.log('connection type changed from ' + type + ' to ' + connection.effectiveType)
+    }
+    connection.addEventListener('change', updateConnectionStatus)
+
   </script>
 </html>
