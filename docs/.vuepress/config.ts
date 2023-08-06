@@ -1,10 +1,10 @@
 import { defineUserConfig, defaultTheme } from 'vuepress'
 import { copyCodePlugin } from 'vuepress-plugin-copy-code2'
 import { searchPlugin } from '@vuepress/plugin-search'
-import { sidebarZh, sidebarEn } from '../.vuepress/configs/siderbar/zh'
 import { mdEnhancePlugin } from 'vuepress-plugin-md-enhance'
-// import { photoSwipePlugin } from 'vuepress-plugin-photo-swipe'
 import { commentPlugin } from 'vuepress-plugin-comment2'
+// import { photoSwipePlugin } from 'vuepress-plugin-photo-swipe'
+import { sidebarZh, sidebarEn } from '../.vuepress/configs/siderbar/zh'
 // https://vuepress-theme-hope.github.io/v2/md-enhance/guide/mermaid.html#sequence-diagram
 
 export default defineUserConfig({
