@@ -1,4 +1,4 @@
-import type { SidebarConfig } from '@vuepress/theme-default'
+import type {SidebarConfig} from '@vuepress/theme-default'
 
 export const sidebarZh: SidebarConfig = {
   '/zh/skill/front/': [
@@ -568,6 +568,11 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/column/git-related/index-30.md',
           ],
         },
+        {
+          text: 'JavaScript 设计模式精讲',
+          collapsible: true,
+          children: ['/zh/other/column/design-pattern/index-01.md']
+        }
       ],
     },
   ],
