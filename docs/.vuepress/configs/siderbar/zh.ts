@@ -497,7 +497,8 @@ export const sidebarZh: SidebarConfig = {
           text: '玩转Vim 从放弃到爱不释手',
           collapsible: true,
           children: [
-            '/zh/other/class/vim-class/index-01.md'
+            '/zh/other/class/vim-class/index-01.md',
+            '/zh/other/class/vim-class/index-02.md'
           ]
         }
       ],
