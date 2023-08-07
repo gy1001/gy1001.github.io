@@ -571,7 +571,10 @@ export const sidebarZh: SidebarConfig = {
         {
           text: 'JavaScript 设计模式精讲',
           collapsible: true,
-          children: ['/zh/other/column/design-pattern/index-01.md']
+          children: [
+            '/zh/other/column/design-pattern/index-01.md',
+            '/zh/other/column/design-pattern/index-02.md'
+          ]
         }
       ],
     },
