@@ -205,7 +205,9 @@ demo.myApply(obj,[1,3,3])
 bind 的源码实现
 
 > [new.target文档](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/new.target)
-
+> 
+> new.target 属性允许你检测函数或构造方法是否是通过new运算符被调用的。在通过new运算符被初始化的函数或构造方法中，
+> new.target返回一个指向构造方法或函数的引用。在普通的函数调用中，new.target 的值是undefined。
 ```javascript
 // bind源码实现
 function demo(){
@@ -373,6 +375,7 @@ obj.foo() // 浏览器中输出: "hello"
 我们可以看看 ECMAScript 标准中对箭头函数的描述：
 
 > **原文：** An ArrowFunction does not define local bindings for arguments, super, this, or new.target. Any reference to arguments, super, this, or new.target within an ArrowFunction must resolve to a binding in a lexically enclosing environment. Typically this will be the Function Environment of an immediately enclosing function.
+>
 > **翻译：** 箭头函数不为 `arguments`、`super`、`this` 或 `new.target` 定义本地绑定。箭头函数中对 `arguments`、`super`、`this` 或 `new.target` 的任何引用都解析为当前所在词法作用域中的绑定。通常，这是箭头函数所在的函数作用域。
 >
 > — [ECMAScript Language Specification - Arrow Function | ECMA 标准 - 箭头函数](https://tc39.github.io/ecma262/#sec-arrow-function-definitions-runtime-semantics-evaluation)

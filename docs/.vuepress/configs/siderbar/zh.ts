@@ -574,7 +574,9 @@ export const sidebarZh: SidebarConfig = {
           collapsible: true,
           children: [
             '/zh/other/column/design-pattern/index-01.md',
-            '/zh/other/column/design-pattern/index-02.md'
+            '/zh/other/column/design-pattern/index-02.md',
+            '/zh/other/column/design-pattern/index-03.md',
+            '/zh/other/column/design-pattern/index-04.md'
           ]
         }
       ],
