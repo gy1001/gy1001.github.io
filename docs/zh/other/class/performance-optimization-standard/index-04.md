@@ -95,7 +95,7 @@ PerformanceMeasure {
 >
 > 注：单次执行可能存在误差，可以多执行几次，取平均值
 
-```javascript
+```shell
 PerformanceMeasure {
   name: '测量1',
   entryType: 'measure',
