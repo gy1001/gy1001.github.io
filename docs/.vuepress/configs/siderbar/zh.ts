@@ -459,6 +459,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/performance-optimization-standard/index-01.md',
             '/zh/other/class/performance-optimization-standard/index-02.md',
             '/zh/other/class/performance-optimization-standard/index-03.md',
+            '/zh/other/class/performance-optimization-standard/index-04.md',
           ],
         },
         {
