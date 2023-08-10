@@ -583,6 +583,8 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/column/design-pattern/index-07.md',
             '/zh/other/column/design-pattern/index-08.md',
             '/zh/other/column/design-pattern/index-09.md',
+            '/zh/other/column/design-pattern/index-10.md',
+            '/zh/other/column/design-pattern/index-11.md',
           ],
         },
       ],
