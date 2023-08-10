@@ -180,7 +180,7 @@ const test6 = () => {foo: 'bar'}    // 输出 undefined，大括号被识别为�
 
 ### 2.2 箭头函数中的 this
 
-箭头函数出来之前，函数在执行时才能确定 `this` 的指向，所以会经常出现闭包中的 `this` 指向不是期望值的情况。在以前的做法中，如果要给闭包指定 `this`，可以用 `bind\call\apply`，或者把 `this` 值分配给封闭的变量（一般是 `that`）。箭头函数出来之后，给我们提供了不一样的选择。
+箭头函数出来之前，函数在执行时才能确定 `this` 的指向，所以会经常出现闭包中的 `this` 指向不是期望值的情况。在以前的做法中，如果要给闭包指定 `this`，可以用 `bind、call、apply`，或者把 `this` 值分配给封闭的变量（一般是 `that`）。箭头函数出来之后，给我们提供了不一样的选择。
 
 箭头函数不会创建自己的 `this`，只会从自己定义位置的作用域的上一层直接继承 `this`。
 
@@ -233,16 +233,16 @@ Foo.prototype.doThis = function() { console.log(`实例方法 kind:${ this.kind 
 
 // ES6 方式定义一个类
 class Foo {
-    /* 构造函数 */
-    constructor() { this.kind = 'foo' }
-    
-    /* 静态方法 */
-    static staticMethod() { console.log('静态方法') }
-    
-    /* 实例方法 */
-    doThis() {
-        console.log(`实例方法 kind:${ this.kind }`)
-    }
+  /* 构造函数 */
+  constructor() { this.kind = 'foo' }
+
+  /* 静态方法 */
+  static staticMethod() { console.log('静态方法') }
+
+  /* 实例方法 */
+  doThis() {
+    console.log(`实例方法 kind:${ this.kind }`)
+  }
 }
 ```
 
@@ -251,14 +251,14 @@ ES6 方式实现继承：
 ```javascript
 // 接上
 class Bar extends Foo {
-    constructor() {
-        super()
-        this.type = 'bar'
-    }
-    
-    doThat() {
-        console.log(`实例方法 type:${ this.type } kind:${ this.kind }`)
-    }
+  constructor() {
+    super()
+    this.type = 'bar'
+  }
+
+  doThat() {
+    console.log(`实例方法 type:${ this.type } kind:${ this.kind }`)
+  }
 }
 
 const bar = new Bar()
@@ -267,9 +267,9 @@ bar.doThat()   // 实例方法 type:bar kind:foo
 
 总结一下：
 
-1. static` 关键字声明的是静态方法，不会被实例继承，只可以直接通过类来调用；
-2. class` 没有变量提升，因此必须在定义之后才使用；
-3. constructor`为构造函数，子类构造函数中的`super` 代表父类的构造函数，必须执行一次，否则新建实例时会抛错；
+1. `static` 关键字声明的是静态方法，不会被实例继承，只可以直接通过类来调用；
+2. `class` 没有变量提升，因此必须在定义之后才使用；
+3. `constructor`为构造函数，子类构造函数中的`super` 代表父类的构造函数，必须执行一次，否则新建实例时会抛错；
 4. `new.target` 一般用在构造函数中，返回 `new` 命令作用于的那个构造函数；
 5. `class` 用 `extends` 来实现继承，子类继承父类所有实例方法和属性。
 
@@ -291,7 +291,7 @@ let [a, b = 4] = [1, null]				 // a:1 b:null
 ```
 
 1. 解构不成功，变量的值为 `undefined`；
-2. 解构可以指定默认值，如果被解构变量的对应位置没有值，即为空，或者值为 `undefined`，默认值才会生效。
+2. **解构可以指定默认值，如果被解构变量的对应位置没有值，即为空，或者值为 `undefined`，默认值才会生效。**
 
 对象解构基本用法：
 
