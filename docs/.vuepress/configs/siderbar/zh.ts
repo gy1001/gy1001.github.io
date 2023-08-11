@@ -601,6 +601,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/column/design-pattern/index-25.md',
             '/zh/other/column/design-pattern/index-26.md',
             '/zh/other/column/design-pattern/index-27.md',
+            '/zh/other/column/design-pattern/index-28.md',
           ],
         },
       ],
