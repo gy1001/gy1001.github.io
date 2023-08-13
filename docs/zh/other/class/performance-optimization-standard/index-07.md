@@ -505,6 +505,68 @@ http1.1虽然可以用keep-alive复用同个tcp链接，但是资源还是有一
 
 ## 07: 用流行的SSR技术给前端减负
 
+### 服务端渲染SSR的好处
 
+- 加速首屏加载
+- 更好的SEO,搜索引擎优化
+
+### 客户端渲染 vs 服务端渲染
+
+> 那我们在客户端去渲染的时候呢，我们需要把这个页面先请求过来，然后再去看页面上它所关联的所有的js，然后加载这些js再进行解析，然后才能让用户看到我们这个页面上，真正要显示的内容，这个过程势必会延迟我们的这个首屏时间 
+>
+> 我们如果使用服务端渲染的话。这个过程可以大大的提前，从服务端渲染完的页面再传到前端的时候，已经是渲染之后的html了，就不需要再经过我们客户端渲染的这样的一个复杂的过程了，很快就可以把这个内容呈现给用户，
+>
+> 另外就是由于我们同服务端传到我们前端已经是现成的html，所以搜索引擎啊，可以很好地去进行索引
+
+<img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ec2b5af6e84a4845b3387951a82adc64~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="在这里插入图片描述" style="zoom:50%;" />
+
+### React SSR
+
+- 基于 Next.js 实现SSR, npm init 创建个新工程，
+
+  ```shell
+  npm install next react react-dom
+  ```
+
+- 添加脚本
+
+  ```json
+  // package.json
+  {
+    "scripts": {
+      "dev": "next"
+    }
+  }
+  ```
+
+  这边写组件和我们之前在客户端渲染时没有太大的差别，不同在于现在我们写完的内容是通过 next 在后端先进行渲染，渲染好之后的内容变成 html 才传回我们前端去执行，给到我们浏览器, 执行脚本 `npm run dev`
+
+  <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8fbc086557cf4bc6944e0578adf58f72~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="在这里插入图片描述" style="zoom:50%;" />
+
+  服务端渲染把所有页面上显示的内容都有，都在html里
+
+  <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a78a66d11167449dac24d560614dd3de~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="在这里插入图片描述" style="zoom:50%;" />
+
+  前端渲染只有 id 为 mian 的 div，后面看不到页面显示的内容，所有页面上的内容都是动态渲染出来的，js解析之后会根据我们的需要，再对body下面的main进行相关的替换或者插入相关的内容；服务端渲染时这些内容已经在服务端渲染好了，后端直接把html返回给前端，前端会显示得更快，因为可以直接立即给用户显示
+
+  ![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dc0fecce89d4489fadc17a00dd208488~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+
+  前端渲染时路由可以带给我们很好的跳转体验，跳转的时候不会感觉重新刷新的感觉，改成服务端渲染，next 有提供 Link，也可以做到这一点
+
+  <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d89ef02c517749ad9d9a9c8e47dbfa06~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="在这里插入图片描述" style="zoom: 50%;" />
+
+  使用 next.js 进行后端渲染，相当于做了个重构的应用，前端渲染、后端渲染可以做到无缝的衔接
+
+### 是否使用SSR
+
+*  架构-大型，动态页面，面向公众用户 是否去用这个服务端渲染？
+
+  > 其实还是围绕他的主要的两个优势，你是不是**非常关心首屏速度**，那这个首屏速度其实也受你项目规模的影响，如果你要考虑服务端渲染，最最开始就要做好这个架构的决定，如果说我们做的这个项目是一个比较大型的项目，然后你这个页面上面的内容其实都是一些动态的内容的话，最好是选择这个服务端渲染
+  >
+  > 所谓动态内容就是还要去进行数据库查询，然后把这些数据拿出来重新进行组织，然后再把它渲染到页面上，这种数据用客户端渲染，还要再发单独的请求，然后再去进行渲染，不如在服务端把这些都做好直接形成一个页面再返回到浏览器效率高
+
+* 搜索引擎排名很重要 
+
+  > 有的前面的页面使用静态页面，后面的页面再用 react、vue 去实现动态加载
 
 ## 08:【讨论题】前端渲染和服务端渲染各有利弊
