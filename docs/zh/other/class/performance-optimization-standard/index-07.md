@@ -404,19 +404,35 @@ Expires（Response Headers）7天都从缓存去取，Date 拿的日期是7月9�
 
 ## 05: 【讨论题】缓存方法
 
+1. http 缓存
 
+2. websql
+
+3. indexDB
+
+4. cookie
+
+5. localstorage
+
+6. sessionstorage
+
+7. application cache
+
+8. cacheStorage
+
+9. flash缓存
 
 ## 06: HTTP 2的性能提升
 
 ### HTTP/2的优势
 
-* 二进制传输 
+* 二进制传输
 
   > http1.0 和 1.1是基于文本的，这种效率比较低，而且不安全，所以 http2 是二进制编码传输，即安全而且进行了很好的压缩，提高了传输效率； 对头部做了压缩，也可以保证传输更快
 
 * 请求响应多路复用
 
-* Server push（服务器推送） 
+* Server push（服务器推送）
 
 ### 开启http2
 
@@ -446,7 +462,7 @@ openssl x509 -req -sha256 -days 3650 -in server.csr -signkey server.key -out ser
 
 <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d26adbd0ce6f45a09c49e523b01d97f3~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="在这里插入图片描述" style="zoom:50%;" />
 
-访问 https://localhost:843， 会出现如下提示，因为我们使用的是自签名的证书，chrome认为你这个证书本身不安全，怀疑这个地方是不是被人劫持
+访问 <https://localhost:843，> 会出现如下提示，因为我们使用的是自签名的证书，chrome认为你这个证书本身不安全，怀疑这个地方是不是被人劫持
 
 <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c78c7ed196924e91b512753956cff994~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="在这里插入图片描述" style="zoom:50%;" />
 
@@ -455,8 +471,6 @@ openssl x509 -req -sha256 -days 3650 -in server.csr -signkey server.key -out ser
 show overview 显示概览图，就是下面条形的图，可以选中局部查看局部网络加载的情况，这几张图片都是通过 http1.1 进行加载的，概览图中可以看到这里开启了多个请求去完成图片的加载，如果页面上资源量比较多的话，会有很高的请求量，网络压力比较大
 
 <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5a51b2e7806e4d3ea8a453c4705b4631~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="在这里插入图片描述" style="zoom:50%;" />
-
-
 
 ### 开启http2
 
@@ -507,12 +521,12 @@ http1.1虽然可以用keep-alive复用同个tcp链接，但是资源还是有一
 
 ### 服务端渲染SSR的好处
 
-- 加速首屏加载
-- 更好的SEO,搜索引擎优化
+* 加速首屏加载
+* 更好的SEO,搜索引擎优化
 
 ### 客户端渲染 vs 服务端渲染
 
-> 那我们在客户端去渲染的时候呢，我们需要把这个页面先请求过来，然后再去看页面上它所关联的所有的js，然后加载这些js再进行解析，然后才能让用户看到我们这个页面上，真正要显示的内容，这个过程势必会延迟我们的这个首屏时间 
+> 那我们在客户端去渲染的时候呢，我们需要把这个页面先请求过来，然后再去看页面上它所关联的所有的js，然后加载这些js再进行解析，然后才能让用户看到我们这个页面上，真正要显示的内容，这个过程势必会延迟我们的这个首屏时间
 >
 > 我们如果使用服务端渲染的话。这个过程可以大大的提前，从服务端渲染完的页面再传到前端的时候，已经是渲染之后的html了，就不需要再经过我们客户端渲染的这样的一个复杂的过程了，很快就可以把这个内容呈现给用户，
 >
@@ -522,13 +536,13 @@ http1.1虽然可以用keep-alive复用同个tcp链接，但是资源还是有一
 
 ### React SSR
 
-- 基于 Next.js 实现SSR, npm init 创建个新工程，
+* 基于 Next.js 实现SSR, npm init 创建个新工程，
 
   ```shell
   npm install next react react-dom
   ```
 
-- 添加脚本
+* 添加脚本
 
   ```json
   // package.json
@@ -559,13 +573,13 @@ http1.1虽然可以用keep-alive复用同个tcp链接，但是资源还是有一
 
 ### 是否使用SSR
 
-*  架构-大型，动态页面，面向公众用户 是否去用这个服务端渲染？
+* 架构-大型，动态页面，面向公众用户 是否去用这个服务端渲染？
 
   > 其实还是围绕他的主要的两个优势，你是不是**非常关心首屏速度**，那这个首屏速度其实也受你项目规模的影响，如果你要考虑服务端渲染，最最开始就要做好这个架构的决定，如果说我们做的这个项目是一个比较大型的项目，然后你这个页面上面的内容其实都是一些动态的内容的话，最好是选择这个服务端渲染
   >
   > 所谓动态内容就是还要去进行数据库查询，然后把这些数据拿出来重新进行组织，然后再把它渲染到页面上，这种数据用客户端渲染，还要再发单独的请求，然后再去进行渲染，不如在服务端把这些都做好直接形成一个页面再返回到浏览器效率高
 
-* 搜索引擎排名很重要 
+* 搜索引擎排名很重要
 
   > 有的前面的页面使用静态页面，后面的页面再用 react、vue 去实现动态加载
 
