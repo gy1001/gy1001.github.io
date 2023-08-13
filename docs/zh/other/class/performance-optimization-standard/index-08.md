@@ -256,4 +256,144 @@ if (root.hasChildNodes()) {
 
 ## 05: Windowing提高列表性能【开源节流，用什么画什么】
 
+[使用react-window构造虚拟列表（性能优化）](https://www.jianshu.com/p/40c4dd721c21)
+
+[Vue 超长列表渲染性能优化实战](https://juejin.cn/post/6979865534166728711)
+
+[https://github.com/tangbc/vue-virtual-scroll-list](https://github.com/tangbc/vue-virtual-scroll-list)
+
+### windowing 的作用
+
+- 加载大列表、大表单的每一行严重影响性能
+- `Lazy loading` 仍然会让 DOM 变得过大
+- `windowing` 只渲染可见的行，渲染和滚动的性能都会提升
+
+![img](https://img-blog.csdnimg.cn/img_convert/9facaa468e9d0a71aafe30daeb0e9a42.png)
+
+ **安装：**
+
+```shell
+npm i -D react-window
+```
+
+**以一个二维列表为例，进行使用：**
+
+```react
+import { FixedSizeGrid, FixedSizeList } from 'react-window'
+import model from './model'
+import React from 'react'
+ 
+const items = []
+ 
+for (let i = 0; i < 100; i++) {
+  items.push(model.map(m => <img src={m.image} alt={m.name} width={100} height={90} />))
+}
+ 
+const Row = ({ index, style }) => {
+  let styleExt = {
+    ...style,
+    borderBottom: '1px solid #fff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
+  return <div style={styleExt}>{items[index]}</div>
+}
+ 
+class ListComponent extends React.Component {
+  listRef = React.createRef()
+ 
+  scrollToRow = rowNum => () => {
+    if (rowNum <= 0 || rowNum > items.length) return
+    this.listRef.current.scrollToItem(rowNum)
+  }
+ 
+  render() {
+    return (
+      <div>
+        <button onClick={this.scrollToRow(50)}>Scroll</button>
+				/* 一维列表List */
+        <FixedSizeList
+          ref={this.listRef}
+          height={360}
+          width={400}
+          itemSize={120}
+          itemCount={items.length}
+          className={this.props.className}
+        >
+          {Row}
+        </FixedSizeList>
+				/* 二维列表Grid */
+        {/* <FixedSizeGrid
+          columnCount={1000}
+          columnWidth={100}
+          height={150}
+          rowCount={1000}
+          rowHeight={35}
+          width={300}
+        >
+          {Row}
+        </FixedSizeGrid> */}
+      </div>
+    )
+  }
+}
+
+export default ListComponent
+```
+
 ## 06: 使用骨架组件减少布局移动【论占位置的重要性】
+
+> 当相关组件数据还没有完全加载时，如果样式没有控制好，会导致组件没有完全撑开，当样式加载好之后，组件的布局会发生变化，对周围的组件也会造成影响，这个性能消耗比较高，我们应该尽量避免
+>
+> 骨架组件也叫 Skeleton 或 Placeholder（占位符），用来占位和提升用户感知性能，可以在 Google DevTools 里键入 ctrl + shift + p，输入 Layout Shift Regions 查看是否发生布局移动
+
+### 骨架组件（Skeleton/Placeholder）的作用：
+
+1. 占位
+2. 提升用户感知性能
+
+> 注意：Placeholder要根据要替换的组件进行定制，从而避免 Layout Shift。
+
+**安装插件**
+
+[https://www.npmjs.com/package/react-placeholder](https://www.npmjs.com/package/react-placeholder)
+
+```shell
+npm i -D react-placeholder
+```
+
+使用
+
+```react
+import ReactPlaceholder from 'react-placeholder'
+ 
+class Contact extends Component {
+  render() {
+    const { ready } = this.state
+    const imageStyle = !ready ? { display: 'none' } : {}
+    const becomeReady = () => {
+      this.setState({ ready: true })
+    }
+    let cardMedia = (
+      <CardMedia
+        component={'img'}
+        style={imageStyle}
+        className={this.props.classes.media}
+        image={this.props.image}
+        onLoad={this.becomeReady}
+      />
+    )
+ 
+    return (
+      <div className={this.props.classes.root}>
+        <ReactPlaceholder ready={this.state.ready} customPlaceholder={<ContactPlaceholder />}>
+          /* ... */
+        </ReactPlaceholder>
+        {!ready && cardMedia}
+      </div>
+    )
+  }
+}
+```
+
