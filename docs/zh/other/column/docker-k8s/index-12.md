@@ -25,7 +25,7 @@ Linux 内核中提供了 6 中隔离支持，分别是：IPC 隔离、网络隔�
 | User      | CLONE_NEWUSER | 用户和用户组                            |
 | UTS       | CLONE_NEWUTS  | 主机名和域名                            |
 
-每个进程都有一个 namespace，在 /proc/<pid>/ns 下面，下面是一个示例：
+每个进程都有一个 namespace，在 `/proc/<pid>/ns` 下面，下面是一个示例：
 
 ```bash
 [root@xxx ns]# ls -al
@@ -101,7 +101,7 @@ int unshare(int flags);
 int ioctl(int fd, unsigned long request, ...);
 ```
 
-其中 fd 是文件描述符，当 fd 指向 ns 文件的时候，我们就可以通过 ioctl 去获取一些 namespace 信息。这个系统调用 Docker 中也没有使用，所以这里限于篇幅，不再展开。感兴趣的同学可以参考这条 manpage：[ioctl_ns ](http://man7.org/linux/man-pages/man2/ioctl_ns.2.html)。
+其中 fd 是文件描述符，当 fd 指向 ns 文件的时候，我们就可以通过 ioctl 去获取一些 namespace 信息。这个系统调用 Docker 中也没有使用，所以这里限于篇幅，不再展开。感兴趣的同学可以参考这条 manpage：[ioctl_ns](http://man7.org/linux/man-pages/man2/ioctl_ns.2.html)。
 
 ## 4. namespace 代码示例
 
@@ -110,7 +110,7 @@ int ioctl(int fd, unsigned long request, ...);
 ```c
 // 子进程的函数主题
 int child_fn() {
-  	// system 函数可以让我们的程序执行 shell 命令
+   // system 函数可以让我们的程序执行 shell 命令
     system("mount -t proc proc /proc");
     system("ps aux");
     printf("child pid: %d\n", getpid());
@@ -118,19 +118,19 @@ int child_fn() {
 }
 
 int main() {
-  	// 子进程的栈空间大小
+   // 子进程的栈空间大小
     int CHILD_STACK_SIZE = 1024 * 1024;
-  	
-  	//子进程的栈空间
+   
+   //子进程的栈空间
     char child_stack[CHILD_STACK_SIZE];
   
-  	// 创建子进程：
-  	// 1. child_fn 表示子进程的主题是函数 child_fn()
-  	// 2. child_stack + CHILD_STACK_SIZE 表示子进程的栈空间，其实就是局部变量 child_stack
-  	// 3. CLONE_NEWPID 表示子进程使用新的 PID namespace；SIGCHLD 表示接收信号
+   // 创建子进程：
+   // 1. child_fn 表示子进程的主题是函数 child_fn()
+   // 2. child_stack + CHILD_STACK_SIZE 表示子进程的栈空间，其实就是局部变量 child_stack
+   // 3. CLONE_NEWPID 表示子进程使用新的 PID namespace；SIGCHLD 表示接收信号
     int child_pid = clone(child_fn, child_stack + CHILD_STACK_SIZE, CLONE_NEWPID | SIGCHLD, NULL);
   
-  	// waitpid 表示父进程等待子进程退出。如果不加这行代码，父进程将会直接退出，子进程就变成了孤儿进程
+   // waitpid 表示父进程等待子进程退出。如果不加这行代码，父进程将会直接退出，子进程就变成了孤儿进程
     waitpid(child_pid, NULL, 0);
     return 0;
 }
@@ -151,6 +151,6 @@ child pid: 1
 
 大家可以参考我上面的代码示例，进行其他的 namespace 相关操作。
 
-## 5. 参考：
+## 5. 参考
 
 1. [namespace man-page](http://man7.org/linux/man-pages/man7/namespaces.7.html)

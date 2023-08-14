@@ -4,8 +4,6 @@
 
 > 机会不会上门来找人，只有人去找机会。——狄更斯
 
-
-
 # Docker 网络模式
 
 在上一篇文章我们介绍了 Docker 网络的工作模式，包括 docker0 网桥和 iptables 等。其中 docker0 网桥是 Docker 默认网络模式，也就是 bridge 模式。
@@ -59,23 +57,15 @@ Docker 会自动创建 docker0 网桥，使用 bridge 模式的 Docker 容器默
 
 - 通过默认网桥 Link 的 Docker 容器可以共享环境变量。所谓 Link 是指
 
-   
-
   ```
   docker run
   ```
 
-   
-
   的时候指定
-
-   
 
   ```
   --link
   ```
-
-   
 
   参数。这个在自定义网桥中是不行的，但是可以通过其他方式来实现，比如：
 

@@ -28,7 +28,7 @@ FROM busybox:latest
 COPY 1 /tmp
 ```
 
-我们通过上面这种方式 `docker build .` 的方式 build 完之后，通过 `docker images` 查看 build 出来的镜像会发现 REPOSITORY 和 TAG 都是 <none>。
+我们通过上面这种方式 `docker build .` 的方式 build 完之后，通过 `docker images` 查看 build 出来的镜像会发现 REPOSITORY 和 TAG 都是 `<none>`。
 
 ```bash
 [root@docker dockerfile]# docker images
@@ -113,7 +113,7 @@ LABEL <key>=<value> <key>=<value> <key>=<value> ...
 [root@docker dockerfile]# docker inspect nginx
 ...
 "Labels": {
-	"maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>"
+ "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>"
 },
 ...
 ```
