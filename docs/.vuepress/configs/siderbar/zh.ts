@@ -508,6 +508,14 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/vim-class/index-02.md',
           ],
         },
+        {
+          text: '前端要学的测试课 从Jest入门到TDD/BDD双实战',
+          collapsible: true,
+          children: [
+            '/zh/other/class/tdd-bdd/index-01.md',
+            '/zh/other/class/tdd-bdd/index-02.md',
+          ],
+        },
       ],
     },
     {
