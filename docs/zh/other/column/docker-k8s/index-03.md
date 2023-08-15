@@ -230,7 +230,7 @@ sudo dpkg -i <deb pkg name>
 
 ## 2. Mac 安装
 
-Mac 版本的安装页面地址为：https://docs.docker.com/v17.09/docker-for-mac/install/#download-docker-for-mac 。Docker 针对 Mac 平台提供了两个不同的版本：
+Mac 版本的安装页面地址为：[https://docs.docker.com/v17.09/docker-for-mac/install/#download-docker-for-mac](https://docs.docker.com/v17.09/docker-for-mac/install/#download-docker-for-mac) 。Docker 针对 Mac 平台提供了两个不同的版本：
 
 - stable: 稳定版
 - edge: 最新的 release，稳定性不保障
