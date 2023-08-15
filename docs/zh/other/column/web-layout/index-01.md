@@ -8,25 +8,21 @@
 
 > Web 布局的历史关键点的可以通过《[Web Design History Timeline](https://www.webdesignmuseum.org/web-design-history)》来了解！
 
-自1991 年 Berners-Lee 创建出世界上首个 Web 页面到如今天，Web 布局主要可以分为六个关键点：
+自 1991 年 Berners-Lee 创建出世界上首个 Web 页面到如今天，Web 布局主要可以分为六个关键点：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/92f350426de446b38df44a00e3a82098~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/92f350426de446b38df44a00e3a82098~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 正如上图所示，每个关键点都有新的布局技术出现，也正因如此，Web 布局也随着技术的变革变得越来越灵活，越来越强大。**其主要表现在，Web** **布局的适配性更强、美感更强、用户体验更好等等。**
 
-除此之外，我们还可以换过一个角度来看。因为不同时代，Web布局（设计）有着自己不同的定义：
+除此之外，我们还可以换过一个角度来看。因为不同时代，Web 布局（设计）有着自己不同的定义：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b3cdef12c9b94e648b5ef7919bc3fc10~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b3cdef12c9b94e648b5ef7919bc3fc10~tplv-k3u1fbpfcp-zoom-1.png)
 
 在 Web 布局（或者说 Web 设计）中，每个版本有着自己清晰的定义：
 
-- Web 设计 1.0（Web Design 1.0）是“**一维的** ”：设计元素大多是按顺序排列的（按文档流的自然顺序排列） ；
+- Web 设计 1.0（Web Design 1.0）是“**一维的** ”：设计元素大多是按顺序排列的（按文档流的自然顺序排列）
 
-<!---->
-
-- Web 设计 2.0（Web Design 2.0）是“**二维的** ”：单元格中有放置元素的网格，具有更多的自由性 ；
-
-<!---->
+- Web 设计 2.0（Web Design 2.0）是“**二维的** ”：单元格中有放置元素的网格，具有更多的自由性
 
 - Web 设计 3.0（Web Design 3.0）是一个“**新的维度** ”：它可以像平面设计工具一样，自由地定位元素、重叠，为网页设计开辟了新的前景，也将开启新的 Web 页面设计时代 。
 
@@ -34,7 +30,7 @@
 
 刚才我们也提到过了，Web 布局的演进有六个关键点，这样划分是因为，在这个时候有新的 Web 布局技术出现，使用不同的布局技术，对 Web 布局也有着不同的称谓。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/791fce4098a74976bc6e86090e4625fb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/791fce4098a74976bc6e86090e4625fb~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 有了这个基础，接下来我们将围绕着 Web 布局这六个关键点来展开。和大家一起探讨每个关键点中采用的主流 Web 布局技术。
 
@@ -42,7 +38,7 @@
 
 互联网上的第一个网站是由 Tim Berners-Lee 创建的，他在瑞士研究中心 [CERN](http://info.cern.ch/hypertext/WWW/TheProject.html)（欧洲核研究组织）设计了该[网站](http://info.cern.ch/hypertext/WWW/TheProject.html)。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/504d290a49d245e49e56ec227fca5966~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/504d290a49d245e49e56ec227fca5966~tplv-k3u1fbpfcp-zoom-1.png)
 
 Tim Berners-Lee 不仅被誉为第一位 Web 设计师，他还创建了超文本标记语言 (HTML 规范)，并使用该语言对 CERN 网站进行了编码。他还编写了第一个 Web 服务器规范 (HTTP) 和 Web 浏览器。他将继续创建[万维网联盟](https://www.w3.org/)，该联盟至今仍负责监督 Web 标准的开发。
 
@@ -50,11 +46,11 @@ Tim Berners-Lee 对漂亮的格式不太感兴趣。出于这个原因，HTML �
 
 也就是说，在早期的 Web 设计时代，Web 页面上的信息（元素）通常按照正常的流顺序（出现在 HTML 文档的源顺序）来组织。它没有色块、没有图像、没有图形，只有文字。与我们今天所认为的“网页设计”相去甚远。
 
-> **这个阶段（大约1991年~1994年）没有任何** **Web** **技术可言，他仅仅依靠** **HTML** **文档的顺序来组织和展示** **Web** **页面信息** ！
+> **这个阶段（大约 1991 年~1994 年）没有任何** **Web** **技术可言，他仅仅依靠** **HTML** **文档的顺序来组织和展示** **Web** **页面信息** ！
 
 在这个阶段只有 **展示性的** **HTML** **标签** 和 **单像素的** **GIF** **技巧** 。
 
-1. ### **展示性的** **HTML** **标签**
+### 1. **展示性的** **HTML** **标签**
 
 早期的 HTML 规范仅提供了 `18` 个 HTML 标签的描述：`<title>`, `<nextid>`, `<a>`, `<isindex>`, `<plaintext>`, `<listing>`, `<p>`, `<h1>`～`<h6>`, `<address>`, `<hp1>`, `<hp2>`, `<dl>`, `<dt>`, `<dd>`, `<ul>`, `<li>`,`<menu>`和`<dir>`。
 
@@ -64,43 +60,58 @@ Tim Berners-Lee 对漂亮的格式不太感兴趣。出于这个原因，HTML �
 
 > 注意，`<img>`标签大约在 1995 年才进入 HTML 规范的！
 
-2. ### **单一像素的 GIF 技巧**
+### 2. **单一像素的 GIF 技巧**
 
-虽然首个 Web 页面仅仅是文本和超链接的展示，但在第二年（1992年）开始，图片就可以通过`<img>`标签在 Web 页面中呈现。下图是世界上首先被运用于 Web 页面的图片之一。
+虽然首个 Web 页面仅仅是文本和超链接的展示，但在第二年（1992 年）开始，图片就可以通过`<img>`标签在 Web 页面中呈现。下图是世界上首先被运用于 Web 页面的图片之一。
 
-<p align=center><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/53b45c8c7bdc41edbe65e6648a38b2e7~tplv-k3u1fbpfcp-zoom-1.image" alt="img"  /></p>
+```html
+<p align="center">
+  <img
+    src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/53b45c8c7bdc41edbe65e6648a38b2e7~tplv-k3u1fbpfcp-zoom-1.image"
+    alt="img"
+  />
+</p>
+```
+
+<p align=center>
+  <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/53b45c8c7bdc41edbe65e6648a38b2e7~tplv-k3u1fbpfcp-zoom-1.image" alt="img"  />
+</p>
 
 不过在当时，Web 开发者更喜欢使用单像素透明图片（GIF）来设置元素之间的间距。作为透明图像，该像素后面的任何内容，例如背景图像或颜色，都会显示出来。
 
 单像素图像下载速度很快，因为它是不可见的（透明的），设计师可以通过添加间距属性（例如 `<img src="smiley.gif" hspace="75" >` 或`width`或`height`）来简单地改变水平和（或）垂直间距，例如 `<img src="single.gif" width="150" >` 以创建所需的任意数量的空白空间。
 
+> img 标签用于插入图像。src 属性指定图像的来源，hspace` 属性设置图像左右边缘与文字的距离。
+>
+> img src="smiley.gif" hspace="75" 表示插入一个名为 "smiley.gif" 的图像，并在图像左右各留出 75 个像素的空白距离。
+
 ## 表格布局模式
 
 互联网的发展是快速的，仅仅几年之后，HTML 2.0 （大约在 1995 年）就新增了**图片** （`<img>`）、**表单** （`<form>`）和 **表格** （`<table>`）等标签。这为 Web 开发人员在页面组织方面提供了更多的创造性自由。
 
-就在 HTML 2.0 表布之后的第二年（1996年），用于展示数据的表格就被用于 Web 的布局上，而且越来越受欢迎，也就在这个时候，**表格布局模式** 就随之开启了。
+就在 HTML 2.0 表布之后的第二年（1996 年），用于展示数据的表格就被用于 Web 的布局上，而且越来越受欢迎，也就在这个时候，**表格布局模式** 就随之开启了。
 
 例如：
 
-```
+```html
 <table>
-    <tr>
-        <td colspan="2">顶栏</td>
-    </tr>
-    <tr>
-        <td>左列</td>
-        <td>右列</td>
-    </tr>
+  <tr>
+    <td colspan="2">顶栏</td>
+  </tr>
+  <tr>
+    <td>左列</td>
+    <td>右列</td>
+  </tr>
 </table>
 ```
 
 效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b6568fb4c5f041c5a9887bcb879733da~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b6568fb4c5f041c5a9887bcb879733da~tplv-k3u1fbpfcp-zoom-1.png)
 
 早期的 Netscape 站点就是使用表格进行布局的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e4fd0614205049e5952d7d2326e8ac04~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e4fd0614205049e5952d7d2326e8ac04~tplv-k3u1fbpfcp-zoom-1.png)
 
 > 直到如今，在互联网上依旧能看到使用表格布局的 Web 页面！
 
@@ -112,23 +123,23 @@ Tim Berners-Lee 对漂亮的格式不太感兴趣。出于这个原因，HTML �
 
 下面的示例显示了五个单独的页面如何包含在主`<frameset>`标记中。
 
-```
+```html
 <frameset cols="30%,*">
-    <frameset rows="40%,*">
-        <frame src="frame1.html">
-        <frame src="frame2.html">
-    </frameset>
-    <frameset rows="33%,33%,*">
-        <frame src="frame3.html">
-        <frame src="frame4.html">
-        <frame src="frame5.html">
-    </frameset>
+  <frameset rows="40%,*">
+    <frame src="frame1.html">
+    <frame src="frame2.html">
+  </frameset>
+  <frameset rows="33%,33%,*">
+    <frame src="frame3.html">
+    <frame src="frame4.html">
+    <frame src="frame5.html">
+  </frameset>
 </frameset>
 ```
 
 大致效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7332cc6b3fa54b85ad69ff1d15101790~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7332cc6b3fa54b85ad69ff1d15101790~tplv-k3u1fbpfcp-zoom-1.png)
 
 当然，这个系统意味着开发人员必须为一个布局管理多个 HTML 文件。由于其他原因，框架也存在问题。比如页面添加书签效果不佳、页面超链接会令人常感到困惑，而且它们对搜索引擎也不友好。
 
@@ -142,7 +153,9 @@ Tim Berners-Lee 对漂亮的格式不太感兴趣。出于这个原因，HTML �
 
 与此同时，Web 动画紧随其后，Macromedia Flash 1.0 席卷了互联网。
 
-<p align=center><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/17467a11c9b74cffb91b824667d62f23~tplv-k3u1fbpfcp-zoom-1.image" alt="img"  /></p>
+<p align=center>
+  <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/17467a11c9b74cffb91b824667d62f23~tplv-k3u1fbpfcp-zoom-1.image" alt="img"  />
+</p>
 
 但它并非没有缺点。动画只有在网站配备了 Flash 扩展插件时才能运行，否则动画会显示为空白。这给完全基于 Flash 构建的网站带来了严重的问题。此外，Web 动画的开发需要繁重的工作，而且页面加载速度较慢。
 
@@ -152,37 +165,33 @@ Tim Berners-Lee 对漂亮的格式不太感兴趣。出于这个原因，HTML �
 
 自 1996 年发布了第一个[CSS 建议](https://www.w3.org/TR/REC-CSS1/) 之后，1998 年就发布了 CSS 第二版本（CSS 2.0），该版本提供了新的 Web 布局特性，比如定位（`position` ）。与此同时，随着 CSS 的到来，Web 页面才真正有了“美感”这么一说：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5d318ab19fc744e298e3aa4c9011b8b9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5d318ab19fc744e298e3aa4c9011b8b9~tplv-k3u1fbpfcp-zoom-1.png)
 
 也是在这个时候（大约是 90 年代末、20 世纪初），表格布局开始用于其初衷（数据展示），随之在 Web 布局中涌现出很多新的布局模式。比如**浮动布局** 、**定位布局** 和 **框架布局** 等。
 
 > 这里所说的框架布局是指 CSS Frameworks，而不是 HTML 中的框架标签！
 
-1. ### 浮动布局
+### 1. 浮动布局
 
 浮动布局指的是使用 CSS 的浮动（`float`属性）特性来构建 Web 页面。它和 HTML 的表格（`<table>`）标签有点类似，它的初衷也不是用于 Web 布局的，是用来对 Web 进行排版的。即，**用来处理文本围绕图片（或某个元素）的一种排版方式** ，就好比 Word 这样的排版软件中的排版方式，如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3c56625d77184793828e64001118262a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3c56625d77184793828e64001118262a~tplv-k3u1fbpfcp-zoom-1.png)
 
 只不过，广大的 CSSer 发挥其无穷的智慧，硬是将其用于 Web 的布局中，而且这种布局方式一度成为一种主流的布局方式，并且持续了很多年，甚至直到今天，还有不少的同学在使用浮动来布局。直到 Flexbox 布局的出现和移动端的兴起，浮动布局才慢慢的被其取替。
 
 在 CSS 的布局模式当中，浮动布局经历的时期是最长的（至少到目前还没有什么方式超过它），持续了十多年的历史。在这个过程中，也积累了很多不同的布局方法。在早期，Web 开发人员主要采用 **固定宽度** 和 **流式布局** 两种布局方案来实现 Web 页面的布局。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fc44b8ab589a4e86b8cc1e91c347e8c7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/fc44b8ab589a4e86b8cc1e91c347e8c7~tplv-k3u1fbpfcp-zoom-1.png)
 
 在这个时期也演变出很多经典的布局。其中要属“**圣杯** ”和“**双飞翼** ”两者最为经典。这两种方法实现的都是以三列布局为主，而且两边的宽度是固定的，中间列是自适应，它们实现的效果是一样的，只是实现的思路不同。
 
-2. ### 定位布局
+### 2. 定位布局
 
 随着 CSS 的定位（`position`）属性的出现，Web 布局除了浮动布局之外，又新增了 **定位布局** 。这种方式的布局能让你快速达到想要的布局效果。当然也有很多同学直接尝试采用 PSD2HTML 这样的工具，直接将设计图转换成 Web 页面。虽然这种方式能快速实现 Web 布局的效果，但也受到很多的局限性：
 
 - 需要明确指定元素的大小 ；
 
-<!---->
-
 - 需要明确计算元素位置坐标 ；
-
-<!---->
 
 - 难于维护 。
 
@@ -190,7 +199,7 @@ Tim Berners-Lee 对漂亮的格式不太感兴趣。出于这个原因，HTML �
 
 > 早期使用 PSD2HTML 的工具或软件（比如 Photoshop 或者 Firework 制图软件的切处导出的页面），基本上采用的都是定位布局。如今也有很多类似的工具，比如一些 AI 智能还图的运用，从设计稿中导出来的 HTML 和 CSS，不全是采用的定位布局。
 
-3. ### 框架布局
+### 3. 框架布局
 
 > 这里所说的框架布局，指的是 CSS Frameworks（CSS 框架），比如 Bootstrap！
 
@@ -198,11 +207,11 @@ Tim Berners-Lee 对漂亮的格式不太感兴趣。出于这个原因，HTML �
 
 对于网格系统，其也经历了一个漫长的演变。表格布局虽然痛苦，但可以说表格是网格系统布局的最初模型。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4d53c44fdfe246ec92b11fd52c8c908f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4d53c44fdfe246ec92b11fd52c8c908f~tplv-k3u1fbpfcp-zoom-1.png)
 
 正因为有表格布局的存在，才有了后面的 CSS 网格系统，不管是早期基于浮动完成的网格系统，还是后期依赖于 Flexbox 完成的网格系统。当然，你可能会说，网格系统的鼻祖不是 [960gs](http://960.gs/)？
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f1ecd2557dd84a78832217efa0cd7820~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f1ecd2557dd84a78832217efa0cd7820~tplv-k3u1fbpfcp-zoom-1.png)
 
 虽然 960gs 是最早出现的网格系统（基于浮动布局），但其网格的思路是来源于表格的。因为表格具有明显的栅格风格，只不过是使用其它的布局方式，快速模拟了表格的风格，甚至是嵌套表格的风格。加上网格系统让 Web 的设计变得结构整齐、布局平衡等，受到众多设计师的青眯，也让 Web 开发者更易实现，并且可以依据此思路制定一套系统。基于此系统，可以快速完成 Web 布局，并且达到较好的效果，甚至还可以基于此系统制作工具，通过工具帮助大家快速完成布局。
 
@@ -216,13 +225,13 @@ Tim Berners-Lee 对漂亮的格式不太感兴趣。出于这个原因，HTML �
 
 虽然这种依赖动态分辨率布局的方案，可以在不同的分辨率下提供更佳的体验，但随着 2005 年 08 月 10 日 Opera 软件公司推出 Opera Mini ，和 2007 年 01 月 09 日第一台 iPhone 手机的出现，市场上不同品牌，不同分辨率的移动端以及品牌商自己的 Web 浏览器越来越多。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ea700d32317549169acbbc58019bdffe~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ea700d32317549169acbbc58019bdffe~tplv-k3u1fbpfcp-zoom-1.png)
 
 在这种环境之下，基于动态分辨率加载不同的样式表已不太现实，Web 开发者不得不想出其他的方案来适应不同的屏幕尺寸。
 
 在很长一段时间，甚至到今日，为了适应不同屏幕的尺寸适配，为移动端单独创建一个网站，即 移动子域名网站。比如 Facebook 的桌面版本和移动端版本，采用两个不同的域名来访问：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bcf734e3af5745089a0a3cfaf8a47ef2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/bcf734e3af5745089a0a3cfaf8a47ef2~tplv-k3u1fbpfcp-zoom-1.png)
 
 如此一来，开发人员要开发两个版本，相应的工作量就更大了，特别对于要快速响应和试错的 Web 应用来说，难度变得更大。
 
@@ -230,25 +239,25 @@ Web 开发人员为了能改善这种现象，在 2010 年的时候，[Ethan Mar
 
 Ethan Marcotte（@beep） 在《[Responsive Web Design](https://alistapart.com/article/responsive-web-design/)》中提到：
 
-> 响应式这个词源自于建筑学领域，原本指的是建筑物本身会“响应”实际的使用情况，来自我调整。在Web开发领域，“响应式”的意思就变成了，我们开发的 Web 页面会“响应”用户的设备尺寸而自动调整布局。在这篇文章中提到过，我们可以基于 流体网格（Fluid Grids）、灵活的图片（Flexible Images）和媒体查询（Media Queries） 三种技术来构建一个响应式 Web 网站或 Web 应用。
+> 响应式这个词源自于建筑学领域，原本指的是建筑物本身会“响应”实际的使用情况，来自我调整。在 Web 开发领域，“响应式”的意思就变成了，我们开发的 Web 页面会“响应”用户的设备尺寸而自动调整布局。在这篇文章中提到过，我们可以基于 流体网格（Fluid Grids）、灵活的图片（Flexible Images）和媒体查询（Media Queries） 三种技术来构建一个响应式 Web 网站或 Web 应用。
 
 另外，Ethan Marcotte（@beep） 构建了第一个具有响应式的 Web 网页，可以说是响应式 Web 设计经典案例之一（只可惜现在打不开了）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fe378046d8f148979e20a8d49d2f0738~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/fe378046d8f148979e20a8d49d2f0738~tplv-k3u1fbpfcp-zoom-1.png)
 
 ## 内在 Web 设计（IWD）
 
-内在的 Web 设计这个概念，是在 2018 年由 [Jen Simmons](http://twitter.com/jensimmons) 提出的，这个概念是 Web 设计中的一个新概念！[她在 2018 年的 An Event Apart 大会上分享了该话题](http://aneventapart.com/news/post/designing-intrinsic-layouts-aea-video)（该话题的 [PPT请点击这里获取](http://talks.jensimmons.com/15TjNW#sGTkg4c)），她分享时曾表示：
+内在的 Web 设计这个概念，是在 2018 年由 [Jen Simmons](http://twitter.com/jensimmons) 提出的，这个概念是 Web 设计中的一个新概念！[她在 2018 年的 An Event Apart 大会上分享了该话题](http://aneventapart.com/news/post/designing-intrinsic-layouts-aea-video)（该话题的 [PPT 请点击这里获取](http://talks.jensimmons.com/15TjNW#sGTkg4c)），她分享时曾表示：
 
 > 我们现在正处于 Web 设计发展的另一个转折点，创意比增长更重要。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2e6012634dc54aa785f1c500ce2a45cc~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2e6012634dc54aa785f1c500ce2a45cc~tplv-k3u1fbpfcp-zoom-1.png)
 
 Jen 说，“内在 Web 设计”（"Intrinsic Web Design"）可能是 Web 设计历史上的新关键点，一切都在改变，在以技术和经验为基础，希望以最少的代码量来实现复杂的 Web 设计，或者说，**Web** **开发者希望在用最少的代码和复杂** **Web** **设计之间取得完美的平衡** 。她意识到，以“内在 Web 设计”将可以把这种平衡趋向于完美。那么什么是内在 Web 设计？
 
 ### 什么是内在 Web 设计？
 
-自从 Web 诞生以来，Web 开发者一直在使用大量的技巧来完成所有与布局有关的事情。无论是使用浮动（`float`）还是引用外部第三方 CSS 框架（CSS Frameworks）和库（比如Bootstrap）将内容放置在 Web 页面上想要的任何位置（即布局），几乎都有一些 Hack 的身影存在！
+自从 Web 诞生以来，Web 开发者一直在使用大量的技巧来完成所有与布局有关的事情。无论是使用浮动（`float`）还是引用外部第三方 CSS 框架（CSS Frameworks）和库（比如 Bootstrap）将内容放置在 Web 页面上想要的任何位置（即布局），几乎都有一些 Hack 的身影存在！
 
 > 浮动的初衷是用于排版的，只不过在那个年代，Web 开发者利用其特性来构建 Web 的布局，而且运用于 Web 布局很多年。其中大多数第三方的 CSS 框架和库都是采用浮动来完成 Web 的布局！
 
@@ -256,7 +265,7 @@ Jen 说，“内在 Web 设计”（"Intrinsic Web Design"）可能是 Web 设�
 
 > 能够以最少的 Hack 和技巧构建任何你想要的 Web 布局（或设计）！
 
-也就是说，与将设计人员和开发人员都限制在 Web 的“预定义规则”中不同，内在 Web 设计（Intrinsic Web Design）使他们能够灵活地将传统的、久经考验的 Web 布局技术和现代布局方法和工具（比如 Flexbox、Grid等）结合起来，以便根据 Web 的内在内容创造独特的布局。
+也就是说，与将设计人员和开发人员都限制在 Web 的“预定义规则”中不同，内在 Web 设计（Intrinsic Web Design）使他们能够灵活地将传统的、久经考验的 Web 布局技术和现代布局方法和工具（比如 Flexbox、Grid 等）结合起来，以便根据 Web 的内在内容创造独特的布局。
 
 鼓励设计人员和开发人员将内容放在首位，并允许他们利用所有可用的布局技术和方法，以最佳方式在 Web 页面上显示内容，同时保持代码干净和更高效。用最简单的术语来说：
 
@@ -266,7 +275,7 @@ Jen 说，“内在 Web 设计”（"Intrinsic Web Design"）可能是 Web 设�
 
 事实上呢？Web 的数据是动态的，服务端吐出的数据与最初设计稿内容有可能并不匹配（有多，也有少），此时呈现给用户的 Web 页面并不是最佳的（有可能很多空白空间未利用，有可能内容溢出容器，打破布局）。反之，Web 的内在尺寸设计就不同，在 Web 布局时，页面元素大小是根据真实内容（服务端吐出的数据）来决定的。
 
-> **内在** **Web** **设计是** **Web** **布局的新时代，****它****超越了响应式设计。我们正在使用** **Web** **本身作为一种媒介（设计受内容驱动），而不是试图模拟印刷设计（内容以设计为导向）。内在** **Web** **设计更为重要的是，不仅上下文的流畅，适应性高，还能够在** **Web** **布局和当前的** **CSS** **功能集上发挥真正的创造力** 。
+> **内在** **Web** **设计是** **Web** **布局的新时代，\*\***它\***\*超越了响应式设计。我们正在使用** **Web** **本身作为一种媒介（设计受内容驱动），而不是试图模拟印刷设计（内容以设计为导向）。内在** **Web** **设计更为重要的是，不仅上下文的流畅，适应性高，还能够在** **Web** **布局和当前的** **CSS** **功能集上发挥真正的创造力** 。
 
 ## 组件驱动式 Web 设计（CDWD）
 
@@ -276,18 +285,12 @@ Web 生态是不断向前发展的。在这十多年来，CSS 也发生了巨大
 
 简单地说， 组件驱动 Web 设计（Component-Driven Web Design），基于组件驱动的开发，即 **CSS** **新增的特性将直接基于组件而不是基于页面注入样式响应能力** 。用下图来简单概述组件驱动式 Web 设计：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/14cd2dcb46734fed98c173423ad2641b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/14cd2dcb46734fed98c173423ad2641b~tplv-k3u1fbpfcp-zoom-1.png)
 
 简要地说，我们使用 CSS 新特性可以做到：
 
 - 响应用户的需求；
-
-<!---->
-
 - 响应容器的需求；
-
-<!---->
-
 - 响应外形的需求。
 
 而且我们不再仅限于基于媒体查询来构建页面级的布局，还可以基于容器查询构建组件组的布局。这对于以往的布局来说，是质的变化。
@@ -296,11 +299,11 @@ Web 生态是不断向前发展的。在这十多年来，CSS 也发生了巨大
 
 自从第一张 Web 页面诞生至今，Web 的布局已经经过了多次迭代：无布局 » 表格布局 » 浮动布局 » 框架布局 » 现代布局 » 未来布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/41588662dce54cab92bfcfc8d0ab8575~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/41588662dce54cab92bfcfc8d0ab8575~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 整个布局演变过程中，有不同的名词来定义布局（一般根据采用的布局技术来命名）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ece2b54c32da449c892ba549ad556779~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ece2b54c32da449c892ba549ad556779~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 其中浮动布局（主要是 CSS 的 `float` 属性）技术曾也占据较长时间，在当初那个年代可以说是主流的布局技术，直到 Flexbox 的出现以及浏览器对 Flexbox 越来越完善时，浮动布局技术才被 Flexbox 布局技术替代下来。
 
@@ -308,15 +311,15 @@ Web 生态是不断向前发展的。在这十多年来，CSS 也发生了巨大
 
 随着 CSS 技术不断向前发展，尤其是这几年，可以用 Web 布局的特性明显增多：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0d986e0471f74ef78f5fd8eb6abdb326~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0d986e0471f74ef78f5fd8eb6abdb326~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
-正如上图所示，其中多列布局（Multi-column）和 Flexbox 已经是很成熟的技术，只不过多列布局（Multi-column）使用的较少，对于像 CSS 自定义属性、CSS 网格（它也很早就有了）、宽高比（`aspect-ratio`）、CSS 比较函数（`min()`、`max()` 和 `clamp()`）、CSS 逻辑属性、CSS书写模式 和 CSS 视窗单位，是近两年才得到主流浏览器支持，其他很多特性对于 Web 开发者来说是“只闻其名，未见其身”。
+正如上图所示，其中多列布局（Multi-column）和 Flexbox 已经是很成熟的技术，只不过多列布局（Multi-column）使用的较少，对于像 CSS 自定义属性、CSS 网格（它也很早就有了）、宽高比（`aspect-ratio`）、CSS 比较函数（`min()`、`max()` 和 `clamp()`）、CSS 逻辑属性、CSS 书写模式 和 CSS 视窗单位，是近两年才得到主流浏览器支持，其他很多特性对于 Web 开发者来说是“只闻其名，未见其身”。
 
 换句话来说，时至今日，这些特性都可以用于 Web 布局当中，它们都是 Web 布局工具箱中的一员。在未来，我们还可以使用像子网格（`subgrid`）、容器查询 和 父选择器 `:has()` 等特性（这三个特性，已经得到部分主流浏览器的支持）。
 
-[如果你有关注过CSS相关的发展报告的话](http://2021.stateofcss.com/en-US/opinions/#currently_missing_from_css_wins)，你可能也知道，这几个 CSS 特性一直以来也是 CSSer 最为期待的三个特性，尤其是容器查询和父选择器：
+[如果你有关注过 CSS 相关的发展报告的话](http://2021.stateofcss.com/en-US/opinions/#currently_missing_from_css_wins)，你可能也知道，这几个 CSS 特性一直以来也是 CSSer 最为期待的三个特性，尤其是容器查询和父选择器：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2a563f89868b43108360f6d388e88e31~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2a563f89868b43108360f6d388e88e31~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 也就是说，这些 CSS 特性已成为时下，或将成为 Web 布局的主流技术。
 
