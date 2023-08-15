@@ -93,11 +93,11 @@ window.location.href = this.phoneIos() ? this.iosUrl : this.androidUrl
 
 ## 2. 使用 `webpack-theme-color-replacer` 来实现主题切换不生效
 
-### 2.1 问题描述：
+### 2.1 问题描述
 
-1.  使用 [d2Admin 框架](https://d2.pub/d2-admin-start-kit/preview/#/index)
-2.  原项目 `router` 使用 `hash` 模式可以实现主题色的切换作用
-3.  本地项目 clone 后使用 `history` 模式发现 刷新后 主题色切换失灵
+1. 使用 [d2Admin 框架](https://d2.pub/d2-admin-start-kit/preview/#/index)
+2. 原项目 `router` 使用 `hash` 模式可以实现主题色的切换作用
+3. 本地项目 clone 后使用 `history` 模式发现 刷新后 主题色切换失灵
 
 ### 2.2 解决办法
 
@@ -167,7 +167,7 @@ new ThemeColorReplacer({
 
 ## 5. null 和 undefined 与数值进行比较时的处理
 
-### 5.1 null 在比较的时候，是当作 0 处理的。
+### 5.1 null 在比较的时候，是当作 0 处理的
 
 ![img](https://img-blog.csdnimg.cn/20201217193722160.png)
 
@@ -506,7 +506,7 @@ export default {
 
 **其他**
 
-vant 的 input 组件使用 clearable 属性时候，有部分手机存在点击并没有清空输入框的问题，采用自定义 clear-icon 处理就可以解决。
+vant 的 Field 组件使用 clearable 属性时候，有部分手机存在点击并没有清空输入框的问题，采用自定义 `right-icon` 和 `click-right-icon` 处理就可以解决。
 
 ## 8. nginx 重定向公告页
 
@@ -526,7 +526,7 @@ A 项目：官网 A（www.a.com）使用了如下配置
  }
 ```
 
-B 项目: 官网 B(www.b.com) 使用了如下配置
+B 项目: 官网 B(<www.b.com>) 使用了如下配置
 
 > 目前容器项目由于有健康检查，如果失败，就会发布不成功。需要排除健康检查 icon，或者联系运维关闭健康检查
 
@@ -539,7 +539,7 @@ B 项目: 官网 B(www.b.com) 使用了如下配置
 #### 操作步骤
 
 1. 挂载后都正常跳转至公告页，A 项目通过绑定 本地 host 访问新的域名进行验证（运维配合），B 项目通过新的域名进行验证
-2. 验证完毕后，A 项目需要下掉公告页（删除重定向），B 项目需要重定向至另一个域名 https://www.c.com
+2. 验证完毕后，A 项目需要下掉公告页（删除重定向），B 项目需要重定向至另一个域名 <https://www.c.com>
 
 活动项目修改为如下配置
 
