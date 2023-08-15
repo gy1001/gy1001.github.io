@@ -216,7 +216,7 @@ export const sidebarZh: SidebarConfig = {
     {
       text: '常用快捷键',
       collapsible: false,
-      children: ['/zh/other/hotkey/vscode.md'],
+      children: ['/zh/other/hotkey/vscode.md', '/zh/other/hotkey/chrome.md'],
     },
     {
       text: '折腾笔记',
