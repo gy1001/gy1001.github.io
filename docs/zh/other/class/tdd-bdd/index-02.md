@@ -241,7 +241,67 @@ npx jest --init
 
 [Jest 配置解读](https://juejin.cn/post/7003595612977365028)
 
+如果想在项目中，使用 ES Module 语法，比如更改`math.js`为如下语法
 
+```javascript
+export function add(a, b) {
+ return a + b
+}
+
+export function minus(a, b) {
+ return a - b
+}
+```
+
+同样，`math.test.js`也需要进行调整更改
+
+```javascript
+import { add, minus } from './math'
+test("测试加法 3 + 7", ()=>{
+  expect(add(3, 7)).toBe(10)
+})
+
+test("测试减法 6 - 3", ()=>{
+  expect(minus(6, 3)).toBe(3)
+})
+```
+
+此时如果直接运行`npm run test`就会报错
+
+```shell
+ import { add, minus } from './math';
+    ^^^^^^
+
+SyntaxError: Cannot use import statement outside a module
+```
+
+显然 jest 不能识别 import 语法
+
+此处要是用到了 babel, 安装依赖
+
+```shell
+npm install --save-dev @babel/core @babel/preset-env
+```
+
+在项目的根目录下创建 `babel.config.js` ，通过配置 Babel 使其能够兼容当前的 Node 版本。
+
+```javascript
+// babel.config.js
+module.exports = {
+  presets: [
+    ['@babel/preset-env', {
+      targets: {
+          node: 'current'
+        }
+      }
+    ]
+  ],
+};
+```
+
+接着再次运行 `npm run test`, 就会发现运行成功了
+
+![image-20230816093544555](./assets/image-20230816093544555.png)
 
 ## 05: Jest 中的匹配器
 
