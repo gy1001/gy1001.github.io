@@ -229,7 +229,7 @@ function minus(a, b) {
 
    ![image-20230815231259250](./assets/image-20230815231259250.png)
 
-## 04: Jest 的简单配置
+
 
 ## 04: Jest 的简单配置
 
@@ -586,9 +586,90 @@ test('the fetch fails with an error', () => {
 
 ## 09: Jest 中的钩子函数
 
+* beforeAll
+* afterAll
+* beforeEach
+* afterEach
+* describe
 
+```javascript
+// Counter.js
+export default class  Counter {
+  constructor() {
+    this.number = 0
+  }
+  addOne(){
+    this.number += 1
+  }
+  minusOne(){
+    this.number -= 1
+  }
+
+  addTwo() {
+    this.number += 2
+  }
+
+  minusTwo() {
+    this.number -= 2
+  }
+}
+```
+
+```javascript
+// Counter.test.js
+import Counter from './Counter'
+
+let counter = null
+
+beforeAll(() => {
+  console.log('beforeAll 运行了')
+  counter = new Counter()
+})
+
+beforeEach(() => {
+  counter = new Counter()
+  console.log("beforeEach 创建了")
+})
+describe("测试增加相关的代码", () => {
+  test('测试 addOne 方法', () => {
+    console.log('测试 addOne 方法')
+    counter.addOne()
+    expect(counter.number).toBe(1)
+  })
+  test('测试 addTwo 方法', () => {
+    console.log('测试 addTwo 方法')
+    counter.addTwo()
+    expect(counter.number).toBe(2)
+  })
+})
+
+describe('测试减少相关的代码', () => {
+  test('测试 minusOne 方法', () => {
+    console.log('测试 minusOne 方法')
+    counter.minusOne()
+    expect(counter.number).toBe(-1)
+  })
+
+
+  test('测试 minusTwo 方法', () => {
+    console.log('测试 minusTwo 方法')
+    counter.minusTwo()
+    expect(counter.number).toBe(-2)
+  })
+})
+
+afterEach(() => {
+  console.log('afterEach 执行了')
+})
+
+afterAll(() => {
+  console.log('afterAll 运行了')
+})
+```
 
 ## 10: 钩子函数的作用域
+
+
 
 ## 11: Jest 中的 Mock（1）
 
