@@ -2,16 +2,16 @@
 
 ## 01 自动化测试背景及原理
 
-> 日常生活中我们会遇到各种各样的bug，比如：安全性的 bug、逻辑上的 bug、性能上的 bug、展示bug。不出现 bug 是不可能的。bug本身并不可怕，可怕的是把 bug 真正带到了线上。
+> 日常生活中我们会遇到各种各样的 bug，比如：安全性的 bug、逻辑上的 bug、性能上的 bug、展示 bug。不出现 bug 是不可能的。bug 本身并不可怕，可怕的是把 bug 真正带到了线上。
 
-为了防止bug上线，目前惯有的采取的措施有什么呢？
+为了防止 bug 上线，目前惯有的采取的措施有什么呢？
 
-* code review 的代码整合
-* 测试小伙伴的测试验证
-* 通过灰度发布的机制，在上线玩做一些局部的验证
-* 还有其他
-  * `TS、flow、Eslint、styleLint`
-* 当前还可以使用**自动化测试**
+- code review 的代码整合
+- 测试小伙伴的测试验证
+- 通过灰度发布的机制，在上线玩做一些局部的验证
+- 还有其他
+  - `TS、flow、Eslint、styleLint`
+- 当前还可以使用**自动化测试**
 
 下面，一步一步来实现自动化测试逻辑
 
@@ -50,11 +50,11 @@ function minus(a, b) {
    var result2 = minus(3, 3)
    var expected = 10
    var expected2 = 0
-   
+
    if (result !== expected) {
      throw new Error(`3 + 7 应该等于 ${expected}, 但是结果是 ${result}`)
    }
-   
+
    if (result2 !== expected2) {
      throw new Error(`3 - 3 应该等于 ${expected2}, 但是结果是 ${result2}`)
    }
@@ -77,16 +77,18 @@ function minus(a, b) {
 2. 上述测试代码有太多的重复内容，如果工具库中增加了函数，又要新加一堆的逻辑，能不能进行封装处理呢？答案当然是可以的
 
    ```javascript
-   function expect(result){
+   function expect(result) {
      return {
-       toBe(actual){
-         if(actual !== result){
-           throw new Error(`预期值与实际值不相符，预期是${actual}, 实际值是 ${result}`)
+       toBe(actual) {
+         if (actual !== result) {
+           throw new Error(
+             `预期值与实际值不相符，预期是${actual}, 实际值是 ${result}`,
+           )
          }
-       }
+       },
      }
    }
-   
+
    expect(add(3, 7)).toBe(10)
    expect(minus(6, 3)).toBe(3)
    ```
@@ -100,30 +102,32 @@ function minus(a, b) {
 3. 优化如下结果
 
    ```javascript
-   function expect(result){
+   function expect(result) {
      return {
-       toBe(actual){
-         if(actual !== result){
-           throw new Error(`预期值与实际值不相符，预期是${actual}, 实际值是 ${result}`)
+       toBe(actual) {
+         if (actual !== result) {
+           throw new Error(
+             `预期值与实际值不相符，预期是${actual}, 实际值是 ${result}`,
+           )
          }
-       }
+       },
      }
    }
-   
-   function  test(desc, fn){
+
+   function test(desc, fn) {
      try {
        fn()
        console.log(`${desc} 通过测试`)
-     }catch (err){
+     } catch (err) {
        console.log(`${desc} 没有通过测试，${err}`)
      }
    }
-   
-   test("测试加法 3 +7", ()=>{
+
+   test('测试加法 3 +7', () => {
      expect(add(3, 7)).toBe(10)
    })
-   
-   test("测试减法 6 - 3", ()=>{
+
+   test('测试减法 6 - 3', () => {
      expect(minus(6, 3)).toBe(3)
    })
    ```
@@ -140,22 +144,22 @@ function minus(a, b) {
 
 前端测试框架的应该在以下几点应该比较突出
 
-* 性能
-* 功能
-* 易用性
+- 性能
+- 功能
+- 易用性
 
 ### Jest 的优点
 
-* 速度快
-* API 简单
-* 易配置
-* 隔离性好
-* 监控模式
-* IDE 整合
-* Snapshot
-* 多项目并行
-* 覆盖率
-* Mock 丰富
+- 速度快
+- API 简单
+- 易配置
+- 隔离性好
+- 监控模式
+- IDE 整合
+- Snapshot
+- 多项目并行
+- 覆盖率
+- Mock 丰富
 
 ## 03: 使用 Jest 修改自动化测试样例
 
@@ -164,7 +168,7 @@ function minus(a, b) {
 1. 新建文件夹`lesson-02`, 在内部进行 npm 初始化，然后一路回车即可
 
    ```shell
-   npm init 
+   npm init
    ```
 
 2. 安装 jest 库
@@ -179,7 +183,7 @@ function minus(a, b) {
    {
      "scripts": {
        "test": "jest"
-     },
+     }
    }
    ```
 
@@ -189,26 +193,26 @@ function minus(a, b) {
    function add(a, b) {
      return a * b // 注意：这里故意写错了
    }
-   
+
    function minus(a, b) {
      return a - b
    }
-   
+
    module.exports = {
      add,
-     minus
+     minus,
    }
    ```
 
 5. 新建`math.test.js`，内容如下
 
    ```javascript
-   const { add, minus }  = require("./math")
-   test("测试加法 3 + 7", ()=>{
+   const { add, minus } = require('./math')
+   test('测试加法 3 + 7', () => {
      expect(add(3, 7)).toBe(10)
    })
-   
-   test("测试减法 6 - 3", ()=>{
+
+   test('测试减法 6 - 3', () => {
      expect(minus(6, 3)).toBe(3)
    })
    ```
@@ -229,8 +233,6 @@ function minus(a, b) {
 
    ![image-20230815231259250](./assets/image-20230815231259250.png)
 
-
-
 ## 04: Jest 的简单配置
 
 Jest 将根据你的项目提出一系列问题，并且将创建一个基础配置文件。文件中的每一项都配有简短的说明：
@@ -245,11 +247,11 @@ npx jest --init
 
 ```javascript
 export function add(a, b) {
- return a + b
+  return a + b
 }
 
 export function minus(a, b) {
- return a - b
+  return a - b
 }
 ```
 
@@ -257,11 +259,11 @@ export function minus(a, b) {
 
 ```javascript
 import { add, minus } from './math'
-test("测试加法 3 + 7", ()=>{
+test('测试加法 3 + 7', () => {
   expect(add(3, 7)).toBe(10)
 })
 
-test("测试减法 6 - 3", ()=>{
+test('测试减法 6 - 3', () => {
   expect(minus(6, 3)).toBe(3)
 })
 ```
@@ -289,14 +291,16 @@ npm install --save-dev @babel/core @babel/preset-env
 // babel.config.js
 module.exports = {
   presets: [
-    ['@babel/preset-env', {
-      targets: {
-          node: 'current'
-        }
-      }
-    ]
+    [
+      '@babel/preset-env',
+      {
+        targets: {
+          node: 'current',
+        },
+      },
+    ],
   ],
-};
+}
 ```
 
 接着再次运行 `npm run test`, 就会发现运行成功了
@@ -307,21 +311,21 @@ module.exports = {
 
 ### [Common Matchers](https://www.jestjs.cn/docs/using-matchers#common-matchers)
 
-**toBe匹配器**
+**toBe 匹配器**
 
 ```javascript
 test('two plus two is four', () => {
-  expect(2 + 2).toBe(4);
-});
+  expect(2 + 2).toBe(4)
+})
 ```
 
 但是如果，如果比较对象的话，如下
 
 ```javascript
 test('isEqual', () => {
-  const a = { name: '1'}
-  expect(a).toBe({ name: '1'}); // 这里结果是 false，因为这里引用地址不一致
-});
+  const a = { name: '1' }
+  expect(a).toBe({ name: '1' }) // 这里结果是 false，因为这里引用地址不一致
+})
 ```
 
 **toEqual**
@@ -330,95 +334,95 @@ test('isEqual', () => {
 
 ```javascript
 test('object assignment', () => {
-  const data = {one: 1};
-  data['two'] = 2;
-  expect(data).toEqual({one: 1, two: 2});
-});
+  const data = { one: 1 }
+  data['two'] = 2
+  expect(data).toEqual({ one: 1, two: 2 })
+})
 ```
 
 ### [Truthiness](https://www.jestjs.cn/docs/using-matchers#truthiness)
 
-* `toBeNull` matches only `null`
+- `toBeNull` matches only `null`
 
-* `toBeUndefined` matches only `undefined`
+- `toBeUndefined` matches only `undefined`
 
-* `toBeDefined` is the opposite of `toBeUndefined`
+- `toBeDefined` is the opposite of `toBeUndefined`
 
-* `toBeTruthy` matches anything that an `if` statement treats as true
+- `toBeTruthy` matches anything that an `if` statement treats as true
 
-* `toBeFalsy` matches anything that an `if` statement treats as false
+- `toBeFalsy` matches anything that an `if` statement treats as false
 
 ```javascript
 test('null', () => {
-  const n = null;
-  expect(n).toBeNull();
-  expect(n).toBeDefined();
-  expect(n).not.toBeUndefined();
-  expect(n).not.toBeTruthy();
-  expect(n).toBeFalsy();
-});
+  const n = null
+  expect(n).toBeNull()
+  expect(n).toBeDefined()
+  expect(n).not.toBeUndefined()
+  expect(n).not.toBeTruthy()
+  expect(n).toBeFalsy()
+})
 
 test('zero', () => {
-  const z = 0;
-  expect(z).not.toBeNull();
-  expect(z).toBeDefined();
-  expect(z).not.toBeUndefined();
-  expect(z).not.toBeTruthy();
-  expect(z).toBeFalsy();
-});
+  const z = 0
+  expect(z).not.toBeNull()
+  expect(z).toBeDefined()
+  expect(z).not.toBeUndefined()
+  expect(z).not.toBeTruthy()
+  expect(z).toBeFalsy()
+})
 ```
 
 ### [Numbers](https://www.jestjs.cn/docs/using-matchers#numbers)
 
 数字先关的匹配器
 
-* `toBeGreaterThan`
-* `toBeGreaterThanOrEqual`
-* `toBeLessThan`
-* `toBeLessThanOrEqual`
-* ...
+- `toBeGreaterThan`
+- `toBeGreaterThanOrEqual`
+- `toBeLessThan`
+- `toBeLessThanOrEqual`
+- ...
 
 ```javascript
 test('two plus two', () => {
-  const value = 2 + 2;
-  expect(value).toBeGreaterThan(3);
-  expect(value).toBeGreaterThanOrEqual(3.5);
-  expect(value).toBeLessThan(5);
-  expect(value).toBeLessThanOrEqual(4.5);
+  const value = 2 + 2
+  expect(value).toBeGreaterThan(3)
+  expect(value).toBeGreaterThanOrEqual(3.5)
+  expect(value).toBeLessThan(5)
+  expect(value).toBeLessThanOrEqual(4.5)
 
   // toBe and toEqual are equivalent for numbers
-  expect(value).toBe(4);
-  expect(value).toEqual(4);
-});
+  expect(value).toBe(4)
+  expect(value).toEqual(4)
+})
 ```
 
 对于浮点小数的相等，可以使用 `toBeCloseTo` 代替 `toEqual`
 
 ```javascript
 test('adding floating point numbers', () => {
-  const value = 0.1 + 0.2;
+  const value = 0.1 + 0.2
   //expect(value).toBe(0.3);           This won't work because of rounding error
-  expect(value).toBeCloseTo(0.3); // This works.
-});
+  expect(value).toBeCloseTo(0.3) // This works.
+})
 ```
 
 ### [Strings](https://www.jestjs.cn/docs/using-matchers#strings)
 
-* `toMatch`
+- `toMatch`
 
 ```javascript
 test('there is no I in team', () => {
-  expect('team').not.toMatch(/I/);
-});
+  expect('team').not.toMatch(/I/)
+})
 
 test('but there is a "stop" in Christoph', () => {
-  expect('Christoph').toMatch(/stop/);
-});
+  expect('Christoph').toMatch(/stop/)
+})
 ```
 
 ### [Arrays and iterables](https://www.jestjs.cn/docs/using-matchers#arrays-and-iterables)
 
-* `toContain`
+- `toContain`
 
 ```javascript
 const shoppingList = [
@@ -427,12 +431,12 @@ const shoppingList = [
   'trash bags',
   'paper towels',
   'milk',
-];
+]
 
 test('the shopping list has milk on it', () => {
-  expect(shoppingList).toContain('milk');
-  expect(new Set(shoppingList)).toContain('milk');
-});
+  expect(shoppingList).toContain('milk')
+  expect(new Set(shoppingList)).toContain('milk')
+})
 ```
 
 ### [Exceptions](https://www.jestjs.cn/docs/using-matchers#exceptions)
@@ -441,21 +445,21 @@ If you want to test whether a particular function throws an error when it's call
 
 ```javascript
 function compileAndroidCode() {
-  throw new Error('you are using the wrong JDK!');
+  throw new Error('you are using the wrong JDK!')
 }
 
 test('compiling android goes as expected', () => {
-  expect(() => compileAndroidCode()).toThrow();
-  expect(() => compileAndroidCode()).toThrow(Error);
+  expect(() => compileAndroidCode()).toThrow()
+  expect(() => compileAndroidCode()).toThrow(Error)
 
   // You can also use a string that must be contained in the error message or a regexp
-  expect(() => compileAndroidCode()).toThrow('you are using the wrong JDK');
-  expect(() => compileAndroidCode()).toThrow(/JDK/);
+  expect(() => compileAndroidCode()).toThrow('you are using the wrong JDK')
+  expect(() => compileAndroidCode()).toThrow(/JDK/)
 
   // Or you can match an exact error mesage using a regexp like below
-  expect(() => compileAndroidCode()).toThrow(/^you are using the wrong JDK$/); // Test fails
-  expect(() => compileAndroidCode()).toThrow(/^you are using the wrong JDK!$/); // Test pass
-});
+  expect(() => compileAndroidCode()).toThrow(/^you are using the wrong JDK$/) // Test fails
+  expect(() => compileAndroidCode()).toThrow(/^you are using the wrong JDK!$/) // Test pass
+})
 ```
 
 ## 06: Jest 命令行工具的使用
@@ -474,13 +478,13 @@ test('compiling android goes as expected', () => {
 >  › Press Enter to trigger a test run.
 > ```
 
-* `a` is equivalent to running `jest --watchAll`, which means it runs *all* tests, not just those since last commit.
-* `f` is useful for focusing only on broken tests
-* `p` is a way to filter quickly to specific test files
-* `t` is similar to `p` but looks at the test title, i.e., the part that’s in quotes after `it` or `describe`
-* `q` exits watch mode
-* `enter` will trigger a re-run (useful, though the point of watch is that Jest will re-run any time there’s a meaningful change to files *within* scope of the current filters).
-* (Not shown) During a test run, press *any* key to interrupt the run and returning to the watch mode menu. Useful if the test run is taking too long and you want to narrow for example, or the filters are wrong and you want to adjust them.
+- `a` is equivalent to running `jest --watchAll`, which means it runs _all_ tests, not just those since last commit.
+- `f` is useful for focusing only on broken tests
+- `p` is a way to filter quickly to specific test files
+- `t` is similar to `p` but looks at the test title, i.e., the part that’s in quotes after `it` or `describe`
+- `q` exits watch mode
+- `enter` will trigger a re-run (useful, though the point of watch is that Jest will re-run any time there’s a meaningful change to files _within_ scope of the current filters).
+- (Not shown) During a test run, press _any_ key to interrupt the run and returning to the watch mode menu. Useful if the test run is taking too long and you want to narrow for example, or the filters are wrong and you want to adjust them.
 
 ## 07: 异步代码的测试方法 (1)
 
@@ -490,10 +494,10 @@ Return a promise from your test, and Jest will wait for that promise to resolve.
 
 ```javascript
 test('the data is peanut butter', () => {
-  return fetchData().then(data => {
-    expect(data).toBe('peanut butter');
-  });
-});
+  return fetchData().then((data) => {
+    expect(data).toBe('peanut butter')
+  })
+})
 ```
 
 ### Async/Await
@@ -502,39 +506,39 @@ test('the data is peanut butter', () => {
 
 ```javascript
 test('the data is peanut butter', async () => {
-  const data = await fetchData();
-  expect(data).toBe('peanut butter');
-});
+  const data = await fetchData()
+  expect(data).toBe('peanut butter')
+})
 
 test('the fetch fails with an error', async () => {
-  expect.assertions(1);
+  expect.assertions(1)
   try {
-    await fetchData();
+    await fetchData()
   } catch (e) {
-    expect(e).toMatch('error');
+    expect(e).toMatch('error')
   }
-});
+})
 ```
 
 当然你也可以使用 .resolves 或者 .rejects
 
 ```javascript
 test('the data is peanut butter', async () => {
-  await expect(fetchData()).resolves.toBe('peanut butter');
-});
+  await expect(fetchData()).resolves.toBe('peanut butter')
+})
 
 test('the fetch fails with an error', async () => {
-  await expect(fetchData()).rejects.toMatch('error');
-});
+  await expect(fetchData()).rejects.toMatch('error')
+})
 ```
 
 如果你预计`Promis` 会被拒绝，请使用 `.catch`方法。确保添加`expect.assertions`以验证是否调用了一定数量的断言。否则，履行的承诺就不会通过测试。
 
 ```javascript
 test('the fetch fails with an error', () => {
-  expect.assertions(1);
-  return fetchData().catch(e => expect(e).toMatch('error'));
-});
+  expect.assertions(1)
+  return fetchData().catch((e) => expect(e).toMatch('error'))
+})
 ```
 
 ### [Callbacks](https://jestjs.io/docs/asynchronous#callbacks)
@@ -542,22 +546,22 @@ test('the fetch fails with an error', () => {
 如果你不想使用 `promises`, 你可以使用回调 `callbacks`. 参数为 `done`, Jest 将等到`done`回调被调用后再完成测试。
 
 ```javascript
-test('the data is peanut butter', done => {
+test('the data is peanut butter', (done) => {
   function callback(error, data) {
     if (error) {
-      done(error);
-      return;
+      done(error)
+      return
     }
     try {
-      expect(data).toBe('peanut butter');
-      done();
+      expect(data).toBe('peanut butter')
+      done()
     } catch (error) {
-      done(error);
+      done(error)
     }
   }
 
-  fetchData(callback);
-});
+  fetchData(callback)
+})
 ```
 
 如果 done 函数从没有被调用，这个测试将会失败(以超时错误结束)。
@@ -572,36 +576,36 @@ test('the data is peanut butter', done => {
 
 ```javascript
 test('the data is peanut butter', () => {
-  return expect(fetchData()).resolves.toBe('peanut butter');
-});
+  return expect(fetchData()).resolves.toBe('peanut butter')
+})
 ```
 
 如果你期望一个 promise 被拒绝，使用 .reject 匹配器。类似于 .resolves 匹配器
 
 ```javascript
 test('the fetch fails with an error', () => {
-  return expect(fetchData()).rejects.toMatch('error');
-});
+  return expect(fetchData()).rejects.toMatch('error')
+})
 ```
 
 ## 09: Jest 中的钩子函数
 
-* beforeAll
-* afterAll
-* beforeEach
-* afterEach
-* describe
+- beforeAll
+- afterAll
+- beforeEach
+- afterEach
+- describe
 
 ```javascript
 // Counter.js
-export default class  Counter {
+export default class Counter {
   constructor() {
     this.number = 0
   }
-  addOne(){
+  addOne() {
     this.number += 1
   }
-  minusOne(){
+  minusOne() {
     this.number -= 1
   }
 
@@ -628,9 +632,9 @@ beforeAll(() => {
 
 beforeEach(() => {
   counter = new Counter()
-  console.log("beforeEach 创建了")
+  console.log('beforeEach 创建了')
 })
-describe("测试增加相关的代码", () => {
+describe('测试增加相关的代码', () => {
   test('测试 addOne 方法', () => {
     console.log('测试 addOne 方法')
     counter.addOne()
@@ -650,7 +654,6 @@ describe('测试减少相关的代码', () => {
     expect(counter.number).toBe(-1)
   })
 
-
   test('测试 minusTwo 方法', () => {
     console.log('测试 minusTwo 方法')
     counter.minusTwo()
@@ -669,12 +672,175 @@ afterAll(() => {
 
 ## 10: 钩子函数的作用域
 
+钩子函数的作用域是在当前的 describe 作用域中生效的
 
+```javascript
+beforeAll(() => console.log('1 - beforeAll'))
+afterAll(() => console.log('1 - afterAll'))
+beforeEach(() => console.log('1 - beforeEach'))
+afterEach(() => console.log('1 - afterEach'))
+
+test('', () => console.log('1 - test'))
+
+describe('Scoped / Nested block', () => {
+  beforeAll(() => console.log('2 - beforeAll'))
+  afterAll(() => console.log('2 - afterAll'))
+  beforeEach(() => console.log('2 - beforeEach'))
+  afterEach(() => console.log('2 - afterEach'))
+
+  test('', () => console.log('2 - test'))
+})
+
+// 1 - beforeAll
+// 1 - beforeEach
+// 1 - test
+// 1 - afterEach
+// 2 - beforeAll
+// 1 - beforeEach
+// 2 - beforeEach
+// 2 - test
+// 2 - afterEach
+// 1 - afterEach
+// 2 - afterAll
+// 1 - afterAll
+```
+
+```javascript
+describe('describe outer', () => {
+  console.log('describe outer-a')
+
+  describe('describe inner 1', () => {
+    console.log('describe inner 1')
+
+    test('test 1', () => console.log('test 1'))
+  })
+
+  console.log('describe outer-b')
+
+  test('test 2', () => console.log('test 2'))
+
+  describe('describe inner 2', () => {
+    console.log('describe inner 2')
+
+    test('test 3', () => console.log('test 3'))
+  })
+
+  console.log('describe outer-c')
+})
+
+// describe outer-a
+// describe inner 1
+// describe outer-b
+// describe inner 2
+// describe outer-c
+// test 1
+// test 2
+// test 3
+```
+
+```javascript
+beforeEach(() => console.log('connection setup'))
+beforeEach(() => console.log('database setup'))
+
+afterEach(() => console.log('database teardown'))
+afterEach(() => console.log('connection teardown'))
+
+test('test 1', () => console.log('test 1'))
+
+describe('extra', () => {
+  beforeEach(() => console.log('extra database setup'))
+  afterEach(() => console.log('extra database teardown'))
+
+  test('test 2', () => console.log('test 2'))
+})
+
+// connection setup
+// database setup
+// test 1
+// database teardown
+// connection teardown
+
+// connection setup
+// database setup
+// extra database setup
+// test 2
+// extra database teardown
+// database teardown
+// connection teardown
+```
 
 ## 11: Jest 中的 Mock（1）
+
+模拟函数调用次数、以及参数
+
+```javascript
+const mockCallback = jest.fn((x) => 42 + x)
+forEach([0, 1], mockCallback)
+
+// The mock function is called twice
+expect(mockCallback.mock.calls.length).toBe(2)
+
+// The first argument of the first call to the function was 0
+expect(mockCallback.mock.calls[0][0]).toBe(0)
+
+// The first argument of the second call to the function was 1
+expect(mockCallback.mock.calls[1][0]).toBe(1)
+
+// The return value of the first call to the function was 42
+expect(mockCallback.mock.results[0].value).toBe(42)
+```
+
+模拟返回值
+
+```javascript
+const myMock = jest.fn()
+console.log(myMock())
+// > undefined
+
+myMock.mockReturnValueOnce(10).mockReturnValueOnce('x').mockReturnValue(true)
+
+console.log(myMock(), myMock(), myMock(), myMock())
+// > 10, 'x', true, true
+```
+
+模拟模块
+
+```javascript
+// users.js
+import axios from 'axios'
+
+class Users {
+  static all() {
+    return axios.get('/users.json').then((resp) => resp.data)
+  }
+}
+
+export default Users
+```
+
+```javascript
+// users.test.js
+import axios from 'axios'
+import Users from './users'
+
+jest.mock('axios')
+
+test('should fetch users', () => {
+  const users = [{ name: 'Bob' }]
+  const resp = { data: users }
+  axios.get.mockResolvedValue(resp)
+
+  // or you could use the following depending on your use case:
+  // axios.get.mockImplementation(() => Promise.resolve(resp))
+
+  return Users.all().then((data) => expect(data).toEqual(users))
+})
+```
 
 ## 12: Jest 中的 Mock（2）
 
 ## 13: 章节小结
+
+推荐 vscode 中使用 jest 插件，实现自动运行测试用例，错误了就会抛红
 
 ## 14:【讨论题】关于前端自动化测试，你有多少了解呢？
