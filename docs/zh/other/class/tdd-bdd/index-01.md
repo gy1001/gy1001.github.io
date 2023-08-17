@@ -6,7 +6,7 @@
 
 [ Jest 实践指南](https://github.yanhaixiang.com/jest-tutorial/)
 
-
+[Jest单元测试](https://juejin.cn/post/7141286019361407006)
 
 > 带你了解课程主体内容，整体对课程中的前端自动化测试及知识点做通盘了解。帮助大家确认课程是否与自己的需求匹配。从零基础入门前端自动化测试，带你深入了解如何借助 Jest 这样的工具和 TDD 等测试思想，快速完成对 Vue，React 项目的完整测试...
 

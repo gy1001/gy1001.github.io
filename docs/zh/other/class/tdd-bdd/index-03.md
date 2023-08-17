@@ -304,8 +304,142 @@ test('timer1 测试', () => {
 })
 ```
 
-## 04:【讨论题】Jest 中的 Mock得实现
+## 04:【讨论题】Jest 中的 Mock 的实现
 
 ## 05: ES6 中类的测试
+
+新创建如下文件
+
+```javascript
+// util.js
+export default class  Util {
+  init(){
+    // 非常复杂
+    // 涉及到异步请求等
+  }
+  a(){
+    // 非常复杂
+    // 涉及到异步请求等
+  }
+  b(){
+    // 非常复杂
+    // 涉及到异步请求等
+  }
+}
+```
+
+```javascript
+// demo.js
+import Util from "./util"
+const demoFunction =(a,b) => {
+  const util = new Util()
+  util.a(a)
+  util.b(b)
+}
+
+export default demoFunction
+```
+
+```javascript
+// util.test.js
+// 这里我们对 util 的 a b 方法进行书写逻辑校验
+import Util from "./util"
+let util = null
+beforeAll(() => {
+  util = new Util()
+})
+test("测试 util 的 a 函数", () => {
+  util.a()
+})
+
+test("测试 util 的 b 函数", () => {
+  util.b()
+})
+```
+
+接着我们写测试文件`demo.test.js`
+
+> 注意：我们想测试 demoFuncton 但是其内部调用了 Util类，是非常复杂的过程，那么怎么去模拟呢？我们可以使用 jest.mock 类进行模拟调用
+>
+> 如果类太复杂，使用 `jest.mock` 可以帮助你在测试时模拟类的行为，从而使测试更加可控和可预测。下面是一些使用 `jest.mock` 实现对类的测试的步骤：
+>
+> ps：如果引用的类太复杂，我们其实很多时候只需要知道它执行了这个方法即可，而没有必要真正的执行（具体的执行逻辑，在类的单独测试文件中进行测试）
+
+```javascript
+jest.mock("./util") // 会自动提到最前面开始执行
+
+// jest.mock 发现 util 是一个类，会自动把类的构造函数和方法变成 jest.fn()，如下：
+// const Util = jest.fn()
+// Util.a = jest.fn()
+// Util.b = jest.fn()
+// Util.init = jest.fn()
+
+import demoFunction from "./demo";
+import Util from "./util"
+test("测试 demoFunction", () => {
+  demoFunction(1,2)
+  expect(Util).toHaveBeenCalled()
+  expect(Util.mock.instances[0].a).toHaveBeenCalled()
+  expect(Util.mock.instances[0].b).toHaveBeenCalled()
+})
+```
+
+这里引申出一个 **单元测试**  和 **集成测试** 的概念
+
+对于上述文件`demo.test.js` 中我们使用到了 util 类，但是并没有真正执行其中的代码逻辑，只是真正测试了 demo.ts 中的函数`demoFunction`，可以理解它为**单元测试**，由此我们可以知道，使用`jest.mock`可以提高单元测试性能，当然也包括其他手段
+
+假如我们在上述代码中不仅仅对`demoFunction`做了测试，同时也对`util`中的`Util`类做了测试，可以理解为`集成测试`。
+
+单元测试是测试和组装软件的系统化技术，主要目标是发现与接口有关的问题1。
+
+集成测试，也叫组装测试或联合测试，是在单元测试的基础上将所有模块按照设计要求组装成为子系统或系统进行测试
+
+当然除了上述方法我们还可以对他进行
+
+1. 自定义模拟:
+
+* 新建 `__mocks_`文件夹，增加`util.js`文件，内容如下
+
+```javascript
+const Util = jest.fn()
+Util.prototype.a = jest.fn(() => {
+  console.log("a")
+})
+Util.prototype.b = jest.fn(() => {
+  console.log("b")
+})
+export default Util
+```
+
+然后运行`npm run test`，结果一切正常
+
+2. 自定义模拟2
+
+> 前提是删除 \_\_mocks\_\_文件夹，或者改名为 其他名字，就不会走此文件的数据
+
+修改`demo.test.js`文件，内容如下
+
+```javascript
+jest.mock("./util", () =>{
+  const Util = jest.fn()
+  Util.prototype.a = jest.fn(() => {
+    console.log("__a")
+  })
+  Util.prototype.b = jest.fn(() => {
+    console.log("__b")
+  })
+  return Util
+})
+import demoFunction from "./demo";
+import Util from "./util"
+test("测试 demoFunction", () => {
+  demoFunction(1,2)
+  expect(Util).toHaveBeenCalled()
+  expect(Util.mock.instances[0].a).toHaveBeenCalled()
+  expect(Util.mock.instances[0].b).toHaveBeenCalled()
+})
+```
+
+再次运行`npm run test`就可以看到运行正常，且相应的 log 都被打印了
 
 ## 06: Jest 中对 DOM 节点操作的测试
