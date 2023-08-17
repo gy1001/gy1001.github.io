@@ -514,6 +514,7 @@ export const sidebarZh: SidebarConfig = {
           children: [
             '/zh/other/class/tdd-bdd/index-01.md',
             '/zh/other/class/tdd-bdd/index-02.md',
+            '/zh/other/class/tdd-bdd/index-03.md',
           ],
         },
       ],
