@@ -161,7 +161,148 @@ test('测试 generateAppConfig InlineSnapShot', () => {
 
 ## 03: mock timers
 
+对于定时器函数，如下
 
+```javascript
+// timer.js
+export default (cb) => {
+  setTimeout(() => {
+    cb()
+  }, 3000)
+}
+```
+
+相应的测试代码
+
+```javascript
+import timer from './timer'
+
+test('timer 测试', (done) => {
+  timer(() => {
+    expect(1).toBe(1)
+    done()
+  })
+})
+```
+
+对于上述代码，需要等到定时器到时间，也就是3s后才会打印成功。这样的话，时间太长。
+
+修改测试代码如下: 这样运行时就会发现立即触发了回调
+
+```javascript
+import timer from './timer'
+
+jest.useFakeTimers()
+test('timer 测试', () => {
+  const fn = jest.fn()
+  timer(fn)
+  jest.runAllTimers()
+  expect(fn).toHaveBeenCalledTimes(1)
+})
+```
+
+那接着我们修改`timer.js`内容如下
+
+```javascript
+export default (cb) => {
+  setTimeout(() => {
+    cb()
+    setTimeout(() => {
+      cb()
+    }, 3000)
+  }, 3000)
+}
+```
+
+这时候在运行`npm run test`就会发现报错，报错信息如下(愿因：runAllTimers 是运行所有的 timer)
+
+```text
+$ yarn test
+ FAIL  ./timer.test.js
+  ✕ timer 测试 (2 ms)
+
+  ● timer 测试
+
+    expect(jest.fn()).toHaveBeenCalledTimes(expected)
+
+    Expected number of calls: 1
+    Received number of calls: 2
+
+       6 |   timer(fn)
+       7 |   jest.runAllTimers()
+    >  8 |   expect(fn).toHaveBeenCalledTimes(1)
+         |              ^
+       9 | })
+      10 |
+
+      at Object.toHaveBeenCalledTimes (timer.test.js:8:14)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 1 total
+Snapshots:   0 total
+Time:        0.314 s, estimated 1 s
+Ran all test suites.
+```
+
+那有没有一种办法，只想运行当前需要执行的 timer 呢 ？比如我们只想立即执行最外层的 timer，那么测试用例该如下写
+
+```javascript
+import timer from './timer'
+
+jest.useFakeTimers()
+test('timer 测试', () => {
+  const fn = jest.fn()
+  timer(fn)
+  jest.runOnlyPendingTimers() // 我只运行在队列中即将被运行的 timer
+  expect(fn).toHaveBeenCalledTimes(1)
+})
+```
+
+还有一个更优秀的 Api:`advanceTimersByTime`, 先看修改后的测试代码
+
+```javascript
+import timer from './timer'
+
+jest.useFakeTimers()
+test('timer 测试', () => {
+  const fn = jest.fn()
+  timer(fn)
+  jest.advanceTimersByTime(3000) // 立即让时间进入3s后
+  expect(fn).toHaveBeenCalledTimes(1)
+  jest.advanceTimersByTime(3000) // 立即让时间进入3s后, 这里可以看到 这个时间快进，是在上一个快进基础上的
+  expect(fn).toHaveBeenCalledTimes(2)
+})
+```
+
+在此执行结果正常
+
+如果说我们有多个呢，如果你害怕 timer 被混用，可以利用之前的 beforeEach
+
+```javascript
+import timer from './timer'
+beforeEach(() => {
+  jest.useFakeTimers() // 测试时，发现不加 beforeEach 同样不会报错，只是这样更稳妥些
+})
+test('timer 测试', () => {
+  const fn = jest.fn()
+  timer(fn)
+  // jest.runAllTimers()
+  // jest.runOnlyPendingTimers() // 我只运行在队列中即将被运行的 timer
+  jest.advanceTimersByTime(3000) // 立即让时间进入3s后
+  expect(fn).toHaveBeenCalledTimes(1)
+  jest.advanceTimersByTime(3000) // 立即让时间进入3s后
+  expect(fn).toHaveBeenCalledTimes(2)
+})
+
+test('timer1 测试', () => {
+  const fn = jest.fn()
+  timer(fn)
+  jest.advanceTimersByTime(2000) // 立即让时间进入2s后
+  expect(fn).toHaveBeenCalledTimes(0)
+  jest.advanceTimersByTime(3000) // 立即让时间进入3s后
+  expect(fn).toHaveBeenCalledTimes(1)
+})
+```
 
 ## 04:【讨论题】Jest 中的 Mock得实现
 
