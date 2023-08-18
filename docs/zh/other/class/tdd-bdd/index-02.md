@@ -113,7 +113,7 @@ function minus(a, b) {
        },
      }
    }
-
+   
    function test(desc, fn) {
      try {
        fn()
@@ -122,11 +122,11 @@ function minus(a, b) {
        console.log(`${desc} 没有通过测试，${err}`)
      }
    }
-
+   
    test('测试加法 3 +7', () => {
      expect(add(3, 7)).toBe(10)
    })
-
+   
    test('测试减法 6 - 3', () => {
      expect(minus(6, 3)).toBe(3)
    })
@@ -140,7 +140,11 @@ function minus(a, b) {
 
 ## 02：前端自动化测试框架 Jest
 
-> Jasmine、Mocha、Chai、Jest
+> Jasmine:是一个比较**早期**的参与者，**无需插件**
+>
+> Mocha:曾经是 npm 上最受欢迎的框架，但是它设计的时候就没有包含其他框架的一些功能，所以需要开发者去**添加插件**，比较常见的插件是 **Chai** 和 **Sinon**
+>
+> Jest: Jest 是 Facebook 出品，是目前**主流**的测试框架，基本上是 Jasmine 的一个翻版，如果用惯了 Jasmine 上手 Jest 也很快
 
 前端测试框架的应该在以下几点应该比较突出
 
