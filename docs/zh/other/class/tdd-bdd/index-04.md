@@ -309,3 +309,79 @@ export default {
 <style lang="stylus" scoped></style>
 ```
 
+## 06：Header 组件样式新增及快照测试
+
+`app.vue`中增加样式
+
+```css
+*{
+  margin: 0;
+  padding: 0;
+}
+```
+
+`header.vue`中增加如下样式
+
+```vue
+
+<template>
+  <div class="header">
+    <div class="header-content">
+      TodoList
+      <input
+        class="header-input"
+        placeholder="请输入待办事项"
+        type="text"
+        data-test="input"
+        v-model="inputValue"
+        @keyup.enter="handlerAdd"
+      />
+    </div>
+  </div>
+</template>
+<style scoped lang="stylus">
+.header{
+  background-color: #666;
+  line-height: 60px;
+  .header-content{
+    width: 600px;
+    margin: 0 auto;
+    color: #fff;
+    font-size: 24px;
+    .header-input{
+      float: right;
+      width: 360px;
+      margin-top :16px;
+      height: 30px;
+      line-height: 30px;
+      padding-left: 10px;
+    }
+  }
+}
+</style>
+```
+
+`header.test.js`中增加如下页面
+
+```javascript
+it('header 样式发生改变，做提示', () => {
+  expect(wrapper).toMatchSnapshot() // 进行快照测试
+})
+```
+
+`npm run test:unit`运行后，文件中会多一个`jest-vue/tests/unit/__snapshots__/Header.test.js.snap`文件，内容如下
+
+```javascript
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Header.vue header 样式发生改变，做提示 1`] = `
+<div class="header">
+  <div class="header-content">
+    TodoList
+    <input placeholder="请输入待办事项" type="text" data-test="input" class="header-input">
+  </div>
+</div>
+`;
+```
+
+当页面中 ui 结构发生变化时，再次运行会提示报错
