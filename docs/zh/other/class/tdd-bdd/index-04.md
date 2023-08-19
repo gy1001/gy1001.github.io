@@ -169,5 +169,92 @@ describe('HelloWorld.vue', () => {
 
 [shallowmount 官方文档](https://v1.test-utils.vuejs.org/zh/api/#shallowmount)
 
-## 04：使用 TDD 的方式开发 Header 组件
+## 04：使用 TDD 的方式开发 Header 组件(1)
+
+### 写测试相关代码
+
+```javascript
+// jest-vue/tests/unit/Hello.test.js
+import { shallowMount } from '@vue/test-utils'
+import Header from '@/components/Header.vue'
+
+const wrapper = shallowMount(Header)
+const input = wrapper.find('input[data-test="input"]')
+
+describe('TodoList.vue', () => {
+  it('Header 包含 input', () => {
+    expect(input.exists()).toBe(true)
+  })
+
+  it('Header中 input的初始值为空', () => {
+    const inputValue = wrapper.vm.$data.inputValue
+    expect(inputValue).toBe('')
+  })
+
+  it('Header中 input输入内容时数据更新', () => {
+    input.setValue('hello world')
+    const inputValue = wrapper.vm.$data.inputValue
+    expect(inputValue).toBe('hello world')
+  })
+
+  it('Header 中input 框输入回车时候，无内容时，无反应', () => {
+    input.setValue('')
+    input.trigger('keyup.enter')
+    expect(wrapper.emitted().add).toBeFalsy()
+  })
+
+  it('Header 中input 框输入回车时候，有内容时，向外触发事件 add, 并清空 inputValue', () => {
+    input.setValue('111')
+    input.trigger('keyup.enter')
+    expect(wrapper.emitted().add).toBeTruthy()
+    expect(wrapper.vm.inputValue).toBe('')
+  })
+})
+```
+
+### 写代码实现部分
+
+```vue
+<!-- jest-vue/src/components/Header.vue -->
+<template>
+  <div class="hello">
+    <input
+      type="text"
+      data-test="input"
+      v-model="inputValue"
+      @keyup.enter="handlerAdd"
+    />
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'hello-world',
+  props: {
+    msg: String,
+  },
+  data() {
+    return {
+      inputValue: '',
+    }
+  },
+  methods: {
+    handlerAdd() {
+      if (this.inputValue) {
+        this.$emit('add', this.inputValue)
+        this.inputValue = ''
+      }
+    },
+  },
+}
+</script>
+```
+
+## 05：使用 TDD 的方式开发 Header 组件(2)
+
+### 写测试相关代码
+
+```javascript
+// 
+```
 
