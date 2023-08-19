@@ -385,3 +385,149 @@ exports[`Header.vue header 样式发生改变，做提示 1`] = `
 ```
 
 当页面中 ui 结构发生变化时，再次运行会提示报错
+
+## 07：通用代码提取封装
+
+## 08：UndoList 的实现（1）
+
+### 编写测试部分
+
+```javascript
+// jest-vue/tests/unit/undoList.test.js
+import { shallowMount } from '@vue/test-utils'
+import undoList from '@/components/undoList'
+const wrapper = shallowMount(undoList, {
+  propsData: {
+    list: [],
+  },
+})
+
+describe('测试 undoList组件', () => {
+  it('undo-list 参数为 [], count 应该为0，且列表无内容', () => {
+    const countEl = wrapper.find('[data-test="count"]')
+    const ListItems = wrapper.findAll('[data-test="item"]')
+    expect(countEl.text()).toBe('0')
+    expect(ListItems.exists()).toBe(false)
+    expect(ListItems.length).toEqual(0)
+  })
+
+  it('undo-list 参数为 [1,2,3时候], count 应该为3，且列表有内容,且存在删除按钮', () => {
+    const wrapper = shallowMount(undoList, {
+      propsData: {
+        list: [1, 2, 3],
+      },
+    })
+    const countEl = wrapper.find('[data-test="count"]')
+    const ListItems = wrapper.findAll('[data-test="item"]')
+    const deleteBtnEls = wrapper.findAll('[data-test="delete"]')
+    expect(countEl.text()).toBe('3')
+    expect(ListItems.exists()).toBe(true)
+    expect(ListItems.length).toEqual(3)
+    expect(deleteBtnEls.exists()).toBe(true)
+    expect(deleteBtnEls.length).toEqual(3)
+  })
+
+  it('undo-list 存在删除按钮时触发 delete 事件', () => {
+    const wrapper = shallowMount(undoList, {
+      propsData: {
+        list: [1, 2, 3],
+      },
+    })
+    const deleteBtnEl = wrapper.findAll('[data-test="delete"]').at(1)
+    deleteBtnEl.trigger('click')
+    expect(wrapper.emitted('delete')).toBeTruthy()
+    expect(wrapper.emitted('delete')[0][0]).toBe(1)
+  })
+})
+```
+
+### 编写代码部分
+
+```vue
+<!-- jest-vue/src/components/UndoList.vue -->
+<template>
+  <div>
+    <div data-test="count">{{ list.length }}</div>
+    <ul>
+      <li data-test="item" v-for="(item, index) in list" :key="item">
+        {{ item }}
+        <span data-test="delete" @click="handleDelete(index)">X</span>
+      </li>
+    </ul>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'undo-list',
+  props: {
+    list: {
+      required: true,
+      type: Array,
+    },
+  },
+  data() {
+    return {
+      inputValue: '',
+    }
+  },
+  methods: {
+    handleDelete(index) {
+      this.$emit('delete', index)
+    },
+  },
+}
+</script>
+<style scoped lang="stylus"></style>
+```
+
+## 09：UndoList 的实现（2）
+
+接着我们实现 TodoList 中的测试代码和真实逻辑部分
+
+### 编写 TodoList 的测试代码
+
+```javascript
+// jest-vue/tests/unit/TodoList.test.js
+// 新增如下部分
+import UndoList from '@/components/undoList.vue'
+
+it('Todo list 调用 undoList 组件时候，应该传递 list 参数', () => {
+  const undoListWrapper = wrapper.findComponent(UndoList)
+  expect(undoListWrapper.props('list')).toBeTruthy()
+})
+
+it('TodoList 中 deleteItem 事件被调用时，undoList 数据应该减少一个', () => {
+  wrapper.setData({ undoList: [1, 2, 3] })
+  wrapper.vm.deleteItem(1)
+  expect(wrapper.vm.undoList).toEqual([1, 3])
+})
+```
+
+### 编写代码实现部分
+
+```vue
+<template>
+  <div>
+    <TodoHeader @add="addItem"></TodoHeader>
+    <!-- 增加如下部分 -->
+    <UndoList :list="undoList" @delete="deleteItem"></UndoList>
+  </div>
+</template>
+
+<script>
+  import UndoList from '@/components/UndoList.vue'
+  
+  export default {
+    components: {
+      UndoList,
+    },
+    methods: {
+     	deleteItem(index) {
+        this.undoList.splice(index, 1)
+      },
+    }
+  }
+</script>
+```
+
