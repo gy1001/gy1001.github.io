@@ -174,7 +174,7 @@ describe('HelloWorld.vue', () => {
 ### 写测试相关代码
 
 ```javascript
-// jest-vue/tests/unit/Hello.test.js
+// jest-vue/tests/unit/Header.test.js
 import { shallowMount } from '@vue/test-utils'
 import Header from '@/components/Header.vue'
 
@@ -255,6 +255,57 @@ export default {
 ### 写测试相关代码
 
 ```javascript
-// 
+// /jest-vue/tests/unit/TodoList.test.js
+import { shallowMount } from '@vue/test-utils'
+import TodoList from '@/container/TodoList/TodoList.vue'
+const wrapper = shallowMount(TodoList)
+
+describe('测试 TodoList 组件', () => {
+  it('TodoLis 组件初始化时，undoList 应该是空的', () => {
+    expect(Array.isArray(wrapper.vm.undoList)).toBeTruthy()
+    expect(wrapper.vm.undoList.length).toBe(0)
+  })
+
+  it('TodoLis 执行 addItem 的时候，会增加一个内容', () => {
+    const str = 'i am first todo'
+    wrapper.vm.addItem(str)
+    expect(wrapper.vm.undoList.length).toBe(1)
+    expect(wrapper.vm.undoList[0]).toBe(str)
+  })
+})
+```
+
+### 书写代码实现部分
+
+```vue
+<!-- jest-vue/src/container/TodoList/TodoList.vue -->
+<template>
+  <div>
+    <TodoHeader @add="addItem"></TodoHeader>
+    {{ undoList }}
+  </div>
+</template>
+
+<script>
+import TodoHeader from '@/components/Header.vue'
+export default {
+  name: 'todo-list',
+  components: {
+    TodoHeader,
+  },
+  data() {
+    return {
+      undoList: [],
+    }
+  },
+  methods: {
+    addItem(value) {
+      this.undoList.push(value)
+    },
+  },
+}
+</script>
+
+<style lang="stylus" scoped></style>
 ```
 
