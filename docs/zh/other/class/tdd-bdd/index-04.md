@@ -24,14 +24,14 @@
 ## 02：Vue 环境中配置 Jest
 
 1. 使用 vue-cli 初始化一个项目
-
+   
    ```bash
    npm install @vue/cli -g
    vue create jest-vue // 按照相关提示选择就可以
    ```
 
 2. 在脚手架中可以看到相关测试代码
-
+   
    ```json
    // package.json
    {
@@ -40,19 +40,19 @@
      }
    }
    ```
-
+   
    ```javascript
    // jest.config.js
    module.exports = {
      preset: '@vue/cli-plugin-unit-jest',
    }
    ```
-
+   
    ```javascript
    // tests/unit/example.spec.js
    import { shallowMount } from '@vue/test-utils'
    import HelloWorld from '@/components/HelloWorld.vue'
-
+   
    describe('HelloWorld.vue', () => {
      it('renders props.msg when passed', () => {
        const msg = 'new message'
@@ -67,7 +67,7 @@
 3. 脚手架生成的内容如下
 
 4. 如果没有使用脚手架生成，我们可以在`package.json`中添加命令
-
+   
    ```javascript
    {
      "scripts": {
@@ -77,7 +77,7 @@
    ```
 
 5. 然后执行 jest 初始化命令，生成配置文件`jest.config.js`
-
+   
    ```bash
    npx jest --init
    ```
@@ -89,16 +89,16 @@
 1. 我们发现上一节中测试文件路径为`tests/unit/example.spec.js`,与我们之前的不是很相符，我们可以改名字为`hello.test.js`
 
 2. 运行`npm run test:unit`后会提示没有文件匹配
-
+   
    > 根据错误信息，我们可以看到默认读取的文件路径有两个，分别是
-   >
+   > 
    > `**/tests/unit/**/*.spec.[jt]s?(x)`
-   >
+   > 
    > `**/__tests__/*.[jt]s?(x) - 0 matches`
-
+   
    ```text
    > vue-cli-service test:unit
-
+   
    No tests found, exiting with code 1
    Run with `--passWithNoTests` to exit with code 0
    In /Users/yuangao/Code/Learn/MyGithub/Javascript/TDD-BDD/lesson-14/jest-vue
@@ -110,7 +110,7 @@
    ```
 
 3. 我们目前的文件为`test/unit/hello.test.js`，均不符合上述正则匹配，我们可以修改`jest.config.js`，增加 testMatch 选项
-
+   
    ```javascript
    // jest.config.js
    module.exports = {
@@ -638,8 +638,8 @@ body{
 变为现在的
 [
   { value: 1, status: 'div' },
-	{ value: 2, status: 'div' },
-	{ value: 3, status: 'div' },
+    { value: 2, status: 'div' },
+    { value: 3, status: 'div' },
 ]
 ```
 
@@ -659,7 +659,7 @@ body{
 
 它适合于开发通用的函数库，比如 lodash 这种工具库，测试和业务就不会有太多的耦合，就很合适。
 
-## 12: UndoList 编辑功能实现 (2)
+## 12:  UndoList 编辑功能实现 (2)
 
 继续完成测试部分代码
 
@@ -863,4 +863,19 @@ export default {
 }
 </script>
 ```
+
+## 13：CodeCoverage 代码覆盖率
+
+[官方文档：测试代码覆盖率]([安装 | Vue Test Utils](https://v1.test-utils.vuejs.org/zh/installation/#%E6%B5%8B%E8%AF%95%E8%A6%86%E7%9B%96%E7%8E%87))
+
+修改配置如下
+
+```javascript
+// jest.config.js
+{
+  "collectCoverage": true,
+  "collectCoverageFrom": ["**/*.{js,vue}", "!**/node_modules/**"]
+}
+```
+
 
