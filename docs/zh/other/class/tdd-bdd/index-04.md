@@ -35,16 +35,16 @@
    ```json
    // package.json
    {
-      "scripts": {
-        "test:unit": "vue-cli-service test:unit"
-     },
+     "scripts": {
+       "test:unit": "vue-cli-service test:unit"
+     }
    }
    ```
 
    ```javascript
    // jest.config.js
    module.exports = {
-     preset: '@vue/cli-plugin-unit-jest'
+     preset: '@vue/cli-plugin-unit-jest',
    }
    ```
 
@@ -52,12 +52,12 @@
    // tests/unit/example.spec.js
    import { shallowMount } from '@vue/test-utils'
    import HelloWorld from '@/components/HelloWorld.vue'
-   
+
    describe('HelloWorld.vue', () => {
      it('renders props.msg when passed', () => {
        const msg = 'new message'
        const wrapper = shallowMount(HelloWorld, {
-         propsData: { msg }
+         propsData: { msg },
        })
        expect(wrapper.text()).toMatch(msg)
      })
@@ -98,7 +98,7 @@
 
    ```text
    > vue-cli-service test:unit
-   
+
    No tests found, exiting with code 1
    Run with `--passWithNoTests` to exit with code 0
    In /Users/yuangao/Code/Learn/MyGithub/Javascript/TDD-BDD/lesson-14/jest-vue
@@ -109,15 +109,13 @@
    Pattern:  - 0 matches
    ```
 
-3. 我们目前的文件为`test/unit/hello.test.js`，均不符合上述正则匹配，我们可以修改`jest.config.js`，增加 testMatch选项
+3. 我们目前的文件为`test/unit/hello.test.js`，均不符合上述正则匹配，我们可以修改`jest.config.js`，增加 testMatch 选项
 
    ```javascript
    // jest.config.js
    module.exports = {
      preset: '@vue/cli-plugin-unit-jest',
-     testMatch: [
-       "**/tests/**/?(*.)+(spec|test).[jt]s?(x)"
-     ]
+     testMatch: ['**/tests/**/?(*.)+(spec|test).[jt]s?(x)'],
    }
    ```
 
@@ -128,20 +126,20 @@
 ```javascript
 // hello.test.js
 
-import  Vue from "vue"
-import helloWorld from "@/components/HelloWorld.vue";
+import Vue from 'vue'
+import helloWorld from '@/components/HelloWorld.vue'
 
-describe("测试 dom 正常渲染", () => {
-  it("render props.msg when passed", () => {
+describe('测试 dom 正常渲染', () => {
+  it('render props.msg when passed', () => {
     const divEl = document.createElement('div')
-    divEl.className = "root"
+    divEl.className = 'root'
     document.body.appendChild(divEl)
     new Vue({
-      render: h => h(helloWorld),
+      render: (h) => h(helloWorld),
       props: {
-        msg: '我是孙悟空'
-      }
-    }).$mount(".root")
+        msg: '我是孙悟空',
+      },
+    }).$mount('.root')
     expect(document.getElementsByClassName('hello').length).toBe(1)
   })
 })
@@ -159,7 +157,7 @@ describe('HelloWorld.vue', () => {
   it('renders props.msg when passed', () => {
     const msg = 'new message'
     const wrapper = shallowMount(HelloWorld, {
-      propsData: { msg }
+      propsData: { msg },
     })
     // wrapper 还有很多其他的属性、方法
     expect(wrapper.text()).toMatch(msg)
@@ -314,7 +312,7 @@ export default {
 `app.vue`中增加样式
 
 ```css
-*{
+* {
   margin: 0;
   padding: 0;
 }
@@ -323,7 +321,6 @@ export default {
 `header.vue`中增加如下样式
 
 ```vue
-
 <template>
   <div class="header">
     <div class="header-content">
@@ -381,7 +378,7 @@ exports[`Header.vue header 样式发生改变，做提示 1`] = `
     <input placeholder="请输入待办事项" type="text" data-test="input" class="header-input">
   </div>
 </div>
-`;
+`
 ```
 
 当页面中 ui 结构发生变化时，再次运行会提示报错
@@ -516,18 +513,18 @@ it('TodoList 中 deleteItem 事件被调用时，undoList 数据应该减少一�
 </template>
 
 <script>
-  import UndoList from '@/components/UndoList.vue'
-  
-  export default {
-    components: {
-      UndoList,
+import UndoList from '@/components/UndoList.vue'
+
+export default {
+  components: {
+    UndoList,
+  },
+  methods: {
+    deleteItem(index) {
+      this.undoList.splice(index, 1)
     },
-    methods: {
-     	deleteItem(index) {
-        this.undoList.splice(index, 1)
-      },
-    }
-  }
+  },
+}
 </script>
 ```
 
@@ -535,7 +532,8 @@ it('TodoList 中 deleteItem 事件被调用时，undoList 数据应该减少一�
 
 ```vue
 <!-- App.vue -->
-<style lang="stylus"> // 注意这里没有 scope
+<style lang="stylus">
+ // 注意这里没有 scope
 body{
   background-color: #cdcdcd;
 }
@@ -616,19 +614,21 @@ body{
   }
 }
 </style>
-
 ```
 
 最后运行，效果如下
 
 ![image-20230820111410531](./assets/image-20230820111410531.png)
 
-## 11: UndoList 编辑功能实现(1)
+## 11: UndoList 编辑功能实现 (1)
 
 因为要实现，可以编辑功能，之前存储的 undoList 数据结构，就不适合了。我们需要更改相应的结构，当然，测试用例中的数据结构也要进行更改, 结构类似如下
 
 ```javascript
-[ { status: 'div', value: 1}, { status: "input", value: 2 } ]
+;[
+  { status: 'div', value: 1 },
+  { status: 'input', value: 2 },
+]
 ```
 
 修改测试用例设计部分
@@ -655,6 +655,212 @@ body{
 
 **Tips:**
 
-做业务开发时，采用这种 TDD  + 单元测试这种方式，并不太适合。
+做业务开发时，采用这种 TDD + 单元测试这种方式，并不太适合。
 
 它适合于开发通用的函数库，比如 lodash 这种工具库，测试和业务就不会有太多的耦合，就很合适。
+
+## 12: UndoList 编辑功能实现 (2)
+
+继续完成测试部分代码
+
+```javascript
+// /jest-vue/tests/unit/undoList.test.js
+it('undoList 列表项目被点击，向外触发 change 事件', async () => {
+  const wrapper = shallowMount(undoList, {
+    propsData: {
+      list: [
+        { value: 1, status: 'div' },
+        { value: 2, status: 'div' },
+        { value: 3, status: 'div' },
+      ],
+    },
+  })
+  const ListItems = wrapper.findAll('[data-test="item"]')
+  ListItems.at(1).trigger('click')
+  expect(wrapper.emitted('change', 1)).toBeTruthy()
+})
+it('undoList 根据传入数据显示一个输入框', () => {
+  const wrapper = shallowMount(undoList, {
+    propsData: {
+      list: [
+        { value: 1, status: 'div' },
+        { value: 2, status: 'input' },
+        { value: 3, status: 'div' },
+      ],
+    },
+  })
+  const inputEls = wrapper.findAll('input[data-test="input"]')
+  expect(inputEls.length).toBe(1)
+})
+it('undoList 中的 input 触发 blur事件时候，重置数据与状态', () => {
+  const wrapper = shallowMount(undoList, {
+    propsData: {
+      list: [
+        { value: 1, status: 'div' },
+        { value: 2, status: 'input' },
+        { value: 3, status: 'div' },
+      ],
+    },
+  })
+  const inputEl = wrapper.find('input[data-test="input"]')
+  inputEl.setValue('123')
+  inputEl.trigger('blur')
+  expect(wrapper.emitted('reset')).toBeTruthy()
+})
+it('输入框变化时，向外触发 change 事件', () => {
+  const wrapper = shallowMount(undoList, {
+    propsData: {
+      list: [
+        { value: 1, status: 'div' },
+        { value: 7899, status: 'input' },
+        { value: 3, status: 'div' },
+      ],
+    },
+  })
+  wrapper.find('input[data-test="input"]').trigger('keyup.enter')
+  expect(wrapper.emitted('changeValue')).toBeTruthy()
+})
+```
+
+```javascript
+// /jest-vue/tests/unit/TodoList.test.js
+it('TodoList 中 changItemStatus 事件被调用时，undoList 数据会发生变化', () => {
+  wrapper.setData({
+    undoList: [
+      { value: 1, status: 'div' },
+      { value: 2, status: 'div' },
+      { value: 3, status: 'div' },
+    ],
+  })
+  wrapper.vm.changItemStatus(1)
+  expect(wrapper.vm.undoList).toEqual([
+    { value: 1, status: 'div' },
+    { value: 2, status: 'input' },
+    { value: 3, status: 'div' },
+  ])
+})
+it('TodoList 中触发 resetList事件时，input框消失', () => {
+  wrapper.setData({
+    undoList: [
+      { value: 1, status: 'div' },
+      { value: 2, status: 'input' },
+      { value: 3, status: 'div' },
+    ],
+  })
+  wrapper.vm.resetList()
+  expect(wrapper.vm.undoList).toEqual([
+    { value: 1, status: 'div' },
+    { value: 2, status: 'div' },
+    { value: 3, status: 'div' },
+  ])
+})
+it('TodoList 触发 changeValue事件，数据变化', () => {
+  wrapper.setData({
+    undoList: [
+      { value: 1, status: 'div' },
+      { value: 2, status: 'input' },
+      { value: 3, status: 'div' },
+    ],
+  })
+  wrapper.vm.changeValue(1, 'test')
+  expect(wrapper.vm.undoList).toEqual([
+    { value: 1, status: 'div' },
+    { value: 'test', status: 'div' },
+    { value: 3, status: 'div' },
+  ])
+})
+```
+
+编写业务代码部分
+
+```vue
+<!-- /jest-vue/src/components/UndoList.vue -->
+<template>
+  <li
+    class="item"
+    data-test="item"
+    v-for="(item, index) in list"
+    :key="item.value"
+    @click="handleChang(index)"
+  >
+    <input
+      :value="item.value"
+      type="text"
+      data-test="input"
+      v-if="item.status === 'input'"
+      @blur="handleBlur"
+      @keyup.enter="(e) => handlerValueChange(index, e.target.value)"
+    />
+    <template v-else>
+      {{ item.value }}
+      <span class="delete-icon" data-test="delete" @click="handleDelete(index)">
+        X
+      </span>
+    </template>
+  </li>
+</template>
+<script>
+export default {
+  methods: {
+    handleChang(index) {
+      this.$emit('change', index)
+    },
+    handleBlur() {
+      this.$emit('reset')
+    },
+    handlerValueChange(index, value) {
+      this.$emit('changeValue', index, value)
+    },
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+input {
+  line-height: 42px;
+  margin-left: 10px;
+}
+</style>
+```
+
+```vue
+<!-- jest-vue/src/container/TodoList/TodoList.vue -->
+
+<template>
+  <div>
+    <TodoHeader @add="addItem"></TodoHeader>
+    <UndoList
+      :list="undoList"
+      @delete="deleteItem"
+      @change="changItemStatus"
+      @reset="resetList"
+      @changeValue="changeValue"
+    ></UndoList>
+  </div>
+</template>
+<script>
+export default {
+  methods: {
+    changItemStatus(index) {
+      const newList = []
+      this.undoList.forEach((item, itemIndex) => {
+        if (index === itemIndex) {
+          newList.push({ ...item, status: 'input' })
+        } else {
+          newList.push({ ...item, status: 'div' })
+        }
+      })
+      this.undoList = newList
+    },
+    resetList() {
+      this.undoList = this.undoList.map((item) => ({ ...item, status: 'div' }))
+      console.log(this.undoList)
+    },
+    changeValue(index, value) {
+      this.$set(this.undoList, index, { value, status: 'div' })
+    },
+  }
+}
+</script>
+```
+
