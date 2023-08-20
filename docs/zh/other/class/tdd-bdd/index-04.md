@@ -622,3 +622,39 @@ body{
 最后运行，效果如下
 
 ![image-20230820111410531](./assets/image-20230820111410531.png)
+
+## 11: UndoList 编辑功能实现(1)
+
+因为要实现，可以编辑功能，之前存储的 undoList 数据结构，就不适合了。我们需要更改相应的结构，当然，测试用例中的数据结构也要进行更改, 结构类似如下
+
+```javascript
+[ { status: 'div', value: 1}, { status: "input", value: 2 } ]
+```
+
+修改测试用例设计部分
+
+```javascript
+把之前的 [1, 2, 3]
+变为现在的
+[
+  { value: 1, status: 'div' },
+	{ value: 2, status: 'div' },
+	{ value: 3, status: 'div' },
+]
+```
+
+修改测试文件涉及`/jest-vue/tests/unit/undoList.test.js`、`jest-vue/tests/unit/TodoList.test.js`
+
+修改编码文件涉及`/jest-vue/src/components/UndoList.vue`、`/jest-vue/src/container/TodoList/TodoList.vue`
+
+这里我们会发现我们这里做了两遍的工作：修改了测试文件、也修改了业务编码文件，为什么呢？
+
+因为我们目前采用的是 TDD + 单元测试，**测试代码与业务组件**功能进行绑定了。正是这种耦合导致的这个现象。
+
+那到底是怎么做呢？
+
+**Tips:**
+
+做业务开发时，采用这种 TDD  + 单元测试这种方式，并不太适合。
+
+它适合于开发通用的函数库，比如 lodash 这种工具库，测试和业务就不会有太多的耦合，就很合适。
