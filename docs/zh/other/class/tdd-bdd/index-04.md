@@ -878,4 +878,14 @@ export default {
 }
 ```
 
+然后再`package.json`中增加命令
 
+```json
+{
+  "scripts": {
+    "test:cov": "vue-cli-service test:unit --coverage"
+  }
+}
+```
+
+运行脚本命令`npm run test:cov`
