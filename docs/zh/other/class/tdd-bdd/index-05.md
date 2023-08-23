@@ -209,4 +209,82 @@ it(`
 
 ## 03：异步测试
 
+> 我们使用 axios 发送请求获取数据
+
+1. 安装 `axios`
+
+   ```shell
+   npm install axios -D
+   ```
+
+2. 修改`/jest-vue/src/container/TodoList/TodoList.vue` 中的代码，如下
+
+   ```vue
+   <script>
+   	import axios from 'axios'
+     export default {
+        mounted() {
+         /**
+          * { success: true, data: [ {status: 'div', value: '孙悟空' } ] }
+          */
+         axios
+           .get('./getUndoList.json')
+           .then((res) => {
+             this.undoList = res.data
+           })
+           .catch((e) => {
+             console.log(e)
+           })
+       },
+     }
+   </script>
+   ```
+
+3. `/jest-vue/tests/intergration/TodoList.test.js`中写入相关测试逻辑
+
+   ```javascript
+   import { nextTick } from 'vue'
+   
+   it(`
+     1. 用户进入页面时，请求远程接口数据
+     2. 列表应该展示远程返回的数据
+   `, async () => {
+     const wrapper = mount(TodoList, { store })
+     await nextTick()
+     const listItems = wrapper.findAll('li.item')
+     expect(listItems.length).toBe(3)
+   })
+   ```
+
+4. 在项目中可能会有相关报错, 建议升级依赖版本
+
+   ```json
+   "jest": "^29.6.3",
+   "jest-environment-jsdom": "^29.6.3",
+   ```
+
+5. 我们可以在`tests`文件夹下，模拟接口数据
+
+   ```javascript
+   // /jest-vue/tests/__mocks__/axios.js
+   export default {
+     get: (url) => {
+       return new Promise((resolve) => {
+         resolve({
+           success: true,
+           data: [
+             { status: 'div', value: '孙悟空' },
+             { status: 'div', value: '猪八戒' },
+             { status: 'div', value: '沙僧' },
+           ],
+         })
+       })
+     },
+   }
+   ```
+
+6. 再次运行`npm run test`后，就会提示测试通过。
+
+7. 注意：如果页面中有定时器 setTimeout, 可以利用之前学过的 `jest.useFakeTimers()`等相关 API，就可以实现进行定时器加速。
+
 ## 04：路由页面的代码组织
