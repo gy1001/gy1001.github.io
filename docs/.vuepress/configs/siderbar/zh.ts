@@ -704,6 +704,15 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/column/web-layout/index-27.md',
           ],
         },
+        {
+          text: '前端高手进阶',
+          collapsible: true,
+          children: [
+            '/zh/other/column/front-master-advanced/index-00.md',
+            '/zh/other/column/front-master-advanced/index-01.md',
+            '/zh/other/column/front-master-advanced/index-02.md',
+          ],
+        },
       ],
     },
   ],
