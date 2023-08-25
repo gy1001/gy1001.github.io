@@ -716,6 +716,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/column/front-master-advanced/index-05.md',
             '/zh/other/column/front-master-advanced/index-06.md',
             '/zh/other/column/front-master-advanced/index-07.md',
+            '/zh/other/column/front-master-advanced/index-08.md',
           ],
         },
       ],
