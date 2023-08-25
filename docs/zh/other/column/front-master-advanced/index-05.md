@@ -4,7 +4,7 @@
 
 接下来我们先解决 CSS 原生语法未能很好实现的模块化和作用域的问题，然后再对代码结构进行优化，提升代码的复用率。
 
-## 如何组织样式文件
+### 如何组织样式文件
 
 尽管 CSS 提供了 import 命令支持文件引用，但由于其存在一些问题（比如影响浏览器并行下载、加载顺序错乱等）导致使用率极低。更常见的做法是通过预处理器或编译工具插件来引入样式文件，因此本课时的讨论将不局限于以 .css 为后缀的样式文件。
 
@@ -14,13 +14,13 @@
 
 下面我们来看看热门的开源项目都是怎么来管理样式文件的。
 
-### 开源项目中的样式文件
+#### 开源项目中的样式文件
 
 我们先来看看著名的 UI 相关的开源项目是怎么管理样式文件的。
 
 以 [Bootstrap 4.4](https://github.com/twbs/bootstrap) 为例，下图是项目样式代码结构，可以看出项目使用的是 Sass 预处理器。
 
-![image (9).png](./assets/Ciqc1F7Lg2KAL_EGAABIIQsIyiQ803.png)
+![image (9).png](https://s0.lgstatic.com/i/image/M00/11/12/Ciqc1F7Lg2KAL_EGAABIIQsIyiQ803.png)
 
 该目录包括了 5 个目录、组件样式文件和一些全局样式。再来分析下目录及内容：
 
@@ -34,11 +34,11 @@
 
 我们再来看一个更符合大多数情况的开源项目 [ant-design 4.2](https://github.com/ant-design/ant-design/)，该项目采用 Less 预处理器，主要源码放在 /components 目录下：
 
-![image (10).png](./assets/CgqCHl7Lg2qAA71pAAA-LE1MpA8895.png)
+![image (10).png](https://s0.lgstatic.com/i/image/M00/11/1D/CgqCHl7Lg2qAA71pAAA-LE1MpA8895.png)
 
 从目录名称上不难猜测，各个组件代码通过文件夹区分，点击其中的 alert 文件夹查看也确实如此，组件相关的代码、测试代码、demo 示例、样式文件、描述文档都在里面。
 
-![image (11).png](./assets/Ciqc1F7Lg3KACdLvAAAhZ58r7rs506.png)
+![image (11).png](https://s0.lgstatic.com/i/image/M00/11/12/Ciqc1F7Lg3KACdLvAAAhZ58r7rs506.png)
 
 至于全局样式和公共样式则在 /components/style 目录下：
 
@@ -55,11 +55,11 @@
 
 最后来看看依赖 Vue.js 实现的热门 UI 库 [element 2.13.1](https://github.com/ElemeFE/element) 的目录结构。项目根路径下的 packages 目录按组件划分目录来存放其源码，但和 ant-design 不同的是，组件样式文件并没有和组件代码放在一起。下图是 /packages 目录下的部分内容。
 
-![image (13).png](./assets/CgqCHl7Lg4GALTUpAAA1dlUb1Vo822.png)
+![image (13).png](https://s0.lgstatic.com/i/image/M00/11/1D/CgqCHl7Lg4GALTUpAAA1dlUb1Vo822.png)
 
 element 将样式文件统一放入了 /packages/theme-chalk 目录下，目录部分内容如下图所示：
 
-![image (14).png](./assets/Ciqc1F7Lg4iAEEjuAABKZlcUAZw345.png)
+![image (14).png](https://s0.lgstatic.com/i/image/M00/11/12/Ciqc1F7Lg4iAEEjuAABKZlcUAZw345.png)
 
 其中包含 4 个目录：
 
@@ -70,7 +70,7 @@ element 将样式文件统一放入了 /packages/theme-chalk 目录下，目录�
 
 和 antd 有同样的问题，把样式当成“组件”看待，组件同级目录设立了 theme-chalk 目录存放样式文件。theme-chalk 目录下的全局样式 reset.scss 与组件样式同级，这也有些欠妥。这种为了将样式打包成模块，在独立项目中直接嵌入另一个独立项目（可以简单理解为一个项目不要有多个 package.json 文件）并不推荐，更符合 Git 使用规范的做法，即是以[子模块](https://git-scm.com/book/zh/v2/Git-工具-子模块)的方式引用进项目。 而且将组件样式和源码分离这种方式开发的时候也不方便，经常需要跨多层目录查找和修改样式。
 
-## 样式文件管理模式
+#### 样式文件管理模式
 
 除了开源项目之外，[Sass Guidelines](https://sass-guidelin.es/#architecture) 曾经提出过一个用来划分样式文件目录结构的 7-1 模式也很有参考意义。这种模式建议将目录结构划分为 7 个目录和 1 个文件，这 1 个文件是样式的入口文件，它会将项目所用到的所有样式都引入进来，一般命名为 main.scss。
 
@@ -86,7 +86,7 @@ element 将样式文件统一放入了 /packages/theme-chalk 目录下，目录�
 
 [点击这里获取示例项目地址](https://github.com/HugoGiraudel/sass-boilerplate)，截图如下图所示：
 
-![image (15).png](./assets/Ciqc1F7Lg5CAFS5jAAB-ZPy2xPc135.png)
+![image (15).png](https://s0.lgstatic.com/i/image/M00/11/12/Ciqc1F7Lg5CAFS5jAAB-ZPy2xPc135.png)
 
 由于这个划分模式是专门针对使用 Sass 项目提出的，从样式文件名称看出还留有 jQuery 时代的影子，为了更加符合单页应用的项目结构，我们可以稍作优化。
 
@@ -133,11 +133,11 @@ src/
 
 这只是推荐的一种目录结构，具体使用可以根据实际情况进行调整。比如我在项目的 src 目录下创建了模块目录，按照模块来拆分路由以及页面、组件，所以每个模块目录下都会有 pages/ 目录和 components/ 目录。
 
-## 如何避免样式冲突
+### 如何避免样式冲突
 
 由于 CSS 的规则是全局的，任何一个样式规则，都对整个页面有效，所以如果不对选择器的命名加以管控会很容易产生冲突。
 
-### 手动命名
+#### 手动命名
 
 最简单有效的命名管理方式就是制定一些命名规则，比如 [OOCSS](http://oocss.org/)、[BEM](http://getbem.com/)、[AMCSS](https://amcss.github.io/)，其中推荐比较常用的 BEM。
 
@@ -147,11 +147,11 @@ BEM 是 Block、Element、Modifier 三个单词的缩写，Block 代表独立的
 
 下图是官方给出的示例代码：
 
-![image (16).png](./assets/CgqCHl7Lg5qAeYYDAAA8eZ2PEKM297.png)
+![image (16).png](https://s0.lgstatic.com/i/image/M00/11/1E/CgqCHl7Lg5qAeYYDAAA8eZ2PEKM297.png)
 
 从命名可以看到 Element 和 Modifier 是可选的，各个单词通过双横线（也可以用双下划线）连接（双横线虽然能和单词的连字符进行区分，但确实有些冗余，可以考虑直接用下划线代替）。BEM 的命名方式具有语义，很容易理解，非常适用于组件样式类。
 
-### 工具命名
+#### 工具命名
 
 通过命名规范来避免冲突的方式固然是好的，但这种规范约束也不能绝对保证样式名的唯一性，而且也没有有效的校验工具来保证命名正确无冲突。所以，聪明的开发者想到了通过插件将原命名转化成不重复的随机命名，从根本上避免命名冲突。比较著名的解决方案就是 CSS Modules。
 
@@ -185,7 +185,7 @@ element.innerHTML = '<div class="' + styles.className + '">'
 
 但这种命名方式带来了一个问题，那就是如果想在引用组件的同时，覆盖它的样式会变得困难，因为编译后的样式名是随机。例如，在上面的示例代码中，如果想在另一个组件中覆盖 className 样式就很困难，而在手动命名情况下则可以直接重新定义 className 样式进行覆盖。
 
-## 如何高效复用样式
+### 如何高效复用样式
 
 如果你有一些项目开发经历，一定发现了某些样式会经常被重复使用，比如：
 
@@ -210,7 +210,7 @@ element.innerHTML = '<div class="' + styles.className + '">'
 
 那会不会出现重复定义呢？这个问题很好解决，按照字母序升序定义样式类就可以了。
 
-## 延伸：值得关注的 CSS in JavaScript
+### 延伸：值得关注的 CSS in JavaScript
 
 我们都知道 Web 标准提倡结构、样式、行为分离（分别对应 HTML、CSS、JavaScript 三种语言），但 React.js 的一出现就开始颠覆了这个原则。
 
@@ -252,64 +252,81 @@ render(
 
 第二段是编译后生成的：
 
-```html
+```xml
 <!--HTML 代码-->
 <div class="sc-fzXfNJ ciXJHl">
   <button class="sc-fzXfNl hvaMnE">Normal Button</button>
   <button class="sc-fzXfNl kiyAbM">Primary Button</button>
 </div>
-<style>
-  /*CSS 代码*/
-  .ciXJHl {
-    text-align: center;
-  }
-  .hvaMnE {
-    color: palevioletred;
-    background: transparent;
-    border-radius: 3px;
-    border-width: 2px;
-    border-style: solid;
-    border-color: palevioletred;
-    border-image: initial;
-    margin: 0.5em 1em;
-    padding: 0.25em 1em;
-  }
-  .kiyAbM {
-    color: white;
-    border-radius: 3px;
-    border-width: 2px;
-    border-style: solid;
-    border-color: palevioletred;
-    border-image: initial;
-    margin: 0.5em 1em;
-    padding: 0.25em 1em;
-    background: palevioletred;
-  }
-</style>
+/*CSS 代码*/
+.ciXJHl {
+  text-align: center;
+}
+.hvaMnE {
+  color: palevioletred;
+  background: transparent;
+  border-radius: 3px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: palevioletred;
+  border-image: initial;
+  margin: 0.5em 1em;
+  padding: 0.25em 1em;
+}
+.kiyAbM {
+  color: white;
+  border-radius: 3px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: palevioletred;
+  border-image: initial;
+  margin: 0.5em 1em;
+  padding: 0.25em 1em;
+  background: palevioletred;
+}
 ```
 
 对比以上两段代码很容易发现，在编译后的样式代码中有很多重复的样式规则。这并不友好，不仅增加了编写样式的复杂度和代码量，连编译后也增加了冗余代码。
 
 styled-components 只是 CSS in JavaScript 的一种解决方案，其他解决方案还有很多，[有兴趣的](https://github.com/MicheleBertoli/css-in-js)[同学](https://github.com/MicheleBertoli/css-in-js)[可以点击这里查阅 GitHub 上的资料学习](https://github.com/MicheleBertoli/css-in-js)，上面收录了现有的 CSS in JavaScript 解决方案。
 
-## 总结
+### 总结
 
 对于样式文件的管理，推荐使用 7-1 模式简化后的目录结构，包括 pages/、components/、abastracts/、base/ 4 个目录。对于样式命名，可以采用 BEM 来命名组件、面向属性的方式来命名公共样式。
 
 最后留一道思考题：说说你在项目中是如何管理样式代码的？
 
-## 精选评论
+---
 
-Mr.W： > 在评价 element 的样式文件管理时说 element 的样式文件与组件文件分离这种方式开发的时候也不方便，经常需要跨多层目录查找和修改样式。但是，根据 Sass Guidelines 优化后得到的样式文件组织结构不也是与组件文件分离的吗？也会造成开发不方便的问题吧。期望能够得到回复与解答。
+### 精选评论
 
-讲师回复：> 是样式与组件分离，同一个组件的样式与模板逻辑都会放在一起、不会出现跨目录层级查找的情况。 你说的开发方便是指“All in js“吗？ 这种编写方式比较适用于小组件，一般情况下还是推荐按照 W3C 的规范，将组件的模板、逻辑和样式都分离开来。 一方面降低代码耦合度，另一方面也方便复用。
+##### Mr.W：
 
-鑫：> 我个人是使用 boostrap 的 css 库，直接才用多 class 并行 比如：最后一个放的是当前 div 的私有样式，个人认为，用这样写很快，也好维护，写 div 就把涉及重排的样式都写上，最后剩下的定制 css 就很少了 。缺点是很 class 很长，丑
+> 在评价 element 的样式文件管理时说 element 的样式文件与组件文件分离这种方式开发的时候也不方便，经常需要跨多层目录查找和修改样式。但是，根据 Sass Guidelines 优化后得到的样式文件组织结构不也是与组件文件分离的吗？也会造成开发不方便的问题吧。期望能够得到回复与解答。
 
-Warn：> 个人项目中样式还是偏向 BEM 命名多一些
+###### &nbsp;&nbsp;&nbsp; 讲师回复：
 
-威：> 公共样式应放在哪个目录？
+> &nbsp;&nbsp;&nbsp; 是样式与组件分离，同一个组件的样式与模板逻辑都会放在一起、不会出现跨目录层级查找的情况。
+> 你说的开发方便是指“All in js“吗？
+> 这种编写方式比较适用于小组件，一般情况下还是推荐按照  W3C  的规范，将组件的模板、逻辑和样式都分离开来。
+> 一方面降低代码耦合度，另一方面也方便复用。
 
-讲师回复： > 全局的公共样式可以放在 src/base 目录哦~
+##### \*\*鑫：
 
-其：> 打卡！
+> 我个人是使用 boostrap 的 css 库，直接才用多 class 并行 比如：最后一个放的是当前 div 的私有样式，个人认为，用这样写很快，也好维护，写 div 就把涉及重排的样式都写上，最后剩下的定制 css 就很少了 。缺点是很 class 很长，丑
+
+##### Warn：
+
+> 个人项目中样式还是偏向 BEM 命名多一些
+
+##### \*\*威：
+
+> 公共样式应放在哪个目录？
+
+###### &nbsp;&nbsp;&nbsp; 讲师回复：
+
+> &nbsp;&nbsp;&nbsp; 全局的公共样式可以放在 src/base 目录哦~
+
+##### \*\*其：
+
+> 打卡！
