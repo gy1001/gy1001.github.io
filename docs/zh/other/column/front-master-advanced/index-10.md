@@ -26,13 +26,18 @@ ES6 模块有两个重要特性一定要掌握，一个是**值引用**，另一
 // a.js
 export var a = ''
 setTimeout(() => (a = 'a'), 500)
+
 // b.js
 import { a } from './a.js'
 console.log(a) // ''
 setTimeout(() => console.log(a), 1000) // 'a'
 ```
 
-ES6 模块对于引用声明有严格的要求，首先必须在文件的首部，不允许使用变量或表达式，不允许被嵌入到其他语句中。所以下面 3 种引用模块方式都会报错。
+ES6 模块对于引用声明有严格的要求，
+* 首先必须在文件的首部，
+* 不允许使用变量或表达式，
+* 不允许被嵌入到其他语句中
+所以下面 3 种引用模块方式都会报错。
 
 ```javascript
 // 必须首部声明
@@ -50,9 +55,13 @@ if (moduleName === 'app') {
 
 定义这些严格的要求可不仅仅是为了代码的可读性，更重要的是可以对代码进行静态分析。
 
-**静态分析**是指不需要执行代码，只从字面量上对代码进行分析。例如，在上面的错误代码中，有一段代码需要通过判断变量 moduleName 的值来加载对应的模块，这就意味着需要执行代码之后才能判断加载哪个模块，而 ES6 模块则不需要。这样做的好处是方便优化代码体积，比如通过 Tree-shaking 操作消除模块中没有被引用或者执行结果不会被用到的无用代码。
+**静态分析**是指不需要执行代码，只从字面量上对代码进行分析。例如，在上面的错误代码中，有一段代码需要通过判断变量 moduleName 的值来加载对应的模块，这就意味着需要执行代码之后才能判断加载哪个模块，而 ES6 模块则不需要。这样做的好处是方便优化代码体积，比如通过 `Tree-shaking` 操作消除模块中没有被引用或者执行结果不会被用到的无用代码。
 
 ## 延伸 1：import 的动态模块提案
+
+[阮一峰：import()](https://es6.ruanyifeng.com/#docs/module#import)
+
+[前端模块化——彻底搞懂AMD、CMD、UMD、ESM和CommonJS](https://zhuanlan.zhihu.com/p/467991875)
 
 虽然 ES6 模块设计在 90% 情况下是很有用的，特别是配合一些工具使用，但是却无法应付某些特殊场景。比如，出于性能原因对代码进行动态加载，所以在 ES2020 规范提案中，希望通过 [import()](https://github.com/tc39/proposal-dynamic-import) 函数来支持动态引入模块。
 
@@ -76,24 +85,24 @@ import() 函数违反了上面静态声明的所有要求，并且提供了其�
 
 ## CommonJS
 
-CommonJS 最初名为 Server.js，是为浏览器之外的 JavaScript 运行环境提供的模块规范，最终被 Node.js 采用。
+`CommonJS` 最初名为 `Server.js`，是为浏览器之外的 `JavaScript` 运行环境提供的模块规范，最终被 Node.js 采用。
 
 ### 定义和引用
 
-CommonJS 规定每个文件就是一个模块，有独立的作用域。每个模块内部，都有一个 module 对象，代表当前模块。通过它来导出 API，它有以下属性：
+`CommonJS` 规定每个文件就是一个模块，有独立的作用域。每个模块内部，都有一个 `module` 对象，代表当前模块。通过它来导出 API，它有以下属性：
 
-- id 模块的识别符，通常是带有绝对路径的模块文件名；
-- filename 模块的文件名，带有绝对路径；
-- loaded 返回一个布尔值，表示模块是否已经完成加载；
-- parent 返回一个对象，表示调用该模块的模块；
-- children 返回一个数组，表示该模块要用到的其他模块；
-- exports 表示模块对外输出的值。
+- `id` 模块的识别符，通常是带有绝对路径的模块文件名；
+- `filename` 模块的文件名，带有绝对路径；
+- `loaded` 返回一个布尔值，表示模块是否已经完成加载；
+- `parent` 返回一个对象，表示调用该模块的模块；
+- `children` 返回一个数组，表示该模块要用到的其他模块；
+- `exports` 表示模块对外输出的值。
 
-引用模块则需要通过 require 函数，它的基本功能是，读入并执行一个 JavaScript 文件，然后返回该模块的 exports 对象。
+引用模块则需要通过 `require` 函数，它的基本功能是，读入并执行一个 `JavaScript` 文件，然后返回该模块的 `exports` 对象。
 
 ### 特性
 
-CommonJS 特性和 ES6 恰恰相反，它采用的是**值拷贝**和**动态声明**。值拷贝和值引用相反，一旦输出一个值，模块内部的变化就影响不到这个值了，可以简单地理解为**变量浅拷贝**。
+`CommonJS` 特性和 ES6 恰恰相反，它采用的是**值拷贝**和**动态声明**。值拷贝和值引用相反，一旦输出一个值，模块内部的变化就影响不到这个值了，可以简单地理解为**变量浅拷贝**。
 
 仍然使用上面的例子，改写成 CommonJS 模块，在 Node.js 端运行，控制台会打印两个空字符串。
 
@@ -102,6 +111,7 @@ CommonJS 特性和 ES6 恰恰相反，它采用的是**值拷贝**和**动态声
 var a = '';
 setTimeout(() => a = 'a', 500);
 module.exports = a
+
 // b.js
 var a = require('./a.js')
 console.log(a) // ''
@@ -112,7 +122,7 @@ setTimeout(() => console.log(a), 1000) // ''
 
 ## AMD
 
-在 ES6 模块出现之前，AMD（Asynchronous Module Definition，异步模块定义）是一种很热门的浏览器模块化方案。
+在 ES6 模块出现之前，`AMD`（Asynchronous Module Definition，异步模块定义）是一种很热门的浏览器模块化方案。
 
 ### 定义和引用
 
@@ -122,11 +132,11 @@ AMD 规范只定义了一个全局函数 define，通过它就可以定义和引
 define(id?, dependencies?, factory);
 ```
 
-第 1 个参数 id 为模块的名称，该参数是可选的。如果没有提供该参数，模块的名字应该默认为模块加载器请求的指定脚本的名字；如果提供了该参数，模块名必须是“顶级”的和绝对的（不允许相对名字）。
+* 第 1 个参数 `id`:  为模块的名称，该参数是可选的。如果没有提供该参数，模块的名字应该默认为模块加载器请求的指定脚本的名字；如果提供了该参数，模块名必须是“顶级”的和绝对的（不允许相对名字）。
 
-第 2 个参数 dependencies 是个数组，它定义了所依赖的模块。依赖模块必须根据模块的工厂函数优先级执行，并且执行的结果应该按照依赖数组中的位置顺序以参数的形式传入（定义中模块的）工厂函数中。
+* 第 2 个参数 `dependencies`: 是个数组，它定义了所依赖的模块。依赖模块必须根据模块的工厂函数优先级执行，并且执行的结果应该按照依赖数组中的位置顺序以参数的形式传入（定义中模块的）工厂函数中。
 
-第 3 个参数 factory 为模块初始化要执行的函数或对象。如果是函数，那么该函数是单例模式，只会被执行一次；如果是对象，此对象应该为模块的输出值。
+* 第 3 个参数 `factory`: 为模块初始化要执行的函数或对象。如果是函数，那么该函数是单例模式，只会被执行一次；如果是对象，此对象应该为模块的输出值。
 
 下面是一个简单的例子，创建一个名为“alpha”的模块，依赖了 require、exports、beta 3 个模块，并导出了 verb 函数。
 
@@ -182,11 +192,11 @@ var requirejs, require, define;
 
 ## CMD
 
-CMD（Common Module Definition，通用模块定义）是基于浏览器环境制定的模块规范。
+`CMD`（Common Module Definition，通用模块定义）是基于浏览器环境制定的模块规范。
 
 ### 定义和引用
 
-CMD 定义模块也是通过一个全局函数 define 来实现的，但只有一个参数，该参数既可以是函数也可以是对象：
+`CMD` 定义模块也是通过一个全局函数 `define` 来实现的，但只有一个参数，该参数既可以是函数也可以是对象：
 
 ```javascript
 define(factory)
@@ -200,15 +210,15 @@ define(function (require, exports, module) {
 })
 ```
 
-第 1 个参数 require 是一个函数，通过调用它可以引用其他模块，也可以调用 require.async 函数来异步调用模块。
+* 第 1 个参数 `require` 是一个函数，通过调用它可以引用其他模块，也可以调用 require.async 函数来异步调用模块。
 
-第 2 个参数 exports 是一个对象，当定义模块的时候，需要通过向参数 exports 添加属性来导出模块 API。
+* 第 2 个参数 `exports` 是一个对象，当定义模块的时候，需要通过向参数 exports 添加属性来导出模块 API。
 
-第 3 个参数 module 是一个对象，它包含 3 个属性：
+* 第 3 个参数 `module` 是一个对象，它包含 3 个属性：
 
-- uri，模块完整的 URI 路径；
-- dependencies，模块的依赖；
-- exports，模块需要被导出的 API，作用同第二个参数 exports。
+  - `uri`，模块完整的 URI 路径；
+  - `dependencies`，模块的依赖；
+  - `exports`，模块需要被导出的 API，作用同第二个参数 exports。
 
 下面是一个简单的例子，定义了一个名为 increment 的模块，引用了 math 模块的 add 函数，经过封装后导出成 increment 函数。
 
@@ -294,6 +304,8 @@ var mod = (function(w){
 // index.js
 import { text, write } from './m'
 write(`<h1>${text} ${text2}</h1>`)
+
+
 // m.js
 const write = (content) => document.write(content)
 var text = 'hello'
@@ -341,7 +353,10 @@ function (modules) {
 
 那么这些 ES6 模块是怎么转化成函数的呢？
 
-从上面的代码我们可以看到，每个模块定义函数都会传入 3 个参数，其中参数 module 可以理解为当前模块的配置参数，包含模块 id 等信息。参数 **webpack_exports** 是一个对象，模块需要导出的 API 都可以添加到这个对象上；参数 **webpack_require** 是一个函数，负责引用依赖的模块。
+从上面的代码我们可以看到，每个模块定义函数都会传入 3 个参数，
+* 其中参数 module 可以理解为当前模块的配置参数，包含模块 id 等信息。
+* 参数 `__webpack_exports__` 是一个对象，模块需要导出的 API 都可以添加到这个对象上；
+* 参数 `__webpack_require__` 是一个函数，负责引用依赖的模块。
 
 ```javascript
 // index.js 中引入 m.js 模块
@@ -361,7 +376,7 @@ var text = 'hello'
 
 ## 总结
 
-本课时主要介绍了 JavaScript 模块化规范，包括原生规范 ES6 模块、Node.js 采用的 CommonJS，以及开源社区早期为浏览器提供的规范 AMD，具有 CommonJS 特性和 AMD 特性的 CMD，让 CommonJS 和 AMD 模块跨端运行的 UMD。希望你对模块系统有更全面地认识，从而加深对 JavaScript 的理解。
+本课时主要介绍了 `JavaScript 模块化`规范，包括原生规范 `ES6 模块`、`Node.js` 采用的 `CommonJS`，以及开源社区早期为浏览器提供的规范 AMD，具有 `CommonJS 特性`和 `AMD 特性`的 `CMD`，让 `CommonJS` 和 `AMD` 模块跨端运行的 `UMD`。希望你对模块系统有更全面地认识，从而加深对 `JavaScript` 的理解。
 
 最后留一道思考题：如果要实现一个支持动态加载的 import() 函数，该怎么做呢？
 
