@@ -2,11 +2,11 @@
 
 这一课时从编译过程和内存管理两个方面带你来探索 JavaScript 引擎的工作机制。
 
-### 编译过程
+## 编译过程
 
-在“加餐1：手写 CSS 预处理器”中提过编译器的基本工作流程，大体上包括 3 个步骤：解析（Parsing）、转换（Transformation）及代码生成（Code Generation），JavaScript 引擎与之相比大体上也遵循这个过程，可分为解析、解释和优化 3 个步骤。下面我们就以 V8 引擎为例进行讲解。
+在“加餐 1：手写 CSS 预处理器”中提过编译器的基本工作流程，大体上包括 3 个步骤：`解析（Parsing）`、`转换（Transformation）`及`代码生成（Code Generation）`，JavaScript 引擎与之相比大体上也遵循这个过程，可分为`解析`、`解释`和`优化` 3 个步骤。下面我们就以 V8 引擎为例进行讲解。
 
-#### 解析
+### 解析
 
 解析步骤又可以拆分成 2 个小步骤：
 
@@ -40,7 +40,7 @@ Punctuator())
 ![1.png](https://s0.lgstatic.com/i/image/M00/27/1E/Ciqc1F70ZQSAGf1cAAEehLtbbTk491.png)
 抽象语法树
 
-#### 解释
+### 解释
 
 在加餐 1 中，我们将 AST 转换成新的 AST，而 JavaScript 引擎是通过解释器 Ignition 将 AST 转换成字节码。字节码是对机器码的一个抽象描述，相对于机器码而言，它的代码量更小，从而可以减少内存消耗。
 
@@ -51,18 +51,18 @@ Punctuator())
 Parameter count 1
 Register count 6
 Frame size 48
- 9646 E> 0x376a94a60ea6 @    0 : a7                StackCheck 
+ 9646 E> 0x376a94a60ea6 @    0 : a7                StackCheck
          ......
          0x376a94a60ec9 @   35 : 26 f6             Star r5
  9683 E> 0x376a94a60ecb @   37 : 5a f9 02 f7 f6 06 CallProperty2 r2, <this>, r4, r5, [6]
-         0x376a94a60ed1 @   43 : 0d                LdaUndefined 
- 9729 S> 0x376a94a60ed2 @   44 : ab                Return 
+         0x376a94a60ed1 @   43 : 0d                LdaUndefined
+ 9729 S> 0x376a94a60ed2 @   44 : ab                Return
 Constant pool (size = 3)
 Handler Table (size = 0)
 Source Position Table (size = 24)
 ```
 
-#### 优化
+### 优化
 
 解释器在得到 AST 之后，会按需进行解释和执行，也就是说如果某个函数没有被调用，则不会去解释执行它。
 
@@ -75,11 +75,11 @@ Source Position Table (size = 24)
 ![3.png](https://s0.lgstatic.com/i/image/M00/27/29/CgqCHl70ZTqAR9m6AAEz8M57qjs116.png)
 JavaScript 编译过程
 
-### 内存管理
+## 内存管理
 
 JavaScript 引擎的内存空间分为**堆（Heap）和栈（Stack）**。堆和栈是两种不同的数据结构，堆是具有树结构的数组，栈也是数组，但是遵循“先进后出”规则。
 
-#### 栈
+### 栈
 
 栈是一个临时存储空间，主要存储局部变量和函数调用（对于全局表达式会创建匿名函数并调用）。
 
@@ -92,15 +92,15 @@ JavaScript 引擎的内存空间分为**堆（Heap）和栈（Stack）**。堆�
 - 调用函数 console.trace() 打印到控制台；
 - 利用浏览器开发者工具进行断点调试。
 
-#### 示例
+### 示例
 
 下面的代码是一个计算斐波那契数列的函数，分别通过调用 console.trace() 函数以及断点的方式得到了它的调用栈信息。
 
 ```javascript
 function fib(n) {
   if (n < 3) return 1
-  console.trace();
-  return fib(n-1) + fib(n-2)
+  console.trace()
+  return fib(n - 1) + fib(n - 2)
 }
 fib(4)
 ```
@@ -116,7 +116,7 @@ fib(4)
 下面是一个递归函数导致的栈溢出报错代码片段：
 
 ```javascript
-(function recursive() {
+;(function recursive() {
   recursive()
 })()
 ```
@@ -126,27 +126,27 @@ fib(4)
 
 所以我们在编写递归函数的时候一定要注意函数执行边界，也就是退出递归的条件。
 
-### 延申：尾调用
+## 延申：尾调用
 
 递归调用由于调用次数较多，同时每层函数调用都需要保存栈帧，所以通常是比较消耗内存的操作。对递归的优化一般有两个思路，**减少递归次数和使用尾调用**。
 
 尾调用（Tail Call）是指**函数的最后一步返回另一个函数的调用**。例如下面的代码中，函数 a() 返回了函数 b() 的调用。
 
 ```javascript
-function a(x){
-  return b(x);
+function a(x) {
+  return b(x)
 }
 ```
 
 像下面的示例中，返回缓存的函数调用结果，或者返回多个函数调用都不属于“尾调用”。
 
 ```javascript
-function a(x){
-  let c = b(x);
-  return c;
+function a(x) {
+  let c = b(x)
+  return c
 }
-function a(x){
-  return b(x) + c(x);
+function a(x) {
+  return b(x) + c(x)
 }
 function a() {
   b(x)
@@ -160,7 +160,7 @@ function a() {
 ```javascript
 function fib(n) {
   if (n < 3) return 1
-  return fib(n-1) + fib(n-2)
+  return fib(n - 1) + fib(n - 2)
 }
 function fibTail(n, a = 0, b = 1) {
   if (n === 0) return a
@@ -170,11 +170,11 @@ function fibTail(n, a = 0, b = 1) {
 
 但是由于尾调用也存在一些隐患，比如错误信息丢失、不方便调试，所以浏览器以及 Node.js 环境默认并没有支持这种优化方式。
 
-#### 堆
+### 堆
 
 堆空间存储的数据比较复杂，大致可以划分为下面 5 个区域：代码区（Code Space）、Map 区(Map Space)、大对象区（Large Object Space）、新生代（New Space）、老生代（Old Space）。这一课时重点讨论新生代和老生代的内存回收算法。
 
-#### 新生代
+### 新生代
 
 大多数的对象最开始都会被分配在新生代，该存储空间相对较小，只有几十 MB，分为两个空间：from 空间和 to 空间。
 
@@ -185,7 +185,7 @@ function fibTail(n, a = 0, b = 1) {
 ![1.png](https://s0.lgstatic.com/i/image6/M00/25/15/Cgp9HWBZVYuADfmqAACqB-v2Dq0515.png)
 Scanvage 回收过程
 
-#### 老生代
+### 老生代
 
 新生代中多次回收仍然存活的对象会被转移到空间较大的老生代。因为老生代空间较大，如果回收方式仍然采用 Scanvage 算法来频繁复制对象，那性能开销就太大了。
 
@@ -203,7 +203,7 @@ Scanvage 回收过程
 ![6.png](https://s0.lgstatic.com/i/image/M00/27/21/Ciqc1F70cS2AU5w_AABOiU6R39g235.png)
 标记整理回收过程
 
-### 总结
+## 总结
 
 本课时的内容偏于底层和抽象，重点在于理解和记忆。
 
@@ -215,40 +215,40 @@ Scanvage 回收过程
 
 ---
 
-### 精选评论
+## 精选评论
 
-##### \*\*涛：
+#### \*\*涛：
 
 > 感觉越往底层分析越明白算法的重要性
 
-##### \*\*玲：
+#### \*\*玲：
 
 > 老师讲得很好
 
-##### \*\*童：
+#### \*\*童：
 
 > 看完后不太懂，这到底是 js 的编译过程还是执行机制？解析的这一步是 v8 引擎做的是吗？v8 引擎不是解释器吗，但是后面又有其他解释器…求解惑谢谢
 
-###### &nbsp;&nbsp;&nbsp; 讲师回复：
+#### 讲师回复：
 
-> &nbsp;&nbsp;&nbsp; 以 V8 引擎为例讲解的 JavaScript 编译过程，V8 可以编译和执行 JavaScript 代码。
+> 以 V8 引擎为例讲解的 JavaScript 编译过程，V8 可以编译和执行 JavaScript 代码。
 
-##### ezra.xu：
+#### ezra.xu：
 
 > 引用计数，标记清除，标记整理，分代回收...
 
-##### \*\*超：
+#### \*\*超：
 
 > 老师，关于获取摄像头以及麦克风，桌面这些是在哪个进程中实现的呢 🙋
 
-###### &nbsp;&nbsp;&nbsp; 讲师回复：
+#### 讲师回复：
 
-> &nbsp;&nbsp;&nbsp; 在启用摄像头/麦克风的时候，浏览器会启动   Video Capture  进程。
+> 在启用摄像头/麦克风的时候，浏览器会启动   Video Capture  进程。
 
-##### \*\*随行：
+#### \*\*随行：
 
 > 所以 v8 的垃圾回收方式跟 Java 中的是一样的么？
 
-###### &nbsp;&nbsp;&nbsp; 讲师回复：
+#### 讲师回复：
 
-> &nbsp;&nbsp;&nbsp; 大体上是相同的
+> 大体上是相同的
