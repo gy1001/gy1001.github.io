@@ -12,7 +12,7 @@ DOM 事件数量非常多，即使分类也有十多种，比如键盘事件、�
 
 试想这样的一个场景，有一个搜索输入框，为了提升用户体验，希望在用户输入后可以立即展现搜索结果，而不是每次输入完后还要点击搜索按钮。最基本的实现方式应该很容易想到，那就是绑定 input 元素的键盘事件，然后在监听函数中发送 AJAX 请求。伪代码如下：
 
-```java
+```javascript
 const ipt = document.querySelector('input')
 ipt.addEventListener('input', e => {
   search(e.target.value).then(resp => {
@@ -33,11 +33,11 @@ ipt.addEventListener('input', e => {
 
 而实际上，只有最后一次搜索结果是用户想要的，前面进行了 4 次无效查询，浪费了网络带宽和服务器资源。
 
-所以对于这类连续触发的事件，需要添加一个**“防抖”功能**，为函数的执行设置一个合理的时间间隔，避免事件在时间间隔内频繁触发，同时又保证用户输入后能即时看到搜索结果。
+所以对于这类连续触发的事件，需要添加一个**防抖功能**，为函数的执行设置一个合理的时间间隔，避免事件在时间间隔内频繁触发，同时又保证用户输入后能即时看到搜索结果。
 
 要实现这样一个功能我们很容易想到使用 setTimeout() 函数来让函数延迟执行。就像下面的伪代码，当每次调用函数时，先判断 timeout 实例是否存在，如果存在则销毁，然后创建一个新的定时器。
 
-```java
+```javascript
 // 代码1
 const ipt = document.querySelector('input')
 let timeout = null
@@ -126,7 +126,7 @@ ipt.addEventListener('input', debounce(e => {
 
 这个功能的实现思路比较简单，滚动前先记录大纲中各个章节的垂直距离，然后监听 scroll 事件的滚动距离，根据距离的比较来判断需要高亮的章节。伪代码如下：
 
-```java
+```javascript
 // 监听scroll事件
 wrap.addEventListener('scroll', e => {
   let highlightId = ''
@@ -246,7 +246,7 @@ const throttle = (func, wait = 0, execFirstCall) => {
 
 ![1.png](https://s0.lgstatic.com/i/image/M00/0C/D6/Ciqc1F7DSJ6AEL__AAFZ8Y41LLM325.png)
 
-例如，在下面的代码中，虽然我们第二次进行事件监听时设置为捕获阶段，但点击事件时仍会按照监听顺序进行执行。
+例如，在下面的代码中，虽然我们第二次进行事件监听时设置为捕获阶段，但点击事件时仍会按照监听顺序进行执行(**存疑**，原文如此写:按照顺序执行，但是实际在控制台是 捕获先，冒泡后)。
 
 ```html
 <body>
@@ -256,16 +256,14 @@ const throttle = (func, wait = 0, execFirstCall) => {
   document.querySelector('button').addEventListener('click', function () {
     console.log('bubble')
   })
-  document.querySelector('button').addEventListener(
-    'click',
-    function () {
+  document.querySelector('button').addEventListener('click', function () {
       console.log('capture')
     },
     true,
   )
   // 执行结果
-  // buble
   // capture
+  // bubble
 </script>
 ```
 
@@ -333,7 +331,7 @@ document.querySelector('input').addEventListener('click', function(e) {
 
 ###### &nbsp;&nbsp;&nbsp; 讲师回复：
 
-> &nbsp;&nbsp;&nbsp; 区别在于返回值，function 形式不能获取返回值，Promise 形式可以处理返回值。实例可以看这个示例代码：https://jsbin.com/vasanag/1/edit?js,console,output
+> &nbsp;&nbsp;&nbsp; 区别在于返回值，function 形式不能获取返回值，Promise 形式可以处理返回值。实例可以看这个示例代码：[https://jsbin.com/vasanag/1/edit?js,console,output](https://jsbin.com/vasanag/1/edit?js,console,output)
 
 ##### \*\*池：
 
@@ -345,8 +343,12 @@ document.querySelector('input').addEventListener('click', function(e) {
 
 ##### \*\*国：
 
-> 老师请问 函数也可以给自己加属性 吗"> debounced.cancel = cancel
+> 老师请问 函数也可以给自己加属性 吗"
+> 
+> debounced.cancel = cancel
+> 
 > debounced.flush = flush
+> 
 > 看您是这么写的
 
 ###### &nbsp;&nbsp;&nbsp; 讲师回复：
@@ -360,9 +362,19 @@ document.querySelector('input').addEventListener('click', function(e) {
 ###### &nbsp;&nbsp;&nbsp; 讲师回复：
 
 > &nbsp;&nbsp;&nbsp; 可以修改 this 指向调用环境，避免指向 window，可以用下面的测试代码分别试试两种方式。
-> function fn (b) {console.log(this===window)}
-> var b= {d: debounce(fn, 1000)}
-> b.d()
+> 
+```javascript
+	function fn (b) {
+		console.log(this===window)	
+	}
+  
+	var b= {	
+		d: debounce(fn, 1000) 
+	}
+  
+	b.d()
+```             
+
 
 ##### \*\*6044：
 

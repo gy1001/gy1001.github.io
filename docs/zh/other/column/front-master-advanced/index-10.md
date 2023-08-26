@@ -2,11 +2,11 @@
 
 作为前端工程师的你，或许早已习惯了在编写浏览器组件时使用 import 和 from 来管理代码模块，在编写 Node.js 服务时通过 require 和 module.exports 来复用代码。但 JavaScript 模块化之路充满了坎坷。这一课时就带你由近及远，看看 JavaScript 模块发展史上那些著名的模块规范与实现。
 
-### ES6 模块
+## ES6 模块
 
 目前最主流的模块化方案应该是 ECMAScript 2015 提出的模块化规范（也称“**ES6 模块**”），这个规范同时适用于 JavaScript 的前后端环境。
 
-#### 定义和引用
+### 定义和引用
 
 由于目前大多数项目都使用了 ES6 模块规范，大家对用法应该比较熟悉，这里就不多介绍了，只补充 3 个小知识：
 
@@ -14,7 +14,7 @@
 - 虽然大部分主流浏览器支持 ES6 模块，但是和引入普通 JS 的方式略有不同，需要在对应 script 标签中将属性 type 值设置为“module”才能被正确地解析为 ES6 模块；
 - 在 Node.js 下使用 ES6 模块则需要将文件名后缀改为“.mjs”，用来和 Node.js 默认使用的 CommonJS 规范模块作区分。
 
-#### 特性
+### 特性
 
 ES6 模块有两个重要特性一定要掌握，一个是**值引用**，另一个是**静态声明**。
 
@@ -52,7 +52,7 @@ if (moduleName === 'app') {
 
 **静态分析**是指不需要执行代码，只从字面量上对代码进行分析。例如，在上面的错误代码中，有一段代码需要通过判断变量 moduleName 的值来加载对应的模块，这就意味着需要执行代码之后才能判断加载哪个模块，而 ES6 模块则不需要。这样做的好处是方便优化代码体积，比如通过 Tree-shaking 操作消除模块中没有被引用或者执行结果不会被用到的无用代码。
 
-### 延伸 1：import 的动态模块提案
+## 延伸 1：import 的动态模块提案
 
 虽然 ES6 模块设计在 90% 情况下是很有用的，特别是配合一些工具使用，但是却无法应付某些特殊场景。比如，出于性能原因对代码进行动态加载，所以在 ES2020 规范提案中，希望通过 [import()](https://github.com/tc39/proposal-dynamic-import) 函数来支持动态引入模块。
 
@@ -74,11 +74,11 @@ import() 函数违反了上面静态声明的所有要求，并且提供了其�
 - 违反变量或表达式要求，则意味着可以根据参数**动态加载**模块。
 - 违反嵌入语句逻辑规则，可想象空间更大，比如可以通过 Promise.race 方式同时加载多个模块，选择加载速度最优模块来使用，从而提升性能。
 
-### CommonJS
+## CommonJS
 
 CommonJS 最初名为 Server.js，是为浏览器之外的 JavaScript 运行环境提供的模块规范，最终被 Node.js 采用。
 
-#### 定义和引用
+### 定义和引用
 
 CommonJS 规定每个文件就是一个模块，有独立的作用域。每个模块内部，都有一个 module 对象，代表当前模块。通过它来导出 API，它有以下属性：
 
@@ -91,13 +91,13 @@ CommonJS 规定每个文件就是一个模块，有独立的作用域。每个�
 
 引用模块则需要通过 require 函数，它的基本功能是，读入并执行一个 JavaScript 文件，然后返回该模块的 exports 对象。
 
-#### 特性
+### 特性
 
 CommonJS 特性和 ES6 恰恰相反，它采用的是**值拷贝**和**动态声明**。值拷贝和值引用相反，一旦输出一个值，模块内部的变化就影响不到这个值了，可以简单地理解为**变量浅拷贝**。
 
 仍然使用上面的例子，改写成 CommonJS 模块，在 Node.js 端运行，控制台会打印两个空字符串。
 
-```java
+```javascript
 // a.js
 var a = '';
 setTimeout(() => a = 'a', 500);
@@ -110,11 +110,11 @@ setTimeout(() => console.log(a), 1000) // ''
 
 动态声明就很好理解了，就是消除了静态声明的限制，可以“自由”地在表达式语句中引用模块。
 
-### AMD
+## AMD
 
 在 ES6 模块出现之前，AMD（Asynchronous Module Definition，异步模块定义）是一种很热门的浏览器模块化方案。
 
-#### 定义和引用
+### 定义和引用
 
 AMD 规范只定义了一个全局函数 define，通过它就可以定义和引用模块，它有 3 个参数：
 
@@ -134,7 +134,7 @@ define(id?, dependencies?, factory);
 define('alpha', ['require', 'exports', 'beta'], function (
   require,
   exports,
-  beta,
+  beta
 ) {
   exports.verb = function () {
     return beta.verb()
@@ -142,7 +142,7 @@ define('alpha', ['require', 'exports', 'beta'], function (
 })
 ```
 
-#### 特性
+### 特性
 
 它的重要特性就是**异步加载**。所谓异步加载，就是指同时并发加载所依赖的模块，当所有依赖模块都加载完成之后，再执行当前模块的回调函数。这种加载方式和浏览器环境的性能需求刚好吻合。
 
@@ -151,22 +151,22 @@ define('alpha', ['require', 'exports', 'beta'], function (
 ```javascript
 var requirejs, require, define;
 (function (global, setTimeout) {
-  ...
+  // ...
   define = function (name, deps, callback) {
-    ...
+    // ...
     if (context) {
       context.defQueue.push([name, deps, callback]);
       context.defQueueMap[name] = true;
     } else {
       globalDefQueue.push([name, deps, callback]);
     }
-  };
-  ...
+  }
+  // ...
   req.load = function (context, moduleName, url) {
-    ...
+    // ...
     if (isBrowser) {
       node = req.createNode(config, moduleName, url);
-      ...
+      // ...
       if (baseElement) {
         head.insertBefore(node, baseElement)
       } else {
@@ -175,16 +175,16 @@ var requirejs, require, define;
       currentlyAddingScript = null;
       return node
     }
-  };
-  ...
+  }
+  // ...
 }(this, (typeof setTimeout === 'undefined' ? undefined : setTimeout)));
 ```
 
-### CMD
+## CMD
 
 CMD（Common Module Definition，通用模块定义）是基于浏览器环境制定的模块规范。
 
-#### 定义和引用
+### 定义和引用
 
 CMD 定义模块也是通过一个全局函数 define 来实现的，但只有一个参数，该参数既可以是函数也可以是对象：
 
@@ -222,13 +222,13 @@ define(function (require, exports, module) {
 })
 ```
 
-#### 特性
+### 特性
 
 CMD 最大的特点就是**懒加载**，和上面示例代码一样，不需要在定义模块的时候声明依赖，可以在模块执行时动态加载依赖。当然还有一点不同，那就是 CMD 同时支持同步加载模块和异步加载模块。
 
 用一句话来形容就是，它**整合了 CommonJS 和 AMD 规范的特点**。遵循 CMD 规范的代表开源项目是 sea.js ，它的实现和 requirejs 没有本质差别，有兴趣的同学可以看其[源码](https://github.com/seajs/seajs)。
 
-### UMD
+## UMD
 
 UMD（Universal Module Definition，统一模块定义）其实并不是模块管理规范，而是带有前后端同构思想的模块封装工具。通过 UMD 可以在合适的环境选择对应的模块规范。比如在 Node.js 环境中采用 CommonJS 模块管理，在浏览器端且支持 AMD 的情况下采用 AMD 模块，否则导出为全局函数。
 
@@ -255,7 +255,7 @@ UMD（Universal Module Definition，统一模块定义）其实并不是模块�
 })
 ```
 
-### 延伸 2：ES5 标准下如何编写模块
+## 延伸 2：ES5 标准下如何编写模块
 
 **模块的核心就是创建独立的作用域**，要实现这个目的，我们在第 08 课时中提到过，可以通过函数来实现。
 
@@ -265,7 +265,7 @@ UMD（Universal Module Definition，统一模块定义）其实并不是模块�
 var mod = {
   a: '',
   f: function() {
-     ...
+    // ...
   },
 }
 ```
@@ -275,10 +275,10 @@ var mod = {
 ```javascript
 var mod = (function(w){
   function f() {
-    ...
+    // ...
   }
   var a = ''
-  ...
+  // ...
   return {
   　　f,
   　　a
@@ -305,13 +305,13 @@ export { text, write }
 ```javascript
 // bundle.js
 (function(modules) {
-  ...
+  // ...
 })({
   "./index.js": (function(module, __webpack_exports__, __webpack_require__) {
-    ...
+    // ...
   },
   "./m.js": (function(module, __webpack_exports__, __webpack_require__) {
-    ...
+    // ...
   }
 })
 ```
@@ -359,7 +359,7 @@ var text = 'hello'
 
 这就是通过对象和立即执行函数来实现代码模块化的基本方法，对实现细节有兴趣的同学可以找一段编译后的代码进行研究。
 
-### 总结
+## 总结
 
 本课时主要介绍了 JavaScript 模块化规范，包括原生规范 ES6 模块、Node.js 采用的 CommonJS，以及开源社区早期为浏览器提供的规范 AMD，具有 CommonJS 特性和 AMD 特性的 CMD，让 CommonJS 和 AMD 模块跨端运行的 UMD。希望你对模块系统有更全面地认识，从而加深对 JavaScript 的理解。
 
@@ -367,28 +367,28 @@ var text = 'hello'
 
 ---
 
-### 精选评论
+## 精选评论
 
-##### \*\*磊：
+#### \*\*磊：
 
-> 首先实现一个配置表，当需要某个 JS 时 去匹配配置表，然后用 JSONP 请求过来，eveal 执行
+> 首先实现一个配置表，当需要某个 JS 时 去匹配配置表，然后用 JSONP 请求过来，eval 执行
 
-##### \*鑫：
+#### \*鑫：
 
 > commonjs 是值的深拷贝吧，上面有点问题
 
-###### &nbsp;&nbsp;&nbsp; 讲师回复：
+#### 讲师回复：
 
-> &nbsp;&nbsp;&nbsp; 属于浅拷贝，被不同模块引用时指向同一个内存空间。
+> 属于浅拷贝，被不同模块引用时指向同一个内存空间。
 
-##### \*道：
+#### \*道：
 
 > 使用 Promise 来实现 动态加载的 import()。
 
-##### \*\*用户 7763：
+#### \*\*用户 7763：
 
 > 直接请求 js 文件可还行，像 script 标签的 src 一样
 
-###### &nbsp;&nbsp;&nbsp; 讲师回复：
+#### 讲师回复：
 
-> &nbsp;&nbsp;&nbsp; 建议封装成统一的模块，便于模块之间的隔离和引用~
+> 建议封装成统一的模块，便于模块之间的隔离和引用~
