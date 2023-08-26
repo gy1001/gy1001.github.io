@@ -8,7 +8,7 @@ DOM 事件数量非常多，即使分类也有十多种，比如键盘事件、�
 
 下面我们就从防抖、节流、代理 3 个场景出发，详细了解 DOM 事件。
 
-#### 防抖
+## 防抖
 
 试想这样的一个场景，有一个搜索输入框，为了提升用户体验，希望在用户输入后可以立即展现搜索结果，而不是每次输入完后还要点击搜索按钮。最基本的实现方式应该很容易想到，那就是绑定 input 元素的键盘事件，然后在监听函数中发送 AJAX 请求。伪代码如下：
 
@@ -68,7 +68,7 @@ ipt.addEventListener('input', e => {
 
 具体代码如下所示，首先将原函数作为参数传入 debounce() 函数中，同时指定延迟等待时间，返回一个新的函数，这个函数包含 cancel 属性，用来取消原函数执行。flush 属性用来立即调用原函数，同时将原函数的执行结果以 Promise 的形式返回。
 
-```java
+```javascript
 // 代码2
 const debounce = (func, wait = 0) => {
   let timeout = null
@@ -120,7 +120,7 @@ ipt.addEventListener('input', debounce(e => {
 
 关于防抖函数还有功能更丰富的版本，比如 [lodash](https://github.com/lodash/lodash) 的 [debounce](https://github.com/lodash/lodash/blob/master/debounce.js)() 函数，有兴趣的话可以到 GitHub 上查阅资料。
 
-#### 节流
+## 节流
 
 现在来考虑另外一个场景，一个左右两列布局的查看文章页面，左侧为文章大纲结构，右侧为文章内容。现在需要添加一个功能，就是当用户滚动阅读右侧文章内容时，左侧大纲相对应部分高亮显示，提示用户当前阅读位置。
 
@@ -153,7 +153,7 @@ wrap.addEventListener('scroll', e => {
 
 实现节流函数的过程和防抖函数有些类似，只是对于节流函数而言，有两种执行方式，在调用函数时执行最先一次调用还是最近一次调用，所以需要设置时间戳加以判断。我们可以基于 debounce() 函数加以修改，代码如下所示：
 
-```java
+```javascript
 const throttle = (func, wait = 0, execFirstCall) => {
   let timeout = null
   let args
@@ -215,7 +215,7 @@ const throttle = (func, wait = 0, execFirstCall) => {
 
 节流与防抖都是通过延迟执行，减少调用次数，来优化频繁调用函数时的性能。不同的是，对于一段时间内的频繁调用，防抖是延迟执行后一次调用，节流是延迟定时多次调用。
 
-#### 代理
+## 代理
 
 下面的 HTML 代码是一个简单的无序列表，现在希望点击每个项目的时候调用 getInfo() 函数，当点击“编辑”时，调用一个 edit() 函数，当点击“删除”时，调用一个 del() 函数。
 
@@ -271,7 +271,7 @@ const throttle = (func, wait = 0, execFirstCall) => {
 
 我们再回到事件代理，事件代理的实现原理就是利用上述 DOM 事件的触发流程来对一类事件进行统一处理。比如对于上面的列表，我们在 ul 元素上绑定事件统一处理，通过得到的事件对象来获取参数，调用对应的函数。
 
-```java
+```javascript
 const ul = document.querySelector('.list')
 ul.addEventListener('click', e => {
   const t = e.target || e.srcElement
@@ -290,11 +290,11 @@ ul.addEventListener('click', e => {
 
 虽然这里我们选择了默认在冒泡阶段监听事件，但和捕获阶段监听并没有区别。对于其他情况还需要具体情况具体细分析，比如有些列表项目需要在目标阶段进行一些预处理操作，那么可以选择冒泡阶段进行事件代理。
 
-#### 补充：关于 DOM 事件标准
+## 补充：关于 DOM 事件标准
 
 你知道下面 3 种事件监听方式的区别吗？
 
-```java
+```javascript
 // 方式1
 <input type="text" onclick="click()"/>
 // 方式2
@@ -311,7 +311,7 @@ document.querySelector('input').addEventListener('click', function(e) {
 
 方式 3 属于 DOM2 标准，推荐使用这种方式。同一元素上的事件监听函数互不影响，而且可以独立取消，调用顺序和监听顺序一致。
 
-#### 总结
+## 总结
 
 最后布置一道思考题：你还能举出关于事件代理在开源项目中使用的例子吗？
 
@@ -321,7 +321,7 @@ document.querySelector('input').addEventListener('click', function(e) {
 
 ---
 
-### 精选评论
+## 精选评论
 
 ##### \*\*俊：
 
