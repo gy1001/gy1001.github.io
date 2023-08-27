@@ -1,53 +1,65 @@
 # 20-详解组件通信之状态管理
 
-在第 18 讲中我们详细分析了组件的 3 个要素：数据模型、渲染和视图。虽然通过组件化的方式能够有效地将 Web 页面进行解耦，但另一个问题也随之出现，组件之间如何进行通信。这一讲我们就来分析组件化 Web 应用中的组件通信问题。
+在第 18 讲中我们详细分析了组件的 3 个要素：`数据模型`、`渲染`和`视图`。
 
-### 全局状态
+虽然通过组件化的方式能够有效地将 Web 页面进行解耦，但另一个问题也随之出现，组件之间如何进行通信。
 
-对于父子组件通信，框架都已给出可行的解决方案：父组件通过 prop(s) 属性向子组件传参，子组件通过自定义事件来向父组件发送消息。而非父子组件之间，如果通过层层传递，这个过程就会变得相当麻烦。最简单的直接解决方式就是设置一个供多个组件共享的全局变量，但如果直接使用全局变量会存在一些问题，比如：
+这一讲我们就来分析组件化 Web 应用中的组件通信问题。
+
+## 全局状态
+
+对于父子组件通信，框架都已给出可行的解决方案：
+
+父组件通过 prop(s) 属性向子组件传参，子组件通过自定义事件来向父组件发送消息。
+
+而非父子组件之间，如果通过层层传递，这个过程就会变得相当麻烦。
+
+最简单的直接解决方式就是设置一个供多个组件共享的全局变量，但如果直接使用全局变量会存在一些问题，比如：
 
 - 可能多个组件会同时修改变量值，这个过程无法追踪，调试问题也会变得很麻烦；
 - 当全局变量值发生变化时，如何通知引用它的每一个组件？
 
-#### 1.状态管理库的特点
+### 1.状态管理库的特点
 
-针对这些问题，一些状态管理库出现了，我们重点分析用于 Vue 的 Vuex 和用于 React 的 Redux，所谓的“状态”，就是不同组件之间传递和引用的数据模型。状态管理库具有 3 个特点：**可预测、中心化、可调式**。
+针对这些问题，一些状态管理库出现了，我们重点分析用于 `Vue` 的 `Vuex` 和用于 `React` 的 `Redux`，所谓的“状态”，就是不同组件之间传递和引用的数据模型。
 
-**可预测**
+状态管理库具有 3 个特点：**可预测、中心化、可调式**。
+
+#### 可预测
 
 可预测性指的是，如果状态 A 经过操作 B 会生成状态 C，那么不论在任何时刻、任何平台（客户端、服务端、App 端），只要 A 和 B 不发生变化，就能得到同样的结果 C。比如下面代码中的函数就是不可预测的：
 
 ```javascript
-function getTime() { 
-  return new Date().getTime() 
-} 
-function getDom(id) { 
-  return document.getElementById(id) 
-} 
+function getTime() {
+  return new Date().getTime()
+}
+function getDom(id) {
+  return document.getElementById(id)
+}
 ```
 
 getTime() 函数在不同时刻会得到不同的值，getDom() 函数只能在网页上运行，所以结果都是不可预测的。而下面的函数都是可预测的：
 
 ```javascript
-function nextDay(time) { 
-  return new Date(time + 1000 * 60 * 60 * 24) 
-} 
-function filter(a, b) { 
-  return a + b 
-} 
+function nextDay(time) {
+  return new Date(time + 1000 * 60 * 60 * 24)
+}
+function filter(a, b) {
+  return a + b
+}
 ```
 
-可预测性只是纯函数的优势之一，后面我们在讲函数式编程的时候再详细介绍纯函数相关的内容。
+**可预测性只是纯函数的优势之一**，后面我们在讲函数式编程的时候再详细介绍纯函数相关的内容。
 
-**中心化**
+#### 中心化
 
 Vuex 和 Redux 都只会构建一棵中心化的状态树，所有的状态数据都会作为子属性挂载到这棵树上，非常有默契。
 
-**可调式**
+#### 可调式
 
 可调式指的是可以利用浏览器插件，对状态的变化和使用情况进行追踪和调试。Vuex 提供了 [Vue.js devtools](https://chrome.google.com/webstore/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)插件，Redux 也提供了 [Redux DevTools](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd)。
 
-#### 2.状态管理库实现原理
+### 2.状态管理库实现原理
 
 了解状态管理库特性之后，我们再对**写**和**读**这两个核心操作的源码进行分析。
 
@@ -56,66 +68,66 @@ Vuex 和 Redux 都只会构建一棵中心化的状态树，所有的状态数�
 下面是一段简单的示例代码，从代码中我们可以看到，通过执行 store.commit('increment') 来调用 mutation 中的 increment() 函数，从而达到修改状态的操作。所以我们来分析 commit() 函数的实现原理。
 
 ```javascript
-const store = new Vuex.Store({ 
-  state: { 
-    count: 0 
-  }, 
-  mutations: { 
-    increment(state, payload) { 
-      state.count += payload 
-    } 
-  } 
-}) 
-store.commit('increment', 1) 
-console.log(store.state.count) // -> 1 
+const store = new Vuex.Store({
+  state: {
+    count: 0,
+  },
+  mutations: {
+    increment(state, payload) {
+      state.count += payload
+    },
+  },
+})
+store.commit('increment', 1)
+console.log(store.state.count) // -> 1
 ```
 
 commit 部分源码如下所示，从代码中可以看出，首先通过 mutations[type] 获取 store 初始化时 mutations 对象下的属性（以下简称为“mutations”），在示例代码中，type 的值为 increment。因为 Vuex 提供了模块机制，不同模块下可能出现相同名称的 mutations，所以保存为数组的形式。
 
-然后调用 _withCommit() 函数，将当前变量 _committing 赋值为 true，执行完回调函数后再还原为之前的值。这个回调函数则会遍历执行 mutations。其中 payload 为调用 commit 时传入的参数，对应示例代码中的数值 1。
+然后调用 \_withCommit() 函数，将当前变量 \_committing 赋值为 true，执行完回调函数后再还原为之前的值。这个回调函数则会遍历执行 mutations。其中 payload 为调用 commit 时传入的参数，对应示例代码中的数值 1。
 
 ```javascript
-Store.prototype.commit = function commit (_type, _payload, _options) { 
-  var this$1 = this; 
-  ... 
-  var mutation = { type: type, payload: payload }; 
-  var entry = this._mutations[type]; 
-  ... 
-  this._withCommit(function () { 
-    entry.forEach(function commitIterator (handler) { 
-      handler(payload); 
-    }); 
-  }); 
-  ... 
-}; 
-Store.prototype._withCommit = function _withCommit (fn) { 
-  var committing = this._committing; 
-  this._committing = true; 
-  fn(); 
-  this._committing = committing; 
-}; 
+Store.prototype.commit = function commit (_type, _payload, _options) {
+  var this$1 = this;
+  ...
+  var mutation = { type: type, payload: payload };
+  var entry = this._mutations[type];
+  ...
+  this._withCommit(function () {
+    entry.forEach(function commitIterator (handler) {
+      handler(payload);
+    });
+  });
+  ...
+};
+Store.prototype._withCommit = function _withCommit (fn) {
+  var committing = this._committing;
+  this._committing = true;
+  fn();
+  this._committing = committing;
+};
 ```
 
 **Vuex（3.5.1）中读取状态**
 
-Vuex 在进行初始化的时候会在内部创建一个 Vue 实例，并且赋值给 store._vm 属性，在这个实例中创建了数据模型 $$state，$$state 的初始值即为我们在初始化 store 时的 state 属性，对应示例代码中的对象 {count: 1}。这个 $$state 属性在 mutations 中以及通过 store.state 访问时都会用到。
+Vuex 在进行初始化的时候会在内部创建一个 Vue 实例，并且赋值给 store.\_vm 属性，在这个实例中创建了数据模型 $$state，$$state 的初始值即为我们在初始化 store 时的 state 属性，对应示例代码中的对象 {count: 1}。这个 $$state 属性在 mutations 中以及通过 store.state 访问时都会用到。
 
 ```javascript
-store._vm = new Vue({ 
-  data: { 
-    $$state: state 
-  }, 
-  computed: computed 
-}); 
+store._vm = new Vue({
+  data: {
+    $$state: state,
+  },
+  computed: computed,
+})
 ```
 
-然后对原型对象 Store.prototype 的属性 state 进行劫持，当读取 store.state 时将返回 _vm._data.$$state。这样当通过 mutations 修改它的时候，就能即时返回最新的值了。
+然后对原型对象 Store.prototype 的属性 state 进行劫持，当读取 store.state 时将返回 \_vm.\_data.$$state。这样当通过 mutations 修改它的时候，就能即时返回最新的值了。
 
 ```javascript
-Object.defineProperties( Store.prototype, prototypeAccessors$1 ); 
-prototypeAccessors$1.state.get = function () { 
-  return this._vm._data.$$state 
-}; 
+Object.defineProperties(Store.prototype, prototypeAccessors$1)
+prototypeAccessors$1.state.get = function () {
+  return this._vm._data.$$state
+}
 ```
 
 **Redux（4.0.5）中修改状态**
@@ -123,37 +135,37 @@ prototypeAccessors$1.state.get = function () {
 下面是官方给出的一段简单的 Redux 示例代码，从中可以看到，通过 store.dispatch() 函数来触发状态更新，通过 store.getState() 函数来获取当前状态信息。
 
 ```javascript
-function counter(state = 0, action) { 
-  switch (action.type) { 
-    case 'INCREMENT': 
-      return state + 1 
-    case 'DECREMENT': 
-      return state - 1 
-    default: 
-      return state 
-  } 
-} 
-let store = createStore(counter) 
-store.subscribe(() => console.log(store.getState())) 
-store.dispatch({ type: 'INCREMENT' })// 1 
-store.dispatch({ type: 'INCREMENT' })// 2 
-store.dispatch({ type: 'DECREMENT' })// 1 
+function counter(state = 0, action) {
+  switch (action.type) {
+    case 'INCREMENT':
+      return state + 1
+    case 'DECREMENT':
+      return state - 1
+    default:
+      return state
+  }
+}
+let store = createStore(counter)
+store.subscribe(() => console.log(store.getState()))
+store.dispatch({ type: 'INCREMENT' }) // 1
+store.dispatch({ type: 'INCREMENT' }) // 2
+store.dispatch({ type: 'DECREMENT' }) // 1
 ```
 
 dispatch() 函数是用来分发 action 的，可以把它理解成用于触发数据更新的方法。它的实现非常简单，部分源码如下：
 
 ```javascript
-function dispatch(action) { 
-    ... 
-    try { 
-      isDispatching = true; 
-      currentState = currentReducer(currentState, action); 
-    } finally { 
-      isDispatching = false; 
-    } 
-    ... 
-    return action; 
-} 
+function dispatch(action) {
+  // ...
+  try {
+    isDispatching = true
+    currentState = currentReducer(currentState, action)
+  } finally {
+    isDispatching = false
+  }
+  // ...
+  return action
+}
 ```
 
 dispatch() 函数会以当前的状态 currentState 以及我们定义的动作 action 作为参数来调用 currentReducer() 函数，该函数对应示例代码中的 counter() 函数。
@@ -163,130 +175,147 @@ dispatch() 函数会以当前的状态 currentState 以及我们定义的动作 
 getState() 函数的代码实现比较简单，首先判断是否为分发状态，如果是则抛出错误，否则直接返回 currentState，而 currentState 的值在 dispatch() 函数执行时就已经被更新了。
 
 ```javascript
-function getState() { 
-    if (isDispatching) { 
-      throw new Error('You may not call store.getState() while the reducer is executing. ' + 'The reducer has already received the state as an argument. ' + 'Pass it down from the top reducer instead of reading it from the store.'); 
-    } 
-    return currentState; 
-  } 
+function getState() {
+  if (isDispatching) {
+    throw new Error(
+      'You may not call store.getState() while the reducer is executing. ' +
+        'The reducer has already received the state as an argument. ' +
+        'Pass it down from the top reducer instead of reading it from the store.',
+    )
+  }
+  return currentState
+}
 ```
 
-### 其他组件通信方式
+## 其他组件通信方式
 
 选用状态管理库并不是解决跨组件传递数据的唯一方式，下面再介绍 2 种方式也能提供跨组件通信，以 Vue 为例进行讲解。
 
-#### 1.全局上下文
+### 1.全局上下文
 
-在 Vue 中，提供了一组 API 用来解决祖先组件与子孙组件的通信问题，那就是 provide 和 inject。provide 可以在祖先组件中指定我们想要提供给子孙组件的数据或方法，而在任何子孙组件中，我们都可以使用 inject 来接收 provide 提供的数据或方法。
+在 `Vue` 中，提供了一组 `API` 用来解决祖先组件与子孙组件的通信问题，那就是 `provide` 和 `inject`。
 
-下面的示例代码中，根组件通过 provide() 函数将数据模型的属性 o 暴露给子孙组件，子孙组件则通过 inject 属性来声明对属性 o 的引用。这样相当于组件之间共享了属性 o，因为只要任何一处修改了 o.count 属性，其他各处也会随之发生变化。
+`provide` 可以在祖先组件中指定我们想要提供给子孙组件的数据或方法，而在任何子孙组件中，我们都可以使用 `inject` 来接收 `provide` 提供的数据或方法。
 
-```javascript
-<div id="app"> 
-  <button v-on:click="o.count++">{{o.count}}</button> 
-  <button-counter></button-counter> 
-  <button-counter></button-counter> 
-  <button-counter></button-counter> 
-</div> 
-<script> 
-Vue.component('button-counter', { 
-  inject: ['o'], 
-  methods: { 
-    click() { 
-      this.o.count++ 
-    } 
-  }, 
-  template: '<button v-on:click="click">You clicked me {{ o.count }} times.</button>' 
-}) 
-const app = new Vue({ 
-  el: '#app', 
-  data: { 
-    o: { 
-      count: 0 
-    } 
-  }, 
-  provide() { 
-    return { 
-      o: this.o 
-    } 
-  } 
-}) 
-</script> 
+下面的示例代码中，根组件通过 `provide()` 函数将数据模型的属性 o 暴露给子孙组件，子孙组件则通过 `inject` 属性来声明对属性 o 的引用。这样相当于组件之间共享了属性 o，因为只要任何一处修改了 o.count 属性，其他各处也会随之发生变化。
+
+```vue
+<div id="app">
+  <button v-on:click="o.count++">{{o.count}}</button>
+  <button-counter></button-counter>
+  <button-counter></button-counter>
+  <button-counter></button-counter>
+</div>
+<script>
+Vue.component('button-counter', {
+  inject: ['o'],
+  methods: {
+    click() {
+      this.o.count++
+    },
+  },
+  template:
+    '<button v-on:click="click">You clicked me {{ o.count }} times.</button>',
+})
+const app = new Vue({
+  el: '#app',
+  data: {
+    o: {
+      count: 0,
+    },
+  },
+  provide() {
+    return {
+      o: this.o,
+    }
+  },
+})
+</script>
 ```
 
-#### 2.事件监听
+### 2.事件监听
 
 事件监听则是利用组件库本身的事件机制，设置一个全局事件代理，用来负责向各个组件传递数据。
 
-下面是一个简单的示例。创建一个 Vue 实例 eventBus，然后通过 Object.defineProperty 将其注入 Vue 组件中，这样在组件中就可以通过 this.$bus 来访问这个 Vue 实例了。当任何一个组件按钮被点击时，通过事件冒泡 this.$bus.$emit 来传入新的状态，其他组件则通过事件监听 this.$bus.$on 来获取最新的状态。
+下面是一个简单的示例。创建一个 `Vue` 实例 `eventBus`，然后通过 `Object.defineProperty` 将其注入 `Vue` 组件中，这样在组件中就可以通过 `this.$bus` 来访问这个 `Vue 实例`了。
 
-```javascript
-<div id="app"> 
-  <button v-on:click="click()">{{this.count}}</button> 
-  <button-counter></button-counter> 
-  <button-counter></button-counter> 
-  <button-counter></button-counter> 
-</div> 
-<script> 
-  var EventBus = new Vue(); 
-  Object.defineProperties(Vue.prototype, { 
-    $bus: { 
-        get: function () { 
-            return EventBus 
-        } 
-    } 
-  }) 
-  Vue.component('button-counter', { 
-    mounted() { 
-      this.$bus.$on('count', c => this.count = c) 
-    }, 
-    data() { 
-      return { 
-        count: 0 
-      } 
-    }, 
-    methods: { 
-      click() { 
-        this.$bus.$emit('count', this.count + 1) 
-      } 
-    }, 
-    template: '<button v-on:click="click">You clicked me {{ this.count }} times.</button>' 
-  }) 
-  const app = new Vue({ 
-    el: '#app', 
-    data: { 
-      count: 0 
-    }, 
-    mounted() { 
-      this.$bus.$on('count', c => this.count = c) 
-    }, 
-    methods: { 
-      click() { 
-        this.$bus.$emit('count', this.count + 1) 
-      } 
-    } 
-  }) 
-</script> 
+当任何一个组件按钮被点击时，通过事件冒泡 `this.$bus.$emit` 来传入新的状态，其他组件则通过事件监听 `this.$bus.$on` 来获取最新的状态。
+
+```vue
+<div id="app">
+  <button v-on:click="click()">{{this.count}}</button>
+  <button-counter></button-counter>
+  <button-counter></button-counter>
+  <button-counter></button-counter>
+</div>
+<script>
+var EventBus = new Vue()
+Object.defineProperties(Vue.prototype, {
+  $bus: {
+    get: function () {
+      return EventBus
+    },
+  },
+})
+Vue.component('button-counter', {
+  mounted() {
+    this.$bus.$on('count', (c) => (this.count = c))
+  },
+  data() {
+    return {
+      count: 0,
+    }
+  },
+  methods: {
+    click() {
+      this.$bus.$emit('count', this.count + 1)
+    },
+  },
+  template:
+    '<button v-on:click="click">You clicked me {{ this.count }} times.</button>',
+})
+const app = new Vue({
+  el: '#app',
+  data: {
+    count: 0,
+  },
+  mounted() {
+    this.$bus.$on('count', (c) => (this.count = c))
+  },
+  methods: {
+    click() {
+      this.$bus.$emit('count', this.count + 1)
+    },
+  },
+})
+</script>
 ```
 
-### 总结
+## 总结
 
-本讲介绍了 3 种不同的跨组件通信方式。由于通信双方不属于父子组件，也就是没有直接的依赖/引用关系，所以需要借助“第三方”来进行传递数据，这些“第三方”既包括视图库（Vue 和 React）本身提供的事件机制或全局上下文，也包括面向其进行开发的状态管理库。
+本讲介绍了 3 种不同的跨组件通信方式。
 
-对于最常用的全局状态管理库 Vuex 和 Redux，通过深入分析其源码，理解了其实现原理。Vuex 内部会创建一个 Vue 实例，并使用这个实例的数据模型来做状态更新；而 Redux 则采用了无副作用的纯函数来生成不可变数据。
+由于通信双方不属于父子组件，也就是没有直接的依赖/引用关系，所以需要借助“第三方”来进行传递数据，这些“第三方”既包括视图库（Vue 和 React）本身提供的事件机制或全局上下文，也包括面向其进行开发的状态管理库。
 
-组件库默认提供了全局上下文的方式来解决跨组件通信问题，非常轻量，适合在小型 Web 应用中使用，缺点是追踪调试状态变化比较困难。事件监听的方式也可以不依赖额外的第三方库来实现，但在监听到事件改变时需要在组件内部手动触发视图更新。
+对于最常用的全局状态管理库 `Vuex` 和 `Redux`，通过深入分析其源码，理解了其实现原理。
+
+- Vuex 内部会创建一个 Vue 实例，并使用这个实例的数据模型来做状态更新；
+- 而 Redux 则采用了无副作用的纯函数来生成不可变数据。
+
+组件库默认提供了`全局上下文`的方式来解决跨组件通信问题，非常轻量，**适合在小型 Web 应用中使用**，缺点是**追踪调试状态变化比较困难**。
+
+事件监听的方式也可以不依赖额外的第三方库来实现，但在监听到事件改变时需要在组件内部手动触发视图更新。
 
 最后布置一道思考题：你还知道哪些跨组件通信的方式？
 
 ---
 
-### 精选评论
+## 精选评论
 
-##### \*玲：
+#### \*玲：
 
 > vm.$emit( eventName, […args] )
 
-##### \*杰：
+#### \*杰：
 
 > 思考题：你还知道哪些跨组件通信的方式？常见父子组件事件机制也可以实现跨组件通信

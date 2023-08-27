@@ -1,30 +1,36 @@
 # 19-把路由放在前端意味着什么？
 
-当浏览器地址栏中的 URL 发生变化时，会请求对应的网络资源，而负责响应这个网络资源的服务就称为**路由**。在早期的 Web 开发中，路由都是交由服务端处理，但随着前端技术的快速发展，路由模块逐渐转移交给了前端进行控制，而路由转移到前端，正是前后端分离和单页应用架构 的 基石。这一课时我们来深入理解前端路由的技术细节。
+当浏览器地址栏中的 URL 发生变化时，会请求对应的网络资源，而负责响应这个网络资源的服务就称为**路由**。
 
-### 前端路由实现基础
+在早期的 Web 开发中，路由都是交由服务端处理，但随着前端技术的快速发展，路由模块逐渐转移交给了前端进行控制，而路由转移到前端，正是前后端分离和单页应用架构 的 基石。
+
+这一课时我们来深入理解前端路由的技术细节。
+
+## 前端路由实现基础
 
 默认情况下，当地址栏的 URL 发生变化时，浏览器会向服务端发起新的请求。所以实现前端路由的重要基础就是在修改 URL 时，不引起浏览器向后端请求数据。根据浏览器提供的 API，有下面两种实现方案。
 
-#### 基于 hash 实现
+### 基于 hash 实现
 
 前面提到当 URL 变化时浏览器会发送请求，但有一种特例，那就是 hash 值的变化不会触发浏览器发起请求。
 
-hash 值是指 URL“#”号后面的内容，通过 location.hash 属性可以读写 hash 值，这个值可以让浏览器将页面滚动到 ID 与 hash 值相等的 DOM 元素位置，不会传给服务端。
+hash 值是指 URL“#”号后面的内容，通过 `location.hash` 属性可以读写 hash 值，这个值可以让浏览器将页面滚动到 ID 与 hash 值相等的 DOM 元素位置，不会传给服务端。
 
-要监听它的变化也比较简单，通过监听 window 对象的 hashchange 事件就可以感知到它的变化。
+要监听它的变化也比较简单，通过监听 window 对象的 `hashchange` 事件就可以感知到它的变化。
 
 这种实现方式占用了 hash 值，导致默认的页面滚动行为失效，对于有滚动定位需求的情况需要自行手动获取元素的位置并调用 BOM 相关 API 进行滚动。
 
-#### 基于 history 实现
+### 基于 history 实现
 
 HTML 5 提出了一种更规范的前端路由实现方式，那就是通过 history 对象。
 
-history 提供了两个函数来修改 URL，即 history.pushState() 和 history.replaceState()，这两个 API 可以在不进行刷新的情况下，来操作浏览器的历史 记录 。唯一不同的是，前者是新增一个历史记录，后者是直接替换当前的历史记录。
+history 提供了两个函数来修改 URL，即 `history.pushState()` 和 history.replaceState()，这两个 API 可以在不进行刷新的情况下，来操作浏览器的历史 记录 。
 
-监听 URL 变化则可以通过监听 window 对象上的 popstate 事件来实现。但需要注意的是，history.pushState() 或 history.replaceState() 不会触发 popstate 事件，这时我们需要手动触发页面渲染。
+唯一不同的是，前者是新增一个历史记录，后者是直接替换当前的历史记录。
 
-虽然能通过这种方式实现前端路由功能，但并不能拦截浏览器默认的请求行为，当用户修改地址栏网址时还是会向服务端发起请求，所以还需要服务端进行设置，将所有 URL 请求转向前端页面，交给前端进行解析。
+监听 URL 变化则可以通过监听 window 对象上的 `popstate 事件`来实现。但需要注意的是，history.pushState() 或 history.replaceState() 不会触发 popstate 事件，这时我们需要手动触发页面渲染。
+
+虽然能通过这种方式实现前端路由功能，但**并不能拦截浏览器默认的请求行为**，当用户修改地址栏网址时还是会向服务端发起请求，所以**还需要服务端进行设置**，将所有 URL 请求转向前端页面，交给前端进行解析。
 
 下面是 vue-router 官网的 Nginx 配置例子：表示对于匹配的路径，按照指定顺序依次检查对应路径文件是否存在，对应路径目录是否存在，如果没有找到任何文件 或目录 ，就返回 index.html。而 index.html 就会引入对应的 JavaScript 代码在浏览器端进行路由解析。
 
@@ -34,23 +40,27 @@ location / {
 }
 ```
 
-### 路由解析
+## 路由解析
 
-阻止浏览器在 URL 变化时向后端发送请求之后，就需要对路由进行解析了。 [vue-router](https://router.vuejs.org/zh/)和 [react-router](https://reactrouter.com/)都同时依赖了一个第三方库 [Path-to-RegExp](https://github.com/pillarjs/path-to-regexp)进行路由解析，下面通过分析 [path-to-regexp 1.8 版本](https://github.com/pillarjs/path-to-regexp/archive/v1.8.0.zip)的源码来理解路由是如何被解析的。
+阻止浏览器在 URL 变化时向后端发送请求之后，就需要对路由进行解析了。
+
+[vue-router](https://router.vuejs.org/zh/)和 [react-router](https://reactrouter.com/)都同时依赖了一个第三方库 [Path-to-RegExp](https://github.com/pillarjs/path-to-regexp)进行路由解析，
+
+下面通过分析 [path-to-regexp 1.8 版本](https://github.com/pillarjs/path-to-regexp/archive/v1.8.0.zip)的源码来理解路由是如何被解析的。
 
 路由解析又分为两个操作：**路由匹配**和**路由生成**。
 
-#### 路由匹配
+### 路由匹配
 
-路由匹配就是当获取到请求路径后，如何找到对应的配置路径。在 path-to-regexp 源码中对应的是默认导出函数 pathToRegexp()，该函数接收 3 个参数：
+路由匹配就是当获取到请求路径后，如何找到对应的配置路径。在 `path-to-regexp` 源码中对应的是默认导出函数 `pathToRegexp()`，该函数接收 3 个参数：
 
-- **path**，必传参数，值可以为自定义的请求路径，如 /user/:id，也可以是正则表达式，还可以是两者组成的数组；
-- **keys**，可选参数， 值为 数组， 数组元素为 解析 正则表达式风格的字符串或冒号开头的占位符（下文简称为“特殊字符串”） 生成的令牌 ，比如字符串 /user/:id 对应的 keys 为 { name: 'id', delimiter: '/', optional: false, repeat: false } ，这个参数的值最终会被保存到返回的正则表达式对象的 keys 属性中，可用于后面的路由生成；
-- **options**，可选参数，执行过程中的配置信息，比如是否大小写敏感。
+- **path**: 必传参数，值可以为自定义的请求路径，如 `/user/:id`，也可以是正则表达式，还可以是两者组成的数组；
+- **keys**: 可选参数， 值为数组， 数组元素为 解析 正则表达式风格的字符串或冒号开头的占位符（下文简称为“特殊字符串”） 生成的令牌 ，比如字符串 `/user/:id` 对应的 keys 为 `{ name: 'id', delimiter: '/', optional: false, repeat: false }` ，这个参数的值最终会被保存到返回的正则表达式对象的 keys 属性中，可用于后面的路由生成；
+- **options**: 可选参数，执行过程中的配置信息，比如是否大小写敏感。
 
-函数返回值是一个带有 keys 属性的正则表达式，keys 属性值类型和 keys 参数相同，也是一个包含特殊字符串描述信息的数组。
+函数返回值是一个带有 `keys` `属性的正则表达式，keys` 属性值类型和 `keys` 参数相同，也是一个包含特殊字符串描述信息的数组。
 
-由于 path 参数可以是正则表达式、字符串、数组 3 种类型数据，所以在处理 path 参数的时候分别对应 3 个函数 regexpToRegexp()、stringToRegexp()、arrayToRegexp()。
+由于 path 参数可以是`正则表达式`、`字符串`、`数组` 3 种类型数据，所以在处理 path 参数的时候分别对应 3 个函数 `regexpToRegexp()`、`stringToRegexp()`、`arrayToRegexp()`。
 
 ```javascript
 function pathToRegexp (path, keys, options) {
@@ -68,7 +78,7 @@ function pathToRegexp (path, keys, options) {
   return stringToRegexp(/** @type {string} */ (path), /** @type {!Array} */ (keys), options)
 ```
 
-arrayToRegexp() 函数会遍历 path 数组然后递归调用函数 pathToRegexp()，将所得的结果拼接成一个新的正则表达式并赋值 keys 属性。
+`arrayToRegexp()` 函数会遍历 path 数组然后递归调用函数 `pathToRegexp()`，将所得的结果拼接成一个新的正则表达式并赋值 `keys` 属性。
 
 ```javascript
 function arrayToRegexp(path, keys, options) {
@@ -81,10 +91,10 @@ function arrayToRegexp(path, keys, options) {
 }
 ```
 
-regexpToRegexp() 函数会找寻正则表达式中的负向后行断言，记录到正则表达式实例的 keys 属性中。
+`regexpToRegexp()` 函数会找寻正则表达式中的负向后行断言，记录到正则表达式实例的 `keys` 属性中。
 
-```java
-function regexpToRegexp (path, keys) {
+```javascript
+function regexpToRegexp(path, keys) {
   var groups = path.source.match(/\((?!\?)/g)
   if (groups) {
     for (var i = 0; i < groups.length; i++) {
@@ -96,7 +106,7 @@ function regexpToRegexp (path, keys) {
         repeat: false,
         partial: false,
         asterisk: false,
-        pattern: null
+        pattern: null,
       })
     }
   }
@@ -104,7 +114,7 @@ function regexpToRegexp (path, keys) {
 }
 ```
 
-一般情况下会调用 stringToRegexp() 函数来将字符串转换成正则表达式。函数 stringToRegexp() 只是调用了两个函数 tokensTo Regexp () 和 parse()。
+一般情况下会调用 `stringToRegexp()` 函数来将字符串转换成正则表达式。函数 `stringToRegexp()` 只是调用了两个函数 `tokensToRegexp () `和 `parse()`。
 
 ```javascript
 function stringToRegexp(path, keys, options) {
@@ -112,7 +122,11 @@ function stringToRegexp(path, keys, options) {
 }
 ```
 
-看到 parse() 这个函数不知道是否会让你想起前面几讲中提到的编译器，该函数的主要作用和编译器中的词法分析比较像，它会将字符串转化为令牌数组。这些令牌分为两类，一类是**非特殊字符串**，不需要做任何处理，直接以字符串形式放入数组；另一类是**特殊字符串**，需要依赖一个正则表达式来进行处理。这个核心的正则表达式如下所示：
+看到 parse() 这个函数不知道是否会让你想起前面几讲中提到的编译器，该函数的主要作用和编译器中的词法分析比较像，它会将字符串转化为令牌数组。
+
+这些令牌分为两类，一类是**非特殊字符串**，不需要做任何处理，直接以字符串形式放入数组；另一类是**特殊字符串**，需要依赖一个正则表达式来进行处理。
+
+这个核心的正则表达式如下所示：
 
 ```javascript
 var PATH_REGEXP =
@@ -144,7 +158,7 @@ PATH_REGEXP.exec('/*') // ["/*", undefined, "/", undefined, undefined, undefined
 ]
 ```
 
-在得到令牌数组之后，下一步是调用函数 tokensToRegExp() 将它转换成正则表达式。对于字符串令牌，直接转化成转义后的字符串，这个转义的过程也很简单，即在“/”“[”这类具有正则表达式功能的特殊字符前加上“\”。
+在得到令牌数组之后，下一步是调用函数 `tokensToRegExp()` 将它转换成正则表达式。对于字符串令牌，直接转化成转义后的字符串，这个转义的过程也很简单，即在“`/`”“`[`”这类具有正则表达式功能的特殊字符前加上“`\`”。
 
 ```javascript
 ...
@@ -157,7 +171,7 @@ function escapeString (str) {
 }
 ```
 
-对于正则表达式令牌，首先放到前面提到的 keys 数组中，然后再对正则表达式令牌的内容进行标准化处理，拼接到最终的正则表达式字符串 route 中，再将 route 实例化为正则表达式对象，并附上 keys 属性。
+对于正则表达式令牌，首先放到前面提到的 `keys` 数组中，然后再对正则表达式令牌的内容进行标准化处理，拼接到最终的正则表达式字符串 `route` 中，再将 `route` 实例化为正则表达式对象，并附上 `keys` 属性。
 
 ```javascript
 ...
@@ -181,11 +195,13 @@ route += capture
 return attachKeys(new RegExp('^' + route, flags(options)), keys)
 ```
 
-#### 路由生成
+### 路由生成
 
-路由生成是指通过配置的请求路径字符串和参数生成对应的请求路径，比如配置的请求路径字符串 /user/:id 和参数 {id: "lagou"} 可以生成 /user/lagou，在 path-to-regexp 源码中对应的是函数 compile()。
+路由生成是指通过配置的请求路径字符串和参数生成对应的请求路径，比如配置的请求路径字符串 `/user/:id` 和参数 `{id: "lagou"}` 可以生成 `/user/lagou`，在 `path-to-regexp` 源码中对应的是函数 `compile()`。
 
-compile() 函数接收两个参数：str 和 options。str 为字符串，可能包含特殊字符串；options 同 pathToRegexp() 函数的 options 参数。
+compile() `函数接收两个参数：str` 和 `options`。
+
+str 为字符串，可能包含特殊字符串；options 同 pathToRegexp() 函数的 options 参数。
 
 从参数可以看出，compile() 函数并不直接生成结果字符串，而是返回一个生成函数，将参数传入这个函数中可以生成**结果字符串**。
 
@@ -197,7 +213,14 @@ function compile(str, options) {
 }
 ```
 
-函数 tokensToFunction() 的核心代码在于返回的匿名函数，匿名函数内部会遍历令牌数组，对于字符串令牌，直接拼接到生成的路径中；而对于正则表达式令牌，则会通过令牌 token.name 属性来找到参数对象 obj 对应的值。如果这个值为字符串，则判断是否匹配 token 中的正则表达式，匹配之后进行 URI 编码并拼接到结果字符串 path 中；如果为数组，则循环执行字符串匹配过程。返回的匿名函数部分代码如下：
+函数 tokensToFunction() 的核心代码在于返回的匿名函数，匿名函数内部会遍历令牌数组，
+
+- 对于字符串令牌，直接拼接到生成的路径中；
+- 而对于正则表达式令牌，则会通过令牌 token.name 属性来找到参数对象 obj 对应的值。
+
+如果这个值为字符串，则判断是否匹配 token 中的正则表达式，匹配之后进行 URI 编码并拼接到结果字符串 path 中；
+
+如果为数组，则循环执行字符串匹配过程。返回的匿名函数部分代码如下：
 
 ```java
 for (var i = 0; i < tokens.length; i++) {
@@ -221,22 +244,30 @@ for (var i = 0; i < tokens.length; i++) {
 return path
 ```
 
-### 总结
+## 总结
 
-这一课时我们先介绍了前端路由的实现基础，包括基于 hash 实现和 history 实现。基于 hash 方式兼容性较好，但是占用了浏览器默认的定位行为，同时会加长 URL 字符串；基于 history 方式可以直接修改 URL 路径，较为美观。
+这一课时我们先介绍了前端路由的实现基础，包括基于 `hash` 实现和 `history` 实现。
 
-然后分析了 vue-router 和 react-router 共同的依赖库 path-to-regexp 中的两个核心函数 pathToRegexp() 和 compile()。pathToRegexp() 会先将配置的请求路径字符串拆分成令牌数组，然后再转化成正则表达式对象，路由库可以通过正则表达式来进行路由匹配，从而将对应的组件渲染到页面；complie() 函数会将配置的请求路径字符串转化成一个匿名函数，这个函数可以传入参数并生成一个请求路径字符串。
+基于 `hash` 方式兼容性较好，但是占用了浏览器默认的定位行为，同时会加长 URL 字符串；
+
+基于 history 方式可以直接修改 URL 路径，较为美观。
+
+然后分析了 `vue-router` 和 `react-router` 共同的依赖库 `path-to-regexp` 中的两个核心函数 `pathToRegexp()` 和 `compile()`。
+
+`pathToRegexp()` 会先将配置的请求路径字符串拆分成令牌数组，然后再转化成正则表达式对象，路由库可以通过正则表达式来进行路由匹配，从而将对应的组件渲染到页面；
+
+`compile()` 函数会将配置的请求路径字符串转化成一个匿名函数，这个函数可以传入参数并生成一个请求路径字符串。
 
 最后留一道思考题：你在使用前端路由的时候碰到过哪些问题，又是怎么解决的呢？欢迎在留言区写下你的答案和大家一起交流学习。
 
 ---
 
-### 精选评论
+## 精选评论
 
-##### \*\*飞：
+#### \*\*飞：
 
 > 路由放前端到底意味着什么？
 
-###### &nbsp;&nbsp;&nbsp; 讲师回复：
+#### 讲师回复：
 
-> &nbsp;&nbsp;&nbsp; 意味着 web 应用的解耦，前后端真正分离，只通过 API 进行交互~
+> 意味着 web 应用的解耦，前后端真正分离，只通过 API 进行交互~
