@@ -6,80 +6,90 @@
 
 从这个定义不难看出，设计模式就是一套抽象的理论，属于编程知识中的“道”而非“术”，对于理论的学习我们最好的学习方式就是通过与实践结合来加深理解，所以接下来我们在分析设计模式相关概念的同时通过具体实例来加深对其理解。
 
-### 设计模式原则
+## 设计模式原则
 
-设计模式其实是针对面向对象编程范式总结出来的解决方案，所以设计模式的原则都是围绕“类”和“接口”这两个概念来提出的，其中下面 6 个原则非常重要，因为这 6 个原则决定了设计模式的规范和标准。
+设计模式其实是针对面向对象编程范式总结出来的解决方案，所以设计模式的原则都是围绕“类”和“接口”这两个概念来提出的，
 
-#### 开闭原则
+其中下面 6 个原则非常重要，因为这 6 个原则决定了设计模式的规范和标准。
 
-开闭原则指的就是对扩展开放、对修改关闭。编写代码的时候不可避免地会碰到修改的情况，而遵循开闭原则就意味着当代码需要修改时，可以通过编写新的代码来扩展已有的代码，而不是直接修改已有代码本身。
+### 开闭原则
+
+开闭原则指的就是对扩展开放、对修改关闭。
+
+编写代码的时候不可避免地会碰到修改的情况，而遵循开闭原则就意味着当代码需要修改时，可以通过编写新的代码来扩展已有的代码，而不是直接修改已有代码本身。
 
 下面的伪代码是一个常见的表单校验功能，校验内容包括**用户名**、**密码**、**验证码**，每个校验项都通过判断语句 if-else 来控制。
 
 ```typescript
 function validate() {
-    // 校验用户名
-    if (!username) {
-        ...
-    } else {
-        ...
-    }
-    // 校验密码
-    if (!pswd){
-        ...
-    } else {
-        ...
-    }
-    // 校验验证码
-    if (!captcha) {
-        ...
-    } else {
-        ...
-    }
+  // 校验用户名
+  if (!username) {
+      ...
+  } else {
+      ...
+  }
+  // 校验密码
+  if (!pswd){
+      ...
+  } else {
+      ...
+  }
+  // 校验验证码
+  if (!captcha) {
+      ...
+  } else {
+      ...
+  }
 }
 ```
 
 这么写看似没有问题，但其实可扩展性并不好，如果此时增加一个校验条件，就要修改 validate() 函数内容。
 
-下面的伪代码遵循开闭原则，将校验规则抽取出来，实现共同的接口 IValidateHandler，同时将函数 validate() 改成 Validation 类，通过 addValidateHandler() 函数添加校验规则，通过 validate() 函数校验表单。这样，当有新的校验规则出现时，只要实现 IValidateHandler 接口并调用 addValidateHandler() 函数即可，不需要修改类 Validation 的代码。
+下面的伪代码遵循开闭原则，将校验规则抽取出来，实现共同的接口 IValidateHandler，同时将函数 validate() 改成 Validation 类，通过 addValidateHandler() 函数添加校验规则，通过 validate() 函数校验表单。
+
+这样，当有新的校验规则出现时，只要实现 IValidateHandler 接口并调用 addValidateHandler() 函数即可，不需要修改类 Validation 的代码。
 
 ```typescript
 class Validation {
-    private validateHandlers: ValidateHandler[] = [];
-    public addValidateHandler(handler: IValidateHandler) {
-        this.validateHandlers.push(handler)
+  private validateHandlers: ValidateHandler[] = [];
+  public addValidateHandler(handler: IValidateHandler) {
+    this.validateHandlers.push(handler)
+  }
+  public validate() {
+    for (let i = 0; i < this.validateHandlers.length; i++) {
+      this.validateHandlers[i].validate();
     }
-    public validate() {
-        for (let i = 0; i < this.validateHandlers.length; i++) {
-            this.validateHandlers[i].validate();
-        }
-    }
+  }
 }
 interface IValidateHandler {
-    validate(): boolean;
+  validate(): boolean;
 }
 class UsernameValidateHandler implements IValidateHandler {
-    public validate() {
-      ...
-    }
+  public validate() {
+    ...
+  }
 }
 class PwdValidateHandler implements IValidateHandler {
-    public validate() {
-      ...
-    }
+  public validate() {
+    ...
+  }
 }
 class CaptchaValidateHandler implements IValidateHandler {
-    public validate() {
-      ...
-    }
+  public validate() {
+    ...
+  }
 }
 ```
 
-#### 里氏替换原则
+### 里氏替换原则
 
-里氏替换原则是指在使用父类的地方可以用它的任意子类进行替换。里氏替换原则是对类的继承复用作出的要求，要求子类可以随时替换掉其父类，同时功能不被破坏，父类的方法仍然能被使用。
+里氏替换原则是指在使用父类的地方可以用它的任意子类进行替换。
 
-下面的代码就是一个违反里氏替换原则的例子，子类 Sparrow 重载了父类 Bird 的 getFood() 函数，但返回值发生了修改。那么如果使用 Bird 类实例的地方改成 Sparrow 类实例则会报错。
+里氏替换原则是对类的继承复用作出的要求，要求子类可以随时替换掉其父类，同时功能不被破坏，父类的方法仍然能被使用。
+
+下面的代码就是一个违反里氏替换原则的例子，子类 Sparrow 重载了父类 Bird 的 getFood() 函数，但返回值发生了修改。
+
+那么如果使用 Bird 类实例的地方改成 Sparrow 类实例则会报错。
 
 ```typescript
 class Bird {
@@ -95,13 +105,15 @@ class Sparrow extends Bird {
 }
 ```
 
-对于这种需要重载的类，正确的做法应该是让子类和父类共同实现一个抽象类或接口。下面的代码就是实现了一个 IBird 接口来遵循里氏替换原则。
+对于这种需要重载的类，正确的做法应该是让子类和父类共同实现一个抽象类或接口。
+
+下面的代码就是实现了一个 IBird 接口来遵循里氏替换原则。
 
 ```typescript
 interface IBird {
   getFood(): string[]
 }
-class Bird implements IBird{
+class Bird implements IBird {
   getFood() {
     return ['虫子']
   }
@@ -114,11 +126,15 @@ class Sparrow implements IBird {
 }
 ```
 
-#### 依赖倒置原则
+### 依赖倒置原则
 
-准确说应该是避免依赖倒置，好的依赖关系应该是类依赖于抽象接口，不应依赖于具体实现。这样设计的好处就是当依赖发生变化时，只需要传入对应的具体实例即可。
+准确说应该是避免依赖倒置，好的依赖关系应该是类依赖于抽象接口，不应依赖于具体实现。
 
-下面的示例代码中，类 Passenger 的构造函数需要传入一个 Bike 类实例，然后在 start() 函数中调用 Bike 实例的 run() 函数。此时类 Passenger 和类 Bike 的耦合非常紧，如果现在要支持一个 Car 类则需要修改 Passenger 代码。
+这样设计的好处就是当依赖发生变化时，只需要传入对应的具体实例即可。
+
+下面的示例代码中，类 Passenger 的构造函数需要传入一个 Bike 类实例，然后在 start() 函数中调用 Bike 实例的 run() 函数。
+
+此时类 Passenger 和类 Bike 的耦合非常紧，如果现在要支持一个 Car 类则需要修改 Passenger 代码。
 
 ```typescript
 class Bike {
@@ -153,7 +169,7 @@ class Car implements ITransportation {
   }
 }
 class Passenger {
-  construct(ITransportation : transportation) {
+  construct(ITransportation: transportation) {
     this.tool = transportation
   }
   public start() {
@@ -162,11 +178,11 @@ class Passenger {
 }
 ```
 
-#### 接口隔离原则
+### 接口隔离原则
 
 不应该依赖它不需要的接口，也就是说一个类对另一个类的依赖应该建立在最小的接口上。目的就是为了降低代码之间的耦合性，方便后续代码修改。
 
-下面就是一个违反接口隔离原则的反例，类 Dog 和类 Bird 都继承了接口 IAnimal，但是 Bird类并没有 swim函数，只能实现一个空函数 swim()。
+下面就是一个违反接口隔离原则的反例，类 Dog 和类 Bird 都继承了接口 IAnimal，但是 Bird 类并没有 swim 函数，只能实现一个空函数 swim()。
 
 ```typescript
 interface IAnimal {
@@ -191,9 +207,11 @@ class Bird implements IAnimal {
 }
 ```
 
-#### 迪米特原则
+### 迪米特原则
 
-一个类对于其他类知道得越少越好，就是说一个对象应当对其他对象尽可能少的了解。这一条原则要求任何一个对象或者方法只能调用该对象本身和内部创建的对象实例，如果要调用外部的对象，只能通过参数的形式传递进来。这一点和纯函数的思想相似。
+一个类对于其他类知道得越少越好，就是说一个对象应当对其他对象尽可能少的了解。
+
+这一条原则要求任何一个对象或者方法只能调用该对象本身和内部创建的对象实例，如果要调用外部的对象，只能通过参数的形式传递进来。这一点和纯函数的思想相似。
 
 下面的类 Store 就违反了迪米特原则，类内部使用了全局变量。
 
@@ -219,13 +237,15 @@ class Store {
 new Store(window.localstorage)
 ```
 
-#### 单一职责原则
+### 单一职责原则
 
-应该有且仅有一个原因引起类的变更。这个原则很好理解，一个类代码量越多，功能就越复杂，维护成本也就越高。遵循单一职责原则可以有效地控制类的复杂度。
+应该有且仅有一个原因引起类的变更。这个原则很好理解，一个类代码量越多，功能就越复杂，维护成本也就越高。
+
+遵循单一职责原则可以有效地控制类的复杂度。
 
 像下面这种情形经常在项目中看到，一个公共类聚集了很多不相关的函数，这就违反了单一职责原则。
 
-```java
+```javascript
 class Util {
   static toTime(date) {
     ...
@@ -241,13 +261,15 @@ class Util {
 
 了解了设计模式原则之后，下面再来看看具体的设计模式。
 
-### 设计模式的分类
+## 设计模式的分类
 
 经典的设计模式有 3 大类，共 23 种，包括**创建型**、**结构型**和**行为型**。
 
-#### 创建型
+### 创建型
 
-创建型模式的主要关注点是“如何创建和使用对象”，这些模式的核心特点就是将对象的创建与使用进行分离，从而降低系统的耦合度。使用者不需要关注对象的创建细节，对象的创建由相关的类来完成。
+创建型模式的主要关注点是“如何创建和使用对象”，这些模式的核心特点就是将对象的创建与使用进行分离，从而降低系统的耦合度。
+
+使用者不需要关注对象的创建细节，对象的创建由相关的类来完成。
 
 具体包括下面几种模式：
 
@@ -257,7 +279,7 @@ class Util {
 - **原型模式**，将一个对象作为原型，通过对其进行克隆创建新的实例；
 - **单例模式**，生成一个全局唯一的实例，同时提供访问这个实例的函数。
 
-下面的代码示例是 Vue.js 源码中使用单例模式的例子。其中，构造了一个唯一的数组 _installedPlugins 来保存插件，并同时提供了 Vue.use() 函数来新增插件。
+下面的代码示例是 Vue.js 源码中使用单例模式的例子。其中，构造了一个唯一的数组 `_installedPlugins` 来保存插件，并同时提供了 Vue.use() 函数来新增插件。
 
 ```javascript
 // src/core/global-api/use.js
@@ -276,7 +298,7 @@ export function initUse (Vue: GlobalAPI) {
 
 ```javascript
 // src/core/vdom/vnode.js
-export function cloneVNode (vnode: VNode): VNode {
+export function cloneVNode(vnode: VNode): VNode {
   const cloned = new VNode(
     vnode.tag,
     vnode.data,
@@ -288,7 +310,7 @@ export function cloneVNode (vnode: VNode): VNode {
     vnode.elm,
     vnode.context,
     vnode.componentOptions,
-    vnode.asyncFactory
+    vnode.asyncFactory,
   )
   cloned.ns = vnode.ns
   cloned.isStatic = vnode.isStatic
@@ -303,9 +325,11 @@ export function cloneVNode (vnode: VNode): VNode {
 }
 ```
 
-#### 结构型
+### 结构型
 
-结构型模式描述如何将类或对象组合在一起形成更大的结构。它分为类结构型模式和对象结构型模式，类结构型模式采用继承机制来组织接口和类，对象结构型模式釆用组合或聚合来生成新的对象。
+结构型模式描述如何将类或对象组合在一起形成更大的结构。
+
+它分为类`结构型模式`和`对象结构型模式`，类结构型模式采用继承机制来组织接口和类，对象结构型模式釆用组合或聚合来生成新的对象。
 
 具体包括下面几种模式：
 
@@ -321,13 +345,12 @@ Vue.js 在判断浏览器支持 Proxy 的情况下会使用代理模式，下面
 
 ```javascript
 // src/core/instance/proxy.js
-initProxy = function initProxy (vm) {
+initProxy = function initProxy(vm) {
   if (hasProxy) {
     // determine which proxy handler to use
     const options = vm.$options
-    const handlers = options.render && options.render._withStripped
-      ? getHandler
-      : hasHandler
+    const handlers =
+      options.render && options.render._withStripped ? getHandler : hasHandler
     vm._renderProxy = new Proxy(vm, handlers)
   } else {
     vm._renderProxy = vm
@@ -340,30 +363,30 @@ Vue 的 Dep 类则应用了代理模式，调用 notify() 函数来通知 subs �
 ```javascript
 // src/core/observer/dep.js
 export default class Dep {
-  static target: ?Watcher;
-  id: number;
-  subs: Array<Watcher>;
+  static target: ?Watcher
+  id: number
+  subs: Array<Watcher>
 
-  constructor () {
+  constructor() {
     this.id = uid++
     this.subs = []
   }
 
-  addSub (sub: Watcher) {
+  addSub(sub: Watcher) {
     this.subs.push(sub)
   }
 
-  removeSub (sub: Watcher) {
+  removeSub(sub: Watcher) {
     remove(this.subs, sub)
   }
 
-  depend () {
+  depend() {
     if (Dep.target) {
       Dep.target.addDep(this)
     }
   }
 
-  notify () {
+  notify() {
     // stabilize the subscriber list first
     const subs = this.subs.slice()
     if (process.env.NODE_ENV !== 'production' && !config.async) {
@@ -379,7 +402,7 @@ export default class Dep {
 }
 ```
 
-#### 行为型
+### 行为型
 
 行为型模式用于描述程序在运行时复杂的流程控制，即描述多个类或对象之间怎样相互协作共同完成单个对象无法单独完成的任务，它涉及算法与对象间职责的分配。
 
@@ -452,11 +475,13 @@ Object.defineProperty(obj, key, {
 })
 ```
 
-### 总结
+## 总结
 
 虽然 JavaScript 并不是一门面向对象的语言，但设计模式的原则和思想对我们编写代码仍有很重要的指导意义。
 
-本课时介绍了设计模式的 6 个重要原则，包括开闭原则、里氏替换原则、依赖倒置原则、接口隔离原则、迪米特原则、单一职责原则，重点讨论了接口和类的使用方式；然后介绍了 3 类设计模式以及对应的例子，创建型模式重点关注如何创建类实例，结构型模式重点关注类之间如何组合，行为型模式关注多个类之间的函数调用关系。
+本课时介绍了设计模式的 6 个重要原则，包括`开闭原则`、`里氏替换原则`、`依赖倒置原则`、`接口隔离原则`、`迪米特原则`、`单一职责原则`，重点讨论了接口和类的使用方式；
+
+然后介绍了 3 类设计模式以及对应的例子，创建型模式重点关注如何创建类实例，结构型模式重点关注类之间如何组合，行为型模式关注多个类之间的函数调用关系。
 
 要全部记住 23 种设计模式有些困难，重点在于理解其背后的思想与目的，从而做到心中有数，在此之上配合编码实践，才能最终完全掌握。
 
@@ -464,16 +489,16 @@ Object.defineProperty(obj, key, {
 
 ---
 
-### 精选评论
+## 精选评论
 
-##### \*召：
+#### \*召：
 
 > 23 种设计模式，与设计模式的原则、思想和目的
 
-##### \*浩：
+#### \*浩：
 
 > 有人说设计模式更像是一种艺术行为而非科学行为
 
-##### \*宇：
+#### \*宇：
 
 > 写的太好了
