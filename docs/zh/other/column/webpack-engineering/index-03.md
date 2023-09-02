@@ -1,10 +1,12 @@
-# 03 Webpack 开发环境搭建
+# 03-Webpack 开发环境搭建
 
 ![img](./assets/5cd962eb000160d406400359.jpg)
 
 > 从不浪费时间的人，没有工夫抱怨时间不够。——杰弗逊
 
-本文将包括安装 Node、NPM、WebPack 开发环境，我使用的开发 IDE 是 [VScode](https://code.visualstudio.com/)。因为 Webpack 实际是用 Node.js 写的，所以首先来介绍下 Node.js 的安装。已经准备好环境的，或者之前有过 Node.js 和 NPM 使用经验的可以直接跳过本小节内容。直接跳到下一小节的 Webpack 入门内容。
+本文将包括安装 Node、NPM、WebPack 开发环境，我使用的开发 IDE 是 [VScode](https://code.visualstudio.com/)。
+
+因为 Webpack 实际是用 Node.js 写的，所以首先来介绍下 Node.js 的安装。已经准备好环境的，或者之前有过 Node.js 和 NPM 使用经验的可以直接跳过本小节内容。直接跳到下一小节的 Webpack 入门内容。
 
 ## 安装 Node.js
 
@@ -55,7 +57,9 @@ NPM 中使用了一个命名为`package.json`的文件作为一个 NPM 包的描
 
 #### 本地模式和全局模式
 
-npm 的包安装，分为本地模式和全局模式，默认是本地模式，即在执行`npm install`命令的当前目录创建`node_modules`，然后下载安装包及其依赖到`node_modules`目录。全局模式是指安装到全局路径的方式。在 Node.js 的 require 依赖之时，会优先查找自己当前文件的`node_modules`，如果没有，则循环遍历上层的`node_modules`，如果便历到根目录还找不到，则会使用全局模式安装的模块，另外全局模式安装的包可以指定全局命令，只需要在`package.json`增加`bin`字段并且指向包内对应的文件即可。全局安装一个包，使用命令`npm install --global`，`--global`可以简写为`-g`。
+npm 的包安装，分为本地模式和全局模式，默认是本地模式，即在执行`npm install`命令的当前目录创建`node_modules`，然后下载安装包及其依赖到`node_modules`目录。全局模式是指安装到全局路径的方式。
+
+在 Node.js 的 require 依赖之时，会优先查找自己当前文件的`node_modules`，如果没有，则循环遍历上层的`node_modules`，如果便历到根目录还找不到，则会使用全局模式安装的模块，另外全局模式安装的包可以指定全局命令，只需要在`package.json`增加`bin`字段并且指向包内对应的文件即可。全局安装一个包，使用命令`npm install --global`，`--global`可以简写为`-g`。
 
 #### 初始化一个 NPM 项目
 
@@ -118,7 +122,7 @@ NPM 不仅可以用于模块管理，还可以用于执行脚本。`package.json
 
 [Webpack-cli](https://github.com/webpack/webpack-cli)是 Webpack 的 CLI （Command-line interface）工具，如果在项目中，我们可以使用下面的方式安装：
 
-```
+```bash
 npm install webpack-cli --save-dev
 ```
 
@@ -135,5 +139,6 @@ npm install webpack-cli --save-dev
 > 本小节 Webpack 相关面试题：
 >
 > 1.什么是 NPM Scripts？NPM Scripts 可以用来做什么？
+>
 > 2.NPM 的常用命令有哪些？
 

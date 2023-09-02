@@ -1,4 +1,4 @@
-# 04 使用 webpack-cli 体验零配置打包
+# 04-使用 webpack-cli 体验零配置打包
 
 ![img](./assets/5cd962f40001a7a706400360.jpg)
 
@@ -33,16 +33,16 @@ npm i webpack-cli --save-dev
 
 `hello.js`、 `world.js`和`index.js`三个文件内容如下：
 
-```js
+```javascript
 // hello
-module.exports = 'hello';
+module.exports = 'hello'
 // world
-module.exports = 'world';
+module.exports = 'world'
 // index
-const hello = require('./hello');
-const world = require('./world');
+const hello = require('./hello')
+const world = require('./world')
 
-console.log(`${hello} ${world}`);
+console.log(`${hello} ${world}`)
 ```
 
 这时候我们使用 `webpack`命令（如果全局安装 webpack-cli 包的话）可以直接体验 Webpack 打包效果。
@@ -91,8 +91,8 @@ console.log(`${hello} ${world}`);
 
 ```json
 "scripts": {
-  "dev": "webpack --mode development --output ./output/main.js",
-  "build": "webpack --mode production --output ./output/main.js"
+  "dev": "webpack --mode development --output-path ./output/main.js",
+  "build": "webpack --mode production --output-path ./output/main.js"
 }
 ```
 
@@ -146,16 +146,29 @@ npm i @babel/core babel-loader @babel/preset-env --save-dev
 
 ```json
 {
-    "presets": ["@babel/preset-env"]
+  "presets": ["@babel/preset-env"]
 }
 ```
 
-有了 babel-loader，可以使用 webpack 命令的`--module-bind`来指定对应的文件需要经过怎样的 Loader 处理，所以继续修改 npm scripts：
+有了 babel-loader，可以使用 webpack 配置文件，来指定对应的文件需要怎样的 Loader 处理，新建 `webpack.config.js`文件内容如下
 
 ```json
-"scripts": {
-    "dev": "webpack --mode development ./src/es/index.js --module-bind js=babel-loader",
-    "build": "webpack --mode production ./src/es/index.js --module-bind js=babel-loader"
+module.exports = {
+  module: {
+    rules: [
+      //设置loader
+      {
+        test: /\.js$/, //已作为js扩展名这样类型的文件
+        exclude: /node_modules/, //排除node_modules文件夹
+        use: {
+          loader: 'babel-loader', //转换成es5
+          options: {
+            presets: ['@babel/preset-env'], //设置编译的规则
+          },
+        },
+      },
+    ],
+  },
 }
 ```
 
@@ -164,14 +177,16 @@ npm i @babel/core babel-loader @babel/preset-env --save-dev
 ![image-20230902112717979](./assets/image-20230902112717979.png)
 
 > Tips：
-> 下面介绍几个 webpack-cli 的小技巧：
-> 1.当项目逐渐变大或者使用生产环境打包的时候，Webpack 的编译时间会变长，可以通过参数让编译的输出内容带有进度和颜色： `webpack --progress --colors`；
 >
-> 2. Webpack 的配置比较复杂，很容出现错误，如果出问题，会打印一些简单的错误信息，我们还可以通过参数 `--display-error-details` 来打印错误详情：`webpack --display-error-details`；
+> 下面介绍几个 webpack-cli 的小技巧：
+>
+> 1.当项目逐渐变大或者使用生产环境打包的时候，Webpack 的编译时间会变长，可以通过参数让编译的输出内容带有进度和颜色： `webpack --progress --color`；
+>
+> 2. Webpack 的配置比较复杂，很容出现错误，如果出问题，会打印一些简单的错误信息，我们还可以通过参数 `--display-error-details` 来打印错误详情：`webpack --display-error-details`；**（最新版本已经弃用）**
 >
 > 3.如果不想每次修改模块后都重新编译，那么可以启动监听模式，开启监听模式后，没有变化的模块会在编译后缓存到内存中，而不会每次都被重新编译，所以监听模式的整体速度是很快的：`webpack --watch`；
 >
-> 4. webpack-cli 支持两个快捷选项：`-d` 和 `-p` ，分别代表一些常用的开发环境和生产环境的打包。
+> 4. webpack-cli 支持两个快捷选项：`-d` 和 `-p` ，分别代表一些常用的开发环境和生产环境的打包。**（已被废弃）**
 
 ##### 小结
 
@@ -179,9 +194,10 @@ npm i @babel/core babel-loader @babel/preset-env --save-dev
 
 - **–config**：指定一个 Webpack 配置文件的路径；
 - **–mode**：指定打包环境的 mode，取值为`development`和`production`，分别对应着开发环境和生产环境；
-- **–json**：输mode出 Webpack 打包的结果，可以使用`webpack --json > stats.json`方式将打包结果输出到指定的文件；
+- **–json**：输 mode 出 Webpack 打包的结果，可以使用`webpack --json > stats.json`方式将打包结果输出到指定的文件；
 - **–progress**：显示 Webpack 打包进度；
 - **–watch, -w**：watch 模式打包，监控文件变化之后重新开始打包；
 - **–color, --colors`/`–no-color, --no-colors**：控制台输出的内容是否开启颜色；
-- **–hot**：开启 Hot Module Replacement模式，后面会详细介绍；
-- **–profile**：会详细的输出每个环节的用时（时间），方便排查打包速度瓶颈。
+- **–hot**：开启 Hot Module Replacement 模式，后面会详细介绍；
+- **—profile**：会详细的输出每个环节的用时（时间），方便排查打包速度瓶颈。
+
