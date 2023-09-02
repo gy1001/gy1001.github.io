@@ -1,6 +1,6 @@
-# 05 基础概念和常见配置项介绍（一）
+# 05-基础概念和常见配置项介绍（一）
 
-![img](https://img1.mukewang.com/5cd962fd000101b306400360.jpg)
+![img](./assets/5cd962fd000101b306400360.jpg)
 
 > 人生太短，要干的事太多，我要争分夺秒。 ——爱迪生
 
@@ -166,11 +166,16 @@ module.exports = {
 ```
 
 > Tips：在实际开发中 `context` 一般不需要配置，不配置则默认为`process.cwd()`即工作目录。
-> 工作目录（英语：Working directory），计算机用语。使用者在作业系统内所在的目录，使用者可在此用相对档名存取档案 —— 维基百科。
+>
+> 工作目录（英语：Working directory），计算机用语。
+>
+> 使用者在作业系统内所在的目录，使用者可在此用相对档名存取档案 —— 维基百科。
 
 ### entry 入口
 
-Webpack 的`entry`支持多种类型，包括字符串、对象、数组。从作用上来说，包括了**单文件入口**和**多文件入口**两种方式。
+Webpack 的`entry`支持多种类型，包括字符串、对象、数组。
+
+从作用上来说，包括了**单文件入口**和**多文件入口**两种方式。
 
 #### 单文件入口
 
@@ -204,11 +209,17 @@ module.exports = {
 
 > Tips：上面配置无论是字符串还是字符串数组的 entry，实际上都是只有一个入口，但是在打包产出上会有差异：
 >
-> 1.如果直接是 string 的形式，那么 webpack 就会直接把该 string 指定的模块（文件）作为入口模块 2.如果是数组 `[string]` 的形式，那么 webpack 会自动生成另外一个入口模块，并将数组中每个元素指定的模块（文件）加载进来，并将最后一个模块的 module.exports 作为入口模块的 module.exports 导出。**这部分会在「原理篇：打包产出小节」继续做详细介绍**。
+> 1. 如果直接是 string 的形式，那么 webpack 就会直接把该 string 指定的模块（文件）作为入口模块 
+> 2. 如果是数组 `[string]` 的形式，那么 webpack 会自动生成另外一个入口模块，并将数组中每个元素指定的模块（文件）加载进来，
+> 3. 并将最后一个模块的 module.exports 作为入口模块的 module.exports 导出。
+>
+> **这部分会在「原理篇：打包产出小节」继续做详细介绍**。
 
 #### 多文件入口
 
-多文件入口是使用对象语法来通过支持多个`entry`，多文件入口的对象语法相对于单文件入口，具有较高的灵活性，例如多页应用、页面模块分离优化。多文件入口的语法如下：
+多文件入口是使用对象语法来通过支持多个`entry`，多文件入口的对象语法相对于单文件入口，具有较高的灵活性，例如多页应用、页面模块分离优化。
+
+多文件入口的语法如下：
 
 ```js
 module.exports = {
@@ -222,7 +233,7 @@ module.exports = {
 
 上面的语法将`entry`分成了 3 个独立的入口文件，这样会打包出来三个对应的 bundle，在后面的文章还会介绍使用`splitChunks`抽离一个项目中多个`entry`的公共代码。
 
-> Tips：对于一个 HTML 页面，我们推荐只有一个 `entry` ，通过统一的入口，解析出来的依赖关系更方便管理和维护。
+> Tips：对于一个 `HTML` 页面，我们推荐只有一个 `entry`，通过统一的入口，解析出来的依赖关系更方便管理和维护。
 
 ### output 输出
 
@@ -260,7 +271,7 @@ path/to/my/entry/search.js → dist/search.js
 path/to/my/entry/list.js → dist/list.js
 ```
 
-我将 Webpack 目前支持的占位符列出来：
+我将 `Webpack` 目前支持的占位符列出来：
 
 | 占位符        | 含义                                           |
 | :------------ | :--------------------------------------------- |
@@ -273,9 +284,9 @@ path/to/my/entry/list.js → dist/list.js
 
 `[hash]` 和 `[chunkhash]` 的长度可以使用 `[hash:16]`（默认为 **20**）来指定。或者，通过指定 `output.hashDigestLength` 在全局配置长度，那么他们之间有什么区别吗？
 
-- `[hash]`：是**整个项目**的 hash 值，其根据每次编译内容计算得到，每次编译之后都会生成新的 hash，即修改任何文件都会导致所有文件的 hash 发生改变；在一个项目中虽然入口不同，但是 hash 是相同的；hash 无法实现前端静态资源在浏览器上长缓存，这时候应该使用 chunkhash；
-- `[chunkhash]`：根据不同的入口文件（entry）进行依赖文件解析，构建对应的 chunk，生成相应的 hash；只要组成 entry 的模块文件没有变化，则对应的 hash 也是不变的，所以一般项目优化时，会将公共库代码拆分到一起，因为公共库代码变动较少的，使用 chunkhash 可以发挥最长缓存的作用；
-- `[contenthash]`：使用 chunkhash 存在一个问题，当在一个 JS 文件中引入了 CSS 文件，编译后它们的 hash 是相同的。而且，只要 JS 文件内容发生改变，与其关联的 CSS 文件 hash 也会改变，针对这种情况，可以把 CSS 从 JS 中使用[mini-css-extract-plugin](https://github.com/webpack-contrib/mini-css-extract-plugin) 或 [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin)抽离出来并使用 contenthash。
+- `[hash]`：是**整个项目**的 hash 值，其根据每次编译内容计算得到，每次编译之后都会生成新的 hash，即修改任何文件都会导致所有文件的 hash 发生改变；在一个项目中虽然入口不同，但是 hash 是相同的；**hash 无法实现前端静态资源在浏览器上长缓存，这时候应该使用 chunkhash** 
+- `[chunkhash]`：根据不同的入口文件（entry）进行依赖文件解析，构建对应的 chunk，生成相应的 hash；只要组成 entry 的模块文件没有变化，则对应的 hash 也是不变的，所以一般项目优化时，会将公共库代码拆分到一起，**因为公共库代码变动较少的，使用 chunkhash 可以发挥最长缓存的作用**
+- `[contenthash]`：使用 chunkhash 存在一个问题，当在一个 JS 文件中引入了 CSS 文件，编译后它们的 hash 是相同的。而且，只要 JS 文件内容发生改变，与其关联的 CSS 文件 hash 也会改变，针对这种情况，可以把 CSS 从 JS 中使用 [mini-css-extract-plugin](https://github.com/webpack-contrib/mini-css-extract-plugin) 或 [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin) 抽离出来并使用 contenthash。
 
 `[hash]`、`[chunkhash]`和`[contenthash]`都支持`[xxx:length]`的语法。
 
@@ -610,6 +621,16 @@ const options = {
 > 3. Webpack 的占位符 `[hash]` 、`[chunkhash]` 和 `[contenthash]` 有什么区别和联系？最佳实践是什么？
 > 4. Webpack 的 SourceMap 有几种形式？分别有什么特点？SourceMap 配置的最佳实践是什么？
 > 5. 什么是 bundle ，什么是 chunk，什么是 module？
+>
+>    **module**：不同文件类型的模块。Webpack 就是用来对模块进行打包的工具，这些模块各种各样，比如：js 模块、css 模块、sass 模块、vue 模块等等不同文件类型的模块。这些文件都会被 loader 转换为有效的模块，然后被应用所使用并且加入到依赖关系图中。相对于一个完整的程序代码，模块化的好处在于，模块化将程序分散成小的功能块，这就提供了可靠的抽象能力以及封装的边界，让设计更加连贯、目的更加明确。而不是将所有东西都揉在一块，既难以理解也难以管理。
+>
+>    **chunk**：数据块。
+>
+>    a. 一种是非初始化的：例如在打包时，对于一些动态导入的异步代码，webpack 会帮你分割出共用的代码，可以是自己写的代码模块，也可以是第三方库（node_modules 文件夹里的），这些被分割的代码文件就可以理解为 chunk。
+>
+>    b. 还有一种是初始化的：就是写在入口文件处 (entry point) 的各种文件或者说模块依赖，就是 chunk ，它们最终会被捆在一起打包成一个 main.js （当然输出文件名你可以自己指定），这个 main.js 可以理解为 bundle，当然它其实也是 chunk。
+>
+>    **bundle**：捆绑好的最终文件。如果说，chunk 是各种片段，那么 bundle 就是一堆 chunk 组成的“集大成者”，比如上面说的 main.js 就属于 bundle。当然它也类似于电路上原先是各种散乱的零件，最终组成一个集成块的感觉。它经历了加载和编译的过程，是源文件的最终版本。
 
 专栏代码已经整理好给大家共享出来：
-https://github.com/ksky521/webpack-tutorial
+[https://github.com/ksky521/webpack-tutorial](https://github.com/ksky521/webpack-tutorial)
