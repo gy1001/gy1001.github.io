@@ -8,6 +8,10 @@
 
 所以 Babel 是一个重要的知识点需要掌握。
 
+## 【推荐文章】
+
+[姜瑞涛的官方网站-Babel 教程](https://www.jiangruitao.com/babel/)
+
 ## 什么是 Babel
 
 Babel 是 JavaScript 的编译器，通过 Babel 可以将我们写的最新 ES 语法的代码轻松转换成任意版本的 JavaScript 语法。
@@ -477,7 +481,6 @@ try {
 } catch (err) {
   console.log(err)
 }
-
 ```
 
 然后执行`node index.js`就可以看到对应的 JavaScript 对象表示的 AST 结构了。
@@ -823,7 +826,7 @@ export default asyncFun
 
 我们知道 Babel 在每个需要转换的代码前面都会插入一些`helpers`代码，这可能会导致多个文件都会有重复的 `helpers` 代码。
 
- `@babel/plugin-transform-runtime` 的 `helpers` 选项就可以把这些代码抽离出来。
+`@babel/plugin-transform-runtime` 的 `helpers` 选项就可以把这些代码抽离出来。
 
 所以 Babel 的 Polyfill 的最佳实践是如下的 Babel 配置：
 
