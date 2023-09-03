@@ -1,14 +1,12 @@
-# 12 使用 Webpack 管理项目中的静态资源
+# 12-使用 Webpack 管理项目中的静态资源
 
-更新时间：2019-06-24 09:26:25
+![image-20230903234631956](./assets/image-20230903234631956.png)
 
-![img](https://img.mukewang.com/5cd9638b00019dce06400360.jpg)
+> 低头要有勇气，抬头要有底气。—— 韩寒
 
-低头要有勇气，抬头要有底气。
+前端项目离不开各种静态资源，静态资源指前端中常用的图片、富媒体（Video、Audio 等）、字体文件等。
 
-——韩寒
-
-前端项目离不开各种静态资源，静态资源指前端中常用的图片、富媒体（Video、Audio 等）、字体文件等。Webpack 中静态资源也是可以作为模块直接使用的，本小节将介绍下 Webpack 中对静态资源的管理。
+Webpack 中静态资源也是可以作为模块直接使用的，本小节将介绍下 Webpack 中对静态资源的管理。
 
 ## 图片引入方式
 
@@ -24,9 +22,13 @@
 <img src="http://s.bxstatic.com/foo/bar.png" />
 ```
 
-上面地址的`http://s.bxstatic.com`是一个 [CDN](https://baike.baidu.com/item/CDN) 静态域名，后面是我们完整的路径，这样我们上线的时候地址就可以直接看了，我们线下开发的时候可以提前将静态资源打包好上传到线上。这样操作想想就很费劲，而且 CDN 每次静态资源更新都要需要刷新缓存，如果我们使用 MD5 命名图片的时候就更麻烦了。
+上面地址的`http://s.bxstatic.com`是一个 [CDN](https://baike.baidu.com/item/CDN) 静态域名，后面是我们完整的路径，这样我们上线的时候地址就可以直接看了，我们线下开发的时候可以提前将静态资源打包好上传到线上。
 
-我们在 Webpack 中，则可以使用 loader 的方式完成图片的引入。例如在 CSS 文件中，直接相对路径使用背景图片：
+这样操作想想就很费劲，而且 CDN 每次静态资源更新都要需要刷新缓存，如果我们使用 MD5 命名图片的时候就更麻烦了。
+
+我们在 Webpack 中，则可以使用 loader 的方式完成图片的引入。
+
+例如在 CSS 文件中，直接相对路径使用背景图片：
 
 ```css
 .bg-img {
@@ -63,7 +65,9 @@ module.exports = {
 - `file-loader`：能够根据配置项复制使用到的资源（不局限于图片）到构建之后的文件夹，并且能够更改对应的链接；
 - `url-loader`：包含 file-loader 的全部功能，并且能够根据配置将符合配置的文件转换成 Base64 方式引入，将小体积的图片 Base64 引入项目可以减少 http 请求，也是一个前端常用的优化方式。
 
-下面以`url-loader`为例说明下 Webpack 中使用方法。首先是安装对应的 loader：`npm install -D url-loader`。
+下面以`url-loader`为例说明下 Webpack 中使用方法。
+
+首先是安装对应的 loader：`npm install -D url-loader`。
 
 下面我们创建一个项目，目录结构如下：
 
@@ -155,11 +159,11 @@ module.exports = {
 
 执行`webpack`之后的 log：
 
-![图片描述](http://img.mukewang.com/5cedf2df0001d32a14440552.png)
+![image-20230903234937080](./assets/image-20230903234937080.png)
 
 这时候发现，打包出来的文件都比较大，通过查看内容发现，我们的图片被`Base64`处理了，然后直接引入了：
 
-![图片描述](http://img.mukewang.com/5cedf2fb00011ac705660410.png)
+![image-20230903234948440](./assets/image-20230903234948440.png)
 
 **这是因为`url-loader`本身优先是将资源`Base64`引入的**。虽然图片`Base64`可以减少 http 请求，但是对于`1M+`这么大的图片都`Base64`处理，范围增加了 CSS、JavaScript 等文件的大小，而且将这么大的`Base64`反解成可以使用的图片渲染出来，时间消耗也是很大的。
 
@@ -167,20 +171,21 @@ module.exports = {
 
 ```js
 {
-    test: /\.(png|svg|jpg|gif)$/,
-    use: {
-        loader: 'url-loader',
-        options: {
-            limit: 3*1024 // 3k
-        }
+  test: /\.(png|svg|jpg|gif)$/,
+  use: {
+    loader: 'url-loader',
+    options: {
+      limit: 3*1024 // 3k
     }
+  }
 }
 ```
 
 这时候再执行`webpack`，发现多打出一个`ad19429dc9b3ac2745c760bb1f460892.png`的图片，这张图片就是`large.png`的图片，因为超过了`limit=3*1024`显示所以没有被处理成`Base64`。
 
-![图片描述](http://img.mukewang.com/5cedf33000018c1f17240600.png)
-继续查看`index.html`和`main.js`（`index.js`打包出来的文件），发现我们使用`large.png`的地址都被 Webpack 自动替换成了新的路径`ad19429dc9b3ac2745c760bb1f460892.png`。
+![image-20230903234959311](./assets/image-20230903234959311.png)
+
+继续查看`index.html`和`main.js`（`index.js`打包出来的文件)，发现我们使用`large.png`的地址都被 Webpack 自动替换成了新的路径`ad19429dc9b3ac2745c760bb1f460892.png`。
 
 ### 配置 CDN 域名
 
@@ -217,8 +222,12 @@ module.exports = {
 修改`index.html`和`index.css`：
 
 ```html
-<img src="@assets/img/large.png" alt="背景图" /> .bg-img { background:
-url(@assets/img/small.png) no-repeat; }
+<img src="@assets/img/large.png" alt="背景图" /> 
+<style>
+.bg-img { 
+  background: url(@assets/img/small.png) no-repeat; 
+}
+</style>
 ```
 
 然后修改`webpack.config.js`增加`resolve.alias`：
@@ -252,15 +261,21 @@ ERROR in   Error: Child compilation failed:
 这是因为在 HTML 和 CSS 使用`alias`必须要前面添加`~`，即：
 
 ```html
-<img src="~@assets/img/large.png" alt="背景图" /> .bg-img { background:
-url(~@assets/img/small.png) no-repeat; }
+<img src="~@assets/img/large.png" alt="背景图" />
+<style>
+  .bg-img { 
+    background: url(~@assets/img/small.png) no-repeat;
+  }
+</style> 
 ```
 
 修改完后，直接执行`webpack`既可以看到正确的结果了。
 
 > Tips：HTML 中使用`<img>`引入图片等静态资源的时候，需要添加`html-loader`配置，不然也不会处理静态资源的路径问题。
 
-[svg-url-loader](https://www.npmjs.com/package/svg-url-loader) 的工作原理类似于 `url-loader`，除了它利用 [URL encoding](https://developer.mozilla.org/en-US/docs/Glossary/percent-encoding) 而不是 Base64 对文件编码。对于 SVG 图片这是有效的，因为 SVG 文件恰好是纯文本，这种编码规模效应更加明显，使用方法如下：
+[svg-url-loader](https://www.npmjs.com/package/svg-url-loader) 的工作原理类似于 `url-loader`，除了它利用 [URL encoding](https://developer.mozilla.org/en-US/docs/Glossary/percent-encoding) 而不是 Base64 对文件编码。
+
+对于 SVG 图片这是有效的，因为 SVG 文件恰好是纯文本，这种编码规模效应更加明显，使用方法如下：
 
 ```js
 // webpack.config.js
@@ -288,16 +303,19 @@ module.exports = {
 ## 图片优化
 
 图片体积是个经常诟病的问题，一个页面中，完全一样内容的图片，在肉眼可见的范围内并不一定有差异但是体积却相差甚大，例如下面的图片：
-![img](https://images.guide/images/book-images/Modern-Image16-large.jpg)
 
-所以图片优化也是我们在前端项目中经常做的事情，在 Webpack 中可以借助[img-webpack-loader](https://github.com/tcoopman/image-webpack-loader)来对使用到的图片进行优化。它支持 JPG、PNG、GIF 和 SVG 格式的图片，因此我们在碰到所有这些类型的图片都会使用它。
+![image-20230903235452248](./assets/image-20230903235452248.png)
+
+所以图片优化也是我们在前端项目中经常做的事情，在 Webpack 中可以借助 [img-webpack-loader](https://github.com/tcoopman/image-webpack-loader)来对使用到的图片进行优化。它支持 JPG、PNG、GIF 和 SVG 格式的图片，因此我们在碰到所有这些类型的图片都会使用它。
 
 ```bash
 # 安装
 npm install image-webpack-loader --save-dev
 ```
 
-[image-webpack-loader](https://github.com/tcoopman/image-webpack-loader)这个 loader 不能将图片嵌入应用，所以它必须和 `url-loader` 以及 `svg-url-loader` 一起使用。为了避免同时将它复制粘贴到两个规则中（一个针对 JPG/PNG/GIF 图片， 另一个针对 SVG ），我们使用 `enforce: 'pre'` 作为单独的规则涵盖在这个 loader：
+[image-webpack-loader](https://github.com/tcoopman/image-webpack-loader)这个 loader 不能将图片嵌入应用，所以它必须和 `url-loader` 以及 `svg-url-loader` 一起使用。
+
+为了避免同时将它复制粘贴到两个规则中（一个针对 JPG/PNG/GIF 图片， 另一个针对 SVG ），我们使用 `enforce: 'pre'` 作为单独的规则涵盖在这个 loader：
 
 ```js
 // webpack.config.js
@@ -359,14 +377,14 @@ module.exports = {
 // rules
 
 {
-    test: /\.css$/,
-    use: [
-        MiniCssExtractPlugin.loader,
-        'css-loader',
-        {
-            loader: 'postcss-loader'
-        }
-    ]
+  test: /\.css$/,
+  use: [
+    MiniCssExtractPlugin.loader,
+    'css-loader',
+    {
+      loader: 'postcss-loader'
+    }
+]
 }
 ```
 
@@ -392,10 +410,12 @@ module.exports = {
 
 经过打包之后，输出 log 如下，可见生成了一个新的图片文件`99b0de3534d3e852ea4ce83b15cbad60.png`：
 
-![图片描述](http://img.mukewang.com/5cedf5a30001134516960648.png)
+![image-20230903235726410](./assets/image-20230903235726410.png)
+
 打开`99b0de3534d3e852ea4ce83b15cbad60.png`文件，我们看到图片被合并到了一起：
 
-![图片描述](http://img.mukewang.com/5cedf5ce0001c49d03670334.png)
+![image-20230903235736336](./assets/image-20230903235736336.png)
+
 在打开打包之后的 CSS 文件，发现内容被主动替换成了 CSS Sprite 写法，并且设置了正确的`background-position`和`background-size`了：
 
 ```css
@@ -432,13 +452,13 @@ module.exports = {
 
 ```js
 {
-    // 文件解析
-    test: /\.(eot|woff|ttf|woff2|appcache|mp4|pdf)(\?|$)/,
-    loader: 'file-loader',
-    query: {
-        // 这么多文件，ext不同，所以需要使用[ext]
-        name: 'assets/[name].[hash:7].[ext]'
-    }
+  // 文件解析
+  test: /\.(eot|woff|ttf|woff2|appcache|mp4|pdf)(\?|$)/,
+  loader: 'file-loader',
+  query: {
+    // 这么多文件，ext不同，所以需要使用[ext]
+    name: 'assets/[name].[hash:7].[ext]'
+  }
 },
 ```
 
@@ -446,22 +466,24 @@ module.exports = {
 
 ### 数据
 
-如果我们项目需要加载的类似 JSON、CSV、TSV 和 XML 等数据，那么我们需要单独给它们配置相应的 loader。对 JSON 的支持实际上是内置的，类似于 Node.js，这意味着`import Data from'./data.json'`导入数据默认情况将起作用。要导入 CSV，TSV 和 XML，可以使用[csv-loader](https://www.npmjs.com/package/csv-loader)和[xml-loader](https://www.npmjs.com/package/xml-loader)。
+如果我们项目需要加载的类似 JSON、CSV、TSV 和 XML 等数据，那么我们需要单独给它们配置相应的 loader。
+
+对 JSON 的支持实际上是内置的，类似于 Node.js，这意味着`import Data from'./data.json'`导入数据默认情况将起作用。要导入 CSV，TSV 和 XML，可以使用[csv-loader](https://www.npmjs.com/package/csv-loader)和[xml-loader](https://www.npmjs.com/package/xml-loader)。
 
 首先是安装它们的 loader：`npm i -D xml-loader csv-loader`，然后增加文件 loader 配置如下：
 
 ```js
- {
-    test: /\.(csv|tsv)$/,
-    use: [
-    'csv-loader'
-    ]
+{
+  test: /\.(csv|tsv)$/,
+  use: [
+  	'csv-loader'
+  ]
 },
 {
-    test: /\.xml$/,
-    use: [
-    'xml-loader'
-    ]
+  test: /\.xml$/,
+  use: [
+  	'xml-loader'
+  ]
 }
 ```
 
@@ -469,7 +491,9 @@ module.exports = {
 
 ## 小结
 
-本小节主要介绍 Webpack 中的图片、字体、富媒体、数据等多种静态资源的管理方式。页面经常用到的图片是页面的重点，Webpack 提供了很多插件和 loader 对图片进行压缩、合并（CSS Sprite）。Webpack 还会使用`url-loader`等插件，将较小的资源通过 Base64 的方式引入。
+本小节主要介绍 Webpack 中的图片、字体、富媒体、数据等多种静态资源的管理方式。页面经常用到的图片是页面的重点，Webpack 提供了很多插件和 loader 对图片进行压缩、合并（CSS Sprite）。
+
+Webpack 还会使用`url-loader`等插件，将较小的资源通过 Base64 的方式引入。
 
 当项目足够大了之后，配置太多的静态资源处理流程也会影响 Webpack 的打包速度，想突破压缩和合并这类前端常见优化，我们可以通过让视觉人员提供最优图片格式等方式来人工解决。当然如果项目组一直没有优化的意识，担心一不小心上到线上一个很大的图片，那么使用 Webpack 来兜底也是个很不错的方案。
 
@@ -477,3 +501,10 @@ module.exports = {
 >
 > 1. Webpack 中怎么给静态资源添加上 CDN 域名？
 > 2. url-loader 和 file-loader 有什么区别？
+>
+> 相同点：file-loader与url-loader都是在webpack中引入图片的解决方案。
+> 不同点：
+> 1、file-loader：返回的是图片的public URL。
+> 2、url-loader：与file-loader不同，url-loader可以在图片大小小于设定的limit的时候返回的是一个bDataURL（base64码），大于limit时会调用file-loader对图片进行处理。
+>
+> 简答地说，url-loader 封装了 file-loader。url-loader 不依赖于 file-loader，即使用 url-loader 时，只需要安装 url-loader 即可，不需要安装 file-loader，因为 url-loader 内置了 file-loader。

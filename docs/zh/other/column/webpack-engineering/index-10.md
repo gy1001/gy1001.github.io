@@ -1,12 +1,8 @@
-# 10 Webpack 中样式相关的配置
+# 10-Webpack 中样式相关的配置
 
-更新时间：2019-06-24 09:25:58
+![image-20230903230050165](./assets/image-20230903230050165.png)
 
-![img](https://img.mukewang.com/5cd96367000154f506400360.jpg)
-
-人的影响短暂而微弱，书的影响则广泛而深远。
-
-——普希金
+>  人的影响短暂而微弱，书的影响则广泛而深远。 ——普希金
 
 Webpack 中一切皆模块，CSS 也可以在 JavaScript 中被直接引用，但是 CSS 的语法 JavaScript 是不能解析的，所以下面代码会报错：
 
@@ -15,7 +11,7 @@ import css from './css/index.css'
 console.log(css)
 ```
 
-![图片描述](http://img.mukewang.com/5ce24d240001544614440984.png)
+![image-20230903230101847](./assets/image-20230903230101847.png)
 
 这时候就需要添加 Webpack 的`loader` 来处理 CSS 了。
 
@@ -23,7 +19,7 @@ console.log(css)
 
 首先添加 css-loader：
 
-```
+```shell
 npm install --save-dev css-loader
 # or
 npm i -D css-loader
@@ -52,24 +48,29 @@ console.log(css, css.toString())
 ```
 
 效果如下：
-![图片描述](http://img.mukewang.com/5ce24d3a0001c08005570198.png)
+
+![image-20230903230125644](./assets/image-20230903230125644.png)
 
 这时候 CSS 会被转成字符串， JS 就可以直接使用。
 
-除了上面直接在`webpack.config.js`中添加`rule`，还可以在 JavaScript 中直接使用下面的方式引入：
+除了上面直接在`webpack.config.js`中添加`rule`，还可以在 `JavaScript` 中直接使用下面的方式引入：
 
 ```js
 import css from 'css-loader!./css/index.css'
 console.log(css)
 ```
 
-上面代码中`import css from 'css-loader!./css/index.css'`是 webpack loader 的内联写法。
+上面代码中`import css from 'css-loader!./css/index.css'`是 `webpack loader` 的内联写法。
 
 ## style-loader
 
-有了 css-loader 可以识别 CSS 语法了，下面就需要 style-loader 出场了。简单来说，style-loader 是将 css-loader 打包好的 CSS 代码以`<style>`标签的形式插入到 HTML 文件中，所以`style-loader`是和`css-loader`成对出现的，并且`style-loader`是在`css-loader`之后。首先安装`style-loader`：
+有了 `css-loader` 可以识别 CSS 语法了，下面就需要 style-loader 出场了。
 
-```
+简单来说，style-loader 是将 css-loader 打包好的 CSS 代码以`<style>`标签的形式插入到 HTML 文件中，所以`style-loader`是和`css-loader`成对出现的，并且`style-loader`是在`css-loader`之后。
+
+首先安装`style-loader`：
+
+```shell
 npm install --save-dev style-loader
 # or
 npm i -D css-loader
@@ -79,7 +80,7 @@ npm i -D css-loader
 
 CSS 作为`<style>`标签放到 HTML 内还是不够的，我们还需要将 CSS 以`<link>`的方式通过 URL 的方式引入进来，这时候就需要使用[mini-css-extract-plugin](https://github.com/webpack-contrib/mini-css-extract-plugin)这个插件了，首先安装它：
 
-```
+```shell
 npm install --save-dev mini-css-extract-plugin
 ```
 
@@ -109,7 +110,11 @@ module.exports = {
 
 ## CSS Modules
 
-CSS Modules 指的是所有的 CSS 类名及其动画名都只是局部作用域的 CSS 文件。CSS Modules 既不是官方标准，也不是浏览器的特性，而是在构建过程中对 CSS 类名选择器限定作用域的一种方式，如我们的广告样式、某个 UI 通用弹层 SDK 这类样式，都需要避免自己的命名跟宿主环境的样式冲突或者避免被 [AdBlock](https://getadblock.com/) 这类广告拦截器拦截掉。CSS Modules 主要解决的问题有：
+CSS Modules 指的是所有的 CSS 类名及其动画名都只是局部作用域的 CSS 文件。
+
+CSS Modules 既不是官方标准，也不是浏览器的特性，而是在构建过程中对 CSS 类名选择器限定作用域的一种方式，如我们的广告样式、某个 UI 通用弹层 SDK 这类样式，都需要避免自己的命名跟宿主环境的样式冲突或者避免被 [AdBlock](https://getadblock.com/) 这类广告拦截器拦截掉。
+
+CSS Modules 主要解决的问题有：
 
 1. 解决 CSS 类都是全局的，容易造成全局污染（样式冲突）；
 2. JS 和 CSS 共享类名；
@@ -174,7 +179,8 @@ module.exports = {
 ```
 
 执行 WebPack 打包，最终效果如下：
-![图片描述](http://img.mukewang.com/5ce24dbf0001d51007800341.png)
+
+![image-20230903230453296](./assets/image-20230903230453296.png)
 
 跟 CSS Modules 相关的配置还有很多，具体可以在`css-loader`对应的[文档](https://github.com/webpack-contrib/css-loader)找到。
 
@@ -260,11 +266,13 @@ module.exports = {
 }
 ```
 
-> Tips：PostCSS 是一个使用 JavaScript 插件来转换 CSS 的工具，PostCSS 核心是将 CSS 解析成 AST，然后通过各种插件做各种转换，最终生成处理后的新 CSS，跟 Babel 在功能和实现上都类似，这里就不再详细讲解实现原理了。在语法转换上还有一个开源项目[cssnext](http://cssnext.io)，使用最新的 CSS 标准来写 CSS，通过 cssnext 可以转换成对应的 CSS 版本。
+> Tips：PostCSS 是一个使用 JavaScript 插件来转换 CSS 的工具，PostCSS 核心是将 CSS 解析成 AST，然后通过各种插件做各种转换，最终生成处理后的新 CSS，跟 Babel 在功能和实现上都类似，这里就不再详细讲解实现原理了。
+>
+> 在语法转换上还有一个开源项目[cssnext](http://cssnext.io)，使用最新的 CSS 标准来写 CSS，通过 cssnext 可以转换成对应的 CSS 版本。
 
 ### postcss-loader
 
-使用 PostCSS 需要安装[postcss-loader](https://github.com/postcss/postcss-loader)，然后按照 loader 顺序，在 css-loader 之前（注意 loader 顺序：从右到左，从后到前）加上 postcss-loader：
+使用 PostCSS 需要安装 [postcss-loader](https://github.com/postcss/postcss-loader)，然后按照 loader 顺序，在 css-loader 之前（注意 loader 顺序：从右到左，从后到前）加上 postcss-loader：
 
 ```js
 // webpack.config.js
@@ -337,7 +345,9 @@ module.exports = {
 // postcss.config.js
 const autoprefixer = require('autoprefixer')
 module.exports = {
-  plugins: [autoprefixer(['IE 10'])],
+  plugins: [
+    autoprefixer(['IE 10'])
+  ],
 }
 ```
 
@@ -396,11 +406,15 @@ Autoprefixer 的主要参数就是 browserslist，即需要代码支持的浏览
 
 ### postcss-preset-env
 
-[postcss-preset-env](https://preset-env.cssdb.org)是跟 babel 的 preset-env 类似的功能，通过它可以安心的使用最新的 CSS 语法来写样式，不用关心浏览器兼容性，浏览器兼容的问题交给了 postcss-preset-env 和 WebPack，在打包构建的时候，会根据不同的配置输出对应支持的 CSS 文件。postcss-preset-env 支持的 CSS 标准，完全可以媲美 CSS 预处理器的功能，所以如果对 cssnext 新的标准比较熟悉，可以直接用新标准来写样式，这样等到浏览器支持新标准之后可以无缝切换到 cssnext 语法，那么可以直接抛弃 CSS 预处理器，直接使用 cssnext 语法来写样式，通过 WebPack 和 postcss-preset-env 来构建。
+[postcss-preset-env](https://preset-env.cssdb.org) 是跟 babel 的 preset-env 类似的功能，通过它可以安心的使用最新的 CSS 语法来写样式，不用关心浏览器兼容性，浏览器兼容的问题交给了 postcss-preset-env 和 webpack，在打包构建的时候，会根据不同的配置输出对应支持的 CSS 文件。
+
+postcss-preset-env 支持的 CSS 标准，完全可以媲美 CSS 预处理器的功能，所以如果对 cssnext 新的标准比较熟悉，可以直接用新标准来写样式，这样等到浏览器支持新标准之后可以无缝切换到 cssnext 语法，那么可以直接抛弃 CSS 预处理器，直接使用 cssnext 语法来写样式，通过 webPack 和 postcss-preset-env 来构建。
 
 ### PreCSS
 
-如果我们厌倦 cssnext 的变量定义方式，想使用 Sass 的语法，而又不想引入 Sass 这个 CSS 预处理器，[PreCSS](https://github.com/jonathantneal/precss)就是你的选择。使用 PreCSS，可以写类 Sass 和 cssnext 语法的 CSS，详细可以参考它的[文档](https://github.com/jonathantneal/precss)。
+如果我们厌倦 cssnext 的变量定义方式，想使用 Sass 的语法，而又不想引入 Sass 这个 CSS 预处理器，[PreCSS](https://github.com/jonathantneal/precss)就是你的选择。
+
+使用 PreCSS，可以写类 Sass 和 cssnext 语法的 CSS，详细可以参考它的[文档](https://github.com/jonathantneal/precss)。
 
 ### cssnano
 
@@ -458,7 +472,9 @@ cssnano 的配置会在 WebPack 优化章节继续详细介绍。
 
 ## 解惑：理解 css-loader 的 importLoaders 参数
 
-在 css-loader 的文档中，有个比较引起疑惑的参数项：`importLoaders`，这个参数用于配置 **css-loader 作用于 `@import`的资源之前**有多少个 loader。给出的示例代码如下：
+在 css-loader 的文档中，有个比较引起疑惑的参数项：`importLoaders`，这个参数用于配置 **css-loader 作用于 `@import`的资源之前**有多少个 loader。
+
+给出的示例代码如下：
 
 ```js
 {
@@ -477,7 +493,9 @@ cssnano 的配置会在 WebPack 优化章节继续详细介绍。
 }
 ```
 
-通过示例并不能看出来配置`importLoaders`是否对项目打包有什么差异，下面通过实例代码来看下加上`importLoaders`和没添加有什么区别。首先我们创建两个文件：`style.css`和`body.css`，`style.css`中通过`@import 'body.css';`引入`body.css`：
+通过示例并不能看出来配置`importLoaders`是否对项目打包有什么差异，下面通过实例代码来看下加上`importLoaders`和没添加有什么区别。
+
+首先我们创建两个文件：`style.css`和`body.css`，`style.css`中通过`@import 'body.css';`引入`body.css`：
 
 ```css
 /* style.css */
@@ -613,16 +631,26 @@ div {
 const autoprefixer = require('autoprefixer')
 const postcssImport = require('postcss-import')
 module.exports = {
-  plugins: [postcssImport(), autoprefixer(['IE 10'])],
+  plugins: [
+    postcssImport(), 
+    autoprefixer(['IE 10'])
+  ],
 }
 ```
 
 ##### 小结
 
-本小节主要介绍了 Webpack 中 CSS 相关的配置，主要内容包含：CSS Webpack 配置、CSS 预处理器配置和 PostCSS 配置。CSS 配置相对来说比较复杂，如果我们使用 CSS 的预处理器来编写代码，首先需要配置对应的预处理器 loader，将扩展的语法转成 CSS 代码，然后在配合 css-loader 和 style-loader。在生产环境推荐使用 mini-css-extract-plugin 将 CSS 内容导出到 CSS 文件来供页面单独引入。PostCSS 是一个强大的 CSS 后处理器，我们通过 PostCSS 的强大插件可以实现 CSS 前缀的自动添加（autoprefixer），还可以更加智能的实现 CSS 的压缩（cssnano）等功能。
+本小节主要介绍了 Webpack 中 CSS 相关的配置，主要内容包含：CSS Webpack 配置、CSS 预处理器配置和 PostCSS 配置。
+
+CSS 配置相对来说比较复杂，如果我们使用 CSS 的预处理器来编写代码，首先需要配置对应的预处理器 loader，将扩展的语法转成 CSS 代码，然后在配合 css-loader 和 style-loader。
+
+在生产环境推荐使用 mini-css-extract-plugin 将 CSS 内容导出到 CSS 文件来供页面单独引入。
+
+PostCSS 是一个强大的 CSS 后处理器，我们通过 PostCSS 的强大插件可以实现 CSS 前缀的自动添加（autoprefixer），还可以更加智能的实现 CSS 的压缩（cssnano）等功能。
 
 > 本小节 Webpack 相关面试题：
 >
 > 1. 怎么使用 PostCSS 来处理 CSS；
 > 2. 你会在 Webpack 中使用 CSS module 吗？
 > 3. Webpack 的 style-loader 和 css-loader 有什么区别？
+
