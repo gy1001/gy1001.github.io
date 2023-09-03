@@ -1,6 +1,4 @@
-# 06 基础概念和常见配置项介绍（二）
-
-更新时间：2019-06-21 09:49:42
+# 06-基础概念和常见配置项介绍（二）
 
 ![img](./assets/5cd963070001e50a06400360.jpg)
 
@@ -10,7 +8,7 @@
 
 ## resolve
 
-Webpack 进行构建的时候会从入口文件开始（entry）遍历寻找各个模块的依赖，resolve 配置是帮助 Webpack 查找依赖模块的，通过 resolve 的配置，可以帮助 Webpack 快速查找依赖，也可以替换对应的依赖（比如开发环境用 dev 版本的 lib 等）。resolve 的基本配置语法如下：
+Webpack 进行构建的时候会从入口文件开始（entry）遍历寻找各个模块的依赖，通过 resolve 的配置，可以帮助 Webpack 快速查找依赖，也可以替换对应的依赖（比如开发环境用 dev 版本的 lib 等）。resolve 的基本配置语法如下：
 
 ```js
 module.exports = {
@@ -36,7 +34,7 @@ module.exports = {
 
 ### resolve.alias
 
-`resolve.alias` 是最常用的配置，通过设置 alias 可以帮助 webpack 更快查找模块依赖，而且也能使我们编写代码更加方便。例如，我们在实际开发中经常会把源码都放到`src`文件夹，目录结构如下：
+`resolve.alias` 是最常用的配置，通过设置 `alias` 可以帮助 `webpack` 更快查找模块依赖，而且也能使我们编写代码更加方便。例如，我们在实际开发中经常会把源码都放到`src`文件夹，目录结构如下：
 
 ```
 src
@@ -71,16 +69,16 @@ module.exports = {
 ```js
 //jsconfig.json
 {
-    "compilerOptions": {
-        "baseUrl": "./src",
-        "paths": {
-            "@lib/": ["src/lib"]
-        }
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@lib/": ["src/lib"]
     }
+  }
 }
 ```
 
-alias 还常被用于给生产环境和开发环境配置不同的 lib 库，例如下面写法，在线下开发环境使用具有 debug 功能的 dev 版本 [San](https://baidu.github.io/san/)：
+`alias` 还常被用于给生产环境和开发环境配置不同的 `lib` 库，例如下面写法，在线下开发环境使用具有 `debug` 功能的 `dev` 版本 [San](https://baidu.github.io/san/)：
 
 ```js
 module.exports = {
@@ -151,17 +149,15 @@ module.exports = {
 
 ```js
 module.exports = {
-    module: {
-        // 使用正则表达式
-        noParse: /jquery|lodash/
+  module: {
+    // 使用正则表达式
+    noParse: /jquery|lodash/
 
-        // 使用函数，从 Webpack 3.0.0 开始支持
-        noParse: (content) => {
-            // content 代表一个模块的文件路径
-            // 返回 true or false
-            return /jquery|lodash/.test(content);
-        }
+    // 使用函数，从 Webpack 3.0.0 开始支持
+    noParse: (content) => {
+        // content 代表一个模块的文件路径
     }
+  }
 }
 ```
 
@@ -169,7 +165,13 @@ module.exports = {
 
 ### parser 来控制模块化语法
 
-因为 webpack 是以模块化的 JavaScript 文件为入口，所以内置了对模块化 JavaScript 的解析功能。支持 AMD、Commonjs、SystemJs、ES6。parse 属性可以更细粒度的配置哪些模块语法要解析，哪些不解析。简单来说，如果设置`parser.commonjs=false`，那么代码里面使用 commonjs 的`require`语法引入模块，对应的模块就不会被解析到依赖中，也不会被处理，支持的选项包括：
+因为 webpack 是以模块化的 JavaScript 文件为入口，所以内置了对模块化 JavaScript 的解析功能。
+
+支持 AMD、Commonjs、SystemJs、ES6。
+
+parse 属性可以更细粒度的配置哪些模块语法要解析，哪些不解析。
+
+简单来说，如果设置`parser.commonjs=false`，那么代码里面使用 commonjs 的`require`语法引入模块，对应的模块就不会被解析到依赖中，也不会被处理，支持的选项包括：
 
 ```js
 module: {
@@ -197,18 +199,22 @@ module: {
 
 ### module.rules
 
-`module.rules`是在处理模块时，将符合规则条件的模块，提交给对应的处理器来处理，通常用来配置 loader，其类型是一个数组，数组里每一项都描述了如何去处理部分文件。每一项 rule 大致可以由以下三部分组成：
+`module.rules`是在处理模块时，将符合规则条件的模块，提交给对应的处理器来处理，通常用来配置 loader，其类型是一个数组，数组里每一项都描述了如何去处理部分文件。
+
+每一项 rule 大致可以由以下三部分组成：
 
 1. 条件匹配：通过`test`、`include`、`exclude`等配置来命中可以应用规则的模块文件；
 2. 应用规则：对匹配条件通过后的模块，使用`use`配置项来应用`loader`，可以应用一个 loader 或者按照**从后往前的顺序**应用一组 loader，当然我们还可以分别给对应 loader 传入不同参数；
-3. 重置顺序：一组 loader 的执行顺序默认是**从后到前（或者从右到左）**执行，通过`enforce`选项可以让其中一个 loader 的执行顺序放到最前（pre）或者是最后（post）。
+3. 重置顺序：一组 loader 的执行顺序默认是**从后到前（或者从右到左）执行**，通过`enforce`选项可以让其中一个 loader 的执行顺序放到最前（pre）或者是最后（post）。
 
 ### 条件匹配
 
-如上所述，条件匹配相关的配置有`test`、`include`、`exclude`、`resource`、`resourceQuery`和`issuer`。条件匹配的对象包括三类：`resource`，`resourceQuery`和`issuer`。
+如上所述，条件匹配相关的配置有`test`、`include`、`exclude`、`resource`、`resourceQuery`和`issuer`。
 
-- resource：请求文件的绝对路径。它已经根据 resolve 规则解析；
-- issuer: 被请求资源（requested the resource）的模块文件的绝对路径，即导入时的位置。
+条件匹配的对象包括三类：`resource`，`resourceQuery`和`issuer`。
+
+- `resource`：请求文件的绝对路径。它已经根据 resolve 规则解析；
+- `issuer`: 被请求资源（requested the resource）的模块文件的绝对路径，即导入时的位置。
 
 举例来说明：从 `app.js` 导入 `'./style.css?inline'`：
 
@@ -231,15 +237,15 @@ module: {
 
 ```js
 {
-    test: [/\.jsx?$/, /\.tsx?$/],
-    include: [
-        path.resolve(__dirname, 'src'),
-        path.resolve(__dirname, 'test')
-    ],
-    exclude: [
-        path.resolve(__dirname, 'node_modules'),
-        path.resolve(__dirname, 'bower_modules')
-    ]
+  test: [/\.jsx?$/, /\.tsx?$/],
+  include: [
+    path.resolve(__dirname, 'src'),
+    path.resolve(__dirname, 'test')
+  ],
+  exclude: [
+    path.resolve(__dirname, 'node_modules'),
+    path.resolve(__dirname, 'bower_modules')
+  ]
 }
 ```
 
@@ -257,11 +263,12 @@ npm i -D less-loader
 
 ```js
 module.exports = {
-    module:{
-        rules:[
-            test: /\.less$/, use:'less-loader'
-        ]
-    }
+  module:{
+    rules:[
+      test: /\.less$/,
+      use:'less-loader'
+    ]
+  }
 }
 ```
 
@@ -288,7 +295,12 @@ console.log(html)
 ```js
 module.exports = {
   module: {
-    rules: [{ test: /\.html$/, use: ['html-loader'] }],
+    rules: [
+      {
+        test: /\.html$/,
+        use: ['html-loader'],
+      },
+    ],
   },
 }
 ```
@@ -306,12 +318,17 @@ module.exports = {
 ```js
 module.exports = {
   module: {
-    rules: [{ test: /\.html$/, use: ['html-loader'] }],
+    rules: [
+      {
+        test: /\.html$/,
+        use: ['html-loader'],
+      },
+    ],
   },
 }
 ```
 
-1. 在 JavaScript 文件内使用内联配置方式：
+2. 在 JavaScript 文件内使用内联配置方式：
 
 ```js
 const html = require('html-loader!./loader.html')
@@ -367,7 +384,11 @@ module: {
 
 #### Loader 的解析顺序
 
-对于一些类型的模块，简单配置一个 loader 是不能够满足需求的，例如 less 模块类型的文件，只配置了 less-loader 仅仅是将 Less 语法转换成了 CSS 语法，但是 JS 还是不能直接使用，所以还需要添加`css-loader`来处理，这时候就需要注意 Loader 的解析顺序了。前面已经提到了，Webpack 的 Loader 解析顺序是从右到左（从后到前）的，即：
+对于一些类型的模块，简单配置一个 `loader` 是不能够满足需求的，
+
+例如 `less` 模块类型的文件，只配置了 `less-loader` 仅仅是将 `Less` 语法转换成了 `CSS` 语法，但是 `JS` 还是不能直接使用，所以还需要添加`css-loader`来处理，这时候就需要注意 Loader 的解析顺序了。
+
+前面已经提到了，`Webpack` 的 `Loader` 解析顺序是 **从右到左（从后到前）的**，即：
 
 ```js
 // query 写法从右到左，使用!隔开
@@ -395,7 +416,7 @@ module.exports = {
 }
 ```
 
-如果需要调整 Loader 的执行顺序，可以使用`enforce`，`enforce`取值是`pre|post`，`pre`表示把放到最前，`post`是放到最后：
+如果需要调整 `Loader` 的执行顺序，可以使用`enforce`，`enforce`取值是`pre|post`，`pre`表示把放到最前，`post`是放到最后：
 
 ```js
 use: [
@@ -438,20 +459,23 @@ module.exports = {
 }
 ```
 
-### `plugin` 插件
+## `plugin` 插件
 
-```
-plugin`是 Webpack 的重要组成部分，通过`plugin`可以解决`loader`解决不了的问题。Webpack 本身就是有很多插件组成的，所以内置了很多插件，我们可以直接通过`webpack`对象的属性来直接使用，例如：`webpack.optimize.UglifyJsPlugin
+`plugin`是 Webpack 的重要组成部分，通过`plugin`可以解决`loader`解决不了的问题。
+
+Webpack 本身就是有很多插件组成的，所以内置了很多插件，我们可以直接通过`webpack`对象的属性来直接使用，例如：`webpack.optimize.UglifyJsPlugin`
+
+```javascript
 module.exports = {
-    //....
-    plugins: [
-        // 压缩js
-        new webpack.optimize.UglifyJsPlugin();
-    ]
+  //....
+  plugins: [
+    // 压缩js
+    new webpack.optimize.UglifyJsPlugin();
+  ]
 }
 ```
 
-除了内置的插件，我们也可以通过 NPM 包的方式来使用插件：
+除了内置的插件，我们也可以通过 `NPM` 包的方式来使用插件：
 
 ```js
 // 非默认的插件
@@ -469,31 +493,23 @@ module.exports = {
 
 > Tips：`loader`面向的是解决某个或者某类模块的问题，而`plugin`面向的是项目整体，解决的是`loader`解决不了的问题。
 
-##### 小结
+## 小结
 
 在本小节中，我们讲解了 Webpack 相关的除`entry`和`output`外的基础配置项，这里总结下项目经常配置的并且比较重要的配置项列表，供大家复习本小节内容：
 
-- ```
-  resolve
-  ```
-
-  ：模块依赖查找相关的配置
+- `resolve` ：模块依赖查找相关的配置
 
   - `resolve.extensions`：可以省略解析扩展名的配置，配置太多反而会导致 webpack 解析效率下降；
   - `resolve.alias`：通过设置 alias 可以帮助 webpack 更快查找模块依赖，精简代码书写时相对路径的书写；
 
-- ```
-  module.rules
-  ```
-
-  ：loader 相关的配置，每个 rule 重要的内容有：
+- `module.rules` ：loader 相关的配置，每个 rule 重要的内容有：
 
   - `test`：正则匹配需要处理的模块文件；
   - `use`：loader 数组配置，内部有`loader`和`options`；
   - `include`：包含；
   - `exclude`：排除；
 
-- `plugins`：插件。
+- `plugins`：插件
 
 > 本小节 Webpack 相关面试题：
 >

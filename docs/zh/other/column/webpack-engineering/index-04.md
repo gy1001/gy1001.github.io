@@ -168,7 +168,7 @@ module.exports = {
         },
       },
     ],
-  },
+  },c
 }
 ```
 
@@ -200,4 +200,3 @@ module.exports = {
 - **–color, --colors`/`–no-color, --no-colors**：控制台输出的内容是否开启颜色；
 - **–hot**：开启 Hot Module Replacement 模式，后面会详细介绍；
 - **—profile**：会详细的输出每个环节的用时（时间），方便排查打包速度瓶颈。
-
