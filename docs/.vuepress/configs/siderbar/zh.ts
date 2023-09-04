@@ -196,7 +196,12 @@ export const sidebarZh: SidebarConfig = {
         },
         {
           text: '掘金',
-          children: [],
+          children: [
+            '/zh/collect/note/jue-jin/index-01.md',
+            '/zh/collect/note/jue-jin/index-02.md',
+            '/zh/collect/note/jue-jin/index-03.md',
+            '/zh/collect/note/jue-jin/index-04.md',
+          ],
         },
         {
           text: '编程相关',
