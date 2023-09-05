@@ -1,12 +1,8 @@
-# 13 Webpack 中打包 HTML 和多页面配置
+# 13-Webpack 中打包 HTML 和多页面配置
 
-更新时间：2019-06-24 09:26:46
+![img](./assets/5cd9639d00012c7a06400359.jpg)
 
-![img](https://img3.mukewang.com/5cd9639d00012c7a06400359.jpg)
-
-辛苦是获得一切的定律。
-
-——牛顿
+> 辛苦是获得一切的定律。 —— 牛顿
 
 在项目中我们除了需要 JavaScript、CSS 和图片等静态资源，还需要页面来承载这些内容和页面结构，怎么在 Webpack 中处理 HTML。并且我们项目也不仅仅是单页应用（Single-Page Application，SPA），也可能是多页应用，所以我们还需要使用 Webpack 来给多页应用做打包。本小节将讲解这俩问题。
 
@@ -34,7 +30,8 @@ module.exports = {
 
 只需要简单配置，执行`webpack`打包之后，发现 log 中显示，在`dist`文件夹中生成一个`index.html`的文件：
 
-![图片描述](http://img.mukewang.com/5cf0cac9000190d414440600.png)
+![image-20230905222128176](./assets/image-20230905222128176.png)
+
 打开后发现 HTML 的内容如下：
 
 ```html
@@ -70,7 +67,9 @@ module.exports = {
 
 ### Template
 
-虽然我们可以简单的修改 Title 这里自定义内容，但是对于我们日常项目来说，这远远不够。我们希望 HTML 页面需要根据我们的意愿来生成，也就是说内容是我们来定的，甚至根据打包的 entry 最后结果来定，这时候我们就需要使用`html-webpack-plugin`的`template`功能了。
+虽然我们可以简单的修改 Title 这里自定义内容，但是对于我们日常项目来说，这远远不够。
+
+我们希望 HTML 页面需要根据我们的意愿来生成，也就是说内容是我们来定的，甚至根据打包的 entry 最后结果来定，这时候我们就需要使用`html-webpack-plugin`的`template`功能了。
 
 比如我在`index.js`中，给`id="app"`的节点添加内容，这时候 HTML 的内容就需要我们自定义了，至少应该包含一个含有`id="app"`的 DIV 元素：
 
@@ -96,7 +95,7 @@ module.exports = {
 </html>
 ```
 
-把 webpack.config.js 更改如下：
+把 `webpack.config.js` 更改如下：
 
 ```js
 const HtmlWebPackPlugin = require('html-webpack-plugin')
@@ -116,19 +115,19 @@ module.exports = {
 
 这时候，打包之后的 HTML 内容就变成了：
 
-```js
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Webpack</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Webpack</title>
 </head>
 <body>
-    <h1>hello world</h1>
-    <div id="app"></div>
-<script src="main.js"></script></body>
+  <h1>hello world</h1>
+  <div id="app"></div>
+	<script src="main.js"></script></body>
 </html>
 ```
 
@@ -136,7 +135,9 @@ module.exports = {
 
 ### 使用 JavaScript 模板引擎
 
-HTML 毕竟还是有限，这时候还可以使用 JavaScript 模板引擎来创建`html-webpack-plugin`的 Template 文件。下面我以[pug](https://pugjs.org/api/getting-started.html)模板引擎为例，来说明下怎么使用模板引擎文件的 Template。
+HTML 毕竟还是有限，这时候还可以使用 JavaScript 模板引擎来创建`html-webpack-plugin`的 Template 文件。
+
+下面我以[pug](https://pugjs.org/api/getting-started.html)模板引擎为例，来说明下怎么使用模板引擎文件的 Template。
 
 首先创建个`index.pug`文件，内容如下：
 
@@ -289,7 +290,9 @@ module.exports = {
 
 对于多入口，并且入口需要区分的情况，那么需要怎么处理呢？
 
-这时候就需要借助 html-webpack-plugin 的两个参数了：`chunks`和`excludeChunks`。`chunks`是当前页面包含的 chunk 有哪些，可以直接用 entry 的`key`来命名，`excludeChunks`则是排除某些 chunks。
+这时候就需要借助 html-webpack-plugin 的两个参数了：`chunks`和`excludeChunks`。
+
+`chunks`是当前页面包含的 chunk 有哪些，可以直接用 entry 的`key`来命名，`excludeChunks`则是排除某些 chunks。
 
 例如，现在有两个 entry，分别是`index.js`和`list.js`，我们希望`index.html`跟`index.js`是一组，`list.html`跟`list.js`是一组，那么 webpack.config.js 需要修改为：
 
@@ -398,20 +401,26 @@ exports.getHtmlWebpackPlugins = () => {
 const {getEntry, getHtmlWebpackPlugins} = require('./scripts/utils');
 
 module.exports = {
-    mode: 'development',
-    getEntry(),
-    plugins: [
-        //...
-        ...getHtmlWebpackPlugins()
-    ]
+  mode: 'development',
+  getEntry(),
+  plugins: [
+    //...
+    ...getHtmlWebpackPlugins()
+  ]
 };
 ```
 
 ## 小结
 
-我们写的代码最终还是需要页面来承载展现，本小节主要介绍 Webpack 的 html-webpack-plugin 插件的使用方法。通过 html-webpack-plugin 我们可以生成包含 Webpack 打包后资源的 HTML 页面。针对 Webpack 中多页应用的打包，我们可以配置多个 html-webpack-plugin 插件实例。
+我们写的代码最终还是需要页面来承载展现，本小节主要介绍 `Webpack` 的 `html-webpack-plugin` 插件的使用方法。
 
-我们还可以按照文章介绍的多页应用最佳实践的方案，通过约定目录规范来通过 Node.js 代码来自动生成 Webpack 的多页应用配置。html-webpack-plugin 是 Webpack 中很重要的一个插件，基于这个插件的 API 我们可以做很多跟页面相关的优化项目，比如预取资源、实现 modern 打包等，后面的实战章节会继续介绍。
+通过 `html-webpack-plugin` 我们可以生成包含 `Webpack` 打包后资源的 `HTML` 页面。
+
+针对 `Webpack` 中多页应用的打包，我们可以配置多个 `html-webpack-plugin` 插件实例。
+
+我们还可以按照文章介绍的多页应用最佳实践的方案，通过约定目录规范来通过 Node.js 代码来自动生成 Webpack 的多页应用配置。
+
+html-webpack-plugin 是 Webpack 中很重要的一个插件，基于这个插件的 API 我们可以做很多跟页面相关的优化项目，比如预取资源、实现 modern 打包等，后面的实战章节会继续介绍。
 
 > 本小节 Webpack 相关面试题：
 >

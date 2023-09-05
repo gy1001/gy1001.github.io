@@ -1,18 +1,20 @@
-# 17 Webpack 优化之体积优化
+# 17-Webpack 优化之体积优化
 
-更新时间：2019-06-24 09:30:27
+![image-20230905233927997](./assets/image-20230905233927997.png)
 
-![img](https://img.mukewang.com/5cd963de0001b93006400360.jpg)
+> 自信和希望是青年的特权。 ——大仲马
 
-自信和希望是青年的特权。
+Webpack 毕竟是个项目打包工具，一般 web 项目，打完包之后，需要发布到服务器上供用户使用，受带宽的限制，我们的项目体积需要越小越好，所以 Webpack 中打包的体积是 Webpack 中重要的一环，
 
-——大仲马
-
-Webpack 毕竟是个项目打包工具，一般 web 项目，打完包之后，需要发布到服务器上供用户使用，受带宽的限制，我们的项目体积需要越小越好，所以 Webpack 中打包的体积是 Webpack 中重要的一环，本小节内容将从 JavaScript、CSS 和其他静态资源体积优化入手，介绍项目的体积优化方案。
+本小节内容将从 JavaScript、CSS 和其他静态资源体积优化入手，介绍项目的体积优化方案。
 
 ## JavaScript 压缩
 
-在`mode=production`下，Webpack 会自动压缩代码，我们可以自定义自己的压缩工具，这里推荐 [terser-webpack-plugin](https://github.com/webpack-contrib/terser-webpack-plugin)，它是 Webpack 官方维护的插件，使用[terser](https://github.com/terser-js/terser)来压缩 JavaScript 代码。UglifyJS 在压缩 ES5 方面做的很优秀，但是随着 ES6 语法的普及，UglifyJS 在 ES6 代码压缩上做的不够好，所以有了`uglify-es`项目，但是之后`uglify-es`项目不在维护了，terser 是从`uglify-es`项目拉的一个分支，来继续维护。terser-webpack-plugin 具有跟 Uglifyjs-webpack-plugin 相同的参数，我们在 Webpack 中可以通过配置文件直接调用：
+在`mode=production`下，Webpack 会自动压缩代码，我们可以自定义自己的压缩工具，这里推荐 [terser-webpack-plugin](https://github.com/webpack-contrib/terser-webpack-plugin)，它是 Webpack 官方维护的插件，使用[terser](https://github.com/terser-js/terser)来压缩 JavaScript 代码。
+
+UglifyJS 在压缩 ES5 方面做的很优秀，但是随着 ES6 语法的普及，UglifyJS 在 ES6 代码压缩上做的不够好，所以有了`uglify-es`项目，但是之后`uglify-es`项目不在维护了，terser 是从`uglify-es`项目拉的一个分支，来继续维护。
+
+terser-webpack-plugin 具有跟 Uglifyjs-webpack-plugin 相同的参数，我们在 Webpack 中可以通过配置文件直接调用：
 
 ```js
 const TerserPlugin = require('terser-webpack-plugin')
@@ -118,7 +120,9 @@ module.exports = {
 })
 ```
 
-我们发现`utils.js`内容和`entry.js`的内容合并在一起了！所以通过 Scope Hoisting 的功能可以让 Webpack 打包出来的代码文件更小、运行的更快。
+我们发现`utils.js`内容和`entry.js`的内容合并在一起了！
+
+所以通过 Scope Hoisting 的功能可以让 Webpack 打包出来的代码文件更小、运行的更快。
 
 ## CSS
 
@@ -219,7 +223,11 @@ module.exports = {
 
 通过观察上面输入和输出的内容差异，我们发现 cssnano 很智能，它能够将 CSS 规则相同的选择器进行合并，并且还能够将`color`进行任意的切换，这样的意义是为了缩短实际的字符串长度。
 
-在 Webapck 中，css-loader 已经集成了 cssnano，我们还可以使用[optimize-css-assets-webpack-plugin](https://github.com/NMFR/optimize-css-assets-webpack-plugin)来自定义 cssnano 的规则。optimize-css-assets-webpack-plugin 是一个 CSS 的压缩插件，默认的压缩引擎就是 cssnano。我们来看下怎么在 Webpack 中使用这个插件：
+在 Webapck 中，css-loader 已经集成了 cssnano，我们还可以使用[optimize-css-assets-webpack-plugin](https://github.com/NMFR/optimize-css-assets-webpack-plugin)来自定义 cssnano 的规则。
+
+optimize-css-assets-webpack-plugin 是一个 CSS 的压缩插件，默认的压缩引擎就是 cssnano。
+
+我们来看下怎么在 Webpack 中使用这个插件：
 
 ```js
 // webpack.config.js
@@ -242,9 +250,17 @@ optimize-css-assets-webpack-plugin 插件默认的 cssnano 配置已经做的很
 
 ## 图片资源优化
 
-通常我们的代码体积会比图片体积小很多，有的时候整个页面的代码都不如一张头图大。好在图片资源不会阻塞浏览器渲染，但是不合理的图片大小也会消耗一定的代码。在之前章节中也已经提到使用：url-loader、svg-url-loader 和 image-webpack-loader 来优化图片，还介绍了使用雪碧图来优化图片资源。
+通常我们的代码体积会比图片体积小很多，有的时候整个页面的代码都不如一张头图大。
 
-[url-loader](https://github.com/webpack-contrib/url-loader) 可以按照配置将小于一定体积的静态文件内联进我们的应用。当我们指定了 `limit` 这个 `options` 选项，它会将文件编码成比无配置更小的 [Base64 的数据 url](https://css-tricks.com/data-uris/) 并将该 url 返回，这样可以将图片内联进 JavaScript 代码中，并节省一次 HTTP 请求。[svg-url-loader](https://github.com/bhovhannes/svg-url-loader) 的工作原理类似于 url-loader，除了它利用 [URL encoding](https://developer.mozilla.org/en-US/docs/Glossary/percent-encoding) 而不是 Base64 对文件编码，对于 SVG 图片来说，svg-url-loader 的这种方式这是有效的，因为 SVG 文件本质上是纯文本文件，这种 URL encoding 编码规模效应更加明显。
+好在图片资源不会阻塞浏览器渲染，但是不合理的图片大小也会消耗一定的代码。
+
+在之前章节中也已经提到使用：url-loader、svg-url-loader 和 image-webpack-loader 来优化图片，还介绍了使用雪碧图来优化图片资源。
+
+[url-loader](https://github.com/webpack-contrib/url-loader) 可以按照配置将小于一定体积的静态文件内联进我们的应用。
+
+当我们指定了 `limit` 这个 `options` 选项，它会将文件编码成比无配置更小的 [Base64 的数据 url](https://css-tricks.com/data-uris/) 并将该 url 返回，这样可以将图片内联进 JavaScript 代码中，并节省一次 HTTP 请求。
+
+[svg-url-loader](https://github.com/bhovhannes/svg-url-loader) 的工作原理类似于 url-loader，除了它利用 [URL encoding](https://developer.mozilla.org/en-US/docs/Glossary/percent-encoding) 而不是 Base64 对文件编码，对于 SVG 图片来说，svg-url-loader 的这种方式这是有效的，因为 SVG 文件本质上是纯文本文件，这种 URL encoding 编码规模效应更加明显。
 
 如果我们的项目中小图片特别多，例如有很多 icon 类的图标，这时候则推荐使用[雪碧图](https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS/CSS_Image_Sprites)（CSS Sprite）来合并这些小图到一张大图中，然后使用`background-position`来设置图片的位置，通过这样的方式可以节省多次小图片的请求。
 

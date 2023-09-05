@@ -1,16 +1,22 @@
-# 14 Webpack Dev Server 本地开发服务
+# 14-Webpack Dev Server 本地开发服务
 
-更新时间：2019-06-24 09:27:11
+![image-20230905224258273](./assets/image-20230905224258273.png)
 
-![img](https://img.mukewang.com/5cd963ac0001b6ac06400359.jpg)
+> 不想当将军的士兵，不是好士兵。 ——拿破仑
 
-不想当将军的士兵，不是好士兵。
+[webpack-dev-server](https://github.com/webpack/webpack-dev-server)是一个基于 [Express](https://expressjs.com/) 的本地开发服务器（看 Roadmap 下个版本内核会从 Express 切换到 Koa）。
 
-——拿破仑
+它使用 [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware) 中间件来为通过 Webpack 打包生成的资源文件提供 Web 服务。
 
-[webpack-dev-server](https://github.com/webpack/webpack-dev-server)是一个基于 [Express](https://expressjs.com/) 的本地开发服务器（看 Roadmap 下个版本内核会从 Express 切换到 Koa）。它使用 [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware) 中间件来为通过 Webpack 打包生成的资源文件提供 Web 服务。它还有一个通过 Socket IO 连接着 webpack-dev-server 服务器的小型运行时程序。webpack-dev-server 发送关于编译状态的消息到客户端，客户端根据消息作出响应。
+它还有一个通过 Socket IO 连接着 webpack-dev-server 服务器的小型运行时程序。
 
-> Tips：简单来说 webpack-dev-server 就是一个 Express 的小型服务器，它是通过 Express 的[中间件](https://expressjs.com/zh-cn/guide/using-middleware.html) [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware)和 Webpack 进行交互的。所以我们如果自己的项目本身就是个 Express 服务器，那么可以使用 webpack-dev-middleware 和 [webpack-hot-middleware](https://github.com/webpack-contrib/webpack-hot-middleware) 两个中间件来实现 HMR 功能。关于 webpack-dev-middleware 和 webpack-hot-middleware 中间件来实现 webpack-dev-server 的内容，在后续章节还会有介绍。
+webpack-dev-server 发送关于编译状态的消息到客户端，客户端根据消息作出响应。
+
+> Tips：简单来说 webpack-dev-server 就是一个 Express 的小型服务器，它是通过 Express 的[中间件](https://expressjs.com/zh-cn/guide/using-middleware.html) [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware)和 Webpack 进行交互的。
+>
+> 所以我们如果自己的项目本身就是个 Express 服务器，那么可以使用 webpack-dev-middleware 和 [webpack-hot-middleware](https://github.com/webpack-contrib/webpack-hot-middleware) 两个中间件来实现 HMR 功能。
+>
+> 关于 webpack-dev-middleware 和 webpack-hot-middleware 中间件来实现 webpack-dev-server 的内容，在后续章节还会有介绍。
 
 ## 命令行
 
@@ -23,7 +29,11 @@ npm i webpack-dev-server
 npx webpack-dev-server
 ```
 
-执行`webpack-dev-server`命令之后，它会读取 Webpack 的配置文件（默认是 webpack.config.js）然后将文件打包到内存中（所以看不到`dist`文件夹的生产，Webpack 会打包到硬盘上），这时候打开 server 的默认地址：`localhost:8080`就可以看到文件目录或者页面（默认是显示 index.html，没有则显示目录）。
+执行`webpack-dev-server`命令之后，它会读取 Webpack 的配置文件（默认是 webpack.config.js）
+
+然后将文件打包到内存中（所以看不到`dist`文件夹的生产，Webpack 会打包到硬盘上），
+
+这时候打开 server 的默认地址：`localhost:8080`就可以看到文件目录或者页面（默认是显示 index.html，没有则显示目录）。
 
 跟`webpack-cli`一样，`webpack-dev-server`也有一些选项可以添加：
 
@@ -56,12 +66,16 @@ webpack-dev-server --content-base ./build
 
 ### 自动刷新
 
-在开发中，我们希望边写代码，边看到代码的执行情况，webpack-dev-server 提供自动刷新页面的功能可以满足我们的需求。webpack-dev-server 支持两种模式的自动刷新页面。
+在开发中，我们希望边写代码，边看到代码的执行情况，`webpack-dev-server` 提供自动刷新页面的功能可以满足我们的需求。
 
-- iframe 模式：页面被放到一个 iframe 内，当发生变化时，会重新加载；
-- inline 模式：将 webpack-dev-server 的重载代码添加到产出的 bundle 中。
+`webpack-dev-server` 支持两种模式的自动刷新页面。
 
-两种模式都支持模块热替换（Hot Module Replacement）。模块热替换的好处是只替换更新的部分，而不是整个页面都重新加载。
+- `iframe` 模式：页面被放到一个 `iframe` 内，当发生变化时，会重新加载；
+- `inline` 模式：将 `webpack-dev-server` 的重载代码添加到产出的 `bundle` 中。
+
+两种模式都支持模块热替换（`Hot Module Replacement`）。
+
+模块热替换的好处是只替换更新的部分，而不是整个页面都重新加载。
 
 使用方式：`webpack-dev-server --hot --inline`是开启`inline`模式的自动刷新。
 
@@ -80,7 +94,9 @@ module.exports = {
 }
 ```
 
-其中 `devServer.port` 表示服务器的监听端口，即运行后我们可以通过 `http://localhost:9000` 来访问应用；而 `devServer.contentBase` 表示服务器将从哪个目录去查找内容文件（即页面文件，比如 HTML）。
+其中 `devServer.port` 表示服务器的监听端口，即运行后我们可以通过 `http://localhost:9000` 来访问应用；
+
+而 `devServer.contentBase` 表示服务器将从哪个目录去查找内容文件（即页面文件，比如 HTML）。
 
 配置完之后，在项目中执行`webpack-dev-server`就可以看到命令行控制台有输出：
 
@@ -104,23 +120,11 @@ Webpack 可以通过配置 `webpack.HotModuleReplacementPlugin` 插件来开启�
 
 要开启 HMR 功能，需要三步：
 
-1. 设置
-
-   ```
-   devServer.hot=true
-   ```
-
-   ，
-
-   ```
-   devServer.inline=true
-   ```
-
-   （默认）；
+1. 设置 `devServer.hot=true，devServer.inline=true`（默认）；
 
    - `devServer.hot=true`：会给 entry 添加`webpack/hot/dev-serve`或者`webpack/hot/only-dev-serve`（`devServer.hotOnly=true`），这个是实现 HMR 的服务端代码；
    - `devServer.inline=true`：会给 entry 添加`webpack-dev-server/client`，这是通信客户端；
-
+   
 2. 在`webpack.config.js`中添加 plugins：`new webpack.HotModuleReplacementPlugin()`；
 
 3. 修改入口文件添加 HMR 支持代码：
@@ -158,7 +162,7 @@ module.exports = {
 
 经过上面配置之后，再次执行`webpack-dev-server`，打开`http://localhost:9000`，然后修改`index.js`内容，就能看到效果了
 
-![图片描述](http://img.mukewang.com/5cf46ee100011e5c00020024.gif)
+![image-20230905224653051](./assets/image-20230905224653051.png)
 
 > Tips：使用 webpack-dev-server 的 CLI 功能只需要命令行中添加`--hot`，webpack-dev-server 会自动将`webpack.HotModuleReplacementPlugin`这个插件添加到 Webpack 的配置中去，所以开启 HotModuleReplacementPlugin 最简单的方式就是使用 inline 模式（命令行添加`--inline`）。
 
@@ -274,11 +278,15 @@ module.exports = {
 
 自定义中间件在开发中常常被用来做 mock server 使用。
 
+现在 before after 已经废弃，官方最新的 API: `devServer.setupMiddlewares`
+
 ## mock server
 
 现在的前端团队一般都会采取前后端分离的开发模式，这样可以做到前后端同时并行开发，而前端同学开发的时候需要依赖后端同学提供的数据接口，后端同学的数据接口没有开发完成的时候，前端不能傻傻得等着，所以这就需要一个 mock server 来根据前后端接口的约定格式伪造一些假数据，这样前端开发就可以继续下去，加快开发进度。
 
-webpack-dev-server 提供了自定义中间件的 Hook，所以我们可以很简单的实现自己的 mock server。下面代码是在`devServer.before`插入一个接口`/api/mock.json`的接口响应：
+webpack-dev-server 提供了自定义中间件的 Hook，所以我们可以很简单的实现自己的 mock server。
+
+下面代码是在`devServer.before`插入一个接口`/api/mock.json`的接口响应：
 
 ```js
 module.exports = {
@@ -294,11 +302,79 @@ module.exports = {
 }
 ```
 
+现在 before after 已经废弃，官方最新的 API: `devServer.setupMiddlewares`
+
+```javascript
+module.exports = {
+  // ...
+  devServer: {
+    setupMiddlewares: (middlewares, devServer) => {
+      if (!devServer) {
+        throw new Error('webpack-dev-server is not defined');
+      }
+
+      devServer.app.get('/setup-middleware/some/path', (_, response) => {
+        response.send('setup-middlewares option GET');
+      });
+
+      // 如果你想在所有其他中间件之前运行一个中间件或者当你从 `onBeforeSetupMiddleware` 配置项迁移时，
+      // 可以使用 `unshift` 方法
+      middlewares.unshift({
+        name: 'first-in-array',
+        // `path` 是可选的
+        path: '/foo/path',
+        middleware: (req, res) => {
+          res.send('Foo!');
+        },
+      });
+
+      // 如果你想在所有其他中间件之后运行一个中间件或者当你从 `onAfterSetupMiddleware` 配置项迁移时，
+      // 可以使用 `push` 方法
+      middlewares.push({
+        name: 'hello-world-test-one',
+        // `path` 是可选的
+        path: '/foo/bar',
+        middleware: (req, res) => {
+          res.send('Foo Bar!');
+        },
+      });
+
+      middlewares.push((req, res) => {
+        res.send('Hello World!');
+      });
+
+      return middlewares;
+    },
+  },
+};
+```
+
+我们修改为
+
+```javascript
+module.exports = {
+  //...
+  devServer: {
+    setupMiddlewares: (middlewares, devServer) => {
+      if (!devServer) {
+        throw new Error('webpack-dev-server is not defined')
+      }
+
+      devServer.app.get('/api/mock.json', (_, response) => {
+        response.send('helo world')
+      })
+
+      return middlewares
+    },
+  },
+}
+```
+
 启动 dev server，访问 http://localhost:9000/api/mock.json 就可以看到这个接口返回的数据了。
 
 https://juejin.im/post/5afba2746fb9a07aaf356327
 
-- ## `devServer.compress`：服务开启 Gzip 压缩；
+## `devServer.compress`：服务开启 Gzip 压缩；
 
 > Tips：`devServer.setup`也可以用于设置 mock server，但是已经被废弃了，将来版本肯定会被删除，不过使用`devServer.before`和`devServer.after`这俩 Hook 已经够用了。
 
@@ -328,11 +404,18 @@ https://juejin.im/post/5afba2746fb9a07aaf356327
 
 Webpack 的 webpack-dev-server 是 Webpack 生态链上很重要的一环，在我们日常的开发环境，我们可以使用 webpack-dev-server 启动本地服务器，而且能够实现 API 接口代理、静态资源服务器、HMR，甚至还能够通过编写 Express 中间件的方式来扩展功能。
 
-但是 webpack-dev-server 本身也有它的局限性，比如我们项目本身就有一个 Node.js 的业务服务，那么在使用 webpack-dev-server 来模拟接口数据就显得多此一举了。后面实战章节我们将介绍使用 Express 的中间件来实现一个自己的 dev-server！
+但是 webpack-dev-server 本身也有它的局限性，比如我们项目本身就有一个 Node.js 的业务服务，那么在使用 webpack-dev-server 来模拟接口数据就显得多此一举了。
+
+后面实战章节我们将介绍使用 Express 的中间件来实现一个自己的 dev-server！
 
 > 本小节 Webpack 相关面试题：
 >
 > 1. webpack-dev-server 的 inline 模式和 iframe 模式有何异同？
+>
 > 2. webpack-dev-server 怎么配置 HMR？
+>
 > 3. webpack-dev-server 怎么使用 Express 中间件？
+>
 > 4. 能够说下你对 webpack-dev-server 理解吗？原理吗？
+>
+>    > webpack-dev-server启动了一个**使用express的Http服务器**，这个服务器与客户端采用websocket通信协议，当原始文件发生改变，webpack-dev-server会实时编译。

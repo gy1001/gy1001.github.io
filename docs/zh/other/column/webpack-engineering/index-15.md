@@ -1,16 +1,14 @@
-# 15 Webpack 中配置 React 和 Vue 开发环境
+# 15-Webpack 中配置 React 和 Vue 开发环境
 
-更新时间：2019-06-24 09:27:56
+![img](./assets/5cd963bb0001a96f06400359.jpg)
 
-![img](https://img2.mukewang.com/5cd963bb0001a96f06400359.jpg)
-
-上天赋予的生命，就是要为人类的繁荣和平和幸福而奉献。
-
-——松下幸之助
+> 上天赋予的生命，就是要为人类的繁荣和平和幸福而奉献。 ——松下幸之助
 
 当下前端最火的两个框架就是了 React 和 Vue 了，本篇文章主要介绍手动配置 Webpack 来做 React 和 Vue 的开发。
 
-> Facebook 官方推出的 [create-react-app](https://github.com/facebook/create-react-app) ，Vue 也有自己的 CLI 工具 [Vue-CLI](https://cli.vuejs.org/zh/)，两个工具都已经非常好用，但在实际项目中，我们仍然需要做一些修改才可以满足实际项目上线的需求，同时我们仍希望有更多所谓个性化设置来支持项目。所以掌握 Webpack 中 React 和 Vue 的配置还是很有必要的事情。
+> Facebook 官方推出的 [create-react-app](https://github.com/facebook/create-react-app) ，Vue 也有自己的 CLI 工具 [Vue-CLI](https://cli.vuejs.org/zh/)，两个工具都已经非常好用，但在实际项目中，我们仍然需要做一些修改才可以满足实际项目上线的需求，同时我们仍希望有更多所谓个性化设置来支持项目。
+>
+> 所以掌握 Webpack 中 React 和 Vue 的配置还是很有必要的事情。
 
 Webpack 的基本配置讲解部分已经接近尾声，下面我们完全按照一个新项目来创建 React 和 Vue 的 Webpack 配置，通过项目的配置帮助我们回忆下 Webpack 基本配置的一些知识点。
 
@@ -102,8 +100,9 @@ module.exports = {
 
 这时候可以执行下`npx webpack --mode development`看下，文件已经打出来了。
 
-![图片描述](http://img.mukewang.com/5cf46f88000195e817940696.png)
-接下来我们创建一个 HTML 文件（`src/index.html`），作为项目的模板，内容如下：
+![image-20230905232527351](./assets/image-20230905232527351.png)
+
+接下来我们创建一个 HTML 文件（`src/index.html`)，作为项目的模板，内容如下：
 
 ```html
 <!DOCTYPE html>
@@ -143,7 +142,7 @@ module.exports = {
 
 完成之后，执行`npx webpack --mode development`就可以看到打包结果了：
 
-![img](http://www.imooc.com/read/29/article/img/react-1.png)
+
 
 好了，现在可以将命令放到`npm`的`scripts`了：
 
@@ -249,7 +248,7 @@ module.exports = {
 
 #### 配置 React 的 HMR
 
-热更新是开发阶段很好用的一个功能，配置了热更新就可以让我们在开发过程中，将修改后代码整页面无刷新且保持原有 state 的情况下直接反应到页面，下面我们继续修改 `webpack.config.dev.js` 并在 App.jsx 增加内容：
+热更新是开发阶段很好用的一个功能，配置了热更新就可以让我们在开发过程中，将修改后代码整页面无刷新且保持原有 state 的情况下直接反应到页面，下面我们继续修改 `webpack.config.dev.js` 并在 `App.jsx` 增加内容：
 
 ```diff
 // webpack.config.dev.js
@@ -270,7 +269,7 @@ module.exports = {
 }
 ```
 
-还需要给对应的文件添加 HMR 对应的代码，打开`index.jsx`在末尾添加：
+还需要给对应的文件添加 `HMR` 对应的代码，打开`index.jsx`在末尾添加：
 
 ```js
 if (module.hot) {
@@ -284,7 +283,8 @@ if (module.hot) {
 
 最后，执行`npm start`，会启动 webpack-dev-server，修改下`App.jsx`的内容，控制台被重新编译触发了，同时浏览器的热更新已经生效了：
 
-![图片描述](http://img.mukewang.com/5cf46fe300012e2e04510334.png)
+![image-20230905232905663](./assets/image-20230905232905663.png)
+
 上面给`index.jsx`末尾添加的代码，是触发 HMR 的，这部分代码应该不属于业务代码，直接写在文件内对我们代码的侵入性实在是太大，所以建议将它们存入一个`dev.js`文件中，然后修改 `webpack.config.dev.js`的 entry，将`index.jsx`和`dev.js`合并在一起。
 
 ```js
@@ -322,7 +322,7 @@ npm i html-webpack-plugin -D
 然后在 src 文件夹下新建`App.vue`和`index.js`两个文件，内容如下：
 
 ```js
-// app.js
+// index.js
 import Vue from 'vue';
 import App from './app.vue';
 
@@ -331,14 +331,18 @@ Vue.config.productionTip = false;
 new Vue({
     render: h => h(App)
 }).$mount('#app');
+```
+
+```vue
+// app.vue
 <template>
-    <div id="app">
-        Hello Vue & Webpack
-    </div>
+  <div id="app">
+    Hello Vue & Webpack
+  </div>
 </template>
 
 <script>
-    export default {};
+  export default {};
 </script>
 ```
 
@@ -401,4 +405,6 @@ Vue 的配置文件跟 React 最大区别是，React 是直接扩展了 Babel �
 
 ## 小结
 
-本文从一个项目搭建开始介绍了 React 和 Vue 两个时下最流行的 JavaScript 库的 Webpack 配置。由于 React 和 Vue 自身语法跟普通的 ES6 语法不同，所以需要配置对应的`loader`或者 Babel 插件。
+本文从一个项目搭建开始介绍了 React 和 Vue 两个时下最流行的 JavaScript 库的 Webpack 配置。
+
+由于 React 和 Vue 自身语法跟普通的 ES6 语法不同，所以需要配置对应的`loader`或者 Babel 插件。
