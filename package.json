@@ -20,6 +20,5 @@
     "vuepress-plugin-md-enhance": "2.0.0-beta.205",
     "vuepress-plugin-photo-swipe": "2.0.0-beta.203",
     "vuepress-plugin-sass-palette": "2.0.0-beta.203"
-  },
-  "packageManager": "yarn@3.6.3"
+  }
 }
