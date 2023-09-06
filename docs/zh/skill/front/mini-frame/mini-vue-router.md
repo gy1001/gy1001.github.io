@@ -112,7 +112,7 @@ export default class VueRouter {
         // 从路由表中获取当前path对应的component组件
         let component = null
         if (that.mode === 'history') {
-          // hash 模式下，截图#后面的地址作为path路径，然后再去路由表中匹配对应的组件
+          // history 模式下，当前的地址作为path路径，然后再去路由表中匹配对应的组件
           component = that.routerMap[that.data.current]
         } else {
           // hash 模式下，截图#后面的地址作为path路径，然后再去路由表中匹配对应的组件
