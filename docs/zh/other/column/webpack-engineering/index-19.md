@@ -1,12 +1,10 @@
-# 19 使用 Webpack 的 splitChunks 功能来拆分代码
+# 19-使用 Webpack 的 splitChunks 功能来拆分代码
 
-![img](https://img3.mukewang.com/5cd963fc000167cb06400360.jpg)
+![img](./assets/5cd963fc000167cb06400360.jpg)
 
-读一本好书，就是和许多高尚的人谈话。
+> 读一本好书，就是和许多高尚的人谈话。 ——歌德
 
-——歌德
-
-在 Webpack4 之前，我们处理公共模块的方式都是使用 CommonsChunkPlugin，然后该插件让开发配置繁琐，并且使公共代码的抽离不够彻底和细致，因此新的`splitChunks`改进了这些能力，不过虽然`splitChunks`相对 CommonsChunkPlugin 进步不少，但是 splitChunks 的配置却比较复杂。
+在 Webpack4 之前，我们处理公共模块的方式都是使用 `CommonsChunkPlugin`，然后该插件让开发配置繁琐，并且使公共代码的抽离不够彻底和细致，因此新的`splitChunks`改进了这些能力，不过虽然`splitChunks`相对 CommonsChunkPlugin 进步不少，但是 splitChunks 的配置却比较复杂。
 
 ## Webpack 代码拆分方式
 
@@ -18,9 +16,17 @@
 
 这里我们主要讲的是通过`splitChunks`抽取公共代码。在讲解之前，再来复习下 Webpack 中三个重要的概念：`module`、`chunks`、`bundle`。
 
-- module：就是 JavaScript 的模块，简单来说就是你通过 `import`、`require` 语句引入的代码，也包括 css、图片等资源；
-- chunk: chunk 是 webpack 根据功能拆分出来的，chunk 包含着 module，可能是一对多也可能是一对一，chunk 包含三种情况，就是上面介绍的三种实现代码拆分的情况。
-- bundle：bundle 是 webpack 打包之后的各个文件，一般就是和 chunk 是一对一的关系，bundle 就是对 chunk 进行编译压缩打包等处理之后的产出。
+- **module**
+
+  >  就是 JavaScript 的模块，简单来说就是你通过 `import`、`require` 语句引入的代码，也包括 css、图片等资源；
+
+- **chunk**
+
+  > chunk 是 webpack 根据功能拆分出来的，chunk 包含着 module，可能是一对多也可能是一对一，chunk 包含三种情况，就是上面介绍的三种实现代码拆分的情况。
+
+- **bundle**
+
+  > bundle 是 webpack 打包之后的各个文件，一般就是和 chunk 是一对一的关系，bundle 就是对 chunk 进行编译压缩打包等处理之后的产出。
 
 记住这些，后面会用到，下面开始 splitChunks 配置。
 
