@@ -1,6 +1,4 @@
-# 20 Webpack 优化之速度优化
-
-更新时间：2019-06-24 09:32:18
+# 20-Webpack 优化之速度优化
 
 ![img](https://img3.mukewang.com/5cd9640a000113f306400360.jpg)
 
