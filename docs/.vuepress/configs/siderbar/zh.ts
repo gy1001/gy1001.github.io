@@ -774,6 +774,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/column/webpack-engineering/index-17.md',
             '/zh/other/column/webpack-engineering/index-18.md',
             '/zh/other/column/webpack-engineering/index-19.md',
+            '/zh/other/column/webpack-engineering/index-20.md',
             '/zh/other/column/webpack-engineering/index-21.md',
             '/zh/other/column/webpack-engineering/index-22.md',
             '/zh/other/column/webpack-engineering/index-23.md',

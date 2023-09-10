@@ -124,7 +124,7 @@ Webpack 可以通过配置 `webpack.HotModuleReplacementPlugin` 插件来开启�
 
    - `devServer.hot=true`：会给 entry 添加`webpack/hot/dev-serve`或者`webpack/hot/only-dev-serve`（`devServer.hotOnly=true`），这个是实现 HMR 的服务端代码；
    - `devServer.inline=true`：会给 entry 添加`webpack-dev-server/client`，这是通信客户端；
-   
+
 2. 在`webpack.config.js`中添加 plugins：`new webpack.HotModuleReplacementPlugin()`；
 
 3. 修改入口文件添加 HMR 支持代码：
@@ -310,12 +310,12 @@ module.exports = {
   devServer: {
     setupMiddlewares: (middlewares, devServer) => {
       if (!devServer) {
-        throw new Error('webpack-dev-server is not defined');
+        throw new Error('webpack-dev-server is not defined')
       }
 
       devServer.app.get('/setup-middleware/some/path', (_, response) => {
-        response.send('setup-middlewares option GET');
-      });
+        response.send('setup-middlewares option GET')
+      })
 
       // 如果你想在所有其他中间件之前运行一个中间件或者当你从 `onBeforeSetupMiddleware` 配置项迁移时，
       // 可以使用 `unshift` 方法
@@ -324,9 +324,9 @@ module.exports = {
         // `path` 是可选的
         path: '/foo/path',
         middleware: (req, res) => {
-          res.send('Foo!');
+          res.send('Foo!')
         },
-      });
+      })
 
       // 如果你想在所有其他中间件之后运行一个中间件或者当你从 `onAfterSetupMiddleware` 配置项迁移时，
       // 可以使用 `push` 方法
@@ -335,18 +335,18 @@ module.exports = {
         // `path` 是可选的
         path: '/foo/bar',
         middleware: (req, res) => {
-          res.send('Foo Bar!');
+          res.send('Foo Bar!')
         },
-      });
+      })
 
       middlewares.push((req, res) => {
-        res.send('Hello World!');
-      });
+        res.send('Hello World!')
+      })
 
-      return middlewares;
+      return middlewares
     },
   },
-};
+}
 ```
 
 我们修改为
@@ -391,7 +391,7 @@ https://juejin.im/post/5afba2746fb9a07aaf356327
 - `devServer.host`：指定 host，使用`0.0.0.0`可以让局域网内可访问；
 - `devServer.contentBase`：告诉服务器从哪里提供内容，只有在你想要提供静态文件时才需要；
 - `devServer.publicPath`：设置内存中的打包文件的虚拟路径映射，区别于`output.publicPath`；
-- `devServer.staticOptions`：为 Expressjs 的 `express.static`配置参数，参考文档： http://expressjs.com/en/4x/api.html#express.static
+- `devServer.staticOptions`：为 Express.js 的 `express.static`配置参数，参考文档： [http://expressjs.com/en/4x/api.html#express.static](http://expressjs.com/en/4x/api.html#express.static)
 - `devServer.clientLogLevel`：在 inline 模式下用于控制在浏览器中打印的 log 级别，如`error`, `warning`, `info` or `none`；
 - `devServer.quiet`：静默模式，设置为`true`则不在控制台输出 log；
 - `devServer.noInfo`：不输出启动 log；
@@ -418,4 +418,4 @@ Webpack 的 webpack-dev-server 是 Webpack 生态链上很重要的一环，在�
 >
 > 4. 能够说下你对 webpack-dev-server 理解吗？原理吗？
 >
->    > webpack-dev-server启动了一个**使用express的Http服务器**，这个服务器与客户端采用websocket通信协议，当原始文件发生改变，webpack-dev-server会实时编译。
+>    > webpack-dev-server 启动了一个**使用 express 的 Http 服务器**，这个服务器与客户端采用 websocket 通信协议，当原始文件发生改变，webpack-dev-server 会实时编译。
