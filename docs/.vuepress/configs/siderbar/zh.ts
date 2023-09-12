@@ -201,6 +201,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/collect/note/jue-jin/index-02.md',
             '/zh/collect/note/jue-jin/index-03.md',
             '/zh/collect/note/jue-jin/index-04.md',
+            '/zh/collect/note/jue-jin/index-05.md',
           ],
         },
         {
