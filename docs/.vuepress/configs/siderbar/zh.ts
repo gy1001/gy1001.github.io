@@ -526,6 +526,14 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/tdd-bdd/index-06.md',
           ],
         },
+        {
+          text: '编程必备基础-大话 HTTP 协议',
+          collapsible: true,
+          children: [
+            '/zh/other/class/http-protocol/index-01.md',
+            '/zh/other/class/http-protocol/index-02.md',
+          ]
+        }
       ],
     },
     {
