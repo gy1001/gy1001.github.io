@@ -36,6 +36,8 @@
 
 [Capslock+: 大大地提高你的文字编辑体验](https://capslox.com/cn/)
 
+[Karabiner-Elements:A powerful and stable keyboard customizer for macOS.](https://karabiner-elements.pqrs.org/)
+
 [LocalSend:将文件共享到附近的设备。 免费、开源、跨平台。](https://localsend.org/#/)
 
 ## Android 端

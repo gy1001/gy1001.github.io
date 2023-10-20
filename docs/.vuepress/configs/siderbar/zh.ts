@@ -222,7 +222,11 @@ export const sidebarZh: SidebarConfig = {
     {
       text: '常用快捷键',
       collapsible: false,
-      children: ['/zh/other/hotkey/vscode.md', '/zh/other/hotkey/chrome.md'],
+      children: [
+        '/zh/other/hotkey/vscode.md',
+        '/zh/other/hotkey/chrome.md',
+        '/zh/other/hotkey/karabiner-elements.md',
+      ],
     },
     {
       text: '折腾笔记',
@@ -532,8 +536,8 @@ export const sidebarZh: SidebarConfig = {
           children: [
             '/zh/other/class/http-protocol/index-01.md',
             '/zh/other/class/http-protocol/index-02.md',
-          ]
-        }
+          ],
+        },
       ],
     },
     {
