@@ -538,6 +538,14 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/http-protocol/index-02.md',
           ],
         },
+        {
+          text: 'React Native 保姆教程及实战小红书',
+          collapsible: true,
+          children: [
+            '/zh/other/class/react-native/xiaohongshu/index-01.md',
+            '/zh/other/class/react-native/xiaohongshu/index-02.md',
+          ],
+        },
       ],
     },
     {
