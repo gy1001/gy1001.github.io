@@ -544,6 +544,8 @@ export const sidebarZh: SidebarConfig = {
           children: [
             '/zh/other/class/react-native/xiaohongshu/index-01.md',
             '/zh/other/class/react-native/xiaohongshu/index-02.md',
+            '/zh/other/class/react-native/xiaohongshu/index-03.md',
+            '/zh/other/class/react-native/xiaohongshu/index-04.md',
           ],
         },
       ],
