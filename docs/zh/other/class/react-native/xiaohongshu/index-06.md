@@ -30,3 +30,15 @@
 * onLayout: 布局信息的回调
 * setNativeProps: 性能瓶颈下的选择余地
 
+## 03-Text：使用占比最高的组件
+
+* 字体属性: fontSize、fontFamily、fontWeight
+* 行数以及修饰模式：numberOfLines、ellipsizeMode
+* 是否可选中以及选中颜色：selectable、selectionColor
+* 点击和长按：onPress、onLongPress
+* 跟随系统字号：allowFontScaling
+* 文字嵌套以及注意事项：嵌套时候部分样式不生效，比如 marginLeft等
+* 文本对齐：textAlign、textAlignVertical
+* 文本装饰：textDecorationStyle、textDecorationLine
+* 文字阴影：textShadowColor、textShadowOffset、textShadowRadius一起使用
+
