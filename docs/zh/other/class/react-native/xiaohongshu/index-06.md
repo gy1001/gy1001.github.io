@@ -53,3 +53,36 @@
 * 加载开始与加载结束：`onLoadStart`、`onLoadEnd`
 * 着色：`tintColor`
 * api: `Image.getSize()`、`Image.prefetch()`
+
+## 05：ImageBackground-View和Image的结合
+
+## 06：TextInput：唯一且强大的输入组件
+
+* 字体样式：与 Text 一致
+* 自动聚焦：autoFocus: 布尔值 和 focus()
+* 自动失焦：blurOnSubmit: 布尔值 和 blur()
+* 隐藏光标：caretHidden
+* 默认值：defaultValue
+* 可编辑性：editable
+* 键盘类型：keyboardType
+  * default
+  * number-pad
+  * decimal-pad
+  * numeric
+  * email-address
+  * phone-pad
+* 确定键配置：returnKeyType
+  * done
+  * go
+  * next
+  * search
+  * send
+* 最大长度：maxLength
+* 多行输入：multiline 和 numberOfLines
+* 焦点回调：onBlur 和 onFocus
+* 内容回调：onChange 和 onChangeText
+* 选中相关：selection、selectionColor、selectTextOnFocus
+* 对齐方式：textAlign 和 textAlignVertical
+* 安全模式：secureTextEntry(),输入后前面输入的变为… 
+  * 注意：不能和 multiline 同时使用
+
