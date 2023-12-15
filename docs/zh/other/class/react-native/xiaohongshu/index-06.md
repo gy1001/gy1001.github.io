@@ -92,7 +92,7 @@
 * 点击事件：onPress、onLongPress、delayLongPress
 * 点击事件起止：onPressIn、onPressout
 
-```js
+```jsx
 import React from 'react';
 import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 
@@ -161,3 +161,111 @@ onPressOut
 ## 08: TouchableHighlight 使用略显麻烦的点击组件
 
 > 用的不过，使用略显麻烦
+
+* 所有点击类事件和 TouchableOpacity 相同
+* 只支持一个子节点，且必须有一个子节点
+* 使用陷阱：必须复写 onPress
+* underlayColor: 指定点击时高亮的颜色
+
+```jsx
+import React from 'react';
+import {View, TouchableHighlight, StyleSheet, Text} from 'react-native';
+
+const styles = StyleSheet.create({
+  root: {
+    width: '100%',
+    height: '100vh',
+    backgroundColor: '#F0F0F0',
+  },
+  button: {
+    width: 300,
+    height: 65,
+    backgroundColor: '#2030FF',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  txt: {
+    fontSize: 20,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+});
+export default function TouchableOpacityDemo(props) {
+  return (
+    <View style={styles.root}>
+      <TouchableHighlight
+        activeOpacity={0.4}
+        style={styles.button}
+				underlayColor="#00bcd4" // 指定点击时，高亮的颜色
+        onPress={() => {
+          console.log('onPress');
+        }}
+        onLongPress={() => {
+          console.log('onLongPress');
+        }}
+        delayLongPress={1000}
+        onPressIn={() => {
+          console.log('onPressIn');
+        }}
+        onPressOut={() => {
+          console.log('onPressOut');
+        }}>
+        <Text style={styles.txt}>点击我</Text>
+      </TouchableHighlight>
+    </View>
+  );
+}
+```
+
+点击后日志如下
+
+```txt
+onPressIn
+onPressOut
+onPress
+```
+
+## 09：TouchableWithoutFeedback 几乎不用的
+
+> 官方文档：除非你有一个很好的理由 ，否则不要使用这个组件。所有能够响应触屏操作的元素在触屏后都应该有一个视觉上的反馈
+>
+> 只支持一个子节点，且自身不支持样式
+
+```jsx
+import React from 'react';
+import {View, TouchableWithoutFeedback, StyleSheet, Text} from 'react-native';
+
+const styles = StyleSheet.create({
+  root: {
+    width: '100%',
+    height: '100vh',
+    backgroundColor: '#F0F0F0',
+  },
+  button: {
+    width: 300,
+    height: 65,
+    backgroundColor: '#2030FF',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  txt: {
+    fontSize: 20,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+});
+export default function TouchableOpacityDemo(props) {
+  return (
+    <View style={styles.root}>
+      <TouchableWithoutFeedback>
+        <View style={styles.button}>
+          <Text style={styles.txt}>点击我</Text>
+        </View>
+      </TouchableWithoutFeedback>
+    </View>
+  );
+}
+```
+
