@@ -58,31 +58,106 @@
 
 ## 06：TextInput：唯一且强大的输入组件
 
-* 字体样式：与 Text 一致
-* 自动聚焦：autoFocus: 布尔值 和 focus()
-* 自动失焦：blurOnSubmit: 布尔值 和 blur()
-* 隐藏光标：caretHidden
-* 默认值：defaultValue
-* 可编辑性：editable
-* 键盘类型：keyboardType
-  * default
-  * number-pad
-  * decimal-pad
-  * numeric
-  * email-address
-  * phone-pad
-* 确定键配置：returnKeyType
-  * done
-  * go
-  * next
-  * search
-  * send
-* 最大长度：maxLength
-* 多行输入：multiline 和 numberOfLines
-* 焦点回调：onBlur 和 onFocus
-* 内容回调：onChange 和 onChangeText
-* 选中相关：selection、selectionColor、selectTextOnFocus
-* 对齐方式：textAlign 和 textAlignVertical
-* 安全模式：secureTextEntry(),输入后前面输入的变为… 
-  * 注意：不能和 multiline 同时使用
+* 字体样式：与 `Text` 一致
+* 自动聚焦：`autoFocus`: 布尔值 和 focus()
+* 自动失焦：`blurOnSubmit`: 布尔值 和 blur()
+* 隐藏光标：`caretHidden`
+* 默认值：`defaultValue`
+* 可编辑性：`editable`
+* 键盘类型：`keyboardType`
+  * `default`
+  * `number-pad`
+  * `decimal-pad`
+  * `numeric`
+  * `email-address`
+  * `phone-pad`
+* 确定键配置：`returnKeyType`
+  * `done`
+  * `go`
+  * `next`
+  * `search`
+  * `send`
+* 最大长度：`maxLength`
+* 多行输入：`multiline` 和 `numberOfLines`
+* 焦点回调：`onBlur` 和 `onFocus`
+* 内容回调：`onChange` 和 `onChangeText`
+* 选中相关：`selection`、`selectionColor`、`selectTextOnFocus`
+* 对齐方式：`textAlign` 和 `textAlignVertical`
+* 安全模式：`secureTextEntry`(),输入后前面输入的变为… 
+  * 注意：不能和 `multiline` 同时使用
 
+## 07：TouchableOpacity 最好用的点击组件
+
+* 透明度渐变阈值：`activeOpacity`
+* 点击事件：onPress、onLongPress、delayLongPress
+* 点击事件起止：onPressIn、onPressout
+
+```js
+import React from 'react';
+import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
+
+const styles = StyleSheet.create({
+  root: {
+    width: '100%',
+    height: '100vh',
+    backgroundColor: '#F0F0F0',
+  },
+  button: {
+    width: 300,
+    height: 65,
+    backgroundColor: '#2030FF',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  txt: {
+    fontSize: 20,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+});
+export default function TouchableOpacityDemo(props) {
+  return (
+    <View style={styles.root}>
+      <TouchableOpacity
+        activeOpacity={0.4}
+        style={styles.button}
+        onPress={() => {
+          console.log('onPress');
+        }}
+        onLongPress={() => {
+          console.log('onLongPress');
+        }}
+        delayLongPress={1000}
+        onPressIn={() => {
+          console.log('onPressIn');
+        }}
+        onPressOut={() => {
+          console.log('onPressOut');
+        }}>
+        <Text style={styles.txt}>点击我</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+```
+
+点击后执行顺序如下
+
+```txt
+onPressIn
+onPressOut
+onPress
+```
+
+长按后执行顺序如下
+
+```txt
+onPressIn
+onLongPress
+onPressOut
+```
+
+## 08: TouchableHighlight 使用略显麻烦的点击组件
+
+> 用的不过，使用略显麻烦
