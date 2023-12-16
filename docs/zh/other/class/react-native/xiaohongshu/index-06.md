@@ -269,3 +269,218 @@ export default function TouchableOpacityDemo(props) {
 }
 ```
 
+## 10：Button: 使用简单，但是样式固定（不能定制）
+
+* title: 设置按钮显示文字(必须声明)
+* color: 设置按钮颜色
+* disabled: 设置按钮不可点击
+* onPress: 设置按钮点击事件
+* 需要定制样式的话，使用 TouchableOpacity，如果对按钮没有样式要求可以使用
+
+```jsx
+import React from 'react';
+import {View, Button, StyleSheet, Text} from 'react-native';
+
+const styles = StyleSheet.create({
+  root: {
+    width: '100%',
+    height: '100vh',
+    backgroundColor: '#F0F0F0',
+  },
+  button: {
+    width: 200,
+    height: 300,
+    backgroundColor: 'red',
+  },
+});
+
+export default function ButtonDemo() {
+  return (
+    <View style={styles.root}>
+      <Button
+        style={styles.button} // 并不能生效
+        title="按钮"
+        color={'green'}
+        onPress={() => {
+          console.log('onPress');
+        }}
+        disabled={false}
+      />
+    </View>
+  );
+}
+```
+
+## 11: 强大的 Pressable
+
+> 可以实现未点击、点击时不一样的样式效果
+
+* 点击类事件和其他点击组件一样
+* 带状态样式与带装填子节点
+* 代码简写
+
+```jsx
+import React, {useEffect, useState} from 'react';
+import {Text, Pressable, View, StyleSheet} from 'react-native';
+
+const styles = StyleSheet.create({
+  root: {
+    width: '100%',
+    height: '100vh',
+    backgroundColor: '#F0F0F0',
+  },
+  text: {color: 'white'},
+  textPressed: {
+    color: 'blue',
+  },
+});
+export default function PressableDemo() {
+  return (
+    <View style={styles.root}>
+      <Pressable
+        style={state => {
+          const {pressed} = state;
+          return {
+            width: 300,
+            height: 65,
+            backgroundColor: pressed ? 'white' : '#2030FF',
+            borderRadius: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+          };
+        }}>
+        {state => {
+          const {pressed} = state;
+          return (
+            <Text style={pressed ? styles.textPressed : styles.text}>按钮</Text>
+          );
+        }}
+      </Pressable>
+    </View>
+  );
+}
+```
+
+## 12：ScrollView 基础滚动组件
+
+* 添加子节点：固定子元素、列表渲染、数组渲染
+* 内容包裹样式：contentContainerStyle
+* 滚动键盘消失：keyboardDismissMode
+* 点击收起键盘：keyboardShouldPersisTaps
+* 滚动开始与结束: onMomentumScrollBegin/End
+* 滚动距离监听：onScroll (IOS: scrollEventThrottle ios中需要配合这个属性，不然只会触发一次)
+* 超过滚动：overScrollMode
+* 分页滚动：pagingEnable 滚动方向：horizontal
+* 滚动开关：scrollEnable
+* 初始滚动：contentOffset
+* 是否展示滚动条：showsVerticalScrollIndicator、showsHorizontalScrollIndicator
+* 吸顶元素：stickyHeaderIndices: 是一个数组，包含要吸顶元素的索引
+* api: scrollTo()、scrollEnd()
+
+```jsx
+import React, {useRef} from 'react';
+import {
+  Text,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
+  Dimensions,
+  Button,
+} from 'react-native';
+const {width, height} = Dimensions.get('screen');
+const styles = StyleSheet.create({
+  root1: {
+    width: '100%',
+    height: 700,
+    backgroundColor: 'white',
+    // display: 'none',
+  },
+  root2: {
+    width: '100%',
+    height: 200,
+  },
+  contentContainer: {
+    paddingHorizontal: 16,
+    backgroundColor: '#E0E0E0',
+    paddingTop: 20,
+  },
+  text: {
+    width: '100%',
+    height: 56,
+    textAlignVertical: 'center',
+    fontSize: 24,
+    color: 'black',
+    backgroundColor: 'gray',
+    marginBottom: 10,
+  },
+  input: {
+    width: '100%',
+    height: 60,
+    backgroundColor: 'white',
+  },
+});
+
+export default function ScrollViewDemo() {
+  const scrollViewRef = useRef(null);
+  const array = [8, 9, 10, 11, 12, 13, 14, 15, 16];
+  const buildListView = () => {
+    const newArray = [];
+    for (let index = 20; index <= 40; index++) {
+      newArray.push(
+        <Text key={'item-' + index} style={styles.text}>
+          List Item{index}
+        </Text>,
+      );
+    }
+    return newArray;
+  };
+  return (
+    <View>
+      <ScrollView
+        ref={scrollViewRef}
+        style={styles.root1}
+        showsVerticalScrollIndicator={false}
+        contentOffset={{y: 100}} // 指定初始时滚动位置
+        keyboardDismissMode="none"
+        keyboardShouldPersistTaps="on-drags"
+        onScroll={event => {
+          console.log(event.nativeEvent.contentOffset.y);
+        }}
+        scrollEnabled={true}
+        stickyHeaderIndices={[0]}
+        contentContainerStyle={styles.contentContainer}>
+        <Button
+          title="按钮"
+          onPress={() => {
+            // scrollViewRef.current.scrollTo({y: 500, animated: true});
+            scrollViewRef.current.scrollToEnd({animated: true});
+          }}
+        />
+        <Text style={styles.text}>1</Text>
+        <Text style={styles.text}>2</Text>
+        <Text style={styles.text}>3</Text>
+        <Text style={styles.text}>45</Text>
+        <Text style={styles.text}>5</Text>
+        <Text style={styles.text}>6</Text>
+        <Text style={styles.text}>7</Text>
+        <TextInput style={styles.input} />
+        {array.map(item => {
+          return (
+            <Text key={item} style={styles.text}>
+              List item {item}
+            </Text>
+          );
+        })}
+        {buildListView()}
+      </ScrollView>
+      {/* 横向类似轮播 */}
+      {/* <ScrollView horizontal={true} style={styles.root2} pagingEnabled={true}>
+        <View style={{width, height: 200, backgroundColor: 'red'}} />
+        <View style={{width, height: 200, backgroundColor: 'blue'}} />
+        <View style={{width, height: 200, backgroundColor: 'green'}} />
+      </ScrollView> */}
+    </View>
+  );
+}
+```
