@@ -319,6 +319,8 @@ export default function ButtonDemo() {
 * 带状态样式与带装填子节点
 * 代码简写
 
+<img src="./assets/d_pressable_pressing.svg" alt="Diagram of the onPress events in sequence." style="zoom:67%;" />
+
 ```jsx
 import React, {useEffect, useState} from 'react';
 import {Text, Pressable, View, StyleSheet} from 'react-native';
