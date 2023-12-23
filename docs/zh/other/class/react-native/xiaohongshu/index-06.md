@@ -1107,3 +1107,32 @@ export default function SectionListDemo() {
 
 ## 18:Switch 开关切换
 
+* 指定开关：value
+* 状态回调：onValueChange
+* 禁用属性：disabled
+* 背景颜色：trackColor
+* 前景颜色：thumbColor
+
+```jsx
+import React, {useEffect, useState} from 'react';
+import {Text, Switch} from 'react-native';
+
+export default function () {
+  const [switchState, setSwitchState] = useState(false);
+  return (
+    <Switch
+      value={switchState}
+      onValueChange={value => {
+        setSwitchState(value);
+      }}
+      trackColor={{
+        true: 'red',
+        false: 'blue',
+      }}
+      thumbColor={switchState ? '#2030ff' : '#303030'}
+      // disabled={true}
+    />
+  );
+}
+```
+
