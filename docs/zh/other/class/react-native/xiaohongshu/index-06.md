@@ -1950,3 +1950,6 @@ const styles = StyleSheet.create({
 });
 ```
 
+效果图如下：
+
+<img src="./assets/S31225-22572634.png" alt="S31225-22572634" style="zoom:50%;" />
