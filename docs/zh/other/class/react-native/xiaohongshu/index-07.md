@@ -426,3 +426,72 @@ export default function TestApiDemo() {
 ```
 
 如此处理后，结果正常，没有红色横线
+
+## 08：BackHandler安卓返回键适配
+
+* 添加监听：BackHandler.addEventListener('hardwareBackPress', fn)
+* 移除监听：BackHandler.removeEventListener('hardwareBackPress', fn)
+
+* 退出应用：BackHandler.exitApp()
+
+```jsx
+import React, {useEffect} from 'react';
+import {
+  BackHandler,
+} from 'react-native';
+
+export default function TestApiDemo() {
+    useEffect(() => {
+      // 比如某些安卓手机底部导航键是可以进行设置收起的，类似场景就会触发
+      const subscription = Dimensions.addEventListener(
+        'change',
+        (window, screen) => {
+          console.log('window', window, screen);
+        },
+      );
+
+      const backFordAndroid = () => {
+        // 返回上一页
+        // return true 表示拦截处理
+        // 返回 false 表示不拦截，默认系统处理
+        // return false;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', backFordAndroid);
+
+      return () => {
+        subscription.remove();
+        BackHandler.removeEventListener('hardwareBackPress', backFordAndroid);
+      };
+    }, []);
+   return (
+    <View style={styles.root}>
+       <Button title="按钮1" />
+     </View>
+ 	)    
+}
+```
+
+上述监听，移除都是模板代码
+
+推荐使用
+
+[https://github.com/react-native-community/hooks](https://github.com/react-native-community/hooks)
+
+```bash
+npm install @react-native-community/hooks
+```
+
+```jsx
+import {useBackHandler} from '@react-native-community/hooks'
+
+useBackHandler(() => {
+  if (shouldBeHandledHere) {
+    // handle it
+    return true
+  }
+  // let the default thing happen
+  return false
+})
+```
+
