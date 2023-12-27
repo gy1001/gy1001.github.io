@@ -233,3 +233,196 @@ export default function TestApiDemo() {
 
 ```
 
+## 05：StyleSheet构建灵活样式表
+
+* 基础使用：以上章节代码就是基本使用
+* 创建多个样式表：使用多个 StyleSheet.create 分别创建不同模块的样式表
+* 样式合并：StyleSheet.compose 和 [] 写法的区别
+* 样式平铺：StyleSheet.flatten
+* 绝对填充：StyleSheet.absoluteFill
+* 头发丝尺寸：StyleSheet.hairlineWidth
+
+```jsx
+const s1 = {
+  fontSize: 18,
+};
+const s2 = {
+  fontSize: 20,
+  color: 'red',
+};
+const composeStyle = StyleSheet.compose(s1, s2);
+console.log(composeStyle); // [{"fontSize": 18}, {"color": "red", "fontSize": 20}]
+
+const flatStyle = StyleSheet.flatten([s1, s2]);
+console.log(flatStyle); // {"fontSize": 20, "color": "red"}
+
+const absoluteStyle = StyleSheet.absoluteFill;
+console.log(absoluteStyle); // {{"bottom": 0, "left": 0, "position": "absolute", "right": 0, "top": 0}
+
+// 头发丝宽度就是一个像素
+console.log(StyleSheet.hairlineWidth);
+console.log(1 / Dimensions.get('screen').scale);
+```
+
+## 06: Linking一个 api 节省 50 行代码
+
+* 打开链接：Linking.openURL()、Linking.canOpenURL()
+  * 网页链接
+  * 地图定位
+  * 拨打电话
+  * 发送短信
+  * 发送邮件
+  * 应用跳转
+* 跳转应用设置：Linking.openSettings()
+* 安卓隐式跳转：Linking.sendIntent()
+* 获取初始化URL：Linking.getInitialURL()
+
+```jsx
+import React, {useEffect} from 'react';
+import {
+  Button,
+  Text,
+  View,
+  Alert,
+  useWindowDimensions,
+  Dimensions,
+  Platform,
+  StyleSheet,
+  Linking,
+} from 'react-native';
+
+export default function TestApiDemo() {
+  const onPress = () => {
+    // if (Linking.canOpenURL('https://www.baidu.com')) {
+    //   Linking.openURL('https://www.baidu.com'); // 会调用系统浏览器打开页面
+    // } else {
+    //   console.log('无法打开链接');
+    // }
+    // Linking.openURL('geo:37.122, 12.222'); // 通过地址软件打开经纬度
+    // Linking.openURL('tel:10086'); // 拨打电话
+    // Linking.openURL('sms:10086'); // 发送短信
+    // Linking.openURL('mailto:10086@163.com'); // 发送邮件
+    // 你需要使用该应用的特定 URL scheme。
+    // Linking.openURL('dagongjue://demo'); // schema://路径
+    // Linking.openSettings(); // 跳转到应用设置页面
+    // Linking.sendIntent('', [{key: 'name', value: '张三'}]);
+    Linking.getInitialURL();
+    console.log(Linking.getInitialURL());
+  }
+  return (
+    <View>
+      <Button title="按钮1" onPress={onPress} />
+  );
+}
+```
+
+## 07: PixelRatio 像素比例工具
+
+* 获取屏幕像素密度：PixelRatio.get()
+* 获取字体缩放比例（仅安卓）：PixelRatio.getFontScale()
+* 获取布局大小：PixelRatio.getPixelSizeForLayoutSize()
+
+```js
+import React, {useEffect} from 'react';
+import {PixelRatio} from 'react-native';
+
+console.log(PixelRatio.get() === Dimensions.get('screen').scale); // true
+console.log(PixelRatio.getFontScale() === Dimensions.get('screen').fontScale ); // true
+console.log(PixelRatio.getPixelSizeForLayoutSize(100) === 100 * PixelRatio.get()); // true
+```
+
+特殊场景下的救命稻草
+
+* 获取就近值：PixelRatio.roundToNearesePixel()
+
+> 在React Native（RN）中，`PixelRatio.roundToNearestPixel()` 是一个用于将一个像素值四舍五入到最接近的像素的函数。这通常在需要确保UI元素的精确像素对齐或确保视觉效果的连贯性时使用。
+
+如下代码
+
+```jsx
+import React, {useEffect} from 'react';
+import {
+  View,
+  PixelRatio,
+} from 'react-native';
+
+export default function TestApiDemo() {
+  const styles = StyleSheet.create({
+    view: {
+      width: '100%',
+      backgroundColor: 'red',
+    },
+    subView: {
+      width: '100%',
+      backgroundColor: 'blue',
+      height: 32.1, // 不用纠结为什么是 32.1
+    },
+  });
+  return (
+    <View style={styles.root}>
+       <View style={styles.view}>
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+      </View>
+    </View>
+  )
+}
+```
+
+效果结果如下：忽略按钮，主要是产生了一条红色横线
+
+<img src="./assets/89f8fdbf2f95c100781015286eb4f49d.jpeg" alt="89f8fdbf2f95c100781015286eb4f49d" style="zoom:50%;" />
+
+更改代码后
+
+```jsx
+import React, {useEffect} from 'react';
+import {
+  View,
+  PixelRatio,
+} from 'react-native';
+
+export default function TestApiDemo() {
+  const styles = StyleSheet.create({
+    view: {
+      width: '100%',
+      backgroundColor: 'red',
+    },
+    subView: {
+      width: '100%',
+      backgroundColor: 'blue',
+      height: 32.1, // 不用纠结为什么是 32.1
+    },
+  });
+  return (
+    <View style={styles.root}>
+       <View style={styles.view}>
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+        <View style={styles.subView} />
+      </View>
+    </View>
+  )
+}
+```
+
+如此处理后，结果正常，没有红色横线
