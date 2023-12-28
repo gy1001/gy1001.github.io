@@ -495,3 +495,155 @@ useBackHandler(() => {
 })
 ```
 
+## 09：PermissionsAndroid 轻松解决权限问题
+
+* 检查权限：PermissionsAndroid.check()
+
+* 申请权限：PermissionsAndroid.request()
+
+  * 切记：要在原生 mainfest 注册权限 
+
+    ```xml
+    // android/app/src/main/AndroidManifest.xml
+    // 需要什么权限，事先声明
+    <uses-permission android:name="android.permission.CAMERA" />
+    ```
+
+* 申请多个权限：PermissionsAndroid.requestMultiple
+
+```jsx
+import React from "react"
+import {
+  Button,
+  View,
+  PermissionsAndroid,
+} from 'react-native';
+export default function TestApiDemo(){
+  const onPress = () => {
+    console.log(PermissionsAndroid.PERMISSIONS);
+    const needPermission = PermissionsAndroid.PERMISSIONS.CAMERA;
+    PermissionsAndroid.check(needPermission).then(result => {
+      console.log(result, 11111);
+      if (!result) {
+        PermissionsAndroid.request(needPermission).then(status => {
+          console.log(status, 22222);
+        });
+      }
+    });
+
+    PermissionsAndroid.requestMultiple([
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+    ]).then(res => {});
+  }
+  return (<View>
+        <Button title="按钮" onPress={onPress}></Button>
+    <View>)
+}
+```
+
+## 10: Vibration 简单好用的震动交互
+
+* 原生声明权限：android.persmission.VIBRATE
+
+* 发起震动：Vibration.vibrate()
+
+* 取消震动：Vibration.cancel()
+
+* 安卓时间模式：[100, 5000, 1000, 2000]: *先停100ms 震动 5000，在停 1s 在震2s*
+
+* IOS时间模式：[100,200,300,400]: 由于 IOS 端震动时间不能更改，所以生效的只是中间的停止时间
+
+* 震动重复：repeat
+
+  ```jsx
+  Vibration.vibrate([100, 5000, 1000, 2000], true); // true 代表重复震动
+  // 停止震动，调用 cancel
+  ```
+
+```jsx
+Vibration.vibrate(); // 震动 400ms 默认
+Vibration.vibrate(1000); // 震动 1s 中，只对于 安卓
+Vibration.cancel(); // 取消
+
+// 先停100ms 震动 5000，在停 1s 在震2s
+Vibration.vibrate([100, 5000, 1000, 2000]);
+// IOS 由于震动时间不能更改，所以生效的只是中间的停止时间
+Vibration.vibrate([2000, 500, 2000, 500], true);
+```
+
+## 11: ToastAndroid 安卓平台的提示
+
+* 弹出提示：ToastAndroid.show()
+* 弹出提示以及位置：ToastAndroid.showWithGravity()
+
+```jsx
+// 先停100ms 震动 5000，在停 1s 在震2s
+Vibration.vibrate([100, 5000, 1000, 2000]);
+// IOS 由于震动时间不能更改，所以生效的只是中间的停止时间
+Vibration.vibrate([2000, 500, 2000, 500], true);
+ToastAndroid.show('提示信息', ToastAndroid.SHORT); // 3s
+ToastAndroid.show('提示信息', ToastAndroid.LONG); // 5s
+
+ToastAndroid.showWithGravity(
+  '提示信息',
+  ToastAndroid.SHORT,
+  ToastAndroid.CENTER,
+);
+```
+
+## 12: Transform 矩阵变换的伪3D效果
+
+* 水平移动：translateX
+* 垂直移动：translateY
+* 整体缩放：scale
+* 横向锁档：scaleX
+* 竖向缩放：scaleY
+* X轴旋转：rotateX
+* Y轴旋转：rotateY
+* Z轴旋转：rotateZ、rotate
+
+```jsx
+import React, {useEffect} from 'react';
+import {
+  View,
+} from 'react-native';
+export default function TestApiDemo() {
+  return <View
+    style={[
+      {
+        width: 200,
+        height: 200,
+        backgroundColor: 'red',
+        marginTop: 100,
+      },
+      {
+        transform: [
+          {
+            // translateX: 100,
+            // translateY: 100,
+            // scale: 1.5,
+            scaleX: 1.5,
+          },
+          {
+            scaleY: 1.5,
+          },
+          // {
+          //   rotateX: '45deg', // 沿着 x 轴旋转, 横向中间位置
+          // },
+          // {
+          //   rotateY: '45deg', // 沿着 y 轴旋转，竖向中间位置
+          // },
+          // {
+          //   rotateZ: '45deg', // 沿着 z 轴旋转
+          // },
+          {
+            rotate: '45deg', // 沿着 z 轴旋转
+          },
+        ],
+      },
+    ]}
+  />
+}
+```
+
