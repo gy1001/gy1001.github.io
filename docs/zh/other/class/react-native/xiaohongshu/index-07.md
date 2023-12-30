@@ -647,3 +647,54 @@ export default function TestApiDemo() {
 }
 ```
 
+## 13：keyboard: 操作键盘有神器
+
+* 注册键盘监听：Keyboard.addListener()
+* 注销键盘监听：EmitterSubscription.remove()
+* 隐藏键盘：Keyboard.dismiss()
+
+```jsx
+import React, {useEffect} from 'react';
+import {
+  View,
+  TextInput,
+  Keyboard
+} from 'react-native';
+
+
+export default function TestApiDemo() {
+  
+   useEffect(() => {
+     
+     const keyboardDidShow = () => {
+        console.log('keyboardDidShow');
+      };
+
+      const keyboardDidHide = () => {
+        console.log('keyboardDidHide');
+      };
+     
+      const showSubscription = Keyboard.addListener(
+        'keyboardDidShow',
+        keyboardDidShow,
+      );
+      const hideSubscription = Keyboard.addListener(
+        'keyboardDidHide',
+        keyboardDidHide,
+      );
+      return () => {
+        showSubscription.remove();
+        hideSubscription.remove();
+      };
+    }, []);
+  
+   return (
+     <View>
+        <TextInput
+          style={{width: '100%', height: 50, backgroundColor: '#E0E0E0'}}
+        />
+     </View>
+   )
+}
+```
+
