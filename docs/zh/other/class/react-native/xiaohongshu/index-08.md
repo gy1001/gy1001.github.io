@@ -560,5 +560,531 @@ export default function Anim1Demo() {
 
 ## 10: 跟随动画延迟难题
 
+* 传统写法问题所在
+* 跟随动画零延迟的实现
 
+> 以下是传统的跟随动画写法，问题是：右边滚动时候，触发 state 改变，然后再进行绘制左边的滚动。会存在一定的延迟。如果不在意，可以忽略，如果在意，需要进行优化处理
+>
+> 注释部分是优化代码
 
+```jsx
+import React, {useState, useRef} from 'react';
+import {StyleSheet, View, ScrollView, Animated} from 'react-native';
+
+const colors = ['red', 'green', 'blue', 'yellow', 'orange'];
+
+export default () => {
+  const [scrollY, setScrollY] = useState(0);
+  //   const scrollY = useRef(new Animated.Value(0)).current;
+
+  const viewList = () => {
+    const array = [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+    ];
+    return (
+      <>
+        {array.map((item, index) => (
+          <View
+            key={item}
+            style={{
+              width: 60,
+              height: 100,
+              backgroundColor: colors[index % 5],
+            }}
+          />
+        ))}
+      </>
+    );
+  };
+
+  return (
+    <View style={styles.root}>
+      <View style={styles.leftLayout}>
+        <Animated.View
+          style={{
+            width: 60,
+            transform: [
+              {translateY: -scrollY}
+              // {translateY: Animated.multiply(-1, scrollY)},
+            ],
+          }}>
+          {viewList()}
+        </Animated.View>
+      </View>
+
+      <View style={styles.rightLayout}>
+        <Animated.ScrollView
+          showsVerticalScrollIndicator={false}
+          onScroll={event => {
+            setScrollY(event.nativeEvent.contentOffset.y);
+          }}
+          //   onScroll={Animated.event(
+          //     [
+          //       {
+          //         nativeEvent: {
+          //           contentOffset: {y: scrollY},
+          //         },
+          //       },
+          //     ],
+          //     {useNativeDriver: true},
+          //   )}
+        >
+          {viewList()}
+        </Animated.ScrollView>
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  root: {
+    width: '100%',
+    height: '100%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  leftLayout: {
+    width: 60,
+    backgroundColor: '#00FF0030',
+    flexDirection: 'column',
+  },
+  rightLayout: {
+    width: 60,
+    height: '100%',
+    backgroundColor: '#0000FF30',
+    marginLeft: 100,
+  },
+});
+```
+
+## 11：自定义 Modal 背景动画
+
+* slide动画，自动以渐变
+* fade 动画，自定义平移
+
+```jsx
+import React, {useState, useRef} from 'react';
+import {
+  StyleSheet,
+  View,
+  Modal,
+  Text,
+  Button,
+  SectionList,
+  TouchableOpacity,
+  Image,
+  Animated,
+  Dimensions,
+} from 'react-native';
+import icon_close_modal from '../assets/images/icon_close_modal.png';
+
+import {SectionData} from '../constants/Data';
+
+const {height: WINDOW_HEIGHT} = Dimensions.get('window');
+
+export default () => {
+  const [visible, setVisible] = useState(false);
+
+  const marginTop = useRef(new Animated.Value(WINDOW_HEIGHT)).current;
+
+  const showModal = () => {
+    setVisible(true);
+    Animated.timing(marginTop, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const hideModal = () => {
+    Animated.timing(marginTop, {
+      toValue: WINDOW_HEIGHT,
+      duration: 500,
+      useNativeDriver: false,
+    }).start(() => {
+      // 动画结束回调
+      setVisible(false);
+    });
+  };
+
+  const renderItem = ({item, index, section}) => {
+    return <Text style={styles.txt}>{item}</Text>;
+  };
+
+  const ListHeader = (
+    <View style={styles.header}>
+      <Text style={styles.extraTxt}>列表头部</Text>
+      <TouchableOpacity style={styles.closeButton} onPress={() => hideModal()}>
+        <Image style={styles.closeImg} source={icon_close_modal} />
+      </TouchableOpacity>
+    </View>
+  );
+
+  const ListFooter = (
+    <View style={[styles.header, styles.footer]}>
+      <Text style={styles.extraTxt}>列表尾部</Text>
+    </View>
+  );
+
+  const renderSectionHeader = ({section}) => {
+    return <Text style={styles.sectionHeaderTxt}>{section.type}</Text>;
+  };
+
+  return (
+    <View style={styles.root}>
+      <Button title="按钮" onPress={() => showModal()} />
+
+      <Modal
+        visible={visible}
+        onRequestClose={() => hideModal()}
+        transparent={true}
+        statusBarTranslucent={true}
+        animationType="fade">
+        <View style={styles.container}>
+          <Animated.View
+            style={[
+              styles.contentView,
+              {
+                marginTop: marginTop,
+              },
+            ]}>
+            <SectionList
+              style={styles.sectionList}
+              contentContainerStyle={styles.containerStyle}
+              sections={SectionData}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => `${item}-${index}`}
+              showsVerticalScrollIndicator={false}
+              ListHeaderComponent={ListHeader}
+              ListFooterComponent={ListFooter}
+              renderSectionHeader={renderSectionHeader}
+              ItemSeparatorComponent={() => <View style={styles.separator} />}
+              stickySectionHeadersEnabled={true}
+            />
+          </Animated.View>
+        </View>
+      </Modal>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  root: {
+    width: '100%',
+    height: '100%',
+    paddingHorizontal: 16,
+  },
+  container: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#00000060',
+  },
+  contentView: {
+    width: '100%',
+    height: '100%',
+    paddingTop: '30%',
+  },
+  sectionList: {
+    width: '100%',
+    height: '80%',
+  },
+  txt: {
+    width: '100%',
+    height: 56,
+    fontSize: 20,
+    color: '#333333',
+    textAlignVertical: 'center',
+    paddingLeft: 16,
+  },
+  containerStyle: {
+    backgroundColor: '#F5F5F5',
+  },
+  header: {
+    width: '100%',
+    height: 48,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  footer: {
+    backgroundColor: '#ff000030',
+  },
+  extraTxt: {
+    fontSize: 20,
+    color: '#666666',
+    textAlignVertical: 'center',
+  },
+  sectionHeaderTxt: {
+    width: '100%',
+    height: 36,
+    backgroundColor: '#DDDDDD',
+    textAlignVertical: 'center',
+    paddingLeft: 16,
+    fontSize: 20,
+    color: '#333333',
+    fontWeight: 'bold',
+  },
+  separator: {
+    width: '100%',
+    height: 2,
+    backgroundColor: '#D0D0D0',
+  },
+  closeButton: {
+    width: 24,
+    height: 24,
+    position: 'absolute',
+    right: 16,
+  },
+  closeImg: {
+    width: 24,
+    height: 24,
+  },
+});
+```
+
+## 12: LayoutAnimation超级简单又强大的布局动画
+
+* 安卓手动启动布局动画
+
+  ```jsx
+  // index.js
+  /**
+   * @format
+   */
+  
+  import {AppRegistry, UIManager, Platform} from 'react-native';
+  import App from './App';
+  import {name as appName} from './app.json';
+  
+  // 如果平台是 安卓
+  if (Platform.OS === 'android') {
+    if (UIManager.setLayoutAnimationEnabledExperimental) {
+      console.log('enable ...');
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }
+  
+  AppRegistry.registerComponent(appName, () => App);
+  ```
+
+* 布局动画的应用场景和优势
+
+* 学习几个演示案例
+
+```jsx
+// 案例一：
+import React, {useState} from 'react';
+import {Button, View, StyleSheet, LayoutAnimation} from 'react-native';
+
+const styles = StyleSheet.create({
+  root: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  view1: {
+    width: 100,
+    height: 100,
+    backgroundColor: 'red',
+    marginTop: 10,
+  },
+});
+
+export default function Anim1Demo() {
+  const [showView, setShowView] = useState(false);
+
+  return (
+    <View style={styles.root}>
+      <Button
+        title="按钮"
+        onPress={() => {
+          LayoutAnimation.configureNext(
+            // LayoutAnimation.Presets.linear
+            // LayoutAnimation.Presets.spring, // 弹跳
+            LayoutAnimation.Presets.easeInEaseOut, // 平缓
+            () => {
+              console.log('动画执行完毕');
+            },
+            () => {
+              console.log('动画执行异常');
+            },
+          );
+          setShowView(!showView);
+        }}
+      />
+      {/* Animated.View 在布局上就可以当做 View */}
+      {showView && <View style={[styles.view1]} />}
+    </View>
+  );
+}
+```
+
+```jsx
+// 案例二
+import React, {useState} from 'react';
+import {
+  Button,
+  View,
+  StyleSheet,
+  Text,
+  LayoutAnimation,
+  Image,
+} from 'react-native';
+import IconAvatar from '../assets/images/default_avatar.png';
+const styles = StyleSheet.create({
+  root: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  view1: {
+    width: '100%',
+    height: 100,
+    backgroundColor: '#F0F0F0',
+    marginTop: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
+  img: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+  },
+  txt: {
+    fontSize: 20,
+    color: '#303030',
+    fontWeight: 'bold',
+    marginHorizontal: 16,
+  },
+});
+
+export default function Anim1Demo() {
+  const [showRight, setShowRight] = useState(false);
+
+  return (
+    <View style={styles.root}>
+      <Button
+        title="按钮"
+        onPress={() => {
+          LayoutAnimation.configureNext(
+            // LayoutAnimation.Presets.linear
+            // LayoutAnimation.Presets.spring, // 弹跳
+            LayoutAnimation.Presets.easeInEaseOut, // 平缓
+            () => {
+              console.log('动画执行完毕');
+            },
+            () => {
+              console.log('动画执行异常');
+            },
+          );
+          setShowRight(!showRight);
+        }}
+      />
+      {/* Animated.View 在布局上就可以当做 View */}
+      {/* {showView && <View style={[styles.view1]} />} */}
+
+      <View
+        style={[
+          styles.view1,
+          {
+            flexDirection: !showRight ? 'row' : 'row-reverse',
+          },
+        ]}>
+        <Image style={styles.img} source={IconAvatar} />
+        <Text style={styles.txt}>这是一行自我介绍文本</Text>
+      </View>
+    </View>
+  );
+}
+```
+
+```jsx
+// 案例三
+import React, {useState} from 'react';
+import {
+  Button,
+  View,
+  StyleSheet,
+  Text,
+  LayoutAnimation,
+  Image,
+} from 'react-native';
+import IconAvatar from '../assets/images/default_avatar.png';
+const styles = StyleSheet.create({
+  root: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  view1: {
+    width: '100%',
+    height: 100,
+    backgroundColor: '#F0F0F0',
+    marginTop: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
+  img: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+  },
+  txt: {
+    fontSize: 20,
+    color: '#303030',
+    fontWeight: 'bold',
+    marginHorizontal: 16,
+  },
+});
+
+export default function Anim1Demo() {
+  const [showRight, setShowRight] = useState(false);
+
+  return (
+    <View style={styles.root}>
+      <Button
+        title="按钮"
+        onPress={() => {
+          // LayoutAnimation.configureNext(
+          //   // LayoutAnimation.Presets.linear
+          //   // LayoutAnimation.Presets.spring, // 弹跳
+          //   LayoutAnimation.Presets.easeInEaseOut, // 平缓
+          //   () => {
+          //     console.log('动画执行完毕');
+          //   },
+          //   () => {
+          //     console.log('动画执行异常');
+          //   },
+          // );
+          // LayoutAnimation.linear();
+          LayoutAnimation.easeInEaseOut();
+          // LayoutAnimation.spring();
+          setShowRight(!showRight);
+        }}
+      />
+      {/* Animated.View 在布局上就可以当做 View */}
+      {/* {showView && <View style={[styles.view1]} />} */}
+
+      <View
+        style={[
+          styles.view1,
+          {
+            flexDirection: !showRight ? 'row' : 'row-reverse',
+          },
+        ]}>
+        <Image style={styles.img} source={IconAvatar} />
+        <Text style={styles.txt}>这是一行自我介绍文本</Text>
+      </View>
+    </View>
+  );
+}
+```
+
+## 13：动画作业
+
+<img src="./assets/image-20240102000515645.png" alt="image-20240102000515645" style="zoom:50%;" />
