@@ -22,10 +22,10 @@ https://reactnative.cn/docs/environment-setup
   * 模拟器
 
 ## 安装 node 和 watchman
-
-* brew install node
-* brew install watchman
-
+```bash
+brew install node
+brew install watchman
+```
 ## 安装 VSCODE
 
 [https://code.visualstudio.com/](https://code.visualstudio.com/)
@@ -35,7 +35,9 @@ https://reactnative.cn/docs/environment-setup
 ### 安装 JDK
 
 * HomeBrew 安装
-  * `brew install adopopenjdk/openjdk/adoptopenjdk8`
+```bash
+brew install adopopenjdk/openjdk/adoptopenjdk8
+```
 
 * 官网下载（推荐）
   * [https://www.oracle.com/java/technologies/downloads/#java11](https://www.oracle.com/java/technologies/downloads/#java11)
@@ -47,9 +49,9 @@ https://reactnative.cn/docs/environment-setup
 [https://developer.android.google.cn/studio?hl=zh-cn](https://developer.android.google.cn/studio?hl=zh-cn)
 
 ### 配置 SDK 和 Tools
-
+```txt
 preference => Languages & Frameworks => Android Sdk
-
+```
 ## 配置环境变量
 
 * 配置 sdk 环境变量
@@ -65,7 +67,7 @@ export PATH=$PATH:$ANDROID_HOME/platform-tools
 * 重新启动配置文件
 
   ```bash
-  soruce ~/.zshrc
+  source ~/.zshrc
   ```
 
   
@@ -73,8 +75,9 @@ export PATH=$PATH:$ANDROID_HOME/platform-tools
 ## 创建安卓模拟器
 
 * 常规创建方式
-  * DeviceManager => Create Device
-
+```txt
+DeviceManager => Create Device
+```
 ### M1 芯片创建安卓模拟器
 
 * 下载对应 SDK
@@ -117,3 +120,38 @@ export PATH=$PATH:$ANDROID_HOME/platform-tools
 * 就可以在 android studio 的 模拟器中查看到相应界面了（前提打开 device manager中的模拟机运行起来）
 
 ![image-20231209201307595](./assets/image-20231209201307595.png)
+
+### 注意报错，
+1. brew update 更新时 shallow clone
+
+[brew update 更新时 shallow clone](https://zhuanlan.zhihu.com/p/351199589)
+
+2. React Native 运行报错，可以运行如下命令，进行检查
+
+```bash
+npx react-native doctor
+```
+然后根据提示进行修复
+
+3. Mac OS 如何彻底卸载各版本的 jdk（java 开发环境）
+
+  * 列出当前的 jdk 安装列表，如下命令：
+
+  ```bash
+  demo@Mac ~ $ ls /Library/Java/JavaVirtualMachines/
+  jdk-11.0.10.jdk		jdk-11.0.3.jdk		jdk1.7.0_80.jdk		jdk1.8.0_241.jdk
+  ```
+
+  * 删除 jdk 安装列表中的 jdk 版本，如下命令：
+
+  ```bash
+  demo@Mac ~ $ sudo rm -rf /Library/Java/JavaVirtualMachines/jdk-11.0.3.jdk
+  Password:
+  ```
+  输入密码，删除成功
+
+4. 步骤 2：输入 java -version 命令，查看当前系统上已安装的 JDK 版本。
+
+```bash
+java -version
+```
