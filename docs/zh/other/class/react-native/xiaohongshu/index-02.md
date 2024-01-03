@@ -121,19 +121,19 @@ DeviceManager => Create Device
 
 ![image-20231209201307595](./assets/image-20231209201307595.png)
 
-### 注意报错，
-1. brew update 更新时 shallow clone
+### 注意报错
+#### 1. brew update 更新时 shallow clone
 
 [brew update 更新时 shallow clone](https://zhuanlan.zhihu.com/p/351199589)
 
-2. React Native 运行报错，可以运行如下命令，进行检查
+#### 2. React Native 运行报错，可以运行如下命令，进行检查
 
 ```bash
 npx react-native doctor
 ```
 然后根据提示进行修复
 
-3. Mac OS 如何彻底卸载各版本的 jdk（java 开发环境）
+#### 3. Mac OS 如何彻底卸载各版本的 jdk（java 开发环境）
 
   * 列出当前的 jdk 安装列表，如下命令：
 
@@ -150,8 +150,40 @@ npx react-native doctor
   ```
   输入密码，删除成功
 
-4. 步骤 2：输入 java -version 命令，查看当前系统上已安装的 JDK 版本。
+#### 4. 步骤 2：输入 java -version 命令，查看当前系统上已安装的 JDK 版本。
 
 ```bash
 java -version
 ```
+
+#### 5. MAC 端安装 cocoapods 时出错
+
+> 可能跟 ruby 版本有关，我的是 2.7.2，需要升级到 3.0.0 以上版本
+
+按照如下文档升级，并配置环境变量
+
+```bash
+# 首先，检查您使用的Ruby版本。
+ruby -v
+
+which  ruby
+usr/bin/ruby
+
+# 现在使用Homebrew安装最新的Ruby。
+brew install ruby
+
+# 根据提示运行图中提示的三行命令 ，按照说明设置PATH。
+echo 'export PATH="/usr/local/opt/ruby/bin:$PATH"' >> ~/.zshrc
+echo 'export LDFLAGS="-L/usr/local/opt/ruby/lib"' >> ~/.zshrc  
+echo 'export CPPFLAGS="-I/usr/local/opt/ruby/include"' >> ~/.zshrc 
+echo 'export PKG_CONFIG_PATH="/usr/local/opt/ruby/lib/pkgconfig"'  >> ~/.zshrc
+
+source ~/.zshrc  
+
+# 最后，检查Ruby版本以确保它已升级。
+ruby -v
+
+# 在进行 npx react-native doctor ，然后在进行安装修复
+```
+
+[https://www.jianshu.com/p/beb6b5c5e109](https://www.jianshu.com/p/beb6b5c5e109)
