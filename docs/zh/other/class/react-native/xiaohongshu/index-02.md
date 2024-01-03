@@ -156,6 +156,7 @@ npx react-native doctor
 java -version
 ```
 
+
 #### 5. MAC 端安装 cocoapods 时出错
 
 > 可能跟 ruby 版本有关，我的是 2.7.2，需要升级到 3.0.0 以上版本
@@ -187,3 +188,15 @@ ruby -v
 ```
 
 [https://www.jianshu.com/p/beb6b5c5e109](https://www.jianshu.com/p/beb6b5c5e109)
+
+#### 6. 安装 cocoapods 后，`npx react-native doctor`仍然报错，提示未安装 cocoapods
+
+> 使用如下相应命令，重新安装
+
+```bash
+sudo gem install cocoapods (osx 10.11以前)
+
+sudo gem install -n /usr/local/bin cocoapods （10.11后苹果升级了安全策略）
+```
+
+重新运行 `npx react-native doctor` 命令，提示成功。安装配置完成
