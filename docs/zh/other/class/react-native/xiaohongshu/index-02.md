@@ -200,3 +200,23 @@ sudo gem install -n /usr/local/bin cocoapods （10.11后苹果升级了安全策
 ```
 
 重新运行 `npx react-native doctor` 命令，提示成功。安装配置完成
+
+#### 7. 安装 cocoapods 后，`npx react-native doctor`通过后，运行 ios 终端报错
+
+> note: Building targets in dependency order
+> 
+> /Users/gaoyuan/Code/learn/RNDemo/ios/Pods/Target Support Files/Pods-RNDemo/Pods-RNDemo.debug.xcconfig:1:1: error: unable to open configuration settings > file
+
+用 xcode 打开 ios 文件夹下的 `RNDemo.xcodeproj`, 发现项目中的 pod 文件一片红
+
+```bash
+# 在此过程中，可能需要翻墙，可以通过设置终端代理来解决
+# 例子： export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
+pod install
+
+pod update（pod install 不行再执行）
+```
+
+然后再运行 `npm run start` 后选择 i，即可
+
+> 注意： 如果报错，就完全退出 xcode 和 模拟器，在重试脚本 npm run start
