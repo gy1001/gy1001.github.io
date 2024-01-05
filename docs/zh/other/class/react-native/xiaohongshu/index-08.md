@@ -657,7 +657,7 @@ const styles = StyleSheet.create({
 });
 ```
 
-## 11：自定义 Modal 背景动画
+## 11: 自定义 Modal 背景动画
 
 * slide动画，自动以渐变
 * fade 动画，自定义平移
@@ -1085,7 +1085,7 @@ export default function Anim1Demo() {
 }
 ```
 
-## 13：动画作业
+## 13: 动画作业
 
 <img src="./assets/image-20240102000515645.png" alt="image-20240102000515645" style="zoom:50%;" />
 
