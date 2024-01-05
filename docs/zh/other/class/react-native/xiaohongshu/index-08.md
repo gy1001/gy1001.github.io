@@ -1136,13 +1136,14 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
 });
-
+const ORIGIN_WIDTH = 40;
+const AFTER_WIDTH = 150;
 export default function AnimateMenu() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const widthValue0 = useRef(new Animated.Value(150)).current;
-  const widthValue1 = useRef(new Animated.Value(50)).current;
-  const widthValue2 = useRef(new Animated.Value(50)).current;
-  const widthValue3 = useRef(new Animated.Value(50)).current;
+  const widthValue0 = useRef(new Animated.Value(AFTER_WIDTH)).current;
+  const widthValue1 = useRef(new Animated.Value(ORIGIN_WIDTH)).current;
+  const widthValue2 = useRef(new Animated.Value(ORIGIN_WIDTH)).current;
+  const widthValue3 = useRef(new Animated.Value(ORIGIN_WIDTH)).current;
   const onPress = number => {
     setActiveIndex(number);
   };
@@ -1154,7 +1155,7 @@ export default function AnimateMenu() {
   }, [activeIndex, widthValue0, widthValue1, widthValue2, widthValue3]);
   const commonAnimated = (widthValueType, isTargetNumber) => {
     Animated.timing(widthValueType, {
-      toValue: isTargetNumber ? 150 : 50,
+      toValue: isTargetNumber ? AFTER_WIDTH : ORIGIN_WIDTH,
       duration: 500,
       useNativeDriver: false,
     }).start();
@@ -1164,25 +1165,33 @@ export default function AnimateMenu() {
       <TouchableOpacity onPress={() => onPress(0)}>
         <Animated.View style={[styles.menuItem, {width: widthValue0}]}>
           <Image style={styles.imageIcon} source={IconHome} />
-          <Text style={styles.text}>首页推荐</Text>
+          <Text ellipsizeMode="clip" numberOfLines={1} style={styles.text}>
+            首页推荐
+          </Text>
         </Animated.View>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => onPress(1)}>
         <Animated.View style={[styles.menuItem, {width: widthValue1}]}>
           <Image style={styles.imageIcon} source={IconShow} />
-          <Text style={styles.text}>精选活动</Text>
+          <Text ellipsizeMode="clip" numberOfLines={1} style={styles.text}>
+            精选活动
+          </Text>
         </Animated.View>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => onPress(2)}>
         <Animated.View style={[styles.menuItem, {width: widthValue2}]}>
           <Image style={styles.imageIcon} source={IconGift} />
-          <Text style={styles.text}>活动</Text>
+          <Text ellipsizeMode="clip" numberOfLines={1} style={styles.text}>
+            活动
+          </Text>
         </Animated.View>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => onPress(3)}>
         <Animated.View style={[styles.menuItem, {width: widthValue3}]}>
           <Image style={styles.imageIcon} source={IconMine} />
-          <Text style={styles.text}>我的</Text>
+          <Text ellipsizeMode="clip" numberOfLines={1} style={styles.text}>
+            我的
+          </Text>
         </Animated.View>
       </TouchableOpacity>
     </View>
