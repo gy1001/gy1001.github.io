@@ -18,7 +18,22 @@ console.log(num1) // 55
 console.log(num2) // 100
 console.log(num) // num is not defined
 ```
-
+值类型和引用类型的传递
+```js
+function Person(name, age, salary){
+  this.name = name;
+  this.age = age;
+  this.salary = salary;
+}
+function f1(person){
+  person.name = "ls";
+  person = new Person("xxx", 20, 2000);
+}
+var p = new Person("zs", 30, 3000);
+console.log(p.name); // zs
+f1(p);
+console.log(p.name); // ls
+```
 ## 2. 作用域相关概念
 
 > 作用域是一套规则，用于规定在何处以及如何查找变量(标识符)。如果查找的目的是对变量进行赋值，那么就会使用 LHS 查询；如果目的是获取变量的值，就会使用 RHS 查询。

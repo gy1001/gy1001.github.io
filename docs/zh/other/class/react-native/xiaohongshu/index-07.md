@@ -1,6 +1,6 @@
 # 07-【夯实基础-常用 API】深刻理解 RN 核心 API 的功能
 
-## 01：常用 API 精讲
+## 01: 常用 API 精讲
 
 * Alert/console: 开发周期的调试工具
 * Dimensions/useWindowDeimensions: 适配屏幕高度
@@ -233,7 +233,7 @@ export default function TestApiDemo() {
 
 ```
 
-## 05：StyleSheet构建灵活样式表
+## 05: StyleSheet构建灵活样式表
 
 * 基础使用：以上章节代码就是基本使用
 * 创建多个样式表：使用多个 StyleSheet.create 分别创建不同模块的样式表
@@ -427,7 +427,7 @@ export default function TestApiDemo() {
 
 如此处理后，结果正常，没有红色横线
 
-## 08：BackHandler安卓返回键适配
+## 08: BackHandler安卓返回键适配
 
 * 添加监听：BackHandler.addEventListener('hardwareBackPress', fn)
 * 移除监听：BackHandler.removeEventListener('hardwareBackPress', fn)
@@ -495,7 +495,7 @@ useBackHandler(() => {
 })
 ```
 
-## 09：PermissionsAndroid 轻松解决权限问题
+## 09: PermissionsAndroid 轻松解决权限问题
 
 * 检查权限：PermissionsAndroid.check()
 

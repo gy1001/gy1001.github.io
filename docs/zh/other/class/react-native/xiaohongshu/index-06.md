@@ -1,6 +1,6 @@
 # 06-全面掌握系统组件的使用方法以及各种属性的应用场景
 
-## 01-详解系统组件用法
+## 01: 详解系统组件用法
 
 * `View`: UI 构建的基石，一切页面的起点
 * `Text`：使用占比最高的组件，使用简单，深入复杂
@@ -21,7 +21,7 @@
 * `Switch`：开关切换，一键搞定
 * 作业：个人信息页练习
 
-## 02-View: UI 构建的基石，一切页面的起点
+## 02: View: UI 构建的基石，一切页面的起点
 
 * `flexDirection`: 横向纵向布局
 * `flexGrow` 和 `flex` 的区别
@@ -30,7 +30,7 @@
 * `onLayout`: 布局信息的回调
 * `setNativeProps`: 性能瓶颈下的选择余地
 
-## 03-Text：使用占比最高的组件
+## 03: Text：使用占比最高的组件
 
 * 字体属性: `fontSize`、`fontFamily`、`fontWeight`
 * 行数以及修饰模式：`numberOfLines`、`ellipsizeMode`
@@ -42,7 +42,7 @@
 * 文本装饰：`textDecorationStyle`、`textDecorationLine`
 * 文字阴影：`textShadowColor`、`textShadowOffset`、`textShadowRadius`一起使用
 
-## 04：Image：精美的UI从使用图片开始
+## 04: Image：精美的UI从使用图片开始
 
 * 图片源的两种类型：`source`
 * 缩放模式：`resizeMode`
@@ -54,9 +54,9 @@
 * 着色：`tintColor`
 * api: `Image.getSize()`、`Image.prefetch()`
 
-## 05：ImageBackground-View和Image的结合
+## 05: ImageBackground-View和Image的结合
 
-## 06：TextInput：唯一且强大的输入组件
+## 06: TextInput：唯一且强大的输入组件
 
 * 字体样式：与 `Text` 一致
 * 自动聚焦：`autoFocus`: 布尔值 和 focus()
@@ -86,7 +86,7 @@
 * 安全模式：`secureTextEntry`(),输入后前面输入的变为… 
   * 注意：不能和 `multiline` 同时使用
 
-## 07：TouchableOpacity 最好用的点击组件
+## 07: TouchableOpacity 最好用的点击组件
 
 * 透明度渐变阈值：`activeOpacity`
 * 点击事件：onPress、onLongPress、delayLongPress
@@ -226,7 +226,7 @@ onPressOut
 onPress
 ```
 
-## 09：TouchableWithoutFeedback 几乎不用的
+## 09: TouchableWithoutFeedback 几乎不用的
 
 > 官方文档：除非你有一个很好的理由 ，否则不要使用这个组件。所有能够响应触屏操作的元素在触屏后都应该有一个视觉上的反馈
 >
@@ -269,7 +269,7 @@ export default function TouchableOpacityDemo(props) {
 }
 ```
 
-## 10：Button: 使用简单，但是样式固定（不能定制）
+## 10: Button: 使用简单，但是样式固定（不能定制）
 
 * title: 设置按钮显示文字(必须声明)
 * color: 设置按钮颜色
@@ -363,7 +363,7 @@ export default function PressableDemo() {
 }
 ```
 
-## 12：ScrollView 基础滚动组件
+## 12: ScrollView 基础滚动组件
 
 * 添加子节点：固定子元素、列表渲染、数组渲染
 * 内容包裹样式：contentContainerStyle
@@ -1136,7 +1136,7 @@ export default function () {
 }
 ```
 
-## 19：课后作业
+## 19: 课后作业
 
 ```jsx
 import React, {useState} from 'react';
