@@ -162,7 +162,7 @@ export default () => {
   );
 };
 
-// AccountModal.js
+// AddAccountModal.js
 import React, {useState, forwardRef, useImperativeHandle} from 'react';
 import {
   View,
@@ -458,3 +458,105 @@ export default forwardRef(function AddAccountModal(props, ref) {
 ```
 
 ## 04：使用UUID和AsyncStorage保存账号数据
+
+### 生成唯一 ID
+
+* react-natvive-get-random-values
+
+  ```bash
+  npm install react-native-get-random-values
+  ```
+
+* uuid
+
+  ```bash
+  npm install uuid 
+  ```
+
+### AsyncStorage: 数据存储
+
+* 集成 async-storage
+
+  * `@react-native-async-storage/async-storage`
+
+    ```bash
+    npm install @react-native-async-storage/async-storage --save
+    ```
+
+  * 保存数据：AsyncStorage.setItem()
+
+  * 读取数据：AsyncStoraget.getItem()
+
+```js
+// utils/uuid.js
+import 'react-native-get-random-values';
+import {v4 as uuidv4} from 'uuid';
+
+export const getUUid = () => {
+  return uuidv4();
+};
+```
+
+```js
+// utils/storage.js
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export const saveStorage = async (key, value) => {
+  try {
+    return await AsyncStorage.setItem(key, value);
+  } catch (error) {}
+};
+export const getStorage = async key => {
+  try {
+    return await AsyncStorage.getItem(key);
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const removeStorage = async key => {
+  try {
+    return await AsyncStorage.removeItem(key);
+  } catch (error) {}
+};
+```
+
+```jsx
+// AddAccountModal.js:增加如下代码
+
+import {getUUid} from '../utils/uuid';
+import {getStorage, saveStorage} from '../utils/storage';
+export default forwardRef(function AddAccountModal(props, ref) {
+	const [id, setId] = useState(0);
+  const show = () => {
+    setModalVisible(true);
+    setId(getUUid);
+  };
+  
+  const renderButton = () => {
+    const handleSaveAccount = () => {
+      const newAccount = {
+        id: id,
+        type: tabIndex,
+        name: accountName,
+        account: accountCode,
+        password: accountPassword,
+      };
+      getStorage('accountList').then(result => {
+        const newAccountList = result ? JSON.parse(result) : [];
+        newAccountList.push(newAccount);
+        saveStorage('accountList', JSON.stringify(newAccountList)).then(() => {
+          console.log('保存成功');
+        });
+        hide();
+      });
+    };
+    
+    return (
+      <TouchableOpacity style={styles.button} onPress={handleSaveAccount}>
+        <Text style={styles.saveText}>保存</Text>
+      </TouchableOpacity>
+    );
+  }
+}
+```
+

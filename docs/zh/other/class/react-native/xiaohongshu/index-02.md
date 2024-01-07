@@ -240,3 +240,9 @@ pod update（pod install 不行再执行）
 # 修改xcode指向的目录
 xcode-select -s /Applications/Xcode.app/Contents/Developer
 ```
+
+#### 9. 运行 RN 项目报错：Android SDK 提示 Versions found: N/A
+
+[运行RN项目报错：Android SDK提示Versions found: N/A](https://blog.csdn.net/G1ANTS/article/details/125485177)
+
+![img](./assets/78a2c6169d2946d3bf74416c574a64f6.png)
