@@ -176,6 +176,7 @@ import {
   Platform,
 } from 'react-native';
 import IconClose from '../assets/images/icon_close_modal.png';
+import {typesArray} from '../utils/constants';
 
 const styles = StyleSheet.create({
   root: {
@@ -299,7 +300,6 @@ export default forwardRef(function AddAccountModal(props, ref) {
         color: 'white',
       },
     });
-    const typesArray = ['游戏', '平台', '银行卡', '其他'];
     return (
       <View style={typeStyles.typesLayout}>
         {typesArray.map((item, index) => {
@@ -520,13 +520,18 @@ export const removeStorage = async key => {
 };
 ```
 
+```js
+// utils/constants.js
+export const typesArray = ['游戏', '平台', '银行卡', '其他'];
+```
+
 ```jsx
 // AddAccountModal.js:增加如下代码
 
 import {getUUid} from '../utils/uuid';
 import {getStorage, saveStorage} from '../utils/storage';
 export default forwardRef(function AddAccountModal(props, ref) {
-	const [id, setId] = useState(0);
+  const [id, setId] = useState(0);
   const show = () => {
     setModalVisible(true);
     setId(getUUid);
@@ -536,7 +541,8 @@ export default forwardRef(function AddAccountModal(props, ref) {
     const handleSaveAccount = () => {
       const newAccount = {
         id: id,
-        type: tabIndex,
+        tabIndex: tabIndex,
+        tabType: typesArray[tabIndex],
         name: accountName,
         account: accountCode,
         password: accountPassword,
@@ -557,6 +563,13 @@ export default forwardRef(function AddAccountModal(props, ref) {
       </TouchableOpacity>
     );
   }
+  
+  return ()
 }
 ```
+
+## 05: 绘制账号列表ui
+
+* 读取账号数据，并进行分组
+* 使用 SectionList 事先列表 UI
 
