@@ -573,3 +573,105 @@ export default forwardRef(function AddAccountModal(props, ref) {
 * 读取账号数据，并进行分组
 * 使用 SectionList 事先列表 UI
 
+```jsx
+// src/modules/Home.js
+
+import IconArrow from '../assets/images/icon_arrow.png';
+
+const styles = StyleSheet.create({
+  contentContainerStyle: {
+    paddingHorizontal: 16,
+  },
+})
+
+export default () => {
+  const renderItem = ({item, index, section}) => {
+    const itemStyles = StyleSheet.create({
+      layout: {
+        width: '100%',
+        paddingHorizontal: 12,
+        paddingVertical: 12,
+        backgroundColor: '#fff',
+        borderTopWidth: 1,
+        borderColor: '#e0e0e0',
+      },
+      text: {
+        fontSize: 16,
+        color: '#333',
+      },
+      accPwdLayout: {
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 12,
+        marginBottom: 6,
+      },
+      accPwdText: {
+        flex: 1,
+        fontSize: 14,
+        color: '#666',
+      },
+    });
+    return (
+      <View style={itemStyles.layout}>
+        <Text style={itemStyles.text}>{item.name}</Text>
+        <View style={itemStyles.accPwdLayout}>
+          <Text style={itemStyles.accPwdText}> 账号：{item.account}</Text>
+          <Text style={itemStyles.accPwdText}> 密码：{item.password}</Text>
+        </View>
+      </View>
+    );
+  };
+  
+  const renderSectionHeader = ({section}) => {
+    const headerStyles = StyleSheet.create({
+      groupHeader: {
+        width: '100%',
+        height: 46,
+        backgroundColor: '#fff',
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12,
+        paddingHorizontal: 12,
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 12,
+      },
+      icon: {
+        width: 24,
+        height: 24,
+        resizeMode: 'contain',
+      },
+      text: {
+        fontSize: 16,
+        color: '#333',
+        fontWeight: '600',
+        marginLeft: 12,
+        textAlignVertical: 'center',
+        height: '100%',
+      },
+      arrowBtn: {
+        position: 'absolute',
+        right: 0,
+        padding: 16,
+      },
+    });
+    return (
+      <View style={headerStyles.groupHeader}>
+        <Image style={headerStyles.icon} source={IconPlatform}></Image>
+        <Text style={headerStyles.text}>{section.name}</Text>
+        <TouchableOpacity style={headerStyles.arrowBtn}>
+          <Image style={headerStyles.icon} source={IconArrow}></Image>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+  
+  
+   return (
+     <SectionList
+        contentContainerStyle={styles.contentContainerStyle}
+      />
+   )
+}
+```
+
