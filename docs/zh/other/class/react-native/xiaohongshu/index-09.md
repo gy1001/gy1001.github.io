@@ -552,8 +552,8 @@ export default forwardRef(function AddAccountModal(props, ref) {
         newAccountList.push(newAccount);
         saveStorage('accountList', JSON.stringify(newAccountList)).then(() => {
           console.log('保存成功');
+          hide();
         });
-        hide();
       });
     };
     
@@ -933,5 +933,82 @@ export default () => {
 };
 ```
 
+## 07: 添加账号后实时刷新列表
 
+```jsx
+// src/components/AddAccountModal.js
+export default forwardRef(function AddAccountModal(props, ref) {
+  	
+  const {onSave} = props;
+ 
+  const renderButton = () => {
+    const handleSaveAccount = () => {
+      const newAccount = {
+        id: id,
+        tabIndex: tabIndex,
+        tabType: typesArray[tabIndex],
+        name: accountName,
+        account: accountCode,
+        password: accountPassword,
+      };
+      getStorage('accountList').then(result => {
+        const newAccountList = result ? JSON.parse(result) : [];
+        newAccountList.push(newAccount);
+        saveStorage('accountList', JSON.stringify(newAccountList)).then(() => {
+          console.log('保存成功');
+          hide();
+          onSave(); // 这里调用外部组件传过来的属性
+        });
+      });
+    };
+    return (
+       <TouchableOpacity style={styles.button} onPress={handleSaveAccount}>
+        <Text style={styles.saveText}>保存</Text>
+      </TouchableOpacity>
+    )
+  }
+  
+  return <>
+}
+```
+
+```jsx
+// src/modules/Home.js
+export default () => {
+  
+ 	useEffect(() => {
+    loadData();
+  }, []);
+  
+  const loadData = () => {
+    getStorage('accountList').then(res => {
+      const accountResultList = res ? JSON.parse(res) : [];
+      const resultObjList = [];
+      accountResultList.forEach(item => {
+        if (!resultObjList[item.tabIndex]) {
+          resultObjList[item.tabIndex] = {
+            data: [],
+            name: item.tabType,
+            index: item.tabIndex,
+          };
+        }
+        resultObjList[item.tabIndex].data.push(item);
+      });
+      setAccountList(resultObjList);
+    });
+  };
+  
+  return <>
+  	<AddAccountModal ref={addCountModalRef} onSave={loadData} />
+  <>
+}
+```
+
+这样点击保存时候就调用了外部传过来的 onSave 属性,实现了点击保存后，数据刷新的效果。
+
+## 08: 实现账号列表细节交互
+
+* 点击列表行，跳转账号详情并支持修改
+* 增加长按删除交互
+* 标题栏增加密码显示开关
 
