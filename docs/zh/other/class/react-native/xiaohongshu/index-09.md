@@ -983,15 +983,16 @@ export default () => {
   const loadData = () => {
     getStorage('accountList').then(res => {
       const accountResultList = res ? JSON.parse(res) : [];
-      const resultObjList = [];
+      const resultObjList = Array.from(
+        {length: typesArray.length},
+        (el, index) => ({
+          data: [],
+          name: typesArray[index],
+          index: index,
+        }),
+      );
+      // 这样放止假如存储的序列中只有 1,3的数据，列表仍然可以获得data:[]的数据，否则列表就会报错
       accountResultList.forEach(item => {
-        if (!resultObjList[item.tabIndex]) {
-          resultObjList[item.tabIndex] = {
-            data: [],
-            name: item.tabType,
-            index: item.tabIndex,
-          };
-        }
         resultObjList[item.tabIndex].data.push(item);
       });
       setAccountList(resultObjList);
@@ -1009,6 +1010,82 @@ export default () => {
 ## 08: 实现账号列表细节交互
 
 * 点击列表行，跳转账号详情并支持修改
+
+  ``` jsx
+  // home 中的 renderItem View 更改为 TouchableOpacity
+  const renderItem = ({item, index, section})=>{
+    return (
+        <TouchableOpacity
+          onPress={() => {
+            addCountModalRef.current.show(item);
+          }}
+        >
+        ...
+        </TouchableOpacity>
+      );
+  }
+  
+  // AddAccountModal.jsx
+  
+  const [isModify, setIsModify] = useState(false);
+  
+  const show = currentAccount => {
+    if (currentAccount) {
+      setIsModify(true);
+      setId(currentAccount.id);
+      setTabIndex(currentAccount.tabIndex);
+      setAccountName(currentAccount.name);
+      setAccountCode(currentAccount.account);
+      setAccountPassword(currentAccount.password);
+    } else {
+      setId(getUUid);
+      setIsModify(false);
+    }
+    setModalVisible(true);
+  };
+  
+  
+  const renderTitle = () => { 
+    return (
+      <View style={titleStyles.layout}>
+        <Text style={titleStyles.titleText}>
+          {isModify ? '编辑账号' : '添加账号'}
+        </Text>
+        ...
+      </View>
+    )
+  }
+  
+  
+  const renderButton = () => {
+    const handleSaveAccount = () => {
+      ...
+      getStorage('accountList').then(result => {
+        // 如果是编辑，就需要在保存前，先移除那个
+        if (isModify) {
+          newAccountList = newAccountList.map(item => {
+            if (item.id === id) {
+              return newAccount;
+            }
+            return item;
+          });
+        } else {
+          newAccountList.push(newAccount);
+        }
+        ...
+      }
+     ...
+    }
+  }
+  
+  ```
+
 * 增加长按删除交互
+
+  ```jsx
+  ```
+
+  
+
 * 标题栏增加密码显示开关
 
