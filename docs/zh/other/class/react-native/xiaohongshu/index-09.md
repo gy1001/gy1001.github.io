@@ -1083,9 +1083,76 @@ export default () => {
 * 增加长按删除交互
 
   ```jsx
-  ```
-
+  const deleteAccount = account => {
+    getStorage('accountList').then(res => {
+      let accountResultList = res ? JSON.parse(res) : [];
+      accountResultList = accountResultList.filter(
+        item => item.id !== account.id,
+      );
+      saveStorage('accountList', JSON.stringify(accountResultList)).then(() => {
+        console.log('删除成功');
+        loadData();
+      });
+    });
+  };
   
+  const renderItem = ({item, index, section}) => {
+   const buttons = [
+      {
+        text: '取消',
+        onPress: () => {},
+      },
+      {
+        text: '确定',
+        onPress: () => deleteAccount(item),
+      },
+    ];
+  
+   return (
+     <TouchableOpacity
+        onLongPress={() => {
+          Alert.alert('提示', `确定要删除账号『${item.name}』吗`, buttons);
+        }}
+     >
+       ...
+      </TouchableOpacity>
+   )
+  }
+  ```
 
 * 标题栏增加密码显示开关
 
+  ```jsx
+  export default () => {
+    
+    const [passwordVisible, setPasswordVisible] = useState(false);
+    
+   	const renderTitle = () => {
+      // 这里应该返回一个标题组件
+      return (
+        <View style={styles.titleLayout}>
+          <Text style={styles.titleTxt}>账号管理</Text>
+          <Switch
+            style={styles.switch}
+            value={passwordVisible}
+            onValueChange={value => setPasswordVisible(value)}
+          />
+        </View>
+      );
+    };
+    
+    const renderItem = ({item, index, section}) => {
+      return (
+        <TouchableOpacity>
+          
+            <Text style={itemStyles.accPwdText}>
+              密码：{passwordVisible ? item.password : '********'}
+            </Text>
+          
+        </TouchableOpacity>
+      );
+    }
+  }
+  ```
+
+  
