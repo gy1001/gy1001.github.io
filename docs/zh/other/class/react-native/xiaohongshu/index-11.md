@@ -35,5 +35,155 @@
 * 对比 Context 实现方式，体会 Context 的简洁和解耦
 * 使用 state 维护动态 Context 值
 
+> 以下示例中我们使用两层传递，当然其实也可以使用三层，四层，因为 context 本来就是为了解决多层传递的问题
 
+1. 创建 src/context/ThemeContext.js 文件, 内容如下
 
+   ```jsx
+   import {createContext} from 'react';
+   
+   export const ThemeContext = createContext('dark');
+   ```
+
+2. 书写父级页面
+
+   > 有一个按钮，点击时候，会进行样式状态的切换，并提供给 context
+
+   ```jsx
+   // RootView.jsx
+   import React, {useState} from 'react';
+   import {View, Button, StyleSheet} from 'react-native';
+   import PageView from './PageView';
+   import {ThemeContext} from '../context/ThemeContext';
+   export default () => {
+     const styles = StyleSheet.create({
+       root: {
+         width: '100%',
+         height: '100%',
+       },
+       btnView: {
+         with: '100%',
+         alignItems: 'center',
+         marginTop: 20,
+         position: 'absolute',
+         top: 0,
+         left: 20,
+         zIndex: 10,
+       },
+     });
+     const [theme, setTheme] = useState('dark');
+     const toggleTheme = () => {
+       setTheme(theme === 'dark' ? 'light' : 'dark'); // 切换主题
+     };
+     return (
+       <ThemeContext.Provider value={theme}>
+         <View style={styles.root}>
+           <View style={styles.btnView}>
+             <Button onPress={toggleTheme} title="切换主题"></Button>
+           </View>
+           <PageView></PageView>
+         </View>
+       </ThemeContext.Provider>
+     );
+   };
+   ```
+
+3. 书写子级（或者多写几层均可，这里为了简单，只写了子级）
+
+   > 这里准备了两套样式，一个 lightStyles，一个 darkStyles，从 context 中取出样式后，做判断处理，来用哪一套
+
+   ```jsx
+   // PageView.js
+   import React, {useContext} from 'react';
+   import {StyleSheet, Text, View, Image} from 'react-native';
+   import AvatarIcon from '../assets/images/default_avatar.png';
+   import {ThemeContext} from '../context/ThemeContext';
+   
+   export default () => {
+     const lightStyles = StyleSheet.create({
+       root: {
+         width: '100%',
+         height: '100%',
+         alignItems: 'center',
+         paddingTop: 50,
+       },
+       img: {
+         width: 100,
+         height: 100,
+         borderRadius: 50,
+       },
+       title: {
+         fontWeight: 'bold',
+         fontSize: 20,
+         marginTop: 20,
+       },
+       desc: {
+         width: '80%',
+         backgroundColor: '#DEB887',
+         paddingHorizontal: 20,
+         paddingVertical: 10,
+         marginTop: 20,
+         borderRadius: 10,
+         color: '#fff',
+       },
+     });
+     const darkStyles = StyleSheet.create({
+       root: {
+         width: '100%',
+         height: '100%',
+         alignItems: 'center',
+         paddingTop: 50,
+         backgroundColor: '#333',
+       },
+       img: {
+         width: 100,
+         height: 100,
+         borderRadius: 50,
+       },
+       title: {
+         fontWeight: 'bold',
+         fontSize: 20,
+         marginTop: 20,
+         color: 'white',
+       },
+       desc: {
+         width: '80%',
+         backgroundColor: '#999',
+         paddingHorizontal: 20,
+         paddingVertical: 10,
+         marginTop: 20,
+         borderRadius: 10,
+         color: '#fff',
+       },
+     });
+     const theme = useContext(ThemeContext);
+     const styles = theme === 'dark' ? darkStyles : lightStyles;
+     return (
+       <View style={styles.root}>
+         <Image source={AvatarIcon} style={styles.img}></Image>
+         <Text style={styles.title}>个人信息介绍</Text>
+         <Text style={styles.desc}>
+           各位产品经理大家好，我是个人开发者，我学习 RN
+           两年半了，我喜欢安卓、RN、鸿蒙。
+         </Text>
+       </View>
+     );
+   };
+   ```
+
+4. 效果如下
+
+   这是dark 模式下
+
+   ![image-20240118223921908](./assets/image-20240118223921908.png)
+
+   这是 light 模式下
+
+   ![image-20240118223954699](./assets/image-20240118223954699.png)
+
+## 03：Context 内容小结
+
+### 使用Context 的思考
+
+* 因为 Context 本质上就是全局变量，大量使用 Context 会导致组件失去独立性，使组件复用性变差
+* 对于常规的组件间传值，可优先使用组件组合、状态管理、单例导出等方式，不要过度使用 Context
