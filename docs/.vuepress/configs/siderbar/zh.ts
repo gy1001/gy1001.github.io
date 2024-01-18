@@ -539,6 +539,20 @@ export const sidebarZh: SidebarConfig = {
           ],
         },
         {
+          text: 'JavaScript 核心进阶',
+          collapsible: true,
+          children: [
+            '/zh/other/class/js-core-advanced/index-01.md',
+            '/zh/other/class/js-core-advanced/index-02.md',
+            '/zh/other/class/js-core-advanced/index-03.md',
+            '/zh/other/class/js-core-advanced/index-04.md',
+            '/zh/other/class/js-core-advanced/index-05.md',
+            '/zh/other/class/js-core-advanced/index-06.md',
+            '/zh/other/class/js-core-advanced/index-07.md',
+            '/zh/other/class/js-core-advanced/index-08.md',
+          ]
+        },
+        {
           text: 'React Native 保姆教程及实战小红书',
           collapsible: true,
           children: [
