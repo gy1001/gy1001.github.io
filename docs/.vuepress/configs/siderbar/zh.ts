@@ -550,7 +550,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/js-core-advanced/index-06.md',
             '/zh/other/class/js-core-advanced/index-07.md',
             '/zh/other/class/js-core-advanced/index-08.md',
-          ]
+          ],
         },
         {
           text: 'React Native 保姆教程及实战小红书',
@@ -567,6 +567,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/react-native/xiaohongshu/index-09.md',
             '/zh/other/class/react-native/xiaohongshu/index-10.md',
             '/zh/other/class/react-native/xiaohongshu/index-11.md',
+            '/zh/other/class/react-native/xiaohongshu/index-12.md',
           ],
         },
       ],
