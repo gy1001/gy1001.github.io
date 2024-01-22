@@ -439,3 +439,24 @@ export default function ListDemo() {
 
 这样每次生成的 onPress 函数都会优先使用缓存中的
 
+## 03：Hermes 引擎
+
+> [官方地址之hermes](https://reactnative.cn/docs/next/hermes)
+
+> 目前版本默认开启
+
+* 提升启动速度
+* 压缩包体积
+
+### Android
+
+编辑 `android/app/gradle.properties` 文件并修改`hermesEnabled`项为 true：
+
+```text
+# 使用此属性启用或禁用 Hermes JS 引擎。
+# 如果设置为false，则将使用 JSC引擎。
+hermesEnabled=true
+```
+
+备注：此属性自 React Native 0.71 版本开始才支持，如果在`gradle.properties` 文件中找不到，请在网站顶部导航条选择你当前的 React Native 版本，切换到那个版本的文档查看相应的操作。
+
