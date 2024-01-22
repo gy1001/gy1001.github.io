@@ -568,6 +568,7 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/react-native/xiaohongshu/index-10.md',
             '/zh/other/class/react-native/xiaohongshu/index-11.md',
             '/zh/other/class/react-native/xiaohongshu/index-12.md',
+            '/zh/other/class/react-native/xiaohongshu/index-13.md',
           ],
         },
       ],
