@@ -18,3 +18,8 @@
 * 编写并注册原生层方法
 * JS 层调用原生方法
 
+### 编写并注册原生层方法
+
+安卓端，打开 android 文件夹（建议用 android studio 打开）
+
+文件位于： `/android/app/src/main/java/com/rndemo/MainApplication.kt`
