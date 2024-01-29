@@ -92,3 +92,21 @@ export const clearData = async () => {
 };
 ```
 
+## 03：路由管理安装和介绍
+
+### 集成 react-navigation
+
+```shell
+npm install @react-navigation/bottom-tabs
+npm install @react-navigation/native
+npm install @react-native/stack
+npm install react-native-gesture-handler
+npm install react-native-safe-area-context
+npm install react-native-screens
+```
+
+### 构建导航栈
+
+* 在 App.tsx 根节点构建导航栈
+* 配置导航栈属性
+* 
