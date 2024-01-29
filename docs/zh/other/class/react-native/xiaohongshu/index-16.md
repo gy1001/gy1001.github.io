@@ -40,3 +40,55 @@ defaultConfig {
 导入相关静态资源文件
 
 * 新建 `RedBookDemo/src/assets` 文件夹，并把需要的文件放进去即可
+
+## 02：项目配置 TS 和 AsyncStorage
+
+### 安装 TS
+
+* 安装 TS
+
+  ```shell
+  npm install --save-dev typescript
+  ```
+
+* 生成 tsconfig.json
+  ```shell
+  tsc --init
+  ```
+
+* 安装类型声明（众多）
+
+  ```shell
+  npm install --save-dev @types/react @types/react-native
+  ```
+
+ ### 安装 AsyncStorage
+
+* 集成 async-storage
+  * `@react-native-async-storage/async-storage`
+
+* 保存数据：AsyncStorage.setItem()
+* 读取数据：AsyncStorage.getItem()
+
+新建`RedBookDemo/src/utils/Storage.ts` 文件，内容如下
+
+```typescript
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export const saveData = async (key: string, value: string) => {
+  return await AsyncStorage.setItem(key, value);
+};
+
+export const getData = async (key: string) => {
+  return await AsyncStorage.getItem(key);
+};
+
+export const removeData = async (key: string) => {
+  return await AsyncStorage.removeItem(key);
+};
+
+export const clearData = async () => {
+  return await AsyncStorage.clear();
+};
+```
+
