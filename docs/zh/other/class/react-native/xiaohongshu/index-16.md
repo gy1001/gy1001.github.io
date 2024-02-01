@@ -99,7 +99,7 @@ export const clearData = async () => {
 ```shell
 npm install @react-navigation/bottom-tabs
 npm install @react-navigation/native
-npm install @react-native/stack
+npm install @react-navigation/stack
 npm install react-native-gesture-handler
 npm install react-native-safe-area-context
 npm install react-native-screens
@@ -109,4 +109,109 @@ npm install react-native-screens
 
 * 在 App.tsx 根节点构建导航栈
 * 配置导航栈属性
-* 
+
+### 代码内容如下
+
+`app.tsx`
+
+```jsx
+
+import React from 'react';
+import {StatusBar, useColorScheme} from 'react-native';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {NavigationContainer} from '@react-navigation/native';
+import {TransitionPresets, createStackNavigator} from '@react-navigation/stack';
+import PageA from './src/modules/PageA';
+import PageB from './src/modules/PageB';
+const Stack = createStackNavigator();
+function App(): React.JSX.Element {
+  const isDarkMode = useColorScheme() === 'dark';
+
+  const backgroundStyle = {
+    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  };
+
+  return (
+    <SafeAreaProvider>
+      <StatusBar
+        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        backgroundColor={backgroundStyle.backgroundColor}
+      />
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="PageA1"
+          screenOptions={{
+            cardStyle: {elevation: 1},
+          }}>
+          <Stack.Screen
+            name="PageA1"
+            component={PageA}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="PageB1"
+            component={PageB}
+            options={{...TransitionPresets.SlideFromRightIOS}}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
+  );
+}
+
+export default App;
+```
+
+`./src/modules/PageB`
+
+```jsx
+import React from 'react';
+import {View, Text} from 'react-native';
+
+export default () => {
+  return (
+    <View>
+      <Text>Page B</Text>
+    </View>
+  );
+};
+```
+
+`./src/modules/PageA`
+
+```jsx
+import React from 'react';
+import {View, Text, Button} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack/lib/typescript/src/types';
+
+export default () => {
+  const navigation = useNavigation<StackNavigationProp<any>>();
+  const myHandler = () => {
+    // if (na`vigation.canGoBack) {
+    //   navigation.goBack();
+    // }
+    navigation.push('PageB1');
+    // navigation.replace('PageB1');
+  };
+  return (
+    <View>
+      <Text>Page A</Text>
+      <Button title="点击跳转" onPress={myHandler} />
+    </View>
+  );
+};
+```
+
+## 04: 欢迎页面、登录页面
+
+* 开发欢迎页面、并设置 3秒倒计时
+* 开发登录页面，并设置 3秒倒计时
+* 三页面连续跳转
+
+设计图如下
+
+![image-20240201115557703](./assets/image-20240201115557703.png)
