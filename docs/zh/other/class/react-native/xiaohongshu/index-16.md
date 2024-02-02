@@ -705,3 +705,26 @@ export default () => {
 };
 ```
 
+## 05：服务端接口与网络请求
+
+### 01：nodejs服务介绍及使用方法
+
+#### 本地 nodejs 服务
+
+* 为什么使用本地 Nodejs 服务器模拟数据？
+  * 使用不了真实小红书后台的服务器数据
+  * 也不可能让你使用，也没有必要
+* 初始 egg.js：初始化、controller、静态资源
+  * [Egg.js官网](https://www.eggjs.org/zh-CN/intro/quickstart)
+* 本地 nodejs 服务的使用方法
+
+### 02：封装Axios请求
+
+* 安装 Axios 库
+
+  ```bash
+  npm install axios 
+  ```
+
+* 封装 request 请求方法
+
