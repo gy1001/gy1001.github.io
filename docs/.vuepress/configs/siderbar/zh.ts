@@ -574,6 +574,12 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/react-native/xiaohongshu/index-16.md',
           ],
         },
+        {
+          text: 'Node.js工程师养成计划',
+          children: [
+            '/zh/other/class/node-nurture/index-01.md',
+          ]
+        }
       ],
     },
     {
