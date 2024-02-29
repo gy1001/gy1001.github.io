@@ -550,6 +550,8 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/js-core-advanced/index-06.md',
             '/zh/other/class/js-core-advanced/index-07.md',
             '/zh/other/class/js-core-advanced/index-08.md',
+            '/zh/other/class/js-core-advanced/index-09.md',
+            '/zh/other/class/js-core-advanced/index-10.md',
           ],
         },
         {
@@ -576,10 +578,8 @@ export const sidebarZh: SidebarConfig = {
         },
         {
           text: 'Node.js工程师养成计划',
-          children: [
-            '/zh/other/class/node-nurture/index-01.md',
-          ]
-        }
+          children: ['/zh/other/class/node-nurture/index-01.md'],
+        },
       ],
     },
     {
