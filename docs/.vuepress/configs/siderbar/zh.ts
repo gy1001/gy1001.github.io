@@ -558,6 +558,13 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/js-core-advanced/index-14.md',
             '/zh/other/class/js-core-advanced/index-15.md',
             '/zh/other/class/js-core-advanced/index-16.md',
+            '/zh/other/class/js-core-advanced/index-17.md',
+            '/zh/other/class/js-core-advanced/index-18.md',
+            '/zh/other/class/js-core-advanced/index-19.md',
+            '/zh/other/class/js-core-advanced/index-20.md',
+            '/zh/other/class/js-core-advanced/index-21.md',
+            '/zh/other/class/js-core-advanced/index-22.md',
+            '/zh/other/class/js-core-advanced/index-23.md',
           ],
         },
         {
