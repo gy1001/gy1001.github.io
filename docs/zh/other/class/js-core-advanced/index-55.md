@@ -20,9 +20,7 @@
 
 一起来试试看。
 
-## *1*
-
-**准备工作**
+## 1-准备工作
 
 首先，按照上节课的内容，使用 create react app 创建一个项目。
 
@@ -30,7 +28,7 @@
 
 因为默认的 demo 中，有了自己的 DOM 渲染，因此我们需要清空他们。将 App.tsx 修改为如下即可
 
-```
+```javascript
 import React from 'react';
 function App() {
   return (
@@ -41,9 +39,7 @@ function App() {
 export default App;
 ```
 
-## 02
-
-**状态管理模块**
+## 02-状态管理模块
 
 在 src 目录中，创建一个状态管理模块，命名为 `state.ts`
 
@@ -51,13 +47,13 @@ export default App;
 
 在整个项目中，状态树是唯一的，我们会把所有的状态名与状态值通过 `key - value` 的形式，保存在状态树中。
 
-```
+```javascript
 const store = {}
 ```
 
 在我们的案例中，状态树可能会长这样
 
-```
+```javascript
 store = {
   show: 0,
   backgroundColor: '#cccccc',
@@ -69,7 +65,7 @@ store = {
 
 因此，给 store 一个类型声明
 
-```
+```javascript
 interface Store {
   [key: string]: any
 }
@@ -86,7 +82,7 @@ const store: Store = {}
 
 具体代码如下：
 
-```
+```javascript
 // 往store中添加一个状态值，并确保传入一个初始值
 export const registerState = (status: string, value: any) => {
   if (store[status]) {
@@ -119,7 +115,7 @@ UI的变动可能会比较简单，也可能会非常复杂，因此为了能够
 
 因此，我们还需要一个 events 对象，来保存专门用于改变 UI 的函数。
 
-```
+```javascript
 type EventCallback = (...args: any[]) => any
 
 interface Events { 
@@ -133,7 +129,7 @@ const events: Events = {}
 
 所以，状态值与 UI 函数的对应关系如下：
 
-```
+```javascript
 store = {
   show: 0,
   backgroundColor: '#cccccc',
@@ -159,7 +155,7 @@ events = {
 - remove: 移出函数的绑定
 - dispatch: 执行函数，setState 中会调用该方法
 
-```
+```javascript
 // 将状态值与事件绑定在一起，通过status-events 的形式保存在events对象中
 export const bind = (status: string, eventFn: EventCallback) => {
   events[status] = eventFn;
@@ -182,7 +178,7 @@ export const dispatch = (status: string, value: any) => {
 
 这样，一个简单的状态管理模块就完成了。完整代码如下
 
-```
+```javascript
 // src/state.ts
 interface Store {
   [key: string]: any
@@ -241,15 +237,13 @@ export const dispatch = (status: string, value: any) => {
 
 接下来的重点，就是如何运用该模块。
 
-## *3*
-
-**注册状态值模块**
+## 3-注册状态值模块
 
 我们需要管理很多的状态，可以在每一个使用到这些状态值的模块中各自注册。也可以使用一个单独的模块来注册状态。如果你担心自己会忘记状态值的作用，建议每一个都做好注释。
 
 注册状态的方式就是利用状态管理模块中定义 registerState 方法来完成。
 
-```
+```javascript
 // src/register.ts
 import {registerState} from './state'
 
@@ -260,9 +254,7 @@ registerState('width', 200)
 registerState('height', 200)
 ```
 
-## 04
-
-**工具函数模块**
+## 04-工具函数模块
 
 每一个项目中，都会使用到大量的工具函数。
 
@@ -272,7 +264,7 @@ registerState('height', 200)
 
 当然，这个例子中我们不会用到特别多的功能函数，因此这里就封装了一个示意一下。
 
-```
+```javascript
 // src/utils.ts
 export const getStyle = (ele: Element, key: any) => {
   if (window.getComputedStyle) {
@@ -285,9 +277,7 @@ export const getStyle = (ele: Element, key: any) => {
 
 除此之外，我们也可以引入 lodash.js 这样的工具库。lodash 是一个具有一致接口、模块化、高性能的工具库，它封装了许多我们常用的工具函数，在实践开发中对我们的帮助非常大。
 
-## 05
-
-**目标元素模块**
+## 05-目标元素模块
 
 目标元素，也就是可能会涉及到 UI 改变的元素。
 
@@ -301,7 +291,7 @@ control_wrap 中是所有的控制按钮
 
 target 是目标元素
 
-```
+```html
 <div id="control">
   <div class="control_wrap">
     <div><button class="show">show/hide</button></div>
@@ -331,7 +321,7 @@ target 是目标元素
 
 清空原有的 `index.css`，重新写一些简单的默认样式
 
-```
+```css
 #control .target {
   width: 200px;
   height: 200px;
@@ -345,7 +335,7 @@ target 是目标元素
 
 此处我们的目标元素是一个正方形的 div 元素，我们将会通过控制按钮来改变它的显示/隐藏，边框，背景，长宽等属性。因此该模块主要要做的事情，就是根据注册的状态变量，绑定 UI 变化的函数。具体代码如下：
 
-```
+```javascript
 // src/box.ts
 import { bind } from './state';
 import { getStyle } from './utils';
@@ -391,9 +381,7 @@ bind('height', value => {
 })
 ```
 
-## *6*
-
-**按钮控制模块**
+## 6-按钮控制模块
 
 我们可能会通过按钮，input 框，或者滑块等不同的方式来改变状态值，因此控制模块将会是一个比较复杂的模块。 为了更好的组织代码，一个可读性和可维护性都很强的方式是将整个控制模块拆分为许多小模块，每一个小模块仅仅只完成一个状态值的控制操作。
 
@@ -403,7 +391,7 @@ bind('height', value => {
 
 控制目标元素显示隐藏的模块
 
-```
+```javascript
 // src/controlButtons/show.ts
 import { getState, setState } from '../state';
 
@@ -420,7 +408,7 @@ btn.addEventListener('click', () => {
 
 控制目标元素背景颜色变化的模块。
 
-```
+```javascript
 // src/controlButtons/bgColor.ts
 import { setState } from '../state';
 
@@ -440,7 +428,7 @@ btn.addEventListener('click', () => {
 
 控制目标元素边框颜色变化的模块。
 
-```
+```javascript
 // src/controlButtons/borderColor.ts
 import { setState } from '../state';
 
@@ -461,7 +449,7 @@ btn.addEventListener('click', () => {
 
 控制目标元素宽度变化的模块。
 
-```
+```javascript
 // src/controlButtons/width.ts
 import { getState, setState } from '../state';
 
@@ -489,7 +477,7 @@ add_btn.addEventListener('click', () => {
 
 控制目标元素高度变化的模块。
 
-```
+```javascript
 // src/controlButtons/height.ts
 import { getState, setState } from '../state';
 
@@ -522,7 +510,7 @@ add_btn.addEventListener('click', () => {
 
 最后将这些模块拼合起来
 
-```
+```javascript
 // src/controlButtons/index.ts
 import './show';
 import './bgColor';
@@ -535,7 +523,7 @@ import './height';
 
 也就是说，在引入这个模块时：
 
-```
+```javascript
 import './controlButtons';
 
 // 等价于
@@ -552,13 +540,11 @@ import './controlButtons/index';  // 后缀名可简写
 
 这样处理之后，我们开发重心，就从考虑整个界面的变化，转移到了仅仅只考虑状态值的变化。这样做的好处是极大的简化了我们在实现需求的过程中所需要考虑的问题。在未来的进阶学习中，大家可能还会大量接触到这样的开发思路。
 
-## *7*
-
-**最后的拼合模块**
+## 7-最后的拼合模块
 
 在 src 目录下的 index.tsx 文件中，我们可以通过 import 将需要的模块拼合起来。
 
-```
+```javascript
 // src/index.tsx
 import './controlButtons';
 import './box';
@@ -568,7 +554,7 @@ import './index.css';
 
 OK，这时候，我们需要的项目就已经全部完成了，如果你在跟着动手实践的话，相信现在你已经能够看到项目的最终效果。整个项目的相关目录结构如下：
 
-```
+```javascript
 + public
   - index.html
 + src
@@ -587,9 +573,7 @@ OK，这时候，我们需要的项目就已经全部完成了，如果你在跟
     - height.ts
 ```
 
-## *8*
-
-**项目小结**
+## 8-项目小结
 
 模块化的开发思路，实际上是通过视觉元素，功能性等原则，将代码划分为一个一个拥有各自独立职能的模块。我们通过 ES6 的 modules 语法按需将这些模块组合起来，并借助构建工具打包成为我们熟知的 js 文件的这样一个过程。
 

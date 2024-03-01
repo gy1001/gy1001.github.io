@@ -4,9 +4,7 @@
 
 当然，使用原生代码自己封装动画，也并非那么困难，跟着我的思路，一起来思考并动手实践就能搞定。
 
-## *1*
-
-**如何让元素动起来**
+## 1-如何让元素动起来
 
 在封装拖拽和封装无缝滚动时，我们都有思考过这个问题。此时我们还需要继续思考。
 
@@ -26,9 +24,7 @@
 
 这里面涉及到两个概念需要我们搞清楚，一个是如何切分目标。二个是如何连续执行，
 
-## *2*
-
-**如何将目标分片**
+## 2-如何将目标分片
 
 要思考如何将目标分片，那么必然的，就必须知道目标是多少。例如我们希望元素能够移动 100 像素，那么目标就是 100 像素。
 
@@ -48,7 +44,7 @@
 
 于是，有了总时间，有了间隔时间，有了目标距离，那么如何分片就变得很简单
 
-```
+```javascript
 // 执行多少次 = 目标时间 / 间隔时间
 const count = 1000 / (1000/60)
 
@@ -56,9 +52,7 @@ const count = 1000 / (1000/60)
 const s = 100 / count
 ```
 
-## *3*
-
-**如何连续执行**
+## 3-如何连续执行
 
 要连续执行，又跟间隔时间有关系，我们很自然就能够想到定时器函数 `setInterval/setTimeout/requestAnimationFrame`。
 
@@ -66,7 +60,7 @@ const s = 100 / count
 
 比如如下一个例子。我们试图每隔 100ms 执行一次函数 foo。实现如下：
 
-```
+```javascript
 var i = 0;
 // 伪函数
 setInterval(function() {
@@ -84,7 +78,7 @@ setInterval(function() {
 
 setTimeout 自身并不具备连续执行的特性，因此需要使用递归在符合条件的情况下，反复创建新的 setTimeout 函数。代码大概如下：
 
-```
+```javascript
 var timer = null
 ani()
 function ani() {
@@ -99,7 +93,7 @@ function ani() {
 
 `requestAnimationFrame` 同样能够使用与 setTimeout 类似的方式，做到连续执行。
 
-```
+```javascript
 var timer = null
 function step() {
   cancelAnimationFrame(timer)
@@ -126,7 +120,7 @@ timer = requestAnimationFrame(step)
 
 兼容代码如下：
 
-```
+```javascript
 const nextFrame = window.requestAnimationFrame || 
                   window.webkitRequestAnimationFrame || 
                   window.mozRequestAnimationFrame || 
@@ -143,9 +137,7 @@ const cancelFrame = window.cancelAnimationFrame ||
                     clearTimeout;
 ```
 
-## *4*
-
-**动画函数**
+## 4-动画函数
 
 在使用 css3 实现动画时，我们知道通过设置不同的动画函数就能够做到不同的运动曲线。例如 `linear, ease, ease-in, ease-out, ease-in-out`。使用 JavaScript 也能够做到同样的事情。
 
@@ -155,7 +147,7 @@ const cancelFrame = window.cancelAnimationFrame ||
 
 JavaScript 有一个工具库 Tween 与之对应的，我们可以搜索使用，在本案例中，我们就从其中拿几个出来完成运动的实现。
 
-```
+```javascript
 // 动画函数
 const tween = {
   linear: function (t, b, c, d) { return c * t / d + b; },
@@ -169,7 +161,7 @@ const tween = {
 
 完整代码如下：
 
-```
+```javascript
 let lasttime = 0
 const nextFrame = window.requestAnimationFrame || 
                   window.webkitRequestAnimationFrame || 
@@ -220,13 +212,11 @@ function slideTo(target) {
 slideTo(400)
 ```
 
-## *5*
-
-**思考题**
+## 5-思考题
 
 1、如果要进一步封装成为一个工具方法应该怎么做？变量是什么？公共逻辑又是什么？
 
-```
+```javascript
 function animate(element, duration, target, easing = 'linear') {
   // todo
 }

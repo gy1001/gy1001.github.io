@@ -2,15 +2,13 @@
 
 基础概念的掌握并不是很难，但是要真正的转化为自己的知识，则需要通过大量的实践才行。
 
-## *1*
-
-**如何让一个DOM元素动起来。**
+## 1-如何让一个DOM元素动起来
 
 拖拽的本质就是让 DOM 元素能够跟着鼠标运动起来。因此，让元素动起来，是我们首先要解决的问题。
 
 设想一下，在我们的页面中仅有一个 `.autumn` 的 div 标签。它的基本样式如下：
 
-```
+```html
 <div class="autumn"></div>
 .autumn {
   width: 20px;
@@ -27,7 +25,7 @@
 
 这里以修改 `left` 为例，一起来实现一下元素被点击一下就往右移动5个像素的效果。代码如下：
 
-```
+```javascript
 var autumn = document.querySelector('.autumn');
 autumn.style.position = 'relative';
 
@@ -38,7 +36,7 @@ autumn.addEventListener('click', function() {
 
 但是当页面所处的环境支持css3属性 `translate` 时，我更建议大家在处理元素运动时去修改 `translate` 的值。因为修改 `left/top` 可能会导致频繁的重排与回流，而 `translate` 的属性，则会被作为合成图层，在 GPU 上进行渲染。结果更为流畅。
 
-```
+```css
 .autumn {
   transform: translateX(0px);
 }
@@ -48,13 +46,13 @@ autumn.addEventListener('click', function() {
 
 不同浏览器的兼容写法包括如下几种：
 
-```
+```css
 ['transform', 'webkitTransform', 'MozTransform', 'msTransform', 'OTransform']
 ```
 
 因此我们需要判断当前浏览器环境支持的 `transform` 属性是哪一种，方法如下：
 
-```
+```javascript
 // 获取当前浏览器支持的transform兼容写法
 function getTransform() {
   var transform = '',
@@ -77,13 +75,11 @@ function getTransform() {
 
 该方法用于获取当前浏览器支持的 `transform` 属性。如果返回空字符串，则表示浏览器不支持 `transform`，这个时候我们就需要退而求其次选择 `left/top`。
 
-## *2*
-
-**如何获取元素的初始位置**
+## 2-如何获取元素的初始位置
 
 为了获取元素的初始位置，我们需要声明一个专门用来获取元素样式的功能函数。获取元素样式在 IE 与其他浏览器中有所不同，因此需要一个兼容性的写法。代码如下：
 
-```
+```javascript
 function getStyle(elem, property) {
   // ie通过currentStyle来获取元素的样式，其他浏览器通过getComputedStyle来获取
   return document.defaultView.getComputedStyle ? document.defaultView.getComputedStyle(elem, false)[property] : elem.currentStyle[property];
@@ -92,7 +88,7 @@ function getStyle(elem, property) {
 
 有了这个方法之后，我们就可以动手来实现一个获取元素位置的方法了。代码如下：
 
-```
+```javascript
 function getTargetPos(elem) {
   var pos = { x: 0, y: 0 };
   var transform = getTransform();
@@ -126,7 +122,7 @@ function getTargetPos(elem) {
 
 在拖拽过程中，我们需要不停的设置目标元素的位置，这样他才能够移动起来。因此我们还需要声明一个设置元素位置的方法。
 
-```
+```javascript
 // pos = { x: 200, y: 100 }
 function setTargetPos(elem, pos) {
   var transform = getTransform();
@@ -142,7 +138,7 @@ function setTargetPos(elem, pos) {
 
 有了这几个工具方法，那么我们可以使用更为完善的方式来实现上述要求的效果。代码如下：
 
-```
+```javascript
 var autumn = document.querySelector('.autumn');
 
 autumn.addEventListener('click', function () {
@@ -154,9 +150,7 @@ autumn.addEventListener('click', function () {
 }, false);
 ```
 
-## *3*
-
-**拖拽的原理**
+## 3-拖拽的原理
 
 可以结合`mousedown, mousemove, mouseup`这三个事件来帮助我们实现拖拽。
 
@@ -176,13 +170,11 @@ autumn.addEventListener('click', function () {
 
 通过事件对象中提供的鼠标精确位置信息，在鼠标移动时我们可以很轻易的计算出鼠标移动位置的差值。然后根据上面的关系，计算出目标元素的当前位置，这样拖拽就能够实现了。
 
-## *4*
-
-**代码实现**
+## 4-代码实现
 
 **part1: 准备工作。**
 
-```
+```javascript
 // 获取目标元素对象
 var autumn = document.querySelector('.autumn');
 
@@ -199,7 +191,7 @@ var sourceY = 0;
 
 因为之前已经贴过代码，就不再重复
 
-```
+```javascript
 // 获取当前浏览器支持的transform兼容写法
 function getTransform() {}
 
@@ -215,7 +207,7 @@ function setTargetPos(elem, potions) {}
 
 **part3: 声明三个事件的回调**
 
-```
+```javascript
 function move(event) {
   // 获取鼠标当前位置
   var currentX = event.pageX;
@@ -241,9 +233,7 @@ function end(event) {
 
 OK，一个简单的拖拽，就这样愉快的实现了。
 
-## *5*
-
-**封装**
+## 5-封装
 
 在前面一章我们学习了面向对象的基础知识。基于这些基础知识我们来将上面实现的拖拽封装为一个拖拽对象。我们的目标是，只要我们声明一个拖拽实例，那么传入的目标元素将自动具备可以被拖拽的功能。
 
@@ -251,7 +241,7 @@ OK，一个简单的拖拽，就这样愉快的实现了。
 
 为了避免变量污染，我们需要将模块放置于一个函数自执行方式模拟的块级作用域中。
 
-```
+```javascript
 ;
 (function() {
   ...
@@ -288,7 +278,7 @@ OK，一个简单的拖拽，就这样愉快的实现了。
 
 根据这些思考，大家可以自己尝试封装一下。然后与我的做一些对比，看看我们的想法有什么不同，在下面例子的注释中，我将自己的想法表达出来。
 
-```
+```javascript
 ;
 (function () {
   // 这是一个私有属性，不需要被实例访问
@@ -427,13 +417,11 @@ new Drag('target2');
 
 建议大家根据我提供的思维方式，多多尝试封装一些组件。比如封装一个弹窗，封装一个循环轮播等。练得多了，面向对象就不再是问题了。这种思维方式，在未来任何时候都是能够用到的。
 
-## *6*
-
-**扩展为 jQuery 插件**
+## 6-扩展为 jQuery 插件
 
 在前面的学习我们已经知道了可以使用`$.extend`扩展jquery工具方法，使用`$.fn.extend`扩展原型方法。当然，这里的拖拽插件扩展为原型方法是最合适的。
 
-```
+```javascript
 // 通过扩展方法将拖拽扩展为jQuery的一个实例方法
 (function ($) {
   $.fn.extend({
@@ -447,6 +435,6 @@ new Drag('target2');
 
 这样我们就能够很轻松的让目标DOM元素具备拖拽能力。
 
-```
+```javascript
 $('target').canDrag();
 ```

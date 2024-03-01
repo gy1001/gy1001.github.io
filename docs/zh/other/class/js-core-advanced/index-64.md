@@ -4,13 +4,11 @@
 
 这一章我们把一些常见的复杂类型单独拿出来与大家一起来学习一下。
 
-## *1*
-
-**枚举**
+## 1-枚举
 
 使用关键字enum可定义一个枚举类型。
 
-```
+```typescript
 enum Direction {
   Up = 1,
   Down,
@@ -28,7 +26,7 @@ Direction.Right // 4
 
 如果不赋值，则从0开始递增。
 
-```
+```typescript
 enum Direction {
   Up,
   Down,
@@ -44,7 +42,7 @@ Direction.Right // 3
 
 也可以赋值为字符串
 
-```
+```typescript
 enum Direction {
   Up = 'up',
   Down = 'down',
@@ -60,7 +58,7 @@ Direction.Right // right
 
 可以反向映射访问
 
-```
+```typescript
 enum Direction {
   Up = 'up',
   Down = 'down',
@@ -76,7 +74,7 @@ Direction.right // Right
 
 前端的一个特殊性在于，我们通常会将枚举类型的值描述展示在页面上，因此此时如果使用枚举来表达会存在一些问题。
 
-```
+```typescript
 // 实践中更多使用这样方式表达枚举的含义
 const sources = {
   1: '微信',
@@ -85,33 +83,29 @@ const sources = {
 }
 ```
 
-## *2*
-
-**`&` 交叉类型**
+## 2-`&` 交叉类型
 
 当我们在封装 Drag 组件时，需要兼容移动端的 touch 与 pc 端的 mouse 事件。可问题在于 touch 的事件对象与 mouse 的事件对象是不一样的。那么我们在兼容了这两种事件的回调中，如何去描述该回调的事件对象呢？
 
 通常使用 & 符号来解决这样的场景，将两种类型合并为一种类型。这样就能够在智能提示中同时访问到两个事件对象的所有属性了。
 
-```
+```typescript
 type TouchEvent = React.TouchEvent & React.MouseEvent;
 ```
 
 demo.gif
 
-## *3*
-
-**`|` 联合类型**
+## 3-`|` 联合类型
 
 当我们想要设定一个变量的类型为 number 时，
 
-```
+```typescript
 let a: number = 10;
 ```
 
 但是当我们想要设定他的数据只能是`10, 20, 30`时，就需要用到 `|`
 
-```
+```typescript
 type Source = 10 | 20 | 30;
 let a: Source = 10;
 ```
@@ -120,19 +114,17 @@ let a: Source = 10;
 
 当然，我们也可以扩展一个数据的类型。
 
-```
+```typescript
 const attr: number | string = 20;
 ```
 
 > 注意体会 & 与 |  的区别
 
-## *4*
-
-**类型保护**
+## 4-类型保护
 
 一个变量，被定义为可能是字符串，也可能是数组。
 
-```
+```typescript
 per: string | string[]
 ```
 
@@ -146,13 +138,11 @@ per: string | string[]
 
 这种处理，就叫做类型保护。
 
-## *5*
-
-**索引类型**
+## 5-索引类型
 
 我们可以使用 `keyof` 来获取一个对象中的 key 对应的具体值。
 
-```
+```typescript
 interface Person {
   name: string,
   age: number
@@ -165,7 +155,7 @@ const key: keyof Person = 'name';
 
 他有点类似于
 
-```
+```typescript
 type Key = 'name' | 'age';
 ```
 
@@ -179,7 +169,7 @@ type Key = 'name' | 'age';
 
 函数定义如下：
 
-```
+```typescript
 // 声明
 function values<T, K extends keyof T>(o: T, names: K[]): T[K][] {
   return names.map(n => o[n]);
@@ -196,8 +186,6 @@ let defUser = {
 values(defUser, ['id', 'name'])
 ```
 
-## *6*
-
-**总结**
+## 6-总结
 
 这是最常用的高级类型，学会之后，能够应对实践中的大部分场景了。当然，更多的高级类型，大家还要结合官方文档继续学习。

@@ -11,13 +11,11 @@
 
 而如果不修改原有对象代码的情况下，装饰者模式是很好的一种解决方案。
 
-## *1*
-
-**案例**
+## 1-案例
 
 首先，我们有设计了几件装备，他们的信息保存在 `config.js` 中
 
-```
+```javascript
 // config.js
 export const cloth = {
   name: '七彩炫光衣',
@@ -45,7 +43,7 @@ export const defaultRole = {
 
 然后创建一个基础的角色对象，添加基础的属性与方法
 
-```
+```javascript
 // 基础角色类
 // 有血条，攻击力，速度三个基础属性
 // 以及衣服，武器，鞋子三个装备插槽
@@ -65,7 +63,7 @@ class Role {
 
 然后基于基础角色类创建职业为**战士**的角色类
 
-```
+```javascript
 // 战士
 class Soldier extends Role {
   constructor(role) {
@@ -102,7 +100,7 @@ class Soldier extends Role {
 
 装饰类与被装饰类的属性与方法基本保持一致，只是实现上略有差异。
 
-```
+```javascript
 // 基础装饰类
 class Decorator {
   constructor(role) {
@@ -132,7 +130,7 @@ class Decorator {
 
 衣服只会修改角色的属性，并不会修改角色的行为
 
-```
+```javascript
 class ClothDecorator extends Decorator {
   constructor(role, cloth) {
     super(role)
@@ -144,7 +142,7 @@ class ClothDecorator extends Decorator {
 
 类封装好了之后，我们使用一下，感受一下变化
 
-```
+```javascript
 const baseInfo = {...defaultRole, nickname: 'alex', gender: 'man'}
 // 创建一个战士角色
 const alex = new Soldier(baseInfo)
@@ -165,7 +163,7 @@ console.log(alex)
 
 武器与鞋子的穿戴会改变角色的攻击动作与奔跑动作，因此需要做更多的修改
 
-```
+```javascript
 class WeaponDecorator extends Decorator {
   constructor(role, weapon) {
     super(role)
@@ -186,7 +184,7 @@ console.log(alex)
 
 鞋子装饰类
 
-```
+```javascript
 class ShoesDecorator extends Decorator {
   constructor(role, shoes) {
     super(role)
@@ -209,9 +207,7 @@ console.log(alex)
 
 我们可以思考一下如何实现这些功能。
 
-## *2*
-
-**decorator**
+## 2-decorator
 
 > 默认情况下并不支持装饰器语法，因此，在学习该语法之前，你需要找到一个支持该语法的开发环境 [如何在构建环境中支持 decorator](https://technologyadvice.github.io/es7-decorators-babel6/)
 
@@ -221,7 +217,7 @@ ES7 中提供了一个快捷的语法用来解决与装饰者模式一样的问�
 
 假设有对象如下：(便于理解)
 
-```
+```javascript
 var person = {
   name: 'TOM'
 }
@@ -240,7 +236,7 @@ var person = {
 
 我们可以通过`Object.defineProperty`(操作单个)与`Object.defineProperties`（操作多个）来修改这些特性值。
 
-```
+```javascript
 // 三个参数分别为  target, key, descriptor(特性值的描述对象)
 Object.defineProperty(person, 'name', {
   value: "TOM"
@@ -254,7 +250,7 @@ Object.defineProperty(person, 'age', {
 
 装饰器语法与此类似，当我们想要自定义一个装饰器时，可以这样写：
 
-```
+```javascript
 function nameDecorator(target, key, descriptor) {
   descriptor.value = () => {
     return 'jake';
@@ -267,7 +263,7 @@ function nameDecorator(target, key, descriptor) {
 
 使用时也很简单，如下：
 
-```
+```javascript
 class Person {
   constructor() {
     this.name = 'jake'
@@ -288,7 +284,7 @@ console.log(p1.getName())
 
 不能使用装饰器对构造函数进行更改，如果要修改构造函数，则可以通过如下的方式来完成
 
-```
+```javascript
 function initDecorator(target, key, descriptor) {
   const fn = descriptor.value;
   // 改变传入的参数值
@@ -321,7 +317,7 @@ console.log(new Person('alex', 20).getName()); // TOM
 
 如果希望装饰器传入一个指定的参数，可以如下做。
 
-```
+```javascript
 // 注意这里的差别
 function initDecorator(name) {
   return function (target, key, descriptor) {
@@ -358,7 +354,7 @@ console.log(new Person('alex', 20).getName());  // xiaoming
 
 我们也可以对整个class添加装饰器
 
-```
+```javascript
 function personDecorator(target) {
   // 修改方法
   target.prototype.getName = () => {
@@ -391,7 +387,7 @@ console.log(p.getName(), p.getAge());  // hahahahaha 30
 
 也可以传参数
 
-```
+```javascript
 function initDecorator(person) {
   return function (target, key, descriptor) {
     var method = descriptor.value;
@@ -426,7 +422,7 @@ console.log(p.getAge(), p.getName(), p.getOther()); // 22 "xiaom" "other info."
 
 那么用ES7 的decorator来实现最开始的需求，则可以这样做
 
-```
+```javascript
 import { cloth, weapon, shoes, defaultRole } from './config';
 
 // 基础角色
@@ -528,7 +524,7 @@ console.log(s);
 
 ES7 Decorator重点在于对装饰器的封装，因此我们可以将上栗中的装饰器单独封装为一个模块。在细节上做了一些调整，让我们封装的装饰器模块不仅仅可以在创建战士对象的时候使用，在我们创建其他职业例如法师，射手的时候也能够正常使用。
 
-```
+```javascript
 export function ClothDecorator(target) {
   target.prototype.getCloth = function (cloth) {
     this.hp += cloth.hp;
@@ -569,7 +565,7 @@ export function ShoesDecorator(target) {
 
 整理之后，Soldier的封装代码将会变得非常简单
 
-```
+```javascript
 import { cloth, weapon, shoes, defaultRole } from './config';
 import { ClothDecorator, WeaponDecorator, ShoesDecorator } from './equip';
 import Role from './Role';

@@ -6,13 +6,11 @@
 
 不理解类型兼容性，就容易在使用时出现很多无法理解的错误。实际使用时，往往需要对各种类型声明进行融合，而要合理的融合，那么类型兼容性就是关键。
 
-## 01
-
-**子类型**
+## 01-子类型
 
 非常简单的案例，
 
-```
+```typescript
 let a = 20
 let b = 30
 
@@ -27,7 +25,7 @@ b = a // ✅ ok
 
 如果稍微调整一下，就会出现错误
 
-```
+```typescript
 let a = 20
 let b = '500'
 
@@ -38,7 +36,7 @@ b = a // ❌ error
 
 如果此时，我们将 b 的类型，进行一个扩展，让 b 的类型从 number 变成 `number | string`，就会发现错误消失了
 
-```
+```typescript
 let a = 20
 let b: number | string = '500'
 
@@ -49,7 +47,7 @@ b = a // ✅ ok
 
 但是反过来就不行，
 
-```
+```typescript
 let a = 20
 let b: number | string = '500'
 
@@ -68,7 +66,7 @@ a = b // ❌ error
 
 那么有如下两个类型
 
-```
+```typescript
 type A = number
 type B = number | string
 ```
@@ -83,7 +81,7 @@ type B = number | string
 
 因此，我们再来看一下这个例子，`b = a` ，其实就是子类型，替换父类型。也就是说，子类型能够赋值给父类型。反之则不行。
 
-```
+```typescript
 let a = 20
 let b: number | string = '500'
 
@@ -95,7 +93,7 @@ b = a
 
 首先定义一个数据类型如下
 
-```
+```typescript
 interface User {
   id: string,
   name: string,
@@ -106,7 +104,7 @@ interface User {
 
 声明一个变量，该变量的类型为 User，具体赋值的字段对象，要比 User 中的多一个
 
-```
+```typescript
 interface User {
   id: string,
   name: string,
@@ -144,15 +142,13 @@ const user2: User = defUser2 // ❌ error
 
 这里对于子类型与父类型的理解，我们要多思考一下，如果没从概念范围的角度思考清楚，你会觉得好像我们列举的这两个例子明明是反着的，但是结论却又一样，就会很困扰。所以如果没能马上理解，建议回过头多阅读几遍。
 
-## 02
-
-**函数类型**
+## 02-函数类型
 
 函数类型兼容性的理解，是一个难点。
 
 首先我们要明确场景。如下场景，并非是把函数当类型进行比较，本质上仍然是比较的基础类型或对象类型。
 
-```
+```typescript
 type Param = { a: number, b: number }
 
 function foo(p: Param){}
@@ -166,7 +162,7 @@ foo({a: 20, b: 20, c: 20})
 
 比较函数类型，我们来看一个简单的例子
 
-```
+```typescript
 let x = (a: number) => {
   return a + 1
 }
@@ -181,7 +177,7 @@ y = x // ❌ error
 
 函数类型的比较，比的是参数类型与返回值类型。这里返回值类型相同，我们暂时不考虑。参数类型上来看，
 
-```
+```typescript
 xP <= yP
 ```
 
@@ -189,7 +185,7 @@ x 的参数类型是 y 参数类型的子类型。按道理来说，函数 x 应
 
 y 才是 x 的子类型。
 
-```
+```typescript
 y <= x
 ```
 
@@ -207,13 +203,11 @@ y <= x
 
 因此，把 x 赋值给 y，是一个危险操作。
 
-## 03
-
-**泛型**
+## 03-泛型
 
 泛型的兼容性问题，最后落点通常情况下在于泛型变量的类型。
 
-```
+```typescript
 let p: Array<string> = ['1', '2']
 let q: Array<number> = [1, 2]
 
@@ -222,7 +216,7 @@ p = q // ❌ error
 
 而当我们调整一下，就可以搞定，让情况符合第一种基础类型，赋值就能成立
 
-```
+```typescript
 let p: Array<string | number> = ['1', '2']
 let q: Array<number> = [1, 2]
 
@@ -236,7 +230,7 @@ p = q // ✅ ok
 
 泛型还可以有更复杂的区别，我们看看下一个例子
 
-```
+```typescript
 interface SuperType {
   base: string;
 }

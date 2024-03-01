@@ -12,7 +12,7 @@
 
 我们也可以自定义事件。
 
-```
+```javascript
 var event = new Event('build')
 
 // 添加观察者
@@ -37,13 +37,11 @@ document.dispatchEvent(event)
 
 上图就是 Vue 的内部原理，观察者 Observer 观察数据 Data 的变化，如果一旦发现数据产生了变化就会通知后续的流程，最终完成 View 的更新。
 
-## *1*
-
-**基本实现**
+## 1-基本实现
 
 代码逻辑比较简单，直接上代码。
 
-```
+```javascript
 let subjectid = 0
 let observerid = 0
 
@@ -100,7 +98,7 @@ sub.dispatch()
 
 以 DOM 元素事件绑定为例，我们进行一个类比
 
-```
+```javascript
 div.addEventListener('click', fn, false)
 div.addEventListener('mousemove', fn, false)
 div.addEventListener('mouseup', fn, false)
@@ -116,7 +114,7 @@ div.addEventListener('mouseup', fn, false)
 
 思考一下，直接上代码
 
-```
+```javascript
 class Subject {
   constructor(name) {
     // 观察者队列
@@ -163,9 +161,7 @@ sub.addListener('click', function() {
 sub.dispatch('build')
 ```
 
-## *2*
-
-**Vue 的实现原理**
+## 2-Vue 的实现原理
 
 ![img](http://wechatapppro-1252524126.cdn.xiaoeknow.com/appxw863qeq2150/image/default/clbUGhS1701668210TM.png?imageView2/2/q/80%7CimageMogr2/ignore-error/1)
 
@@ -203,7 +199,7 @@ data 数据的监听机制不需要我们去实现，因为在 JavaScript 中，
 
 因此，完整的实现如下：
 
-```
+```javascript
 class Observer {
   constructor(data) {
     this.data = data;
@@ -239,7 +235,7 @@ class Observer {
 
 使用时，可以直接 new，也可以增加一个额外的判断
 
-```
+```javascript
 function observe(value, vm) {
   if (!value || typeof value !== 'object') {
     return;
@@ -252,7 +248,7 @@ function observe(value, vm) {
 
 此处的 Dep，也是一个被观察者，它与 Watcher 也是被观察者与观察者的关系。因此 Dep 的实现也非常简单，作用就是收集观察者 Watcher，以及通知 Watcher 更新。
 
-```
+```javascript
 class Dep {
   constructor() {
     this.subs = []
@@ -276,7 +272,7 @@ class Dep {
 
 因此，我们在初始化 Watcher 时，可以手动去访问一次 data 中的数据，强制触发 get 执行。这样我们就可以在 get 的逻辑中，将 Watcher 添加到 Dep 里了。
 
-```
+```javascript
 class Watcher {
   constructor(vm, exp, cb) {
     this.vm = vm;
@@ -310,7 +306,7 @@ class Watcher {
 
 最后，我们需要将 data，Observer，Watcher 关联起来，形成一个整体。
 
-```
+```javascript
 class Vue {
   constructor(options, el, exp) {
     this.data = options.data;
@@ -334,7 +330,7 @@ class Vue {
 
 我们也可以对 Vue 的数据做一个代理处理，让 `vue.data.text` 与 `vue.text` 的操作是等价的。
 
-```
+```javascript
 class Vue {
   constructor(options, el, exp) {
     this.data = options.data;
@@ -369,7 +365,7 @@ class Vue {
 
 封装好之后，最后的使用代码就很简单了。
 
-```
+```javascript
 var ele = document.querySelector('#wrap');
 var vue = new Vue({
   data: {

@@ -2,11 +2,9 @@
 
 Create React App 是一个用于学习 React 的集成环境。与此同时，他也是一个学习 ES6 Modules 的舒适环境。因此为了降低学习成本，我们直接使用该环境来学习 ES6 Moduels 语法。
 
-## *1*
+## 1-创建项目
 
-**创建项目**
-
-```
+```bash
 npx create-react-app my-app --template typescript
 cd my-app
 npm start
@@ -14,9 +12,7 @@ npm start
 
 项目启动需要花费一点时间，启动之后，通常浏览器会自动打开一个新的页面运行项目，我们也可以在浏览器中输入 http://localhost:3000 来运行项目。
 
-## *2*
-
-**认识项目**
+## 2-认识项目
 
 **package.json 与 yarn.lock**
 
@@ -42,21 +38,19 @@ npm start
 
 项目中的 `src/index.tsx` 是项目的入口文件，其他的代码我们先不关注，在 src 目录下创建一个新的模块用于学习。
 
-## *3*
-
-**创建模块**
+## 3-创建模块
 
 一个 js/ts 文件就是一个单独的模块。模块创建的目的，就是让其他模块能够使用该模块的功能。因此，除了主模块，其他的模块都需要抛出接口，以决定该模块中那些能够可以被其他模块使用。
 
 通过 `export` 关键字可以对外抛出接口。
 
-```
+```javascript
 export const name1 = 'TOM'
 ```
 
 `export` 可以多次使用，抛出多个接口。
 
-```
+```javascript
 // module01.js
 export const name1 = 'TOM'
 export const name2 = 'Jake'
@@ -64,13 +58,13 @@ export const name2 = 'Jake'
 
 当我们在其他模块引入该模块的接口时，如果只需要其中一个接口
 
-```
+```javascript
 import {name1} from './module01'
 ```
 
 但是如果我们需要引入该模块中所有的对外接口，一种方式是在大括号中将所有的名称都列出来，另外一种方式就是使用通配符与 as 配合。
 
-```
+```javascript
 import { name1, name2 } from './module01';
 
 // or 利用别名的方式
@@ -82,7 +76,7 @@ name2 = module01.name2
 
 我们还可以通过 `export default` 来对外提供接口，这种情况下，对外的接口通常都是一个对象。
 
-```
+```javascript
 // 修改module01.js
 const name1 = 'TOM';
 const name2 = 'Jake';
@@ -96,7 +90,7 @@ export default {
 
 那么，在引入模块时的写法我们需要相应的做一些调整。当模块中有 `export default` 命令抛出接口时，引入模块时就可以直接这样写：
 
-```
+```javascript
 import module01 from './module01';
 ```
 
@@ -110,7 +104,7 @@ import module01 from './module01';
 
 开始尝试使用一些简单的 ts 语法。
 
-```
+```javascript
 // src/person.ts
 class Person {
   private name: string
@@ -130,7 +124,7 @@ export default Person
 
 在其他模块使用
 
-```
+```javascript
 // src/index.tsx
 import Person from './person';
 
@@ -142,7 +136,7 @@ console.log(p1.getName());
 
 该案例演示多个 `export` 与一个 `export default` 同时存在的情况。
 
-```
+```javascript
 // src/person2.ts
 export function fn() {
   console.log('this is a function named fn.');
@@ -170,6 +164,6 @@ export default Person;
 
 使用时，写法如下
 
-```
+```javascript
 import Person2, {fn, bar} from './person2'
 ```

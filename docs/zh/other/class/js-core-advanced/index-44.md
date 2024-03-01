@@ -8,9 +8,7 @@
 
 这就是策略模式解决问题的思路。
 
-## *1*
-
-**计算员工奖金**
+## 1-计算员工奖金
 
 公司里每位员工的奖金都不一样。
 
@@ -26,7 +24,7 @@
 
 于是，我们就可以封装一个计算奖金的方法如下
 
-```
+```javascript
 function getBouns(base, level) {
   if (level == 'A') {
     return base * 5
@@ -48,7 +46,7 @@ function getBouns(base, level) {
 
 有了这个方法，计算奖金就很简单
 
-```
+```javascript
 const p1 = {
   name: '张三',
   base: 1000,
@@ -72,7 +70,7 @@ console.log(p1)
 
 因此，我们应该建立一个员工等级与奖金计算方式的隐射关系
 
-```
+```javascript
 const map = {
   A: function(base) {
     return base * 5
@@ -96,7 +94,7 @@ const map = {
 
 员工的奖金依据该配置进行计算
 
-```
+```javascript
 function getBouns(base, level) {
   return map[level](base)
 }
@@ -110,15 +108,13 @@ p2.bouns = getBouns(p2.base, p2.level)
 console.log(p2)
 ```
 
-## 02
-
-**表单验证**
+## 02-表单验证
 
 表单验证是一个非常常见的案例，我们也可以使用策略模式来解决规则的验证问题。
 
 借鉴 antdesign 的表单规则，假设我们从组件中，获取得到的字段数据与其对应的规则如下
 
-```
+```javascript
 // 从组件中获取到的字段内容，其中包括了具体的值，与传入的校验规则
 const fields = {
   username: {
@@ -140,7 +136,7 @@ const fields = {
 
 同样的道理，每一个规则，都应该有对应的验证函数，该验证函数与 rules 中的字段是一对一的映射关系。因此我们也因为维护一份配置表
 
-```
+```javascript
 var strategys = {
   required: function (value, rule) {
     if (value === '') {
@@ -170,7 +166,7 @@ var strategys = {
 
 规则作为变量被提炼出来，规则的映射表也有了，那么我们只需要再封装一个验证对象即可。
 
-```
+```javascript
 function Validator () {
   // 格式 { username: { value: '张三', rules: [{}, {}] } }
   this.fields = {};
@@ -226,7 +222,7 @@ Validator.prototype.validate = function() {
 
 这样，我们在使用时，就可以通过 `validate` 方法，得到表单验证的结果
 
-```
+```javascript
 var validator = new Validator();
 validator.addFields(fields)
 const result = validator.validate()

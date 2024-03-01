@@ -10,7 +10,7 @@
 
 于是我们按照普通的思维定义类时，就会出现一种情况，他们只是在创建时传入的参数不同，但是其他的方法都相同。
 
-```
+```javascript
 class Xiaomi {
   constructor() {
     this.materials = {
@@ -66,7 +66,7 @@ class Huawei {
 
 首先，创建一个工厂方法，通过传入不同的参数，然后声明不同的类。
 
-```
+```javascript
 function factory(type) {
   if (type == 'xiaomi') {
     return new Xiaomi()
@@ -84,7 +84,7 @@ function factory(type) {
 
 那么，我们在使用时，就不再直接通过 `new Xiaomi()` 的方式直接创建实例了。而是使用 factory 方法进行创建。
 
-```
+```javascript
 const xm = factory('xiaomi')
 const ip = factory('iphone')
 const hw = factory('huawei')
@@ -92,7 +92,7 @@ const hw = factory('huawei')
 
 未来需要将类名进行更改时，例如将 Xiaomi 修改为 Xiaomi4，那么只需要在类的声明和工厂方法里进行修改即可。而其他使用的地方，可以不做修改。
 
-```
+```javascript
 - class Xiaomi {
 + class Xiaomi4 {
   constructor() {
@@ -135,7 +135,7 @@ function factory(type) {
 
 当然有：最简单的方式如下
 
-```
+```javascript
 function factory(type) {
   // window 表示声明的类 挂载的对象，可能是window，可能是global，可能是其他自定义的对象
   return new window[type]()
@@ -144,7 +144,7 @@ function factory(type) {
 
 这样处理之后，那么传入的 type 字符串，就必须与类名保持一致。因此在使用时会有一些限制
 
-```
+```javascript
 const hw = factory('Huawei')
 ```
 
@@ -154,7 +154,7 @@ const hw = factory('Huawei')
 
 于是，上面的工厂函数可以演变成为工厂类。并且具备了自己的方法，config 配置文件维护在工厂对象的原型中，被所有实例共享。
 
-```
+```javascript
 function Factory() {}
 Factory.prototype.create = function(type) {
   var cur = this.config[type]
@@ -170,7 +170,7 @@ Factory.prototype.setConfig = function(type, sub) {
 
 之后，每新增一个类，都需要使用工厂对象修改存储在原型对象中的配置
 
-```
+```javascript
 class Xiaomi5 {
   constructor() {
     this.materials = {
@@ -190,7 +190,7 @@ new Factory().setConfig('xiaomi5', Xiaomi5)
 
 我们也可以专门手动维护一个单独的模块作为配置文件。这样的方式更直观。
 
-```
+```javascript
 import Xiaomi from './Xiaomi'
 import Xiaomi5 from './Xiaomi5'
 
@@ -211,7 +211,7 @@ export default function factory(type) {
 
 我们分析上面三个类的情况，都是生成手机，所以所有的方法都完全相同。但是因为每一种手机的原材料不一样，因此构造函数里会不一样。利用封装的思维，我们可以将这三个类，合并成为一个类，不同的手机在构造函数中进行判断。
 
-```
+```javascript
 class PhoneFactory {
   constructor(type) {
     if (type == 'xiaomi') {
@@ -251,7 +251,7 @@ const hw = new PhoneFactory('huawei')
 
 在 jQuery 的封装里，也有同样的场景。例如 jQuery 的构造函数 `jQuery.fn.init` 中有这样的逻辑判断
 
-```
+```javascript
 init = jQuery.fn.init = function (selector, context, root) {
   var match, elem;
 
@@ -280,7 +280,7 @@ init = jQuery.fn.init = function (selector, context, root) {
 
 为了扩展时，不直接修改对象而是修改配置文件，可以进一步调整一下
 
-```
+```javascript
 const config = {
   xiaomi: {
     1: 'xiaomi_material1',
@@ -316,7 +316,7 @@ const hw = new PhoneFactory('huawei')
 
 但是如果这几个类只是部分相似，只有部分接口是一样的，那么就需要区别对象，而不能直接合在一起。同样的方法使用继承的方式来简化
 
-```
+```javascript
 class Phone {
   step1() {}
   step2() {}

@@ -38,7 +38,7 @@
 
 在 JavaScript 中，提供了默认的 Proxy 对象，用于创建一个对象的代理。
 
-```
+```javascript
 const t = {m: 1}
 const p1 = new Proxy(t, {
   get: function(obj, prop) {
@@ -62,7 +62,7 @@ Vue3.0 正是利用了 Proxy 这样的特点，才能得以使用 Proxy 替换�
 
 > ProxyPolyfill 简化版，仅仅只提供了 Object 的兼容。仅供参考阅读
 
-```
+```javascript
 class Internal {
   constructor(target, handler) {
     this.target = target
@@ -171,7 +171,7 @@ function observeProperty(obj, prop, internal) {
 
 简单验证一下，发现初步达到了目的
 
-```
+```javascript
 const t = {m: 1}
 const p1 = new ProxyPolyfill(t, {
   get: function(obj, prop) {
@@ -189,7 +189,7 @@ console.log(t) // {m: 2}
 
 当图片还没有完整加载完成时，我们可以使用一个默认图片或者 loading 图片进行占位。目标图片加载完成之后，再将 loading 图片替换成目标图片。
 
-```
+```javascript
 var targetImage = (function () {
   var imgNode = document.createElement('img');
   document.body.appendChild(imgNode);
@@ -224,7 +224,7 @@ proxyImage.setSrc('https://cn.bing.com/sa/simg/hpb/LaDigue_EN-CA1115245085_1920x
 
 有这样一个函数。该函数接收两个整数参数，第一个参数表示开始数字，第二个参数表示结束数字，该函数的功能是计算开始到结束的范围中，所有整数的和。
 
-```
+```javascript
 function sum(start, end) {
   let res = 0
   for (let i = start; i <= end; i++) {
@@ -236,7 +236,7 @@ function sum(start, end) {
 
 于是问题来了，如果是大额的计算，计算成本很高。例如，我多次调用该方法，计算 1 ~ 100000 的和。
 
-```
+```javascript
 sum(1, 100000)
 sum(1, 100000)
 sum(1, 100000)
@@ -253,7 +253,7 @@ sum(1, 100000)
 
 优化方案如下：
 
-```
+```javascript
 function withSum(base) {
   const cache = {}
 
@@ -269,7 +269,7 @@ function withSum(base) {
 
 使用时很简单
 
-```
+```javascript
 const _sum = withSum(sum)
 
 _sum(1, 100000)

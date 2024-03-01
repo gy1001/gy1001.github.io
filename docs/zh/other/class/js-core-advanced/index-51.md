@@ -8,7 +8,7 @@
 
 以图片加载为例，Promise 的使用如下
 
-```
+```javascript
 function imageLoad(url) {
   const img = new Image()
   img.src = url
@@ -25,7 +25,7 @@ function imageLoad(url) {
 
 封装好之后，我们就可以利用 `imageLoad` 来执行图片加载完成之后的逻辑
 
-```
+```javascript
 imageLoad('xxx.png').then(res => {
   console.log(res) // 此时的 res 为字符串：图片加载成功
 })
@@ -42,7 +42,7 @@ imageLoad('xxx.png').then(res => {
 
 因此我们可以依据这些已知点，得到如下结果：
 
-```
+```javascript
 class MyPromise {
   constructor(executor) {
     executor(this._resolve.bind(this), this._reject.bind(this))
@@ -68,7 +68,7 @@ class MyPromise {
 
 最简单的解决方案就是在 then 中抛出引用，在 resolve 中执行该引用。于是代码演变如下：
 
-```
+```javascript
 class MyPromise {
   constructor(executor) {
     this.thencallback = null
@@ -89,7 +89,7 @@ class MyPromise {
 
 同理，继续演变，解决 catch 的执行问题。
 
-```
+```javascript
 class MyPromise {
   constructor(executor) {
     this.thencallback = null
@@ -120,7 +120,7 @@ class MyPromise {
 
 写个例子简单验证一下
 
-```
+```javascript
 const p = new MyPromise((resolve, reject) => {
   setTimeout(() => {
     reject('异常信息')
@@ -136,7 +136,7 @@ p.catch(res => {
 
 然后简单调整，模拟将 then_cb 放入队列中执行，简单调整如下：
 
-```
+```javascript
 class MyPromise {
   constructor(executor) {
     this.thencallback = null
@@ -175,7 +175,7 @@ pending -> resolved
 
 pending -> rejected
 
-```
+```javascript
 const pending = 'PENDING'
 const resolved = 'RESOLVED'
 const rejected = 'REJECTED'
@@ -227,7 +227,7 @@ then 可以多次调用，因此，缓存 then 的回调的引用，对应的应
 
 基于这个思路继续优化。
 
-```
+```javascript
 const pending = 'PENDING'
 const resolved = 'RESOLVED'
 const rejected = 'REJECTED'
@@ -299,7 +299,7 @@ window.MyPromise2 = MyPromise2
 
 验证一下，完美通过。
 
-```
+```javascript
 const p = new MyPromise2((resolve, reject) => {
   setTimeout(() => {
     resolve('xxx')
@@ -325,7 +325,7 @@ then 方法执行之后，返回的仍然是 Promise 对象，并且可以链式
 
 先不管那么多，因为要返回的 Promise 对象，因此
 
-```
+```javascript
 then(onResolved, onRejected) {
   const {_status, _value} = this
   return new MyPromise2((resolveNext, rejectNext) => {
@@ -340,7 +340,7 @@ then(onResolved, onRejected) {
 
 因此，代码演变如下
 
-```
+```javascript
 then(onResolved, onRejected) {
   const {_status, _value} = this
   return new MyPromise2((resolveNext, rejectNext) => {
@@ -382,7 +382,7 @@ then(onResolved, onRejected) {
 
 逻辑如下：
 
-```
+```javascript
 const _resolved = (value) => {
   try {
     if (!isFunction(onResolved)) {
@@ -403,7 +403,7 @@ const _resolved = (value) => {
 
 于是完整代码新鲜出炉
 
-```
+```javascript
 const pending = 'PENDING'
 const resolved = 'RESOLVED'
 const rejected = 'REJECTED'
@@ -516,7 +516,7 @@ window.MyPromise2 = MyPromise2
 
 再次验证一下，完整通过测试。链式调用生效。
 
-```
+```javascript
 const p = new MyPromise2((resolve, reject) => {
   setTimeout(() => {
     resolve('World')
@@ -541,7 +541,7 @@ Promise 的封装是不是很简单！
 
 用同样的思考，继续添加 Promise 的几个静态方法。
 
-```
+```javascript
 // 添加静态方法：resolve
 static resolve(value) {
   // 如果参数是MyPromise实例，直接返回这个实例

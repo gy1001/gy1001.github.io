@@ -6,20 +6,18 @@
 
 在 ts 中，得泛型者，得天下！丢泛型者，失天下！
 
-## *1*
-
-**什么是泛型**
+## 1-什么是泛型
 
 整个ts的学习，其实就是各种数据类型的类型约束的学习。当我们规定一个变量只能是 `number` 时，它就不能是其他数据类型。
 
-```
+```typescript
 let a: number = 20;
 a = 'string' // 类型错误
 ```
 
 在函数中也是一样，传入的参数类型，与返回的参数类型，都会被不同的约束规则约束。
 
-```
+```typescript
 function foo(a: number, b: string): string {
   // todo
 }
@@ -29,7 +27,7 @@ function foo(a: number, b: string): string {
 
 以我们用的非常多的数组方法 `map` 为例。
 
-```
+```typescript
 [1, 2, 3].map(item => {
   return item + 1;
 })
@@ -37,7 +35,7 @@ function foo(a: number, b: string): string {
 
 我们都知道 map 方法接收的第一个参数为一个回调函数 `callback`，`callback`的第一个参数为数组的每一项。那么问题就来了，不同的数组调用 map，数组的每一项数据类型必然不一样
 
-```
+```typescript
 [1, 2, 3].map()
 ['a', 'b', 'c'].map()
 ```
@@ -52,7 +50,7 @@ function foo(a: number, b: string): string {
 
 仔细观察下面的三组案例，思考一下如果我们要自己描述 Array 类型与数组中的 map 方法应该怎么做？
 
-```
+```typescript
 interface Person {
   name: string,
   age: number
@@ -77,7 +75,7 @@ demo3.map((item) => item);
 
 具体如下：
 
-```
+```typescript
 interface Array<T> {
   map<U>(callbackfn: (value: T, index: number, array: T[]) => U): U[]
 }
@@ -87,7 +85,7 @@ interface Array<T> {
 
 因此针对数据的描述，我们通常可以这样做：
 
-```
+```typescript
 const arr1: Array<number> = [1, 2, 3];
 const arr2: Array<string> = ['a', 'b', 'c'];
 const arr3: Array<Person> = [{ name: 'alex', age: 20 }, { name: 'john', age: 10 }, { name: 'hx', age: 21 }];
@@ -99,21 +97,19 @@ const arr3: Array<Person> = [{ name: 'alex', age: 20 }, { name: 'john', age: 10 
 
 回调函数 `callbackfn` 的第一个参数就是数组的每一项，正好就是定义数组时传入的泛型变量 `T`，不过回调函数会返回一个新的数组项，因此我们需要重新定义一个新的泛型变量来表达这个新数组，即为 `U`。
 
-```
+```typescript
 map<U>(callbackfn: (value: T, index: number, array: T[]) => U): U[]
 ```
 
 于是我们就使用泛型，准确的描述了 map 方法的含义。
 
-## *2*
-
-**基础语法**
+## 2-基础语法
 
 如果完整的理解了泛型的概念，那么泛型的基础知识就比较简单了，过一遍就 OK。
 
 **函数中使用泛型**
 
-```
+```typescript
 // 声明一个泛型变量
 function identity<T> {}
 
@@ -129,7 +125,7 @@ let myIdentity: <T>(arg: T) => T = identity;
 
 **接口中使用泛型**
 
-```
+```typescript
 // 使用接口约束一部分数据类型，使用泛型变量让剩余部分变得灵活
 interface Parseer<T> {
   success: boolean,
@@ -146,7 +142,7 @@ interface Array<T> {
 
 **class中使用泛型**
 
-```
+```typescript
 // 注意总结相似性
 declare namespace demo02 {
   class GenericNumber<T> {
@@ -165,13 +161,11 @@ declare namespace demo02 {
 }
 ```
 
-## *3*
-
-**泛型实践场景**
+## 3-泛型实践场景
 
 **描述数组**
 
-```
+```typescript
 interface Array<T> {
   length: number,
   toString(): string,
@@ -211,7 +205,7 @@ interface Array<T> {
 
 约定所有的接口返回满足统一的数据格式。但是具体的可用的数据结果则因为情况不同，会有不同的场景。因此使用泛型先定义一个基本的结构约束。
 
-```
+```typescript
 interface Result<T> {
   success: true,
   code: number,
@@ -224,7 +218,7 @@ interface Result<T> {
 
 > Promise本身就需要接受一个泛型变量，因此这里要注意泛型的嵌套使用
 
-```
+```typescript
 function fetchData(): Promise<Result<number>> {
   return http.get('/api/demo/number');
 }
@@ -232,7 +226,7 @@ function fetchData(): Promise<Result<number>> {
 
 当数据返回结果为普通JSON数据时
 
-```
+```typescript
 interface Person {
   name: string,
   age: number
@@ -245,7 +239,7 @@ function fetchData(): Promise<Result<Person>> {
 
 当数据返回为数组时
 
-```
+```typescript
 interface Person {
   name: string,
   age: number
@@ -258,7 +252,7 @@ function fetchData(): Promise<Result<Person[]>> {
 
 当属返回结果为分页对象时
 
-```
+```typescript
 interface Person {
   name: string,
   age: number

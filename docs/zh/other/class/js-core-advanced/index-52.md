@@ -10,7 +10,7 @@
 
 例如下面的例子
 
-```
+```javascript
 setTimeout(() => {
   console.log('index 1')
 }, 1000)
@@ -26,9 +26,7 @@ setTimeout 是一个很常见的异步事件。回调函数中的 `index 1` 并�
 
 因此，在此之前，我们要学习在浏览器中，到底有哪些异步事件。以及他们各自有什么特点。
 
-## *1*
-
-**线程**
+## 1-线程
 
 ![img](./assets/1-20240301115442846.png)
 
@@ -52,7 +50,7 @@ GUI 负责浏览器界面 HTML 元素的渲染。
 
 用一个简单的例子来验证这个结论。
 
-```
+```html
 <!DOCTYPE html>
 <html>
 
@@ -131,7 +129,7 @@ setTimeout、setInterval 的逻辑是由专门的定时器线程在负责。
 
 写入定时器回调函数中的逻辑并不会立刻执行，即使我们将时间设置为 0.
 
-```
+```javascript
 setTimeout(() => {
   console.log('定时器的回调逻辑')
 }, 0)
@@ -161,7 +159,7 @@ http线程的主要作用，是使用无状态短连接的 http 请求，在应�
 
 该方法使用非常简单。
 
-```
+```javascript
 requestAnimationFrame(() => {
   console.log('requestAnimationFrame')
 })
@@ -189,9 +187,7 @@ ric 也能执行一个回调函数，通常我们会将优先级不高的任务�
 
 这样的目的，是为了利用空闲时间，执行优先级不高的任务。如上图。
 
-## *2*
-
-**Promise**
+## 2-Promise
 
 在浏览器中，线程对应的异步事件，并不能涵盖所有的异步事件类型。
 
@@ -205,7 +201,7 @@ Promise 是 JavaScript 的内部逻辑，并非由浏览器额外的线程来执
 
 现有简单的示例代码如下
 
-```
+```javascript
 // 创建一个 promise 实例
 const p = new Promise((resolve, reject) => {})
 
@@ -252,7 +248,7 @@ pending 状态中，不会向 PromiseJobs 队列中加入任何 job。
 
 如果在创建 promise 对象时，就已经 settled，那么 job 会直接进入到 PromiseJobs 队列中。
 
-```
+```javascript
 const p = new Promise((resolve, reject) => {
   // 直接敲定状态
   resolve()
@@ -278,7 +274,7 @@ PromiseJobs 的执行有如下规则：
 
 文字表达可能难以理解，我们可以用下面的代码来表达同样的含义
 
-```
+```javascript
 const PromiseJobs = []
 
 let job
@@ -291,7 +287,7 @@ while (job = PromiseJobs.shift()) {
 
 那么我们来分析一下下面例子的执行顺序。
 
-```
+```javascript
 const p1 = new Promise((resolve) => {
   resolve()
 }).then(function f1() {
@@ -327,7 +323,7 @@ p1 的声明逻辑代码结束之后，还有一个 console.log 逻辑，此时�
 
 f1 执行，先输出 1，然后下面的代码发现又声明了一个新的 Promise 对象，并且该对象在创建时状态一样直接被固定，因此 f3 可以直接进入 PromiseJobs，但是 f4 却需要知道 f3 的执行结果才能确定是否加入 PromiseJobs，此时 f4 进入临时队列
 
-```
+```javascript
 PromiseFulfillReactions = [f2, f4]
 PromiseJobs = [f3]
 ```
@@ -336,28 +332,28 @@ PromiseJobs = [f3]
 
 此时 f1 有了执行结果，f2 就能够明确如何响应，此时 f2 进入 PromiseJobs
 
-```
+```javascript
 PromiseFulfillReactions = [f4]
 PromiseJobs = [f3, f2]
 ```
 
 f1 执行完毕之后，PromiseJobs 中还有 job，继续执行。此时 f3 在队列首位， f3 执行。输出 2
 
-```
+```javascript
 PromiseFulfillReactions = [f4]
 PromiseJobs = [f2]
 ```
 
 f3 执行完毕之后，返回 undefined，因此 f4 进入 PromiseJobs 队列
 
-```
+```javascript
 PromiseFulfillReactions = []
 PromiseJobs = [f2, f4]
 ```
 
 然后依次执行 f2, f4，没有产生新的 job，PromiseJobs 队列变成空，当前循环结束。
 
-```
+```javascript
 PromiseFulfillReactions = []
 PromiseJobs = []
 ```
@@ -370,7 +366,7 @@ PromiseJobs = []
 
 简单调整上面的例子，
 
-```
+```javascript
 const p1 = new Promise((resolve) => {
   resolve()
 }).then(function f1() {
@@ -428,7 +424,7 @@ console.log(0)
 
 同样的道理，大家可以分析一下如下代码的执行顺序
 
-```
+```javascript
 new Promise(resolve => {
   resolve()
 })
@@ -471,9 +467,7 @@ new Promise(resolve => {
 console.log(0)
 ```
 
-## *3*
-
-**事件循环机制**
+## 3-事件循环机制
 
 我们已经知道，单纯的依靠 call stack 不能完全的覆盖所有的代码执行逻辑，call stack 的代码执行顺序永远都是同步的逻辑。对于许多线程引发的异步逻辑，则需要依靠队列机制。
 
@@ -523,7 +517,7 @@ console.log(0)
 
 例如
 
-```
+```javascript
 function foo() {
   // 点击之后执行的逻辑
 }
@@ -575,7 +569,7 @@ raf -> ui render -> [event，http，timer] -> ric
 
 以setTimeout 为例。
 
-```
+```javascript
 document.onclick = () => {
   console.log('s')
   setTimeout(() => {
@@ -617,7 +611,7 @@ setTimeout 执行时，三个 task 进入了临时队列。
 
 先说 setInterval，一个简单的例子如下：
 
-```
+```javascript
 setInterval(function f1() {
   func();
 }, 100)
@@ -629,7 +623,7 @@ setInterval(function f1() {
 
 假设 f1 的执行时间是 200ms
 
-```
+```javascript
 // 第一轮循环，时间不满足 100 ms ，因此 timer 执行队列为空
 []
 // 第二轮循环，时间超出了 100ms，进入一个任务到执行队列
@@ -650,7 +644,7 @@ setInterval(function f1() {
 
 我们常常使用 `setTimeout` 的递归调用来取代 setInterval
 
-```
+```javascript
 function fn() {
   console.log(2)
   // 这句代码一定要放在最后
@@ -666,7 +660,7 @@ fn()
 
 我们再通过两个例子来分析一下事件循环的执行顺序。
 
-```
+```javascript
 setTimeout(function s1() {
   console.log(5);
 }, 1)
@@ -780,7 +774,7 @@ s2 执行完之后，所有的代码都执行完了，队列也被清空了，�
 
 简单实现一个没有临时队列的简易版。
 
-```
+```javascript
 // 用数组模拟一个队列
 var tasks = [];
 

@@ -14,13 +14,11 @@ webpack 是一个资源打包工具。
 
 本文项目地址：[点击这里](https://github.com/yangbo5207/jsCore/tree/master/7.2webpack)
 
-## 01
-
-**安装**
+## 01-安装
 
 首先我们创建一个目录，并在该努力下初始化项目，以及安装 webpack，webpack-cli
 
-```
+```bash
 // 初始化 npm 项目
 npm init -y
 npm install webpack webpack-cli --save-dev
@@ -56,13 +54,13 @@ yarn-error.log*
 
 我们案例中，需要工具模块 lodash ，因此提前安装它
 
-```
+```bash
 npm install lodash --save
 ```
 
 在根目录下新增入口 html 文件 `index.html`
 
-```
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -78,7 +76,7 @@ npm install lodash --save
 
 然后在根目录创建 `src` 目录，并在 src 目录下，创建入口 js 文件 `index.js`
 
-```
+```javascript
 // src/index.js
 import _ from 'lodash'
 
@@ -94,7 +92,7 @@ document.body.appendChild(component());
 
 我们可以直接执行如下指令，开始打包。
 
-```
+```javascript
 npx webpack
 
 // 该指令运行的是 `./node_modules/.bin/webpack` 文件，
@@ -105,7 +103,7 @@ npx webpack
 
 此时没有自动生成 html 文件，因此我们手动创建一个，内容跟上面的 `index.html` 一样，但是引入的 js 文件，要修改成为打包生成的 `main.js`
 
-```
+```html
 dist/index.html
 <!DOCTYPE html>
 <html>
@@ -122,15 +120,13 @@ dist/index.html
 
 我们在浏览器中运行 `dist/index.html`，如果发现页面显示结果为 `Hello webpack`，表示我们的目的已经达到。打包结果符合预期。
 
-## 02
-
-**配置文件**
+## 02-配置文件
 
 我们仍然需要一个配置文件去明确的告诉 webpack，打包开始时，入口文件是什么，打包之后应该放在哪里，用什么样的方式打包等。
 
 根目录下创建 `webpack.config.js`
 
-```
+```javascript
 const path = require('path');
 
 module.exports = {
@@ -148,13 +144,13 @@ output：表示打包结果，用于告诉 webpack 在哪里输出它创建的 b
 
 执行如下指令就可以开始依据配置文件打包
 
-```
+```bash
 npx webpack --config webpack.config.js
 ```
 
 但是这样太麻烦了，我们可以利用 `package.json` 中的 `scripts` 字段，来配置快捷指令。
 
-```
+```json
 {
   "name": "7.2webpack",
   "version": "1.0.0",
@@ -191,7 +187,7 @@ npm install html-webpack-plugin --save-dev
 
 然后修改 `webpack.config.js` 中的逻辑
 
-```
+```javascript
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -217,7 +213,7 @@ module.exports = {
 
 我们还可以修改 output 中 filename 的规则，加入 hash 值，确保每次打包的文件名都不一样，避免浏览器缓存。
 
-```
+```javascript
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -242,13 +238,13 @@ module.exports = {
 
 安装 `clean-webpack-plugin`
 
-```
+```javascript
 npm install --save-dev clean-webpack-plugin
 ```
 
 然后修改 `webpack.config.js` 加入该插件的执行逻辑
 
-```
+```javascript
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 + const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -270,9 +266,7 @@ module.exports = {
 
 现在，重新 build 看看效果。
 
-## 03
-
-**Loader**
+## 03-Loader
 
 Loader 在 webpack 充当了重要的角色。它是一个资源文件加载器。Loader 应该在模块加载之前，对该文件进行编译、压缩等。
 
@@ -283,7 +277,7 @@ Loader 在 webpack 充当了重要的角色。它是一个资源文件加载器�
 
 新增 `src/index.css` ，我们希望在 index.js 中引入该模块
 
-```
+```css
 body {
   background-color: orange;
   color: #FFF;
@@ -306,19 +300,19 @@ document.body.appendChild(component());
 
 安装 `css-loader`
 
-```
+```bash
 npm install --save-dev css-loader
 ```
 
 除此之外，我们还需要一个能够帮助 css 写入 html 文件中 style 的 Loader
 
-```
+```bash
 npm install --save-dev style-loader
 ```
 
 然后修改 webpack.config.js，新增 相关 Loader 的配置规则
 
-```
+```javascript
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -360,13 +354,13 @@ module.exports = {
 
 如果我们要加载 `.scss` 文件，需要安装一个新的 Loader，`sass-loader`，由于 `sass-loader` 还依赖 `node-sass`，因此这两个依赖包一起安装
 
-```
+```bash
 npm i node-sass sass-loader --save-dev
 ```
 
 然后针对 `.scss` 文件配置规则，webpack.config.js 修改如下
 
-```
+```javascript
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -408,7 +402,7 @@ module.exports = {
 
 随便写一个 `test.scss`，并在 index.js 中引入，打包后验证一下结果
 
-```
+```scss
 body {
   font-size: 50px;
 }
@@ -426,7 +420,7 @@ import './test.scss'
 
 修改 `webpack.config.js` 配置文件如下
 
-```
+```javascript
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -474,7 +468,7 @@ module.exports = {
 
 此时，我们把该图片当成了一个模块在处理
 
-```
+```javascript
 import _ from 'lodash'
 import './index.css'
 import './test.scss'
@@ -502,9 +496,7 @@ build 之后发现，图片已经正常的进入到了页面。
 
 [官方文档：资源管理](https://webpack.docschina.org/guides/asset-management/#loading-css)
 
-## 04
-
-**dev server**
+## 04-dev server
 
 每次我修改了代码，如果每次都只能执行 `npm run build` 之后，我才能看到我改变的效果，这样开发效率就太低了。
 
@@ -520,7 +512,7 @@ npm install --save-dev webpack-dev-server
 
 然后新增配置如下：
 
-```
+```javascript
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -571,7 +563,7 @@ module.exports = {
 
 并且在 `package.json` 中新增快捷指令运行 dev server。
 
-```
+```json
 {
   "name": "7.2webpack",
   "version": "1.0.0",
@@ -606,9 +598,7 @@ module.exports = {
 
 [进一步学习 dev server](https://webpack.docschina.org/configuration/dev-server/)
 
-## 05
-
-**小结**
+## 05-小结
 
 本文只是简单的给大家分享了 webpack 的强大能力，最关键的是我们要通过实际操作，去体会在 webpack 中模块的真实含义。以增强对于组件化的思维理解。
 

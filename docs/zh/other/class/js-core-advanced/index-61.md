@@ -1,8 +1,6 @@
 # 61-React 拖拽实践
 
-## *1*
-
-**方法**
+## 1-方法
 
 通过上一篇文章的学习，我们知道，TypeScript 其实是一套约束规则。
 
@@ -19,9 +17,7 @@
 
 > 拖拽的原理与实现过程之前已经学习过，所以这里就把之前的代码直接拿过来调整一下
 
-## *2*
-
-**环境**
+## 2-环境
 
 一个简单的方式，是直接使用 `create-react-app` 创建一个已经支持typescript开发的项目。
 
@@ -35,9 +31,7 @@ npx create-react-app tsDemo --template typescript
 
 > https://github.com/daraluv/practice
 
-## *3*
-
-**.d.ts**
+## 3-.d.ts
 
 在ts的开发中，`.d.ts` 文件扮演着至关重要的作用。通常情况下，这样的文件，我们称之为声明文件。
 
@@ -49,7 +43,7 @@ npx create-react-app tsDemo --template typescript
 
 因此，如果我们要利用ts实现拖拽组件，那么文件结构会如下展示：
 
-```
+```typescript
 + Drag
    - index.tsx
    - style.scss
@@ -58,7 +52,7 @@ npx create-react-app tsDemo --template typescript
 
 其中 `interface.d.ts` 中会声明在开发过程中遇到的所有复杂数据结构。大概内容如下：
 
-```
+```typescript
 declare namespace drag {
   ...
 }
@@ -74,7 +68,7 @@ declare namespace drag {
 
 整个拖拽功能完整声明文件如下
 
-```
+```typescript
 /** declare 为声明关键字，让外部组件能访问该命名空间*/
 declare namespace drag {
   interface JSONDemo {
@@ -120,9 +114,7 @@ declare namespace drag {
 
 > 如果声明比较简单，我们可以不需要 .d.ts
 
-## *4*
-
-**React with TypeScript**
+## 4-React with TypeScript
 
 我们可以使用 ES6 语法的 class 来创建 React 组件，所以如果熟悉 ES6 class 语法，则可以比较轻松的进一步学习 TypeScript 的 class 语法。在React 中使用结合 TypeScript 是非常便利的。
 
@@ -142,7 +134,7 @@ React 的声明文件，详细的描述了 React 的每一个变量/方法的实
 
 最后，理解泛型
 
-```
+```typescript
 class Component<P, S> {
         
     static contextType?: Context<any>;
@@ -181,7 +173,7 @@ class Component<P, S> {
 
 这是在React的声明文件中，对于 `React.Component` 的描述。我们可以看到一些常用的 `state, setState, render` 等都有对应的描述。关键的地方是声明文件中有许多用到泛型的地方可能大家理解起来会比较困难。
 
-```
+```typescript
 class Component<P, S>
 ```
 
@@ -195,7 +187,7 @@ class Component<P, S>
 
 基于上面几点理解，我们就可以实现 Drag 组件了。如下。代码仅仅只是阅读可能难以理解，一定要动手试试看！
 
-```
+```typescript
 // index.tsx
 
 import * as React from 'react';
@@ -403,9 +395,7 @@ export default Drag;
 
 函数式组件同理。
 
-## *5*
-
-**JSX**
+## 5-JSX
 
 普通的ts文件，以 `.ts` 作为后缀名。
 
@@ -435,7 +425,7 @@ ts支持三种jsx模式，`preserve, react, react-native`。这些模式只在�
 
 固有元素使用特殊的接口 JSX.IntrinsicElements 来查找。我们也可以利用这个接口，来定义自己的固有元素「但是没必要」。
 
-```
+```typescript
 // 官网demo
 declare namespace JSX {
   interface IntrinsicElements {
@@ -451,7 +441,7 @@ declare namespace JSX {
 
 我们可以通过以下方式，给固有元素定义属性。
 
-```
+```typescript
 declare namespace JSX {
   interface IntrinsicElements {
     foo: { bar?: boolean }
@@ -466,7 +456,7 @@ declare namespace JSX {
 
 也就是 React 中常常提到的自定义元素。规定必须以大写字母开头。基于值的元素会简单的在它所在的作用域里按标识符查找。
 
-```
+```typescript
 // demo来自官方
 import MyComponent from "./myComponent";
                                 
@@ -485,7 +475,7 @@ React自定义组件有两种方式
 
 正如其名，组件被定义成 JavaScript 函数，它的第一个参数是 props 对象。 TypeScript 会强制它的「函数执行的」返回值可以赋值给 JSX.Element。
 
-```
+```typescript
 // demo来自官方文档
 interface FooProp {
     name: string;
@@ -505,7 +495,7 @@ const Button = (prop: {value: string}, context: { color: string }) => <button>
 
 当一个组件由 class 创建而成「例如我们刚才实践的Drag组件」，那么当我们在使用该组件「即生成实例对象」时，则该实例类型必须赋值给 JSX.ElementClass 或抛出一个错误。
 
-```
+```typescript
 // demo来自官方文档
 declare namespace JSX {
     interface ElementClass {
@@ -527,7 +517,7 @@ function MyFactoryFunction() {
 
 函数组件的 props 直接作为参数传入，而类组件的 props，则取决于 JSX.ElementAttributesProperty。
 
-```
+```typescript
 // 案例来自官方文档
 declare namespace JSX {
     interface ElementAttributesProperty {
@@ -554,7 +544,7 @@ class MyComponent {
 
 简单来说，我们可以在 `this.props` 的智能提示中，得到 children 的索引。
 
-```
+```typescript
 declare namespace JSX {
   interface ElementChildrenAttribute {
     children: {};  // specify children name to use

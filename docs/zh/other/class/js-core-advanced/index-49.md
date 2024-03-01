@@ -4,7 +4,7 @@
 
 通过一个简单的例子来了解一下展开运算符的作用。
 
-```
+```javascript
 // 首先声明一个数组
 const arr1 = [1, 2, 3];
 
@@ -16,7 +16,7 @@ const arr2 = [...arr1, 4, 5, 6];
 
 当然，展开对象也可以得到类似的结果。
 
-```
+```javascript
 const object1 = {
   a: 1,
   b: 2,
@@ -43,7 +43,7 @@ object2 = {
 
 在解析结构中，我们也常常使用展开运算符。
 
-```
+```javascript
 const tom = {
   name: 'TOM',
   age: 20,
@@ -60,7 +60,7 @@ const { name, ...others } = tom;
 
 在 react 组件中，我们也常常使用展开运算符来传递数据。
 
-```
+```javascript
 const props = {
   size: 1,
   src: 'xxxx',
@@ -75,7 +75,7 @@ const { size, ...others } = props;
 
 展开运算符还可以运用在函数参数中，放置于函数参数的最后一个参数(且只能放置于最后)，表示不定参。
 
-```
+```javascript
 // 求所有参数之和
 const add = (a, b, ...more) => {
   return more.reduce((m, n) => m + n) + a + b

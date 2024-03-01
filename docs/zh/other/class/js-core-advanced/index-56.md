@@ -8,9 +8,7 @@
 
 这是我们日常开发中最常见的需求。那么在没有 React/Vue 等框架的帮助下，我们如何能够方便快捷的做到展示内容的切换呢？
 
-## *1*
-
-**项目准备**
+## 1-项目准备
 
 首先，使用 create react app 创建一个项目。
 
@@ -18,7 +16,7 @@
 
 因为默认的 demo 中，有了自己的 DOM 渲染，因此我们需要清空他们。将 App.tsx 修改为如下即可
 
-```
+```javascript
 import React from 'react';
 function App() {
   return (
@@ -29,15 +27,13 @@ function App() {
 export default App;
 ```
 
-## *2*
-
-**请求接口的工具模块**
+## 2-请求接口的工具模块
 
 我们需要一个类似于 `axios.get` 或者 `$.get` 这样的方法，去请求接口。代码封装如下，该方法单独成为一个模块，
 
 实践中，我们还要根据需求，扩展 post、put、delete 方法
 
-```
+```javascript
 // src/request.ts
 // 简易版，未考虑参数情况，请勿运用于实践
 export function get<T>(url: string): Promise<T> {
@@ -63,17 +59,14 @@ export function get<T>(url: string): Promise<T> {
 }
 ```
 
-## *3*
-
-**api 模块**
+## 3-api 模块
 
 实践项目中，有许多要从后端请求数据的接口。我们统一封装在一个模块里
 
-```
+```javascript
 // src/api.ts
 import {get} from './request'
 import news, {Newspaper} from './data'
-
 
 
 export function newsApi() {
@@ -101,7 +94,7 @@ export function other3Api(url: string) {}
 
 因此这里会额外弄一个数据来源的模块
 
-```
+```javascript
 // src/data.ts
 export interface Story {
   ga_prefix: string,
@@ -149,21 +142,19 @@ const news: Newspaper = {
 export default news;
 ```
 
-## *4*
-
-**页面模块 / render 模块**
+## 4-页面模块 / render 模块
 
 针对某一个功能的处理。此处页面模块的作用，就是请求数据，并且渲染页面。
 
 首先在 index.html 中，添加一个容器标签，我们会将内容渲染到该容器中。
 
-```
+```html
 <div id="news"></div>
 ```
 
 然后处理页面逻辑
 
-```
+```javascript
 // src/render.ts
 import {newsApi} from './api'
 
@@ -202,13 +193,11 @@ newsApi().then(res => {
 })
 ```
 
-## *5*
-
-**最后**
+## 5-最后
 
 最后在入口模块 `index.tsx` 中，引入 render 模块即可。
 
-```
+```javascript
 // src/index.tsx
 import './render'
 ```

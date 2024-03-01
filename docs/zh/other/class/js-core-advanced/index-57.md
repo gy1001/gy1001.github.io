@@ -2,7 +2,7 @@
 
 ![img](./assets/1-20240301115756874.png)
 
-# 序
+## 序
 
 我会用一个大的章节来介绍组件化，主要目的在于分享组件化的开发思维，组件化由何而来，让大家对于组件化底层思维有一个了解，并且有自己的独立思考。为深入的掌握好组件化提供一个方向与思路。
 
@@ -35,7 +35,7 @@
 
 那么，我们在使用时，最简单的方式就应该把按钮当成一个独立个体引入一次，即可呈现完整的按钮
 
-```
+```javascript
 import Button from './components/Button'
 ```
 
@@ -45,7 +45,7 @@ import Button from './components/Button'
 
 首先使用 create react app 创建一个项目
 
-```
+```javascript
 npx create-react-app tab --template typescript
 ```
 
@@ -57,7 +57,7 @@ npx create-react-app tab --template typescript
 
 > 默认创建的项目还有许多其他冗余的文件，我们不关注，就当他们不存在。
 
-```
+```javascript
 import React from 'react';
 import './App.css';
 
@@ -73,7 +73,7 @@ export default App;
 
 然后，在 html 中，新增片段
 
-```
+```html
 <div id="tab-root">
   <div class="titles">
     <div class="item active" data-index="0">标题1</div>
@@ -90,7 +90,7 @@ export default App;
 
 在 `src/tab.css` 中，新增如下样式代码
 
-```
+```css
 body {
   margin: 0;
 }
@@ -148,7 +148,7 @@ html, body {
 
 在 `src/tab.ts` 中新增如下逻辑代码
 
-```
+```typescript
 const titles = document.querySelector<HTMLElement>('.titles');
 const contents = document.querySelector('.contents');
 
@@ -182,7 +182,7 @@ titles.onclick = (event) => {
 
 当我们使用时，直接在入口文件 `index.tsx` 中，引入如下资源就行。
 
-```
+```javascript
 import './tab'
 import './tab.css'
 ```
@@ -201,7 +201,7 @@ import './tab.css'
 
 在该目录下新建 `index.css` 用于存放样式。
 
-```
+```css
 /* src/Tabbar/index.css */
 body {
   margin: 0;
@@ -260,7 +260,7 @@ html, body {
 
 在该目录下新建 `index.tsx` 创建组件。
 
-```
+```tsx
 // src/Tabbar/index.tsx
 import React, { Component } from 'react';
 import './style.css';
@@ -324,7 +324,7 @@ export default Tab;
 
 封装之后，假如我们要在 `App.tsx` 中使用该组件，就只需要引入一次即可。而不用关心 Tabbar 组件的组成细节。
 
-```
+```tsx
 // src/App.tsx
 import React from 'react';
 import './App.css';
@@ -343,7 +343,9 @@ function App() {
 export default App;
 ```
 
-![上为组件化案例，下为模块化案例](./assets/1-20240301115756603.png)上为组件化案例，下为模块化案例
+![上为组件化案例，下为模块化案例](./assets/1-20240301115756603.png)
+
+上为组件化案例，下为模块化案例
 
 **组件化开发思维，是在模块化的基础之上，将所有的资源都当成模块来处理，不同的模块经过合理的合并，能够拼合成为一个完整的组件。**
 

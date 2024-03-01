@@ -27,7 +27,7 @@ const p1 = {
 
 先按照正常的方式创建一个对象
 
-```
+```javascript
 class Login {
   constructor() {}
   show() {}
@@ -43,7 +43,7 @@ class Login {
 
 可以使用静态属性来在内存中存储已创建好的实例
 
-```
+```javascript
 class Login {
   // 使用静态属性在内存存储实例
   static instance = null
@@ -72,7 +72,7 @@ console.log(p1 === p2) // true
 
 当然，也可以使用闭包在内存存储实例，只是写法不一样，思路与上面的方案无差别
 
-```
+```javascript
 const Login = (function () {
   // 使用 闭包 在内存存储实例
   let instance = null
@@ -106,7 +106,7 @@ console.log(p1 === p2) // true
 
 首先定义
 
-```
+```javascript
 // components/login.js
 let instance = null
 class LoginComponent {
@@ -132,7 +132,7 @@ export default LoginComponent
 
 在其他模块中使用
 
-```
+```javascript
 import Login from 'components/login'
 
 const p1 = new Login()
@@ -147,7 +147,7 @@ console.log(p1 === p2)  // true
 
 此时我们可以借助代理的思维方式来处理。
 
-```
+```javascript
 class Login {
   constructor() { }
   show() { }
@@ -178,7 +178,7 @@ console.log(p1 === p2)
 
 singleCreator 借助高阶函数的思想，用于扩展构造函数的逻辑。
 
-```
+```javascript
 class Login {
   constructor() { }
   show() { }

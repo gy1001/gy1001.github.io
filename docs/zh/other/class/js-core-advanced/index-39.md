@@ -8,22 +8,20 @@
 
 ![img](./assets/1-20240301114437445.png)
 
-## *1*
-
-**单一职责原则**
+## 1-单一职责原则
 
 一个类，只负责一项职责。一个方法尽量只干一件事。
 
 例如，一个非常简单的案例，人要打球。合理的封装应该是，分别封装一个人的类，与球的类。这是我们很容易就能够区分出来的事情。单一原则的运用往往在潜移默化中，虽然你可能还没有听过这个原则，但是你已经在使用它了。
 
-```
+```javascript
 class Person {}
 class Ball {}
 ```
 
 不合理的封装，就是把球的属性，放在 Person 对象里
 
-```
+```javascript
 class Person {
   constructor(name, ballType) {
     this.name = name
@@ -34,9 +32,7 @@ class Person {
 
 但是这样封装的扩展性就非常差，因为在实践中，人有许多类别，例如学生，教师，医生等，可能会设计不同的类。球也有羽毛球，篮球，乒乓球等等。人与球是一个多对多的关系，如果封装在一个类里，后续的扩展就会变得非常困难。
 
-## *2*
-
-**里氏替换原则**
+## 2-里氏替换原则
 
 该原则针对的是父类与子类的替换关系。
 
@@ -46,7 +42,7 @@ class Person {
 
 例如，父类为 Person， 子类为学生 Student
 
-```
+```javascript
 class Person {
   constructor(name) {
     this.name = name
@@ -79,9 +75,7 @@ s1.run(20)
 
 很明显，该原则也是确保我们写的程序能具备强大的扩展性。
 
-## *3*
-
-**依赖倒置原则**
+## 3-依赖倒置原则
 
 依赖倒置原则的原始定义如下：
 
@@ -99,13 +93,13 @@ Abstractions should not depend upon details.  Details should depend upon abstrac
 
 我们来使用代码定义这个场景，大概就是
 
-```
+```javascript
 myself.read(book)
 ```
 
 这里的 myself 与 book，就是我们要封装的两个类。
 
-```
+```javascript
 // 低层模块
 class Book {
   // 定义一个非常简单的方法
@@ -117,7 +111,7 @@ class Book {
 
 低层模块是一个非常简单的类，他不依赖任何其他的类来实现自己的功能。
 
-```
+```javascript
 import Book from './Book'
 
 // 高层模块
@@ -134,7 +128,7 @@ class Person {
 
 在实践中，这样的方式其实没有什么问题。
 
-```
+```javascript
 const myself = new Person()
 const book = new Book()
 
@@ -145,7 +139,7 @@ myself.read(book)
 
 我可能不仅仅只是想读书，还想要读报纸，读手机内容等等。那此时，read 方法的类型限制就很难受了
 
-```
+```javascript
 import Book from './Book'
 import Newspaper from './NewsPaper'
 import Phone from './Phone'
@@ -170,7 +164,7 @@ class Person {
 
 先定义抽象类
 
-```
+```javascript
 interface Reader {
   getContent: () => string
 }
@@ -178,7 +172,7 @@ interface Reader {
 
 然后定义各自具体的读物
 
-```
+```javascript
 class Book impements Reader {
   getContent() {
     return '返回具体的内容'
@@ -188,7 +182,7 @@ class Book impements Reader {
 
 最后定义 Person 类
 
-```
+```javascript
 import Reader from './Reader'
 
 // 高层模块
@@ -213,9 +207,7 @@ class Person {
 
 又例如，封装的地图组件，不明确依赖到底是百度地图还是高德地图或者是谷歌地图。而是将这些地图提炼出来一个抽象概念：地图。无论是什么地图，只需要提供我们组建需要的方法即可
 
-## *4*
-
-**接口隔离原则**
+## 4-接口隔离原则
 
 定义：一个类，不应该依赖它不需要的接口。
 
@@ -223,7 +215,7 @@ class Person {
 
 同样的对象，从不同的角度去分类，可以提炼出不同的抽象，也就是说可以提炼出不同的接口。
 
-```
+```javascript
 interface Book {
   // 提供内容
   getContent: () => string,
@@ -237,7 +229,7 @@ interface Book {
 
 虽然读物和可燃物，都是从书籍里提炼出来的，但是他们针对的场景不一样，因此就不应该把他们的抽象类合并在一起，而应该拆分开。
 
-```
+```javascript
 // 读物
 interface Reader {
   getContent: () => string
@@ -252,9 +244,7 @@ interface CombustibleMaterial {
 
 当然，接口隔离原则的使用，一定要适度，要结合场景进行合理的拆分，如果拆分得过细，也就造成接口过多而维护困难的局面。
 
-## *5*
-
-**迪米特法则**
+## 5-迪米特法则
 
 迪米特法则要求的是：一个对象应该对其他的对象保持最少的了解。
 
@@ -272,7 +262,7 @@ interface CombustibleMaterial {
 
 不合理的设计方式，就是把分公司员工的薪资计算交给集团公司类来做
 
-```
+```javascript
 // 定义分公司类
 class BranchOffice {
   // 获取员工列表，包含员工基本信息
@@ -289,7 +279,7 @@ class BranchOffice {
 
 定义集团公司，还需要分公司薪资，因此此时必须依赖分公司，
 
-```
+```javascript
 import BranchOffice from './BranchOffice'
 
 // 定义集团公司类
@@ -328,7 +318,7 @@ class HeadOffice {
 
 代码如下：
 
-```
+```javascript
 // 定义分公司类
 class BranchOffice {
   // 获取员工列表，包含员工基本信息
@@ -387,9 +377,7 @@ class HeadOffice {
 
 当然，我们还可以利用依赖倒置原则进一步优化。这里就不再扩展。
 
-## *6*
-
-**开闭原则**
+## 6-开闭原则
 
 开闭原则是面向对象程序设计的终极目标。
 
@@ -401,8 +389,6 @@ class HeadOffice {
 
 当然，开闭原则是一个非常抽象和理想的情况，实践中很难完全的达到这样的理想效果。我们只需要在实践时，对程序的扩展性和可维护性保持足够的重视，就自然会遵循开闭原则。
 
-## 7
-
-**总结**
+## 7-总结
 
 在实践中，设计原则讨论的不是是与否的问题，而是多与少的问题。有的场景因为场景原因，或者历史原因，并不能完全的遵循这些设计原则。我们在实践中，要学会灵活运用这些原则，这就是很理想的情况。

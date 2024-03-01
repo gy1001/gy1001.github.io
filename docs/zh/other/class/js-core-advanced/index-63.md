@@ -4,7 +4,7 @@
 
 当我想要声明一个变量为 number 类型时，常规的语法是这样的
 
-```
+```typescript
 let a: number = 20
 ```
 
@@ -16,7 +16,7 @@ let a: number = 20
 
 因此，在 ts 中，一个更专业的写法，就是
 
-```
+```typescript
 let a = 20
 ```
 
@@ -26,7 +26,7 @@ let a = 20
 
 我们可以继续观察几个被推导出来之后的结果
 
-```
+```typescript
 let arr = [1, 2, 3, null]
 ```
 
@@ -34,7 +34,7 @@ let arr = [1, 2, 3, null]
 
 函数也可以被推导
 
-```
+```typescript
 function add(a = 0, b = 0) {
   return a + b
 }
@@ -44,7 +44,7 @@ function add(a = 0, b = 0) {
 
 复杂数据类型也可以
 
-```
+```typescript
 const person = {
   name: 'TOM',
   age: 20,
@@ -57,7 +57,7 @@ const person = {
 
 再看看我们熟悉的 map 方法。
 
-```
+```typescript
 const arr = [1, 2, 3, 4, 5]
 const arr2 = arr.map((item) => {
   return item + 1
@@ -70,7 +70,7 @@ const arr2 = arr.map((item) => {
 
 数组的 map 方法能够做到这样的推导，得益于底层的 ts 声明。
 
-```
+```typescript
 interface Array<T> {
   map<U>(callbackfn: (value: T, index: number, array: T[]) => U): U[]
 }
@@ -84,7 +84,7 @@ interface Array<T> {
 
 例如一个请求结果的封装
 
-```
+```typescript
 // 底层声明
 interface Result<T> {
   code: number,
@@ -102,7 +102,7 @@ function get<T>(url: string) {
 
 一个返回 Promise 对象的 get 方法，此处唯一不能推导的就是 T，因此我们只需要在应用层，明确泛型变量 T 的类型即可，其他的全都通过推导搞定。
 
-```
+```typescript
 interface User {
   name: string,
   id: string

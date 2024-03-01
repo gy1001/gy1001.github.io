@@ -6,13 +6,11 @@
 
 这里我们把 jQuery 的实现作为一个学习案例，帮助我们进一步掌握面向对象的使用。也为有兴趣的朋友，进一步学习 jQuery源码一个铺垫，算是一个简单的抛砖引玉。
 
-## *1*
-
-**基本实现**
+## 1-基本实现
 
 使用 jQuery 时，我们通常会这样写：
 
-```
+```javascript
 // 声明一个 jquery 实例
 $('.target')
 
@@ -29,7 +27,7 @@ $('target').offset()
 
 首先，一个库就是一个单独的模块，使用自执行函数的方式模拟一个模块。
 
-```
+```javascript
 (function() {
   // do something
 });
@@ -37,7 +35,7 @@ $('target').offset()
 
 第二步，我们能够在全局直接调用 jQuery，说明 jQuery 被挂载在了全局对象上。因此当我们在模块中对外提供接口时，可以采取 `window.jQuery` 的方式。
 
-```
+```javascript
 // 先声明一个构造函数
 var jQuery = function() {}
 
@@ -48,7 +46,7 @@ window.jQuery = jQuery
 
 在使用时，并没有用 jQuery，而是使用了 $, 其实是多加了一个赋值操作。
 
-```
+```javascript
 window.$ = window.jQuery = jQuery
 ```
 
@@ -56,7 +54,7 @@ window.$ = window.jQuery = jQuery
 
 前面一节的学习我们知道，每一个函数都可能是任何角色，因此 jQuery 内部的实现正是利用了这一点，在具体实现时，改变了内部某些函数的 prototype 指向。先看实现代码，再来一步步分析。
 
-```
+```javascript
 ;(function (ROOT) {
   // 构造函数
   var jQuery = function (selector) {
@@ -95,7 +93,7 @@ window.$ = window.jQuery = jQuery
 
 首先在 jQuery 构造函数中声明了一个 fn 属性，并将其指向了原型 `jQuery.prototype`。随后在原型对象中添加了init方法。
 
-```
+```javascript
 jQuery.fn = jQuery.prototype = {
   init: function() {}
 }
@@ -103,13 +101,13 @@ jQuery.fn = jQuery.prototype = {
 
 之后又将 init 的原型，指向了 jQuery.prototype.
 
-```
+```javascript
 jQuery.fn.init.prototype = jQuery.fn;
 ```
 
 而在构造函数jQuery中，则返回了init的实例对象。
 
-```
+```javascript
 var jQuery = function(selector) {
   return new jQuery.fn.init(selector);
 }
@@ -117,7 +115,7 @@ var jQuery = function(selector) {
 
 最后对外暴露接口时，将字符 $ 与方法 jQuery 对等起来。
 
-```
+```javascript
 ROOT.jQuery = ROOT.$ = jQuery;
 ```
 
@@ -125,13 +123,11 @@ ROOT.jQuery = ROOT.$ = jQuery;
 
 下面用图例展示下这中间的逻辑变化。
 
-## *2*
-
-**扩展方法**
+## 2-扩展方法
 
 我们在使用 jQuery 时还知道，jQuery 提供了两个扩展接口来帮助我们自定义 jQuery 的方法。通常称自定义的 jQuery 方法为 jQuery 插件。那么这两个扩展方法是如何实现的呢？在上面的实现基础上我们继续添加代码，如下。
 
-```
+```javascript
 ;
 (function (ROOT) {
 
@@ -210,7 +206,7 @@ ROOT.jQuery = ROOT.$ = jQuery;
 
 在上面的代码中，我们通过下面的方式简单的实现了两个扩展方法。
 
-```
+```javascript
 jQuery.extend = jQuery.fn.extend = function (options) {
 
   // 在jquery源码中会根据参数不同进行很多判断，我们这里就直接走一种方式，所以就不用判断了
@@ -231,7 +227,7 @@ jQuery.extend = jQuery.fn.extend = function (options) {
 
 静态方法可以直接调用，因此常常也被称为工具方法。例如：
 
-```
+```javascript
 $.ajax()
 $.isFunction()
 $.each()
@@ -240,7 +236,7 @@ $.each()
 
 原型方法则必须通过声明的实例才能调用。
 
-```
+```javascript
 $('#test').css();
 $('#test').attr();
 

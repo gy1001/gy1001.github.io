@@ -8,7 +8,7 @@
 
 我们先在 html 中将这两部分代码写出来。
 
-```
+```html
 <div class="box" id="tab_wrap">
   <ul class="tab_options">
     <li data-index="0" class="item active">tab1</li>
@@ -27,7 +27,7 @@
 
 并简单写一些css代码。
 
-```
+```css
 body {
   margin: 0;
 }
@@ -78,7 +78,7 @@ ul, li {
 
 选项卡的实现原理非常简单。大家可以注意我们在 html 代码中，每一个头部按钮都保存了一个 `data-index` 属性。这个属性告诉我们这是第几个按钮。这个值同时也对应第几页。因此我们只需要声明一个 index 变量来保存当前页的序列，并在点击时把当前页的值修改为`data-index`的值就可以了，与此同时，让当前按钮修改为选中状态，其他按钮修改为未选中状态，让当前页显示，其他页隐藏即可。JavaScript 代码如下。
 
-```
+```javascript
 var tabHeader = document.querySelector('.tab_options');
 var items = tabHeader.children;
 var tabContent = document.querySelector('.tab_content');
@@ -100,14 +100,14 @@ tabHeader.addEventListener('click', function(e) {
 
 但是此时假设我们要新增一个功能，在html中新增两个按钮，点击他们我们可以分别切换到上一页跟下一页，我们应该怎么办？
 
-```
+```html
 <button class="next">Next</button>
 <button class="prev">Prev</button>
 ```
 
 为了能够更直观的实现这个功能，我们尝试来将选项卡封装成为一个对象。代码如下：
 
-```
+```javascript
 !function(ROOT) {
   var index = 0;
   function Tab(elem) {
@@ -174,7 +174,7 @@ tabHeader.addEventListener('click', function(e) {
 
 那么再使用时，就很简单了，代码如下：
 
-```
+```javascript
 var tab = new Tab(document.querySelector('#tab_wrap'));
 
 document.querySelector('.next').addEventListener('click', function() {
