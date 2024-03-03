@@ -40,30 +40,30 @@ JavaScript 中的运行环境包括三种情况：
 
 - 全局环境：代码运行时会首先进入全局环境，同时会生成全局上下文
 - 函数环境：当函数被调用执行时，进入函数环境执行函数代码，同时该函数对应的执行上下文被创建
-- eval环境：不建议使用，这里不做介绍
+- eval 环境：不建议使用，这里不做介绍
 
-当我们调用一个新的函数时，一个新的执行上下文就会被创建。因此可以预见的是，每一个应用程序中，会有大量的执行上下文会被创建。JavaScript 引擎，使用栈的方式来管理与跟踪多个执行上下文的运行情况，我们称之为**「函数调用栈」。**在应用程序的运行过程中，栈底永远是全局上下文，并且不会出栈。栈顶是当前正在执行的上下文，**并且正在执行的上下文始终都会在栈顶**。也就意味着，无论任何时候，都只会有一个上下文正在执行。在执行过程中，如果遇到了新的函数，那么就会创建新的上下文，推入到栈顶，栈顶上下文执行完毕之后，就会出栈，并被垃圾回收器回收，新的栈顶上下文继续执行。
+当我们调用一个新的函数时，一个新的执行上下文就会被创建。因此可以预见的是，每一个应用程序中，会有大量的执行上下文会被创建。JavaScript 引擎，使用栈的方式来管理与跟踪多个执行上下文的运行情况，我们称之为[ **函数调用栈** ] 。在应用程序的运行过程中，栈底永远是全局上下文，并且不会出栈。栈顶是当前正在执行的上下文，**并且正在执行的上下文始终都会在栈顶** 。也就意味着，无论任何时候，都只会有一个上下文正在执行。在执行过程中，如果遇到了新的函数，那么就会创建新的上下文，推入到栈顶，栈顶上下文执行完毕之后，就会出栈，并被垃圾回收器回收，新的栈顶上下文继续执行。
 
 为了更加清晰的理解整个函数调用栈的执行过程，我们通过几个实例进行分析一下。
 
 demo1：有示例代码如下
 
 ```javascript
-var color = 'blue';
+var color = 'blue'
 
 function changeColor() {
-  var anotherColor = 'red';
+  var anotherColor = 'red'
 
   function swapColors() {
-    var tempColor = anotherColor;
-    anotherColor = color;
-    color = tempColor;
+    var tempColor = anotherColor
+    anotherColor = color
+    color = tempColor
   }
 
-  swapColors();
+  swapColors()
 }
 
-changeColor();
+changeColor()
 ```
 
 此处使用 ECStack 来表示跟踪执行上下文执行情况的函数调用栈。
@@ -92,16 +92,16 @@ changeColor();
 
 关于调用栈的执行顺序我想大家应该都已经理解了，我们再来分析一个具备一定迷惑性的例子。
 
-```
+```javascript
 function f1() {
-  var n = 999;
+  var n = 999
   function f2() {
-    alert(n);
+    alert(n)
   }
-  return f2;
+  return f2
 }
-var result = f1();
-result(); // 999
+var result = f1()
+result() // 999
 ```
 
 只是一个跟闭包有关的例子，我们仔细观察该例子，函数 f1 执行过程中，声明了新的函数 f2，并且返回 f2。接着 f2 继续执行。在 f2 中访问了 f1 的变量 n，因此会形成包含 n 的闭包对象，该闭包对象不会因为 f1 执行完而被回收。
@@ -134,15 +134,15 @@ result(); // 999
 
 ```javascript
 function f1() {
-  var n = 999;
+  var n = 999
   function f2() {
     console.trace()
-    alert(n);
+    alert(n)
   }
-  return f2;
+  return f2
 }
-var result = f1();
-result(); // 999
+var result = f1()
+result() // 999
 ```
 
 ![img](./assets/1-20240301002841095.png)

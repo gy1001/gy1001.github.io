@@ -2,7 +2,7 @@
 
 引用数据类型在实践中是一个雷区。由于引用类型引发的惨案，也频频发生。进一步掌握引用类型，是作为一个合格前端开发必不可少的学习过程。
 
-**引用类型，是可变的。**当我们操作引用类型时，如果不小心，就可能会出现我们意想不到的结果。
+**引用类型，是可变的**。当我们操作引用类型时，如果不小心，就可能会出现我们意想不到的结果。
 
 ## 01-纯函数
 
@@ -21,20 +21,20 @@
 ```javascript
 var person = {
   name: 'Tim',
-  age: 20
+  age: 20,
 }
 
 function setting(p, name, age) {
-  p.name = name; 
-  p.age = age;
-  return p;
+  p.name = name
+  p.age = age
+  return p
 }
 
-var a = setting(person, 'Jake', 10);
+var a = setting(person, 'Jake', 10)
 
-console.log(a);
-console.log(person);
-console.log(a === person);
+console.log(a)
+console.log(person)
+console.log(a === person)
 ```
 
 思考一分钟。
@@ -54,12 +54,12 @@ console.log(a === person);
 ```javascript
 var foo = {
   a: 1,
-  b: 2
-};
+  b: 2,
+}
 
-var bar = Object.assign(foo, { c: 100 });
+var bar = Object.assign(foo, { c: 100 })
 
-console.log(foo, bar);
+console.log(foo, bar)
 ```
 
 我们希望得到一个新的值，结合 foo 所有属性与 `{c: 100}` 。于是使用 Object.assign 来实现。如果你对该方法了解不深，就会带来意想不到的结果。因为在这个过程中，原数组 foo 被改变了。
@@ -73,10 +73,10 @@ var bar = Object.assign({}, foo, { c: 100 })
 这样会修改原数组的类似方法还不少，例如操作数组的 api：splice
 
 ```javascript
-const arr = [1, 2, 3, 4, 5, 6, 7, 9];
-arr.splice(7); // 对原数组arr的值造成影响
+const arr = [1, 2, 3, 4, 5, 6, 7, 9]
+arr.splice(7) // 对原数组arr的值造成影响
 
-console.log(arr);
+console.log(arr)
 ```
 
 所以学习数组方法时，我们也要区分出来哪些是会改变原数组的，哪些不会改变。
@@ -105,19 +105,19 @@ var foo = {
   a: 10,
   b: {
     m: 20,
-    n: 30
-  }
+    n: 30,
+  },
 }
 
-var copy = Object.assign({}, foo);
+var copy = Object.assign({}, foo)
 
 // 属性a的值，是基础数据类型，直接改变不会影响原值foo
-copy.a = 20;
+copy.a = 20
 
 // 属性b是引用数据类型，浅拷贝仅仅只是第一层数据创建新的内存，而第二层数据指向同样的内存值，因此改变会影响foo的值。
-copy.b.m = 100;
-console.log(copy);
-console.log(foo);
+copy.b.m = 100
+console.log(copy)
+console.log(foo)
 ```
 
 观察 copy 和 foo 的最终结果，对于 a 的操作互不干扰，而对于 m 的操作，则相互影响。这就是浅拷贝。除了第一层引用不同，更深层次的引用都是相同的。
@@ -127,45 +127,48 @@ console.log(foo);
 ```javascript
 /**
  * desc: 判断一个值的具体数据类型
- */ 
+ */
 function type(value) {
-  return Object.prototype.toString.call(value).split(' ')[1].slice(0, -1)
-    .replace(/^[A-Z]{1}/, (p) => p.toLowerCase());
+  return Object.prototype.toString
+    .call(value)
+    .split(' ')[1]
+    .slice(0, -1)
+    .replace(/^[A-Z]{1}/, (p) => p.toLowerCase())
 }
 
 /** 浅拷贝 */
 export function clone(target) {
-  let res = null;
+  let res = null
 
   if (type(target) === 'array') {
-    res = [];
-    target.forEach(item => {
-      res.push(item);
+    res = []
+    target.forEach((item) => {
+      res.push(item)
     })
   }
 
   if (type(target) === 'object') {
-    res = {};
-    Object.keys(target).forEach(key => {
-      res[key] = target[key];
+    res = {}
+    Object.keys(target).forEach((key) => {
+      res[key] = target[key]
     })
   }
 
   // 如果需要完善后运用于生产环境，则需要在继续分别考虑各种其他数据类型，例如基础数据类型，函数，Map，并分别处理等
-  return res || target;
+  return res || target
 }
 
-const x = { a: 1, b: { m: 1, n: 2 } };
-const y = clone(x);
-console.log(y);
-y.b.m = 20;
-console.log(x); // y修改b属性之后，x也受到影响
+const x = { a: 1, b: { m: 1, n: 2 } }
+const y = clone(x)
+console.log(y)
+y.b.m = 20
+console.log(x) // y修改b属性之后，x也受到影响
 
-const a1 = [1, 2, { m: 1, n: 2 }];
-const a2 = clone(a1);
-console.log(a2);
-a2[2].m = 100;
-console.log(a1); // a2修改第三个值，a1也受到影响
+const a1 = [1, 2, { m: 1, n: 2 }]
+const a2 = clone(a1)
+console.log(a2)
+a2[2].m = 100
+console.log(a1) // a2修改第三个值，a1也受到影响
 ```
 
 ### 浅比较
@@ -193,8 +196,12 @@ function is(x, y) {
 export default function shallowEqual(objA, objB) {
   if (is(objA, objB)) return true
 
-  if (typeof objA !== 'object' || objA === null ||
-      typeof objB !== 'object' || objB === null) {
+  if (
+    typeof objA !== 'object' ||
+    objA === null ||
+    typeof objB !== 'object' ||
+    objB === null
+  ) {
     return false
   }
 
@@ -204,8 +211,7 @@ export default function shallowEqual(objA, objB) {
   if (keysA.length !== keysB.length) return false
 
   for (let i = 0; i < keysA.length; i++) {
-    if (!hasOwn.call(objB, keysA[i]) ||
-        !is(objA[keysA[i]], objB[keysA[i]])) {
+    if (!hasOwn.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) {
       return false
     }
   }
@@ -227,51 +233,51 @@ export default function shallowEqual(objA, objB) {
 function type(value) {
   return Object.prototype.toString
     .call(value)
-    .split(" ")[1]
+    .split(' ')[1]
     .slice(0, -1)
-    .replace(/^[A-Z]{1}/, p => p.toLowerCase());
+    .replace(/^[A-Z]{1}/, (p) => p.toLowerCase())
 }
 
 /** 深拷贝 */
 export function deepClone(target) {
-  let res = null;
+  let res = null
 
-  if (type(target) === "array") {
-    res = [];
-    target.forEach(item => {
-      res.push(deepClone(item));
-    });
+  if (type(target) === 'array') {
+    res = []
+    target.forEach((item) => {
+      res.push(deepClone(item))
+    })
   }
 
-  if (type(target) === "object") {
-    res = {};
-    Object.keys(target).forEach(key => {
-      res[key] = deepClone(target[key]);
-    });
+  if (type(target) === 'object') {
+    res = {}
+    Object.keys(target).forEach((key) => {
+      res[key] = deepClone(target[key])
+    })
   }
 
   // 如果需要完善后运用于生产环境，则需要在继续分别考虑各种其他数据类型，例如基础数据类型，函数，Map，并分别处理等
-  return res || target;
+  return res || target
 }
 
-const x = { a: 1, b: { m: 1, n: 2 } };
-const y = deepClone(x);
-console.log(y);
-y.b.m = 20;
-console.log(x); // y修改b属性之后，x不受影响
+const x = { a: 1, b: { m: 1, n: 2 } }
+const y = deepClone(x)
+console.log(y)
+y.b.m = 20
+console.log(x) // y修改b属性之后，x不受影响
 
-const a1 = [1, 2, { m: 1, n: 2 }];
-const a2 = deepClone(a1);
-console.log(a2);
-a2[2].m = 100;
-console.log(a1); // a2修改第三个值，a1不受影响
+const a1 = [1, 2, { m: 1, n: 2 }]
+const a2 = deepClone(a1)
+console.log(a2)
+a2[2].m = 100
+console.log(a1) // a2修改第三个值，a1不受影响
 ```
 
 深比较同理，因为几乎不在实践中使用，这里就不再做额外的介绍。
 
 ## 03-不可变数据集
 
-**不可变数据是函数式编程的重要概念。**从上面关于纯函数的学习中我们得知，对于函数式编程而言，引用数据类型的可变性，简直是“万恶之源”。
+**不可变数据是函数式编程的重要概念**。从上面关于纯函数的学习中我们得知，对于函数式编程而言，引用数据类型的可变性，简直是“万恶之源”。
 
 我们在函数式编程的实践中，往往期望引用数据类型也具备基础数据类型不可变的特性，这样能使开发变得更加简单，状态可回溯，测试也更加友好。因此在开发中探索不可变数据集，是必不可少的行为。
 

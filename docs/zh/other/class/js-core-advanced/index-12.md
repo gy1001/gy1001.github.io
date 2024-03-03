@@ -1,4 +1,4 @@
- # 12-作用域与作用域链
+# 12-作用域与作用域链
 
 作用域是规定变量与函数可访问范围的**一套规则**。
 
@@ -34,15 +34,15 @@ function bar() {}
 
 ```javascript
 function foo() {
-  bar = 20;
+  bar = 20
 }
 
 function fn() {
-  foo();
-  return bar + 30;
+  foo()
+  return bar + 30
 }
 
-fn(); // 50
+fn() // 50
 ```
 
 需要注意的是，从一个完整的大型应用的角度来考虑，我们应该尽量少的将变量或者方法定义为全局。
@@ -61,22 +61,25 @@ function setM() {
 setM()
 ```
 
-**命名冲突：**不同的开发者，在同一个项目里如果都使用全局变量的话，很容易造成命名冲突
+**命名冲突**: 不同的开发者，在同一个项目里如果都使用全局变量的话，很容易造成命名冲突
 
 应用程序执行过程中，**全局变量的内存无法被释放**
 
 因此，对于团队项目管理来说，每一个全局变量的使用，都应该引起足够的重视以防止影响到别的代码逻辑。除此之外，还有许多类似的场景，例如，css 没有作用域的概念，那么也就意味着，每一个组件对应的样式，都有可能影响别的组件布局，因此我们常常会通过一些方式让当前组件具备范围约束，以达到作用域的效果
 
-```javascript
+```css
 // 假设当前组件为一个侧边栏，为了避免影响其他元素，每一个样式前面都使用 sidebar 进行范围约束
-.sidebar .container {}
-.sidebar .content {}
-.sidebar .left {}
+.sidebar .container {
+}
+.sidebar .content {
+}
+.sidebar .left {
+}
 ```
 
 在 vue 中，专门提供了 css 作用域的语法，以达到类似的效果
 
-```javascript
+```vue
 <style scoped>
 .example {
   color: red;
@@ -128,38 +131,38 @@ console.log(window.b) // undefined
 
 ```javascript
 function foo() {
-  var a = 20;
-  var b = 30;
+  var a = 20
+  var b = 30
 }
-foo();
+foo()
 
 function bar() {
-  return a + b;
+  return a + b
 }
 
-bar(); // 因为作用域的限制，bar中无法访问到变量a,b，因此执行报错
+bar() // 因为作用域的限制，bar中无法访问到变量a,b，因此执行报错
 function foo() {
-  var a = 20;
-  var b = 30;
+  var a = 20
+  var b = 30
 
   function bar() {
-    return a + b;
+    return a + b
   }
-  return bar();
+  return bar()
 }
-foo(); // 50 bar中的作用域为foo的子作用域，因此能访问到变量a, b
+foo() // 50 bar中的作用域为foo的子作用域，因此能访问到变量a, b
 ```
 
 在 ES6 以前，ECMAScript 没有块级作用域，因此使用时需要特别注意，一定是在函数环境中才能生成新的作用域。如下情况则不会有作用域的限制。
 
 ```javascript
-var arr = [1, 2, 3, 4, 5];
+var arr = [1, 2, 3, 4, 5]
 
 for (var i = 0; i < arr.length; i++) {
-  console.log('do something by ', i);
+  console.log('do something by ', i)
 }
 
-console.log(i); // i == 5
+console.log(i) // i == 5
 ```
 
 因为没有块级作用域，单独的 `{}` 并不会产生新的作用域。这个时候 i 的值会保留下来，在 for 循环结束之后仍然能够访问。
@@ -168,9 +171,9 @@ console.log(i); // i == 5
 
 ```javascript
 function foo() {
-  var a = 1;
+  var a = 1
   function bar() {
-    console.log(a);
+    console.log(a)
   }
   console.dir(bar)
 }
@@ -185,16 +188,16 @@ foo()
 没有块级作用域会给我们的开发带来许多困扰。例如上面的 for 循环例子中，i 值仍然在作用域中可以被访问，那么这个值就会对作用域中的其他同名变量造成干扰。因此在没有块级作用域时，需要模拟块级作用域。我们知道，一个函数可以生成一个作用域，这个时候，就能够利用函数达到模拟的目的。
 
 ```javascript
-var arr = [1, 2, 3, 4, 5];
+var arr = [1, 2, 3, 4, 5]
 
 // 自执行函数
-(function () {
+;(function () {
   for (var i = 0; i < arr.length; i++) {
-    console.log('do something by ', i);
+    console.log('do something by ', i)
   }
-})();
+})()
 
-console.log(i); // i is not defined
+console.log(i) // i is not defined
 ```
 
 ## 04-块级作用域
@@ -207,14 +210,13 @@ console.log(i); // i is not defined
 
 ```javascript
 // 同名变量可以重复声明
-var a = 10;
-var a = 20;
+var a = 10
+var a = 20
 
 // 声明的变量可以任意修改
-var b = 30;
-b = 40;
-b = function() {}
-
+var b = 30
+b = 40
+b = function () {}
 
 // 花括号不会约束 var 变量的作用范围
 {
@@ -257,11 +259,11 @@ if (true) {
   let a = 20
 }
 console.log(a) // Uncaught ReferenceError: a is not defined
-for(let i = 0; i <= 10; i++) {
+for (let i = 0; i <= 10; i++) {
   console.log(i) // 依次输出 0 ~ 10
 }
 console.log(i) // Uncaught ReferenceError: i is not defined
-with(location) {
+with (location) {
   let s = search.substring(1)
   let hostName = hostname
 }
@@ -287,11 +289,11 @@ console.log(a)
 let 声明的变量，存在暂时性死区。在当前块级作用域中，let 声明的变量，在赋值之前，都不能对该变量进行额外的访问与操作，否则就会报错。
 
 ```javascript
-var a = 10;
+var a = 10
 
 if (true) {
-  a = 20; // Uncaught ReferenceError: Cannot access 'a' before initialization
-  let a = 30; // 当然这里也会报错，因为重复声明了，只不过提前报错了，所以暴露不到这里来
+  a = 20 // Uncaught ReferenceError: Cannot access 'a' before initialization
+  let a = 30 // 当然这里也会报错，因为重复声明了，只不过提前报错了，所以暴露不到这里来
 }
 ```
 
@@ -310,7 +312,7 @@ const a = 20
 a = 30 // Uncaught SyntaxError: Identifier 'a' has already been declared
 
 const person = { name: 'TOM' }
-person.name = 'Jake'  // 可以修改
+person.name = 'Jake' // 可以修改
 ```
 
 结合基础数据类型与引用数据类型的特点，这个不难理解。我们要重点考虑的是，在实践中，用哪一种声明比较合适。
@@ -331,7 +333,7 @@ person.name = 'Jake'  // 可以修改
 
 ```javascript
 function foo() {
-  const a = 10;
+  const a = 10
   function bar() {}
 }
 
@@ -346,13 +348,13 @@ console.dir(foo)
 
 ```javascript
 function foo() {
-  var a = 1;
-  let b = 2;
+  var a = 1
+  let b = 2
 
   function bar() {
-    console.log(a);
+    console.log(a)
   }
-  
+
   console.dir(bar)
 }
 
@@ -369,11 +371,11 @@ foo()
 
 ```javascript
 function foo() {
-  var a = 1;
-  let b = 2;
+  var a = 1
+  let b = 2
   function bar() {
     function inner() {
-      return a + b;
+      return a + b
     }
     console.dir(inner)
   }
@@ -396,7 +398,7 @@ foo()
 inner.[[Scopes]] = [O(bar), O(foo), O(window)]
 ```
 
-只是O(bar) 中，一个变量也没有，因此就被优化掉了。
+只是 O(bar) 中，一个变量也没有，因此就被优化掉了。
 
 **在当前函数中，要寻找到变量的值是从哪里来的，就首先会从当前执行上下文中查找，如果没有找到，则会去作用域链中查找。这里需要注意的是，作用域链本身就是存在于函数对象中的一个属性 [[Scopes]]，因此不是一层一层的往上查找「这里经常理解有误」，该属性是在代码预解析阶段就已经确认好的。**
 
@@ -410,36 +412,36 @@ inner.[[Scopes]] = [O(bar), O(foo), O(window)]
 
 **Closure 对象**：我们讨论比较多的闭包对象，嵌套函数生成，仅会保存当前作用域能够访问的变量属性
 
-**Local 对象**：以上的几种变量对象，都会存在于函数的 [[Scopes]]属性之中，因为他们都能够在函数解析时确认，而 Local 对象则不行，需要在函数的执行过程中才能确定，并且在执行过程中，该对象中的属性是随时会发生变化的，该对象除了会存储当前函数上下文中所有的变量与函数声明，还会额外记录this的指向。
+**Local 对象**：以上的几种变量对象，都会存在于函数的 [[Scopes]]属性之中，因为他们都能够在函数解析时确认，而 Local 对象则不行，需要在函数的执行过程中才能确定，并且在执行过程中，该对象中的属性是随时会发生变化的，该对象除了会存储当前函数上下文中所有的变量与函数声明，还会额外记录 this 的指向。
 
 通过该例子结合图示进行分析
 
 ```javascript
 // const 声明，在其他函数的作用域链中，会归属于 Script 对象中去
-const a = 20;
+const a = 20
 
 function test() {
-  const b = a + 10;
-  var m = 20;
+  const b = a + 10
+  var m = 20
   const x = 10
   const y = 20
 
   function innerTest() {
     console.log(x, y)
-    const c = 10 + m;
+    const c = 10 + m
     console.dir(innerTest)
 
     function bar() {
       console.log(c)
       console.dir(bar)
     }
-    return bar;
+    return bar
   }
 
-  return innerTest();
+  return innerTest()
 }
 
-var foo = test();
+var foo = test()
 foo()
 ```
 
@@ -458,19 +460,19 @@ foo()
 如下例子中，作用域链的情况如何
 
 ```javascript
-const a = 20;
+const a = 20
 
 function test() {
-  const b = a + 10;
+  const b = a + 10
 
   function innerTest() {
-    const c = 10;
+    const c = 10
     console.dir(innerTest)
-    return b + c;
+    return b + c
   }
 
-  return innerTest();
+  return innerTest()
 }
 
-test();
+test()
 ```

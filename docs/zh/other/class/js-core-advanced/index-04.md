@@ -4,7 +4,7 @@
 
 堆数据结构，是树中的一种。在实践中，我们更常用的堆数据结构就是**二叉堆**。
 
-二叉堆能够实现优先级队列**「Priority Queue」**。
+二叉堆能够实现优先级队列「**Priority Queue**」。
 
 Linux 内核中对各个进程的调度分配，定时器的实现原理，React Fiber 的任务调度分配，都利用了优先级队列的思维来解决问题。因此作为一名合格的高级前端工程师，优先级队列是必须要掌握的重要知识点。
 
@@ -12,11 +12,11 @@ Linux 内核中对各个进程的调度分配，定时器的实现原理，React
 
 二叉堆是一颗完全二叉树：即在树结构中，除了最后一层，其他节点都是完整的「每一个节点都拥有左右两个子节点」。它分为两种类型：
 
-1. **最大堆，**又称为大顶堆，任何父节点的键值，都大于等于任何一个子节点。最大堆的根节点为堆顶，堆顶元素是整个堆中的最大值。
+1. **最大堆** 又称为大顶堆，任何父节点的键值，都大于等于任何一个子节点。最大堆的根节点为堆顶，堆顶元素是整个堆中的最大值。
 
 ![img](./assets/1-20240301170211669.png)
 
-1. **最小堆，**又称为小顶堆，任何父节点的键值，都小于等于任何一个子节点。最小堆的根节点为堆顶，堆顶元素是整个堆中的最小值。
+2. **最小堆** 又称为小顶堆，任何父节点的键值，都小于等于任何一个子节点。最小堆的根节点为堆顶，堆顶元素是整个堆中的最小值。
 
 ![img](./assets/1-20240301170211674.png)
 
@@ -72,17 +72,17 @@ Linux 内核中对各个进程的调度分配，定时器的实现原理，React
 
 **节点公式推导过程如下：**
 
-以上面的例子为例，一共有九个节点，我们以 p 代表父节点，l 代表left 左节点，r 代表 right 右节点，那么数组中下标从 0 开始，对应的关系如下
+以上面的例子为例，一共有九个节点，我们以 p 代表父节点，l 代表 left 左节点，r 代表 right 右节点，那么数组中下标从 0 开始，对应的关系如下
 
 ```javascript
-p = 0, l = 1, r = 2
-p = 1, l = 3, r = 4
-p = 2, l = 5, r = 6
-p = 3, l = 7, r = 8
+;(p = 0), (l = 1), (r = 2)
+;(p = 1), (l = 3), (r = 4)
+;(p = 2), (l = 5), (r = 6)
+;(p = 3), (l = 7), (r = 8)
 
 // 当前案例一共只有9个节点，如果节点更多的话，我们还可以继续总结
-p = 4, l = 9, r = 10
-p = 5, l = 11, r = 12
+;(p = 4), (l = 9), (r = 10)
+;(p = 5), (l = 11), (r = 12)
 ```
 
 因此我们很容易发现父节点与左右子节点下标序列的关系 `l = 2p + 1, r = 2p +2`。因此，当我们知道父节点的下标，就能够找到左右子节点的下标。
@@ -90,7 +90,7 @@ p = 5, l = 11, r = 12
 反过来会有一点麻烦，如果我们只是知道一个子节点下标，那么如何得到父节点下标呢？把上面的公式调整一下可以得到。
 
 ```javascript
-p = (l - 1) / 2 
+p = (l - 1) / 2
 p = (r - 2) / 2
 ```
 
@@ -159,14 +159,14 @@ class BinaryHeap {
   // 插入节点
   push(node) {
     if (this.size == 0) {
-      this.size ++
+      this.size++
       this.heap[0] = node
       return
     }
-    this.size ++
+    this.size++
     let i = this.size - 1
     this.heap[i] = node
-    while(i != 0 && this.compare(this.heap[i], this.parent(i))) {
+    while (i != 0 && this.compare(this.heap[i], this.parent(i))) {
       this.swap(i, this.parentIndex(i))
       i = this.parentIndex(i)
     }
@@ -180,8 +180,8 @@ class BinaryHeap {
     const l = this.leftIndex(i)
     const r = this.rightIndex(i)
     const pv = this.heap[i],
-          lv = this.heap[l],
-          rv = this.heap[r]
+      lv = this.heap[l],
+      rv = this.heap[r]
 
     let small = i
     if (l < this.size && this.compare(lv, pv)) {
@@ -204,13 +204,13 @@ class BinaryHeap {
     }
     if (this.size == 1) {
       let node = this.heap[this.size - 1]
-      this.size --
+      this.size--
       this.heap.length = this.size
       return node
     }
     const root = this.heap[0]
     this.heap[0] = this.heap[this.size - 1]
-    this.size --
+    this.size--
     this.heap.length = this.size
     this.heapify(0)
     return root
@@ -230,21 +230,21 @@ class BinaryHeap {
 }
 
 function compare(a, b) {
-  return a < b;
+  return a < b
 }
 
-var heap = new BinaryHeap(compare);
-heap.push(1);
-heap.push(2);
-heap.push(3);
-heap.push(4);
-heap.push(5);
+var heap = new BinaryHeap(compare)
+heap.push(1)
+heap.push(2)
+heap.push(3)
+heap.push(4)
+heap.push(5)
 console.log(heap.heap) // [1, 2, 3, 4, 5]
 heap.pop()
 console.log(heap.heap) // [2, 4, 3, 5]
 
-var array = [150, 80, 40, 30, 10, 70, 110, 100, 20, 90, 60, 50, 120, 140, 130]; 
-var h = new BinaryHeap(compare, array);
+var array = [150, 80, 40, 30, 10, 70, 110, 100, 20, 90, 60, 50, 120, 140, 130]
+var h = new BinaryHeap(compare, array)
 console.log(h.heap) // [10, 20, 40, 30, 60, 50, 110, 100, 150, 90, 80, 70, 120, 140, 130]
 ```
 
@@ -255,12 +255,12 @@ console.log(h.heap) // [10, 20, 40, 30, 60, 50, 110, 100, 150, 90, 80, 70, 120, 
 ```javascript
 function compare(a, b) {
   // 小顶堆
-  return a < b;
+  return a < b
 }
 
 function compare(a, b) {
   // 大顶堆
-  return a > b;
+  return a > b
 }
 ```
 
@@ -272,7 +272,7 @@ function compare(a, b) {
       this.size ++
       this.heap[0] = node
       return
-    } 
+    }
     this.size ++
     let i = this.size - 1
     this.heap[i] = node
@@ -287,7 +287,7 @@ function compare(a, b) {
 
 ```javascript
 const array = [
-  {name: 'Jake', id: 29}, 
+  {name: 'Jake', id: 29},
   {name: 'Toms', id: 22},
   {name: 'Jone', id: 40},
   ...
@@ -299,27 +299,27 @@ const array = [
 ```javascript
 function compare(a, b) {
   // 小顶堆
-  return a.id < b.id;
+  return a.id < b.id
 }
 
 function compare(a, b) {
   // 大顶堆
-  return a.id > b.id;
+  return a.id > b.id
 }
 ```
 
 在数组的自身已经支持的 sort 方法也采用了类似的解决方案来决定排序的结果
 
 ```javascript
-var array = [150, 80, 40, 30, 10, 70, 110, 100, 20, 90, 60, 50, 120, 140, 130]; 
+var array = [150, 80, 40, 30, 10, 70, 110, 100, 20, 90, 60, 50, 120, 140, 130]
 
 // 由小到大排序
 var _a = array.sort((a, b) => a - b)
-console.log(_a)   // [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150]
+console.log(_a) // [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150]
 
 // 由大到小排序
 var _b = array.sort((a, b) => b - a)
-console.log(_b)  // [150, 140, 130, 120, 110, 100, 90, 80, 70, 60, 50, 40, 30, 20, 10]
+console.log(_b) // [150, 140, 130, 120, 110, 100, 90, 80, 70, 60, 50, 40, 30, 20, 10]
 ```
 
 节点元素不能直接参与比较，使用某个字段进行比较
@@ -338,7 +338,7 @@ console.log(p1) // 结果为按照 id，从小打大排序
 // 因为引用类型的关系，下面的代码请分开执行，否则眼睛看到的打印结果将会是最后一次的排序结果
 
 const p2 = persons.sort((a, b) => b.id - a.id)
-console.log(p2)  // 结果为按照 id，从大到小排序
+console.log(p2) // 结果为按照 id，从大到小排序
 ```
 
 除了 sort 方法之外，map, filter, reduce, some, every 等方法，都采用了类似的思维，传入一个条件，根据条件的执行结果，返回新的内容。这样的封装思维，我们在高阶函数中会进一步详细解读。
