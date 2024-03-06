@@ -6,20 +6,22 @@ this 的学习至关重要。
 
 前面我们学习执行上下文的章节中，有提到关于 this 的信息。在执行上下文中的环境记录对象中，提供了一个内部属性 [[ThisValue]] 用于记录 this 的指向，同时还提供了一个内部方法 BindThisValue 用于设置 [[ThisValue]] 的值。也就意味着，对于函数而言，**this 的指向，是在执行上下文的创建过程中，被确定的。**
 
-明确了这一点，我们就很容易知道，只有在函数调用时，this 的指向才会被确定。于是一个函数的 this 的指向，就变得非常灵活。这也是导致 this 难以理解的真正原因。例如下面的例子，同一个函数，由于调用方式不同，它内部的 this 指向了不同的对象
+明确了这一点，我们就很容易知道，**只有在函数调用时，this 的指向才会被确定**。于是一个函数的 this 的指向，就变得非常灵活。这也是导致 this 难以理解的真正原因。
+
+例如下面的例子，同一个函数，由于调用方式不同，它内部的 this 指向了不同的对象
 
 ```javascript
-var a = 10;
+var a = 10
 var obj = {
-  a: 20
+  a: 20,
 }
 
 function fn() {
-  console.log(this.a);
+  console.log(this.a)
 }
 
-fn(); // 10
-fn.call(obj); // 20
+fn() // 10
+fn.call(obj) // 20
 ```
 
 通过 a 值的不同表现，我们可以知道 this 分别指向了 window 与 obj 对象。
@@ -32,18 +34,18 @@ fn.call(obj); // 20
 
 ```javascript
 // 通过this绑定到全局对象
-this.a2 = 20;
+this.a2 = 20
 
 // 通过声明绑定到变量对象，但在全局环境中，变量对象就是它自身
-var a1 = 10;
+var a1 = 10
 
 // 仅仅只有赋值操作，标识符会隐式绑定到全局对象
-a3 = 30;
+a3 = 30
 
 // 输出结果会全部符合预期
-console.log(a1);
-console.log(a2);
-console.log(a3);
+console.log(a1)
+console.log(a2)
+console.log(a3)
 ```
 
 const/let 声明的函数并不会挂载到全局对象，因此
@@ -57,7 +59,9 @@ console.log(this.b) // undefined
 
 函数上下文中的 this 指向，与调用该函数的方式息息相关。
 
-**在一个函数的执行上下文中，this 由该函数的调用者「caller」提供，由调用函数的方式来决定。方式一，有明确的调用者。方式二，独立调用，无明确的调用者。**** 一个简单的例子来展示谁是调用者 caller，谁是被调用者 callee。
+**在一个函数的执行上下文中，this 由该函数的调用者「caller」提供，由调用函数的方式来决定。方式一，有明确的调用者。方式二，独立调用，无明确的调用者。**
+
+一个简单的例子来展示谁是调用者 caller，谁是被调用者 callee。
 
 ```javascript
 function foo(a) {
@@ -69,7 +73,7 @@ function foo(a) {
 window.foo(10)
 ```
 
-很显然，foo 是被调用者 callee，而 window 对象是调用者 caller。因此 foo 内部的this，此时指向 window。执行结果如下图所示：![image.png](./assets/1-9260127.png)
+很显然，foo 是被调用者 callee，而 window 对象是调用者 caller。因此 foo 内部的 this，此时指向 window。执行结果如下图所示：![image.png](./assets/1-9260127.png)
 
 一种特殊的情况是，在写法上，foo 并没有显示的调用者，函数独立调用。如下
 
@@ -88,7 +92,7 @@ foo(10)
 
 ```javascript
 function foo(a) {
-  'use strict';
+  'use strict'
   // 严格模式下无法访问 arguments.callee
   // console.log(arguments.callee)
   console.log(this)
@@ -102,21 +106,21 @@ foo(10) // 内部 this 指向为 undefined
 **案例一**
 
 ```javascript
-var a = 20;
+var a = 20
 
 var obj = {
-  a: 40
+  a: 40,
 }
 function fn() {
-  console.log('fn this: ', this);
+  console.log('fn this: ', this)
 
   function foo() {
-    console.log(this.a);
+    console.log(this.a)
   }
-  foo();
+  foo()
 }
-fn.call(obj);
-fn();
+fn.call(obj)
+fn()
 ```
 
 代码中涉及到两个函数的 this 指向问题，一个是 fn，一个是 foo。fn 有两种执行方式，一种是通过 call 方法显示的指定调用者为 obj，因此此时的 this 指向自然是 obj 对象。一种是独立调用，显示上没有调用者，这里非严格模式则表示 此时 fn 内部的 this 指向 window 对象。
@@ -134,21 +138,20 @@ fn this: Window {}
 **案例二**
 
 ```javascript
-'use strict';
+'use strict'
 
-var a = 20;
+var a = 20
 function foo() {
-  var a = 1;
+  var a = 1
   var obj = {
     a: 10,
-    c: this.a + 20
+    c: this.a + 20,
   }
-  return obj.c;
-
+  return obj.c
 }
 
-console.log(window.foo()); // 40
-console.log(foo()); // 报错 TypeError
+console.log(window.foo()) // 40
+console.log(foo()) // 报错 TypeError
 ```
 
 对象字面量的写法并不会产生自己的作用域，因此该案例中，obj.c 上使用的 this 并不会指向 obj，而是与函数 foo 内部的 this 指向是一样的。
@@ -161,17 +164,17 @@ console.log(foo()); // 报错 TypeError
 
 ```javascript
 // demo03
-var a = 20;
+var a = 20
 var foo = {
   a: 10,
   getA: function () {
-    return this.a;
-  }
+    return this.a
+  },
 }
-console.log(foo.getA()); // 10
+console.log(foo.getA()) // 10
 
-var test = foo.getA;
-console.log(test()); // 20
+var test = foo.getA
+console.log(test()) // 20
 ```
 
 这是一个迷惑性很强的例子。但是只要我们能够正确分清楚调用者与被调用者，就不怕任何迷魂阵。
@@ -190,29 +193,29 @@ function foo() {
 }
 
 function active(fn) {
-  fn();
+  fn()
 }
 
-var a = 20;
+var a = 20
 var obj = {
   a: 10,
   getA: foo,
-  active: active
+  active: active,
 }
 
-active(obj.getA); // 输出的值是多少？
-obj.active(obj.getA); // 输出的值是多少?
-var n = 'window';
+active(obj.getA) // 输出的值是多少？
+obj.active(obj.getA) // 输出的值是多少?
+var n = 'window'
 var object = {
   n: 'object',
   getN: function () {
     return function () {
-      return this.n;
+      return this.n
     }
-  }
+  },
 }
 
-console.log(object.getN()()); // 输出的结果是多少？
+console.log(object.getN()()) // 输出的结果是多少？
 ```
 
 ## 04-call/apply/bind
@@ -222,20 +225,20 @@ JavaScript 提供了一种可以手动设置函数内部 this 指向的方式，
 有下面一个简单的例子
 
 ```javascript
-var a = 20;
+var a = 20
 var object = {
-  a: 40
+  a: 40,
 }
 
 function fn() {
-  console.log(this.a);
+  console.log(this.a)
 }
 ```
 
 如果我们正常调用函数 fn，fn 独立调用，在非严格模式下，内部的 this 指向 window 对象，因此函数的输出结果会是 20.
 
 ```javascript
-fn(); // 20
+fn() // 20
 ```
 
 我们还可以通过如下的方式，显示的指定 fn 的调用者。
@@ -255,20 +258,20 @@ apply 的第一个参数与 call 完全一样，函数本身应该传入的参�
 
 ```javascript
 function fn(num1, num2) {
-return this.a + num1 + num2;
+  return this.a + num1 + num2
 }
 
-var a = 20;
+var a = 20
 var object = { a: 40 }
 
 // 正常执行
-fn(10, 10); // 40
+fn(10, 10) // 40
 
 // 通过call改变this指向
-fn.call(object, 10, 10); // 60
+fn.call(object, 10, 10) // 60
 
 // 通过apply改变this指向
-fn.apply(object, [10, 10]); // 60
+fn.apply(object, [10, 10]) // 60
 ```
 
 bind 方法也能够显示的指定函数内部的 this 指向，但是它与 call/apply 有所不同。
@@ -279,17 +282,17 @@ bind 方法也能够显示的指定函数内部的 this 指向，但是它与 ca
 
 ```javascript
 function fn(num1, num2) {
-  return this.a + num1 + num2;
+  return this.a + num1 + num2
 }
 
-var a = 20;
+var a = 20
 var object = { a: 40 }
 
-var _fn = fn.bind(object, 1, 2);
+var _fn = fn.bind(object, 1, 2)
 
-console.log(_fn === fn); // false
-_fn(); // 43
-_fn(1, 4); // 43 因为参数被绑定，因此重新传入参数是无效的
+console.log(_fn === fn) // false
+_fn() // 43
+_fn(1, 4) // 43 因为参数被绑定，因此重新传入参数是无效的
 ```
 
-call/apply/bind的特性，让JavaScript变得十分灵活，他们的应用场景十分广泛，例如将类数组转化为数据，实现继承，实现函数柯里化等。在这里我们先记住他们的基础知识与基本特性，在后续章节中，我们还会遇到 this 相关的知识，后续再来进一步学习。
+call/apply/bind 的特性，让 JavaScript 变得十分灵活，他们的应用场景十分广泛，例如将类数组转化为数据，实现继承，实现函数柯里化等。在这里我们先记住他们的基础知识与基本特性，在后续章节中，我们还会遇到 this 相关的知识，后续再来进一步学习。

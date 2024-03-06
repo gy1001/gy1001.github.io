@@ -18,15 +18,15 @@ JavaScript 的词法作用域通过函数的 [[Scopes]] 属性来具体体现。
 const g = 10
 
 function foo() {
-  let a = 10;
-  let b = 20;
+  let a = 10
+  let b = 20
 
   function bar() {
-    a = a + 1;
-    const c = 30;
+    a = a + 1
+    const c = 30
 
-    return a + b + c;
-  }  
+    return a + b + c
+  }
 
   console.dir(bar)
   return bar
@@ -49,7 +49,7 @@ foo()
 
 从具体实现上来说，对于函数 bar 而言，闭包对象「Closure (foo)」的引用存在于自身的 [[Scopes]] 属性中。也就是说，只要函数体 bar 在内存中持久存在，闭包就会持久存在。而如果函数体被回收，闭包对象同样会被回收。
 
-*「此处消除一个大多数人的误解：认为闭包在内存中永远都不会被回收，实际情况并不是这样的」*
+_「此处消除一个大多数人的误解：认为闭包在内存中永远都不会被回收，实际情况并不是这样的」_
 
 通过前面的函数调用栈章节我们知道，在预解析阶段，函数声明会创建一个函数体，并在代码中持久存在。但是并非所有的函数体都能够持久存在。上面的例子就是一个非常典型的案例。函数 foo 的函数体能够在内存中持久存在，原因在于 foo 在全局上下文中声明，foo 的引用始终存在。因此我们总能访问到 foo。而函数 bar 则不同，函数 bar 是在函数 foo 的执行上下文中声明，当执行上下文执行完毕，执行上下文会被回收，在 foo 执行上下文中声明的函数 bar，也会被回收。如果不做特殊处理，foo 与 bar 产生的闭包对象，同样会被回收。
 
@@ -59,17 +59,17 @@ foo()
 const g = 10
 
 function foo() {
-  let a = 10;
-  let b = 20;
+  let a = 10
+  let b = 20
 
   function bar() {
-    a = a + 1;
+    a = a + 1
     console.log(a)
-    const c = 30;
-   
-    return a + b + c;
-  }  
- console.dir(bar)
+    const c = 30
+
+    return a + b + c
+  }
+  console.dir(bar)
   return bar
 }
 
@@ -96,17 +96,17 @@ foo()()
 const g = 10
 
 function foo() {
-  let a = 10;
-  let b = 20;
+  let a = 10
+  let b = 20
 
   function bar() {
-    a = a + 1;
+    a = a + 1
     console.log(a)
-    const c = 30;
-   
-    return a + b + c;
-  }  
- console.dir(bar)
+    const c = 30
+
+    return a + b + c
+  }
+  console.dir(bar)
   return bar
 }
 
@@ -129,17 +129,17 @@ bar()
 const g = 10
 
 function foo() {
-  let a = 10;
-  let b = 20;
+  let a = 10
+  let b = 20
 
   function bar() {
-    a = a + 1;
+    a = a + 1
     console.log(a)
-    const c = 30;
-   
-    return a + b + c;
-  }  
- console.dir(bar)
+    const c = 30
+
+    return a + b + c
+  }
+  console.dir(bar)
   return bar
 }
 
@@ -180,16 +180,16 @@ bar2()
 
 ```javascript
 function foo() {
-  let a = 10;
-  let b = 20;
+  let a = 10
+  let b = 20
 
   function bar() {
-    a = a + 1;
+    a = a + 1
     console.log('in bar', a)
-    let c = 30;
+    let c = 30
 
     function fn() {
-      a = a + 1;
+      a = a + 1
       c = c + 1
       console.log('in fn', a)
     }
@@ -223,23 +223,23 @@ fn()
 ```javascript
 function add(x) {
   return function _add(y) {
-    return x + y;
+    return x + y
   }
 }
 
-add(2)(3); // 5
-var name = "window";
+add(2)(3) // 5
+var name = 'window'
 
 var p = {
   name: 'Perter',
   getName: function () {
     return function () {
-      return this.name;
+      return this.name
     }
-  }
+  },
 }
 
-var getName = p.getName();
-var _name = getName();
-console.log(_name);
+var getName = p.getName()
+var _name = getName()
+console.log(_name)
 ```

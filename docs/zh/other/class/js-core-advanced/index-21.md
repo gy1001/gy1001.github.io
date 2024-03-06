@@ -18,7 +18,7 @@
 
 ![img](./assets/1-20240301103103450.png)
 
-**箭头一**指向的区域有一排图标。
+**箭头一** 指向的区域有一排图标。
 
 可以通过这一排图标来控制函数的执行过程，从左到右他们依次是：
 
@@ -49,56 +49,48 @@
 ## 02-案例一
 
 ```javascript
-var fn;
+var fn
 function foo() {
-  var a = 2;
+  var a = 2
   function baz() {
-    console.log(a);
+    console.log(a)
   }
-  fn = baz;
+  fn = baz
 }
 function bar() {
-  fn();
+  fn()
 }
 
-foo();
-bar(); // 2
+foo()
+bar() // 2
 ```
 
 这是一个闭包的案例，我们可以先思考一下闭包是如何产生的，然后通过调试工具来验证自己的想法是否正确。
 
 在函数 foo 中，声明了函数 baz，并且 baz 访问了 foo 中声明的变量，因此，此时闭包产生。fn 在 foo 中获得了 baz 的引用，因此当 fn 执行时，其实就是 baz 在执行。
 
-**第一步：**设置断点，经过简单的分析可以看出，代码的执行阶段，是从 foo() 开始的，在这里设置一个断点。然后刷新页面。![img](./assets/1-20240301103103489.png)
+**第一步：** 设置断点，经过简单的分析可以看出，代码的执行阶段，是从 foo() 开始的，在这里设置一个断点。然后刷新页面。![img](./assets/1-20240301103103489.png)
 
 此时函数调用栈中，只有一个匿名函数，这里表达的是 script 标签的上下文环境。
 
 ```javascript
-CallStack = [
-  anonymous
-]
+CallStack = [anonymous]
 ```
 
 当前代码的执行环境的作用域链，是全局对象，因此只包含了全局对象 Global
 
 ```javascript
-Scope = [
-  Global
-]
+Scope = [Global]
 ```
 
-**第二步：**多次点击 step into，该按钮能够让代码按照正确的执行顺序，一步一步向下执行，注意观察每一次点击之后，相关信息的变化。
+**第二步：** 多次点击 step into，该按钮能够让代码按照正确的执行顺序，一步一步向下执行，注意观察每一次点击之后，相关信息的变化。
 
 多次点击，直到函数 baz 执行，如图所示![img](./assets/1-20240301103103466.png)
 
 此时的函数调用栈中，已经有了多个函数
 
 ```javascript
-CallStack = [
-  baz,
-  bar,
-  anonymous
-]
+CallStack = [baz, bar, anonymous]
 ```
 
 正在执行的函数 baz ，处于栈顶
@@ -106,11 +98,7 @@ CallStack = [
 与此同时，Scope 也表达的是函数 baz 的完整作用域链
 
 ```javascript
-Scope = [
-  Local,
-  Closure (foo),
-  Global,
-]
+Scope = [Local, Closure(foo), Global]
 ```
 
 我们要关注代码执行过程中，各个变量的变化情况，以及调用栈与作用域链的变化。
@@ -121,24 +109,24 @@ Scope = [
 
 ```javascript
 function foo() {
-  var a = 10;
+  var a = 10
 
   function fn1() {
-    console.log(a);
+    console.log(a)
   }
 
   function fn2() {
-    var b = 10;
-    console.log(b);
+    var b = 10
+    console.log(b)
   }
 
-  fn2();
+  fn2()
 }
 
-foo();
+foo()
 ```
 
-花一点时间思考一下，当函数 fn2 执行时，对fn2 来说，有没有闭包？
+花一点时间思考一下，当函数 fn2 执行时，对 fn2 来说，有没有闭包？
 
 答案是有的。
 

@@ -6,64 +6,67 @@
 
 ```javascript
 function Person(name, age) {
-  this.name = name;
-  this.age = age;
+  this.name = name
+  this.age = age
 }
-Person.prototype.getName = function() {
-  return this.name;
+Person.prototype.getName = function () {
+  return this.name
 }
 
-const p1 = new Person('Jake', 18);
-p1.getName();
+const p1 = new Person('Jake', 18)
+p1.getName()
 ```
 
 我们知道构造函数其实就是普通的函数，我们也知道 this 其实是在函数运行时才确认的。那么是什么导致了构造函数变得特别？
 
-**答案与new关键字有关。**
+**答案与 new 关键字有关。**
 
 如果自定义一个 New 方法，来模拟关键字 new 的能力，那么应该如下实现：
+
+1. 调用函数
+2. 创建一个新的对象,把实例对象的隐式原型指向构造函数的显式原型
+3. 改变 this 指向,把 this 绑定在实例对象上
+4. 返回一个对象,如果构造函数本身返回的是一个对象,那么就返回这个对象,如果不是就返回这个实例对象
 
 ```javascript
 // 将构造函数以参数形式传入
 function New(func) {
-
   // 声明一个中间对象，该对象为最终返回的实例
-  var res = {};
+  var res = {}
   if (func.prototype !== null) {
-
     // 将实例的原型指向构造函数的原型
-    res.__proto__ = func.prototype;
+    res.__proto__ = func.prototype
   }
 
   // ret为构造函数执行的结果，这里通过apply，将构造函数内部的this指向修改为指向res，即为实例对象
-  var ret = func.apply(res, Array.prototype.slice.call(arguments, 1));
+  var ret = func.apply(res, Array.prototype.slice.call(arguments, 1))
 
   // 当我们在构造函数中明确指定了返回对象时，那么new的执行结果就是该返回对象
-  if ((typeof ret === "object" || typeof ret === "function") && ret !== null) {
-    return ret;
+  if ((typeof ret === 'object' || typeof ret === 'function') && ret !== null) {
+    return ret
   }
 
   // 如果没有明确指定返回对象，则默认返回res，这个res就是实例对象
-  return res;
+  return res
 }
 ```
 
-为了方便大家理解，我在例子中做了详细的注解。通过 New 方法的实现我们可以看出，当 New 执行时，利用apply 显示的指定了传入的构造函数的 this 指向。因此当我们使用 New 创建实例时，**构造函数中 this 是指向被创建的实例。**
+为了方便大家理解，我在例子中做了详细的注解。通过 New 方法的实现我们可以看出，当 New 执行时，利用 apply 显示的指定了传入的构造函数的 this 指向。因此当我们使用 New 创建实例时，**构造函数中 this 是指向被创建的实例。**
 
 ```javascript
 function Person(name, age) {
-  this.name = name;
-  this.age = age;
+  this.name = name
+  this.age = age
 }
-Person.prototype.getName = function() {
-  return this.name;
+Person.prototype.getName = function () {
+  return this.name
 }
 
 // 使用上例中封装的New方法来创建实例
-var p1 = New(Person, 'Jake', 18);
-var p2 = New(Person, 'Tom', 20);
-p1.getName(); // Jake
-p2.getName(); // Tom
+var p1 = New(Person, 'Jake', 18)
+var p2 = New(Person, 'Tom', 20)
+p1.getName() // Jake
+p2.getName() // Tom
 ```
 
 把当前函数看成基础函数的话，那么**高阶函数，就是让当前函数获得额外能力的函数。**
@@ -72,26 +75,29 @@ p2.getName(); // Tom
 
 如果简单粗暴一点的理解，凡是接收一个函数作为参数的函数，都是高阶函数。但是如果这样理解，那么我们可能并不能很好的利用高阶函数的特性来让我们的代码变得更加优雅。因为高阶函数其实是一个高度封装的过程，理解他需要一点神奇的想象力。接下来，我们借助几个例子，来理解高阶函数的封装。
 
-## 01-数组map方法封装的思考过程
+## 01-数组 map 方法封装的思考过程
 
-数组有一个 map 方法，它对数组中的每一项运行特定的函数，返回每次函数调用的结果组成的新数组。通俗来说，就是遍历数组的每一项，并且在 map 的第一个参数中进行运算并返回结算结果。最后返回一个由所有计算结果组成的新数组。
+数组有一个 map 方法，它对数组中的每一项运行特定的函数，返回每次函数调用的结果组成的新数组。通俗来说，就是遍历数组的每一项，并且在 map 的第一个参数中进行运算并返回计算结果。最后返回一个由所有计算结果组成的新数组。
 
 ```javascript
 // 声明一个被遍历的数据array
-var array = [1, 2, 3, 4];
+var array = [1, 2, 3, 4]
 
 // map方法第一个参数为一个回调函数，该函数拥有三个参数
 //  + 第一个参数表示 array 数组中的每一项
 //  + 第二个参数表示当前遍历的索引值
 //  + 第三个参数表示数组本身
 //  + 该函数中的 this 指向为 map 方法的第二个参数，若该参数不存在，则this指向丢失
-const newArray = array.map(function(item, i, array) {
-    console.log(item, i, array, this); // 可运行查看每一项参数的具体值
-    return item + 1;
-}, { a: 1})
+const newArray = array.map(
+  function (item, i, array) {
+    console.log(item, i, array, this) // 可运行查看每一项参数的具体值
+    return item + 1
+  },
+  { a: 1 },
+)
 
 // newArray为一个新数组，由map遍历的结果组成
-console.log(newArray); // [2, 3, 4, 5]
+console.log(newArray) // [2, 3, 4, 5]
 ```
 
 上面的例子详细分析了 map 的所有细节。现在需要我们思考的是，如果要我们自己来封装这样一个方法，应该怎么办？
@@ -104,7 +110,7 @@ console.log(newArray); // [2, 3, 4, 5]
 
 ```javascript
 function add(a) {
-  return a + 10;
+  return a + 10
 }
 ```
 
@@ -113,36 +119,36 @@ function add(a) {
 基于这个思路，就可以按照如下的方式封装 map 方法。
 
 ```javascript
-Array.prototype._map = function(fn, context) {
+Array.prototype._map = function (fn, context) {
   // 首先定义一个数组来保存每一项的运算结果，最后返回
-  var temp = [];
-  if(typeof fn == 'function') {
-    var k = 0;
-    var len = this.length;
+  var temp = []
+  if (typeof fn == 'function') {
+    var k = 0
+    var len = this.length
     // 封装for循环过程
-    for(; k < len; k++) {
+    for (; k < len; k++) {
       // 将每一项的运算操作丢进fn里，利用call方法指定fn的this指向与具体参数
       temp.push(fn.call(context, this[k], k, this))
     }
   } else {
-    console.error('TypeError: '+ fn +' is not a function.');
+    console.error('TypeError: ' + fn + ' is not a function.')
   }
 
   // 返回每一项运算结果组成的新数组
-  return temp;
+  return temp
 }
 
-var newArr = [1, 2, 3, 4]._map(function(item) {
-  return item + 1;
+var newArr = [1, 2, 3, 4]._map(function (item) {
+  return item + 1
 })
 // [2, 3, 4, 5]
 ```
 
-回过头反思 map 方法的封装过程，可以发现，其实我们封装的是一个数组的 for 循环过程。每一个数组在使用for循环遍历时，虽然无法确认在 for 循环中到底会干什么事情，但是我们可以确定的是，他们一定会使用for循环。
+回过头反思 map 方法的封装过程，可以发现，其实我们封装的是一个数组的 for 循环过程。每一个数组在使用 for 循环遍历时，虽然无法确认在 for 循环中到底会干什么事情，但是我们可以确定的是，他们一定会使用 for 循环。
 
 于是，可以把使用 for 循环这个公共的逻辑封装起来，而具体要干什么事，则以一个函数作为参数的形式，来让使用者自定义。这个被作为参数传入的函数，我们可以称之为基础函数。而我们封装的 map 方法，就可以称之为高阶函数。
 
-**高阶函数的使用思路正是在于此，他其实是一个封装公共逻辑的过程。**例如此处的 for 循环逻辑。
+**高阶函数的使用思路正是在于此，他其实是一个封装公共逻辑的过程。** 例如此处的 for 循环逻辑。
 
 在实践中，高阶函数的用途也十分广泛，接下来我们通过另外一个例子再次来感受一下高阶函数的魅力。
 
@@ -192,10 +198,10 @@ var newArr = [1, 2, 3, 4]._map(function(item) {
 假设我们要展示主页，可以通过一个 renderIndex 的方法来渲染。当然，渲染主页仍然是一个单独的模块。
 
 ```javascript
-(function() {
-  const withLogin = window.withLogin;
+;(function () {
+  const withLogin = window.withLogin
 
-  const renderIndex = function(loginInfo) {
+  const renderIndex = function (loginInfo) {
     // 这里处理index页面的逻辑
 
     if (loginInfo.login) {
@@ -206,24 +212,24 @@ var newArr = [1, 2, 3, 4]._map(function(item) {
   }
 
   // 对外暴露接口时，使用高阶函数包一层，来执行当前页面的登录状态的判断
-  window.renderIndex = withLogin(renderIndex);
-})();
+  window.renderIndex = withLogin(renderIndex)
+})()
 ```
 
 同样的道理，当我们想要展示其他的页面，例如个人主页时，会有一个 renderPersonal 方法，如下：
 
 ```javascript
-(function() {
-  const withLogin = window.withLogin;
-  const renderPersonal = function(loginInfo) {
+;(function () {
+  const withLogin = window.withLogin
+  const renderPersonal = function (loginInfo) {
     if (loginInfo.login) {
       // do something
     } else {
       // do other something
     }
   }
-  window.renderPersonal = withLogin(renderPersonal);
-})();
+  window.renderPersonal = withLogin(renderPersonal)
+})()
 ```
 
 使用高阶函数封装每个页面的公共逻辑之后，会发现代码逻辑变得非常清晰，而且更加统一。当我们再写新的页面逻辑，就在此基础上完成即可，就再也不用去考虑已经封装过的逻辑。
@@ -231,9 +237,9 @@ var newArr = [1, 2, 3, 4]._map(function(item) {
 最后，在合适的时机使用这些渲染函数即可。
 
 ```javascript
-(function() {
-  window.renderIndex();
-})();
+;(function () {
+  window.renderIndex()
+})()
 ```
 
 在你的项目中使用高阶函数，你的代码会变得更加优雅，也更具逼格。
