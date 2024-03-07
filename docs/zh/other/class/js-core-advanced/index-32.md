@@ -1,6 +1,6 @@
 # 32-继承
 
-**承是对类的封装。**这是继承最核心的理念。
+**继承是对类的封装。** 这是继承最核心的理念。
 
 怎么来理解呢？通过一个实践案例来聊一聊。
 
@@ -20,7 +20,9 @@ class Student {
     this.name = name
     this.age = age
   }
-  getName() { return this.name }
+  getName() {
+    return this.name
+  }
 }
 
 class Teacher {
@@ -28,7 +30,9 @@ class Teacher {
     this.name = name
     this.age = age
   }
-  getName() { return this.name }
+  getName() {
+    return this.name
+  }
 }
 
 class Doctor {
@@ -36,7 +40,9 @@ class Doctor {
     this.name = name
     this.age = age
   }
-  getName() { return this.name }
+  getName() {
+    return this.name
+  }
 }
 ```
 
@@ -48,7 +54,9 @@ class Person {
     this.name = name
     this.age = age
   }
-  getName() { return this.name }
+  getName() {
+    return this.name
+  }
 }
 ```
 
@@ -60,7 +68,7 @@ class Teacher extends Person {}
 class Doctor extends Person {}
 ```
 
-代码得到了极大的简化。这也是为什么我们要总结为，继承，是对类的封装。对于实践应用这个观念特别重要，因为他会涉及到一个很重要的理念：**先有父类还是先由子类？**
+代码得到了极大的简化。这也是为什么我们要总结为，继承，是对类的封装。对于实践应用这个观念特别重要，因为他会涉及到一个很重要的理念：**先有父类还是先有子类？**
 
 初学时，可能会认为，应该先有父类，再有子类。但是实际情况并非如此，继承是对类的封装，那么也就意味着，应该先有子类，然后从子类中提炼出来父类。
 
@@ -99,14 +107,14 @@ function Student(name, age, grade) {
 // 将父类的原型对象作为参数传入
 function create(proto, options) {
   // 创建一个空对象
-  const tmp = {};
+  const tmp = {}
 
   // 让这个新的空对象成为父类对象的实例
-  tmp.__proto__ = proto;
+  tmp.__proto__ = proto
 
   // 传入的方法都挂载到新对象上，新的对象将作为子类对象的原型
-  Object.defineProperties(tmp, options);
-  return tmp;
+  Object.defineProperties(tmp, options)
+  return tmp
 }
 ```
 
@@ -116,13 +124,13 @@ function create(proto, options) {
 Student.prototype = create(Person.prototype, {
   // 不要忘了重新指定构造函数
   constructor: {
-    value: Student
+    value: Student,
   },
   getGrade: {
     value: function () {
       return this.grade
-    }
-  }
+    },
+  },
 })
 ```
 
@@ -132,42 +140,38 @@ Student.prototype = create(Person.prototype, {
 
 ```javascript
 function Person(name, age) {
-  this.name = name;
-  this.age = age;
+  this.name = name
+  this.age = age
 }
 Person.prototype.getName = function () {
   return this.name
 }
 Person.prototype.getAge = function () {
-  return this.age;
+  return this.age
 }
 
 function Student(name, age, grade) {
   // 构造函数继承
-  Person.call(this, name, age);
-  this.grade = grade;
+  Person.call(this, name, age)
+  this.grade = grade
 }
 
 // 原型继承
 Student.prototype = Object.create(Person.prototype, {
   // 不要忘了重新指定构造函数
   constructor: {
-    value: Student
+    value: Student,
   },
   getGrade: {
     value: function () {
       return this.grade
-    }
-  }
+    },
+  },
 })
 
+var s1 = new Student('ming', 22, 5)
 
-var s1 = new Student('ming', 22, 5);
-
-console.log(s1.getName()); // ming
-console.log(s1.getAge()); // 22
-console.log(s1.getGrade()); // 5
+console.log(s1.getName()) // ming
+console.log(s1.getAge()) // 22
+console.log(s1.getGrade()) // 5
 ```
-
-
-

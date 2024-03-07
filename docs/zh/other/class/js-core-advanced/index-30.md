@@ -7,7 +7,7 @@ function createPerson(name, age) {
   this.name = name
   this.age = age
 }
-createPerson.prototype.run = function() {
+createPerson.prototype.run = function () {
   console.log(`调用此方法${this.name}就会开始奔跑`)
 }
 
@@ -43,7 +43,9 @@ function Person(name, age) {
 }
 ```
 
-通过上一章节的分析我们知道，**属于属于所有实例共享的属性与方法，都被抽离出来放在了原型对象中，而属于每一个实例特有的属性与方法，都会留在构造函数。**** 例如，每一个实例的名字，只能属于每个实例特有，不可能所有实例共享名字。
+通过上一章节的分析我们知道，**属于属于所有实例共享的属性与方法，都被抽离出来放在了原型对象中，而属于每一个实例特有的属性与方法，都会留在构造函数。**
+
+例如，每一个实例的名字，只能属于每个实例特有，不可能所有实例共享名字。
 
 **new 关键字都干了什么**
 
@@ -56,25 +58,23 @@ function Person(name, age) {
 ```javascript
 // 将构造函数以参数形式传入
 function New(func) {
-
   // 声明一个中间对象，该对象为最终返回的实例
-  const res = {};
+  const res = {}
   if (func.prototype !== null) {
-
     // 将实例的原型指向构造函数的原型
-    res.__proto__ = func.prototype;
+    res.__proto__ = func.prototype
   }
 
   // ret为构造函数执行的结果，这里通过apply，将构造函数内部的this指向修改为指向res，即为实例对象
-  const ret = func.apply(res, Array.prototype.slice.call(arguments, 1));
+  const ret = func.apply(res, Array.prototype.slice.call(arguments, 1))
 
   // 当我们在构造函数中明确指定了返回对象时，那么new的执行结果就是该返回对象
-  if ((typeof ret === "object" || typeof ret === "function") && ret !== null) {
-    return ret;
+  if ((typeof ret === 'object' || typeof ret === 'function') && ret !== null) {
+    return ret
   }
 
   // 如果没有明确指定返回对象，则默认返回res，这个res就是实例对象
-  return res;
+  return res
 }
 ```
 
@@ -103,20 +103,20 @@ const p2 = new Person('Tom', 22)
 
 ![img](./assets/1-20240301171327552.png)
 
-构造函数的 prototype 与所有实例的 __ *proto*__ 都指向原型对象，原型对象中有一个 constructor 属性，指向构造函数。
+构造函数的 prototype 与所有实例的 **\_proto\_** 都指向原型对象，原型对象中有一个 constructor 属性，指向构造函数。
 
 需要注意的是，如果构造函数与原型对象中，同时声明了同名的方法/属性时，会优先访问构造函数中的方法/属性，如下例
 
 ```javascript
 function Person(name) {
   this.name = name
-  this.getName = function() {
+  this.getName = function () {
     console.log('你访问了构造函数中的 getName')
     return this.name
   }
 }
 
-Person.prototype.getName = function() {
+Person.prototype.getName = function () {
   console.log('你访问了原型对象中的 getName')
   return this.name
 }

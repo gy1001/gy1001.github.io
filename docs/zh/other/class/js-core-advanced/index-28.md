@@ -12,7 +12,7 @@
 const book = {
   title: 'JavaScript 核心进阶',
   author: '这波能反杀',
-  publish: '电子工业出版社'
+  publish: '电子工业出版社',
 }
 ```
 
@@ -25,12 +25,12 @@ const book = {
   title: 'JavaScript 核心进阶',
   author: '这波能反杀',
   publish: '电子工业出版社',
-  autoRead: function() {},
-  destory: function() {}
+  autoRead: function () {},
+  destory: function () {},
 }
 ```
 
-在 ECMAScript 的标准中，对象被定义为**无序属性的集合，其属性可以包含基本值，对象，函数。**** 也就是说，对象是由一系列无序的 key-value 对组成。其中 value 可以是基本数据类型，对象，数组，函数等。这刚好符合了上面的案例。
+在 ECMAScript 的标准中，对象被定义为**无序属性的集合，其属性可以包含基本值，对象，函数。\*\*** 也就是说，对象是由一系列无序的 key-value 对组成。其中 value 可以是基本数据类型，对象，数组，函数等。这刚好符合了上面的案例。
 
 ## 02-创建对象
 
@@ -71,7 +71,7 @@ const person = {
 const person = {
   name: 'Jake',
   age: 21,
-  run: () => {}
+  run: () => {},
 }
 ```
 
@@ -91,7 +91,7 @@ person[_name]
 因此，当我们想要访问的属性名是一个变量时，可以使用中括号的方式，例如
 
 ```javascript
-['name', 'age'].forEach(item => {
+;['name', 'age'].forEach((item) => {
   console.log(person[item])
 })
 ```
@@ -100,7 +100,7 @@ person[_name]
 
 ```javascript
 // person 对象中不存在 gender 属性
-person.gender   // undefined
+person.gender // undefined
 ```
 
 ## 04-删除
@@ -109,11 +109,11 @@ person.gender   // undefined
 
 ```javascript
 const person = {
-  name: 'TOM'
+  name: 'TOM',
 }
 
 delete person.name
-console.log(person.name)  // undefined
+console.log(person.name) // undefined
 ```
 
 除了使用输出是否为 undefined 来判断属性是否还存在与对象中，还可以使用 in 操作符。
@@ -121,13 +121,13 @@ console.log(person.name)  // undefined
 ```javascript
 const person = {
   name: 'TOM',
-  age: 20
+  age: 20,
 }
 
 delete person.name
 
-console.log('name' in person)   // false
-console.log('age' in person)   // true
+console.log('name' in person) // false
+console.log('age' in person) // true
 ```
 
 在实践中，in 操作符特别有用，例如快速判断当前应用环境是移动端还是 web 端
@@ -141,7 +141,17 @@ console.log('age' in person)   // true
 
 在 ECMAScript 内部，针对对象的每一个属性，都有一个描述对象来表达该属性的状态和行为。该描述对象包含如下属性值：
 
-**configurable：**表示该属性是否能被 delete 删除，其值为 false 时，描述对象的其他属性值都不能被改变。默认值为true。**enumerable：**该属性是否能被枚举。也就是是否能被 for-in 遍历，默认值为 true**writable：**该属性值是否能被修改。默认值为 true**value：**该属性的具体值。默认为 undefined**get：**当我们通过 `person.name` 访问 name 属性时，get 方法将被调用。该方法可以自定义返回的具体值。默认值为 undefined**set：**当我们通过 `person.name = 'Jake'` 设置 name 值时，set 方法将被调用。该方法可以自定义设置值的具体方式。默认值为 undefined
+**configurable：** 表示该属性是否能被 delete 删除，其值为 false 时，描述对象的其他属性值都不能被改变。默认值为 true。
+
+**enumerable：** 该属性是否能被枚举。也就是是否能被 for-in 遍历，默认值为 true
+
+**writable：** 该属性值是否能被修改。默认值为 true
+
+**value：** 该属性的具体值。默认为 undefined
+
+**get：** 当我们通过 `person.name` 访问 name 属性时，get 方法将被调用。该方法可以自定义返回的具体值。默认值为 undefined
+
+**set：** 当我们通过 `person.name = 'Jake'` 设置 name 值时，set 方法将被调用。该方法可以自定义设置值的具体方式。默认值为 undefined
 
 我们可以通过 `Object.defineProperty` 来修改属性的描述对象。需要注意的是，不能同时设置 value/writable 与 get/set 的值。
 
@@ -151,28 +161,28 @@ console.log('age' in person)   // true
 
 ```javascript
 // 用普通的方式给person对象添加一个name属性，值为TOM
-  const person = {
-    name: 'TOM'
-  }
+const person = {
+  name: 'TOM',
+}
 
-  // 使用delete删除该属性
-  delete person.name; // 返回true 表示删除成功
+// 使用delete删除该属性
+delete person.name // 返回true 表示删除成功
 
-  // 通过Object.defineProperty重新添加name属性
-  // 并设置name的属性类型的configurable为false，表示不能再用delete删除
-  Object.defineProperty(person, 'name', {
-    configurable: false,
-    value: 'Jake' // 设置name属性的值
-  })
+// 通过Object.defineProperty重新添加name属性
+// 并设置name的属性类型的configurable为false，表示不能再用delete删除
+Object.defineProperty(person, 'name', {
+  configurable: false,
+  value: 'Jake', // 设置name属性的值
+})
 
-  // 再次delete，已经不能删除了
-  delete person.name // false
+// 再次delete，已经不能删除了
+delete person.name // false
 
-  console.log(person.name) // 值为Jake
+console.log(person.name) // 值为Jake
 
-  // 试图改变value
-  person.name = "alex";
-  console.log(person.name) // Jake 改变失败，结果仍然为 Jake
+// 试图改变value
+person.name = 'alex'
+console.log(person.name) // Jake 改变失败，结果仍然为 Jake
 ```
 
 **enumerable**
@@ -180,55 +190,55 @@ console.log('age' in person)   // true
 ```javascript
 const person = {
   name: 'TOM',
-  age: 20
+  age: 20,
 }
 
 // 使用for-in枚举person的属性
-const params = [];
+const params = []
 
 for (var key in person) {
-  params.push(key);
+  params.push(key)
 }
 
 // 查看枚举结果
-console.log(params); // ['name', 'age']
+console.log(params) // ['name', 'age']
 
 // 重新设置name属性的类型，让其不可被枚举
 Object.defineProperty(person, 'name', {
-  enumerable: false
+  enumerable: false,
 })
 
-const params_ = [];
+const params_ = []
 for (var key in person) {
   params_.push(key)
 }
 
 // 再次查看枚举结果
-console.log(params_); // ['age']
+console.log(params_) // ['age']
 ```
 
 **writable**
 
 ```javascript
 const person = {
-  name: 'TOM'
+  name: 'TOM',
 }
 
 // 修改name的值
-person.name = 'Jake';
+person.name = 'Jake'
 
 // 查看修改结果
-console.log(person.name); // Jake 修改成功
+console.log(person.name) // Jake 修改成功
 
 // 设置name的值不能被修改
 Object.defineProperty(person, 'name', {
-  writable: false
+  writable: false,
 })
 
 // 再次试图修改name的值
-person.name = 'alex';
+person.name = 'alex'
 
-console.log(person.name); // Jake 修改失败
+console.log(person.name) // Jake 修改失败
 ```
 
 **value**
@@ -238,7 +248,7 @@ const person = {}
 
 // 添加一个name属性
 Object.defineProperty(person, 'name', {
-  value: 'TOM'
+  value: 'TOM',
 })
 
 console.log(person.name) // TOM
@@ -257,8 +267,8 @@ Object.defineProperty(person, 'name', {
   },
   set: function (value) {
     // 设置name属性时，返回该字符串，value为新值
-    console.log(value + ' in set');
-  }
+    console.log(value + ' in set')
+  },
 })
 
 // 第一次访问name，调用get
@@ -281,7 +291,7 @@ const person = {}
 Object.defineProperties(person, {
   name: {
     value: 'Jake',
-    configurable: true
+    configurable: true,
   },
   age: {
     get: function () {
@@ -289,8 +299,8 @@ Object.defineProperties(person, {
     },
     set: function (value) {
       this.value = value
-    }
-  }
+    },
+  },
 })
 
 person.name // Jake
@@ -304,20 +314,20 @@ person.age // 22
 ```javascript
 const person = {}
 
-  Object.defineProperty(person, 'name', {
-    value: 'alex',
-    writable: false,
-    configurable: false
-  })
+Object.defineProperty(person, 'name', {
+  value: 'alex',
+  writable: false,
+  configurable: false,
+})
 
-  var descripter = Object.getOwnPropertyDescriptor(person, 'name');
+var descripter = Object.getOwnPropertyDescriptor(person, 'name')
 
-  console.log(descripter); // 返回结果如下
+console.log(descripter) // 返回结果如下
 
-  descripter = {
-    configurable: false,
-    enumerable: false,
-    value: 'alex',
-    writable: false
-  }
+descripter = {
+  configurable: false,
+  enumerable: false,
+  value: 'alex',
+  writable: false,
+}
 ```

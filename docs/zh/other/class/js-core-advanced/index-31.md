@@ -17,7 +17,7 @@ function Person(name) {
   this.name = name
 }
 
-const p1 = new Person('Tom');
+const p1 = new Person('Tom')
 
 console.log(p1.__proto__ === Person.prototype) // true
 console.log(Person.prototype.constructor === Person) // true
@@ -61,5 +61,5 @@ const p = new Person('Tom')
 
 ```javascript
 // p 对象中并没有 constructor 属性，但是能够从其原型对象中找到，所以
-p.constructor === Person  // true
+p.constructor === Person // true
 ```

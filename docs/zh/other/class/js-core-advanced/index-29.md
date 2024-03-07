@@ -8,7 +8,7 @@
 const p1 = {
   name: '张三',
   age: 20,
-  run: function() {
+  run: function () {
     console.log('调用此方法张三就开始奔跑')
   },
 }
@@ -16,7 +16,7 @@ const p1 = {
 const p2 = {
   name: '李四',
   age: 22,
-  run: function() {
+  run: function () {
     console.log('调用此方法李四就开始奔跑')
   },
 }
@@ -24,7 +24,7 @@ const p2 = {
 const p3 = {
   name: '王五',
   age: 21,
-  run: function() {
+  run: function () {
     console.log('调用此方法王五就开始奔跑')
   },
 }
@@ -41,9 +41,9 @@ function createPerson(name, age) {
   return {
     name: name,
     age: age,
-    run: function() {
+    run: function () {
       console.log(`调用此方法${name}就会开始奔跑`)
-    }
+    },
   }
 }
 ```
@@ -68,9 +68,9 @@ const p3 = createPerson('王五', 21)
 function run() {}
 function createPerson(name, age) {
   return {
-    name: name, 
+    name: name,
     age: age,
-    run: run
+    run: run,
   }
 }
 ```
@@ -85,13 +85,13 @@ function createPerson(name, age) {
 
 ```javascript
 function run() {
- console.log(`调用此方法${this.name}就会开始奔跑`)
+  console.log(`调用此方法${this.name}就会开始奔跑`)
 }
 
 function createPerson(name, age) {
   this.name = name
   this.age = age
-  
+
   return this
 }
 ```
@@ -121,25 +121,23 @@ New 的逻辑也很简单，就是在内部创建一个空的对象，然后通�
 ```javascript
 // 将构造函数以参数形式传入
 function New(func) {
-
   // 声明一个中间对象，该对象为最终返回的实例
-  const res = {};
+  const res = {}
   if (func.prototype !== null) {
-
     // 将实例的原型指向构造函数的原型
-    res.__proto__ = func.prototype;
+    res.__proto__ = func.prototype
   }
 
   // ret为构造函数执行的结果，这里通过apply，将构造函数内部的this指向修改为指向res，即为实例对象
-  const ret = func.apply(res, Array.prototype.slice.call(arguments, 1));
+  const ret = func.apply(res, Array.prototype.slice.call(arguments, 1))
 
   // 当我们在构造函数中明确指定了返回对象时，那么new的执行结果就是该返回对象
-  if ((typeof ret === "object" || typeof ret === "function") && ret !== null) {
-    return ret;
+  if ((typeof ret === 'object' || typeof ret === 'function') && ret !== null) {
+    return ret
   }
 
   // 如果没有明确指定返回对象，则默认返回res，这个res就是实例对象
-  return res;
+  return res
 }
 ```
 
@@ -150,7 +148,7 @@ function New(func) {
 因此，定义时，run 方法会这样写
 
 ```javascript
-createPerson.prototype.run = function() {
+createPerson.prototype.run = function () {
   console.log(`调用此方法${this.name}就会开始奔跑`)
 }
 ```
@@ -160,32 +158,30 @@ createPerson.prototype.run = function() {
 ```javascript
 // 将构造函数以参数形式传入
 function New(func) {
-
   // 声明一个中间对象，该对象为最终返回的实例
-  const res = {};
+  const res = {}
   if (func.prototype !== null) {
-
     // 将实例的原型指向构造函数的原型
-    res.__proto__ = func.prototype;
+    res.__proto__ = func.prototype
   }
 
   // ret为构造函数执行的结果，这里通过apply，将构造函数内部的this指向修改为指向res，即为实例对象
-  const ret = func.apply(res, Array.prototype.slice.call(arguments, 1));
+  const ret = func.apply(res, Array.prototype.slice.call(arguments, 1))
 
   // 当我们在构造函数中明确指定了返回对象时，那么new的执行结果就是该返回对象
-  if ((typeof ret === "object" || typeof ret === "function") && ret !== null) {
-    return ret;
+  if ((typeof ret === 'object' || typeof ret === 'function') && ret !== null) {
+    return ret
   }
 
   // 如果没有明确指定返回对象，则默认返回res，这个res就是实例对象
-  return res;
+  return res
 }
 
 function createPerson(name, age) {
   this.name = name
   this.age = age
 }
-createPerson.prototype.run = function() {
+createPerson.prototype.run = function () {
   console.log(`调用此方法${this.name}就会开始奔跑`)
 }
 
