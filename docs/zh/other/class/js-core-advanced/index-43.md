@@ -39,15 +39,15 @@
 在 JavaScript 中，提供了默认的 Proxy 对象，用于创建一个对象的代理。
 
 ```javascript
-const t = {m: 1}
+const t = { m: 1 }
 const p1 = new Proxy(t, {
-  get: function(obj, prop) {
+  get: function (obj, prop) {
     return obj[prop]
-  }
+  },
 })
 
 // 通过代理对象，访问目标对象
-console.log(p1.m)  // 1
+console.log(p1.m) // 1
 
 // 通过代理对象修改目标对象
 p1.m = 2
@@ -69,114 +69,114 @@ class Internal {
     this.handler = handler
   }
   get(property, receiver) {
-    var handler = this.handler;
-    if (handler.get ==undefined) {
-      return this.target[property];
+    var handler = this.handler
+    if (handler.get == undefined) {
+      return this.target[property]
     }
     if (typeof handler.get === 'function') {
-      return handler.get(this.target, property, receiver);
+      return handler.get(this.target, property, receiver)
     }
   }
   set(property, value, receiver) {
-    var handler = this.handler;
+    var handler = this.handler
     if (handler.set == undefined) {
-      this.target[property] = value;
+      this.target[property] = value
     } else if (typeof handler.set === 'function') {
-      var result = handler.set(this.target, property, value, receiver);
+      var result = handler.set(this.target, property, value, receiver)
       if (!result) {
         console.error(`set 异常： ${property}`)
       }
     } else {
-      console.error("Trap 'set' is not a function: " + handler.set);
+      console.error("Trap 'set' is not a function: " + handler.set)
     }
   }
 }
 
 function ProxyPolyfill(target, handler) {
-  return proxyObject(new Internal(target, handler));
+  return proxyObject(new Internal(target, handler))
 }
 
 /**
  * Proxy object 这里是核心关键，使用 Object.create 的方式与 目标对象建立绑定关系
- * @param {Internal} internal 
+ * @param {Internal} internal
  * @returns {object}
  */
 function proxyObject(internal) {
-  var target = internal.target;
-  var descMap, newProto;
-  
-  descMap = observeProto(internal);
-  newProto = Object.create(Object.getPrototypeOf(target), descMap);
+  var target = internal.target
+  var descMap, newProto
 
-  descMap = observeProperties(target, internal);
-  return Object.create(newProto, descMap);
+  descMap = observeProto(internal)
+  newProto = Object.create(Object.getPrototypeOf(target), descMap)
+
+  descMap = observeProperties(target, internal)
+  return Object.create(newProto, descMap)
 }
 
 /**
  * Observe [[Prototype]]
- * @param {Internal} internal 
+ * @param {Internal} internal
  * @returns {object} descriptors
  */
 function observeProto(internal) {
-  var descMap = {};
-  var proto = internal.target;
-  while (proto = Object.getPrototypeOf(proto)) {
-    var props = observeProperties(proto, internal);
-    Object.assign(descMap, props);
+  var descMap = {}
+  var proto = internal.target
+  while ((proto = Object.getPrototypeOf(proto))) {
+    var props = observeProperties(proto, internal)
+    Object.assign(descMap, props)
   }
   descMap.__PROXY__ = {
     get: function () {
-      return internal.target ? undefined : 'REVOKED';
-    }
-  };
-  return descMap;
+      return internal.target ? undefined : 'REVOKED'
+    },
+  }
+  return descMap
 }
 
 /**
  * Observe properties
  * @param {object} obj
- * @param {Internal} internal 
+ * @param {Internal} internal
  * @returns {object} descriptors
  */
 function observeProperties(obj, internal) {
-  var names = Object.getOwnPropertyNames(obj);
-  var descMap = {};
+  var names = Object.getOwnPropertyNames(obj)
+  var descMap = {}
   for (var i = names.length - 1; i >= 0; --i) {
-    descMap[names[i]] = observeProperty(obj, names[i], internal);
+    descMap[names[i]] = observeProperty(obj, names[i], internal)
   }
-  return descMap;
+  return descMap
 }
 
 /**
  * Observe property，让 代理对象的属性操作，映射到目标对象
  * @param {object} obj
  * @param {string} prop
- * @param {Internal} internal 
+ * @param {Internal} internal
  * @returns {{get: function, set: function, enumerable: boolean, configurable: boolean}}
  */
 function observeProperty(obj, prop, internal) {
-  var desc = Object.getOwnPropertyDescriptor(obj, prop);
+  var desc = Object.getOwnPropertyDescriptor(obj, prop)
   return {
     get: function () {
-      return internal.get(prop, this);
+      return internal.get(prop, this)
     },
     set: function (value) {
-      internal.set(prop, value, this);
+      internal.set(prop, value, this)
     },
     enumerable: desc.enumerable,
-    configurable: desc.configurable
-  };
+    configurable: desc.configurable,
+  }
 }
 ```
 
 简单验证一下，发现初步达到了目的
 
 ```javascript
-const t = {m: 1}
+const t = { m: 1 }
 const p1 = new ProxyPolyfill(t, {
-  get: function(obj, prop) {
+  get: function (obj, prop) {
     return obj[prop]
-  }
+  },
 })
 
 p1.m = 2
@@ -191,33 +191,35 @@ console.log(t) // {m: 2}
 
 ```javascript
 var targetImage = (function () {
-  var imgNode = document.createElement('img');
-  document.body.appendChild(imgNode);
+  var imgNode = document.createElement('img')
+  document.body.appendChild(imgNode)
   return {
     setSrc: function (src) {
-      imgNode.src = src;
-    }
+      imgNode.src = src
+    },
   }
-})();
+})()
 
-var proxyImage = (function() {
-  var img = new Image();
+var proxyImage = (function () {
+  var img = new Image()
   // 先加载 loading 或者默认图片用于快速显示
   targetImage.setSrc('loading.gif')
   img.onload = img.onerror = function () {
     // 加载完成之后，替换目标图片
-    targetImage.setSrc(img.src);
-  };
+    targetImage.setSrc(img.src)
+  }
 
   return {
     setSrc: function (src) {
       // 此时开始加载图片
-      img.src = src;
-    }
+      img.src = src
+    },
   }
-})();
+})()
 
-proxyImage.setSrc('https://cn.bing.com/sa/simg/hpb/LaDigue_EN-CA1115245085_1920x1080.jpg');
+proxyImage.setSrc(
+  'https://cn.bing.com/sa/simg/hpb/LaDigue_EN-CA1115245085_1920x1080.jpg',
+)
 ```
 
 **缓存代理：记忆函数**

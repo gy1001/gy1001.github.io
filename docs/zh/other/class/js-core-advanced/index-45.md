@@ -19,15 +19,15 @@
 // config.js
 export const cloth = {
   name: '七彩炫光衣',
-  hp: 1000
+  hp: 1000,
 }
 export const weapon = {
   name: '青龙偃月刀',
-  attack: 2000
+  attack: 2000,
 }
 export const shoes = {
   name: '神行疾步靴',
-  speed: 300
+  speed: 300,
 }
 export const defaultRole = {
   hp: 100,
@@ -37,7 +37,7 @@ export const defaultRole = {
   weapon: null,
   shoes: null,
   career: null,
-  gender: null
+  gender: null,
 }
 ```
 
@@ -49,12 +49,12 @@ export const defaultRole = {
 // 以及衣服，武器，鞋子三个装备插槽
 class Role {
   constructor(role) {
-    this.hp = role.hp;
-    this.atk = role.atk;
-    this.speed = role.speed;
-    this.cloth = role.cloth;
-    this.weapon = role.weapon;
-    this.shoes = role.shoes;
+    this.hp = role.hp
+    this.atk = role.atk
+    this.speed = role.speed
+    this.cloth = role.cloth
+    this.weapon = role.weapon
+    this.shoes = role.shoes
   }
   run() {}
   attack() {}
@@ -104,16 +104,16 @@ class Soldier extends Role {
 // 基础装饰类
 class Decorator {
   constructor(role) {
-    this.role = role;
-    this.hp = role.hp;
-    this.atk = role.atk;
-    this.speed = role.speed;
-    this.cloth = role.cloth;
-    this.weapon = role.weapon;
-    this.shoes = role.shoes;
-    this.career = role.career;
-    this.gender = role.gender;
-    this.nickname = role.nickname;
+    this.role = role
+    this.hp = role.hp
+    this.atk = role.atk
+    this.speed = role.speed
+    this.cloth = role.cloth
+    this.weapon = role.weapon
+    this.shoes = role.shoes
+    this.career = role.career
+    this.gender = role.gender
+    this.nickname = role.nickname
   }
   run() {
     this.role.run()
@@ -143,7 +143,7 @@ class ClothDecorator extends Decorator {
 类封装好了之后，我们使用一下，感受一下变化
 
 ```javascript
-const baseInfo = {...defaultRole, nickname: 'alex', gender: 'man'}
+const baseInfo = { ...defaultRole, nickname: 'alex', gender: 'man' }
 // 创建一个战士角色
 const alex = new Soldier(baseInfo)
 alex.run()
@@ -203,13 +203,15 @@ console.log(alex)
 
 ![img](./assets/1-20240301114717667.png)
 
-除此之外，我们玩游戏时，还知道每个角色都会在某些情况下获得不同的 buff，例如大龙 buff，小龙 buff，红蓝 buff 等，这些buff 有的会更改角色属性，例如 cd 更短，攻击更高，有的会更改攻击特性，例如红 buff 会持续掉血，减速等。
+除此之外，我们玩游戏时，还知道每个角色都会在某些情况下获得不同的 buff，例如大龙 buff，小龙 buff，红蓝 buff 等，这些 buff 有的会更改角色属性，例如 cd 更短，攻击更高，有的会更改攻击特性，例如红 buff 会持续掉血，减速等。
 
 我们可以思考一下如何实现这些功能。
 
 ## 2-decorator
 
-> 默认情况下并不支持装饰器语法，因此，在学习该语法之前，你需要找到一个支持该语法的开发环境 [如何在构建环境中支持 decorator](https://technologyadvice.github.io/es7-decorators-babel6/)
+> 默认情况下并不支持装饰器语法，因此，在学习该语法之前，你需要找到一个支持该语法的开发环境
+
+[如何在构建环境中支持 decorator](https://technologyadvice.github.io/es7-decorators-babel6/)
 
 ES7 中提供了一个快捷的语法用来解决与装饰者模式一样的问题。这就是装饰器语法 decorator。
 
@@ -219,13 +221,13 @@ ES7 中提供了一个快捷的语法用来解决与装饰者模式一样的问�
 
 ```javascript
 var person = {
-  name: 'TOM'
+  name: 'TOM',
 }
 ```
 
 对象中的每个属性都有一个特性值来描述这个属性的特点，他们分别是：
 
-- `configurable`: 属性是否能被 delete 删除，当值为false时，其他特性值也不能被改变，默认值为true
+- `configurable`: 属性是否能被 delete 删除，当值为 false 时，其他特性值也不能被改变，默认值为 true
 - `enumerable`： 属性是否能被枚举，也就是是否能被 for in 循环遍历。默认为 true
 - `writable`: 是否能修改属性值。默认为 true
 - `value`：具体的属性值是多少，默认为 undefined
@@ -239,12 +241,12 @@ var person = {
 ```javascript
 // 三个参数分别为  target, key, descriptor(特性值的描述对象)
 Object.defineProperty(person, 'name', {
-  value: "TOM"
+  value: 'TOM',
 })
 
 // 新增
 Object.defineProperty(person, 'age', {
-  value: 20
+  value: 20,
 })
 ```
 
@@ -253,9 +255,9 @@ Object.defineProperty(person, 'age', {
 ```javascript
 function nameDecorator(target, key, descriptor) {
   descriptor.value = () => {
-    return 'jake';
+    return 'jake'
   }
-  return descriptor;
+  return descriptor
 }
 ```
 
@@ -270,29 +272,29 @@ class Person {
   }
   @nameDecorator
   getName() {
-    return this.name;
+    return this.name
   }
 }
 
-let p1 = new Person();
+let p1 = new Person()
 console.log(p1.getName())
 ```
 
 在 `getName` 方法前面加上 `@nameDecorator`，就是装饰器语法。
 
-自定义函数 `nameDecorator` 的参数中，target，就是装饰的对象Person，key 就是被装饰的具体方法`getName`。
+自定义函数 `nameDecorator` 的参数中，target，就是装饰的对象 Person，key 就是被装饰的具体方法`getName`。
 
 不能使用装饰器对构造函数进行更改，如果要修改构造函数，则可以通过如下的方式来完成
 
 ```javascript
 function initDecorator(target, key, descriptor) {
-  const fn = descriptor.value;
+  const fn = descriptor.value
   // 改变传入的参数值
   descriptor.value = (...args) => {
-    args[0] = 'TOM';
-    return fn.apply(target, args);
+    args[0] = 'TOM'
+    return fn.apply(target, args)
   }
-  return descriptor;
+  return descriptor
 }
 
 class Person {
@@ -301,18 +303,18 @@ class Person {
   }
   @initDecorator
   init(name, age) {
-    this.name = name;
-    this.age = age;
+    this.name = name
+    this.age = age
   }
   getName() {
-    return this.name;
+    return this.name
   }
   getAge() {
-    return this.age;
+    return this.age
   }
 }
 
-console.log(new Person('alex', 20).getName()); // TOM
+console.log(new Person('alex', 20).getName()) // TOM
 ```
 
 如果希望装饰器传入一个指定的参数，可以如下做。
@@ -321,12 +323,12 @@ console.log(new Person('alex', 20).getName()); // TOM
 // 注意这里的差别
 function initDecorator(name) {
   return function (target, key, descriptor) {
-    const fn = descriptor.value;
+    const fn = descriptor.value
     descriptor.value = (...args) => {
-      args[0] = name;
-      return fn.apply(target, args);
+      args[0] = name
+      return fn.apply(target, args)
     }
-    return descriptor;
+    return descriptor
   }
 }
 
@@ -336,23 +338,23 @@ class Person {
   }
   @initDecorator('xiaoming')
   init(name, age) {
-    this.name = name;
-    this.age = age;
+    this.name = name
+    this.age = age
   }
   getName() {
-    return this.name;
+    return this.name
   }
   getAge() {
-    return this.age;
+    return this.age
   }
 }
 
-console.log(new Person('alex', 20).getName());  // xiaoming
+console.log(new Person('alex', 20).getName()) // xiaoming
 ```
 
 这里利用了闭包的原理，将装饰器函数外包裹一层函数，以闭包的形式缓存了传入的参数。
 
-我们也可以对整个class添加装饰器
+我们也可以对整个 class 添加装饰器
 
 ```javascript
 function personDecorator(target) {
@@ -364,7 +366,7 @@ function personDecorator(target) {
   target.prototype.getAge = function () {
     return this.age
   }
-  return target;
+  return target
 }
 
 @personDecorator
@@ -373,16 +375,16 @@ class Person {
     this.init(name, age)
   }
   init(name, age) {
-    this.name = name;
-    this.age = age;
+    this.name = name
+    this.age = age
   }
   getName() {
-    return this.name;
+    return this.name
   }
 }
 
-var p = new Person('alex', 30);
-console.log(p.getName(), p.getAge());  // hahahahaha 30
+var p = new Person('alex', 30)
+console.log(p.getName(), p.getAge()) // hahahahaha 30
 ```
 
 也可以传参数
@@ -390,10 +392,10 @@ console.log(p.getName(), p.getAge());  // hahahahaha 30
 ```javascript
 function initDecorator(person) {
   return function (target, key, descriptor) {
-    var method = descriptor.value;
+    var method = descriptor.value
     descriptor.value = () => {
-      var ret = method.call(target, person.name);
-      return ret;
+      var ret = method.call(target, person.name)
+      return ret
     }
   }
 }
@@ -401,195 +403,197 @@ function initDecorator(person) {
 @stuDecorator(xiaom)
 class Student {
   constructor(name, age) {
-    this.init(name, age);
+    this.init(name, age)
   }
   @initDecorator(xiaom)
   init(name, age) {
-    this.name = name;
-    this.age = age;
+    this.name = name
+    this.age = age
   }
   getAge() {
-    return this.age;
+    return this.age
   }
   getName() {
-    return this.name;
+    return this.name
   }
 }
 
-var p = new Student('hu', 18);
-console.log(p.getAge(), p.getName(), p.getOther()); // 22 "xiaom" "other info."
+var p = new Student('hu', 18)
+console.log(p.getAge(), p.getName(), p.getOther()) // 22 "xiaom" "other info."
 ```
 
-那么用ES7 的decorator来实现最开始的需求，则可以这样做
+那么用 ES7 的 decorator 来实现最开始的需求，则可以这样做
 
 ```javascript
-import { cloth, weapon, shoes, defaultRole } from './config';
+import { cloth, weapon, shoes, defaultRole } from './config'
 
 // 基础角色
 class Role {
   constructor(role) {
-    this.hp = role.hp;
-    this.atk = role.atk;
-    this.speed = role.speed;
-    this.cloth = role.cloth;
-    this.weapon = role.weapon;
-    this.shoes = role.shoes;
+    this.hp = role.hp
+    this.atk = role.atk
+    this.speed = role.speed
+    this.cloth = role.cloth
+    this.weapon = role.weapon
+    this.shoes = role.shoes
     this.nickname = role.nickname
     this.gender = role.gender
   }
-  run() { }
-  attack() { }
+  run() {}
+  attack() {}
 }
-
 
 function ClothDecorator(target) {
   target.prototype.getCloth = function (cloth) {
-    this.hp += cloth.hp;
-    this.cloth = cloth.name;
+    this.hp += cloth.hp
+    this.cloth = cloth.name
   }
 }
 
 function WeaponDecorator(target) {
   target.prototype.getWeapon = function (weapon) {
-    this.atk += weapon.attack;
-    this.weapon = weapon.name;
+    this.atk += weapon.attack
+    this.weapon = weapon.name
   }
   target.prototype.attack = function () {
     if (this.weapon) {
-      console.log(`装备了${this.weapon}，攻击更强了`);
+      console.log(`装备了${this.weapon}，攻击更强了`)
     } else {
-      console.log('战士的基础攻击');
+      console.log('战士的基础攻击')
     }
   }
 }
 
 function ShoesDecorator(target) {
   target.prototype.getShoes = function (shoes) {
-    this.speed += shoes.speed;
-    this.shoes = shoes.name;
+    this.speed += shoes.speed
+    this.shoes = shoes.name
   }
   target.prototype.run = function () {
     if (this.shoes) {
-      console.log(`穿上了${this.shoes}，移动速度更快了`);
+      console.log(`穿上了${this.shoes}，移动速度更快了`)
     } else {
-      console.log('战士的奔跑动作');
+      console.log('战士的奔跑动作')
     }
   }
 }
-
 
 @ClothDecorator
 @WeaponDecorator
 @ShoesDecorator
 class Soldier extends Role {
   constructor(role) {
-    const o = Object.assign({}, defaultRole, role);
-    super(o);
-    this.career = '战士';
+    const o = Object.assign({}, defaultRole, role)
+    super(o)
+    this.career = '战士'
     if (role.hp == defaultRole.hp) {
-      this.hp = defaultRole.hp + 20;
+      this.hp = defaultRole.hp + 20
     }
     if (role.speed == defaultRole.speed) {
-      this.speed = defaultRole.speed + 5;
+      this.speed = defaultRole.speed + 5
     }
   }
   run() {
-    console.log('战士的奔跑动作');
+    console.log('战士的奔跑动作')
   }
   attack() {
-    console.log('战士的基础攻击');
+    console.log('战士的基础攻击')
   }
 }
 
 const base = {
   ...defaultRole,
   nickname: 'alex',
-  gender: 'man'
+  gender: 'man',
 }
 
-const s = new Soldier(base);
-s.getCloth(cloth);
-console.log(s);
+const s = new Soldier(base)
+s.getCloth(cloth)
+console.log(s)
 
-s.getWeapon(weapon);
-s.attack();
-console.log(s);
+s.getWeapon(weapon)
+s.attack()
+console.log(s)
 
-s.getShoes(shoes);
-s.run();
-console.log(s);
+s.getShoes(shoes)
+s.run()
+console.log(s)
 ```
 
 这里需要注意的是，装饰者模式与直接使用浏览器支持的语法在实现上的一些区别。
 
-ES7 Decorator重点在于对装饰器的封装，因此我们可以将上栗中的装饰器单独封装为一个模块。在细节上做了一些调整，让我们封装的装饰器模块不仅仅可以在创建战士对象的时候使用，在我们创建其他职业例如法师，射手的时候也能够正常使用。
+ES7 Decorator 重点在于对装饰器的封装，因此我们可以将上栗中的装饰器单独封装为一个模块。在细节上做了一些调整，让我们封装的装饰器模块不仅仅可以在创建战士对象的时候使用，在我们创建其他职业例如法师，射手的时候也能够正常使用。
 
 ```javascript
 export function ClothDecorator(target) {
   target.prototype.getCloth = function (cloth) {
-    this.hp += cloth.hp;
-    this.cloth = cloth.name;
+    this.hp += cloth.hp
+    this.cloth = cloth.name
   }
 }
 
 export function WeaponDecorator(target) {
   target.prototype.getWeapon = function (weapon) {
-    this.atk += weapon.attack;
-    this.weapon = weapon.name;
+    this.atk += weapon.attack
+    this.weapon = weapon.name
   }
   target.prototype.attack = function () {
     if (this.weapon) {
-      console.log(`${this.nickname}装备了${this.weapon}，攻击更强了。职业：${this.career}`);
+      console.log(
+        `${this.nickname}装备了${this.weapon}，攻击更强了。职业：${this.career}`,
+      )
     } else {
-      console.log(`${this.career}的基本攻击`);
+      console.log(`${this.career}的基本攻击`)
     }
   }
 }
 
 export function ShoesDecorator(target) {
   target.prototype.getShoes = function (shoes) {
-    this.speed += shoes.speed;
-    this.shoes = shoes.name;
+    this.speed += shoes.speed
+    this.shoes = shoes.name
   }
   target.prototype.run = function () {
     if (this.shoes) {
-      console.log(`${this.nickname}穿上了${this.shoes}，移动速度更快了。职业：${this.career}`);
+      console.log(
+        `${this.nickname}穿上了${this.shoes}，移动速度更快了。职业：${this.career}`,
+      )
     } else {
-      console.log(`${this.career}的奔跑动作`);
+      console.log(`${this.career}的奔跑动作`)
     }
   }
 }
 ```
 
-可以利用该例子，感受Decorator与继承的不同。
+可以利用该例子，感受 Decorator 与继承的不同。
 
-整理之后，Soldier的封装代码将会变得非常简单
+整理之后，Soldier 的封装代码将会变得非常简单
 
 ```javascript
-import { cloth, weapon, shoes, defaultRole } from './config';
-import { ClothDecorator, WeaponDecorator, ShoesDecorator } from './equip';
-import Role from './Role';
+import { cloth, weapon, shoes, defaultRole } from './config'
+import { ClothDecorator, WeaponDecorator, ShoesDecorator } from './equip'
+import Role from './Role'
 
 @ClothDecorator
 @WeaponDecorator
 @ShoesDecorator
 class Soldier extends Role {
   constructor(roleInfo) {
-    const o = Object.assign({}, defaultRoleInfo, roleInfo);
-    super(o);
-    this.career = '战士';
+    const o = Object.assign({}, defaultRoleInfo, roleInfo)
+    super(o)
+    this.career = '战士'
     if (roleInfo.hp == defaultRoleInfo.hp) {
-      this.hp = defaultRoleInfo.hp + 20;
+      this.hp = defaultRoleInfo.hp + 20
     }
     if (roleInfo.speed == defaultRoleInfo.speed) {
-      this.speed = defaultRoleInfo.speed + 5;
+      this.speed = defaultRoleInfo.speed + 5
     }
   }
   run() {
-    console.log('战士的奔跑动作');
+    console.log('战士的奔跑动作')
   }
   attack() {
-    console.log('战士的基础攻击');
+    console.log('战士的基础攻击')
   }
 }
 ```

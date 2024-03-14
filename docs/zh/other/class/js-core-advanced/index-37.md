@@ -14,31 +14,35 @@ html 代码如下
 
 ```html
 <div class="wrap">
-  <ul class="items"><!--
-    --><li class="item"><div>1</div></li><!--
-    --><li class="item"><div>2</div></li><!--
-    --><li class="item"><div>3</div></li><!--
-    --><li class="item"><div>4</div></li><!--
-    --><li class="item"><div>5</div></li><!--
-    --><li class="item"><div>6</div></li><!--
-  --></ul>
+  <ul class="items">
+    <li class="item"><div>1</div></li>
+    <li class="item"><div>2</div></li>
+    <li class="item"><div>3</div></li>
+    <li class="item"><div>4</div></li>
+    <li class="item"><div>5</div></li>
+    <li class="item"><div>6</div></li>
+  </ul>
 </div>
 ```
 
-我们的目标是实现水平方向上的滚动，因此需要 `li.item` 水平排列。此处，我们使用 `display: inline-block` 的方式来达到布局目的。但是我们知道，这样的布局，元素之间会存在默认的间隙，因此，使用了 `<!-- -->` 的方式来消除间隙。
+我们的目标是实现水平方向上的滚动，因此需要 `li.item` 水平排列。此处，我们使用 `display: inline-block` 的方式来达到布局目的。但是我们知道，这样的布局，元素之间会存在默认的间隙，我们可以使用 `<!-- -->` 的方式来消除间隙。
 
 另外，我们还需要控制页面元素的移动。可以通过改变元素的 `left, top, translateX, translateY` 等方式来做到，布局的选择，同时也会影响到最终的方案。
 
 在布局上，超出容器的部分，需要隐藏，此处的隐藏，是给`ul.items`的，注意与 float 布局的区别。
 
 ```css
-.items { overflow: hidden; }
+.items {
+  overflow: hidden;
+}
 ```
 
 `ul.items` 的内容不能折行，因此
 
 ```css
-.items { white-space: nowrap; }
+.items {
+  white-space: nowrap;
+}
 ```
 
 需要适配到移动端，因此，`li.item`的宽度就必然会随着设备宽度的变小而变小。
@@ -93,12 +97,12 @@ cancelFrame = window.cancelAnimationFrame ||
 ```javascript
 // 此处结合 jQuery 来实现，
 if ($items.children().eq(0).width() == 190) {
-  itemW = 190;
+  itemW = 190
 }
 if ($items.children().eq(0).width() == 160) {
-  itemW = 160;
+  itemW = 160
 }
-target = itemW * $items.children().length;
+target = itemW * $items.children().length
 ```
 
 > 该例子特地结合 jQuery 来实现，也是为了让大家感知一下语法不同，但原理万变不离其宗的感受
@@ -106,7 +110,7 @@ target = itemW * $items.children().length;
 为了实现障眼法，需要复制一份子元素
 
 ```javascript
-$items.html($items.html() + $items.html());
+$items.html($items.html() + $items.html())
 ```
 
 定义一个运动函数，这里的运动为匀速运动，因此比较简单，只需要一直 +1 即可。如果需要运动快一点，就多加一点
@@ -114,13 +118,13 @@ $items.html($items.html() + $items.html());
 ```javascript
 function adAni() {
   timer = nextFrame(function () {
-    scrollX += 1;
+    scrollX += 1
     if (scrollX >= target) {
-      scrollX = 0;
+      scrollX = 0
     }
-    $items.scrollLeft(scrollX);
-    adAni();
-  });
+    $items.scrollLeft(scrollX)
+    adAni()
+  })
 }
 ```
 
@@ -129,52 +133,56 @@ function adAni() {
 ```javascript
 // 判断是否在移动端
 function isMobile() {
-  return 'ontouchstart' in document;
+  return 'ontouchstart' in document
 }
 ```
 
 在移动端，可以左右滑动，滑动时停止自动滚动，松开之后继续自动滚动。移动端的滑动事件，主要通过 touchstart, touchmove, touchend 来实现，与 pc 端的 mousedown, mousemove, mouseup 类似。
 
 ```javascript
-var sX, sL;
-$items.on('touchstart', function (e) {
-  cancelFrame(timer);
-  sX = e.originalEvent.changedTouches[0].pageX;
-  sL = $items.scrollLeft();
-}).on('touchmove', function (e) {
-  var dis = e.originalEvent.changedTouches[0].pageX - sX;
-  var nowX = sL - dis;
-  if (nowX > target) {
-    nowX = 0;
-  }
-  $items.scrollLeft(nowX);
-}).on('touchend', function (e) {
-  scrollX = $items.scrollLeft();
-  if (scrollX >= target) {
-    scrollX = 0;
-  }
-  adAni();
-})
+var sX, sL
+$items
+  .on('touchstart', function (e) {
+    cancelFrame(timer)
+    sX = e.originalEvent.changedTouches[0].pageX
+    sL = $items.scrollLeft()
+  })
+  .on('touchmove', function (e) {
+    var dis = e.originalEvent.changedTouches[0].pageX - sX
+    var nowX = sL - dis
+    if (nowX > target) {
+      nowX = 0
+    }
+    $items.scrollLeft(nowX)
+  })
+  .on('touchend', function (e) {
+    scrollX = $items.scrollLeft()
+    if (scrollX >= target) {
+      scrollX = 0
+    }
+    adAni()
+  })
 ```
 
 到这里，功能基本上就已经搞定了，完整代码如下
 
 ```javascript
-;
-(function ($) {
+;(function ($) {
   var $items = $('.items'),
     lastTime = 0,
-    nextFrame = window.requestAnimationFrame ||
+    nextFrame =
+      window.requestAnimationFrame ||
       window.webkitRequestAnimationFrame ||
       window.mozRequestAnimationFrame ||
       window.msRequestAnimationFrame ||
       function (callback) {
-        var currTime = + new Date,
-          delay = Math.max(1000 / 60, 1000 / 60 - (currTime - lastTime));
-        lastTime = currTime + delay;
-        return setTimeout(callback, delay);
+        var currTime = +new Date(),
+          delay = Math.max(1000 / 60, 1000 / 60 - (currTime - lastTime))
+        lastTime = currTime + delay
+        return setTimeout(callback, delay)
       },
-    cancelFrame = window.cancelAnimationFrame ||
+    cancelFrame =
+      window.cancelAnimationFrame ||
       window.webkitCancelAnimationFrame ||
       window.webkitCancelRequestAnimationFrame ||
       window.mozCancelRequestAnimationFrame ||
@@ -183,61 +191,68 @@ $items.on('touchstart', function (e) {
     scrollX = 0,
     itemW = 240,
     target = 0,
-    timer = null;
+    timer = null
 
   if ($items.children().eq(0).width() == 190) {
-    itemW = 190;
+    itemW = 190
   }
   if ($items.children().eq(0).width() == 160) {
-    itemW = 160;
+    itemW = 160
   }
-  target = itemW * $items.children().length;
+  target = itemW * $items.children().length
 
-  $items.html($items.html() + $items.html());
+  $items.html($items.html() + $items.html())
 
-  adAni();
+  adAni()
 
   function adAni() {
     timer = nextFrame(function () {
-      scrollX += 1;
+      scrollX += 1
       if (scrollX >= target) {
-        scrollX = 0;
+        scrollX = 0
       }
-      $items.scrollLeft(scrollX);
-      adAni();
-    });
+      $items.scrollLeft(scrollX)
+      adAni()
+    })
   }
   if (!isMobile()) {
-    $items.on('mouseover', function () {
-      cancelFrame(timer);
-    }).on('mouseout', function () { adAni(); });
+    $items
+      .on('mouseover', function () {
+        cancelFrame(timer)
+      })
+      .on('mouseout', function () {
+        adAni()
+      })
   }
 
-  var sX, sL;
-  $items.on('touchstart', function (e) {
-    cancelFrame(timer);
-    sX = e.originalEvent.changedTouches[0].pageX;
-    sL = $items.scrollLeft();
-  }).on('touchmove', function (e) {
-    var dis = e.originalEvent.changedTouches[0].pageX - sX;
-    var nowX = sL - dis;
-    if (nowX > target) {
-      nowX = 0;
-    }
-    $items.scrollLeft(nowX);
-  }).on('touchend', function (e) {
-    scrollX = $items.scrollLeft();
-    if (scrollX >= target) {
-      scrollX = 0;
-    }
-    adAni();
-  })
+  var sX, sL
+  $items
+    .on('touchstart', function (e) {
+      cancelFrame(timer)
+      sX = e.originalEvent.changedTouches[0].pageX
+      sL = $items.scrollLeft()
+    })
+    .on('touchmove', function (e) {
+      var dis = e.originalEvent.changedTouches[0].pageX - sX
+      var nowX = sL - dis
+      if (nowX > target) {
+        nowX = 0
+      }
+      $items.scrollLeft(nowX)
+    })
+    .on('touchend', function (e) {
+      scrollX = $items.scrollLeft()
+      if (scrollX >= target) {
+        scrollX = 0
+      }
+      adAni()
+    })
 
   // 判断是否在移动端
   function isMobile() {
-    return 'ontouchstart' in document;
+    return 'ontouchstart' in document
   }
-})(jQuery);
+})(jQuery)
 ```
 
 那么，如何封装成为一个 jQuery 插件，就交给大家自己来完成啦！动手实践一下，应该不难搞定。

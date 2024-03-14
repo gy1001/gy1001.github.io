@@ -14,7 +14,7 @@
 
 员工的奖金，由员工基本工资与员工等级相关。
 
-奖金 = 基本工资 * 等级对应的倍数
+奖金 = 基本工资 \* 等级对应的倍数
 
 - A 级 -> 5 倍
 - B 级 -> 4 倍
@@ -50,7 +50,7 @@ function getBouns(base, level) {
 const p1 = {
   name: '张三',
   base: 1000,
-  level: 'A'
+  level: 'A',
 }
 p1.bouns = getBouns(p1.base, p1.level)
 
@@ -72,7 +72,7 @@ console.log(p1)
 
 ```javascript
 const map = {
-  A: function(base) {
+  A: function (base) {
     return base * 5
   },
   B: function (base) {
@@ -101,7 +101,7 @@ function getBouns(base, level) {
 const p2 = {
   name: '李四',
   base: 1200,
-  level: 'B'
+  level: 'B',
 }
 p2.bouns = getBouns(p2.base, p2.level)
 
@@ -119,16 +119,16 @@ console.log(p2)
 const fields = {
   username: {
     value: '张三',
-    rules: [{required: true, message: '该字段为必填'}, {max: 10}]
+    rules: [{ required: true, message: '该字段为必填' }, { max: 10 }],
   },
   password: {
     value: '123',
-    rules: [{required: true}, {min: 6}]
+    rules: [{ required: true }, { min: 6 }],
   },
   phone: {
     value: '123123',
-    rules: [{pattern: /(^1[3|5|8][0-9]{9}$)/, message: '手机号码规则不匹配'}]
-  }
+    rules: [{ pattern: /(^1[3|5|8][0-9]{9}$)/, message: '手机号码规则不匹配' }],
+  },
 }
 ```
 
@@ -140,63 +140,63 @@ const fields = {
 var strategys = {
   required: function (value, rule) {
     if (value === '') {
-      return rule.message || '该字段不能为空';
+      return rule.message || '该字段不能为空'
     }
   },
   // 限制最小长度
   min: function (value, rule) {
     if (value.length < rule.min) {
-      return rule.message || `该字段最小长度为${rule.min}`;
+      return rule.message || `该字段最小长度为${rule.min}`
     }
   },
   // 限制最小长度
   max: function (value, rule) {
     if (value.length > rule.max) {
-      return rule.message || `该字段最大长度为${rule.max}`;
+      return rule.message || `该字段最大长度为${rule.max}`
     }
   },
   // 手机号码格式
   pattern: function (value, rule) {
     if (!rule.pattern.test(value)) {
-      return rule.message || '正则匹配失败';
+      return rule.message || '正则匹配失败'
     }
-  }
-};
+  },
+}
 ```
 
 规则作为变量被提炼出来，规则的映射表也有了，那么我们只需要再封装一个验证对象即可。
 
 ```javascript
-function Validator () {
+function Validator() {
   // 格式 { username: { value: '张三', rules: [{}, {}] } }
-  this.fields = {};
-};
+  this.fields = {}
+}
 
 // 添加一个字段
 Validator.prototype.addField = function (name, value, rules) {
   this.fields[name] = {
     value,
-    rules
+    rules,
   }
-};
+}
 
 // 添加多个字段
-Validator.prototype.addFields = function(fields) {
+Validator.prototype.addFields = function (fields) {
   this.fields = fields
 }
 
 // 验证，并返回验证结果
-Validator.prototype.validate = function() {
+Validator.prototype.validate = function () {
   // 通过的字段，与错误的字段
   const result = { fields: [], errorFields: [] }
-  Object.keys(this.fields).forEach(key => {
+  Object.keys(this.fields).forEach((key) => {
     // 错误验证结果
     let errorMessage = ''
     const value = this.fields[key].value
     const rules = this.fields[key].rules
-    
+
     for (var i = 0; i < rules.length; i++) {
-      Object.keys(rules[i]).forEach(validateField => {
+      Object.keys(rules[i]).forEach((validateField) => {
         if (strategys[validateField]) {
           const message = strategys[validateField](value, rules[i])
           if (message) {
@@ -210,20 +210,20 @@ Validator.prototype.validate = function() {
     }
 
     if (errorMessage) {
-      result.errorFields.push({field: key, value, message: errorMessage})
+      result.errorFields.push({ field: key, value, message: errorMessage })
     } else {
-      result.fields.push({field: key, value})
+      result.fields.push({ field: key, value })
     }
   })
 
   return result
-};
+}
 ```
 
 这样，我们在使用时，就可以通过 `validate` 方法，得到表单验证的结果
 
 ```javascript
-var validator = new Validator();
+var validator = new Validator()
 validator.addFields(fields)
 const result = validator.validate()
 console.log(result)

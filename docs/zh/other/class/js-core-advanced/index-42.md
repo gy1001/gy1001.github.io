@@ -60,12 +60,12 @@ class Subject {
 
   // 删除观察者
   removeListener(observer) {
-    this.observers = this.observers.filter(item => item.id !== observer.id)
+    this.observers = this.observers.filter((item) => item.id !== observer.id)
   }
 
   // 通知
   dispatch() {
-    this.observers.forEach(item => {
+    this.observers.forEach((item) => {
       item.watch(this.name)
     })
   }
@@ -127,7 +127,7 @@ class Subject {
   addListener(type, fn) {
     const cbs = this.events[type]
     if (cbs && cbs.length > 0) {
-      const _cbs = cbs.filter(cb => cb != fn)
+      const _cbs = cbs.filter((cb) => cb != fn)
       _cbs.push(fn)
       this.events[type] = _cbs
     } else {
@@ -142,19 +142,19 @@ class Subject {
 
   // 通知
   dispatch(type) {
-    this.events[type].forEach(cb => cb())
+    this.events[type].forEach((cb) => cb())
   }
 }
 
 const sub = new Subject('div')
 
-sub.addListener('build', function() {
+sub.addListener('build', function () {
   console.log('build 事件触发1')
 })
 sub.addListener('build', function () {
   console.log('build 事件触发2')
 })
-sub.addListener('click', function() {
+sub.addListener('click', function () {
   console.log('click 事件触发')
 })
 
@@ -177,7 +177,7 @@ Dep：订阅器，收集 Watcher。
 
 Watcher：Dep 的订阅者，收到通知之后更新试图
 
-数据的变化，会被 Observer 劫持，并且通知订阅器 Dep。Dep 收到通知之后，又会通知 Watcher，Watcher 收到属性的变化通知并执行响应的函数去更新试图 View。
+数据的变化，会被 Observer 劫持，并且通知订阅器 Dep。Dep 收到通知之后，又会通知 Watcher，Watcher 收到属性的变化通知并执行响应的函数去更新视图 View。
 
 **Observer**
 
@@ -202,33 +202,33 @@ data 数据的监听机制不需要我们去实现，因为在 JavaScript 中，
 ```javascript
 class Observer {
   constructor(data) {
-    this.data = data;
-    this.walk(data);
+    this.data = data
+    this.walk(data)
   }
   walk(data) {
     Object.keys(data).forEach((key) => {
-      this.defineReactive(data, key, data[key]);
-    });
+      this.defineReactive(data, key, data[key])
+    })
   }
   defineReactive(data, key, val) {
-    const dep = new Dep();
+    const dep = new Dep()
     Object.defineProperty(data, key, {
       enumerable: true,
       configurable: true,
       get: () => {
         if (Dep.target) {
-          dep.addSub(Dep.target);
+          dep.addSub(Dep.target)
         }
-        return val;
+        return val
       },
       set: function (newVal) {
         if (newVal === val) {
-          return;
+          return
         }
-        val = newVal;
-        dep.notify();
-      }
-    });
+        val = newVal
+        dep.notify()
+      },
+    })
   }
 }
 ```
@@ -238,10 +238,10 @@ class Observer {
 ```javascript
 function observe(value, vm) {
   if (!value || typeof value !== 'object') {
-    return;
+    return
   }
-  return new Observer(value);
-};
+  return new Observer(value)
+}
 ```
 
 **Dep**
@@ -254,12 +254,12 @@ class Dep {
     this.subs = []
   }
   addSub(sub) {
-    this.subs.push(sub);
+    this.subs.push(sub)
   }
   notify() {
     this.subs.forEach(function (sub) {
-      sub.update();
-    });
+      sub.update()
+    })
   }
 }
 ```
@@ -275,29 +275,29 @@ class Dep {
 ```javascript
 class Watcher {
   constructor(vm, exp, cb) {
-    this.vm = vm;
-    this.exp = exp;
-    this.cb = cb;
-    this.value = this.get();
+    this.vm = vm
+    this.exp = exp
+    this.cb = cb
+    this.value = this.get()
   }
   update() {
     this.run()
   }
   run() {
-    var value = this.vm.data[this.exp];
-    var oldVal = this.value;
+    var value = this.vm.data[this.exp]
+    var oldVal = this.value
     if (value !== oldVal) {
-      this.value = value;
-      this.cb.call(this.vm, value, oldVal);
+      this.value = value
+      this.cb.call(this.vm, value, oldVal)
     }
   }
   get() {
-    Dep.target = this;
+    Dep.target = this
     // 访问data，触发 get 执行，把当前的 Watcher 实例，添加到 Dep 中
-    var value = this.vm.data[this.exp]  
+    var value = this.vm.data[this.exp]
     // 添加成功之后，释放掉自身，其他的实例还需要该引用
-    Dep.target = null;
-    return value;
+    Dep.target = null
+    return value
   }
 }
 ```
@@ -309,19 +309,19 @@ class Watcher {
 ```javascript
 class Vue {
   constructor(options, el, exp) {
-    this.data = options.data;
-    
+    this.data = options.data
+
     // 劫持 data
-    observe(this.data);
-    
+    observe(this.data)
+
     // 初始化显示
-    el.innerHTML = this.data[exp];
-    
+    el.innerHTML = this.data[exp]
+
     // 创建 Watcher 实例
     new Watcher(this, exp, function (value) {
-      el.innerHTML = value;
-    });
-    return this;
+      el.innerHTML = value
+    })
+    return this
   }
 }
 ```
@@ -333,32 +333,32 @@ class Vue {
 ```javascript
 class Vue {
   constructor(options, el, exp) {
-    this.data = options.data;
+    this.data = options.data
     Object.keys(this.data).forEach((key) => {
-      this.proxyKeys(key);
-    });
+      this.proxyKeys(key)
+    })
 
     // 劫持 data
-    observe(this.data);
-    
+    observe(this.data)
+
     // 初始化显示
-    el.innerHTML = this.data[exp];  
+    el.innerHTML = this.data[exp]
     new Watcher(this, exp, function (value) {
-      el.innerHTML = value;
-    });
-    return this;
+      el.innerHTML = value
+    })
+    return this
   }
   proxyKeys(key) {
     Object.defineProperty(this, key, {
       enumerable: false,
       configurable: true,
       get: () => {
-        return this.data[key];
+        return this.data[key]
       },
       set: (newVal) => {
-        this.data[key] = newVal;
-      }
-    });
+        this.data[key] = newVal
+      },
+    })
   }
 }
 ```
@@ -366,14 +366,22 @@ class Vue {
 封装好之后，最后的使用代码就很简单了。
 
 ```javascript
-var ele = document.querySelector('#wrap');
-var vue = new Vue({
-  data: {
-    text: 'hello world'
-  }
-}, ele, 'text');
+var ele = document.querySelector('#wrap')
+var vue = new Vue(
+  {
+    data: {
+      text: 'hello world',
+    },
+  },
+  ele,
+  'text',
+)
 
-document.addEventListener('click', function() {
-  vue.data.text = `${vue.data.text} vue click.`
-}, false)
+document.addEventListener(
+  'click',
+  function () {
+    vue.data.text = `${vue.data.text} vue click.`
+  },
+  false,
+)
 ```

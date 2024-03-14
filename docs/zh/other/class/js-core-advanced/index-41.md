@@ -56,7 +56,7 @@ class Huawei {
 
 这样封装没什么问题。不过我们在实践时，可能会遇到一些维护上的小问题。
 
-时光飞逝，类 Xiaomi 已经在代码中用了很久，项目中有几十处代码使用 `new Xiaomi()` 创建了大量的实例。可是后来我们发现，`Xiaomi` 已经出了很多种品牌了，例如 小米6，小米7，小米8，而且这些小米手机使用的材料也不一样。而我们最开始使用的 `Xiaomi`，其实是想要声明的是 小米 4。
+时光飞逝，类 Xiaomi 已经在代码中用了很久，项目中有几十处代码使用 `new Xiaomi()` 创建了大量的实例。可是后来我们发现，`Xiaomi` 已经出了很多种品牌了，例如 小米 6，小米 7，小米 8，而且这些小米手机使用的材料也不一样。而我们最开始使用的 `Xiaomi`，其实是想要声明的是 小米 4。
 
 为了适应场景的变动和调整，我们需要修改代码。但是 Xiaomi 类已经变成了祖传代码，此时如果轻易修改，风险非常大。即使只是改一个类名 Xiaomi -> Xiaomi4，就要改动几十处。因此我们在设计之初，如何避免未来修改代码的风险呢？
 
@@ -127,7 +127,7 @@ function factory(type) {
 
 这样能够解决一部分问题。
 
-进一步思考，后续手机的品种会越来越多，小米8，小米9， 小米10，华为 mete10，华为 p40 等等。那这个时候，我们会发现，除了要新增一个类之外，工厂方法 factory 也会持续被更改。
+进一步思考，后续手机的品种会越来越多，小米 8，小米 9， 小米 10，华为 mete10，华为 p40 等等。那这个时候，我们会发现，除了要新增一个类之外，工厂方法 factory 也会持续被更改。
 
 > 违背了开闭原则
 
@@ -156,14 +156,14 @@ const hw = factory('Huawei')
 
 ```javascript
 function Factory() {}
-Factory.prototype.create = function(type) {
+Factory.prototype.create = function (type) {
   var cur = this.config[type]
   if (cur) {
     return new cur()
   }
 }
 Factory.prototype.config = {}
-Factory.prototype.setConfig = function(type, sub) {
+Factory.prototype.setConfig = function (type, sub) {
   this.config[type] = sub
 }
 ```
@@ -218,7 +218,7 @@ class PhoneFactory {
       this.materials = {
         1: 'xiaomi_material1',
         2: 'xiaomi_material2',
-        3: 'xiaomi_material3',  
+        3: 'xiaomi_material3',
       }
     }
     if (type == 'iphone') {
@@ -253,29 +253,26 @@ const hw = new PhoneFactory('huawei')
 
 ```javascript
 init = jQuery.fn.init = function (selector, context, root) {
-  var match, elem;
+  var match, elem
 
   // $(""), $(null), $(undefined), $(false)
   if (!selector) {
-    return this;
+    return this
   }
 
   // $('.wrapper')
-  if (typeof selector === "string") {
-
+  if (typeof selector === 'string') {
     //...
-
     // $(DOMElement)
   } else if (selector.nodeType) {
-
-  // $(function)
-  // Shortcut for document ready
+    // $(function)
+    // Shortcut for document ready
   } else if (jQuery.isFunction(selector)) {
     //....
   }
 
-  return jQuery.makeArray(selector, this);
-};
+  return jQuery.makeArray(selector, this)
+}
 ```
 
 为了扩展时，不直接修改对象而是修改配置文件，可以进一步调整一下
@@ -296,7 +293,7 @@ const config = {
     1: 'huawei_material1',
     2: 'huawei_material2',
     3: 'huawei_material3',
-  }
+  },
 }
 
 class PhoneFactory {
@@ -357,7 +354,7 @@ class Huawei extends Phone {
 const config = {
   xiaomi: Xiaomi,
   iphone: IPhone,
-  huawei: Huawei
+  huawei: Huawei,
 }
 
 function factory(type) {

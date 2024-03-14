@@ -1,5 +1,3 @@
-
-
 # 40-单例模式
 
 单例模式是最简单的一种设计模式。同时也是使用最多的设计模式。我们在无意识中可能会大量使用它。
@@ -10,10 +8,10 @@
 
 例如，我们随便使用对象字面量创建一个对象，这就是最简单的单例。
 
-```
+```javascript
 const p1 = {
   token: '1xd33xsk21',
-  time: 20201219
+  time: 20201219,
 }
 ```
 
@@ -58,10 +56,10 @@ class Login {
     return this
   }
 
-  show() { }
-  hide() { }
+  show() {}
+  hide() {}
   // 渲染 DOM 节点
-  render() { }
+  render() {}
 }
 
 const p2 = new Login()
@@ -88,10 +86,10 @@ const Login = (function () {
       return this
     }
 
-    show() { }
-    hide() { }
+    show() {}
+    hide() {}
     // 渲染 DOM 节点
-    render() { }
+    render() {}
   }
   return LoginComponent
 })()
@@ -102,7 +100,7 @@ const p1 = new Login()
 console.log(p1 === p2) // true
 ```
 
-仔细观察用闭包存储实例，我们使用函数自执行的方式构建了闭包环境，如果我们换一种方式，假设我们的开发环境已经支持了模块化「import方式」，那么我们就可以将这种方式进行一个简单的调整
+仔细观察用闭包存储实例，我们使用函数自执行的方式构建了闭包环境，如果我们换一种方式，假设我们的开发环境已经支持了模块化「import 方式」，那么我们就可以将这种方式进行一个简单的调整
 
 首先定义
 
@@ -121,10 +119,10 @@ class LoginComponent {
     return this
   }
 
-  show() { }
-  hide() { }
+  show() {}
+  hide() {}
   // 渲染 DOM 节点
-  render() { }
+  render() {}
 }
 
 export default LoginComponent
@@ -138,7 +136,7 @@ import Login from 'components/login'
 const p1 = new Login()
 const p2 = new Login()
 
-console.log(p1 === p2)  // true
+console.log(p1 === p2) // true
 ```
 
 基于这个例子，大家可以体会一下：模块、闭包、单例 之间的关系。
@@ -149,16 +147,16 @@ console.log(p1 === p2)  // true
 
 ```javascript
 class Login {
-  constructor() { }
-  show() { }
-  hide() { }
+  constructor() {}
+  show() {}
+  hide() {}
   // 渲染 DOM 节点
-  render() { }
+  render() {}
 }
 
 const LoginProxy = (function () {
   let instance = null
-  return function() {
+  return function () {
     if (!instance) {
       instance = new Login()
     }
@@ -180,17 +178,17 @@ singleCreator 借助高阶函数的思想，用于扩展构造函数的逻辑。
 
 ```javascript
 class Login {
-  constructor() { }
-  show() { }
-  hide() { }
+  constructor() {}
+  show() {}
+  hide() {}
   // 渲染 DOM 节点
-  render() { }
+  render() {}
 }
 
 // 该方法可以将其他的任何类改造成为单例模式
 function singleCreator(constructor) {
   let instance = null
-  return function() {
+  return function () {
     if (!instance) {
       instance = new constructor()
     }

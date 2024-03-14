@@ -48,7 +48,7 @@ class Person {
     this.name = name
   }
   run(t) {
-    console.log(`${this.name} 跑了 ${t} 公里`);
+    console.log(`${this.name} 跑了 ${t} 公里`)
   }
 }
 
@@ -79,9 +79,13 @@ s1.run(20)
 
 依赖倒置原则的原始定义如下：
 
-High-level modules should not depend on low-level modules.  Both should depend on abstractions.**高层模块不应该依赖低层模块，两者都应该依赖其抽象**
+High-level modules should not depend on low-level modules. Both should depend on abstractions.
 
-Abstractions should not depend upon details.  Details should depend upon abstractions.**抽象不应该依赖细节，细节应该依赖抽象**
+**高层模块不应该依赖低层模块，两者都应该依赖其抽象**
+
+Abstractions should not depend upon details. Details should depend upon abstractions.
+
+**抽象不应该依赖细节，细节应该依赖抽象**
 
 这个理解起来有点困难，但是掌握之后威力巨大。
 
@@ -166,7 +170,7 @@ class Person {
 
 ```javascript
 interface Reader {
-  getContent: () => string
+  getContent: () => string;
 }
 ```
 
@@ -218,10 +222,10 @@ class Person {
 ```javascript
 interface Book {
   // 提供内容
-  getContent: () => string,
-  
+  getContent: () => string;
+
   // 燃烧
-  burn: () => void
+  burn: () => void;
 }
 ```
 
@@ -232,11 +236,11 @@ interface Book {
 ```javascript
 // 读物
 interface Reader {
-  getContent: () => string
+  getContent: () => string;
 }
 可燃物
 interface CombustibleMaterial {
-  burn: () => void
+  burn: () => void;
 }
 ```
 
@@ -269,7 +273,7 @@ class BranchOffice {
   getEmployeeList() {
     return []
   }
-  
+
   // 通过员工id进一步获取员工更多的信息，例如基本工资，绩效信息，提成方式等
   getEmployeeInfo(id) {
     return '员工信息'
@@ -299,14 +303,14 @@ class HeadOffice {
     const headEmployees = this.getEmployeeList()
     headEmployees.forEach((emp, i) => {
       const info = this.getEmployeeInfo(emp.id)
-      this.setEmployeeSalary({...emp, ...info})
+      this.setEmployeeSalary({ ...emp, ...info })
     })
 
     // 需要通过分公司，获取到分公司的员工信息，以及员工的详细信息
     const employees = office.getEmployeeList()
     employees.forEach((emp, i) => {
       const info = office.getEmployeeInfo(emp.id)
-      this.setEmployeeSalary({...emp, ...info})
+      this.setEmployeeSalary({ ...emp, ...info })
     })
   }
 }
@@ -336,9 +340,9 @@ class BranchOffice {
   // 计算所有员工的薪资
   calAllEmployeeSalary() {
     const employees = this.getEmployeeList()
-    employees.forEach(employee => {
+    employees.forEach((employee) => {
       const info = this.getEmployeeInfo(employee.id)
-      this.setEmployeeSalary({...employee, ...info})
+      this.setEmployeeSalary({ ...employee, ...info })
     })
   }
 }
@@ -358,7 +362,7 @@ class HeadOffice {
   // 计算集团公司所有员工的薪资
   calAllEmployeeSalary() {
     const employees = this.getEmployeeList()
-    employees.forEach(employee => {
+    employees.forEach((employee) => {
       const info = this.getEmployeeInfo(employee.id)
       this.setEmployeeSalary({ ...employee, ...info })
     })
