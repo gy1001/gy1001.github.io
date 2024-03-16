@@ -16,7 +16,7 @@ JS 同时也是一门弱类型语言。我们声明一个变量之后，它可�
 
 在复杂项目中，我们无法承受 JS 弱类型的副作用，这是 typescript 出现的基础动因，它让 JavaScript 具备了强类型语言的特征。当然，除了解决这些基础问题，ts 还有许多别的特性。
 
-## 2-什么是typescirpt 「后面简称ts」
+## 2-什么是 typescirpt 「后面简称 ts」
 
 官方文档解释说，**ts 是 JavaScript 的超集，它可以编译成纯 JavaScript**。
 
@@ -24,11 +24,11 @@ JS 同时也是一门弱类型语言。我们声明一个变量之后，它可�
 
 总的来说，ts 是一套语法规则，也是一套语法规范，它能帮助我们约束自己的代码，以具备更强的可维护性和健壮性。
 
-## 3-作用1：直接在开发过程中暴露错误
+## 3-作用 1：直接在开发过程中暴露错误
 
 如图所示。
 
-试图修改const声明的常量
+试图修改 const 声明的常量
 
 ![img](./assets/1-20240301115936634.png)
 
@@ -38,13 +38,13 @@ JS 同时也是一门弱类型语言。我们声明一个变量之后，它可�
 
 与 eslint 类似，具体的报错语法我们可以通过 `tslint` 来配置规则。
 
-## 4-作用2：约束变量类型
+## 4-作用 2：约束变量类型
 
 当我们给变量 foo 设定为 number 之后，如果我们试图将其他类型的值赋值给变量 foo，那么编辑器就会抛出异常，因为这违反了类型约束的规定。
 
 ![img](./assets/1-20240301115936640.png)
 
-## 5-作用3：描述函数规则，即明确的告诉使用者该函数的参数类型与返回值类型
+## 5-作用 3：描述函数规则，即明确的告诉使用者该函数的参数类型与返回值类型
 
 当我们定义了 add 函数，要求传入该函数的参数分别为 2 个 number 类型，并且返回值也为 number 类型。那么在使用时，不符合这个规则的用法都会报错。
 
@@ -60,11 +60,11 @@ JS 同时也是一门弱类型语言。我们声明一个变量之后，它可�
 ```typescript
 function add(a, b) {
   if (typeof a != 'number') {
-   // ...
+    // ...
   }
-  
+
   if (typeof b != 'number') {
-   // ...
+    // ...
   }
 }
 ```
@@ -79,26 +79,26 @@ function add(a: number, b: number): number {
 
 **代码习惯不好的人，就不会觉得应该做这样的判断，所以他们无法感知 ts 的好处，他们写出来的代码，往往也禁不住考验。**
 
-## 6-ts作用4：使用 interface 描述复杂数据
+## 6-ts 作用 4：使用 interface 描述复杂数据
 
 ```typescript
 interface IParamA {
-  id: number,
+  id: number
   name: string
 }
 
 function fetchList(params: IParamA): Promise<void> {
-  return axios.get('/api/demo', params);
+  return axios.get('/api/demo', params)
 }
 
-fetchList({ id: 1, name: 'alex' });
+fetchList({ id: 1, name: 'alex' })
 ```
 
 如上所示的例子，当我们定义 `fetchList` 时，会传入一个 JSON 对象作为参数，此时我们需要描述该参数的数据类型，借助 `interface` 即可做到，当传入的参数不符合描述的规则时，会抛出对应的错误。
 
 ![img](./assets/1-20240301115936645.png)
 
-在实践中，数据的复杂程度远不止于此，因此我们还需要借助更多的知识点来描述不同的参数类型，这也是我们学习ts的重点与难点。
+在实践中，数据的复杂程度远不止于此，因此我们还需要借助更多的知识点来描述不同的参数类型，这也是我们学习 ts 的重点与难点。
 
 例如枚举类型。
 
@@ -108,22 +108,22 @@ enum Direction {
   up = 1,
   down,
   left,
-  right
+  right,
 }
 
 /** 三种运动方式 */
-type MoveType = 'linear' | 'ease' | 'bounce';
+type MoveType = 'linear' | 'ease' | 'bounce'
 
 function moveToDemo(ease: string, direction: Direction): void {
   // .. todo
-  console.log(ease, direction);
+  console.log(ease, direction)
 }
 
 function moveTo(ease: MoveType, direction: Direction): void {
-  console.log(ease, direction);
+  console.log(ease, direction)
 }
 
-moveTo('bounce', Direction.down);
+moveTo('bounce', Direction.down)
 ```
 
 上面这个例子中，我们自定义了一个函数 moveTo，该函数接收两个参数
@@ -135,41 +135,41 @@ moveTo('bounce', Direction.down);
 
 ![img](./assets/1-20240301115936694.png)
 
-## 7-描述class对象
+## 7-描述 class 对象
 
-与ES6语法几乎一样。
+与 ES6 语法几乎一样。
 
 ```typescript
 class Person {
-  private name: string;
-  private age: number;
+  private name: string
+  private age: number
   constructor(name: string, age: number) {
-    this.name = name;
-    this.age = age;
+    this.name = name
+    this.age = age
   }
 
   public getName(): string {
-    return this.name;
+    return this.name
   }
 
   public getAge(): number {
-    return this.age;
+    return this.age
   }
 }
-const p1 = new Person('alex', 20);
-p1.getAge();
-p1.getName();
+const p1 = new Person('alex', 20)
+p1.getAge()
+p1.getName()
 ```
 
 ![img](./assets/1-20240301115936670.png)
 
 ## 8-总结：**ts 的主要作用在于约束**
 
-通过上面的几个简单的例子，我们可以知道，ts 的主要作用在于通过各种方式约束我们的代码。也可以这样理解：**ts是一套约束规则**。而我们只要掌握了这套约束规则，必然的，我们的代码习惯就会变得更好，除此之外，另一个好处就是，我们可以更加容易的读懂别人的代码。
+通过上面的几个简单的例子，我们可以知道，ts 的主要作用在于通过各种方式约束我们的代码。也可以这样理解：**ts 是一套约束规则**。而我们只要掌握了这套约束规则，必然的，我们的代码习惯就会变得更好，除此之外，另一个好处就是，我们可以更加容易的读懂别人的代码。
 
 也正因为约束规则的存在，IDE「例如 vscode」就可以很容易的做到智能提示，这也是我们要在实践中使用 ts 的另一个重要原因。
 
-因此，我们学习ts的过程，其实就是学习一套约束规则的过程。
+因此，我们学习 ts 的过程，其实就是学习一套约束规则的过程。
 
 ## 9-快速读懂别人的代码
 
@@ -181,7 +181,7 @@ p1.getName();
 
 在团队协作中，衡量一个人代码水平最重要的因素是**代码可读性**。在我看来，它是比性能和技巧更为重要的一个标准。
 
-而 typescript 在复杂项目中，对于代码可读性带来的增强是非常具有吸引力的。因此越来越多的团队在项目中深度使用 ts。甚至在 angular 团队中，整个`angular`都是直接使用ts开发。vue3 也是。
+而 typescript 在复杂项目中，对于代码可读性带来的增强是非常具有吸引力的。因此越来越多的团队在项目中深度使用 ts。甚至在 angular 团队中，整个`angular`都是直接使用 ts 开发。vue3 也是。
 
 typescript 已经成为了前端开发者的必备技能之一。
 

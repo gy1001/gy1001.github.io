@@ -18,7 +18,7 @@ promise 表达的就是从发起请求开始，从没结果 pending 到 有结�
 
 在 promise 内部，使用 resolve 方法来同意请求，状态变成 fulfilled，使用 reject 方法来拒绝请求，状态变成 rejected。
 
-> 在我初学的时候，同意请求之后状态变成了 fulfilled 让我感到非常困惑。为什么不是 resolved 的呢？这个小的细节让我在初学时感到很难受，因此为了统一概念，**我在文中，将表达被同意状态的单词 fulfilled 修改成了 resolved。**标准的文档中，使用 fulfilled / onFulfilled 来表示
+> 在我初学的时候，同意请求之后状态变成了 fulfilled 让我感到非常困惑。为什么不是 resolved 的呢？这个小的细节让我在初学时感到很难受，因此为了统一概念，**我在文中，将表达被同意状态的单词 fulfilled 修改成了 resolved。** 标准的文档中，使用 fulfilled / onFulfilled 来表示
 
 ```javascript
 - resolve() -> fulfilled
@@ -134,7 +134,7 @@ next code
 
 ## 2-Promise
 
-**ajax**
+### **ajax**
 
 ajax 是网页与服务端进行数据交互的一种技术。
 
@@ -258,11 +258,11 @@ p.then(function (result) {
 
 然后接下来我们来了解 Promise 的相关基础知识。
 
-**创建**
+### **创建**
 
 使用 `new Promise()` 可以创建一个 Promise 实例。
 
-```
+```javascript
 const p = new Promise()
 ```
 
@@ -291,7 +291,7 @@ promise 的默认状态为 `pending`
 
 `resolve、reject` 是 `executor` 函数的两个参数。他们能够将请求结果的具体数据传递出去。
 
-**then**
+### **then**
 
 Promise 实例拥有的 `then` 方法，用来处理当请求结果的状态变成 `resolved` 时的逻辑。`then` 的第一个参数也为一个回调函数，该函数的参数则是 `resolve` 传递出来的数据。在上面的例子中，`result` 的值为 `tag is true`。
 
@@ -308,7 +308,7 @@ Promise.resolve('abc')
   })
 ```
 
-**catch**
+### **catch**
 
 Promise 实例拥有的 `catch` 方法，用来处理当请求结果的状态变成 `rejected` 时的逻辑。`catch` 的第一个参数也为一个回调函数，该函数的参数则是 `reject` 传递出来的数据。在上面的例子中，`err = tag is false`。
 
@@ -515,7 +515,7 @@ $.get(url)
   })
 ```
 
-**Promise.all**
+### **Promise.all**
 
 当有一个 ajax 请求，它的参数需要另外 2 个甚至更多请求都有返回结果之后才能确定，那么这个时候，就需要用到 Promise.all 来帮助我们应对这个场景。
 
@@ -535,7 +535,7 @@ renderAll().then(function (value) {
 })
 ```
 
-#### Promise.race
+### Promise.race
 
 与 Promise.all 相似的是，Promise.race 都是以一个 Promise 对象组成的数组作为参数，不同的是，只要当数组中的其中一个 Promsie 状态变成 resolved 或者 rejected 时，就可以调用.then 方法了。而传递给 then 方法的值也会有所不同，大家可以再浏览器中运行下面的例子与上面的例子进行对比。
 
@@ -549,7 +549,7 @@ renderRace().then(function (value) {
 })
 ```
 
-**async/await**
+### **async/await**
 
 异步问题除了可以使用前面学到的 `Promise` 来解决之外，我们还可以用 `async/await` 来搞定。
 
@@ -636,7 +636,7 @@ foo()
 
 很显然如果使用 async/await 的话，代码结构会更加简洁，逻辑也更加清晰。
 
-**异常处理**
+### **异常处理**
 
 在 Promise 中，我们知道是通过 catch 的方式来捕获异常。而当我们使用 async 时，则通过 try/catch 来捕获异常。
 

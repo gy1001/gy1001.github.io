@@ -59,16 +59,16 @@ export const name2 = 'Jake'
 当我们在其他模块引入该模块的接口时，如果只需要其中一个接口
 
 ```javascript
-import {name1} from './module01'
+import { name1 } from './module01'
 ```
 
 但是如果我们需要引入该模块中所有的对外接口，一种方式是在大括号中将所有的名称都列出来，另外一种方式就是使用通配符与 as 配合。
 
 ```javascript
-import { name1, name2 } from './module01';
+import { name1, name2 } from './module01'
 
 // or 利用别名的方式
-import * as module01 from './module01';
+import * as module01 from './module01'
 // 那么就有
 name1 = module01.name1
 name2 = module01.name2
@@ -78,20 +78,20 @@ name2 = module01.name2
 
 ```javascript
 // 修改module01.js
-const name1 = 'TOM';
-const name2 = 'Jake';
+const name1 = 'TOM'
+const name2 = 'Jake'
 
 // ES6对象的简写语法
 export default {
   name1,
-  name2
+  name2,
 }
 ```
 
 那么，在引入模块时的写法我们需要相应的做一些调整。当模块中有 `export default` 命令抛出接口时，引入模块时就可以直接这样写：
 
 ```javascript
-import module01 from './module01';
+import module01 from './module01'
 ```
 
 此时的 `module01` 就是 `export default` 抛出的对象。
@@ -100,7 +100,7 @@ import module01 from './module01';
 
 不过可以同时拥有多个 `export` 与一个 `export default`。
 
-**3.1 创建模块1**
+### **3.1 创建模块 1**
 
 开始尝试使用一些简单的 ts 语法。
 
@@ -126,13 +126,13 @@ export default Person
 
 ```javascript
 // src/index.tsx
-import Person from './person';
+import Person from './person'
 
-const p1 = new Person('Tom', 20);
-console.log(p1.getName());
+const p1 = new Person('Tom', 20)
+console.log(p1.getName())
 ```
 
-**3.2 创建模块2**
+### **3.2 创建模块 2**
 
 该案例演示多个 `export` 与一个 `export default` 同时存在的情况。
 
@@ -165,5 +165,5 @@ export default Person;
 使用时，写法如下
 
 ```javascript
-import Person2, {fn, bar} from './person2'
+import Person2, { fn, bar } from './person2'
 ```

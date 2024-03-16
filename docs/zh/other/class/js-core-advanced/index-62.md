@@ -2,16 +2,16 @@
 
 ![img](./assets/1-20240301120027187.png)
 
-这篇文章跟大家分享学习ts的又一个重难点「**泛型**」。
+这篇文章跟大家分享学习 ts 的又一个重难点「**泛型**」。
 
 在 ts 中，得泛型者，得天下！丢泛型者，失天下！
 
 ## 1-什么是泛型
 
-整个ts的学习，其实就是各种数据类型的类型约束的学习。当我们规定一个变量只能是 `number` 时，它就不能是其他数据类型。
+整个 ts 的学习，其实就是各种数据类型的类型约束的学习。当我们规定一个变量只能是 `number` 时，它就不能是其他数据类型。
 
 ```typescript
-let a: number = 20;
+let a: number = 20
 a = 'string' // 类型错误
 ```
 
@@ -28,16 +28,15 @@ function foo(a: number, b: string): string {
 以我们用的非常多的数组方法 `map` 为例。
 
 ```typescript
-[1, 2, 3].map(item => {
-  return item + 1;
+;[1, 2, 3].map((item) => {
+  return item + 1
 })
 ```
 
 我们都知道 map 方法接收的第一个参数为一个回调函数 `callback`，`callback`的第一个参数为数组的每一项。那么问题就来了，不同的数组调用 map，数组的每一项数据类型必然不一样
 
 ```typescript
-[1, 2, 3].map()
-['a', 'b', 'c'].map()
+;[1, 2, 3].map()[('a', 'b', 'c')].map()
 ```
 
 应该怎么办？我们应该使用什么样的方式来约束 callback 的参数呢？
@@ -52,22 +51,26 @@ function foo(a: number, b: string): string {
 
 ```typescript
 interface Person {
-  name: string,
+  name: string
   age: number
 }
 
-const demo1: number[] = [1, 2, 3];
-const demo2: string[] = ['a', 'b', 'c'];
-const demo3: Person[] = [{ name: 'alex', age: 20 }, { name: 'john', age: 10 }, { name: 'hx', age: 21 }];
+const demo1: number[] = [1, 2, 3]
+const demo2: string[] = ['a', 'b', 'c']
+const demo3: Person[] = [
+  { name: 'alex', age: 20 },
+  { name: 'john', age: 10 },
+  { name: 'hx', age: 21 },
+]
 
-demo1.map((item) => item);
-demo2.map((item) => item);
-demo3.map((item) => item);
+demo1.map((item) => item)
+demo2.map((item) => item)
+demo3.map((item) => item)
 ```
 
 ![img](./assets/1-20240301120034274.png)
 
-从图中可以看出，当不同的数组调用 map 时，回调函数的参数 item，会自动推导为对应的数据类型。也就是说，这里的item，必然是使用了泛型进行了更为宽松的约束。
+从图中可以看出，当不同的数组调用 map 时，回调函数的参数 item，会自动推导为对应的数据类型。也就是说，这里的 item，必然是使用了泛型进行了更为宽松的约束。
 
 **也就是说，泛型，其实就是变量**
 
@@ -86,9 +89,13 @@ interface Array<T> {
 因此针对数据的描述，我们通常可以这样做：
 
 ```typescript
-const arr1: Array<number> = [1, 2, 3];
-const arr2: Array<string> = ['a', 'b', 'c'];
-const arr3: Array<Person> = [{ name: 'alex', age: 20 }, { name: 'john', age: 10 }, { name: 'hx', age: 21 }];
+const arr1: Array<number> = [1, 2, 3]
+const arr2: Array<string> = ['a', 'b', 'c']
+const arr3: Array<Person> = [
+  { name: 'alex', age: 20 },
+  { name: 'john', age: 10 },
+  { name: 'hx', age: 21 },
+]
 ```
 
 这里分别定义了三个数组，在约束这些数组时，我们明确了泛型变量`T`的具体数据类型，分别对应为 `number, string, Person`。
@@ -128,9 +135,9 @@ let myIdentity: <T>(arg: T) => T = identity;
 ```typescript
 // 使用接口约束一部分数据类型，使用泛型变量让剩余部分变得灵活
 interface Parseer<T> {
-  success: boolean,
-  result: T,
-  code: number,
+  success: boolean
+  result: T
+  code: number
   desc: string
 }
 
@@ -140,13 +147,13 @@ interface Array<T> {
 }
 ```
 
-**class中使用泛型**
+**class 中使用泛型**
 
 ```typescript
 // 注意总结相似性
 declare namespace demo02 {
   class GenericNumber<T> {
-    private value: T;
+    private value: T
 
     public add: (x: T, y: T) => T
   }
@@ -155,8 +162,8 @@ declare namespace demo02 {
 // 多个泛型变量传入
 declare namespace demo02 {
   class Component<P, S> {
-    private constructor(props: P);
-    public state: S;
+    private constructor(props: P)
+    public state: S
   }
 }
 ```
@@ -167,35 +174,76 @@ declare namespace demo02 {
 
 ```typescript
 interface Array<T> {
-  length: number,
-  toString(): string,
-  pop(): T | undefined,
+  length: number
+  toString(): string
+  pop(): T | undefined
   // 注意此处的含义
-  push(...items: T[]): number,
-  concat(...items: T[]): T[],
-  join(separator?: string): string,
-  reverse(): T[],
-  shift(): T | undefined;
-  slice(start?: number, end?: number): T[],
-  sort(compareFn?: (a: T, b: T) => number): this,
-  splice(start: number, deleteCount?: number): T[],
+  push(...items: T[]): number
+  concat(...items: T[]): T[]
+  join(separator?: string): string
+  reverse(): T[]
+  shift(): T | undefined
+  slice(start?: number, end?: number): T[]
+  sort(compareFn?: (a: T, b: T) => number): this
+  splice(start: number, deleteCount?: number): T[]
   // 注意此处的重载写法
-  splice(start: number, deleteCount: number, ...items: T[]): T[],
-  unshift(...items: T[]): number,
-  indexOf(searchElement: T, fromIndex?: number): number,
-  lastIndexOf(searchElement: T, fromIndex?: number): number,
-  every(callbackfn: (value: T, index: number, array: T[]) => boolean, thisArg?: any): boolean,
-  some(callbackfn: (value: T, index: number, array: T[]) => boolean, thisArg?: any): boolean,
-  forEach(callbackfn: (value: T, index: number, array: T[]) => void, thisArg?: any): void,
-  map<U>(callbackfn: (value: T, index: number, array: T[]) => U, thisArg?: any): U[],
-  filter<S extends T>(callbackfn: (value: T, index: number, array: T[]) => value is S, thisArg?: any): S[],
-  filter(callbackfn: (value: T, index: number, array: T[]) => any, thisArg?: any): T[],
-  reduce(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T): T,
-  reduce(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T, initialValue: T): T,
-  reduce<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U,
+  splice(start: number, deleteCount: number, ...items: T[]): T[]
+  unshift(...items: T[]): number
+  indexOf(searchElement: T, fromIndex?: number): number
+  lastIndexOf(searchElement: T, fromIndex?: number): number
+  every(
+    callbackfn: (value: T, index: number, array: T[]) => boolean,
+    thisArg?: any,
+  ): boolean
+  some(
+    callbackfn: (value: T, index: number, array: T[]) => boolean,
+    thisArg?: any,
+  ): boolean
+  forEach(
+    callbackfn: (value: T, index: number, array: T[]) => void,
+    thisArg?: any,
+  ): void
+  map<U>(
+    callbackfn: (value: T, index: number, array: T[]) => U,
+    thisArg?: any,
+  ): U[]
+  filter<S extends T>(
+    callbackfn: (value: T, index: number, array: T[]) => value is S,
+    thisArg?: any,
+  ): S[]
+  filter(
+    callbackfn: (value: T, index: number, array: T[]) => any,
+    thisArg?: any,
+  ): T[]
+  reduce(
+    callbackfn: (
+      previousValue: T,
+      currentValue: T,
+      currentIndex: number,
+      array: T[],
+    ) => T,
+  ): T
+  reduce(
+    callbackfn: (
+      previousValue: T,
+      currentValue: T,
+      currentIndex: number,
+      array: T[],
+    ) => T,
+    initialValue: T,
+  ): T
+  reduce<U>(
+    callbackfn: (
+      previousValue: U,
+      currentValue: T,
+      currentIndex: number,
+      array: T[],
+    ) => U,
+    initialValue: U,
+  ): U
   // reduceRight 略
   // 索引调用
-  [n: number]: T,
+  [n: number]: T
 }
 ```
 
@@ -207,33 +255,33 @@ interface Array<T> {
 
 ```typescript
 interface Result<T> {
-  success: true,
-  code: number,
-  descript: string,
+  success: true
+  code: number
+  descript: string
   result: T
 }
 ```
 
-结合Promise，当数据返回结果为 number 时
+结合 Promise，当数据返回结果为 number 时
 
-> Promise本身就需要接受一个泛型变量，因此这里要注意泛型的嵌套使用
+> Promise 本身就需要接受一个泛型变量，因此这里要注意泛型的嵌套使用
 
 ```typescript
 function fetchData(): Promise<Result<number>> {
-  return http.get('/api/demo/number');
+  return http.get('/api/demo/number')
 }
 ```
 
-当数据返回结果为普通JSON数据时
+当数据返回结果为普通 JSON 数据时
 
 ```typescript
 interface Person {
-  name: string,
+  name: string
   age: number
 }
 
 function fetchData(): Promise<Result<Person>> {
-  return http.get('/api/demo/person');
+  return http.get('/api/demo/person')
 }
 ```
 
@@ -241,12 +289,12 @@ function fetchData(): Promise<Result<Person>> {
 
 ```typescript
 interface Person {
-  name: string,
+  name: string
   age: number
 }
 
 function fetchData(): Promise<Result<Person[]>> {
-  return http.get('/api/demo/persons');
+  return http.get('/api/demo/persons')
 }
 ```
 
@@ -254,19 +302,19 @@ function fetchData(): Promise<Result<Person[]>> {
 
 ```typescript
 interface Person {
-  name: string,
+  name: string
   age: number
 }
 
 interface Page<T> {
-  current: number,
-  pageSize: number,
-  total: number,
+  current: number
+  pageSize: number
+  total: number
   data: T[]
 }
 
 function fetchData(): Promise<Result<Page<Person>>> {
-  return http.get('/api/demo/page/person');
+  return http.get('/api/demo/page/person')
 }
 ```
 

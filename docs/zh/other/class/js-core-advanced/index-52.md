@@ -36,7 +36,7 @@ JavaScript 是一个单线程的语言。
 
 但是 JavaScript 的执行环境，是由多个线程协同工作的结果。不同的线程，对应着不同的异步事件。我们一一简单了解一下。
 
-**GUI 渲染线程**
+### **GUI 渲染线程**
 
 > 更详细的与性能有关的渲染知识，点击 https://xiaozhuanlan.com/topic/4203159786
 
@@ -53,25 +53,24 @@ GUI 负责浏览器界面 HTML 元素的渲染。
 ```html
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>DOM 渲染是否异步</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <title>DOM 渲染是否异步</title>
-</head>
-
-<body>
-  <div id="d">默认文本</div>
-  <script>
-    d.onclick = function () {
-      console.log('开始更改DOM')
-      this.innerHTML = "往div里添加的新文本";//更改一个节点
-      console.log('DOM 更改完毕')
-      document.body.appendChild(document.createElement("input"));//插入一个节点
-      for (var i = 0; i < 10000000000; i++);
-      console.log('xxxx')
-    }
-  </script>
-</body>
+  <body>
+    <div id="d">默认文本</div>
+    <script>
+      d.onclick = function () {
+        console.log('开始更改DOM')
+        this.innerHTML = '往div里添加的新文本' //更改一个节点
+        console.log('DOM 更改完毕')
+        document.body.appendChild(document.createElement('input')) //插入一个节点
+        for (var i = 0; i < 10000000000; i++);
+        console.log('xxxx')
+      }
+    </script>
+  </body>
 </html>
 ```
 
@@ -117,13 +116,13 @@ GUI 负责浏览器界面 HTML 元素的渲染。
 >
 > DOM 跟 React 的虚拟 DOM，几乎是一样的逻辑。
 
-**JavaScript 引擎线程**
+### **JavaScript 引擎线程**
 
 浏览器并不能直接运行 JavaScript 代码。需要在浏览器中植入内核，为 JavaScript 的运行提供环境。chrome 中，这个内核就是 V8。
 
 每一个网页进程，浏览器只会启动一个 JavaScript 引擎线程来配合完成网页的交互。
 
-**定时器线程**
+### **定时器线程**
 
 setTimeout、setInterval 的逻辑是由专门的定时器线程在负责。
 
@@ -135,25 +134,24 @@ setTimeout(() => {
 }, 0)
 console.log('代码的最后位置')
 
-
 // 执行结果
 // 代码的最后位置
 // 定时器的回调逻辑
 ```
 
-**I/O 事件触发线程**
+### **I/O 事件触发线程**
 
 当我们鼠标点击、滑动，键盘输入等都会触发一些事件。而这些事件的触发逻辑的处理，就是依靠事件触发线程来完成。
 
 与上面的线程一样，该线程会把事件的逻辑放入队列之中，等待 JavaScript 引擎处理。
 
-**http 线程**
+### **http 线程**
 
-http线程的主要作用，是使用无状态短连接的 http 请求，在应用层基于 http 协议的基础之上，达到与服务端进行通信的目的「在服务端，也会有专门的 http 线程来处理通信过程」。
+http 线程的主要作用，是使用无状态短连接的 http 请求，在应用层基于 http 协议的基础之上，达到与服务端进行通信的目的「在服务端，也会有专门的 http 线程来处理通信过程」。
 
 当然，该线程的触发逻辑，事件监听等也不是在 JS 引擎线程中，这个过程仍然是异步的。
 
-**requestAnimationFrame 「简称：raf」**
+### **requestAnimationFrame 「简称：raf」**
 
 可能新人朋友对这个 api 不是很熟悉，但是他却是动画的重要实现手段。必须要掌握。这也是一个异步方式。他和前面介绍的异步方式大有不同，跟 UI render 紧密相关。
 
@@ -177,13 +175,13 @@ requestAnimationFrame 是完全符合浏览器刷新频率的回调方式。
 
 我们通常喜欢将一次 UI render 描述为一帧「frame」。
 
-顾名思义，requestAnimationFrame 的回调，只会在每一帧开始渲染之前执行。
+顾名思义，**requestAnimationFrame 的回调，只会在每一帧开始渲染之前执行。**
 
 ![img](./assets/1-20240301115442857.png)
 
-**requestIdleCallback 「简称：ric」**
+### **requestIdleCallback 「简称：ric」**
 
-ric 也能执行一个回调函数，通常我们会将优先级不高的任务放在 ric 中执行。它的执行频率也跟 UI render 的频率是一样。但是它会在每一帧的最后执行。
+ric 也能执行一个回调函数，通常我们会将优先级不高的任务放在 ric 中执行。它的执行频率也跟 UI render 的频率是一样。**但是它会在每一帧的最后执行。**
 
 这样的目的，是为了利用空闲时间，执行优先级不高的任务。如上图。
 
@@ -208,11 +206,11 @@ const p = new Promise((resolve, reject) => {})
 p.then(f, r)
 ```
 
-**job**
+### **job**
 
 我们在 `then` 中添加的回调函数，就是一个 job。也就是此处的 f 与 r。catch 同理。
 
-**执行队列**
+### **执行队列**
 
 ECMAScript 提供了一个用于存储 Promise 异步逻辑的队列 `PromiseJobs`。
 
@@ -220,7 +218,7 @@ ECMAScript 提供了一个用于存储 Promise 异步逻辑的队列 `PromiseJob
 
 > 或者说，在 call stack 清空之后执行
 
-**状态**
+### **状态**
 
 一个 promise 实例有三种状态，
 
@@ -238,7 +236,7 @@ pending 状态中，不会向 PromiseJobs 队列中加入任何 job。
 
 当 promise 的状态有了结果，不再是 pending，那么我们称该 promise 的状态被固定：settled。
 
-**何时进入队列 PromiseJobs**
+### **何时进入队列 PromiseJobs**
 
 当代码中调用 `p.then(f, r)` 时，会将 job `f` 放入 `[[PromiseFulfillReactions]]` 队列尾部。将 job `r` 放入 `[[PromiseRejectReactions]]` 队列尾部。
 
@@ -261,7 +259,7 @@ const p = new Promise((resolve, reject) => {
 
 确定了返回结果之后，才会将 job 移入到 PromiseJobs 队列中。
 
-**PromiseJobs 队列如何执行**
+### **PromiseJobs 队列如何执行**
 
 经过之前的知识，我们已经知道 job 何时进入 PromiseJobs 队列。那么进入队列之后，job 是如何执行的呢？
 
@@ -280,7 +278,7 @@ const PromiseJobs = []
 let job
 // 将先进入队列的 job 移出队列，并执行
 // 每一个job 的执行过程，都有可能向 PromiseJobs 队列中添加新的 Job，因此这里只能使用 while 来处理这种动态循环才符合场景，而不能使用 for 循环
-while (job = PromiseJobs.shift()) {
+while ((job = PromiseJobs.shift())) {
   job()
 }
 ```
@@ -290,29 +288,33 @@ while (job = PromiseJobs.shift()) {
 ```javascript
 const p1 = new Promise((resolve) => {
   resolve()
-}).then(function f1() {
-  console.log(1)
-  const p2 = new Promise(resolve => {
-    resolve()
-  }).then(function f3() {
-    console.log(2)
-  }).then(function f4() {
-    console.log(4)
-  })
-}).then(function f2() {
-  console.log(3)
 })
+  .then(function f1() {
+    console.log(1)
+    const p2 = new Promise((resolve) => {
+      resolve()
+    })
+      .then(function f3() {
+        console.log(2)
+      })
+      .then(function f4() {
+        console.log(4)
+      })
+  })
+  .then(function f2() {
+    console.log(3)
+  })
 
 console.log(0)
 
-// 执行结果为 0 1 2 3 4 
+// 执行结果为 0 1 2 3 4
 ```
 
 p1 实例在创建时，直接调用了 resolve，状态也直接被固定。因此 f1 能马上加入到 PromiseJobs 队列。
 
 但是 f2 却不行。因为 f2 是否加入该队列，需要得到 f1 的执行结果。因此此时 f2 进入临时队列
 
-```
+```javascript
 PromiseFulfillReactions = [f2]
 PromiseJobs = [f1]
 ```
@@ -360,7 +362,7 @@ PromiseJobs = []
 
 这里需要注意的是，PromiseJobs 的逻辑，其实是 JavaScript 代码的内部逻辑，不会因为在 Job 的执行过程中产生了新的 Job，就认为一轮循环的结束。而是要直接将队列中的 job 执行到不会产生新的 Job，才算结束。
 
-**PromiseJobs 的逻辑是一个内循环。**
+### **PromiseJobs 的逻辑是一个内循环。**
 
 我们也可以使用同样的逻辑，自定义新的内循环。
 
@@ -369,53 +371,57 @@ PromiseJobs = []
 ```javascript
 const p1 = new Promise((resolve) => {
   resolve()
-}).then(function f1() {
-  console.log(1)
-  const p2 = new Promise(resolve => {
-    resolve()
-  }).then(function f3() {
-    console.log(2)
-  }).then(function f4() {
-    console.log(4)
-  })
-}).then(function f2() {
-  console.log(3)
-  const queue = []
-  
-  // 定义一个事件分发器
-  function rafx(cb) {
-    queue.push(cb)
-  }
-
-  rafx(() => {
-    console.log(0.1)
-  })
-  
-  rafx(() => {
-    console.log(0.2)
-    
-    rafx(() => {
-      console.log(0.21)
-    })
-  })
-  
-  rafx(() => {
-    console.log(0.3)
-  })
-  
-  rafx(() => {
-    console.log(0.4)
-  })
-  
-  rafx(() => {
-    console.log(0.5)
-  })
-
-  let cb
-  while(cb = queue.shift()) {
-    cb()
-  }
 })
+  .then(function f1() {
+    console.log(1)
+    const p2 = new Promise((resolve) => {
+      resolve()
+    })
+      .then(function f3() {
+        console.log(2)
+      })
+      .then(function f4() {
+        console.log(4)
+      })
+  })
+  .then(function f2() {
+    console.log(3)
+    const queue = []
+
+    // 定义一个事件分发器
+    function rafx(cb) {
+      queue.push(cb)
+    }
+
+    rafx(() => {
+      console.log(0.1)
+    })
+
+    rafx(() => {
+      console.log(0.2)
+
+      rafx(() => {
+        console.log(0.21)
+      })
+    })
+
+    rafx(() => {
+      console.log(0.3)
+    })
+
+    rafx(() => {
+      console.log(0.4)
+    })
+
+    rafx(() => {
+      console.log(0.5)
+    })
+
+    let cb
+    while ((cb = queue.shift())) {
+      cb()
+    }
+  })
 
 console.log(0)
 ```
@@ -425,11 +431,11 @@ console.log(0)
 同样的道理，大家可以分析一下如下代码的执行顺序
 
 ```javascript
-new Promise(resolve => {
+new Promise((resolve) => {
   resolve()
 })
   .then(() => {
-    new Promise(resolve => {
+    new Promise((resolve) => {
       resolve()
     })
       .then(() => {
@@ -444,11 +450,11 @@ new Promise(resolve => {
   })
   .then(() => {
     console.log(1.1)
-    new Promise((resolve => {
+    new Promise((resolve) => {
       resolve()
-    }))
+    })
       .then(() => {
-        new Promise(resolve => {
+        new Promise((resolve) => {
           resolve()
         })
           .then(() => {
@@ -457,7 +463,8 @@ new Promise(resolve => {
           .then(() => {
             console.log(6)
           })
-      }).then(() => {
+      })
+      .then(() => {
         console.log(5)
       })
   })
@@ -481,13 +488,13 @@ console.log(0)
 
 目前我们知道的执行队列有：
 
-------
+---
 
 **scriptJobs**：指的是 script 标签，代码执行的起点
 
 > 当有多个 script 标签时，不同的浏览器对该队列的理解和实现差别很大，因此这里我们不讨论这种情况
 
-------
+---
 
 **rafs**：requestAnimationFrame 对应的队列
 
@@ -495,7 +502,7 @@ console.log(0)
 
 **ric**：requestIdleCallback 对应的队列
 
-------
+---
 
 **event queue**：I/O 事件队列
 
@@ -503,11 +510,11 @@ console.log(0)
 
 **http queue**：http 队列
 
-------
+---
 
 **PromiseJobs**：Promise 队列，由 p.then 分发
 
-------
+---
 
 > 因为每一种队列都有各自很鲜明的特点，因此我们这里就不简单粗暴的把这些异步队列划分为宏任务队列还是微任务队列。而是直接明确的以队列名来进行理解。如果非要这样理解，那么除了 PromiseJobs，其他的都可以理解为宏任务。有的浏览器，把 scriptJobs 理解为更顶层的宏任务，因为差别太大，这里我们不深入探讨，大家可以自行研究
 
@@ -560,14 +567,14 @@ raf -> ui render -> [event，http，timer] -> ric
 
 ![img](./assets/1-20240301115442870.png)
 
-1. raf | ui render | ric 三个队列中的 task 不会每次循环都执行，他们的执行频率要和刷新率保持一致。因此很多次循环中，他们都不会执行「执行队列为空」
+1. `raf | ui render | ric` 三个队列中的 task 不会每次循环都执行，他们的执行频率要和刷新率保持一致。因此很多次循环中，他们都不会执行「执行队列为空」
 2. 任务分发时，多半都是进入临时队列，满足条件之后，进入执行队列。
 3. 当次循环所有的执行队列都清空之后，一轮循环完毕。一轮循环完毕的标志是最后一个 task 中的内循环 PromiseJobs 队列清空。
 4. 下一轮循环从执行队列中的第一个任务继续开始执行，直到当次执行队列清空为止
 
 我们在理解时，还需要特别关注的是任务进入执行队列的时机。
 
-以setTimeout 为例。
+以 setTimeout 为例。
 
 ```javascript
 document.onclick = () => {
@@ -588,7 +595,6 @@ document.onclick = () => {
   console.log('e')
 }
 
-
 // 点击之后的输出结果
 // 先立刻输出 s
 // 10s 之后，依次快速输出
@@ -603,7 +609,7 @@ setTimeout 执行时，三个 task 进入了临时队列。
 
 但 for 循环的执行时间非常长，超过了 setTimeout 的设定时间，因此，在 for 循环的执行过程中，定时器线程发现 timer 临时队列中的任务满足了条件，就直接放入到了执行队列。
 
-只要for循环的时间超过了3s，此时三个 task 都会已经进入到了执行队列。所以就直接执行了。
+只要 for 循环的时间超过了 3s，此时三个 task 都会已经进入到了执行队列。所以就直接执行了。
 
 到这里，还能看懂的点个赞啊！
 
@@ -613,7 +619,7 @@ setTimeout 执行时，三个 task 进入了临时队列。
 
 ```javascript
 setInterval(function f1() {
-  func();
+  func()
 }, 100)
 ```
 
@@ -625,15 +631,17 @@ setInterval(function f1() {
 
 ```javascript
 // 第一轮循环，时间不满足 100 ms ，因此 timer 执行队列为空
-[]
 // 第二轮循环，时间超出了 100ms，进入一个任务到执行队列
-[f1]
-// f1 执行，但是执行时间是 200ms，因此这个时候，定时器线程会推送 2个 f1 到执行队列
-[f1, f1]
-// 第三轮循环，要把这两个执行完，总耗时 400ms，那么就会被推入 4 个 task
-[f1, f1, f1, f1]
-// 第四轮需要 800ms 执行完，这个时候就能推送 8 个任务
-[f1, f1, f1, f1, f1, f1, f1, f1]
+;[][f1][
+  // f1 执行，但是执行时间是 200ms，因此这个时候，定时器线程会推送 2个 f1 到执行队列
+  (f1, f1)
+][
+  // 第三轮循环，要把这两个执行完，总耗时 400ms，那么就会被推入 4 个 task
+  (f1, f1, f1, f1)
+][
+  // 第四轮需要 800ms 执行完，这个时候就能推送 8 个任务
+  (f1, f1, f1, f1, f1, f1, f1, f1)
+]
 
 // 依次类推，阻塞会越来越严重
 ```
@@ -662,24 +670,24 @@ fn()
 
 ```javascript
 setTimeout(function s1() {
-  console.log(5);
+  console.log(5)
 }, 1)
 
 setTimeout(function s2() {
-  console.log(6);
+  console.log(6)
 }, 0)
 
 new Promise(function (resolve) {
-  console.log(1);
+  console.log(1)
   for (var i = 0; i < 1000; i++) {
-    i == 99 && resolve();
+    i == 99 && resolve()
   }
-  console.log(2);
+  console.log(2)
 }).then(function p1() {
-  console.log(4);
+  console.log(4)
 })
 
-console.log(3);
+console.log(3)
 ```
 
 首先，起手式。事件循环从 script 开始。此时，只有 scriptJobs 队列中有任务。
@@ -776,30 +784,30 @@ s2 执行完之后，所有的代码都执行完了，队列也被清空了，�
 
 ```javascript
 // 用数组模拟一个队列
-var tasks = [];
+var tasks = []
 
 // 模拟一个事件分发器
 var addFn1 = function (task) {
-  tasks.push(task);
+  tasks.push(task)
 }
 
 // 执行所有的任务
 var flush = function () {
   tasks.map(function (task) {
-    task();
+    task()
   })
 }
 
 // 最后利用setTimeout/或者其他你认为合适的方式丢入事件循环中
 setTimeout(function () {
-  flush();
+  flush()
 })
 
 // 当然，也可以不用丢进事件循环，而是我们自己手动在适当的时机去执行对应的某一个方法
 var dispatch = function (name) {
   tasks.map(function (item) {
     if (item.name == name) {
-      item.handler();
+      item.handler()
     }
   })
 }
@@ -808,7 +816,7 @@ var dispatch = function (name) {
 // 这时候，task的格式就如下
 demoTask = {
   name: 'demo',
-  handler: function () { }
+  handler: function () {},
 }
 
 // 于是，一个订阅-通知的设计模式就这样轻松的被实现了

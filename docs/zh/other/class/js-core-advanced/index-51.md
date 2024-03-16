@@ -13,11 +13,11 @@ function imageLoad(url) {
   const img = new Image()
   img.src = url
   return new Promise((resolve, reject) => {
-    img.onload = function() {
+    img.onload = function () {
       resolve('图片加载成功')
     }
-    img.onerror = function() {
-     reject('图片加载失败')
+    img.onerror = function () {
+      reject('图片加载失败')
     }
   })
 }
@@ -26,12 +26,13 @@ function imageLoad(url) {
 封装好之后，我们就可以利用 `imageLoad` 来执行图片加载完成之后的逻辑
 
 ```javascript
-imageLoad('xxx.png').then(res => {
-  console.log(res) // 此时的 res 为字符串：图片加载成功
-})
-.catch(err => {
-  console.log(err) // 此时的 err 为字符串：图片加载失败
-})
+imageLoad('xxx.png')
+  .then((res) => {
+    console.log(res) // 此时的 res 为字符串：图片加载成功
+  })
+  .catch((err) => {
+    console.log(err) // 此时的 err 为字符串：图片加载失败
+  })
 ```
 
 我们要抓住的核心关键是： Promise 最终的目的是，是为了执行 then 中的回调函数，我们给它取个名字为 `then_cb`。
@@ -47,11 +48,11 @@ class MyPromise {
   constructor(executor) {
     executor(this._resolve.bind(this), this._reject.bind(this))
   }
-  
+
   _resolve(value) {}
-  
+
   _reject(value) {}
-  
+
   then(then_cb) {}
 }
 ```
@@ -79,7 +80,7 @@ class MyPromise {
     this.thencallback(value)
   }
 
-  _reject(value) { }
+  _reject(value) {}
 
   then(then_cb) {
     this.thencallback = then_cb
@@ -127,7 +128,7 @@ const p = new MyPromise((resolve, reject) => {
   }, 1000)
 })
 
-p.catch(res => {
+p.catch((res) => {
   console.log(res)
 })
 ```
@@ -247,15 +248,15 @@ class MyPromise2 {
     if (!pending) return
     const run = () => {
       this._status = resolved
-      let cb;
+      let cb
       // 执行队列中收集的回调，执行一个，删除一个，
       // 队列思路：先进先出
-      while (cb = this.onResolvedQueue.shift()) {
+      while ((cb = this.onResolvedQueue.shift())) {
         this._value = value
         cb(value)
       }
     }
-    
+
     setTimeout(run, 0)
   }
 
@@ -268,11 +269,11 @@ class MyPromise2 {
         throw new Error(value)
       }
       let cb
-      while(cb = this.onRejectedQueue.shift()) {
+      while ((cb = this.onRejectedQueue.shift())) {
         cb(value)
       }
     }
-    
+
     setTimeout(run, 0)
   }
 
@@ -306,15 +307,15 @@ const p = new MyPromise2((resolve, reject) => {
   }, 1000)
 })
 
-p.then(res => {
+p.then((res) => {
   console.log(res)
 })
 
-p.then(res => {
+p.then((res) => {
   console.log('2 then', res)
 })
 
-p.catch(err => {
+p.catch((err) => {
   console.log('catch', err)
 })
 ```
@@ -358,7 +359,7 @@ then(onResolved, onRejected) {
 
     switch(_status) {
       // 状态为 pending 时，收集回调
-      case pending: 
+      case pending:
         this.onResolvedQueue.push(_resolved)
         this.onRejectedQueue.push(_rejected)
         break
@@ -423,15 +424,15 @@ class MyPromise2 {
     if (!pending) return
     const run = () => {
       this._status = resolved
-      let cb;
+      let cb
       // 执行队列中收集的回调，执行一个，删除一个，
       // 队列思路：先进先出
-      while (cb = this.onResolvedQueue.shift()) {
+      while ((cb = this.onResolvedQueue.shift())) {
         this._value = value
         cb(value)
       }
     }
-    
+
     setTimeout(run, 0)
   }
 
@@ -444,16 +445,16 @@ class MyPromise2 {
         throw new Error(value)
       }
       let cb
-      while(cb = this.onRejectedQueue.shift()) {
+      while ((cb = this.onRejectedQueue.shift())) {
         cb(value)
       }
     }
-    
+
     setTimeout(run, 0)
   }
 
   then(onResolved, onRejected) {
-    const {_status, _value} = this
+    const { _status, _value } = this
     return new MyPromise2((resolveNext, rejectNext) => {
       const _resolved = (value) => {
         try {
@@ -489,9 +490,9 @@ class MyPromise2 {
         }
       }
 
-      switch(_status) {
+      switch (_status) {
         // 状态为 pending 时，收集回调
-        case pending: 
+        case pending:
           this.onResolvedQueue.push(_resolved)
           this.onRejectedQueue.push(_rejected)
           break
@@ -523,14 +524,16 @@ const p = new MyPromise2((resolve, reject) => {
   }, 1000)
 })
 
-p.then(res => {
+p.then((res) => {
   console.log('1 then：', res)
   return 'hello ' + res
-}).then(res => {
-  console.log('2 then：', res)
-}).catch(err => {
-  console.log('catch', err)
 })
+  .then((res) => {
+    console.log('2 then：', res)
+  })
+  .catch((err) => {
+    console.log('catch', err)
+  })
 ```
 
 Promise 的封装是不是很简单！

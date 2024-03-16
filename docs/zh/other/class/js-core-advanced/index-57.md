@@ -10,7 +10,7 @@
 
 因此，这个大的章节不会进一步分享如何深入掌握 React 等应用层面的知识，那需要至少一整本书才能说完，但会提供一个更为便利掌握它的底层基础，因此同样非常重要。大家明确好学习目的，做到有的放矢。
 
-------
+---
 
 **组件化**是前端独有的开发思维。是在模块化的基础之上发展而来的更高效的开发手段。
 
@@ -20,7 +20,7 @@
 
 我们知道，一个按钮，通常有如下几部分共同组成
 
-- DOM 结构  `<button class="btn"></button>`
+- DOM 结构 `<button class="btn"></button>`
 - 按钮逻辑 `click` 等回调事件
 - 按钮样式 `.btn {}`
 - 可能还包括按钮前置图标
@@ -58,17 +58,14 @@ npx create-react-app tab --template typescript
 > 默认创建的项目还有许多其他冗余的文件，我们不关注，就当他们不存在。
 
 ```javascript
-import React from 'react';
-import './App.css';
+import React from 'react'
+import './App.css'
 
 function App() {
-  return (
-    <div className="App">
-    </div>
-  );
+  return <div className='App'></div>
 }
 
-export default App;
+export default App
 ```
 
 然后，在 html 中，新增片段
@@ -95,21 +92,22 @@ body {
   margin: 0;
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
 #tab-root {
   width: 300px;
   margin: 20px auto;
-  border: 1px solid #CCC;
+  border: 1px solid #ccc;
   height: 400px;
 }
 
 .titles {
   display: flex;
   height: 44px;
-  border-bottom: 1px solid #CCC;
+  border-bottom: 1px solid #ccc;
 }
 
 .titles .item {
@@ -122,7 +120,7 @@ html, body {
 
 .titles .item.active {
   background-color: orange;
-  color: #FFF;
+  color: #fff;
 }
 
 .contents {
@@ -149,31 +147,31 @@ html, body {
 在 `src/tab.ts` 中新增如下逻辑代码
 
 ```typescript
-const titles = document.querySelector<HTMLElement>('.titles');
-const contents = document.querySelector('.contents');
+const titles = document.querySelector<HTMLElement>('.titles')
+const contents = document.querySelector('.contents')
 
 if (!titles || !contents) {
   throw new Error('element not exist.')
 }
 
-let index = 0;
+let index = 0
 
 titles.onclick = (event) => {
-  const activeTitle = event.target as HTMLElement;
+  const activeTitle = event.target as HTMLElement
 
   if (!activeTitle) {
-    return;
+    return
   }
 
-  const aindex = Number(activeTitle.dataset.index);
+  const aindex = Number(activeTitle.dataset.index)
 
   if (aindex !== index) {
-    titles.children[index].classList.remove('active');
-    contents.children[index].classList.remove('active');
+    titles.children[index].classList.remove('active')
+    contents.children[index].classList.remove('active')
 
-    activeTitle.classList.add('active');
-    contents.children[aindex].classList.add('active');
-    index = aindex;
+    activeTitle.classList.add('active')
+    contents.children[aindex].classList.add('active')
+    index = aindex
   }
 }
 ```
@@ -207,21 +205,22 @@ body {
   margin: 0;
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
 .tab_container {
   width: 300px;
   margin: 20px auto;
-  border: 1px solid #CCC;
+  border: 1px solid #ccc;
   height: 400px;
 }
 
 .titles {
   display: flex;
   height: 44px;
-  border-bottom: 1px solid #CCC;
+  border-bottom: 1px solid #ccc;
 }
 
 .titles .item {
@@ -234,7 +233,7 @@ html, body {
 
 .titles .item.active {
   background-color: orange;
-  color: #FFF;
+  color: #fff;
 }
 
 .contents {
@@ -262,45 +261,49 @@ html, body {
 
 ```tsx
 // src/Tabbar/index.tsx
-import React, { Component } from 'react';
-import './style.css';
+import React, { Component } from 'react'
+import './style.css'
 
-const defaultTabs = [{
-  title: 'tab1',
-  content: 'tab1'
-}, {
-  title: 'tab2',
-  content: 'tab2'
-}, {
-  title: 'tab3',
-  content: 'tab3'
-}]
+const defaultTabs = [
+  {
+    title: 'tab1',
+    content: 'tab1',
+  },
+  {
+    title: 'tab2',
+    content: 'tab2',
+  },
+  {
+    title: 'tab3',
+    content: 'tab3',
+  },
+]
 
 class Tab extends Component {
   state = {
-    index: 0
+    index: 0,
   }
 
   static defaultProps = {
-    tabs: defaultTabs
+    tabs: defaultTabs,
   }
 
   switchTab = (index) => {
     this.setState({
-      index
+      index,
     })
   }
 
   render() {
-    const { tabs } = this.props;
-    const { index } = this.state;
+    const { tabs } = this.props
+    const { index } = this.state
 
     return (
-      <div className="tab_container">
-        <div className="titles">
+      <div className='tab_container'>
+        <div className='titles'>
           {tabs.map((tab, m) => (
-            <div 
-              className={m === index ? 'item active' : 'item'} 
+            <div
+              className={m === index ? 'item active' : 'item'}
               key={m}
               onClick={() => this.switchTab(m)}
             >
@@ -309,17 +312,19 @@ class Tab extends Component {
           ))}
         </div>
 
-        <div className="contents">
+        <div className='contents'>
           {tabs.map((tab, n) => (
-            <div className={n === index ? 'item active' : 'item'} key={n}>{tab.content}</div>
+            <div className={n === index ? 'item active' : 'item'} key={n}>
+              {tab.content}
+            </div>
           ))}
         </div>
       </div>
-    );
+    )
   }
 }
 
-export default Tab;
+export default Tab
 ```
 
 封装之后，假如我们要在 `App.tsx` 中使用该组件，就只需要引入一次即可。而不用关心 Tabbar 组件的组成细节。

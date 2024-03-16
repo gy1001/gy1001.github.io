@@ -12,7 +12,7 @@
 
 了解模块发展历程有助于增加我们的知识厚度。目前在实践中，我们仅使用最新的模块化语法。
 
-**1、函数自执行**
+### **1、函数自执行**
 
 因为没有模块化语法，我们常常用自执行函数来模拟模块。
 
@@ -20,30 +20,29 @@
 // 自执行函数模拟模块化
 
 // Person 模块
-(() => {
+;(() => {
   // 实例个数，模块内部变量，外部无法直接访问，
   let number = 0
   function Person(name, age) {
-    number ++
+    number++
     this.name = name
     this.age = age
   }
 
-  Person.prototype.getName = function() {
+  Person.prototype.getName = function () {
     return this.name
   }
 
-  Person.getInstanceNumber = function() {
+  Person.getInstanceNumber = function () {
     return number
   }
 
   // 对外抛出接口
   window.Person = Person
-})();
-
+})()
 
 // main 模块
-(() => {
+;(() => {
   // 引入模块
   const Person = window.Person
 
@@ -57,7 +56,7 @@
 })()
 ```
 
-**2、CommonJS 规范**
+### **2、CommonJS 规范**
 
 Node 应用的模块，就是采用 CommonJS 规范来实现。
 
@@ -93,7 +92,7 @@ module.exports.Person = Person
 // 引入模块
 const person = require('./person.js')
 
-const {Person, getInstanceNumber} = person
+const { Person, getInstanceNumber } = person
 
 const p1 = new Person('Tom', 20)
 const p2 = new Person('Jake', 20)
@@ -106,7 +105,7 @@ p3.getName()
 console.log('实例化个数', getInstanceNumber())
 ```
 
-**3、AMD**
+### **3、AMD**
 
 AMD 是适用于浏览器环境的异步加载模块规范，它是一种依赖前置的规范。
 
@@ -116,7 +115,7 @@ AMD 是适用于浏览器环境的异步加载模块规范，它是一种依赖�
 
 ```javascript
 // person.js
-define(function() {
+define(function () {
   let number = 0
   function Person(name, age) {
     number++
@@ -136,12 +135,12 @@ define(function() {
   // 对外暴露接口
   return {
     getInstanceNumber,
-    Person
+    Person,
   }
 })
 // main.js
 // 引入模块
-define(['./person.js'], function(person) {
+define(['./person.js'], function (person) {
   const { Person, getInstanceNumber } = person
 
   const p1 = new Person('Tom', 20)
@@ -156,7 +155,7 @@ define(['./person.js'], function(person) {
 })
 ```
 
-**4、CMD**
+### **4、CMD**
 
 CMD 规范是模仿 CommonJS，由阿里玉伯提出，`sea.js` 实现了该规范，这是一种就近依赖的规范
 
@@ -164,7 +163,7 @@ CMD 规范是模仿 CommonJS，由阿里玉伯提出，`sea.js` 实现了该规�
 
 ```javascript
 // person.js
-define(function(require, exports, module) {
+define(function (require, exports, module) {
   let number = 0
   function Person(name, age) {
     number++
@@ -184,7 +183,7 @@ define(function(require, exports, module) {
   module.exports.Person = Person
 })
 // mian.js
-define(function(require) {
+define(function (require) {
   const person = require('./person.js')
   const { Person, getInstanceNumber } = person
 
@@ -200,24 +199,28 @@ define(function(require) {
 })
 ```
 
-**5、UMD**
+### **5、UMD**
 
 UMD 是一个兼容写法，一个开源模块可能会提供给 CommonJS 标准的项目中实现，也可能提供给 AMD 标准的项目使用。UMD 应运而生。
 
 ```javascript
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) { // AMD
+;(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD
     define(['person'], factory)
-  } else if (typeof define === 'function' && define.cmd) { // CMD
-    define(function(require, exports, module) {
+  } else if (typeof define === 'function' && define.cmd) {
+    // CMD
+    define(function (require, exports, module) {
       module.exports = factory()
     })
-  } else if (typeof exports === 'object') { // CommonJS
+  } else if (typeof exports === 'object') {
+    // CommonJS
     module.exports = factory()
-  } else { // global
+  } else {
+    // global
     root.person = factory()
   }
-})(this, function() {
+})(this, function () {
   let number = 0
   function Person(name, age) {
     number++
@@ -230,20 +233,20 @@ UMD 是一个兼容写法，一个开源模块可能会提供给 CommonJS 标准
     return this.name
   }
 
-  function getInstanceNumber () {
+  function getInstanceNumber() {
     return number
   }
 
   return {
     Person,
-    getInstanceNumber
+    getInstanceNumber,
   }
 })
 ```
 
 很多开源模块都会采用这种兼容性的写法。
 
-**6、ES6 Modules**
+### **6、ES6 Modules**
 
 ES6 提出了新的模块化语法规范。
 
@@ -252,7 +255,8 @@ ES6 提出了新的模块化语法规范。
 ```javascript
 // person.js
 let number = 0
-export function Person(name, age) {  // 暴露接口
+export function Person(name, age) {
+  // 暴露接口
   number++
   this.name = name
   this.age = age
@@ -269,7 +273,7 @@ export const getInstanceNumber = function () {
 }
 // main.js
 // 引入模块
-import {Person, getInstanceNumber} from './person.js'
+import { Person, getInstanceNumber } from './person.js'
 
 const p1 = new Person('Tom', 20)
 const p2 = new Person('Jake', 20)

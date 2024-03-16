@@ -63,14 +63,14 @@ npm install lodash --save
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8" />
-  <title>webpack 起步</title>
-</head>
+  <head>
+    <meta charset="utf-8" />
+    <title>webpack 起步</title>
+  </head>
 
-<body>
-  <script src="./src/index.js"></script>
-</body>
+  <body>
+    <script src="./src/index.js"></script>
+  </body>
 </html>
 ```
 
@@ -81,13 +81,13 @@ npm install lodash --save
 import _ from 'lodash'
 
 function component() {
-  const element = document.createElement('div');
-  element.innerHTML = _.join(['Hello', 'webpack'], ' ');
+  const element = document.createElement('div')
+  element.innerHTML = _.join(['Hello', 'webpack'], ' ')
 
-  return element;
+  return element
 }
 
-document.body.appendChild(component());
+document.body.appendChild(component())
 ```
 
 我们可以直接执行如下指令，开始打包。
@@ -107,14 +107,14 @@ npx webpack
 dist/index.html
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8" />
-  <title>webpack 起步</title>
-</head>
+  <head>
+    <meta charset="utf-8" />
+    <title>webpack 起步</title>
+  </head>
 
-<body>
-  <script src="./main.js"></script>
-</body>
+  <body>
+    <script src="./main.js"></script>
+  </body>
 </html>
 ```
 
@@ -127,7 +127,7 @@ dist/index.html
 根目录下创建 `webpack.config.js`
 
 ```javascript
-const path = require('path');
+const path = require('path')
 
 module.exports = {
   entry: './src/index.js',
@@ -135,7 +135,7 @@ module.exports = {
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist'),
   },
-};
+}
 ```
 
 entry：表示入口，用于告诉 webpack 应该使用哪个模块来作为构建其内部依赖图的开始。默认值是 `src/index.js`。
@@ -188,8 +188,8 @@ npm install html-webpack-plugin --save-dev
 然后修改 `webpack.config.js` 中的逻辑
 
 ```javascript
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   entry: './src/index.js',
@@ -201,8 +201,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: '管理输出',
     }),
-  ]
-};
+  ],
+}
 ```
 
 此时我们修改了两个地方，一是新增了 `HtmlWebpackPlugin` 插件的逻辑，用于自动生成入口 html 文件。二是调整了 output 中 filename 的规则。
@@ -234,7 +234,7 @@ module.exports = {
 
 多打包几次，我们会发现 dist 中的内容越来越多，因此我们需要一个清理 dist 目录的插件。
 
-> 每次打包之前，需要修改模块的内容，否则 webpack 感知到模块没有变化，就会生成hash值相同的文件，文件数量就不会越来越多
+> 每次打包之前，需要修改模块的内容，否则 webpack 感知到模块没有变化，就会生成 hash 值相同的文件，文件数量就不会越来越多
 
 安装 `clean-webpack-plugin`
 
@@ -313,9 +313,9 @@ npm install --save-dev style-loader
 然后修改 webpack.config.js，新增 相关 Loader 的配置规则
 
 ```javascript
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 module.exports = {
   entry: './src/index.js',
@@ -325,27 +325,27 @@ module.exports = {
   },
   module: {
     rules: [
-      { 
-        test: /\.css$/, 
+      {
+        test: /\.css$/,
         use: [
-          {loader: 'style-loader'},
+          { loader: 'style-loader' },
           {
             loader: 'css-loader',
             options: {
-              modules: true
-            }
-          }
-        ] 
-      }
-    ]
+              modules: true,
+            },
+          },
+        ],
+      },
+    ],
   },
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: '管理输出',
     }),
-  ]
-};
+  ],
+}
 ```
 
 重新 build 之后发现，css 样式已经写入进来了
@@ -361,9 +361,9 @@ npm i node-sass sass-loader --save-dev
 然后针对 `.scss` 文件配置规则，webpack.config.js 修改如下
 
 ```javascript
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 module.exports = {
   entry: './src/index.js',
@@ -373,31 +373,31 @@ module.exports = {
   },
   module: {
     rules: [
-      { 
-        test: /\.css$/, 
+      {
+        test: /\.css$/,
         use: [
-          {loader: 'style-loader'},
+          { loader: 'style-loader' },
           {
             loader: 'css-loader',
             options: {
-              modules: true
-            }
-          }
-        ] 
+              modules: true,
+            },
+          },
+        ],
       },
       {
         test: /\.(sc|sa)ss$/,
-        use: [ 'style-loader', 'css-loader', 'sass-loader']
+        use: ['style-loader', 'css-loader', 'sass-loader'],
       },
-    ]
+    ],
   },
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: '管理输出',
     }),
-  ]
-};
+  ],
+}
 ```
 
 随便写一个 `test.scss`，并在 index.js 中引入，打包后验证一下结果
@@ -433,8 +433,8 @@ module.exports = {
   },
   module: {
     rules: [
-      { 
-        test: /\.css$/, 
+      {
+        test: /\.css$/,
         use: [
           {loader: 'style-loader'},
           {
@@ -443,7 +443,7 @@ module.exports = {
               modules: true
             }
           }
-        ] 
+        ]
       },
       {
         test: /\.(sc|sa)ss$/,
@@ -481,7 +481,7 @@ function component() {
 + const img = new Image()
 + img.src = Inbox
 + element.appendChild(img)
-  
+
   return element;
 }
 
@@ -530,8 +530,8 @@ module.exports = {
 + },
   module: {
     rules: [
-      { 
-        test: /\.css$/, 
+      {
+        test: /\.css$/,
         use: [
           {loader: 'style-loader'},
           {
@@ -540,7 +540,7 @@ module.exports = {
               modules: true
             }
           }
-        ] 
+        ]
       },
       {
         test: /\.(sc|sa)ss$/,

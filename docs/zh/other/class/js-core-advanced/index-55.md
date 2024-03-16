@@ -2,7 +2,7 @@
 
 我们先来实现一个简单的场景。
 
-首先有一个普通的div。
+首先有一个普通的 div。
 
 然后有一堆设置按钮。
 
@@ -20,7 +20,7 @@
 
 一起来试试看。
 
-## 1-准备工作
+## 01-准备工作
 
 首先，按照上节课的内容，使用 create react app 创建一个项目。
 
@@ -29,14 +29,12 @@
 因为默认的 demo 中，有了自己的 DOM 渲染，因此我们需要清空他们。将 App.tsx 修改为如下即可
 
 ```javascript
-import React from 'react';
+import React from 'react'
 function App() {
-  return (
-    <div className="App"></div>
-  );
+  return <div className='App'></div>
 }
 
-export default App;
+export default App
 ```
 
 ## 02-状态管理模块
@@ -58,7 +56,7 @@ store = {
   show: 0,
   backgroundColor: '#cccccc',
   width: '200',
-  height: '200'
+  height: '200',
   // ... more
 }
 ```
@@ -67,7 +65,7 @@ store = {
 
 ```javascript
 interface Store {
-  [key: string]: any
+  [key: string]: any;
 }
 
 const store: Store = {}
@@ -88,10 +86,9 @@ export const registerState = (status: string, value: any) => {
   if (store[status]) {
     throw new Error('状态已经存在。')
   }
-  store[status] = value;
-  return value;
+  store[status] = value
+  return value
 }
-
 
 // 获取整个状态树
 export const getStore = () => store
@@ -101,9 +98,9 @@ export const getState = (status: string) => store[status]
 
 // 设置某个状态的值
 export const setState = (status: string, value: any) => {
-  store[status] = value;
-  dispatch(status, value);
-  return value;
+  store[status] = value
+  dispatch(status, value)
+  return value
 }
 ```
 
@@ -111,15 +108,15 @@ export const setState = (status: string, value: any) => {
 
 当我们通过交互改变状态值时，其实期待的是界面 UI 能够发生相应的改变。
 
-UI的变动可能会比较简单，也可能会非常复杂，因此为了能够更好的维护 UI 改变，我们将每个 UI 变化用函数封装起来，并与对应的状态值对应「绑定」。这样，当状态值改变的同时，调用一下对应的 UI 函数就能够实现界面的实时变动了。
+UI 的变动可能会比较简单，也可能会非常复杂，因此为了能够更好的维护 UI 改变，我们将每个 UI 变化用函数封装起来，并与对应的状态值对应「绑定」。这样，当状态值改变的同时，调用一下对应的 UI 函数就能够实现界面的实时变动了。
 
 因此，我们还需要一个 events 对象，来保存专门用于改变 UI 的函数。
 
 ```javascript
 type EventCallback = (...args: any[]) => any
 
-interface Events { 
-  [key: string]: EventCallback 
+interface Events {
+  [key: string]: EventCallback;
 }
 
 const events: Events = {}
@@ -134,15 +131,15 @@ store = {
   show: 0,
   backgroundColor: '#cccccc',
   width: '200',
-  height: '200'
+  height: '200',
   // ... more
 }
 
 events = {
-  show: function () { },
-  backgroundColor: function () { },
-  width: function () { },
-  height: function () { }
+  show: function () {},
+  backgroundColor: function () {},
+  width: function () {},
+  height: function () {},
   // ... more
 }
 
@@ -158,21 +155,21 @@ events = {
 ```javascript
 // 将状态值与事件绑定在一起，通过status-events 的形式保存在events对象中
 export const bind = (status: string, eventFn: EventCallback) => {
-  events[status] = eventFn;
+  events[status] = eventFn
 }
 
 // 移除绑定
 export const remove = (status: string) => {
   delete events[status]
-  return status;
+  return status
 }
 
 export const dispatch = (status: string, value: any) => {
   if (!events[status]) {
     throw new Error('未绑定任何事件！')
   }
-  events[status](value);
-  return value;
+  events[status](value)
+  return value
 }
 ```
 
@@ -181,13 +178,13 @@ export const dispatch = (status: string, value: any) => {
 ```javascript
 // src/state.ts
 interface Store {
-  [key: string]: any
+  [key: string]: any;
 }
 
 type EventCallback = (...args: any[]) => any
 
-interface Events { 
-  [key: string]: EventCallback 
+interface Events {
+  [key: string]: EventCallback;
 }
 
 const events: Events = {}
@@ -198,8 +195,8 @@ export const registerState = (status: string, value: any) => {
   if (store[status]) {
     throw new Error('状态已经存在。')
   }
-  store[status] = value;
-  return value;
+  store[status] = value
+  return value
 }
 
 // 获取整个状态树
@@ -210,34 +207,34 @@ export const getState = (status: string) => store[status]
 
 // 设置某个状态的值
 export const setState = (status: string, value: any) => {
-  store[status] = value;
-  dispatch(status, value);
-  return value;
+  store[status] = value
+  dispatch(status, value)
+  return value
 }
 
 // 将状态值与事件绑定在一起，通过status-events 的形式保存在events对象中
 export const bind = (status: string, eventFn: EventCallback) => {
-  events[status] = eventFn;
+  events[status] = eventFn
 }
 
 // 移除绑定
 export const remove = (status: string) => {
   delete events[status]
-  return status;
+  return status
 }
 
 export const dispatch = (status: string, value: any) => {
   if (!events[status]) {
     throw new Error('未绑定任何事件！')
   }
-  events[status](value);
-  return value;
+  events[status](value)
+  return value
 }
 ```
 
 接下来的重点，就是如何运用该模块。
 
-## 3-注册状态值模块
+## 03-注册状态值模块
 
 我们需要管理很多的状态，可以在每一个使用到这些状态值的模块中各自注册。也可以使用一个单独的模块来注册状态。如果你担心自己会忘记状态值的作用，建议每一个都做好注释。
 
@@ -245,7 +242,7 @@ export const dispatch = (status: string, value: any) => {
 
 ```javascript
 // src/register.ts
-import {registerState} from './state'
+import { registerState } from './state'
 
 registerState('show', true)
 registerState('backgroundColor', '#cccccc')
@@ -283,7 +280,7 @@ export const getStyle = (ele: Element, key: any) => {
 
 之前在创建状态管理模块时已经提到，我们需要将 UI 改变的动作封装为函数，并保存/绑定到 events 对象中。这个操作就选择在目标元素模块中来完成。
 
-首先在 `public/index.html` 中写入一个div元素。
+首先在 `public/index.html` 中写入一个 div 元素。
 
 root 元素用于 create react app 默认 demo 中的逻辑，我们不管它。我们新起一个 div 元素用于管理自己的逻辑。
 
@@ -296,11 +293,19 @@ target 是目标元素
   <div class="control_wrap">
     <div><button class="show">show/hide</button></div>
     <div>
-      <input class="bgcolor_input" type="text" placeholder="input background color" />
+      <input
+        class="bgcolor_input"
+        type="text"
+        placeholder="input background color"
+      />
       <button class="bgcolor_btn">sure</button>
     </div>
     <div>
-      <input type="text" class="bdcolor_input" placeholder="input border color" />
+      <input
+        type="text"
+        class="bdcolor_input"
+        placeholder="input border color"
+      />
       <button class="bdcolor_btn">sure</button>
     </div>
     <div>
@@ -311,7 +316,7 @@ target 是目标元素
     <div>
       <span>height</span>
       <button class="height_reduce">-</button>
-      <input type="text" class="height_input" readonly>
+      <input type="text" class="height_input" readonly />
       <button class="height_add">+</button>
     </div>
   </div>
@@ -337,51 +342,51 @@ target 是目标元素
 
 ```javascript
 // src/box.ts
-import { bind } from './state';
-import { getStyle } from './utils';
-import './register';
+import { bind } from './state'
+import { getStyle } from './utils'
+import './register'
 
-const div = document.querySelector<HTMLElement>('.target');
+const div = document.querySelector < HTMLElement > '.target'
 
 if (!div) {
   throw new Error('元素对象 target 不存在')
 }
 
 // control show or hide
-bind('show', value => {
+bind('show', (value) => {
   if (value === true) {
-    div.classList.add('hide');
+    div.classList.add('hide')
   }
   if (value === false) {
-    div.classList.remove('hide');
+    div.classList.remove('hide')
   }
 })
 
 // change background color
-bind('backgroundColor', value => {
-  div.style.backgroundColor = value;
+bind('backgroundColor', (value) => {
+  div.style.backgroundColor = value
 })
 
 // change border color
-bind('borderColor', value => {
-  const width = parseInt(getStyle(div, 'borderWidth'));
+bind('borderColor', (value) => {
+  const width = parseInt(getStyle(div, 'borderWidth'))
   if (width === 0) {
-    div.style.border = '2px solid #ccc';
+    div.style.border = '2px solid #ccc'
   }
-  div.style.borderColor = value;
+  div.style.borderColor = value
 })
 
 // change width
-bind('width', value => {
-  div.style.width = `${value}px`;
+bind('width', (value) => {
+  div.style.width = `${value}px`
 })
 
-bind('height', value => {
-  div.style.height = `${value}px`;
+bind('height', (value) => {
+  div.style.height = `${value}px`
 })
 ```
 
-## 6-按钮控制模块
+## 06-按钮控制模块
 
 我们可能会通过按钮，input 框，或者滑块等不同的方式来改变状态值，因此控制模块将会是一个比较复杂的模块。 为了更好的组织代码，一个可读性和可维护性都很强的方式是将整个控制模块拆分为许多小模块，每一个小模块仅仅只完成一个状态值的控制操作。
 
@@ -393,130 +398,157 @@ bind('height', value => {
 
 ```javascript
 // src/controlButtons/show.ts
-import { getState, setState } from '../state';
+import { getState, setState } from '../state'
 
-const btn = document.querySelector('.show');
+const btn = document.querySelector('.show')
 
 if (!btn) {
   throw new Error('元素对象不存在')
 }
 
-btn.addEventListener('click', () => {
-  setState('show', !getState('show'))
-}, false);
+btn.addEventListener(
+  'click',
+  () => {
+    setState('show', !getState('show'))
+  },
+  false,
+)
 ```
 
 控制目标元素背景颜色变化的模块。
 
 ```javascript
 // src/controlButtons/bgColor.ts
-import { setState } from '../state';
+import { setState } from '../state'
 
-const input = document.querySelector<HTMLInputElement>('.bgcolor_input');
-const btn = document.querySelector('.bgcolor_btn');
+const input = document.querySelector < HTMLInputElement > '.bgcolor_input'
+const btn = document.querySelector('.bgcolor_btn')
 
 if (!input || !btn) {
   throw new Error('元素对象不存在')
 }
 
-btn.addEventListener('click', () => {
-  if (input.value) {
-    setState('backgroundColor', input.value);
-  }
-}, false);
+btn.addEventListener(
+  'click',
+  () => {
+    if (input.value) {
+      setState('backgroundColor', input.value)
+    }
+  },
+  false,
+)
 ```
 
 控制目标元素边框颜色变化的模块。
 
 ```javascript
 // src/controlButtons/borderColor.ts
-import { setState } from '../state';
+import { setState } from '../state'
 
-const input = document.querySelector<HTMLInputElement>('.bdcolor_input');
-const btn = document.querySelector('.bdcolor_btn');
+const input = document.querySelector < HTMLInputElement > '.bdcolor_input'
+const btn = document.querySelector('.bdcolor_btn')
 
 if (!input || !btn) {
   throw new Error('元素对象不存在')
 }
 
-
-btn.addEventListener('click', () => {
-  if (input.value) {
-    setState('borderColor', input.value);
-  }
-}, false);
+btn.addEventListener(
+  'click',
+  () => {
+    if (input.value) {
+      setState('borderColor', input.value)
+    }
+  },
+  false,
+)
 ```
 
 控制目标元素宽度变化的模块。
 
 ```javascript
 // src/controlButtons/width.ts
-import { getState, setState } from '../state';
+import { getState, setState } from '../state'
 
-const red_btn = document.querySelector('.width_reduce');
-const add_btn = document.querySelector('.width_add');
+const red_btn = document.querySelector('.width_reduce')
+const add_btn = document.querySelector('.width_add')
 
 if (!red_btn || !add_btn) {
   throw new Error('元素对象不存在')
 }
 
-red_btn.addEventListener('click', () => {
-  const cur = getState('width');
-  if (cur > 50) {
-    setState('width', cur - 5);
-  }
-}, false)
+red_btn.addEventListener(
+  'click',
+  () => {
+    const cur = getState('width')
+    if (cur > 50) {
+      setState('width', cur - 5)
+    }
+  },
+  false,
+)
 
-add_btn.addEventListener('click', () => {
-  const cur = getState('width');
-  if (cur < 400) {
-    setState('width', cur + 5);
-  }
-}, false)
+add_btn.addEventListener(
+  'click',
+  () => {
+    const cur = getState('width')
+    if (cur < 400) {
+      setState('width', cur + 5)
+    }
+  },
+  false,
+)
 ```
 
 控制目标元素高度变化的模块。
 
 ```javascript
 // src/controlButtons/height.ts
-import { getState, setState } from '../state';
+import { getState, setState } from '../state'
 
-const red_btn = document.querySelector('.height_reduce');
-const add_btn = document.querySelector('.height_add');
-const height_input = document.querySelector<HTMLInputElement>('.height_input');
+const red_btn = document.querySelector('.height_reduce')
+const add_btn = document.querySelector('.height_add')
+const height_input = document.querySelector < HTMLInputElement > '.height_input'
 
 if (!red_btn || !add_btn || !height_input) {
   throw new Error('元素对象不存在')
 }
 
-height_input.value = getState('height') || 200;
+height_input.value = getState('height') || 200
 
-red_btn.addEventListener('click', () => {
-  const cur = getState('height');
-  if (cur > 50) {
-    setState('height', cur - 5);
-    height_input.value = cur - 5 + '';
-  }
-}, false)
+red_btn.addEventListener(
+  'click',
+  () => {
+    const cur = getState('height')
+    if (cur > 50) {
+      setState('height', cur - 5)
+      height_input.value = cur - 5 + ''
+    }
+  },
+  false,
+)
 
-add_btn.addEventListener('click', () => {
-  const cur = getState('height');
-  if (cur < 400) {
-    setState('height', cur + 5);
-    height_input.value = cur + 5;
-  }
-}, false)
+add_btn.addEventListener(
+  'click',
+  () => {
+    const cur = getState('height')
+    if (cur < 400) {
+      setState('height', cur + 5)
+      height_input.value = cur + 5
+    }
+  },
+  false,
+)
 ```
 
 最后将这些模块拼合起来
 
 ```javascript
 // src/controlButtons/index.ts
-import './show';
-import './bgColor';
-import './borderColor';
-import './width';
-import './height';
+import './show'
+import './bgColor'
+import './borderColor'
+import './width'
+import './height'
 ```
 
 在构建工具中，如果我们引入一个文件夹当做模块，那么相当于默认引入的是该文件下的名为 index.ts 的模块，因此我们可以通过在 controlButtons 文件夹下创建 index.ts 的方式，来让该文件夹成为一个模块。
@@ -524,10 +556,10 @@ import './height';
 也就是说，在引入这个模块时：
 
 ```javascript
-import './controlButtons';
+import './controlButtons'
 
 // 等价于
-import './controlButtons/index';  // 后缀名可简写
+import './controlButtons/index' // 后缀名可简写
 ```
 
 **后面这段话非常重要。**
@@ -536,44 +568,44 @@ import './controlButtons/index';  // 后缀名可简写
 
 可能在大家以前的开发经验中，要改变一个元素的某个属性，一般来说会有状态值的变化，并且还有对应的 UI 操作。我们这里的做法好像有点不太一样。
 
-其实我这里是利用这样的一个例子，带大家尝试一下分层的开发思维。这里例子中，我们将状态控制设定为控制层，而 UI 变化设定为 view 层。我们只需要在目标元素模块中，将view 层的变化封装好，那么利用状态管理模块中的机制，在控制层，我们就只需要单一的考虑状态值的变化即可。
+其实我这里是利用这样的一个例子，带大家尝试一下分层的开发思维。这里例子中，我们将状态控制设定为控制层，而 UI 变化设定为 view 层。我们只需要在目标元素模块中，将 view 层的变化封装好，那么利用状态管理模块中的机制，在控制层，我们就只需要单一的考虑状态值的变化即可。
 
 这样处理之后，我们开发重心，就从考虑整个界面的变化，转移到了仅仅只考虑状态值的变化。这样做的好处是极大的简化了我们在实现需求的过程中所需要考虑的问题。在未来的进阶学习中，大家可能还会大量接触到这样的开发思路。
 
-## 7-最后的拼合模块
+## 07-最后的拼合模块
 
 在 src 目录下的 index.tsx 文件中，我们可以通过 import 将需要的模块拼合起来。
 
 ```javascript
 // src/index.tsx
-import './controlButtons';
-import './box';
+import './controlButtons'
+import './box'
 
-import './index.css';
+import './index.css'
 ```
 
 OK，这时候，我们需要的项目就已经全部完成了，如果你在跟着动手实践的话，相信现在你已经能够看到项目的最终效果。整个项目的相关目录结构如下：
 
 ```javascript
-+ public
-  - index.html
-+ src
-  - index.tsx
-  - index.css
-  - box.ts
-  - state.ts
-  - utils.ts
-  - register.ts
-  + controlBtns
-    - index.ts
-    - show.ts
-    - bgColor.ts
-    - borderColor.ts
-    - width.ts
-    - height.ts
+;+public -
+  index.html +
+  src -
+  index.tsx -
+  index.css -
+  box.ts -
+  state.ts -
+  utils.ts -
+  register.ts +
+  controlBtns -
+  index.ts -
+  show.ts -
+  bgColor.ts -
+  borderColor.ts -
+  width.ts -
+  height.ts
 ```
 
-## 8-项目小结
+## 08-项目小结
 
 模块化的开发思路，实际上是通过视觉元素，功能性等原则，将代码划分为一个一个拥有各自独立职能的模块。我们通过 ES6 的 modules 语法按需将这些模块组合起来，并借助构建工具打包成为我们熟知的 js 文件的这样一个过程。
 

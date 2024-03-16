@@ -95,9 +95,9 @@ b = a
 
 ```typescript
 interface User {
-  id: string,
-  name: string,
-  phone: string,
+  id: string
+  name: string
+  phone: string
   pwd: string
 }
 ```
@@ -106,9 +106,9 @@ interface User {
 
 ```typescript
 interface User {
-  id: string,
-  name: string,
-  phone: string,
+  id: string
+  name: string
+  phone: string
   pwd: string
 }
 
@@ -117,7 +117,7 @@ let defUser1 = {
   name: '张三',
   phone: '12312312313',
   pwd: '123123',
-  age: 20
+  age: 20,
 }
 
 let defUser2 = {
@@ -125,8 +125,8 @@ let defUser2 = {
   name: '张三',
   phone: '12312312313',
 }
- 
-const user: User = defUser1  // ✅ ok
+
+const user: User = defUser1 // ✅ ok
 const user2: User = defUser2 // ❌ error
 ```
 
@@ -149,15 +149,15 @@ const user2: User = defUser2 // ❌ error
 首先我们要明确场景。如下场景，并非是把函数当类型进行比较，本质上仍然是比较的基础类型或对象类型。
 
 ```typescript
-type Param = { a: number, b: number }
+type Param = { a: number; b: number }
 
-function foo(p: Param){}
+function foo(p: Param) {}
 
 // 试图将父类型赋值给子类型，❌ error
-foo({a: 20}) //
+foo({ a: 20 }) //
 
 // 将子类型赋值给父类型， ✅ ok
-foo({a: 20, b: 20, c: 20})
+foo({ a: 20, b: 20, c: 20 })
 ```
 
 比较函数类型，我们来看一个简单的例子
@@ -168,7 +168,7 @@ let x = (a: number) => {
 }
 
 let y = (a?: number) => {
-  return a ? a + 1: 0
+  return a ? a + 1 : 0
 }
 
 x = y // ✅ ok
@@ -232,11 +232,11 @@ p = q // ✅ ok
 
 ```typescript
 interface SuperType {
-  base: string;
+  base: string
 }
 interface SubType extends SuperType {
-  addition: string;
-};
+  addition: string
+}
 
 let p: SuperType = { base: 'base' }
 let c: SubType = { base: 'base', addition: 'hex' }
@@ -244,12 +244,12 @@ let c: SubType = { base: 'base', addition: 'hex' }
 p = c // ✅ ok
 c = p // ❌ error
 
-type Contravariant<T> = (p: T) => void;
-let pf: Contravariant<SuperType> = function (p) { }
-let cf: Contravariant<SubType> = function (p) { }
+type Contravariant<T> = (p: T) => void
+let pf: Contravariant<SuperType> = function (p) {}
+let cf: Contravariant<SubType> = function (p) {}
 
-pf = cf; // ❌ error 
-cf = pf; // ✅ ok 逆变
+pf = cf // ❌ error
+cf = pf // ✅ ok 逆变
 ```
 
 这种 `Comp<T>` 的类型兼容性与 `T` 相反的场景，我们称之为**逆变。**

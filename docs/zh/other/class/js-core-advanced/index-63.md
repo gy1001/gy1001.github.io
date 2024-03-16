@@ -49,7 +49,7 @@ const person = {
   name: 'TOM',
   age: 20,
   gender: 1,
-  run: () => {}
+  run: () => {},
 }
 ```
 
@@ -87,16 +87,14 @@ interface Array<T> {
 ```typescript
 // 底层声明
 interface Result<T> {
-  code: number,
-  data: T,
+  code: number
+  data: T
   success: boolean
 }
 
 // 底层封装
 function get<T>(url: string) {
-  return new Promise<Result<T>>((resolve, reject) => {
-
-  })
+  return new Promise<Result<T>>((resolve, reject) => {})
 }
 ```
 
@@ -104,7 +102,7 @@ function get<T>(url: string) {
 
 ```typescript
 interface User {
-  name: string,
+  name: string
   id: string
 }
 

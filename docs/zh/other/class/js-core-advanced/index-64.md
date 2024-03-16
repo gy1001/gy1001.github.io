@@ -6,14 +6,14 @@
 
 ## 1-枚举
 
-使用关键字enum可定义一个枚举类型。
+使用关键字 enum 可定义一个枚举类型。
 
 ```typescript
 enum Direction {
   Up = 1,
   Down,
   Left,
-  Right
+  Right,
 }
 
 Direction.Up // 1
@@ -22,16 +22,16 @@ Direction.Left // 3
 Direction.Right // 4
 ```
 
-> 需要注意，与interface等类型约束关键字不同，枚举类型是真实运行的代码，因此枚举类型是真实存在的对象，而并非仅仅只是简单的类型约束。
+> 需要注意，与 interface 等类型约束关键字不同，枚举类型是真实运行的代码，因此枚举类型是真实存在的对象，而并非仅仅只是简单的类型约束。
 
-如果不赋值，则从0开始递增。
+如果不赋值，则从 0 开始递增。
 
 ```typescript
 enum Direction {
   Up,
   Down,
   Left,
-  Right
+  Right,
 }
 
 Direction.Up // 0
@@ -47,7 +47,7 @@ enum Direction {
   Up = 'up',
   Down = 'down',
   Left = 'left',
-  Right = 'right'
+  Right = 'right',
 }
 
 Direction.Up // up
@@ -63,7 +63,7 @@ enum Direction {
   Up = 'up',
   Down = 'down',
   Left = 'left',
-  Right = 'right'
+  Right = 'right',
 }
 
 Direction.up // Up
@@ -90,7 +90,7 @@ const sources = {
 通常使用 & 符号来解决这样的场景，将两种类型合并为一种类型。这样就能够在智能提示中同时访问到两个事件对象的所有属性了。
 
 ```typescript
-type TouchEvent = React.TouchEvent & React.MouseEvent;
+type TouchEvent = React.TouchEvent & React.MouseEvent
 ```
 
 demo.gif
@@ -100,14 +100,14 @@ demo.gif
 当我们想要设定一个变量的类型为 number 时，
 
 ```typescript
-let a: number = 10;
+let a: number = 10
 ```
 
 但是当我们想要设定他的数据只能是`10, 20, 30`时，就需要用到 `|`
 
 ```typescript
-type Source = 10 | 20 | 30;
-let a: Source = 10;
+type Source = 10 | 20 | 30
+let a: Source = 10
 ```
 
 通常这种场景与枚举数据有关。
@@ -115,10 +115,10 @@ let a: Source = 10;
 当然，我们也可以扩展一个数据的类型。
 
 ```typescript
-const attr: number | string = 20;
+const attr: number | string = 20
 ```
 
-> 注意体会 & 与 |  的区别
+> 注意体会 & 与 | 的区别
 
 ## 4-类型保护
 
@@ -130,11 +130,11 @@ per: string | string[]
 
 我们在代码编写时，希望能够自动提示对应的 api，typescript 则不知道应该如何处理这种情况。
 
-试图调用数组的map方法，结果无法找到
+试图调用数组的 map 方法，结果无法找到
 
 为此，我们应该使用一些判断，帮助编辑器做出正确推断。
 
-自动提示所有字符串api自动提示所有数组api
+自动提示所有字符串 api 自动提示所有数组 api
 
 这种处理，就叫做类型保护。
 
@@ -144,11 +144,11 @@ per: string | string[]
 
 ```typescript
 interface Person {
-  name: string,
+  name: string
   age: number
 }
 
-const key: keyof Person = 'name';
+const key: keyof Person = 'name'
 ```
 
 结果
@@ -156,7 +156,7 @@ const key: keyof Person = 'name';
 他有点类似于
 
 ```typescript
-type Key = 'name' | 'age';
+type Key = 'name' | 'age'
 ```
 
 但 keyof 具备更强的灵活性，它会动态的去识别对象中的所有 key 值。
@@ -172,7 +172,7 @@ type Key = 'name' | 'age';
 ```typescript
 // 声明
 function values<T, K extends keyof T>(o: T, names: K[]): T[K][] {
-  return names.map(n => o[n]);
+  return names.map((n) => o[n])
 }
 // 使用
 let defUser = {
@@ -180,7 +180,7 @@ let defUser = {
   name: '张三',
   phone: '12312312313',
   pwd: '123123',
-  age: 20
+  age: 20,
 }
 
 values(defUser, ['id', 'name'])
