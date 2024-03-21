@@ -216,6 +216,28 @@ heades: { 'X-Requested-With': 'XMLHttpRequest' }
 
 [强烈推荐：一文彻底搞懂 http 缓存，图文解说+实战应用](https://juejin.cn/post/7051552782486077471)
 
+## 6. GET 与 POST 的区别
+
+- GET 用于获取资源,是无副作用的，是幂等的，且可缓存，POST 用于提交资源,有副作用，非幂等，不可缓存
+- GET 请求会被浏览器主动 cache，而 POST 不会，除非手动设置
+- GET 请求只能进行 url 编码，而 POST 支持多种编码方式
+- GET 请求参数会被完整保留在浏览器历史记录里，而 POST 中的参数不会被保留
+- GET 请求在 URL 中传送的参数是有长度限制的，而 POST 没有限制
+- 对参数的数据类型，GET 只接受 ASCII 字符，而 POST 没有限制
+- GET 比 POST 更不安全，因为参数直接暴露在 URL 上，所以不能用来传递敏感信息
+- GET 参数通过 URL 传递，POST 放在 Request body 中
+- GET 产生一个 TCP 数据包；POST 产生两个 TCP 数据包 (注意，此话不准确)
+
+  - 有些文章中提到，post 会将 header 和 body 分开发送，先发送 header，服务端返回 100 状态码再发送 body。HTTP 协议中没有明确说明 POST 会产生两个 TCP 数据包，而且实际测试(Chrome)发现，header 和 body 不会分开发送。所以，header 和 body 分开发送是部分浏览器或框架的请求方法，不属于 post 必然行为。
+
+  作者：小辣椒高效 Office
+  链接：https://www.zhihu.com/question/48725585/answer/2689830949
+  来源：知乎
+  著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+- GET 参数会被完整保留在浏览器历史记录里，而 POST 中的参数不会被保留
+- GET 产生的 URL 地址可以被 Bookmark，而 POST 不可以。
+
 ## 题目
 
 ### 1. http 常见的状态码有哪些？
