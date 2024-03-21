@@ -25,7 +25,7 @@
 npx create-react-app tsDemo --template typescript
 ```
 
-当然，在不同的脚手架项目中支持 typescirpt 可能不太一样，因此这里就不做统一讲解，大家根据自己的需求在网上搜索方案即可。
+当然，在不同的脚手架项目中支持 typescript 可能不太一样，因此这里就不做统一讲解，大家根据自己的需求在网上搜索方案即可。
 
 除此之外，也可以 clone 我们的 [练习项目](https://github.com/daraluv/practice)。
 
@@ -453,7 +453,6 @@ declare namespace JSX {
 ```typescript
 // demo来自官方
 import MyComponent from './myComponent'
-
 ;<MyComponent /> // 当前作用域找得到，正确
 ;<SomeOtherComponent /> // 找不到，错误
 ```
