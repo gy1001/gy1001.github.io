@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-573a5a54","path":"/zh/other/class/js-core-advanced/index-16.html","title":"16-栈操作原理与函数调用","lang":"zh-CN","frontmatter":{},"headers":[{"level":2,"title":"00-思考题","slug":"_00-思考题","link":"#_00-思考题","children":[]}],"git":{"updatedTime":1709293837000},"filePathRelative":"zh/other/class/js-core-advanced/index-16.md"}');export{e as data};

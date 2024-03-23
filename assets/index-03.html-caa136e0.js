@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-32e71732","path":"/zh/other/column/emotional-intelligence-lessons/index-03.html","title":"03-做高情商的“面试者”","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1689947278000},"filePathRelative":"zh/other/column/emotional-intelligence-lessons/index-03.md"}');export{e as data};

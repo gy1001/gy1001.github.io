@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-20d2a6e2","path":"/zh/other/class/engineering/index-24.html","title":"24-高阶实战——vue-cli5 源码解析","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1683860900000},"filePathRelative":"zh/other/class/engineering/index-24.md"}');export{e as data};

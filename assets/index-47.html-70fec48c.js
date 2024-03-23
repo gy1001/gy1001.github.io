@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-10bc3694","path":"/zh/other/class/js-core-advanced/index-47.html","title":"47-模板字符串","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1710427649000},"filePathRelative":"zh/other/class/js-core-advanced/index-47.md"}');export{e as data};

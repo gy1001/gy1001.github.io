@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-3d242aec","path":"/zh/other/column/emotional-intelligence-lessons/index-09.html","title":"09-从被抢功到会邀功","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1689926786000},"filePathRelative":"zh/other/column/emotional-intelligence-lessons/index-09.md"}');export{e as data};

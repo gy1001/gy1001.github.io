@@ -1,0 +1,1 @@
+import{_ as r,p as t,q as a,R as e,t as c}from"./framework-e8cb8151.js";const s={},o=e("h1",{id:"jquery",tabindex:"-1"},[e("a",{class:"header-anchor",href:"#jquery","aria-hidden":"true"},"#"),c(" jQuery")],-1),n=[o];function _(d,i){return t(),a("div",null,n)}const h=r(s,[["render",_],["__file","jquery.html.vue"]]);export{h as default};

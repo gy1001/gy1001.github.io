@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-62aec896","path":"/zh/other/column/emotional-intelligence-lessons/index-10.html","title":"10-“我干得多，挣得少？”“薪资倒挂？”--谈谈职场薪水观","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1689931369000},"filePathRelative":"zh/other/column/emotional-intelligence-lessons/index-10.md"}');export{e as data};

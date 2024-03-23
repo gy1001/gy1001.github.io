@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-1974bea8","path":"/zh/other/class/design-pattern/index-13.html","title":"13-课程总结","lang":"zh-CN","frontmatter":{},"headers":[{"level":2,"title":"总结","slug":"总结","link":"#总结","children":[]}],"git":{"updatedTime":1686895745000},"filePathRelative":"zh/other/class/design-pattern/index-13.md"}');export{e as data};

@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-2c881ff7","path":"/zh/other/class/js-core-advanced/index-57.html","title":"57-组件化","lang":"zh-CN","frontmatter":{},"headers":[{"level":2,"title":"序","slug":"序","link":"#序","children":[]}],"git":{"updatedTime":1710553331000},"filePathRelative":"zh/other/class/js-core-advanced/index-57.md"}');export{e as data};

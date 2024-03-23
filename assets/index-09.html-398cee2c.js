@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-2772a8f0","path":"/zh/other/class/js-core-advanced/index-09.html","title":"09-基础数据类型为什么是不可变的","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1709293837000},"filePathRelative":"zh/other/class/js-core-advanced/index-09.md"}');export{e as data};

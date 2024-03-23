@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-dd81c11c","path":"/zh/other/class/js-core-advanced/index-29.html","title":"29-一切始于封装","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1709826825000},"filePathRelative":"zh/other/class/js-core-advanced/index-29.md"}');export{e as data};

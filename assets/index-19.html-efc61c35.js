@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-720a662d","path":"/zh/other/column/emotional-intelligence-lessons/index-19.html","title":"19-从“年薪170w大牛征婚”聊起","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1689947278000},"filePathRelative":"zh/other/column/emotional-intelligence-lessons/index-19.md"}');export{e as data};

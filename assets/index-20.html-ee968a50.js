@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-d0d5f852","path":"/zh/other/column/emotional-intelligence-lessons/index-20.html","title":"20-结束语：大道行思,取则行远","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1689947278000},"filePathRelative":"zh/other/column/emotional-intelligence-lessons/index-20.md"}');export{e as data};

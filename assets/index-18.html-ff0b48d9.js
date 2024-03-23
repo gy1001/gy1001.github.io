@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-70558d8e","path":"/zh/other/column/emotional-intelligence-lessons/index-18.html","title":"18-别输在“情绪管理”","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1689947278000},"filePathRelative":"zh/other/column/emotional-intelligence-lessons/index-18.md"}');export{e as data};

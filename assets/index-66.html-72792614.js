@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-5fb98299","path":"/zh/other/class/js-core-advanced/index-66.html","title":"66-前五期录播地址","lang":"zh-CN","frontmatter":{},"headers":[{"level":3,"title":"前五期直播录播地址","slug":"前五期直播录播地址","link":"#前五期直播录播地址","children":[]}],"git":{"updatedTime":1710553331000},"filePathRelative":"zh/other/class/js-core-advanced/index-66.md"}');export{e as data};

@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-651cd7d9","path":"/zh/other/hotkey/vscode.html","title":"VScode 编程快捷","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1660754348000},"filePathRelative":"zh/other/hotkey/vscode.md"}');export{e as data};

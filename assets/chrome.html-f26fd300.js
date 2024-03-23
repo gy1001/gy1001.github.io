@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-65164d89","path":"/zh/other/hotkey/chrome.html","title":"Chrome 操作快捷键","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1692086743000},"filePathRelative":"zh/other/hotkey/chrome.md"}');export{e as data};

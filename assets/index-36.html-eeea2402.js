@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-6f7cd8cd","path":"/zh/other/column/webpack-engineering/index-36.html","title":"38 课程总结","lang":"zh-CN","frontmatter":{},"headers":[{"level":2,"title":"最后说两句","slug":"最后说两句","link":"#最后说两句","children":[]}],"git":{"updatedTime":1693628989000},"filePathRelative":"zh/other/column/webpack-engineering/index-36.md"}');export{e as data};

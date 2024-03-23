@@ -1,0 +1,1 @@
+const t=JSON.parse('{"key":"v-529931d9","path":"/zh/skill/front/about/gulp.html","title":"Gulp","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1659671062000},"filePathRelative":"zh/skill/front/about/gulp.md"}');export{t as data};

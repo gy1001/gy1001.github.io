@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-0d528556","path":"/zh/other/class/js-core-advanced/index-48.html","title":"48-解构","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1710427649000},"filePathRelative":"zh/other/class/js-core-advanced/index-48.md"}');export{e as data};

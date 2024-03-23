@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-6b3703b1","path":"/zh/other/column/emotional-intelligence-lessons/index-15.html","title":"15-“我不会，但我愿意学”","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1689947278000},"filePathRelative":"zh/other/column/emotional-intelligence-lessons/index-15.md"}');export{e as data};

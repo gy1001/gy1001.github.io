@@ -1,0 +1,1 @@
+import{_ as t,p as o,q as a,R as e,t as n}from"./framework-e8cb8151.js";const c={},d=e("h1",{id:"node",tabindex:"-1"},[e("a",{class:"header-anchor",href:"#node","aria-hidden":"true"},"#"),n(" Node")],-1),r=[d];function s(_,i){return o(),a("div",null,r)}const l=t(c,[["render",s],["__file","node-01.html.vue"]]);export{l as default};

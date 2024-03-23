@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-1e62fb8c","path":"/zh/other/class/js-core-advanced/index-43.html","title":"43-代理模式","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1710427649000},"filePathRelative":"zh/other/class/js-core-advanced/index-43.md"}');export{e as data};

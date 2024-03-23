@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-1b80e1ac","path":"/zh/other/class/vue3-learn/index-16.html","title":"16-总结","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1680844001000},"filePathRelative":"zh/other/class/vue3-learn/index-16.md"}');export{e as data};

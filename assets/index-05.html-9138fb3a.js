@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-1a618194","path":"/zh/collect/note/jue-jin/index-05.html","title":"Vue 组件间的属性、事件透传 (05)–实际应用","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1694535400000},"filePathRelative":"zh/collect/note/jue-jin/index-05.md"}');export{e as data};

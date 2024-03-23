@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-6f7c2822","path":"/zh/other/column/webpack-engineering/index-01.html","title":"01-开篇词 | 使用 Webpack 实现前端工程化","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1693645550000},"filePathRelative":"zh/other/column/webpack-engineering/index-01.md"}');export{e as data};

@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-28a00f46","path":"/zh/other/class/js-core-advanced/index-40.html","title":"40-单例模式","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1710427649000},"filePathRelative":"zh/other/class/js-core-advanced/index-40.md"}');export{e as data};

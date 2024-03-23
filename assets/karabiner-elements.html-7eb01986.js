@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-6ca901ee","path":"/zh/other/hotkey/karabiner-elements.html","title":"karabiner-elements 配置文件","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1697816892000},"filePathRelative":"zh/other/hotkey/karabiner-elements.md"}');export{e as data};

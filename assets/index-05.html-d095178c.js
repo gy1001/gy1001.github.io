@@ -1,0 +1,1 @@
+import{_ as t,p as a,q as c,R as e,t as n}from"./framework-e8cb8151.js";const r={},s=e("h1",{id:"_05-知识-属性描述符",tabindex:"-1"},[e("a",{class:"header-anchor",href:"#_05-知识-属性描述符","aria-hidden":"true"},"#"),n(" 05-知识-属性描述符")],-1),_=[s];function o(d,i){return a(),c("div",null,_)}const l=t(r,[["render",o],["__file","index-05.html.vue"]]);export{l as default};

@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-39ba79ae","path":"/zh/other/column/emotional-intelligence-lessons/index-07.html","title":"07-从“我干活，你抢功”聊起之“抢功劳的上司”篇","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1689923594000},"filePathRelative":"zh/other/column/emotional-intelligence-lessons/index-07.md"}');export{e as data};

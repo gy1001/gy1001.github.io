@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-4dcc70fa","path":"/zh/other/class/duyi-master/index-05.html","title":"05-知识-属性描述符","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1689955404000},"filePathRelative":"zh/other/class/duyi-master/index-05.md"}');export{e as data};

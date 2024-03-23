@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-f1fbe890","path":"/zh/other/class/js-core-advanced/index-23.html","title":"23-函数是一等公民","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1709293837000},"filePathRelative":"zh/other/class/js-core-advanced/index-23.md"}');export{e as data};

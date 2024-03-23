@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-5a9af8bc","path":"/zh/other/class/js-core-advanced/index-63.html","title":"63-类型推导是核心","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1710553331000},"filePathRelative":"zh/other/class/js-core-advanced/index-63.md"}');export{e as data};

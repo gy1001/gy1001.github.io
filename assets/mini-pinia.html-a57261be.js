@@ -1,0 +1,1 @@
+const i=JSON.parse('{"key":"v-3c773ff6","path":"/zh/skill/front/mini-frame/mini-pinia.html","title":"mini-pinia","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1688376925000},"filePathRelative":"zh/skill/front/mini-frame/mini-pinia.md"}');export{i as data};

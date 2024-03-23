@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-926c85c8","path":"/zh/other/class/js-core-advanced/index-30.html","title":"30-构造函数","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1709826825000},"filePathRelative":"zh/other/class/js-core-advanced/index-30.md"}');export{e as data};

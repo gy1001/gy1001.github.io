@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-e4552398","path":"/zh/other/class/js-core-advanced/index-27.html","title":"27-组合 compose","lang":"zh-CN","frontmatter":{},"headers":[{"level":2,"title":"00-中间件：洋葱模型","slug":"_00-中间件-洋葱模型","link":"#_00-中间件-洋葱模型","children":[]}],"git":{"updatedTime":1709293837000},"filePathRelative":"zh/other/class/js-core-advanced/index-27.md"}');export{e as data};

@@ -1,0 +1,1 @@
+const t=JSON.parse('{"key":"v-4d3aa268","path":"/zh/skill/front/frame/react.html","title":"React","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1647518299000},"filePathRelative":"zh/skill/front/frame/react.md"}');export{t as data};

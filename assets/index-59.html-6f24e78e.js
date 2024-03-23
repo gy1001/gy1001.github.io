@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-2ff1d135","path":"/zh/other/class/js-core-advanced/index-59.html","title":"59-TypeScript 入门指引","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1710553331000},"filePathRelative":"zh/other/class/js-core-advanced/index-59.md"}');export{e as data};

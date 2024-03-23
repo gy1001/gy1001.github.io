@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-7df25e54","path":"/zh/other/class/js-core-advanced/index-36.html","title":"36-封装选项卡对象","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1710427649000},"filePathRelative":"zh/other/class/js-core-advanced/index-36.md"}');export{e as data};

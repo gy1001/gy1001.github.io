@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-6cebdc50","path":"/zh/other/column/emotional-intelligence-lessons/index-16.html","title":"16-职场“站队”难","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1689947278000},"filePathRelative":"zh/other/column/emotional-intelligence-lessons/index-16.md"}');export{e as data};

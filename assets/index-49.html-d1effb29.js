@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-09e8d418","path":"/zh/other/class/js-core-advanced/index-49.html","title":"49-展开运算符","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1710427649000},"filePathRelative":"zh/other/class/js-core-advanced/index-49.md"}');export{e as data};

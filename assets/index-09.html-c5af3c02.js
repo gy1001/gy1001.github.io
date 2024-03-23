@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-bfc4dabc","path":"/zh/other/class/typescript-simple/index-09.html","title":"09-课程总结及后续学习方法推荐","lang":"zh-CN","frontmatter":{},"headers":[{"level":2,"title":"推荐网站","slug":"推荐网站","link":"#推荐网站","children":[]}],"git":{"updatedTime":1683644803000},"filePathRelative":"zh/other/class/typescript-simple/index-09.md"}');export{e as data};

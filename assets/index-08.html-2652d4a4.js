@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-c32e8bfa","path":"/zh/other/class/typescript-simple/index-08.html","title":"08-使用 React 编写爬取数据的展示页面","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1683626178000},"filePathRelative":"zh/other/class/typescript-simple/index-08.md"}');export{e as data};

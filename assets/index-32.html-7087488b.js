@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-8b99234c","path":"/zh/other/class/js-core-advanced/index-32.html","title":"32-继承","lang":"zh-CN","frontmatter":{},"headers":[{"level":2,"title":"01-继承","slug":"_01-继承","link":"#_01-继承","children":[]}],"git":{"updatedTime":1709826825000},"filePathRelative":"zh/other/class/js-core-advanced/index-32.md"}');export{e as data};

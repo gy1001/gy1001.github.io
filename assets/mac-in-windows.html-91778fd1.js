@@ -1,0 +1,1 @@
+const t=JSON.parse('{"key":"v-639efab3","path":"/zh/other/toss/mac-in-windows.html","title":"MAC-IN-WINDOWS","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1661425388000},"filePathRelative":"zh/other/toss/mac-in-windows.md"}');export{t as data};

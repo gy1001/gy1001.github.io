@@ -1,0 +1,1 @@
+import{_ as t,p as a,q as c,R as e,t as n}from"./framework-e8cb8151.js";const r={},s=e("h1",{id:"_04-实战-购物车效果",tabindex:"-1"},[e("a",{class:"header-anchor",href:"#_04-实战-购物车效果","aria-hidden":"true"},"#"),n(" 04-实战-购物车效果")],-1),_=[s];function o(d,i){return a(),c("div",null,_)}const l=t(r,[["render",o],["__file","index-04.html.vue"]]);export{l as default};

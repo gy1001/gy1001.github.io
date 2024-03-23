@@ -1,0 +1,1 @@
+import{_ as a,p as n,q as t,R as e,t as c}from"./framework-e8cb8151.js";const s={},o=e("h1",{id:"mac-in-windows",tabindex:"-1"},[e("a",{class:"header-anchor",href:"#mac-in-windows","aria-hidden":"true"},"#"),c(" MAC-IN-WINDOWS")],-1),i=[o];function r(d,_){return n(),t("div",null,i)}const l=a(s,[["render",r],["__file","mac-in-windows.html.vue"]]);export{l as default};
