@@ -87,6 +87,10 @@ export const sidebarZh: SidebarConfig = {
   ],
   '/zh/interview': [
     {
+      text: '简历相关',
+      children: ['/zh/interview/resume/index.md'],
+    },
+    {
       text: 'Html 相关',
       children: ['/zh/interview/html/html.md'],
     },
@@ -102,6 +106,7 @@ export const sidebarZh: SidebarConfig = {
     {
       text: 'JavaScript 相关',
       children: [
+        '/zh/interview/javascript/basic-00.md',
         '/zh/interview/javascript/basic-01.md',
         '/zh/interview/javascript/basic-02.md',
         '/zh/interview/javascript/basic-03.md',

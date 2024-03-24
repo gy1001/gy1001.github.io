@@ -232,19 +232,169 @@ vue 中的模板 template 无法被浏览器解析并渲染，因为这不属于
 
 与 react 类似，在添加了jsx的语法糖解析器babel-plugin-transform-vue-jsx之后，就可以直接手写render函数。
 
-所以，template和jsx的都是render的一种表现形式，不同的是：
+所以，template 和 jsx 的都是 render 的一种表现形式，不同的是：
 
-JSX相对于template而言，具有更高的灵活性，在复杂的组件中，更具有优势，而 template 虽然显得有些呆滞。但是 template 在代码结构上更符合视图与逻辑分离的习惯，更简单、更直观、更好维护。
+JSX 相对于 template 而言，具有更高的灵活性，在复杂的组件中，更具有优势，而 template 虽然显得有些呆滞。但是 template 在代码结构上更符合视图与逻辑分离的习惯，更简单、更直观、更好维护。
 
 ## 8. SSR有了解吗？原理是什么？
 
-在客户端请求服务器的时候，服务器到数据库中获取到相关的数据，并且在服务器内部将Vue组件渲染成HTML，并且将数据、HTML一并返回给客户端，这个在服务器将数据和组件转化为HTML的过程，叫做服务端渲染SSR。
+在客户端请求服务器的时候，服务器到数据库中获取到相关的数据，并且在服务器内部将 Vue 组件渲染成 HTML，并且将数据、HTML一并返回给客户端，这个在服务器将数据和组件转化为 HTML 的过程，叫做服务端渲染 SSR。
 
-而当客户端拿到服务器渲染的HTML和数据之后，由于数据已经有了，客户端不需要再一次请求数据，而只需要将数据同步到组件或者Vuex内部即可。除了数据以外，HTML也结构已经有了，客户端在渲染组件的时候，也只需要将HTML的DOM节点映射到Virtual DOM即可，不需要重新创建DOM节点，这个将数据和HTML同步的过程，又叫做客户端激活。
+而当客户端拿到服务器渲染的 HTML 和数据之后，由于数据已经有了，客户端不需要再一次请求数据，而只需要将数据同步到组件或者Vuex内部即可。除了数据以外，HTML结构也已经有了，客户端在渲染组件的时候，也只需要将 HTML 的 DOM 节点映射到 Virtual DOM 即可，不需要重新创建 DOM 节点，这个将数据和 HTML 同步的过程，又叫做客户端激活。
 
 使用SSR的好处：
 
-有利于SEO：其实就是有利于爬虫来爬你的页面，因为部分页面爬虫是不支持执行JavaScript的，这种不支持执行JavaScript的爬虫抓取到的非SSR的页面会是一个空的HTML页面，而有了SSR以后，这些爬虫就可以获取到完整的HTML结构的数据，进而收录到搜索引擎中。
+**有利于SEO**：其实就是有利于爬虫来爬你的页面，因为部分页面爬虫是不支持执行 JavaScript 的，这种不支持执行JavaScript 的爬虫抓取到的非SSR的页面会是一个空的 HTML 页面，而有了 SSR 以后，这些爬虫就可以获取到完整的HTML 结构的数据，进而收录到搜索引擎中。
 
-白屏时间更短：相对于客户端渲染，服务端渲染在浏览器请求URL之后已经得到了一个带有数据的HTML文本，浏览器只需要解析HTML，直接构建DOM树就可以。而客户端渲染，需要先得到一个空的HTML页面，这个时候页面已经进入白屏，之后还需要经过加载并执行 JavaScript、请求后端服务器获取数据、JavaScript 渲染页面几个过程才可以看到最后的页面。特别是在复杂应用中，由于需要加载 JavaScript 脚本，越是复杂的应用，需要加载的 JavaScript 脚本就越多、越大，这会导致应用的首屏加载时间非常长，进而降低了体验感。
+**白屏时间更短**：相对于客户端渲染，服务端渲染在浏览器请求 URL 之后已经得到了一个带有数据的 HTML 文本，浏览器只需要解析 HTML，直接构建 DOM树 就可以。而客户端渲染，需要先得到一个空的 HTML 页面，这个时候页面已经进入白屏，之后还需要经过加载并执行 JavaScript、请求后端服务器获取数据、JavaScript 渲染页面几个过程才可以看到最后的页面。特别是在复杂应用中，由于需要加载 JavaScript 脚本，越是复杂的应用，需要加载的 JavaScript 脚本就越多、越大，这会导致应用的首屏加载时间非常长，进而降低了体验感。
+
+## 9. 在 Vue 中为 diff 设置 key 一定可以提升效率吗？
+
+在 Vue 中，`diff`算法是用于比较新旧虚拟 DOM 节点，并对页面进行更新的一种机制。
+
+设置`key`可以提高`diff`算法的效率，但并不是绝对的。 
+
+当使用`v-for`遍历元素列表时，Vue 会默认采用`就地复用`策略，即尽可能地复用已渲染的 DOM 元素，而不是移动它们的位置来匹配数据项的顺序。这种默认模式在大多数情况下是高效的，但仅适用于不依赖子组件状态或临时 DOM 状态（例如表单输入值）的简单列表渲染。 
+
+如果数据项的顺序发生改变，Vue 将不会移动 DOM 元素来匹配新的顺序，而是简单地复用每个元素，并确保它们在特定的索引下显示正确的内容。这种行为可能会导致一些意外的渲染结果，例如在表单输入值发生变化时，可能会出现数据错位的问题。 
+
+通过为每个元素提供一个唯一的`key`值，可以告诉 Vue 在比较新旧节点时，要依据`key`来进行判断。这样可以更准确、快速地找到对应的`vnode`节点，从而提高`diff`算法的效率。
+
+但是，如果列表渲染的内容非常简单，或者故意依赖默认行为来获得性能提升，那么不使用`key`可能会更高效。 
+
+因此，建议在使用`v-for`时尽可能地提供`key`，除非你确定不需要或者遍历输出的 DOM 内容非常简单。
+
+> ```
+> 该怎么理解上面那句话，有没有实际例子
+> ```
+
+好的，我用一个简单的例子来解释一下`diff`算法以及`key`值的作用：
+
+假设有一个列表，包含三个元素`A`、`B`、`C`，当它们的顺序发生变化时，如果不使用`key`，`Vue`会将整个列表重新渲染。而如果为每个元素设置了`key`，`Vue`就会根据`key`来判断哪些元素发生了变化，从而只更新发生变化的元素，而不是整个列表。
+
+下面是一个代码示例：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <!-- 使用 v-for 循环渲染列表 -->
+    <ul>
+      <li v-for="item in items" :key="item.id">
+        {{ item.text }}
+      </li>
+    </ul>
+  </div>
+
+  <script>
+    // 创建一个 Vue 实例
+    const app = new Vue({
+      el: '#app',
+      data: {
+        items: [
+          { id: 1, text: 'A' },
+          { id: 2, text: 'B' },
+          { id: 3, text: 'C' }
+        ]
+      }
+    });
+
+    // 模拟数据更新
+    setInterval(() => {
+      app.items.splice(1, 1, { id: 4, text: 'D' });
+    }, 1000);
+  </script>
+</body>
+</html>
+```
+
+在上述示例中，为每个元素设置了`key`值为`id`，当列表中的元素顺序发生变化时，`Vue`会根据`key`值来判断哪些元素发生了变化，从而只更新发生变化的元素，提高了`diff`效率。
+
+请注意，`key`值应该是唯一的，并且最好是能够反映元素身份的属性。如果`key`值不唯一，或者没有提供`key`值，`Vue`可能无法正确地识别哪些元素发生了变化，从而导致不必要的重新渲染。
+
+## 10. Vue 自定义指令 应用场景
+
+### 表单的重复提交
+
+```vue
+<template>
+	<button v-throttle="formSubmit">表单提交</button>
+</template>
+
+<script>
+  Vue.directive("throttle", {
+  bind: (el, binding) => {
+    let throttleTime = binding.value
+    if(!throttleTime){
+      throttleTime = 2000
+    }
+    let cbFunc
+    el.addEventListener("click", event => {
+      if(cbFunc){
+        cbFunc = setTimeout(() => {
+          cbFunc = null
+        }, throttleTime)
+      }else {
+        event.stopImmediatePropagation()
+      }
+    }, true)
+  }
+})
+</script>
+```
+
+### 一键复制
+
+## 11. Vue 组件间的通信方式
+
+props、emit、attrs
+
+$parent $root
+
+ref、eventBus、Vuex
+
+### 1. 父子之间的组件通信
+
+* props
+* emit
+* $parent
+* $ref
+* $attrs
+
+### 2. 兄弟组件之间
+
+* $parent
+* $root
+* eventBus
+* vuex
+
+### 3. 跨层级组件通信
+
+* eventBus
+* vuex
+* provide/inject
+
+## 12. Vue 跨域
+
+### 什么是跨域
+
+* 协议 protocol
+* 主机名（域名）host
+* 端口 prot
+
+### 如何解决跨域
+
+* JSONP
+* CORS
+* Proxy
+* Nginx
+
+
 
