@@ -97,6 +97,7 @@ export const sidebarZh: SidebarConfig = {
     {
       text: 'Css 相关',
       children: [
+        '/zh/interview/css/index-01.md',
         '/zh/interview/css/css-layout.md',
         '/zh/interview/css/css-position.md',
         '/zh/interview/css/css-graphics.md',
