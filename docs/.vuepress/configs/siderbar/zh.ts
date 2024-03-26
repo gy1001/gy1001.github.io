@@ -127,6 +127,10 @@ export const sidebarZh: SidebarConfig = {
       children: ['/zh/interview/es6/index-01.md'],
     },
     {
+      text: 'TS 相关',
+      children: ['/zh/interview/ts/index-01.md'],
+    },
+    {
       text: 'Webpack 相关',
       children: ['/zh/interview/webpack/webpack.md'],
     },
