@@ -306,8 +306,22 @@ js 实现
 
 ## 19. 如何用 css 实现一个三角形
 
-```css
+主要使用 border 来实现上下左右边框宽度的颜色，来生成不同的三角形、梯形等
 
+```html
+<div></div>
+
+<style>
+  div {
+    width: 0;
+    height: 0;
+    border: 10px solid red;
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+    border-right-color: transparent;
+  }
+</style>
 ```
 
 ## 20: 介绍一下 CSS 中的层叠上下文
@@ -330,7 +344,3 @@ js 实现
 - 层叠上下文的特性
 
   - 内部元素会覆盖外部元素
-
-```
-
-```

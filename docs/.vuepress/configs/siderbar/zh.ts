@@ -123,6 +123,10 @@ export const sidebarZh: SidebarConfig = {
       ],
     },
     {
+      text: 'ES6 相关',
+      children: ['/zh/interview/es6/index-01.md'],
+    },
+    {
       text: 'Webpack 相关',
       children: ['/zh/interview/webpack/webpack.md'],
     },
