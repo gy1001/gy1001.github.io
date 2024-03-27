@@ -55,6 +55,8 @@ function compiler(sourceCode) {
 将 LISP 的语言转换为 C
 [实现一个 LISP to C 的语法转换器](https://zhuanlan.zhihu.com/p/140889954)
 
+#### 1. 先实现 tokenizer
+
 ```js
 // 词法分析，tokens
 const tokenizer = (input: string) => {
@@ -128,11 +130,386 @@ const tokenizer = (input: string) => {
   }
   return tokens
 }
+const input = '(add 2 (subtract 4 2))'
+const tokens = tokenizer(input)
+console.log(tokens)
 ```
 
-## 2. Babel 的 plugin 和 loader 的应用场景？
+```json
+[
+  // 结果如下
+  { "type": "paren", "value": "(" },
+  { "type": "name", "value": "add" },
+  { "type": "number", "value": "2" },
+  { "type": "paren", "value": "(" },
+  { "type": "name", "value": "subtract" },
+  { "type": "number", "value": "4" },
+  { "type": "number", "value": "2" },
+  { "type": "paren", "value": ")" },
+  { "type": "paren", "value": ")" }
+]
+```
+
+#### 2. 接着实现 parser
+
+```js
+// 语法分析
+interface IToken {
+  type: string;
+  value: string | number;
+}
+
+const parser = (tokens: IToken[]) => {
+  let current = 0
+  function walk() {
+    let token = tokens[current]
+    // 数字
+    if (token.type === 'number') {
+      current++
+      return {
+        type: 'NumberLiteral',
+        value: token.value,
+      }
+    }
+    // 字符串
+    if (token.type === 'string') {
+      current++
+      return {
+        type: 'StringLiteral',
+        value: token.value,
+      }
+    }
+    // 带括号的表达式
+    if (token.type === 'paren' && token.value === '(') {
+      token = tokens[++current]
+      let node: IASTExpressionNode = {
+        type: 'CallExpression',
+        name: token.value,
+        params: [],
+      }
+      token = tokens[++current]
+      while (
+        token.type !== 'paren' ||
+        (token.type === 'paren' && token.value !== ')')
+      ) {
+        // 进一步遍历
+        node.params.push(walk())
+        token = tokens[current]
+      }
+      current++
+      return node
+    }
+    throw new TypeError(token.type)
+  }
+  let ast: IAST = {
+    type: 'Program',
+    body: [],
+  }
+  while (current < tokens.length) {
+    // 生成ast
+    ast.body.push(walk())
+  }
+  return ast
+}
+```
+
+结果如下
+
+```json
+// console.log(parser(tokens))
+{
+  "type": "Program",
+  "body": [
+    {
+      "type": "CallExpression",
+      "name": "add",
+      "params": [
+        {
+          "type": "NumberLiteral",
+          "value": "2"
+        },
+        {
+          "type": "CallExpression",
+          "name": "subtract",
+          "params": [
+            {
+              "type": "NumberLiteral",
+              "value": "4"
+            },
+            {
+              "type": "NumberLiteral",
+              "value": "2"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+#### 3. Transformation: 将 LISP 的 AST 转成 C 的 AST
+
+> 对 AST 内的每一种类型填充 enter 和 exit 函数（处理前和处理后）分别在遍历进入和退出的时候执行
+
+```ts
+function transformer(ast) {
+  let newAst = {
+    type: 'Program',
+    body: [],
+  }
+
+  ast._context = newAst.body
+
+  function traverser(ast, visitor) {
+    function traverseArray(array, parent) {
+      array.forEach((child) => {
+        traverseNode(child, parent)
+      })
+    }
+    function traverseNode(node, parent) {
+      let methods = visitor[node.type]
+      if (methods && methods.enter) {
+        methods.enter(node, parent)
+      }
+      switch (node.type) {
+        case 'Program':
+          traverseArray(node.body, node)
+          break
+        case 'CallExpression':
+          traverseArray(node.params, node)
+          break
+        case 'NumberLiteral':
+        case 'StringLiteral':
+          break
+        default:
+          throw new TypeError(node.type)
+      }
+      if (methods && methods.exit) {
+        methods.exit(node, parent)
+      }
+    }
+    traverseNode(ast, null)
+  }
+  traverser(ast, {
+    NumberLiteral: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'NumberLiteral',
+          value: node.value,
+        })
+      },
+    },
+    StringLiteral: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'StringLiteral',
+          value: node.value,
+        })
+      },
+    },
+    CallExpression: {
+      enter(node, parent) {
+        let expression = {
+          type: 'CallExpression',
+          callee: {
+            type: 'Identifier',
+            name: node.name,
+          },
+          arguments: [],
+        }
+        node._context = expression.arguments
+        if (parent.type !== 'CallExpression') {
+          expression = {
+            type: 'ExpressionStatement',
+            expression: expression,
+          }
+        }
+        parent._context.push(expression)
+      },
+    },
+  })
+  return newAst
+}
+```
+
+输出结果如下
+console.log(transformer(parser(tokens)))
+
+```json
+{
+  "type": "Program",
+  "body": [
+    {
+      "type": "ExpressionStatement",
+      "expression": {
+        "type": "CallExpression",
+        "callee": {
+          "type": "Identifier",
+          "name": "add"
+        },
+        "arguments": [
+          {
+            "type": "NumberLiteral",
+            "value": "2"
+          },
+          {
+            "type": "CallExpression",
+            "callee": {
+              "type": "Identifier",
+              "name": "subtract"
+            },
+            "arguments": [
+              {
+                "type": "NumberLiteral",
+                "value": "4"
+              },
+              {
+                "type": "NumberLiteral",
+                "value": "2"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+#### 4. Code Generation：将 C 的 AST 转化成 C 的 code
+
+- 深度优先遍历基于 C 的 AST。
+- 通过不同类型处理成不同的字符串。
+- 将所有字符串组合成为 C 的 code。
+
+```ts
+const codeGenerator = (node) => {
+  switch (node.type) {
+    case 'Program':
+      return node.body.map(codeGenerator).join('\n')
+    case 'ExpressionStatement':
+      return codeGenerator(node.expression) + ';'
+
+    case 'CallExpression':
+      return (
+        codeGenerator(node.callee) +
+        '(' +
+        node.arguments.map(codeGenerator).join(', ') +
+        ')'
+      )
+    case 'Identifier':
+      return node.name
+    case 'NumberLiteral':
+      return node.value
+    case 'StringLiteral':
+      return '"' + node.value + '"'
+    default:
+      throw new TypeError(node.type)
+  }
+}
+```
+
+结果如下：
+
+```js
+// console.log(codeGenerator(transformer(parser(tokens))))
+add(2, subtract(4, 2))
+```
+
+## 2. Babel 的 plugin 和 loader 的应用和原理？
+
+babel 是一个流行的 JavaScript 编译器
+
+babel 包含以下几个核心内容
+
+- @babel/core
+- @babel/parser
+- @babel/traverse
+- @babel/generator
+- 辅助相关，type polyfill template 等
+
+babel 的预设：babel-preset-env
+
+![image-20240327155817537](./assets/image-20240327155817537.png)
+
+```js
+import %%importName%% from "%%source%%"
+
+期望这段代码最终输出
+
+import module from "module"
+```
+
+参考 bable 官网文档
+
+> 官网给出的例子，运行时提示报错：
+>
+> import template from '@babel/template'
+> import generate from '@babel/generator'
+>
+> TypeError: template is not a function
+>
+> TypeError: generate is not a function
+>
+> 需要修改 为如下
+>
+> import _template from '@babel/template'
+> import _generate from '@babel/generator'
+>
+> const template = _template.default
+> const generate = _generate.default
+
+```js
+import _template from '@babel/template'
+import _generate from '@babel/generator'
+import * as t from '@babel/types'
+
+const template = _template.default
+const generate = _generate.default
+
+const buildRequire = template(`
+  var %%importName%% = require(%%source%%);
+`)
+
+const ast = buildRequire({
+  importName: t.identifier('myModule'),
+  source: t.stringLiteral('my-module'),
+})
+
+console.log(generate(ast).code)
+
+// var myModule = require("my-module");
+```
+
+babel 除了转译 code 外，还可以做什么呢？
+
+* polyfill
 
 ## 3. 请说说 webpack 的打包过程与原理？
+
+webpack 基本的配置情况如何？
+
+* splitChunk 怎么做
+* Tress shaking
+* Dll
+* css 提取
+* terser 提取
+* mode （development production）、entry、module(loader)、resolve、external、plugin
+
+### webpack 打包构建流程
+
+几个核心概念
+
+1. Compiler
+2. Compliation
+3. Module
+4. Chunk
+5. Bundle
+
+执行过程描述
+
+1. 初始化，初始化会读取配置信息，统计入口文件、
 
 <!-- ## 4. 请说说 webpack 的热更新原理？ -->
 
