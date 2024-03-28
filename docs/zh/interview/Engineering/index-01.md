@@ -509,7 +509,55 @@ webpack 基本的配置情况如何？
 
 执行过程描述
 
-1. 初始化，初始化会读取配置信息，统计入口文件、
+1. 初始化，初始化会读取配置信息，统计入口文件、解析 loader 以及 plugin 等信息；
+2. 编译阶段，webpack 编译代码，部分依赖 babel, ts 转译为 JavaScript，less 转为 css, styled-components 进行处理
+3. 输出阶段：生成输出文件，包含文件名，输出路径，资源信息
+
+#### 初始化阶段的主要流程
+
+1. 初始化参数
+2. 创建 compiler 对象实例
+3. 开始编译，compiler.run
+4. 确定入口，根据 entry，找出所有入口文件，调用 addEntry
+
+#### 构建阶段
+
+1. 编译阶段，通过 entry 对应的 dependence 构建 module 对象，调用对应 loder 去将模块转换为 js 内容（babel 将一些内容转换为目标内容）
+2. 完成模块编译，得到一个 moduleGraphe
+
+Module => chunk => bundle
+
+#### 生成阶段
+
+1. 输出资源组装 chunk, chunkGroup, 再将 Chunk 转换为一个单独文件加入到输出列表，既然到这儿已经加入到输出列表了，说明之类是修改资源的最后机会（也就是afterChunks: new SyncHooks([‘chunks’])钩子）
+2. 写入文件系统(emitAssets)在确定好输出内容后，根据配置输出到文件中。
+   1. （如果是 webpack-dev-server 呢？？不太一样）
+   2. 还有比如热更新等等
+
+### loader 的本质就是对象
+
+```js
+const loaderUtils = require("loader-utils")
+exports = module.exports = function(source) {
+  // 对 source 做一些处理
+  return source
+}
+```
+
+### Plugin的本质是对象
+
+```js
+export default Class CusPlugin {
+  constructor(options = {}){
+    this.options = options
+  }
+  apply (compiler) {
+    /...../
+  }
+}
+```
+
+
 
 <!-- ## 4. 请说说 webpack 的热更新原理？ -->
 
