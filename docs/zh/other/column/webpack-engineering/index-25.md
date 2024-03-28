@@ -1,12 +1,8 @@
 # 25 Webpack 的 Compiler 和 Compilation
 
-更新时间：2019-06-27 09:57:45
+![img](./assets/5cd9645f000128e506400360.jpg)
 
-![img](https://img.mukewang.com/5cd9645f000128e506400360.jpg)
-
-与有肝胆人共事，从无字句处读书。
-
-——周恩来
+>  与有肝胆人共事，从无字句处读书。 —— 周恩来
 
 在 [Webpack 工作流程](TODO) 文章中已经提到过，Compiler 和 Compilation 都是继承自[Tapable](https://github.com/webpack/tapable) ，不同点是`Compiler`是每个 Webpack 的配置，对应一个`Compiler`对象，记录着整个 Webpack 的生命周期；在构建的过程中，每次构建都会产生一次`Compilation`，`Compilation`则是构建周期的产物。本文将进一步介绍`Compiler`和`Compilation`，通过本章节的学习，将会对 Webpack 构建过程有一个更加宏观的掌握。
 

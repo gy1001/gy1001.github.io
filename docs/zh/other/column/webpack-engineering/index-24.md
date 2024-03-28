@@ -1,12 +1,8 @@
 # 24 apable —— Webpack 的核心模块
 
-更新时间：2019-06-26 13:30:29
+![img](./assets/5cd9645100016fb206400360.jpg)
 
-![img](https://img1.mukewang.com/5cd9645100016fb206400360.jpg)
-
-立志是事业的大门，工作是登门入室的的旅途。
-
-——巴斯德
+> 立志是事业的大门，工作是登门入室的的旅途。 —— 巴斯德
 
 Webpack 工程相当庞大，但 Webpack 本质上是一种事件流机制。通过事件流将各种插件串联起来，最终完成 Webpack 的全流程，而实现事件流机制的核心是今天要讲的[Tapable 模块](https://www.npmjs.com/package/tapable)。Webpack 负责编译的 Compiler 和创建 Bundle 的 Compilation 都是继承自 Tapable。所以在讲 Webpack 工作流程之前，我们需要先掌握 Tapable。
 
@@ -91,7 +87,7 @@ const {
 
 Hook 类型可以分为同步（`Sync`）和异步（`Async`），异步又分为并行和串行：
 
-![图片描述](http://img.mukewang.com/5d076a520001811512870187.png)
+![图片描述](./assets/5d076a520001811512870187.png)
 根据使用方式来分，又可以分为`Basic`、`Waterfal`、`Bail`和`Loop`四类，每类 Hook 都有自己的使用要点：
 
 | 类型       | 使用要点                                                                                      |
@@ -149,7 +145,7 @@ Webpack 3
 
 详细的流程图如下：
 
-![图片描述](http://img.mukewang.com/5d076a8b000157ca02800491.png)
+![图片描述](./assets/5d076a8b000157ca02800491.png)
 
 ### `Bail` 类型 Hook
 
@@ -184,8 +180,8 @@ hello 2
 
 详细的流程图如下：
 
-![图片描述](http://img.mukewang.com/5d076aae00017a9e05790501.png)
-`SyncBailHook`类似`Array.find`，找到（或者发生）一件事情就停止执行；`AsyncParallelBailHook`类似`Promise.race`这里竞速场景，只要有一个回调解决了一个问题，全部都解决了。
+![图片描述](./assets/5d076aae00017a9e05790501.png)
+`SyncBailHook`类似`Array.find`，找到（或者发生)一件事情就停止执行；`AsyncParallelBailHook`类似`Promise.race`这里竞速场景，只要有一个回调解决了一个问题，全部都解决了。
 
 ### `Waterfall` 类型 Hook
 
@@ -227,7 +223,7 @@ Webpack Tapable 1
 
 详细的流程图如下：
 
-![图片描述](http://img.mukewang.com/5d076ad000010a0a06280535.png)
+![图片描述](./assets/5d076ad000010a0a06280535.png)
 
 ### `Loop` 类型 Hook
 
@@ -312,7 +308,7 @@ function intentLog(...text) {
 
 详细的流程图如下：
 
-![图片描述](http://img.mukewang.com/5d076aef000151c908260538.png)
+![图片描述](./assets/5d076aef000151c908260538.png)
 
 ## Tapable 的原理解析
 

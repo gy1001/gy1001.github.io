@@ -1,6 +1,6 @@
 # 35 Webpack 5.0
 
-![img](https://img4.mukewang.com/5cd964f90001836a06400360.jpg)
+![img](./assets/5cd964f90001836a06400360.jpg)
 
 先相信你自己，然后别人才会相信你。
 

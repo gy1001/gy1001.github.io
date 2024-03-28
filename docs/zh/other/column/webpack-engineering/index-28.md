@@ -1,12 +1,8 @@
 # 28 Webpack 的模块热替换做了什么？
 
-更新时间：2019-07-30 10:41:19
+![img](./assets/5cd9648e0001230906400360.jpg)
 
-![img](https://img.mukewang.com/5cd9648e0001230906400360.jpg)
-
-不安于小成，然后足以成大器；不诱于小利，然后可以立远功。
-
-——方孝孺
+>  不安于小成，然后足以成大器；不诱于小利，然后可以立远功。 —— 方孝孺
 
 Webpack 的模块热替换（HMR - Hot Module Replacement，又称为热替换、热更新等）是 Webpack 最令人兴奋的特性之一。在没有 HMR 之前，Web 前端开发者使用类似 [LiveReload](http://livereload.com/) 这类工具配合浏览器插件监听文件变化，然后**重新加载整个页面**。当 Webpack 开启了 HMR 功能之后，我们的代码修改之时，Webpack 会重新打包，并且将修改后的代码发送到浏览器，浏览器替换老的代码，保证了页面状态不会丢失，在不刷新整个页面的前提下进行局部的更新。
 
@@ -97,10 +93,10 @@ module.exports = {
 
 配置完毕后，我们使用 npx 启动`webpack-dev-server --open`，这时候浏览器会自动打开我们的 HTML 首页：`http://localhost:9000`。我们修改`index.js`和`style.css`的内容，则浏览器的页面也进行变化，具体效果可以参考下面的 Gif 动图：
 
-![图片描述](http://img.mukewang.com/5d0777790001565a07370446.gif)
+![图片描述](./assets/5d0777790001565a07370446.gif)
 这时候 HMR 并不是真正的局部刷新，而是重新加载，详细请看下面的 Gif 动图。注意观察 Chrome DevTools 的 Network 面板请求是重新加载的，而不是增量加载：
 
-![图片描述](http://img.mukewang.com/5d0777620001158503290372.gif)
+![图片描述](./assets/5d0777620001158503290372.gif)
 要解决这个问题，就需要我们在`src/index.js`增加一段代码：
 
 ```js
@@ -118,14 +114,14 @@ if (module.hot) {
 
 增加这段代码之后，再来看 HMR 的局部更新效果就实现了，具体看下面的 Gif 动图：
 
-![图片描述](http://img.mukewang.com/5d07774400017ac500140014.gif)
+![图片描述](./assets/5d07774400017ac500140014.gif)
 接下来我们来看下 HMR 的具体流程是怎样的。
 
 ### HMR 流程
 
 现在我们启动 `webpack-dev-server` 之后，我们先来看下 Webpack 打包的 log ：
 
-![图片描述](http://img.mukewang.com/5d07772c000102a008160314.png)
+![图片描述](./assets/5d07772c000102a008160314.png)
 从 log 中可以看出我们的`entry`打包出来了两个文件：`main.js`和`main.2cd06169aeecf9cddf61.hot-update.js`。这时候我们打开 Chrome 浏览器访问 `http://localhost:9000`，看下 Chrome 的 DevTools 的 Network 面板，查看页面的请求：
 
 ![图片描述](http://img.mukewang.com/5d0777130001f40802770136.png)
@@ -154,12 +150,12 @@ if (module.hot) {
 
 在终端中，log 发生了变化：
 
-![图片描述](http://img.mukewang.com/5d0776cf0001b8a708140313.png)
+![图片描述](./assets/5d0776cf0001b8a708140313.png)
 生成了新的打包之后的文件，包括：`main.c243117d7cba3d4c4390.hot-update.js`和`c243117d7cba3d4c4390.hot-update.json`等。
 
 这时候我们观察 Chrome 的请求，首先是 WebSocket 的消息中收到了一条推送内容：
 
-![图片描述](http://img.mukewang.com/5d0776ba00013e0003510134.png)
+![图片描述](./assets/5d0776ba00013e0003510134.png)
 
 ```
 {"type":"hash","data":"c243117d7cba3d4c4390"}
@@ -172,7 +168,7 @@ http://localhost:9000/c243117d7cba3d4c4390.hot-update.json
 http://localhost:9000/main.c243117d7cba3d4c4390.hot-update.js
 ```
 
-![图片描述](http://img.mukewang.com/5d0775fd0001595a06680177.png)
+![图片描述](./assets/5d0775fd0001595a06680177.png)
 这两个请求的就是更新下来的更新的代码，下面我们来看下 Chrome 一开始加载的`main.2cd06169aeecf9cddf61.hot-update.js`文件和后来请求过来的`main.c243117d7cba3d4c4390.hot-update.js`内容，比较下`$node.innerHTML`内容就是我们刚刚修改`src/index.js`的内容了：
 
 ```js
@@ -206,7 +202,7 @@ webpackHotUpdate('main', {
 
 通过上面的全流程观察，我们可以总结出来 Webpack HMR 的全流程图如下所示：
 
-![图片描述](http://img.mukewang.com/5d0775600001e23210060750.jpg)
+![图片描述](./assets/5d0775600001e23210060750.jpg)
 上面的流程图展现了 HMR 的一个完整周期，整个周期分为两部分：**启动阶段**和**文件监控更新流程**。
 
 在启动阶段，Webpack 和 webpack-dev-server 进行交互。Webpack 和 webpack-dev-server 主要是通过 Express 的中间件 [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware)进行交互，这个阶段可以细分为以下几个步骤：
@@ -231,7 +227,7 @@ webpackHotUpdate('main', {
 
 WebSocket 消息的含义如下图所示：
 
-![图片描述](http://img.mukewang.com/5d07743900010a2108730315.png)
+![图片描述](./assets/5d07743900010a2108730315.png)
 
 > Tips：
 >
@@ -279,7 +275,7 @@ module.exports = {
 
 这里 Webpack wiki 中有一张比较形象的图：
 
-![图片描述](http://img.mukewang.com/5d07740a0001892e08340616.jpg)
+![图片描述](./assets/5d07740a0001892e08340616.jpg)
 上图中，右边的 moduleID 为`4`和`9`的模块发生了变化，那么依赖两个模块的 4 个 Chunk 文件就需要更新，这 4 个 chunks 被放入了`manifest`JSON 文件中：
 
 - `moduleID=9`模块修改后：引入了新的依赖`12`，所以 `chunk=3`生成了包含`9`和`12`的 update 文件；

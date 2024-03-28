@@ -1,6 +1,6 @@
 # 21-使用 Webpack 的 Tree-Shaking
 
-![img](https://img1.mukewang.com/5cd9641e0001c6c306390359.jpg)
+![img](./assets/5cd9641e0001c6c306390359.jpg)
 
 > 你若要喜爱你自己的价值，你就得给世界创造价值。 ——歌德
 

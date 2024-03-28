@@ -1,6 +1,6 @@
 # 37 附录：项目中常用的 loader
 
-![img](https://img2.mukewang.com/5cd965150001c63306400360.jpg)
+![img](./assets/5cd965150001c63306400360.jpg)
 
 自信和希望是青年的特权。
 

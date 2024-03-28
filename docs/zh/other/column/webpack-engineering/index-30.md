@@ -1,8 +1,6 @@
 # 30 实战：手写一个 markdown-loader
 
-更新时间：2019-07-08 14:12:13
-
-![img](https://img3.mukewang.com/5cd964af0001fdb906400360.jpg)
+![img](./assets/5cd964af0001fdb906400360.jpg)
 
 古之立大事者，不唯有超世之才，亦必有坚韧不拔之志。
 

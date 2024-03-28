@@ -1,12 +1,8 @@
 # 23 怎么调试 Webpack？
 
-更新时间：2019-06-25 17:21:36
+![img](./assets/5cd9643f0001e11806390358.jpg)
 
-![img](https://img.mukewang.com/5cd9643f0001e11806390358.jpg)
-
-宝剑锋从磨砺出，梅花香自苦寒来。
-
-——佚名
+> 宝剑锋从磨砺出，梅花香自苦寒来。——- 佚名
 
 在深入理解 Webpack 内核原理之前，我们先来学习下研究方法，即怎么调试 Webpack。我们都知道 Webpack 实际是 Node.js 编写的，执行的时候我们使用`webpack-cli`命令进行执行，所以我们可以利用 Node.js 的调试方法来调试 Webpack。
 
@@ -67,7 +63,7 @@ module.exports = {
 
 了解了`webpack`执行命令的原理之后，我们再来看下 VSCode 的调试功能怎么使用，下面是一张调试面板的截图：
 
-![图片描述](http://img.mukewang.com/5d0767e000019aeb19201080.png)
+![图片描述](./assets/5d0767e000019aeb19201080.png)
 在 VSCode 中开启调试很简单，只需要下面步骤：
 
 1. 打开需要调试的文件，然后在需要的地方设置添加`debugger`关键字设置断点；
@@ -75,13 +71,13 @@ module.exports = {
 3. 修改`launch.json`文件的相关内容，主要是`name`、`program`和`cwd`三个字段，改成项目对应的配置即可。这里使用`${workspaceFolder}`这个变量，代表 VSCode 的工作路径，即当前打开项目的根目录；
 4. 点击 VSCode 界面左侧长得类似虫子的按钮进入 debug 面板界面，点击上图中左上角的开始三角按钮，启动调试；
 
-![图片描述](http://img.mukewang.com/5d0768060001dbb001310325.png)
+![图片描述](./assets/5d0768060001dbb001310325.png)
 
 5. 这时候就可以使用调试控制条进行调试了。左侧会显示执行上下文、变量、断点、调用栈等多个信息，跟 Chrome 的 DevTools 调试非常调试。
 
 调试控制条如下图所示，共有 6 个按钮，从左到右依次为下面列表及其对应的快捷键（Mac 系统）：
 
-![图片描述](http://img.mukewang.com/5d07682d00012bf502160032.png)
+![图片描述](./assets/5d07682d00012bf502160032.png)
 
 - 继续/暂停：`F5`
 - 单步跳过：`F10`
@@ -278,7 +274,7 @@ try {
 
 设置完断点之后，这时候在`cli.js`页面按`F5`快捷键，选择`Node.js`环境，这时候会进入编辑`launch.json`。如果直接进入了调试模式，那么需要按照下图方式手动打开`launch.json`编辑界面：
 
-![图片描述](http://img.mukewang.com/5d07687200016aed04130264.png)
+![图片描述](./assets/5d07687200016aed04130264.png)
 这时候，我们根据项目的实际情况修改`name`、`cwd`、`program`配置。如果我们用 VSCode 打开的是项目之前创建的`webpack-debug`文件夹，那么`${workspaceFolder}`对应的就是`webpack-debug`的完整路径，配置内容如下：
 
 ```json
@@ -301,7 +297,7 @@ try {
 
 经过上面配置，我们保存`launch.json`之后，就可以开始调试了，整个过程可以看下下面的动图：
 
-![图片描述](http://img.mukewang.com/5d102654000166e700050001.gif)
+![图片描述](./assets/5d102654000166e700050001.gif)
 
 ## 总结
 

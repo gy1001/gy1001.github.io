@@ -2,7 +2,7 @@
 
 更新时间：2019-07-10 14:31:25
 
-![img](https://img3.mukewang.com/5cd964bf00013cec06400360.jpg)
+![img](./assets/5cd964bf00013cec06400360.jpg)
 
 人生太短，要干的事太多，我要争分夺秒。
 
@@ -113,7 +113,7 @@ module.exports = FileListPlugin
 
 我们将编写的代码放到了 webpack.config.js 配置中，直接执行后得到的命令行输出内容为：
 
-![图片描述](http://img.mukewang.com/5d078516000138b914420648.png)
+![图片描述](./assets/5d078516000138b914420648.png)
 通过 log 发现多输出了一个`filelist.md`的文件，然后我们打开`dist`文件夹中的这个文件下看内容是否符合我们的预期：
 
 ```markdown

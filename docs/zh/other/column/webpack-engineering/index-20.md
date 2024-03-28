@@ -1,6 +1,6 @@
 # 20-Webpack 优化之速度优化
 
-![img](https://img3.mukewang.com/5cd9640a000113f306400360.jpg)
+![img](./assets/5cd9640a000113f306400360.jpg)
 
 [学习 Webpack5 之路（优化篇）- 近 7k 字](https://juejin.cn/post/6996816316875161637#heading-18)
 

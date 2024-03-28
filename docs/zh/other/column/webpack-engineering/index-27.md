@@ -1,12 +1,8 @@
 # 27 从 Webpack 的产出代码来看 Webpack 是怎么执行的
 
-更新时间：2019-07-01 12:09:35
+![img](./assets/5cd9648000019c9706400359.jpg)
 
-![img](https://img2.mukewang.com/5cd9648000019c9706400359.jpg)
-
-老骥伏枥，志在千里；  烈士暮年，壮心不已。
-
-——曹操
+> 老骥伏枥，志在千里；  烈士暮年，壮心不已。—— 曹操
 
 通过之前的章节内容，我们已经了解了 Webpack 的整个打包流程，并且针对源码做了分析。这篇文章，来分析下 Webpack 打包产出物是怎样执行的。本文基于 Webpack@4.29.6 版本来分析产出物，Webpack 版本不同产出物可能有差异，但是基本原理是一致的。
 
@@ -1082,7 +1078,7 @@ function webpackJsonpCallback(data) {
 
 本文第二部分，解析`splitChunk`产出的代码时，故意预留一个坑：zepto 执行的时候会报错，具体如下：
 
-![图片描述](http://img.mukewang.com/5d07727b0001e0e804930193.png)
+![图片描述](./assets/5d07727b0001e0e804930193.png)
 通过分析报错原因，我们来更好地理解下 Webpack 的模块执行机制。
 
 首先看下 Zepto 的源码结构：
@@ -1182,7 +1178,7 @@ function __webpack_require__(moduleId) {
 
 所以对于 Zepto 来说，它初始化时使用的 `this`（见下图）其实就是 `module.exports`，但这个 `module.exports` 没有赋值过任何变量，即 Zepto 初始化使用的 `this` 为空对象。
 
-![图片描述](http://img.mukewang.com/5d0772580001549903980528.png)
+![图片描述](./assets/5d0772580001549903980528.png)
 而在 Zepto 中，实际想用的 `this` 是`window`对象，所以 `factory(global)` 中 `global` 为空对象，Zepto 运行函数中的 `window` 也就变成了空对象，而 `document = window.document`，这个 `document` 为 `undefined`，因此会造成 `document.createElement` 会报 `TypeError`。
 
 ### 解决 Webpack 引入 Zepto 报错问题
