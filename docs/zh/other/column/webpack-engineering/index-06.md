@@ -34,7 +34,9 @@ module.exports = {
 
 ### resolve.alias
 
-`resolve.alias` 是最常用的配置，通过设置 `alias` 可以帮助 `webpack` 更快查找模块依赖，而且也能使我们编写代码更加方便。例如，我们在实际开发中经常会把源码都放到`src`文件夹，目录结构如下：
+`resolve.alias` 是最常用的配置，通过设置 `alias` 可以帮助 `webpack` 更快查找模块依赖，而且也能使我们编写代码更加方便。
+
+例如，我们在实际开发中经常会把源码都放到`src`文件夹，目录结构如下：
 
 ```
 src
@@ -141,7 +143,9 @@ module.exports = {
 
 ## module
 
-在 webpack 解析模块的同时，不同的模块需要使用不同类型的模块处理器来处理，这部分的设置就在`module`配置中。module 有两个配置：`module.noParse`和`module.rules`，
+在 webpack 解析模块的同时，不同的模块需要使用不同类型的模块处理器来处理，这部分的设置就在`module`配置中。
+
+module 有两个配置：`module.noParse`和`module.rules`，
 
 ### module.noParse
 
@@ -416,7 +420,7 @@ module.exports = {
 }
 ```
 
-如果需要调整 `Loader` 的执行顺序，可以使用`enforce`，`enforce`取值是`pre|post`，`pre`表示把放到最前，`post`是放到最后：
+如果需要调整 `Loader` 的执行顺序，可以使用`enforce`，`enforce`取值是`pre | post`，`pre`表示把放到最前，`post`是放到最后：
 
 ```js
 use: [
@@ -513,7 +517,7 @@ module.exports = {
 
 > 本小节 Webpack 相关面试题：
 >
-> 1. 能不能手写一个 Webpack 配置？记住重点配置项：`entry`、`output`、`module.rules`（loader）和`plugin`。
+> 1. 能不能手写一个 Webpack 配置？记住重点配置项：`entry`、`output`、`module.rules`、`loader`和`plugin`。
 > 2. 在 JS 文件中怎么调用 Loader 来处理一个模块？
 > 3. Loader 的解析顺序是怎样的？
 

@@ -6,7 +6,9 @@
 
 随着 Web 前端的不断发展，传统网页开发在逐渐往 Web 应用（Web Application，简称 WebAPP）的开发方式转变，页面开始变得越来越复杂，复杂的应用场景必然引起技术的进步，出现新的技术手段来解决现有问题。
 
-前端模块化和工程化的呼声越来越高，随着前些年大行其道的 Grunt、Gulp、FIS 等构建工具的发展，带动了一波前端工程化热。近几年，经过 React、Vue 库这些年的扩张，大型 Webapp 不再局限于手写 jQuery 操作 DOM，让大型 Webapp 有了全新的开发体验。在这个过程中，前端逐渐发展成了模块化和单页应用（single-page application，简称 SPA）为主的形式，在这种形态和 React、Vue 这些库的普及下，Webpack 越来越被更多成为主流构建工具。
+前端模块化和工程化的呼声越来越高，随着前些年大行其道的 Grunt、Gulp、FIS 等构建工具的发展，带动了一波前端工程化热。近几年，经过 React、Vue 库这些年的扩张，大型 Webapp 不再局限于手写 jQuery 操作 DOM，让大型 Webapp 有了全新的开发体验。
+
+在这个过程中，前端逐渐发展成了模块化和单页面应用（single-page application，简称 SPA）为主的形式，在这种形态和 React、Vue 这些库的普及下，Webpack 越来越被更多成为主流构建工具。
 
 ## 模块化
 
@@ -20,37 +22,127 @@
 
 模块化之后的代码，我们考虑更多的代码使用和维护成本的问题。所以有了很多模块化的规范：`CommonJS`、`AMD`和`ES6 Module`规范（另外还有`CMD`、`UMD`等）。
 
-- CommonJS：是 Nodejs 广泛使用的一套模块化规范，是一种
-
-  同步
-
-  加载模块依赖的方式；
+- CommonJS：是 Nodejs 广泛使用的一套模块化规范，是一种 **同步** 加载模块依赖的方式；
 
   - `require`：引入一个模块
   - `exports`：导出模块内容
   - `module`：模块本身
 
-- AMD：是 js 模块加载库
+  ```js
+  // 模块 A
+  module.exports = {
+    add: function (a, b) {
+      return a + b
+    },
+  }
 
-  RequireJS
+  // 模块 B
+  const moduleA = require('./moduleA')
+  console.log(moduleA.add(2, 3))
+  ```
 
-  提出并且完善的一套模块化规范，AMD 是一条
-
-  异步
-
-  加载模块依赖的方式；
+- AMD：是 js 模块加载库 **RequireJS** 提出并且完善的一套模块化规范，AMD 是一条**异步** 加载模块依赖的方式；
 
   - id：模块的 id
   - dependencies：模块依赖
   - factory：模块的工厂函数，即模块的初始化操作函数
   - require：引入模块
 
+  ```html
+  // index.html
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="UTF-8" />
+      <title></title>
+    </head>
+    <body></body>
+    <!-- data-main 属性的作用是，指定网页程序的主模块。在下面例中，就是 js 目录下面的 main.js，这个文件会第一个被 require.js 加载。由于 require.js 默认的文件后缀名是 js，所以可以把 main.js 简写成 main。 -->
+    <script data-main="main" src="require.js"></script>
+  </html>
+  ```
+
+  ```js
+  // main.js
+  require.config({
+    paths: {
+      jquery: 'jquery-3.2.1.min',
+      color: 'jquery.color',
+      math1: 'math',
+      test: 'test',
+    },
+  })
+  require(['test'], function (test) {
+    test.testMath()
+    test.testColor()
+  })
+
+  // jquery.color.js
+  // jQuery 1.7 以上已经实现 AMD 规范
+  define('color', 'jquery', function ($) {
+    ;(function () {
+      $.fn.extend({
+        color: function (value) {
+          if (value == undefined) {
+            return this.css('color')
+          } else {
+            return this.css('color', value)
+          }
+        },
+      })
+    })()
+  })
+
+  // math.js
+  define('math1', function () {
+    var add = function (x, y) {
+      return x + y
+    }
+    var minus = function (x, y) {
+      return x - y
+    }
+    return {
+      add: add,
+      minus: minus,
+    }
+  })
+
+  // test.js
+  define('test', ['math1', 'color', 'jquery'], function (math, color, $) {
+    var testMath = function () {
+      var x = 10
+      var y = 5
+      $('#divAdd').html(x + '+' + y + '=' + math.add(x, y))
+      $('#divMinus').html(x + '-' + y + '=' + math.minus(x, y))
+    }
+    var testColor = function () {
+      $('#divColor').color('blue')
+    }
+    return {
+      testMath: testMath,
+      testColor: testColor,
+    }
+  })
+  ```
+
 - ES6 Module：ES6 推出的一套模块化规范。
 
   - import：引入模块依赖
   - export：模块导出
+  
+  ```js
+  // 定义一个模块
+  export function sum(a, b) {
+      return a + b;
+  }
+  // 导入并使用这个模块
+  import { sum } from './module';
+  console.log(sum(1, 2));
+  ```
 
-> Tips：除了上面三大主流规范，还有 CMD（国产库 SeaJS 提出来的一套模块规范）和 UMD（兼容 CommonJS 和 AMD 一套规范）。目前多数模块的封装，是既可以在 Node.js 环境又可以在 Web 环境运行，那么一般会采用 UMD 的规范，后面 Webpack 针对 lib 库的封装会有进一步介绍。
+> Tips：除了上面三大主流规范，还有 CMD（国产库 SeaJS 提出来的一套模块规范）和 UMD（兼容 CommonJS 和 AMD 一套规范）。
+>
+> 目前多数模块的封装，是既可以在 Node.js 环境又可以在 Web 环境运行，那么一般会采用 UMD 的规范，后面 Webpack 针对 lib 库的封装会有进一步介绍。
 
 除了 JavaScript 的模块化，在 CSS 样式中也可以采用`@import`的方式来引入自己依赖的模块：
 
@@ -60,7 +152,11 @@
 
 在一些 Less 或者 Sass 这些 CSS 预处理语言中`@import`还可以用来导入一些变量、函数和`mixin`的定义。
 
-> Tips：大家可能也经常听到组件化这个名词，模块化一般指的是可以被抽象封装的最小/最优代码集合，模块化解决的是功能耦合问题；组件化则更像是模块化进一步封装，根据业务特点或者不同的场景封装出具有一定功能特性的独立整体；另外，前端提到组件化更多的是具有模板、样式和 js 交互的 UI 组件。
+> Tips：大家可能也经常听到组件化这个名词，模块化一般指的是可以被抽象封装的最小/最优代码集合，模块化解决的是功能耦合问题；
+>
+> 组件化则更像是模块化进一步封装，根据业务特点或者不同的场景封装出具有一定功能特性的独立整体；
+>
+> 另外，前端提到组件化更多的是具有模板、样式和 js 交互的 UI 组件。
 
 关于模块化开发相关的内容，在「Webpack 模块化开发」部分会继续详细介绍。
 
@@ -95,7 +191,7 @@ webpack 跟其他构建工具本质上不同之处在于：**webpack 是从入�
 当然，Webpack 还可以轻松的解决传统构建工具解决的问题：
 
 - 模块化打包，一切皆模块，JS 是模块，CSS 等也是模块；
-- 语法糖转换：比如 ES6 转 ES5、TypeScript；
+- 语法糖转换：比如 ES6 转 ES5、TypeScript 转换 JavaScript；
 - 预处理器编译：比如 Less、Sass 等；
 - 项目优化：比如压缩、CDN；
 - 解决方案封装：通过强大的 Loader 和插件机制，可以完成解决方案的封装，比如 PWA；
@@ -108,6 +204,19 @@ webpack 跟其他构建工具本质上不同之处在于：**webpack 是从入�
 > 本小节 Webpack 相关面试题：
 >
 > 1. Webpack 与 Grunt、Gulp 这类打包工具有什么不同？
+>
+>    * grunt和gulp是基于任务流的。类似于jquery，找到一个或者一类文件，对其进行链式操作，更新流上的数据，整一条链条构成一个任务，多个任务就构成web的构建流程。
+>    * webpack是基于入口的。webpack会自动递归解析入口所需要的加载的所有资源文件，然后用不同的loader去处理不同的文件，用plugin来扩展webpack的功能。
 > 2. 与 Webpack 类似的工具还有哪些？谈谈你为什么选择（或放弃）使用 Webpack？
+>
+>    * 与 Webpack 类似的工具还有：
+>
+>      - Rollup：一个用于构建 [JavaScript](coco://sendMessage?ext={"s%24wiki_link"%3A"https%3A%2F%2Fm.baike.com%2Fwikiid%2F7263973572305318203"}&msg=JavaScript) 模块的轻量级工具。
+>
+>      - Parcel：一个快速且零配置的 Web 应用打包器。
+>
+>      - Browserify：一个将 CommonJS 模块转换为浏览器可识别的模块的工具。
+>
+>    * 我选择使用 Webpack 的原因是它具有丰富的功能和强大的扩展性。Webpack 提供了模块化开发、代码分割、加载器和[插件](coco://sendMessage?ext={"s%24wiki_link"%3A"https%3A%2F%2Fm.baike.com%2Fwikiid%2F5672419420006108837"}&msg=插件)系统等特性，使得构建复杂的前端项目变得更加容易和高效。它的灵活性允许我根据项目的需求进行定制化配置，并且有大量的社区插件和资源可供选择。
 
 [课程的源代码下载](https://github.com/ksky521/webpack-tutorial)

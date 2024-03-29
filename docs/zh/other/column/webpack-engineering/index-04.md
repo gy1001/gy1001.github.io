@@ -84,7 +84,7 @@ console.log(`${hello} ${world}`)
 
 通过上面的演示，我们得到下面的结论：
 
-1. Webpack 默认的入口文件是`src/index.js`；
+1. Webpack 默认的入口文件是`src/index.js`
 2. Webpack 的默认输出目录是`dist/main.js`。
 
 我们如果要修改 Webpack 的默认输出目录，需要用到 Webpack 命令的`--output`，我们将上面的 npm scripts 做下修改：
@@ -168,7 +168,7 @@ module.exports = {
         },
       },
     ],
-  },c
+  },
 }
 ```
 
@@ -180,7 +180,11 @@ module.exports = {
 >
 > 下面介绍几个 webpack-cli 的小技巧：
 >
-> 1.当项目逐渐变大或者使用生产环境打包的时候，Webpack 的编译时间会变长，可以通过参数让编译的输出内容带有进度和颜色： `webpack --progress --color`；
+> 1.当项目逐渐变大或者使用生产环境打包的时候，Webpack 的编译时间会变长，可以通过参数让编译的输出内容带有进度和颜色：
+>
+> ```bash
+> webpack --progress --color
+> ```
 >
 > 2. Webpack 的配置比较复杂，很容出现错误，如果出问题，会打印一些简单的错误信息，我们还可以通过参数 `--display-error-details` 来打印错误详情：`webpack --display-error-details`；**（最新版本已经弃用）**
 >
@@ -190,13 +194,15 @@ module.exports = {
 
 ##### 小结
 
-至此，我们已经学习并且演示了使用 webpack-cli 命令来完成 Webpack 的零配置打包，后面章节我们继续介绍 Webpack 的打包配置。webpack-cli 命令的选项比较多，详细可以通过 [webpack-cli 的文档](https://webpack.js.org/api/cli)进行查阅，这里总结我们日常用的最多的几个选项（options）：
+至此，我们已经学习并且演示了使用 webpack-cli 命令来完成 Webpack 的零配置打包，后面章节我们继续介绍 Webpack 的打包配置。
 
-- **–config**：指定一个 Webpack 配置文件的路径；
-- **–mode**：指定打包环境的 mode，取值为`development`和`production`，分别对应着开发环境和生产环境；
-- **–json**：输 mode 出 Webpack 打包的结果，可以使用`webpack --json > stats.json`方式将打包结果输出到指定的文件；
-- **–progress**：显示 Webpack 打包进度；
-- **–watch, -w**：watch 模式打包，监控文件变化之后重新开始打包；
+webpack-cli 命令的选项比较多，详细可以通过 [webpack-cli 的文档](https://webpack.js.org/api/cli)进行查阅，这里总结我们日常用的最多的几个选项（options）：
+
+- **-–config**：指定一个 Webpack 配置文件的路径；
+- **—mode**：指定打包环境的 mode，取值为`development`和`production`，分别对应着开发环境和生产环境；
+- **—-json**：输 mode 出 Webpack 打包的结果，可以使用`webpack --json > stats.json`方式将打包结果输出到指定的文件；
+- **—progress**：显示 Webpack 打包进度；
+- **—watch, -w**：watch 模式打包，监控文件变化之后重新开始打包；
 - **–color, --colors`/`–no-color, --no-colors**：控制台输出的内容是否开启颜色；
 - **–hot**：开启 Hot Module Replacement 模式，后面会详细介绍；
-- **—profile**：会详细的输出每个环节的用时（时间），方便排查打包速度瓶颈。
+- **–profile**：会详细的输出每个环节的用时（时间），方便排查打包速度瓶颈

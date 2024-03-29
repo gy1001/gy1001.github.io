@@ -45,7 +45,7 @@ console.log(sayHi())
 })
 ```
 
-#### CommonJS 的问题
+### CommonJS 的问题
 
 `CommonJS` 规范是 `JavaScript` 中最常见的模块格式规范，这一标准的设计初衷是为了让 `JavaScript` 在多个环境下都实现模块化。
 
@@ -386,7 +386,7 @@ render(data) // 传入 data，直接返回的是 html 片段
 
 > 本小节 Webpack 相关面试题：
 >
-> 1. 什么是 JavaScript 的模块化开发？有哪些可以遵循的规范？ 
+> 1. 什么是 JavaScript 的模块化开发？有哪些可以遵循的规范？
 >
 > 2. 在 js 文件中怎么调用 loader 来处理一个模块？
 > 3. Webpack 中怎么获取一个模块引用另外一个模块是传入的 query？

@@ -15,7 +15,7 @@ Webpack 是可配置的模块打包工具，我们可以通过修改 Webpack 的
 
 说白了，`webpack.config.js`是一个 Node.js 的模块。
 
-### 简单的 webpack.config.js 示例
+**简单的 webpack.config.js 示例**
 
 ```js
 const path = require('path')
@@ -152,11 +152,17 @@ npx webpack --config webpack.config.entry.js --mode development
 
 通过前面的文章我们已经了解到：**webpack 是一个模块打包工具，能够从一个需要处理的 JavaScript 文件开始，构建一个依赖关系图（dependency graph），该图映射到了项目中每个模块，然后将这个依赖关系图输出到一个或者多个 bundle 中**。
 
-从上面文字的认识，可以轻易的得到 Webpack 的两个核心概念：`entry`和`output`，即入口和输出，Webpack 是从指定的入口文件（entry）开始，经过加工处理，最终按照`output`设定输出固定内容的 bundle；而这个加工处理的过程，就用到了`loader`和`plugin`两个工具；`loader`是源代码的处理器，`plugin`解决的是 `loader`处理不了的事情。今天重点介绍下`entry`和`output`，在后面文章在介绍`loader`和`plugin`。
+从上面文字的认识，可以轻易的得到 Webpack 的两个核心概念：`entry`和`output`，即入口和输出。
+
+Webpack 是从指定的入口文件（entry）开始，经过加工处理，最终按照`output`设定输出固定内容的 bundle；而这个加工处理的过程，就用到了`loader`和`plugin`两个工具；`loader`是源代码的处理器，`plugin`解决的是 `loader` 处理不了的事情。
+
+今天重点介绍下`entry`和`output`，在后面文章在介绍`loader`和`plugin`。
 
 ### context
 
-在介绍`entry`之前，介绍下`context`（上下文），`context`即项目打包的相对路径上下文，如果指定了`context="/User/test/webpack"`，那么我们设置的`entry`和`output`的相对路径都是相对于`/User/test/webpack`的，包括在 JavaScript 中引入模块也是从这个路径开始的。由于`context`的作用，**决定了`context`值必须是一个绝对路径**。
+在介绍`entry`之前，介绍下`context`（上下文），`context`即项目打包的相对路径上下文，如果指定了`context="/User/test/webpack"`，那么我们设置的`entry`和`output`的相对路径都是相对于`/User/test/webpack`的，包括在 JavaScript 中引入模块也是从这个路径开始的。
+
+由于`context`的作用，**决定了`context`值必须是一个绝对路径**。
 
 ```js
 // webpack.config.js
@@ -182,9 +188,11 @@ Webpack 的`entry`支持多种类型，包括字符串、对象、数组。
 单文件的用法如下：
 
 ```js
+// 使用字符串方式
 module.exports = {
   entry: 'path/to/my/entry/file.js',
 }
+
 // 或者使用对象方式
 module.exports = {
   entry: {
@@ -209,8 +217,8 @@ module.exports = {
 
 > Tips：上面配置无论是字符串还是字符串数组的 entry，实际上都是只有一个入口，但是在打包产出上会有差异：
 >
-> 1. 如果直接是 string 的形式，那么 webpack 就会直接把该 string 指定的模块（文件）作为入口模块 
-> 2. 如果是数组 `[string]` 的形式，那么 webpack 会自动生成另外一个入口模块，并将数组中每个元素指定的模块（文件）加载进来，
+> 1. 如果直接是 string 的形式，那么 webpack 就会直接把该 string 指定的模块（文件）作为入口模块
+> 2. 如果是数组 `[string]` 的形式，那么 webpack 会自动生成另外一个入口模块，并将数组中每个元素指定的模块（文件）加载进来
 > 3. 并将最后一个模块的 module.exports 作为入口模块的 module.exports 导出。
 >
 > **这部分会在「原理篇：打包产出小节」继续做详细介绍**。
@@ -247,7 +255,9 @@ webpack 的`output`是指定了`entry`对应文件编译打包后的输出 bundl
 
 > Tips：当不指定 output 的时候，默认输出到 `dist/main.js` ，即 `output.path` 是`dist`，`output.filename` 是 `main`。
 
-一个 webpack 的配置，**可以包含多个`entry`，但是只能有一个`output`**。对于不同的`entry`可以通过`output.filename`占位符语法来区分，比如：
+一个 webpack 的配置，**可以包含多个`entry`，但是只能有一个`output`**。
+
+对于不同的`entry`可以通过`output.filename`占位符语法来区分，比如：
 
 ```js
 module.exports = {
@@ -284,7 +294,7 @@ path/to/my/entry/list.js → dist/list.js
 
 `[hash]` 和 `[chunkhash]` 的长度可以使用 `[hash:16]`（默认为 **20**）来指定。或者，通过指定 `output.hashDigestLength` 在全局配置长度，那么他们之间有什么区别吗？
 
-- `[hash]`：是**整个项目**的 hash 值，其根据每次编译内容计算得到，每次编译之后都会生成新的 hash，即修改任何文件都会导致所有文件的 hash 发生改变；在一个项目中虽然入口不同，但是 hash 是相同的；**hash 无法实现前端静态资源在浏览器上长缓存，这时候应该使用 chunkhash** 
+- `[hash]`：是**整个项目**的 hash 值，其根据每次编译内容计算得到，每次编译之后都会生成新的 hash，即修改任何文件都会导致所有文件的 hash 发生改变；在一个项目中虽然入口不同，但是 hash 是相同的；**hash 无法实现前端静态资源在浏览器上长缓存，这时候应该使用 chunkhash**
 - `[chunkhash]`：根据不同的入口文件（entry）进行依赖文件解析，构建对应的 chunk，生成相应的 hash；只要组成 entry 的模块文件没有变化，则对应的 hash 也是不变的，所以一般项目优化时，会将公共库代码拆分到一起，**因为公共库代码变动较少的，使用 chunkhash 可以发挥最长缓存的作用**
 - `[contenthash]`：使用 chunkhash 存在一个问题，当在一个 JS 文件中引入了 CSS 文件，编译后它们的 hash 是相同的。而且，只要 JS 文件内容发生改变，与其关联的 CSS 文件 hash 也会改变，针对这种情况，可以把 CSS 从 JS 中使用 [mini-css-extract-plugin](https://github.com/webpack-contrib/mini-css-extract-plugin) 或 [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin) 抽离出来并使用 contenthash。
 
@@ -294,7 +304,9 @@ path/to/my/entry/list.js → dist/list.js
 
 #### output.publicPath
 
-对于使用`<script>` 和 `<link>`标签时，当文件路径不同于他们的本地磁盘路径（由`output.path`指定）时，`output.publicPath`被用来作为`src`或者`link`指向该文件。这种做法在需要将静态文件放在不同的域名或者 CDN 上面的时候是很有用的。
+对于使用`<script>` 和 `<link>`标签时，当文件路径不同于他们的本地磁盘路径（由`output.path`指定）时，`output.publicPath`被用来作为`src`或者`link`指向该文件。
+
+这种做法在需要将静态文件放在不同的域名或者 CDN 上面的时候是很有用的。
 
 ```js
 module.exports = {
@@ -351,11 +363,11 @@ module.exports = {
 ```js
 // var config
 {
-    output: {
-        library: 'myLib',
-        filename: 'var.js',
-        libraryTarget: 'var'
-    }
+  output: {
+    library: 'myLib',
+    filename: 'var.js',
+    libraryTarget: 'var'
+  }
 }
 // output
 var myLib = (function(modules) {})({
@@ -364,37 +376,37 @@ var myLib = (function(modules) {})({
 // ===============================================
 // assign config
 {
-    output: {
-        library: 'myLib',
-        filename: 'assign.js',
-        libraryTarget: 'assign'
-    }
+  output: {
+    library: 'myLib',
+    filename: 'assign.js',
+    libraryTarget: 'assign'
+  }
 }
 // output： 少了个 var
  myLib = (function(modules) {})({
-    './src/index.js': function(module, exports) {}
+  './src/index.js': function(module, exports) {}
 });
 // ===============================================
 // this config
 {
-    output: {
-        library: 'myLib',
-        filename: 'this.js',
-        libraryTarget: 'this'
-    }
+  output: {
+    library: 'myLib',
+    filename: 'this.js',
+    libraryTarget: 'this'
+  }
 }
 // output
 this["myLib"] = (function(modules) {})({
-    './src/index.js': function(module, exports) {}
+  './src/index.js': function(module, exports) {}
 });
 // ===============================================
 // window config
 {
-    output: {
-        library: 'myLib',
-        filename: 'window.js',
-        libraryTarget: 'window'
-    }
+  output: {
+    library: 'myLib',
+    filename: 'window.js',
+    libraryTarget: 'window'
+  }
 }
 // output
 window["myLib"] = (function(modules) {})({
@@ -404,11 +416,11 @@ window["myLib"] = (function(modules) {})({
 // ===============================================
 // global config
 {
-    output: {
-        library: 'myLib',
-        filename: 'global.js',
-        libraryTarget: 'global'
-    }
+  output: {
+    library: 'myLib',
+    filename: 'global.js',
+    libraryTarget: 'global'
+  }
 }
 // output：注意 target=node 的时候才是 global，默认 target=web下global 为 window
 window["myLib"] = (function(modules) {})({
@@ -417,112 +429,112 @@ window["myLib"] = (function(modules) {})({
 // ===============================================
 // commonjs config
 {
-    output: {
-        library: 'myLib',
-        filename: 'commonjs.js',
-        libraryTarget: 'commonjs'
-    }
+  output: {
+    library: 'myLib',
+    filename: 'commonjs.js',
+    libraryTarget: 'commonjs'
+  }
 }
 // output
 exports["myLib"] = (function(modules) {})({
-    './src/index.js': function(module, exports) {}
+  './src/index.js': function(module, exports) {}
 });
 // ===============================================
 // amd config
 {
-    output: {
-        library: 'myLib',
-        filename: 'amd.js',
-        libraryTarget: 'amd'
-    }
+  output: {
+    library: 'myLib',
+    filename: 'amd.js',
+    libraryTarget: 'amd'
+  }
 }
 // output
 define('myLib', [], function() {
-    return (function(modules) {})({
-        './src/index.js': function(module, exports) {}
-    });
+  return (function(modules) {})({
+    './src/index.js': function(module, exports) {}
+  });
 });
 
 // ===============================================
 // umd config
 {
-    output: {
-        library: 'myLib',
-        filename: 'umd.js',
-        libraryTarget: 'umd'
-    }
+  output: {
+    library: 'myLib',
+    filename: 'umd.js',
+    libraryTarget: 'umd'
+  }
 }
 // output
 (function webpackUniversalModuleDefinition(root, factory) {
-    if (typeof exports === 'object' && typeof module === 'object') module.exports = factory();
-    else if (typeof define === 'function' && define.amd) define([], factory);
-    else if (typeof exports === 'object') exports['myLib'] = factory();
-    else root['myLib'] = factory();
+  if (typeof exports === 'object' && typeof module === 'object') module.exports = factory();
+  else if (typeof define === 'function' && define.amd) define([], factory);
+  else if (typeof exports === 'object') exports['myLib'] = factory();
+  else root['myLib'] = factory();
 })(window, function() {
-    return (function(modules) {})({
-        './src/index.js': function(module, exports) {}
-    });
+  return (function(modules) {})({
+    './src/index.js': function(module, exports) {}
+  });
 });
 // ===============================================
 // commonjs2 config
 {
-    output: {
-        library: 'myLib',
-        filename: 'commonjs2.js',
-        libraryTarget: 'commonjs2'
-    }
+  output: {
+    library: 'myLib',
+    filename: 'commonjs2.js',
+    libraryTarget: 'commonjs2'
+  }
 }
 // output
 module.exports = (function(modules) {})({
-    './src/index.js': function(module, exports) {}
+  './src/index.js': function(module, exports) {}
 });
 // ===============================================
 // umd2 config
 {
-    output: {
-        library: 'myLib',
-        filename: 'umd2.js',
-        libraryTarget: 'umd2'
-    }
+  output: {
+    library: 'myLib',
+    filename: 'umd2.js',
+    libraryTarget: 'umd2'
+  }
 }
 // output
 (function webpackUniversalModuleDefinition(root, factory) {
-    if (typeof exports === 'object' && typeof module === 'object') module.exports = factory();
-    else if (typeof define === 'function' && define.amd) define([], factory);
-    else if (typeof exports === 'object') exports['myLib'] = factory();
-    else root['myLib'] = factory();
+  if (typeof exports === 'object' && typeof module === 'object') module.exports = factory();
+  else if (typeof define === 'function' && define.amd) define([], factory);
+  else if (typeof exports === 'object') exports['myLib'] = factory();
+  else root['myLib'] = factory();
 })(window, function() {
-    return (function(modules) {})({
-        './src/index.js': function(module, exports) {
-        }
-    });
+  return (function(modules) {})({
+    './src/index.js': function(module, exports) {
+    }
+  });
 });
 // ===============================================
 // commonjs-module config
 {
-    output: {
-        library: 'myLib',
-        filename: 'commonjs-module.js',
-        libraryTarget: 'commonjs-module'
-    }
+  output: {
+    library: 'myLib',
+    filename: 'commonjs-module.js',
+    libraryTarget: 'commonjs-module'
+  }
 }
 // ===============================================
 // output
 module.exports = (function(modules) {})({
-    './src/index.js': function(module, exports) {}
+  './src/index.js': function(module, exports) {}
 });
 // ===============================================
 // jsonp config
 {
-    output: {
-        library: 'myLib',
-        filename: 'jsonp.js',
-        libraryTarget: 'jsonp'
-    }
+  output: {
+    library: 'myLib',
+    filename: 'jsonp.js',
+    libraryTarget: 'jsonp'
+  }
 }
 // output
 myLib((function(modules) {})({
-    './src/index.js': function(module, exports) {}
+  './src/index.js': function(module, exports) {}
 }));
 ```
 
@@ -530,9 +542,15 @@ myLib((function(modules) {})({
 
 下面介绍下跟 output 输出相关的三个配置项：`externals`，`target` 和 `devtool`
 
-### externals
+## externals
 
-`externals`配置项用于去除输出的打包文件中依赖的某些第三方 js 模块（例如 `jquery`，`vue` 等等），减小打包文件的体积。该功能通常在开发自定义 js 库（library）的时候用到，用于去除自定义 js 库依赖的其他第三方 js 模块。这些被依赖的模块应该由使用者提供，而不应该包含在 js 库文件中。例如开发一个 jQuery 插件或者 Vue 扩展，不需要把 jQuery 和 Vue 打包进我们的 bundle，引入库的方式应该交给使用者。
+`externals`配置项用于去除输出的打包文件中依赖的某些第三方 js 模块（例如 `jquery`，`vue` 等等），减小打包文件的体积。
+
+该功能通常在开发自定义 js 库（library）的时候用到，用于去除自定义 js 库依赖的其他第三方 js 模块。
+
+这些被依赖的模块应该由使用者提供，而不应该包含在 js 库文件中。
+
+例如开发一个 jQuery 插件或者 Vue 扩展，不需要把 jQuery 和 Vue 打包进我们的 bundle，引入库的方式应该交给使用者。
 
 所以，这里就有个重要的问题，使用者应该怎么提供这些被依赖的模块给我们的 js 库（library）使用呢？这就要看我们的 js 库的导出方式是什么，以及使用者采用什么样的方式使用我们的库。例如：
 
@@ -545,7 +563,7 @@ myLib((function(modules) {})({
 
 如果不是在开发一个 js 库，即没有设置 `output.library`, `output.libraryTarget` 等配置信息，那么我们生成的打包文件只能以 `<script>` 标签的方式在页面中引入，因此那些被去除的依赖模块也只能以全局变量的方式引入。
 
-### target
+## target
 
 在项目开发中，我们不仅仅是开发 web 应用，还可能开发的是 Node.js 服务应用、或者 electron 这类跨平台桌面应用，这时候因为对应的宿主环境不同，所以在构建的时候需要特殊处理。webpack 中可以通过设置`target`来指定构建的目标（target）。
 
@@ -584,7 +602,7 @@ const options = {
 }
 ```
 
-### devtool
+## devtool
 
 `devtool`是来控制怎么显示[sourcemap](http://blog.teamtreehouse.com/introduction-source-maps)，通过 sourcemap 我们可以快速还原代码的错误位置。
 
@@ -610,27 +628,41 @@ const options = {
 
 **一般在实际项目中，我个人推荐生产环境不使用或者使用 source-map（如果有 [Sentry](https://sentry.io/) 这类错误跟踪系统），开发环境使用`cheap-module-eval-source-map`。**
 
-##### 小结
+## 小结
 
-本小节从 webpack 的配置文件`webpack.config.js`基本语法开始，分别介绍了配置的基本用法，`mode`、`context`、`entry`、`output`、`target`等 webpack 中的基础概念。希望大家读完本小节内容之后，能够动手实际操作一下。在记忆方面，可以
+本小节从 webpack 的配置文件`webpack.config.js`基本语法开始，分别介绍了配置的基本用法，`mode`、`context`、`entry`、`output`、`target`等 webpack 中的基础概念。希望大家读完本小节内容之后，能够动手实际操作一下。
 
-> 本小节 Webpack 相关面试题：
->
-> 1. Webpack 的配置有几种写法，分别可以应用到什么场景？
-> 2. 我们要开发一个 jQuery 插件、Vue 组件等，需要怎么配置 Webpack？
-> 3. Webpack 的占位符 `[hash]` 、`[chunkhash]` 和 `[contenthash]` 有什么区别和联系？最佳实践是什么？
-> 4. Webpack 的 SourceMap 有几种形式？分别有什么特点？SourceMap 配置的最佳实践是什么？
-> 5. 什么是 bundle ，什么是 chunk，什么是 module？
->
->    **module**：不同文件类型的模块。Webpack 就是用来对模块进行打包的工具，这些模块各种各样，比如：js 模块、css 模块、sass 模块、vue 模块等等不同文件类型的模块。这些文件都会被 loader 转换为有效的模块，然后被应用所使用并且加入到依赖关系图中。相对于一个完整的程序代码，模块化的好处在于，模块化将程序分散成小的功能块，这就提供了可靠的抽象能力以及封装的边界，让设计更加连贯、目的更加明确。而不是将所有东西都揉在一块，既难以理解也难以管理。
->
->    **chunk**：数据块。
->
->    a. 一种是非初始化的：例如在打包时，对于一些动态导入的异步代码，webpack 会帮你分割出共用的代码，可以是自己写的代码模块，也可以是第三方库（node_modules 文件夹里的），这些被分割的代码文件就可以理解为 chunk。
->
->    b. 还有一种是初始化的：就是写在入口文件处 (entry point) 的各种文件或者说模块依赖，就是 chunk ，它们最终会被捆在一起打包成一个 main.js （当然输出文件名你可以自己指定），这个 main.js 可以理解为 bundle，当然它其实也是 chunk。
->
->    **bundle**：捆绑好的最终文件。如果说，chunk 是各种片段，那么 bundle 就是一堆 chunk 组成的“集大成者”，比如上面说的 main.js 就属于 bundle。当然它也类似于电路上原先是各种散乱的零件，最终组成一个集成块的感觉。它经历了加载和编译的过程，是源文件的最终版本。
+## 本小节 Webpack 相关面试题：
+
+### 1. Webpack 的配置有几种写法，分别可以应用到什么场景？
+
+### 2. 我们要开发一个 jQuery 插件、Vue 组件等，需要怎么配置 Webpack？
+
+### 3. Webpack 的占位符 `[hash]` 、`[chunkhash]` 和 `[contenthash]` 有什么区别和联系？最佳实践是什么？
+
+hash 一般是结合 CDN 缓存来使用，通过 webpack 构建之后，生成对应文件名自动带上对应的 MD5 值。如果文件内容改变的话，那么对应文件哈希值也会改变，对应的 HTML 引用的 URL 地址也会改变，触发 CDN 服务器从源服务器上拉取对应数据，进而更新本地缓存。但是在实际使用的时候，这几种 hash 计算还是有一定区别。
+
+1、hash: hash 是跟整个项目的构建相关，只要项目里有文件更改，整个项目构建的 hash 值都会更改，并且全部文件都共用相同的 hash 值
+
+2、chunkhash: 采用 hash 计算的话，每一次构建后生成的哈希值都不一样，即使文件内容压根没有改变。这样子是没办法实现缓存效果，我们需要换另一种哈希值计算方式，即 chunkhash。chunkhash 和 hash 不一样，它根据不同的入口文件(Entry)进行依赖文件解析、构建对应的 chunk，生成对应的哈希值。我们在生产环境里把一些公共库和程序入口文件区分开，单独打包构建，接着我们采用 chunkhash 的方式生成哈希值，那么只要我们不改动公共库的代码，就可以保证其哈希值不会受影响。
+
+3、contenthash: 在使用 chunkhash 的例子中，如果 index.css 被 index.js 引用了，那么就会共用相同的 chunkhash 值。但是这样子有个问题，如果 index.js 更改了代码，css 文件就算内容没有任何改变，由于是该模块发生了改变，导致 css 文件会重复构建。这个时候，我们可以使用 extra-text-webpack-plugin 里的 contenthash 值，保证即使 css 文件所处的模块里就算其他文件内容改变，只要 css 文件内容不变，那么不会重复构建。
+
+### 4. Webpack 的 SourceMap 有几种形式？分别有什么特点？SourceMap 配置的最佳实践是什么？
+
+### 5. 什么是 module、chunk、bundle？
+
+- **module**：不同文件类型的模块。Webpack 就是用来对模块进行打包的工具，这些模块各种各样，比如：js 模块、css 模块、sass 模块、vue 模块等等不同文件类型的模块。这些文件都会被 loader 转换为有效的模块，然后被应用所使用并且加入到依赖关系图中。相对于一个完整的程序代码，模块化的好处在于，模块化将程序分散成小的功能块，这就提供了可靠的抽象能力以及封装的边界，让设计更加连贯、目的更加明确。而不是将所有东西都揉在一块，既难以理解也难以管理。
+
+* **chunk**：数据块。
+
+  a. 一种是非初始化的：例如在打包时，对于一些动态导入的异步代码，webpack 会帮你分割出共用的代码，可以是自己写的代码模块，也可以是第三方库（node_modules 文件夹里的），这些被分割的代码文件就可以理解为 chunk。
+
+  b. 还有一种是初始化的：就是写在入口文件处 (entry point) 的各种文件或者说模块依赖，就是 chunk ，它们最终会被捆在一起打包成一个 main.js （当然输出文件名你可以自己指定），这个 main.js 可以理解为 bundle，当然它其实也是 chunk。
+
+* **bundle**：捆绑好的最终文件。如果说，chunk 是各种片段，那么 bundle 就是一堆 chunk 组成的“集大成者”，比如上面说的 main.js 就属于 bundle。当然它也类似于电路上原先是各种散乱的零件，最终组成一个集成块的感觉。它经历了加载和编译的过程，是源文件的最终版本。
+
+总的来说，module 是 Webpack 处理的单个文件，代表了应用程序的组成部分。chunk 是逻辑上的代码块，表示一组相互依赖的模块。它可以根据需要进行拆分和加载。bundle 是由 Webpack 生成的最终输出文件，它包含了所有模块的代码和资源。
 
 专栏代码已经整理好给大家共享出来：
 [https://github.com/ksky521/webpack-tutorial](https://github.com/ksky521/webpack-tutorial)
