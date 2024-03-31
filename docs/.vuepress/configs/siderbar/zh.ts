@@ -19,6 +19,7 @@ export const sidebarZh: SidebarConfig = {
         '/zh/skill/front/about/grunt.md',
         '/zh/skill/front/about/gulp.md',
         '/zh/skill/front/about/webpack.md',
+        '/zh/skill/front/about/babel.md',
         '/zh/skill/front/about/axios.md',
         '/zh/skill/front/about/typeScript.md',
         '/zh/skill/front/about/promise.md',
