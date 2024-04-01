@@ -8,16 +8,16 @@
 
 ## Babel 是什么
 
-Babel 是一个 JavaScript 解释器，它能够将 ECMAScript 2015+ 版本的代码转换为向后兼容的 JavaScript 语法，以便能够运行在当前和旧版本的浏览器或其他环境中。
+`Babel` 是一个 `JavaScript` 解释器，它能够将 `ECMAScript 2015+` 版本的代码转换为向后兼容的 `JavaScript` 语法，以便能够运行在当前和旧版本的浏览器或其他环境中。
 
-使用 Babel 进行 ES6 转 ES5 时，转化之后默认是严格模式
+使用 `Babel` 进行 `ES6` 转 `ES5` 时，转化之后默认是严格模式
 
 ## Babel 转码依赖以及基本配置
 
-- @babel/core：Babel 核心代码，用于转码
-- @babel/cli：Babel 的命令行工具，用于在命令行转码文件
+- `@babel/core`：Babel 核心代码，用于转码
+- `@babel/cli`：Babel 的命令行工具，用于在命令行转码文件
   - `npm install @babel/cli -D`
-- @babel/preset-env：Babel 预设环境，用于转码 ES6+ 语法
+- `@babel/preset-env`：Babel 预设环境，用于转码 ES6+ 语法
   - `npm install @babel/preset-env -D`
 
 ```js
@@ -27,29 +27,29 @@ module.exports = {
 }
 ```
 
-一个完整的 Babel 转码工程通常包括如下
+一个完整的 `Babel` 转码工程通常包括如下
 
-1. Babel 配置文件
-2. Babel 相关依赖包
+1. `Babel` 配置文件
+2. `Babel` 相关依赖包
 3. 需要转码的源代码文件
 
-## 引入 polyfill
+## 引入 `polyfill`
 
-### 为什么要引入 polyfill
+### 为什么要引入 `polyfill`
 
-因为 Babel 默认只会转换新的 JavaScript 语法，而不会转换新的 API
+因为 `Babel` 默认只会转换新的 `JavaScript` 语法，而不会转换新的 API
 
-新的 API 一类是诸如 Iterator、Generator、Set、Maps、Proxy、Reflect、Symbol、Promise 等全局对象，以及一些定义在全局对象上的方法（比如 Object.assign、Promise.resolve）
+新的 API 一类是诸如 `Iterator`、`Generator`、`Set`、`Maps`、`Proxy`、`Reflect`、`Symbol`、`Promise` 等全局对象，以及一些定义在全局对象上的方法（比如 `Object.assign`、`Promise.resolve`）
 
-一类是新的实例方法，比如 Array.from、Array.of、String.padStart 等
+一类是新的实例方法，比如 `Array.from`、`Array.of`、`String.padStart` 等
 
 ### 什么是 polyfill
 
-polyfill 是一种 JavaScript 文件，它包含一些代码，用来为旧浏览器提供它没有原生支持的较新的 JavaScript 功能。
+`polyfill` 是一种 `JavaScript` 文件，它包含一些代码，用来为旧浏览器提供它没有原生支持的较新的 `JavaScript` 功能。
 
-polyfill 提供了全局的 ES6 对象以及通过修改原型链 Array.prototype 等实现对实例的实现。
+`polyfill` 提供了全局的 ES6 对象以及通过修改原型链 `Array.prototype` 等实现对实例的实现。
 
-我们可以直接在 html 文件引入 polyfill.js 文件来作为全局环境垫片， polyfill.js 有 Babel 官方的 polyfill.js，也有第三方的。
+我们可以直接在 html 文件引入 `polyfill.js` 文件来作为全局环境垫片， `polyfill.js` 有 `Babel` 官方的 `polyfill.js`，也有第三方的。
 
 ## Babel 配置文件
 
@@ -89,21 +89,21 @@ module.exports = {
 
 babel 插件有很多，比如处理 ES 2015 的就有
 
-- @babel/plugin-transform-arrow-functions
-- @babel/plugin-transform-block-scoped-functions
-- @babel/plugin-transform-block-scoping
+- `@babel/plugin-transform-arrow-functions`
+- `@babel/plugin-transform-block-scoped-functions`
+- `@babel/plugin-transform-block-scoping`
 - ……
 
-babel 插件实在太多，我们不可能一一记住、安装并写入配置插件中，预设 presets 就是为了解决这一问题的。
+`babel` 插件实在太多，我们不可能一一记住、安装并写入配置插件中，预设 `presets` 就是为了解决这一问题的。
 
-预设 presets 就是一系列插件的集合，它包含了一组插件，可以让我们一次性安装和配置这些插件。例如 babel-preset-env 预设包含了所有 ES 2015+ 的语法转换插件，我们只需要安装它，就可以直接使用了。
+预设 `presets` 就是一系列插件的集合，它包含了一组插件，可以让我们一次性安装和配置这些插件。例如 `babel-preset-env` 预设包含了所有 ES 2015+ 的语法转换插件，我们只需要安装它，就可以直接使用了。
 
-babel 官方已经对常用的环境做了一写 presets 包
+`babel` 官方已经对常用的环境做了一写 `presets` 包
 
-- @babel/preset-env
-- @babel/preset-flow
-- @babel/preset-react
-- @babel/preset-typescript
+- `@babel/preset-env`
+- `@babel/preset-flow`
+- `@babel/preset-react`
+- `@babel/preset-typescript`
 
 ### 执行顺序的区别
 
@@ -134,14 +134,14 @@ babel 官方已经对常用的环境做了一写 presets 包
 
 Babel 官方的 preset，我们实际可能会用到的其实就只有 4 个：
 
-- @babel/preset-env
-- @babel/preset-flow
-- @babel/preset-react
-- @babel/preset-typescript
+- `@babel/preset-env`
+- `@babel/preset-flow`
+- `@babel/preset-react`
+- `@babel/preset-typescript`
 
 目前比较常用的插件只有
 
-- @babel/plugin-transform-runtime。
+- `@babel/plugin-transform-runtime`
 
 目前我做过的几个项目，前端工程已经很少见到里使用其它的插件了。
 
@@ -176,6 +176,14 @@ Babel 官方的 preset，我们实际可能会用到的其实就只有 4 个：
 
 ```js
 import './polyfill.js'
+
+var promise = Promise.resolve('ok')
+console.log(promise)
+```
+
+```js
+// 需要安装： npm install --save @babel/polyfill
+import '@babel/polyfill'
 
 var promise = Promise.resolve('ok')
 console.log(promise)
@@ -258,11 +266,13 @@ module.exports = {
 }
 ```
 
-上面的配置含义是，目标环境是市场份额大于 1%的浏览器并且不考虑 IE8 及以下的 IE 浏览器。Browserslist 叫做目标环境配置表，除了写在 package.json 里，也可以单独写在工程目录下.browserslistrc 文件里。
+上面的配置含义是，目标环境是市场份额大于 1%的浏览器并且不考虑 IE8 及以下的 IE 浏览器。
 
-我们用 browserslist 来指定代码最终要运行在哪些浏览器或 node.js 环境。
+`Browserslist` 叫做目标环境配置表，除了写在 package.json 里，也可以单独写在工程目录下 `.browserslistrc` 文件里。
 
-Autoprefixer、postcss 等就可以根据我们的 browserslist，来自动判断是否要增加 CSS 前缀（例如'-webkit-'）。
+我们用 `browserslist` 来指定代码最终要运行在哪些浏览器或 node.js 环境。
+
+`Autoprefixer`、`postcss` 等就可以根据我们的 `browserslist`，来自动判断是否要增加 CSS 前缀（例如'-webkit-'）。
 
 我们的 Babel 也可以使用 browserslist，如果你使用了@babel/preset-env 这个预设，此时 Babel 就会读取 browserslist 的配置。
 
@@ -599,10 +609,113 @@ var obj = _promise.default.resolve()
 
 下面简单说一下作用 3。
 
-在之前章节，若我们转码前代码里有 Generator 函数或 async 函数，转码后需要引入'regenerator-runtime/runtime'做全局 API 补齐。
+在之前章节，若我们转码前代码里有 Generator 函数或 async 函数，转码后需要引入'regenerator-runtime/runtime'做全局 API 补齐。全局 API 补齐必然会对浏览器的 window 对象进行修改，如果我们不想要污染 window，那么我们就不能引入'regenerator-runtime/runtime'了。
 
-全局 API 补齐必然会对浏览器的 window 对象进行修改，如果我们不想要污染 window，那么我们就不能引入'regenerator-runtime/runtime'了。
+这个时候，我们可以开启@babel/plugin-transform-runtime 的作用 3，对 Generator/async 进行 API 转换。需要注意的是，@babel/plugin-transform-runtime 对 Generator/async 进行 API 转换功能，默认是开启的，不需要我们设置。
 
-这个时候，我们可以开启@babel/plugin-transform-runtime 的作用 3，对 Generator/async 进行 API 转换。
+### @babe/plugin-transform-runtime 配置项
 
-需要注意的是，@babel/plugin-transform-runtime 对 Generator/async 进行 API 转换功能，默认是开启的，不需要我们设置。
+```json
+{
+  "plugins": ["@babel/plugin-transform-runtime"]
+}
+// 默认值如下
+{
+  "plugins": [
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "helpers": true,
+        "corejs": false,
+        "regenerator": true,
+        "useESModules": false,
+        "absoluteRuntime": false,
+        "version": "7.0.0-beta.0"
+      }
+    ]
+  ]
+}
+```
+
+#### helpers
+
+该项是用来设置是否要自动引入辅助函数包，这个我们当然要引入了，这是@babel/plugin-transform-runtime 的核心用途。该项取值是布尔值，我们设置为 true，其默认值也是 true，所以也可以省略不填。
+
+#### corejs 和 regenerator
+
+这两项是用来设置是否做 API 转换以避免污染全局环境，regenerator 取值是布尔值，corejs 取值是 false、2 和 3。在前端业务项目里，我们一般对 corejs 取 false，即不对 Promise 这一类的 API 进行转换。而在开发 JS 库的时候设置为 2 或 3。regenerator 取默认的 true 就可以
+
+#### useESModules
+
+该项用来设置是否使用 ES6 的模块化用法，取值是布尔值。默认是 fasle，在用 webpack 一类的打包工具的时候，我们可以设置为 true，以便做静态分析。
+
+#### absoluteRuntime
+
+该项用来自定义@babel/plugin-transform-runtime 引入@babel/runtime/模块的路径规则，取值是布尔值或字符串。没有特殊需求，我们不需要修改，保持默认 false 即可。
+
+## 其他
+
+### @babel/polyfill = core-js + regenerator-runtime
+
+要是浏览器不支持的 API 可以自己写一个模拟函数，这些模拟函数叫做 polyfill。比如要使用的新的 API 比较 Promise、WeakMap 等新的内置类型 或者 Array.from、Object.assign 等新的内置对象方法，我们需要使用 core-js3 这个 npm 库。要使用生成器函数 （function \*）需要使用 regenerator-runtime 这个 npm 库。
+
+@babel/polyfill 这个库已经不推荐使用。它实际上就是 core-js2 和 regenerator-runtime 的集合。corejs-2 也已经不推荐使用，现在单独安装和引用 corejs-3 和 regenerator-runtime 就行。
+
+另外，@babel/runtime 用来抽离公共辅助函数。这样可以把每个项目里都注入的辅助函数抽离出来，减少代码体积。为了自动使用 @babel/runtime 里的函数，还需要 @babel/plugin-transform-runtime 插件。
+
+### @babel/plugin-transform-runtime
+
+为了使用这些函数，需要在 babel 的配置文件配置`@babel/preset-env`。
+
+安装依赖库
+
+```bash
+npm install --save-dev @babel/cli @babel/core @babel/preset-env @babel/plugin-transform-runtime
+npm install --save @babel/runtime core-js@3
+```
+
+```json
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "usage",
+        "corejs": 3
+      }
+    ]
+  ],
+  "plugins": ["@babel/plugin-transform-runtime"]
+}
+```
+
+```json
+
+```
+
+### @babel/runtime-corejs3 避免污染全局环境
+
+安装依赖库
+
+```bash
+npm install --save-dev @babel/cli @babel/core @babel/preset-env @babel/plugin-transform-runtime
+npm install --save @babel/runtime-corejs3
+```
+
+> @babel/runtime-corejs3 相当于 @babel/runtime + 不污染环境的 core-js@3。
+
+上面的方案默认会影响全局变量，在日常开发项目时是没有关系的。但是如果是用来开发 JS 库或者 npm 库的时候，就需要避免污染全局变量。我们就需要使用 @babel/runtime-corejs3
+
+```json
+{
+  "presets": [["@babel/preset-env"]],
+  "plugins": [
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "corejs": 3
+      }
+    ]
+  ]
+}
+```
