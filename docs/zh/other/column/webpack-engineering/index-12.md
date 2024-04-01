@@ -222,11 +222,11 @@ module.exports = {
 修改`index.html`和`index.css`：
 
 ```html
-<img src="@assets/img/large.png" alt="背景图" /> 
+<img src="@assets/img/large.png" alt="背景图" />
 <style>
-.bg-img { 
-  background: url(@assets/img/small.png) no-repeat; 
-}
+  .bg-img {
+    background: url(@assets/img/small.png) no-repeat;
+  }
 </style>
 ```
 
@@ -263,10 +263,10 @@ ERROR in   Error: Child compilation failed:
 ```html
 <img src="~@assets/img/large.png" alt="背景图" />
 <style>
-  .bg-img { 
+  .bg-img {
     background: url(~@assets/img/small.png) no-repeat;
   }
-</style> 
+</style>
 ```
 
 修改完后，直接执行`webpack`既可以看到正确的结果了。
@@ -335,7 +335,7 @@ module.exports = {
 
 通过`enforce: 'pre'`我们提高了 img-webpack-loader 的优先级，保证在`url-loader`和`svg-url-loader`之前就完成了图片的优化。
 
-另外[img-webpack-loader](https://github.com/tcoopman/image-webpack-loader)默认的配置就已经适用于日常开发图片的压缩优化需求了，但是如果你想更进一步去配置它，参考[插件选项](https://github.com/tcoopman/image-webpack-loader)。要选择指定选项，请查看国外牛人写的一个[图像优化指南](https://images.guide/)。
+另外[img-webpack-loader](https://github.com/tcoopman/image-webpack-loader) 默认的配置就已经适用于日常开发图片的压缩优化需求了，但是如果你想更进一步去配置它，参考[插件选项](https://github.com/tcoopman/image-webpack-loader)。要选择指定选项，请查看国外牛人写的一个[图像优化指南](https://images.guide/)。
 
 ## CSS Sprite 雪碧图
 
@@ -468,7 +468,7 @@ module.exports = {
 
 如果我们项目需要加载的类似 JSON、CSV、TSV 和 XML 等数据，那么我们需要单独给它们配置相应的 loader。
 
-对 JSON 的支持实际上是内置的，类似于 Node.js，这意味着`import Data from'./data.json'`导入数据默认情况将起作用。要导入 CSV，TSV 和 XML，可以使用[csv-loader](https://www.npmjs.com/package/csv-loader)和[xml-loader](https://www.npmjs.com/package/xml-loader)。
+对 JSON 的支持实际上是内置的，类似于 Node.js，这意味着`import Data from'./data.json'`导入数据默认情况将起作用。要导入 CSV，TSV 和 XML，可以使用 [csv-loader](https://www.npmjs.com/package/csv-loader) 和 [xml-loader](https://www.npmjs.com/package/xml-loader)。
 
 首先是安装它们的 loader：`npm i -D xml-loader csv-loader`，然后增加文件 loader 配置如下：
 
@@ -504,11 +504,11 @@ Webpack 还会使用`url-loader`等插件，将较小的资源通过 Base64 的�
 >
 > 相同点：
 >
-> file-loader与url-loader都是在webpack中引入图片的解决方案。
+> file-loader 与 url-loader 都是在 webpack 中引入图片的解决方案。
 >
 > 不同点：
 >
-> 1、file-loader：返回的是图片的public URL。
-> 2、url-loader：与file-loader不同，url-loader可以在图片大小小于设定的limit的时候返回的是一个bDataURL（base64码），大于limit时会调用file-loader对图片进行处理。
+> 1、file-loader：返回的是图片的 public URL。
+> 2、url-loader：与 file-loader 不同，url-loader 可以在图片大小小于设定的 limit 的时候返回的是一个 bDataURL（base64 码），大于 limit 时会调用 file-loader 对图片进行处理。
 >
 > 简答地说，url-loader 封装了 file-loader。url-loader 不依赖于 file-loader，即使用 url-loader 时，只需要安装 url-loader 即可，不需要安装 file-loader，因为 url-loader 内置了 file-loader。

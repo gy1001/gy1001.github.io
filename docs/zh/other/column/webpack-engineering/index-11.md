@@ -221,7 +221,7 @@ module.exports = {
 
 ##### 小结
 
-本小节主要介绍了 `Webpack` 中结合 `ESLint` 和 `StyleLint` 对 `JavaScript` 和 CSS 文件进行代码风格检测。
+本小节主要介绍了 `Webpack` 中结合 `ESLint` 和 `StyleLint` 对 `JavaScript` 和 `CSS` 文件进行代码风格检测。
 
 结合 `eslint-loader`和 `stylelint-webpack-plugin` 可以在 `Webpack` 编译的过程中检测出代码中不符合规范的部分，提醒开发者及时修改代码。
 

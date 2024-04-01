@@ -1,4 +1,4 @@
-# 24 apable —— Webpack 的核心模块
+# 24 Tapable —— Webpack 的核心模块
 
 ![img](./assets/5cd9645100016fb206400360.jpg)
 
