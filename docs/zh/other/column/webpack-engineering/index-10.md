@@ -318,8 +318,8 @@ module.exports = {
               importLoader: 2,
             },
           },
-          'less-loader',
           'postcss-loader',
+          'less-loader',
         ],
       },
     ],
@@ -329,7 +329,11 @@ module.exports = {
 
 ### PostCSS 配置
 
-通过 PostCSS 的强大插件系统，不仅可以处理 CSS 语法，还可以处理 CSS 预处理器的语法，实现的功能也有很多，包括添加前缀、最新语法转义、压缩等，甚至可以扩展 CSS 的语言特性。配置了 postcss-loader 之后，WebPack 就可以使用 PostCSS 来处理 CSS 了。但是 PostCSS 本身只不过是将 CSS 解析成 AST ，真正起作用的还需要依赖其强大的插件系统。
+通过 PostCSS 的强大插件系统，不仅可以处理 CSS 语法，还可以处理 CSS 预处理器的语法，实现的功能也有很多，包括添加前缀、最新语法转义、压缩等，甚至可以扩展 CSS 的语言特性。
+
+配置了 postcss-loader 之后，WebPack 就可以使用 PostCSS 来处理 CSS 了。
+
+但是 PostCSS 本身只不过是将 CSS 解析成 AST，真正起作用的还需要依赖其强大的插件系统。
 
 所以，PostCSS 配置其实主要是配置其使用哪些插件，PostCSS 的配置写法有以下三种方式：
 
@@ -402,11 +406,11 @@ module.exports = {
 
 Autoprefixer 还支持各种 IDE 插件，可以在 IDE 中直接转换对应的 css 文件（不推荐这样用，多人合作项目跟进 IDE 配置不同，转换的文件也会存在差异）。
 
-Autoprefixer 的主要参数就是 browserslist，即需要代码支持的浏览器列表，这部分内容在 babel 章节已经介绍过了。其他相关的参数说明可以在文档中找到：https://github.com/postcss/autoprefixer#options。
+Autoprefixer 的主要参数就是 browserslist，即需要代码支持的浏览器列表，这部分内容在 babel 章节已经介绍过了。其他相关的参数说明可以在文档中找到：[https://github.com/postcss/autoprefixer#options](https://github.com/postcss/autoprefixer#options)。
 
 ### postcss-preset-env
 
-[postcss-preset-env](https://preset-env.cssdb.org) 是跟 babel 的 preset-env 类似的功能，通过它可以安心的使用最新的 CSS 语法来写样式，不用关心浏览器兼容性，浏览器兼容的问题交给了 postcss-preset-env 和 webpack，在打包构建的时候，会根据不同的配置输出对应支持的 CSS 文件。
+[postcss-preset-env](https://preset-env.cssdb.org) 是跟 babel 的 preset-env 类似的功能，通过它可以安心的使用最新的 CSS 语法来写样式，不用关心浏览器兼容性，浏览器兼容的问题交给了 `postcss-preset-env` 和 `webpack`，在打包构建的时候，会根据不同的配置输出对应支持的 CSS 文件。
 
 postcss-preset-env 支持的 CSS 标准，完全可以媲美 CSS 预处理器的功能，所以如果对 cssnext 新的标准比较熟悉，可以直接用新标准来写样式，这样等到浏览器支持新标准之后可以无缝切换到 cssnext 语法，那么可以直接抛弃 CSS 预处理器，直接使用 cssnext 语法来写样式，通过 webPack 和 postcss-preset-env 来构建。
 
@@ -507,6 +511,7 @@ body {
 div {
   display: flex;
 }
+
 /* body.css */
 .body-import {
   /* body import */
@@ -602,6 +607,7 @@ div {
   display: -ms-flexbox;
   display: flex;
 }
+
 /* with-import-loaders.css */
 .body-import {
   /* body import */

@@ -528,7 +528,7 @@ console.log(john)
 
 可以看到，它生成的代码比我们完全手动引入@babel/runtime 里的辅助函数更加优雅。
 
-实际前端开发的时候，我们除了安装@babel/runtime 这个包外，一定会安装@babel/plugin-transform-runtime 这个 Babel 插件包的。
+实际前端开发的时候，我们除了安装 @babel/runtime 这个包外，一定会安装@babel/plugin-transform-runtime 这个 Babel 插件包的。
 
 ### 作用 2 示例
 
@@ -657,9 +657,9 @@ var obj = _promise.default.resolve()
 
 ### @babel/polyfill = core-js + regenerator-runtime
 
-要是浏览器不支持的 API 可以自己写一个模拟函数，这些模拟函数叫做 polyfill。比如要使用的新的 API 比较 Promise、WeakMap 等新的内置类型 或者 Array.from、Object.assign 等新的内置对象方法，我们需要使用 core-js3 这个 npm 库。要使用生成器函数 （function \*）需要使用 regenerator-runtime 这个 npm 库。
+要是浏览器不支持的 API 可以自己写一个模拟函数，这些模拟函数叫做 `polyfill`。比如要使用的新的 API 比较 Promise、WeakMap 等新的内置类型 或者 `Array.from`、`Object.assign` 等新的内置对象方法，我们需要使用 `core-js3` 这个 npm 库。要使用生成器函数 `（function *）`需要使用 `regenerator-runtime` 这个 npm 库。
 
-@babel/polyfill 这个库已经不推荐使用。它实际上就是 core-js2 和 regenerator-runtime 的集合。corejs-2 也已经不推荐使用，现在单独安装和引用 corejs-3 和 regenerator-runtime 就行。
+`@babel/polyfill` 这个库已经不推荐使用。它实际上就是 `core-js2` 和 `regenerator-runtime` 的集合。`corejs-2` 也已经不推荐使用，现在单独安装和引用 `corejs-3` 和 `regenerator-runtime` 就行。
 
 另外，@babel/runtime 用来抽离公共辅助函数。这样可以把每个项目里都注入的辅助函数抽离出来，减少代码体积。为了自动使用 @babel/runtime 里的函数，还需要 @babel/plugin-transform-runtime 插件。
 
@@ -687,10 +687,6 @@ npm install --save @babel/runtime core-js@3
   ],
   "plugins": ["@babel/plugin-transform-runtime"]
 }
-```
-
-```json
-
 ```
 
 ### @babel/runtime-corejs3 避免污染全局环境
