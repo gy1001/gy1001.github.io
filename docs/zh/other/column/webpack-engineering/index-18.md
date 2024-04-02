@@ -61,7 +61,7 @@ module.exports = {
 
 我们 Webpack 打包出来的资源，除了通过 HTML 中使用之外，可能还会需要生成一张包含所有内容的清单文件，这个文件可以用于类似 [Application Cache](https://www.html5rocks.com/zh/tutorials/appcache/beginner/)或者 [PWA](https://developer.mozilla.org/zh-CN/docs/Web/Progressive_web_apps)方案，这时候我们需要使用[webpack-manifest-plugin](https://github.com/danethurber/webpack-manifest-plugin)插件。
 
-webpack-manifest-plugin 是一个扩展性极强的插件，它可以帮助你解决服务端逻辑比较复杂的那部分。在打包时，它会生成一个 JSON 文件，里面包含了原文件名和带哈希文件名的映射。
+`webpack-manifest-plugin` 是一个扩展性极强的插件，它可以帮助你解决服务端逻辑比较复杂的那部分。在打包时，它会生成一个 JSON 文件，里面包含了原文件名和带哈希文件名的映射。
 
 在服务端，通过这个 JSON 就能方便的找到我们真正要执行的文件：
 

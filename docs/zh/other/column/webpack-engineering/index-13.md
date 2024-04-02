@@ -51,7 +51,7 @@ module.exports = {
 
 除了我们 HTML 外，我们的 entry 也被主动插入到了页面中，这样我们打开`index.html`就直接加载了`main.js`了。
 
-如果要修改 HTML 的`title`和名称，可以如下配置：
+如果要修改 HTML 的`title`和`名称`，可以如下配置：
 
 ```js
 const HtmlWebPackPlugin = require('html-webpack-plugin')
@@ -118,16 +118,17 @@ module.exports = {
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Webpack</title>
-</head>
-<body>
-  <h1>hello world</h1>
-  <div id="app"></div>
-	<script src="main.js"></script></body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Webpack</title>
+  </head>
+  <body>
+    <h1>hello world</h1>
+    <div id="app"></div>
+    <script src="main.js"></script>
+  </body>
 </html>
 ```
 
@@ -238,9 +239,9 @@ Pug 引擎被转换成 HTML 代码，里面包含了：`main.js`和`footer.pug`�
 
 ### 多页面问题
 
-多页面就是指的多个 HTML 页面，这时候可以直接借助 html-webpack-plugin 插件来实现，我们只需要多次实例化一个 html-webpack-plugin 的实例即可，例如：
+多页面就是指的多个 HTML 页面，这时候可以直接借助 `html-webpack-plugin` 插件来实现，我们只需要多次实例化一个 `html-webpack-plugin` 的实例即可，例如：
 
-下面是同一个 template，那么可以只修改`filename`输出不同名的 HTML 即可：
+下面是同一个 `template`，那么可以只修改`filename`输出不同名的 HTML 即可：
 
 ```js
 const HtmlWebPackPlugin = require('html-webpack-plugin')
@@ -286,11 +287,11 @@ module.exports = {
 
 ### 多入口问题
 
-上面的多页面解决是多次实例化 html-webpack-plugin，根据传入的参数不同（主要是 filename 不同），打包出两个文件，但是这两个文件的特点是引入的 JavaScript 文件都是一样的，即都是`main.js`。
+上面的多页面解决是多次实例化 `html-webpack-plugin`，根据传入的参数不同（主要是 filename 不同），打包出两个文件，但是这两个文件的特点是引入的 JavaScript 文件都是一样的，即都是`main.js`。
 
 对于多入口，并且入口需要区分的情况，那么需要怎么处理呢？
 
-这时候就需要借助 html-webpack-plugin 的两个参数了：`chunks`和`excludeChunks`。
+这时候就需要借助 `html-webpack-plugin` 的两个参数了：`chunks`和`excludeChunks`。
 
 `chunks`是当前页面包含的 chunk 有哪些，可以直接用 entry 的`key`来命名，`excludeChunks`则是排除某些 chunks。
 
@@ -418,9 +419,9 @@ module.exports = {
 
 针对 `Webpack` 中多页应用的打包，我们可以配置多个 `html-webpack-plugin` 插件实例。
 
-我们还可以按照文章介绍的多页应用最佳实践的方案，通过约定目录规范来通过 Node.js 代码来自动生成 Webpack 的多页应用配置。
+我们还可以按照文章介绍的多页应用最佳实践的方案，通过约定目录规范来通过 `Node.js` 代码来自动生成 `Webpack` 的多页应用配置。
 
-html-webpack-plugin 是 Webpack 中很重要的一个插件，基于这个插件的 API 我们可以做很多跟页面相关的优化项目，比如预取资源、实现 modern 打包等，后面的实战章节会继续介绍。
+`html-webpack-plugin` 是 `Webpack` 中很重要的一个插件，基于这个插件的 API 我们可以做很多跟页面相关的优化项目，比如预取资源、实现 `modern` 打包等，后面的实战章节会继续介绍。
 
 > 本小节 Webpack 相关面试题：
 >

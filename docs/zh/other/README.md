@@ -40,6 +40,24 @@
 
 [LocalSend:将文件共享到附近的设备。 免费、开源、跨平台。](https://localsend.org/#/)
 
+[Mounty for NTFS](https://mounty.app/#FAQs)
+
+> 注意：[读写 ntfs 软件 mounty 提示 NTFS-3G 的解决办法](https://bbs.pcbeta.com/viewthread-1977729-1-1.html)
+
+```bash
+// 你需要在 macOS 上安装 Homebrew。
+/bin/zsh -c "$(curl -fsSL https://gitee.com/cunkai/HomebrewCN/raw/master/Homebrew.sh)"
+或
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
+// 安装 FUSE for macOS
+接下来，使用 Homebrew 安装 FUSE for macOS。你需要在 Terminal 下执行下列命令。
+brew install --cask macfuse
+
+安装 NTFS-3G
+brew install gromgit/fuse/ntfs-3g-mac
+```
+
 ## Android 端
 
 [坚果云: 智能同步文件神器](https://www.jianguoyun.com/s/downloads)

@@ -8,11 +8,11 @@
 
 它使用 [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware) 中间件来为通过 Webpack 打包生成的资源文件提供 Web 服务。
 
-它还有一个通过 Socket IO 连接着 webpack-dev-server 服务器的小型运行时程序。
+它还有一个通过 `Socket IO` 连接着 `webpack-dev-server` 服务器的小型运行时程序。
 
-webpack-dev-server 发送关于编译状态的消息到客户端，客户端根据消息作出响应。
+`webpack-dev-server` 发送关于编译状态的消息到客户端，客户端根据消息作出响应。
 
-> Tips：简单来说 webpack-dev-server 就是一个 Express 的小型服务器，它是通过 Express 的[中间件](https://expressjs.com/zh-cn/guide/using-middleware.html) [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware)和 Webpack 进行交互的。
+> Tips：简单来说 `webpack-dev-server` 就是一个 Express 的小型服务器，它是通过 Express 的[中间件](https://expressjs.com/zh-cn/guide/using-middleware.html) [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware)和 Webpack 进行交互的。
 >
 > 所以我们如果自己的项目本身就是个 Express 服务器，那么可以使用 webpack-dev-middleware 和 [webpack-hot-middleware](https://github.com/webpack-contrib/webpack-hot-middleware) 两个中间件来实现 HMR 功能。
 >
@@ -278,7 +278,7 @@ module.exports = {
 
 自定义中间件在开发中常常被用来做 mock server 使用。
 
-现在 before after 已经废弃，官方最新的 API: `devServer.setupMiddlewares`
+现在 before after 已经废弃，官方最新的 API: [`devServer.setupMiddlewares`](https://webpack.docschina.org/configuration/dev-server/#devserversetupmiddlewares)
 
 ## mock server
 
@@ -302,7 +302,7 @@ module.exports = {
 }
 ```
 
-现在 before after 已经废弃，官方最新的 API: `devServer.setupMiddlewares`
+现在 before after 已经废弃，官方最新的 API: [`devServer.setupMiddlewares`](https://webpack.docschina.org/configuration/dev-server/#devserversetupmiddlewares)
 
 ```javascript
 module.exports = {
@@ -408,14 +408,33 @@ Webpack 的 webpack-dev-server 是 Webpack 生态链上很重要的一环，在�
 
 后面实战章节我们将介绍使用 Express 的中间件来实现一个自己的 dev-server！
 
-> 本小节 Webpack 相关面试题：
->
-> 1. webpack-dev-server 的 inline 模式和 iframe 模式有何异同？
->
-> 2. webpack-dev-server 怎么配置 HMR？
->
-> 3. webpack-dev-server 怎么使用 Express 中间件？
->
-> 4. 能够说下你对 webpack-dev-server 理解吗？原理吗？
->
->    > webpack-dev-server 启动了一个**使用 express 的 Http 服务器**，这个服务器与客户端采用 websocket 通信协议，当原始文件发生改变，webpack-dev-server 会实时编译。
+## 本小节 Webpack 相关面试题：
+
+### 1. webpack-dev-server 的 inline 模式和 iframe 模式有何异同？
+
+### 2. webpack-dev-server 怎么配置 HMR？
+
+### 3. webpack-dev-server 怎么使用 Express 中间件？
+
+### 4. 能够说下你对 webpack-dev-server 理解吗？原理吗？
+
+webpack-dev-server 启动了一个**使用 express 的 Http 服务器**，这个服务器与客户端采用 websocket 通信协议，当原始文件发生改变，webpack-dev-server 会实时编译。
+
+webpack-dev-server 是一个与 webpack 配合使用的工具，主要用于在开发过程中提供以下功能：
+
+- 实时重新加载：当源代码发生更改时，自动重新加载浏览器，提高开发效率。
+- 提供简洁的服务器环境：方便在本地进行开发和调试。
+- 支持热模块替换（HMR）：在不刷新整个页面的情况下，动态更新部分模块。
+
+其工作原理如下：
+
+- 启动一个本地服务器，监听指定端口。
+- 接收 webpack 编译后的输出，并将其提供给浏览器。
+- 监听源代码的变化，当检测到变化时，触发重新编译和刷新浏览器。
+- 利用 HMR 技术，实现模块的动态更新，而无需完全刷新页面。
+
+webpack-dev-server 的优点包括：
+
+- 快速的开发反馈，减少开发周期。
+- 方便调试和测试。
+- 与现代开发工具和工作流程集成良好。

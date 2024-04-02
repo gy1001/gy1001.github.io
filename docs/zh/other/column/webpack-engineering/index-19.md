@@ -22,7 +22,7 @@
 
 - **module**
 
-  >  就是 JavaScript 的模块，简单来说就是你通过 `import`、`require` 语句引入的代码，也包括 css、图片等资源；
+  > 就是 JavaScript 的模块，简单来说就是你通过 `import`、`require` 语句引入的代码，也包括 css、图片等资源；
 
 - **chunk**
 
@@ -84,7 +84,8 @@ import(/* webpackChunkName: "react" */ 'react')
 添加`webpack.config.js`，内容如下：
 
 ```js
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const BundleAnalyzerPlugin =
+  require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 module.exports = {
   mode: 'production',
   entry: {
@@ -113,6 +114,12 @@ module.exports = {
 ## 理解 `splitChunks.chunks` 三个值
 
 `splitChunks`中的`chunks`是一个很重要的配置项，表示从哪些 chunks 里面抽取代码，`chunks`的三个值有：`"initial"`、 `"all"`、 `"async"`， 默认就是是`async`。
+
+它们的含义如下：
+
+- all：把动态和非动态模块同时进行优化打包，所有模块都扔到 vendor.bundle.js 里面。
+- initial：把非动态模块打包进 vendor，动态模块优化打包。
+- async：把动态模块打包进 vendor，非动态模块保持原样（不优化）
 
 为了理解`splitChunks.chunks`三个值的差异，下面通过实例来帮助我们理解。
 
@@ -146,14 +153,15 @@ export default b;
 下面是我们的`webpack.config.js`文件内容，我们主要修改是`chunks`的三个值：
 
 ```js
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const BundleAnalyzerPlugin =
+  require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 module.exports = {
   mode: 'development',
   entry: {
     a: './default/a.js',
     b: './default/b.js',
   },
-  plugins: [ new BundleAnalyzerPlugin() ],
+  plugins: [new BundleAnalyzerPlugin()],
   optimization: {
     splitChunks: {
       cacheGroups: {
@@ -181,7 +189,9 @@ module.exports = {
 2. react 在 a.js 和 b.js 表现不同：
 
    - 在`a.js`因为是同步引入的，设置的`chunks='async'`，所以不被拆分出去
-- 在`b.js`是动态引入的，符合`chunks='async'`的设置，所以被单独拆到`vendors~b-react.js`
+
+   - 在`b.js`是动态引入的，符合`chunks='async'`的设置，所以被单独拆到`vendors~b-react.js`
+
 3. `lodash`因为在两个文件都是动态加载的，所以被拆到了`vendors~a-lodash.js`
 
 > Tips：`b.js`中的`react`拆出来的文件名是`vendors~b-react.js`含有`vendors`，说明中了名字为`vendors`的`cacheGroups`规则
@@ -247,7 +257,7 @@ vendors: {
 
 如果将`cacheGroup`的默认两个分组`vendor`和`default`设置为 false，则`splitChunks`就不会起作用，我们也可以重写这俩默认的配置。
 
-`cacheGroups`除了拥有默认配置所有的配置项目（例如 minSize、minChunks、name 等）之外，还有三个独有的配置项：`test`、`priority`和`reuseExistingChunk`。 
+`cacheGroups`除了拥有默认配置所有的配置项目（例如 minSize、minChunks、name 等）之外，还有三个独有的配置项：`test`、`priority`和`reuseExistingChunk`。
 
 `splitChunks.cacheGroup`**必须同时满足**各个配置项的条件才能生效，`reuseExistingChunk`表示是否使用已有的 chunk，如果为 true 则表示如果当前的 chunk 包含的模块已经被抽取出去了，那么将不会重新生成新的。
 

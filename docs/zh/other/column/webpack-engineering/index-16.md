@@ -59,7 +59,7 @@ module.exports = merge(baseWebpackConfig, devWebpackConfig)
 >
 > 这里只是顺着之前的逻辑继续分析下去。
 
-### cross-env
+#### cross-env
 
 首先安装 [cross-env](https://www.npmjs.com/package/cross-env)：
 
@@ -90,7 +90,7 @@ module.exports = {
 }
 ```
 
-### `function`配置
+#### `function`配置
 
 根据前面的章节我们知道，Webpack 的配置可以是对象，也可以是函数，如果是 function 则接受一个`mode`参数，即开发环境打包还是生产环境打包。
 

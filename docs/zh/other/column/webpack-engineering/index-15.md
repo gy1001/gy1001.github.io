@@ -142,8 +142,6 @@ module.exports = {
 
 完成之后，执行`npx webpack --mode development`就可以看到打包结果了：
 
-
-
 好了，现在可以将命令放到`npm`的`scripts`了：
 
 ```json
@@ -244,7 +242,7 @@ module.exports = {
 
 到这里，可以执行下`npm start`看下效果了！
 
-> Tips：当然还可以将 webpack.config.js 继续拆分，将公共部分放到`webpack.config.base.js`部分，然后使用`webpack-merge`来合并配置项，这里不再展开，参考[TODO](dev。md 相关的文件链接)。
+> Tips：当然还可以将 webpack.config.js 继续拆分，将公共部分放到`webpack.config.base.js`部分，然后使用`webpack-merge`来合并配置项，这里不再展开。
 
 #### 配置 React 的 HMR
 
@@ -323,26 +321,24 @@ npm i html-webpack-plugin -D
 
 ```js
 // index.js
-import Vue from 'vue';
-import App from './app.vue';
+import Vue from 'vue'
+import App from './app.vue'
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = false
 
 new Vue({
-    render: h => h(App)
-}).$mount('#app');
+  render: (h) => h(App),
+}).$mount('#app')
 ```
 
 ```vue
 // app.vue
 <template>
-  <div id="app">
-    Hello Vue & Webpack
-  </div>
+  <div id="app">Hello Vue & Webpack</div>
 </template>
 
 <script>
-  export default {};
+export default {}
 </script>
 ```
 
