@@ -1,10 +1,12 @@
-# 25 Webpack 的 Compiler 和 Compilation
+# 25-Webpack 的 Compiler 和 Compilation
 
 ![img](./assets/5cd9645f000128e506400360.jpg)
 
->  与有肝胆人共事，从无字句处读书。 —— 周恩来
+> 与有肝胆人共事，从无字句处读书。 —— 周恩来
 
-在 [Webpack 工作流程](TODO) 文章中已经提到过，Compiler 和 Compilation 都是继承自[Tapable](https://github.com/webpack/tapable) ，不同点是`Compiler`是每个 Webpack 的配置，对应一个`Compiler`对象，记录着整个 Webpack 的生命周期；在构建的过程中，每次构建都会产生一次`Compilation`，`Compilation`则是构建周期的产物。本文将进一步介绍`Compiler`和`Compilation`，通过本章节的学习，将会对 Webpack 构建过程有一个更加宏观的掌握。
+在 [Webpack 工作流程] 文章中已经提到过，Compiler 和 Compilation 都是继承自[Tapable](https://github.com/webpack/tapable) ，不同点是`Compiler`是每个 Webpack 的配置，对应一个`Compiler`对象，记录着整个 Webpack 的生命周期；在构建的过程中，每次构建都会产生一次`Compilation`，`Compilation`则是构建周期的产物。
+
+本文将进一步介绍`Compiler`和`Compilation`，通过本章节的学习，将会对 Webpack 构建过程有一个更加宏观的掌握。
 
 ## Compiler
 
@@ -27,7 +29,9 @@ webpack(webpackConfig, callback)
 
 我们如果要手动实例化一个`Compiler`对象，可以通过`const Compiler = webpack.Compiler`来获取它的类，一般只有一个父 `Compiler`，而子 `Compiler` 可以用来处理一些特殊的事件。
 
-在 webpack plugin 中，每个插件都有个`apply`方法。这个方法接收到的参数就是`Compiler`对象，我们可以通过在对应的钩子时机绑定处理函数来编写插件，下面主要介绍下`Compiler`对象的钩子。
+在 webpack plugin 中，每个插件都有个`apply`方法。
+
+这个方法接收到的参数就是`Compiler`对象，我们可以通过在对应的钩子时机绑定处理函数来编写插件，下面主要介绍下`Compiler`对象的钩子。
 
 ### Compiler 钩子
 
@@ -66,7 +70,11 @@ run -> afterEmit
 run -> done
 ```
 
-上面的方式只是输出`compiler.run()`之后的一部分钩子，`Compiler` 还有好多钩子。比如在 watch 模式下，还会有 `watchRun`、`watchClose` 和 `invalid`。我们如果要绑定某个钩子，则可以使用下面的方法来绑定：
+上面的方式只是输出`compiler.run()`之后的一部分钩子，`Compiler` 还有好多钩子。
+
+比如在 watch 模式下，还会有 `watchRun`、`watchClose` 和 `invalid`。
+
+我们如果要绑定某个钩子，则可以使用下面的方法来绑定：
 
 ```js
 compiler.hooks.someHook.tap('MyPlugin', (params) => {
@@ -110,7 +118,9 @@ compiler.hooks.someHook.tap('MyPlugin', (params) => {
 
 #### 注解 1：Resolver
 
-Compiler 的 Resolver 是指来自于[enhanced-resolve](https://github.com/webpack/enhanced-resolve)模块，它主要功能是一个提供异步`require.resolve()`，即从哪里去查找文件的路径，可以通过 Webpack 的`resolve`和`resolveLoader`来配置。Compiler 类有三种类型的内置 Resolver：
+Compiler 的 Resolver 是指来自于[enhanced-resolve](https://github.com/webpack/enhanced-resolve)模块，它主要功能是一个提供异步`require.resolve()`，即从哪里去查找文件的路径，可以通过 Webpack 的`resolve`和`resolveLoader`来配置。
+
+Compiler 类有三种类型的内置 Resolver：
 
 - Normal：通过绝对路径或相对路径，解析一个模块；
 - Context：通过给定的上下文（context）解析一个模块；
@@ -118,11 +128,17 @@ Compiler 的 Resolver 是指来自于[enhanced-resolve](https://github.com/webpa
 
 #### 注解 2：`thisCompilation`和`compilation`
 
-这里为什么会有 `thisCompilation`和`compilation` 两个钩子呢？其实是跟子编译（child compiler）有关， Compiler 实例通过 `createChildCompiler` 方法可以创建子编译实例 `childCompiler`。创建`childCompiler`时，`childCompiler`会复制 compiler 实例的任务点监听器。**`compilation`的钩子会被复制，而`thisCompilation` 钩子则不会被复制**。
+这里为什么会有 `thisCompilation`和`compilation` 两个钩子呢？其实是跟子编译（child compiler）有关， Compiler 实例通过 `createChildCompiler` 方法可以创建子编译实例 `childCompiler`。
+
+创建`childCompiler`时，`childCompiler`会复制 compiler 实例的任务点监听器。**`compilation`的钩子会被复制，而`thisCompilation` 钩子则不会被复制**。
 
 ## Compilation
 
-在 Compilation 阶段，模块会被加载(loaded)、封存(sealed)、优化(optimized)、分块(chunked)、哈希(hashed)和重新创建(restored)，Compilation 对象包含了当前的模块资源、编译生成资源、变化的文件等。当 Webpack 以监听（watch）模式运行时，每当检测到一个文件变化，一次新的 Compilation 将被创建。Compilation 对象也提供了很多事件回调供插件做扩展，通过 Compilation 也能读取到 Compiler 对象。
+在 Compilation 阶段，模块会被加载(loaded)、封存(sealed)、优化(optimized)、分块(chunked)、哈希(hashed)和重新创建(restored)，Compilation 对象包含了当前的模块资源、编译生成资源、变化的文件等。
+
+当 Webpack 以监听（watch）模式运行时，每当检测到一个文件变化，一次新的 Compilation 将被创建。
+
+Compilation 对象也提供了很多事件回调供插件做扩展，通过 Compilation 也能读取到 Compiler 对象。
 
 ### Compilation 钩子
 
@@ -369,7 +385,15 @@ webpack(config, (err, stats) => {
 
 ## 总结
 
-本小节主要介绍 Webpack 中两个核心的类 Compiler 和 Compilation。Compiler 是每次 Webpack 全部生命周期的对象，而 Compilation 是 Webpack 中每次构建过程的生命周期对象，Compilation 是通过 Compiler 创建的实例。两个类都有自己生命周期，即有自己不同的 Hook，通过添加对应 Hook 事件，可以拿到各自生命周期关键数据和对象。Compilation 有个很重要的对象是 Stats 对象，通过这个对象可以得到 Webpack 打包后的所有 module、chunk 和 assets 信息，通过分析 Stats 对象可以得到很多有用的信息，比如 webpack-bundle-analyzer 这类分析打包结果的插件都是通过分析 Stats 对象来得到分析报告的。另外 Webpack 中`lib/Stats.js`的源码也可以看下，对于分析打包结果和编写插件都有很大的启发。
+本小节主要介绍 Webpack 中两个核心的类 Compiler 和 Compilation。
+
+Compiler 是每次 Webpack 全部生命周期的对象，而 Compilation 是 Webpack 中每次构建过程的生命周期对象，Compilation 是通过 Compiler 创建的实例。
+
+两个类都有自己生命周期，即有自己不同的 Hook，通过添加对应 Hook 事件，可以拿到各自生命周期关键数据和对象。
+
+Compilation 有个很重要的对象是 Stats 对象，通过这个对象可以得到 Webpack 打包后的所有 module、chunk 和 assets 信息，通过分析 Stats 对象可以得到很多有用的信息，比如 webpack-bundle-analyzer 这类分析打包结果的插件都是通过分析 Stats 对象来得到分析报告的。
+
+另外 Webpack 中`lib/Stats.js`的源码也可以看下，对于分析打包结果和编写插件都有很大的启发。
 
 > 本小节 Webpack 相关面试题：
 >

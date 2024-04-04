@@ -1,4 +1,6 @@
-# 22 为你准备了一份 Webpack 工程化最佳实践总结![img](https://img1.mukewang.com/5cd9642f0001145406400359.jpg)
+# 22-为你准备了一份 Webpack 工程化最佳实践总结
+
+![img](https://img1.mukewang.com/5cd9642f0001145406400359.jpg)
 
 > 世界上最快乐的事，莫过于为理想而奋斗。—— 苏格拉底
 
@@ -6,19 +8,7 @@
 
 ## 使用 NPM Scripts 来管理开发命令
 
-1. 使用 NPM Scripts 来配置开发命令，即
-
-   ```
-   package.json
-   ```
-
-   的
-
-   ```
-   scripts
-   ```
-
-   字段，这样即使我们修改脚本甚至切换 Webpack 到其他的打包工具，对于团队其他成员来说，使用的命令还是不变的，建议的命令包括：
+1. 使用 NPM Scripts 来配置开发命令，即`package.json`的`scripts`字段，这样即使我们修改脚本甚至切换 Webpack 到其他的打包工具，对于团队其他成员来说，使用的命令还是不变的，建议的命令包括：
 
    1. `npm start`：相当于`npm run start`，用于开发命令，快速启动本地开发服务；
    2. `npm run build`：用于生产环境打包；

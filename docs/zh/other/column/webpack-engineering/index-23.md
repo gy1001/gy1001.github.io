@@ -1,4 +1,4 @@
-# 23 怎么调试 Webpack？
+# 23-怎么调试 Webpack？
 
 ![img](./assets/5cd9643f0001e11806390358.jpg)
 
@@ -8,7 +8,11 @@
 
 在这里我们不是使用`console.log`的方式来调试代码，而是使用**断点**的方式来调试 Webpack，配合 VSCode IDE 编辑器的调试面板来实现 Webpack 的 Debug。
 
-[VSCode](https://code.visualstudio.com/) 是一个基于 Electron 编写的 IDE，[Electron](https://electronjs.org/) 是基于 Chromium 内置 Node.js 的一套桌面应用解决方案，通过它可以用 JavaScript、HTML 和 CSS 这些前端技术栈来创建桌面应用，并且 Electron 创建出来的桌面应用是支持跨端的！VSCode 和 Electron 都是开源的，感兴趣的可以去 Github 查看源码。本篇文章主要来介绍基于 VSCode 的调试面板来调试 Webpack，**学会这个其实可以扩展到调试任意 Node.js 项目代码**。
+[VSCode](https://code.visualstudio.com/) 是一个基于 Electron 编写的 IDE，[Electron](https://electronjs.org/) 是基于 Chromium 内置 Node.js 的一套桌面应用解决方案，通过它可以用 JavaScript、HTML 和 CSS 这些前端技术栈来创建桌面应用，并且 Electron 创建出来的桌面应用是支持跨端的！
+
+VSCode 和 Electron 都是开源的，感兴趣的可以去 Github 查看源码。
+
+本篇文章主要来介绍基于 VSCode 的调试面板来调试 Webpack，**学会这个其实可以扩展到调试任意 Node.js 项目代码**。
 
 ## 前期准备
 
@@ -28,6 +32,7 @@
 // src/index.js
 import _ from 'lodash'
 console.log(_.isArray(1))
+
 // webpack.config.js
 module.exports = {
   entry: './src/index.js',
@@ -40,7 +45,12 @@ module.exports = {
 这时候我们执行`npx webpack`，执行成功：
 
 ![图片描述](http://img.mukewang.com/5d0767b70001c6e914440504.png)
-下面来说下`npx webpack`做了什么事情。之前介绍下，[npx](https://www.npmjs.com/package/npx)实际执行的是对应模块的 bin 命令，bin 命令是对应的 NPM 模块在模块安装（npm install）的时候通过`package.json`的`bin`字段指定的，`webpack`这个命令实际是通过`webpack-cli`来注入的。我们来看下`webpack-cli`的[`package.json`](https://github.com/webpack/webpack-cli/blob/master/package.json#L10-L12)：
+
+下面来说下`npx webpack`做了什么事情。
+
+之前介绍过，[npx](https://www.npmjs.com/package/npx)实际执行的是对应模块的 bin 命令，bin 命令是对应的 NPM 模块在模块安装（npm install）的时候通过`package.json`的`bin`字段指定的，`webpack`这个命令实际是通过`webpack-cli`来注入的。
+
+我们来看下`webpack-cli`的[`package.json`](https://github.com/webpack/webpack-cli/blob/master/package.json#L10-L12)：
 
 ```json
 // webpack-cli package.json
@@ -64,6 +74,7 @@ module.exports = {
 了解了`webpack`执行命令的原理之后，我们再来看下 VSCode 的调试功能怎么使用，下面是一张调试面板的截图：
 
 ![图片描述](./assets/5d0767e000019aeb19201080.png)
+
 在 VSCode 中开启调试很简单，只需要下面步骤：
 
 1. 打开需要调试的文件，然后在需要的地方设置添加`debugger`关键字设置断点；

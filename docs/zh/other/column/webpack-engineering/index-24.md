@@ -1,14 +1,24 @@
-# 24 Tapable —— Webpack 的核心模块
+# 24-Tapable —— Webpack 的核心模块
 
 ![img](./assets/5cd9645100016fb206400360.jpg)
 
 > 立志是事业的大门，工作是登门入室的的旅途。 —— 巴斯德
 
-Webpack 工程相当庞大，但 Webpack 本质上是一种事件流机制。通过事件流将各种插件串联起来，最终完成 Webpack 的全流程，而实现事件流机制的核心是今天要讲的[Tapable 模块](https://www.npmjs.com/package/tapable)。Webpack 负责编译的 Compiler 和创建 Bundle 的 Compilation 都是继承自 Tapable。所以在讲 Webpack 工作流程之前，我们需要先掌握 Tapable。
+Webpack 工程相当庞大，但 Webpack 本质上是一种事件流机制。
+
+通过事件流将各种插件串联起来，最终完成 Webpack 的全流程，而实现事件流机制的核心是今天要讲的[Tapable 模块](https://www.npmjs.com/package/tapable)。
+
+Webpack 负责编译的 Compiler 和创建 Bundle 的 Compilation 都是继承自 Tapable。
+
+所以在讲 Webpack 工作流程之前，我们需要先掌握 Tapable。
 
 ## 事件监听和发射器
 
-我们都知道 Node.js 特点提到**事件驱动**，这是因为 Node.js 本身利用 JavaScript 的语言特点实现了自定义的事件回调。Node.js 内部一个事件发射器 `EventEmitter`，通过这个类，可以进行事件监听与发射。这个也是 Node.js 的核心模块，很多 Node.js 内部模块都是继承自它，或者引用了它。
+我们都知道 Node.js 特点提到**事件驱动**，这是因为 Node.js 本身利用 JavaScript 的语言特点实现了自定义的事件回调。
+
+Node.js 内部一个事件发射器 `EventEmitter`，通过这个类，可以进行事件监听与发射。
+
+这个也是 Node.js 的核心模块，很多 Node.js 内部模块都是继承自它，或者引用了它。
 
 ```js
 const EventEmitter = require('events').EventEmitter
@@ -23,7 +33,11 @@ setTimeout(function () {
 
 上面代码就是事件发射器的用法。
 
-Webpack 核心库 Tapable 的原理和 EventEmitter 类似，但是功能更强大，包括多种类型，通过事件的注册和监听，触发 Webpack 生命周期中的函数方法。在 Webpack 中，tapable 都是放到对象的`hooks`上，所以我们叫它们钩子。翻阅 Webpack 的源码时，会发现很多类似下面的代码：
+Webpack 核心库 Tapable 的原理和 EventEmitter 类似，但是功能更强大，包括多种类型，通过事件的注册和监听，触发 Webpack 生命周期中的函数方法。
+
+在 Webpack 中，tapable 都是放到对象的`hooks`上，所以我们叫它们钩子。
+
+翻阅 Webpack 的源码时，会发现很多类似下面的代码：
 
 ```js
 // webpack 4.29.6
@@ -64,7 +78,9 @@ class Compiler extends Tapable {
 }
 ```
 
-这些代码就是一个类或者函数完整生命周期需要**「走过的路」**。所有的 Webpack 代码，虽然代码量很大，但是从`hook`找生命周期事件点，然后通过 Hook 名称，基本就可以猜出大概流程。
+这些代码就是一个类或者函数完整生命周期需要 **「走过的路」** 。
+
+所有的 Webpack 代码，虽然代码量很大，但是从`hook`找生命周期事件点，然后通过 Hook 名称，基本就可以猜出大概流程。
 
 ## Tapable 中 Hook 的类型
 
@@ -88,6 +104,7 @@ const {
 Hook 类型可以分为同步（`Sync`）和异步（`Async`），异步又分为并行和串行：
 
 ![图片描述](./assets/5d076a520001811512870187.png)
+
 根据使用方式来分，又可以分为`Basic`、`Waterfal`、`Bail`和`Loop`四类，每类 Hook 都有自己的使用要点：
 
 | 类型       | 使用要点                                                                                      |
@@ -149,7 +166,9 @@ Webpack 3
 
 ### `Bail` 类型 Hook
 
-`Bail`类型的 Hook 包括：`SyncBailHook`、`AsyncSeriesBailHook`、`AsyncParallelBailHook`。`Bail`类型的 Hook 也是按回调栈顺序一次执行回调，但是如果其中一个回调函数返回结果`result !== undefined` 则退出回调栈调。代码示例如下：
+`Bail`类型的 Hook 包括：`SyncBailHook`、`AsyncSeriesBailHook`、`AsyncParallelBailHook`。
+
+`Bail`类型的 Hook 也是按回调栈顺序一次执行回调，但是如果其中一个回调函数返回结果`result !== undefined` 则退出回调栈调。代码示例如下：
 
 ```js
 const { SyncBailHook } = require('tapable')
@@ -181,11 +200,16 @@ hello 2
 详细的流程图如下：
 
 ![图片描述](./assets/5d076aae00017a9e05790501.png)
+
 `SyncBailHook`类似`Array.find`，找到（或者发生)一件事情就停止执行；`AsyncParallelBailHook`类似`Promise.race`这里竞速场景，只要有一个回调解决了一个问题，全部都解决了。
 
 ### `Waterfall` 类型 Hook
 
-`Waterfall`类型 `Hook` 包括 `SyncWaterfallHook`和`AsyncSeriesWaterfallHook`。类似`Array.reduce`效果，如果上一个回调函数的结果 `result !== undefined`，则会被作为下一个回调函数的第一个参数。代码示例如下：
+`Waterfall`类型 `Hook` 包括 `SyncWaterfallHook`和`AsyncSeriesWaterfallHook`。
+
+类似`Array.reduce`效果，如果上一个回调函数的结果 `result !== undefined`，则会被作为下一个回调函数的第一个参数。
+
+代码示例如下：
 
 ```js
 const { SyncWaterfallHook } = require('tapable')
@@ -227,7 +251,9 @@ Webpack Tapable 1
 
 ### `Loop` 类型 Hook
 
-这类 `Hook` 只有一个`SyncLoopHook`（虽然 Tapable 1.1.1 版本中存在`AsyncSeriesLoopHook`，但是并没有将它 export 出来），`LoopHook`执行特点是不停地循环执行回调函数，直到所有函数结果 `result === undefined`。为了更加直观地展现 LoopHook 的执行过程，我对示例代码做了一下丰富：
+这类 `Hook` 只有一个`SyncLoopHook`（虽然 Tapable 1.1.1 版本中存在`AsyncSeriesLoopHook`，但是并没有将它 export 出来），`LoopHook`执行特点是不停地循环执行回调函数，直到所有函数结果 `result === undefined`。
+
+为了更加直观地展现 LoopHook 的执行过程，我对示例代码做了一下丰富：
 
 ```js
 const { SyncLoopHook } = require('tapable')
@@ -359,29 +385,29 @@ hook.tap('evt2', (arg0) => {
 
 ```js
 tap(options, fn) {
-    // 实际调用了_tap
-    this._tap("sync", options, fn);
+  // 实际调用了_tap
+  this._tap("sync", options, fn);
 }
 _tap(type, options, fn) {
-    // 这里主要进行了一些参数的类型判断
-    if (typeof options === "string") {
-        options = {
-            name: options
-        };
-    } else if (typeof options !== "object" || options === null) {
-        throw new Error("Invalid tap options");
-    }
-    if (typeof options.name !== "string" || options.name === "") {
-        throw new Error("Missing name for tap");
-    }
-    if (typeof options.context !== "undefined") {
-        deprecateContext();
-    }
-    options = Object.assign({ type, fn }, options);
-    // 这里是注册了Interceptors(拦截器)
-    options = this._runRegisterInterceptors(options);
-    // 参数处理完之后，调用了_insert，这是关键代码
-    this._insert(options);
+  // 这里主要进行了一些参数的类型判断
+  if (typeof options === "string") {
+    options = {
+        name: options
+    };
+  } else if (typeof options !== "object" || options === null) {
+    throw new Error("Invalid tap options");
+  }
+  if (typeof options.name !== "string" || options.name === "") {
+    throw new Error("Missing name for tap");
+  }
+  if (typeof options.context !== "undefined") {
+    deprecateContext();
+  }
+  options = Object.assign({ type, fn }, options);
+  // 这里是注册了Interceptors(拦截器)
+  options = this._runRegisterInterceptors(options);
+  // 参数处理完之后，调用了_insert，这是关键代码
+  this._insert(options);
 }
 ```
 
@@ -390,42 +416,41 @@ _tap(type, options, fn) {
 ```js
 // tapable/lib/Hook.js
 _insert(item) {
-		this._resetCompilation();
-		let before;
-		if (typeof item.before === "string") {
-			before = new Set([item.before]);
-		} else if (Array.isArray(item.before)) {
-			before = new Set(item.before);
-		}
-		let stage = 0;
-		if (typeof item.stage === "number") {
-			stage = item.stage;
-        }
-        // 这里根据 stage 对事件进行一个优先级排序
-		let i = this.taps.length;
-		while (i > 0) {
-			i--;
-			const x = this.taps[i];
-			this.taps[i + 1] = x;
-			const xStage = x.stage || 0;
-			if (before) {
-				if (before.has(x.name)) {
-					before.delete(x.name);
-					continue;
-				}
-				if (before.size > 0) {
-					continue;
-				}
-			}
-			if (xStage > stage) {
-				continue;
-			}
-			i++;
-			break;
-        }
-        // 这是找到了回调栈
-		this.taps[i] = item;
-	}
+  this._resetCompilation();
+  let before;
+  if (typeof item.before === "string") {
+    before = new Set([item.before]);
+  } else if (Array.isArray(item.before)) {
+    before = new Set(item.before);
+  }
+  let stage = 0;
+  if (typeof item.stage === "number") {
+    stage = item.stage;
+  }
+  // 这里根据 stage 对事件进行一个优先级排序
+  let i = this.taps.length;
+  while (i > 0) {
+    i--;
+    const x = this.taps[i];
+    this.taps[i + 1] = x;
+    const xStage = x.stage || 0;
+    if (before) {
+      if (before.has(x.name)) {
+        before.delete(x.name);
+        continue;
+      }
+      if (before.size > 0) {
+        continue;
+      }
+    }
+    if (xStage > stage) {
+      continue;
+    }
+    i++;
+    break;
+  }
+  // 这是找到了回调栈
+  this.taps[i] = item;
 }
 ```
 
@@ -501,23 +526,27 @@ Object.defineProperties(Hook.prototype, {
 })
 ```
 
-在上面的代码中，`Hook.prototype`通过对象定义属性方法`Object.defineProperties`定义了三个属性方法：`_call`、`_promise`、`_callAsync`。这三个属性的`value`都是通过 `createCompileDelegate`返回的一个名为`lazyCompileHook`的函数，从名字上面来猜测是「懒编译」。当我们真正调用`call`方法的时候，才会编译出真正的`call`函数。
+在上面的代码中，`Hook.prototype`通过对象定义属性方法`Object.defineProperties`定义了三个属性方法：`_call`、`_promise`、`_callAsync`。
+
+这三个属性的`value`都是通过 `createCompileDelegate`返回的一个名为`lazyCompileHook`的函数，从名字上面来猜测是「懒编译」。
+
+当我们真正调用`call`方法的时候，才会编译出真正的`call`函数。
 
 `call`函数编译用到的是`_createCall`方法，这个是在 Hook 类定义的时候就定义的方法，`_createCall`实际最终调用了`compile`方法，而通过`Hook.js`代码来看，`compile`是个需要子类重写实现的方法：
 
 ```js
 // tapable/lib/Hook.js
 compile(options) {
-    throw new Error("Abstract: should be overriden");
+  throw new Error("Abstract: should be overriden");
 }
 
 _createCall(type) {
-    return this.compile({
-        taps: this.taps,
-        interceptors: this.interceptors,
-        args: this._args,
-        type: type
-    });
+  return this.compile({
+    taps: this.taps,
+    interceptors: this.interceptors,
+    args: this._args,
+    type: type
+  });
 }
 ```
 
@@ -555,12 +584,14 @@ class SyncHook extends Hook {
 }
 ```
 
-SyncHook 的`compile`来自是`HookCodeFactory`的子类`SyncHookCodeFactory`。在`lib/HookCodeFactory.js`找到`setup`方法：
+SyncHook 的`compile`来自是`HookCodeFactory`的子类`SyncHookCodeFactory`。
+
+在`lib/HookCodeFactory.js`找到`setup`方法：
 
 ```js
 // lib/HookCodeFactory
 setup(instance, options) {
-    instance._x = options.taps.map(t => t.fn);
+  instance._x = options.taps.map(t => t.fn);
 }
 ```
 
@@ -570,75 +601,79 @@ setup(instance, options) {
 
 ```js
 // lib/HookCodeFactory.js
-create(options) {
-    this.init(options);
-    let fn;
-    switch (this.options.type) {
-        case "sync":
-            fn = new Function(
-                this.args(),
-                '"use strict";\n' +
-                    this.header() +
-                    this.content({
-                        onError: err => `throw ${err};\n`,
-                        onResult: result => `return ${result};\n`,
-                        resultReturns: true,
-                        onDone: () => "",
-                        rethrowIfPossible: true
-                    })
-            );
-            break;
-        case "async":
-            fn = new Function(
-                this.args({
-                    after: "_callback"
-                }),
-                '"use strict";\n' +
-                    this.header() +
-                    this.content({
-                        onError: err => `_callback(${err});\n`,
-                        onResult: result => `_callback(null, ${result});\n`,
-                        onDone: () => "_callback();\n"
-                    })
-            );
-            break;
-        case "promise":
-            let errorHelperUsed = false;
-            const content = this.content({
-                onError: err => {
-                    errorHelperUsed = true;
-                    return `_error(${err});\n`;
-                },
-                onResult: result => `_resolve(${result});\n`,
-                onDone: () => "_resolve();\n"
-            });
-            let code = "";
-            code += '"use strict";\n';
-            code += "return new Promise((_resolve, _reject) => {\n";
-            if (errorHelperUsed) {
-                code += "var _sync = true;\n";
-                code += "function _error(_err) {\n";
-                code += "if(_sync)\n";
-                code += "_resolve(Promise.resolve().then(() => { throw _err; }));\n";
-                code += "else\n";
-                code += "_reject(_err);\n";
-                code += "};\n";
-            }
-            code += this.header();
-            code += content;
-            if (errorHelperUsed) {
-                code += "_sync = false;\n";
-            }
-            code += "});\n";
-            fn = new Function(this.args(), code);
-            break;
-    }
-    this.deinit();
-    return fn;
+create(options){
+  this.init(options)
+  let fn
+  switch (this.options.type) {
+    case 'sync':
+      fn = new Function(
+        this.args(),
+        '"use strict";\n' +
+          this.header() +
+          this.content({
+            onError: (err) => `throw ${err};\n`,
+            onResult: (result) => `return ${result};\n`,
+            resultReturns: true,
+            onDone: () => '',
+            rethrowIfPossible: true,
+          }),
+      )
+      break
+    case 'async':
+      fn = new Function(
+        this.args({
+          after: '_callback',
+        }),
+        '"use strict";\n' +
+          this.header() +
+          this.content({
+            onError: (err) => `_callback(${err});\n`,
+            onResult: (result) => `_callback(null, ${result});\n`,
+            onDone: () => '_callback();\n',
+          }),
+      )
+      break
+    case 'promise':
+      let errorHelperUsed = false
+      const content = this.content({
+        onError: (err) => {
+          errorHelperUsed = true
+          return `_error(${err});\n`
+        },
+        onResult: (result) => `_resolve(${result});\n`,
+        onDone: () => '_resolve();\n',
+      })
+      let code = ''
+      code += '"use strict";\n'
+      code += 'return new Promise((_resolve, _reject) => {\n'
+      if (errorHelperUsed) {
+        code += 'var _sync = true;\n'
+        code += 'function _error(_err) {\n'
+        code += 'if(_sync)\n'
+        code += '_resolve(Promise.resolve().then(() => { throw _err; }));\n'
+        code += 'else\n'
+        code += '_reject(_err);\n'
+        code += '};\n'
+      }
+      code += this.header()
+      code += content
+      if (errorHelperUsed) {
+        code += '_sync = false;\n'
+      }
+      code += '});\n'
+      fn = new Function(this.args(), code)
+      break
+  }
+  this.deinit()
+  return fn
 }
 ```
 
-上面`create`代码中的重要参数是`type`，而`type`是由 Hook 类在 `createCompileDelegate("call", "sync")`的时候传入进去的，所以调用 `call`方法。实际`type`为`sync`，在 create 中会进入到`case 'sync'`的分支，在`switch`中用到最重要的`content`实际是在`class SyncHookCodeFactory extends HookCodeFactory`的时候定义的。这里我们就不继续追踪代码生成的逻辑实现了，我们可以直接在最后将 `fn`的源码`console.log`出来：`console.log(fn.toString())`，大致可以得到下面的代码：
+上面`create`代码中的重要参数是`type`，而`type`是由 Hook 类在 `createCompileDelegate("call", "sync")`的时候传入进去的，所以调用 `call`方法。
+
+实际`type`为`sync`，在 create 中会进入到`case 'sync'`的分支，在`switch`中用到最重要的`content`实际是在`class SyncHookCodeFactory extends HookCodeFactory`的时候定义的。
+
+这里我们就不继续追踪代码生成的逻辑实现了，我们可以直接在最后将 `fn`的源码`console.log`出来：`console.log(fn.toString())`，大致可以得到下面的代码：
 
 ```js
 // 调用 call 的代码
@@ -661,7 +696,13 @@ function anonymous(argName0, argName1) {
 
 ## 总结
 
-Tapable 是 Webpack 的核心模块，Webpack 的所有工作流程都是通过 Tapable 来实现的。Tapable 本质上是提供了多种类型的事件绑定机制，根据不同的流程特点可以选择不同类型的 Hook 来使用。Tapable 的核心实现在绑定事件阶段跟我们平时的自定义 JavaScript 事件绑定（例如 EventEmitter）没有太大区别，但是在事件触发执行的时候，会临时生成可以执行的函数代码片段。通过这种实现方式，Tapable 实现了强大的事件流程控制能力，也增加了如 `waterfall`/`parallel` 系列方法，实现了异步/并行等事件流的控制能力。
+Tapable 是 Webpack 的核心模块，Webpack 的所有工作流程都是通过 Tapable 来实现的。
+
+Tapable 本质上是提供了多种类型的事件绑定机制，根据不同的流程特点可以选择不同类型的 Hook 来使用。
+
+Tapable 的核心实现在绑定事件阶段跟我们平时的自定义 JavaScript 事件绑定（例如 EventEmitter）没有太大区别，但是在事件触发执行的时候，会临时生成可以执行的函数代码片段。
+
+通过这种实现方式，Tapable 实现了强大的事件流程控制能力，也增加了如 `waterfall`/`parallel` 系列方法，实现了`异步`/`并行`等事件流的控制能力。
 
 > 本小节 Webpack 相关面试题：
 >

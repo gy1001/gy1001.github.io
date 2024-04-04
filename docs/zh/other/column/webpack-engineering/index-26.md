@@ -1,10 +1,12 @@
-# 26 Webpack 工作流程
+# 26-Webpack 工作流程
 
 ![img](./assets/5cd964700001973406390359.jpg)
 
->  机会不会上门来找人，只有人去找机会。 —— 狄更斯
+> 机会不会上门来找人，只有人去找机会。 —— 狄更斯
 
-Webpack 主要工作是从一个入口开始，将小块独立的代码编制成更大而复杂的可以运行在浏览器中的代码，独立的代码就是一些 JavaScript 及其它可以被 JavaScript 引用的文件。今天章节来理解下 Webpack 的工作流程和基本原理。为了方便理解，我先将 Webpack 整个工作流程打个比方：
+Webpack 主要工作是从一个入口开始，将小块独立的代码编制成更大而复杂的可以运行在浏览器中的代码，独立的代码就是一些 JavaScript 及其它可以被 JavaScript 引用的文件。
+
+今天章节来理解下 Webpack 的工作流程和基本原理。为了方便理解，我先将 Webpack 整个工作流程打个比方：
 
 > Webpack 可以看做是一个工厂车间，`plugin`和`loader`是车间中的两类机器，工厂有一个车间主任和一个生产车间。车间主任叫`Compiler`，负责指挥生产车间机器`Compilation`进行生产劳动，`Compilation`会首先将进来的原材料（`entry`）使用一种叫做`loader`的机器进行加工，生产出来的产品就是`Chunk`；`Chunk`生产出来之后，会被组装成`Bundle`，然后通过一类`plugin`的机器继续加工，得到最后的`Bundle`，然后运输到对应的仓库（output）。这个工厂的生产线就是 Tapable，厂子运作的整个流程都是生产线控制的，车间中有好几条生产线，每个生产线有很多的操作步骤（`hook`），一步操作完毕，会进入到下一步操作，直到生产线全流程完成，再将产出传给下一个产品线处理。整个车间生产线也组成了一条最大的生产线。
 
@@ -28,11 +30,13 @@ Webpack 的基本流程可以分为三个阶段：
 2. 使用上一步得到的参数实例化一个 Compiler 类，注册所有的插件，给对应的 Webpack 构建生命周期绑定 Hook；
 3. 开始编译：执行 Compiler 类的 run 方法开始执行编译；
 4. `compiler.run` 方法调用 `compiler.compile`，在`compile` 内实例化一个`Compilation`类，`Compilation`是做构建打包的事情，主要事情包括：
-   1）查找入口：根据 entry 配置，找出全部的入口文件；
-   2）编译模块：根据文件类型和 loader 配置，使用对应 loader 对文件进行转换处理；
-   3）解析文件的 AST 语法树；
-   4）找出文件依赖关系；
-   5）递归编译依赖的模块。
+
+   - 1）查找入口：根据 entry 配置，找出全部的入口文件；
+   - 2）编译模块：根据文件类型和 loader 配置，使用对应 loader 对文件进行转换处理；
+   - 3）解析文件的 AST 语法树；
+   - 4）找出文件依赖关系；
+   - 5）递归编译依赖的模块。
+
 5. 递归完后得到每个文件的最终结果，根据 entry 配置生成代码块 chunk；
 6. 输出所有 chunk 到对应的`output`路径。
 
@@ -43,15 +47,21 @@ Webpack 的基本流程可以分为三个阶段：
 - Hook：钩子，对应 Tapable 的 Hook；
 - 生命周期：Webpack 的执行流程，钩子实际就是生命周期，一般类似 entryOption 的 Hook，在生命周期中`entry-option`。
 
-参与 Webpack 流程的两个重要模块是：`Compiler`和`Compilation`。关于`Compiler`和`Compilation`这里先简单做下介绍，本文主要讲解 Webpack 的工作流程，它俩在后续章节会继续详细解释。
+参与 Webpack 流程的两个重要模块是：`Compiler`和`Compilation`。
+
+关于`Compiler`和`Compilation`这里先简单做下介绍，本文主要讲解 Webpack 的工作流程，它俩在后续章节会继续详细解释。
 
 #### Compiler
 
-`Compiler` 继承自 `Tapable`，是 Webpack 的整个生命周期管理，代表了完整的 Webpack 环境配置。每个 Webpack 的配置，对应一个`Compiler`对象，记录了 Webpack 的 `options`、`loader` 和 `plugin`等信息，并且通过`Tapable`的 Hook 机制管理整个打包流程的生命周期。
+`Compiler` 继承自 `Tapable`，是 Webpack 的整个生命周期管理，代表了完整的 Webpack 环境配置。
+
+每个 Webpack 的配置，对应一个`Compiler`对象，记录了 Webpack 的 `options`、`loader` 和 `plugin`等信息，并且通过`Tapable`的 Hook 机制管理整个打包流程的生命周期。
 
 #### Compilation
 
-`Compilation` 也继承自 `Tapable`，代表了一次资源版本构建，包含了当前的模块资源、编译生成资源、变化的文件、以及被跟踪依赖的状态信息。每次构建过程都会产生一次`Compilation`，比如我们启动 watch 功能的时候，每当检测到一个文件变化，就会重新创建一个新的 `Compilation`，从而生成一组新的编译资源。
+`Compilation` 也继承自 `Tapable`，代表了一次资源版本构建，包含了当前的模块资源、编译生成资源、变化的文件、以及被跟踪依赖的状态信息。
+
+每次构建过程都会产生一次`Compilation`，比如我们启动 watch 功能的时候，每当检测到一个文件变化，就会重新创建一个新的 `Compilation`，从而生成一组新的编译资源。
 
 > Tips：Webpack 的插件是在`apply`方法接收`Compiler`对象来给某个流程添加钩子回调，钩子回调函数接收的是记录当前状态的`Compilation`对象，后面 plugin 小节内容继续做介绍。
 
