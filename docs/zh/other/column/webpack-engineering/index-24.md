@@ -164,6 +164,37 @@ Webpack 3
 
 ![图片描述](./assets/5d076a8b000157ca02800491.png)
 
+#### 模拟实现
+
+```js
+class SyncHook {
+  constructor(args) {
+    this.taskArr = []
+  }
+  tap(name, fn) {
+    this.taskArr.push(fn)
+  }
+  call(...args) {
+    // 执行所有的监听函数
+    this.taskArr.forEach((task) => {
+      task(...args)
+    })
+  }
+}
+
+const hook = new SyncHook(['name'])
+
+hook.tap('react', function (name) {
+  console.log('react', name)
+})
+
+hook.tap('node', function (name) {
+  console.log('node', name)
+})
+
+hook.call('gy')
+```
+
 ### `Bail` 类型 Hook
 
 `Bail`类型的 Hook 包括：`SyncBailHook`、`AsyncSeriesBailHook`、`AsyncParallelBailHook`。
@@ -202,6 +233,40 @@ hello 2
 ![图片描述](./assets/5d076aae00017a9e05790501.png)
 
 `SyncBailHook`类似`Array.find`，找到（或者发生)一件事情就停止执行；`AsyncParallelBailHook`类似`Promise.race`这里竞速场景，只要有一个回调解决了一个问题，全部都解决了。
+
+#### 模拟实现
+
+```js
+class SyncBailHook {
+  constructor(args) {
+    // 初始化hook
+    this.tasks = []
+  }
+  tap(name, taskFn) {
+    this.tasks.push(taskFn)
+  }
+  call(...args) {
+    let result
+    let taskIndex = 0
+    do {
+      result = this.tasks[taskIndex++](...args)
+    } while (result === undefined && this.tasks.length > taskIndex)
+  }
+}
+
+const syncBailHook = new SyncBailHook(['name'])
+
+syncBailHook.tap('react', function (name) {
+  console.log('react', name)
+  return 'react'
+})
+
+syncBailHook.tap('node', function (name) {
+  console.log('node', name)
+})
+
+syncBailHook.call('kobe')
+```
 
 ### `Waterfall` 类型 Hook
 

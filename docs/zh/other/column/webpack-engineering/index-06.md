@@ -497,6 +497,48 @@ module.exports = {
 
 > Tips：`loader`面向的是解决某个或者某类模块的问题，而`plugin`面向的是项目整体，解决的是`loader`解决不了的问题。
 
+## webpack ignorePlugin
+
+webpack 种的 IgnorePlugin 在打包时忽略本地化内容，如引入了一个插件，只用到了中文语言包，打包的时候把非中文语言包排除掉
+比如 'moment'
+
+```bash
+npm install moment --save
+```
+
+用法如下
+`new webpack.IgnorePlugin({ resourceRegExp, contextRegExp });`
+
+- resourceRegExp ：用于测试资源的正则表达式。
+- contextRegExp ：（可选）用于测试上下文（目录）的正则表达式。
+  其他用法
+
+- checkResource (resource, context) 接收 resource 和 context 作为参数的过滤器函数必须返回布尔值。
+
+```json
+new webpack.IgnorePlugin({
+  checkResource(resource) {
+    // 对资源做一些事情
+    return true | false;
+  },
+});
+```
+
+webpack.config.js 的 plugins 处添加配置
+
+```js
+let webpack = require('webpack')
+module.exports = {
+  plugins: [
+    // 忽略解析三方包里插件
+    new webpack.IgnorePlugin({
+      resourceRegExp: /^\.\/locale$/,
+      contextRegExp: /moment$/,
+    });
+  ],
+}
+```
+
 ## 小结
 
 在本小节中，我们讲解了 Webpack 相关的除`entry`和`output`外的基础配置项，这里总结下项目经常配置的并且比较重要的配置项列表，供大家复习本小节内容：
