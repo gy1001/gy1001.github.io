@@ -314,6 +314,42 @@ Webpack Tapable 1
 
 ![图片描述](./assets/5d076ad000010a0a06280535.png)
 
+#### 模拟实现
+
+```js
+class SyncWaterfallHook {
+  constructor(name) {
+    this.tasks = []
+  }
+  tap(name, fn) {
+    this.tasks.push(fn)
+  }
+  call(...args) {
+    const first = this.tasks.shift()
+    const result = first(...args) // 第一个参数是传给call的参数
+    this.tasks.reduce((prev, next) => next(prev) || prev, result)
+  }
+}
+
+const syncWaterfallHook = new SyncWaterfallHook(['name'])
+
+syncWaterfallHook.tap('node', function (name) {
+  console.log('node', name)
+  return 'node'
+})
+
+syncWaterfallHook.tap('react', function (data) {
+  console.log('react', data)
+  // return 'react'
+})
+
+syncWaterfallHook.tap('webpack', function (data) {
+  console.log('webpack', data)
+})
+
+syncWaterfallHook.call('javascript')
+```
+
 ### `Loop` 类型 Hook
 
 这类 `Hook` 只有一个`SyncLoopHook`（虽然 Tapable 1.1.1 版本中存在`AsyncSeriesLoopHook`，但是并没有将它 export 出来），`LoopHook`执行特点是不停地循环执行回调函数，直到所有函数结果 `result === undefined`。
