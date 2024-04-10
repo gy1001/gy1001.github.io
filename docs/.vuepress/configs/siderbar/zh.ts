@@ -1,4 +1,20 @@
 import type { SidebarConfig } from '@vuepress/theme-default'
+import fs from 'fs'
+import path from 'path'
+
+function generatorMdFileArr(modulePath) {
+  return fs
+    .readdirSync(path.resolve(__dirname, '../../..' + modulePath))
+    .filter((item) => {
+      return item.includes('.md')
+    })
+    .map((item) => ({
+      text: item.replace(/\.md/, ''),
+      link: modulePath + item,
+    }))
+}
+const VisualH5Arr = generatorMdFileArr('/zh/other/column/visual-h5/')
+const NestH5Arr = generatorMdFileArr('/zh/other/column/nest-h5/')
 
 export const sidebarZh: SidebarConfig = {
   '/zh/skill/front/': [
@@ -924,6 +940,16 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/column/webpack-engineering/index-37.md',
             '/zh/other/column/webpack-engineering/index-38.md',
           ],
+        },
+        {
+          text: '从零开发H5可视化搭建项目',
+          collapsible: true,
+          children: VisualH5Arr,
+        },
+        {
+          text: '掘金小册 Nest 通关秘籍',
+          collapsible: true,
+          children: NestH5Arr,
         },
       ],
     },

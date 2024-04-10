@@ -4,6 +4,10 @@
 
 > 立志是事业的大门，工作是登门入室的的旅途。 —— 巴斯德
 
+[深入理解 Webpack 核心模块 Tapable 钩子[同步版]](https://segmentfault.com/a/1190000018312127)
+
+[深入理解 Webpack 核心模块 Tapable 钩子[异步版]](https://segmentfault.com/a/1190000018312930)
+
 Webpack 工程相当庞大，但 Webpack 本质上是一种事件流机制。
 
 通过事件流将各种插件串联起来，最终完成 Webpack 的全流程，而实现事件流机制的核心是今天要讲的[Tapable 模块](https://www.npmjs.com/package/tapable)。
@@ -114,9 +118,21 @@ Hook 类型可以分为同步（`Sync`）和异步（`Async`），异步又分�
 | `Waterfal` | 瀑布式，上一步的返回值继续交给下一步处理和使用                                                |
 | `Loop`     | 循环类型，如果该监听函数返回 `true` 则这个监听函数会反复执行，如果返回 `undefined` 则退出循环 |
 
+**触发事件的方式**
+
+| 类型          | 描述                                                                                                                  |
+| :------------ | :-------------------------------------------------------------------------------------------------------------------- |
+| Sync          | 这类 hook 注册的回调会被同步调用。注册方式只能用 tap ，而调用方式可以用 call 和 callAsync                             |
+| AsyncSeries   | 这类 hook 注册的回调会被异步调用。注册方式可以是 tap、tapAsync 和 tapPromise，调用方式只能是 callAsync 或者 promise。 |
+| AsyncParallel | 和 AsyncSeries 差不多，只是回调会被并行执行。                                                                         |
+
 ### `Basic` 类型 Hook
 
-基础类型包括`SyncHook`、`AsyncParallelHook`和`AsyncSeriesHook`，这类 Hook 不关心函数的返回值，会一直执行到底。下面以`SyncHook`为例来说明下：
+基础类型包括`SyncHook`、`AsyncParallelHook`和`AsyncSeriesHook`，这类 Hook 不关心函数的返回值，会一直执行到底。
+
+#### SyncHook
+
+下面以`SyncHook`为例来说明下：
 
 ```js
 const { SyncHook } = require('tapable')
@@ -193,6 +209,503 @@ hook.tap('node', function (name) {
 })
 
 hook.call('gy')
+```
+
+#### AsyncParallelHook
+
+`AsyncParallelHook` 跟`AsyncParallelBailHook` 类似，只是`AsyncParallelHook`的回调函数返回值会被忽略，不会影响之后的回调函数执行。
+
+```js
+const { AsyncParallelHook } = require('tapable')
+
+const asyncParallelHook = new AsyncParallelHook(['name'])
+
+asyncParallelHook.tapAsync('react', (name, cb) => {
+  setTimeout(() => {
+    console.log('react', name)
+    cb()
+  }, 1000)
+})
+
+asyncParallelHook.tapAsync('node', (name, cb) => {
+  setTimeout(() => {
+    console.log('node', name)
+    cb()
+  }, 1000)
+})
+
+asyncParallelHook.tapAsync('angular', (name, cb) => {
+  setTimeout(() => {
+    console.log('angular', name)
+    cb()
+  }, 2000)
+})
+// 这里如果调用 call 会报错：asyncParallelHook.call is not a function
+asyncParallelHook.callAsync('zs', () => {
+  console.log('finished')
+})
+```
+
+上述代码
+
+1. 执行 1s 后 输出
+
+   - react zs
+   - node zs
+
+2. 执行 2s 后 输出
+
+   - angular zs
+
+3. 然后输出 'finished'
+
+#### 模拟实现 AsyncParallelHook
+
+```js
+// const { AsyncParallelHook } = require('tapable')
+class AsyncParallelHook {
+  constructor(...args) {
+    this.tasks = []
+  }
+  tapAsync(name, task) {
+    this.tasks.push(task)
+  }
+  callAsync(...args) {
+    const finishedCallback = args.pop()
+    let finishedTaskCount = 0
+    const done = () => {
+      finishedTaskCount++
+      if (finishedTaskCount === this.tasks.length) {
+        finishedCallback()
+      }
+    }
+    this.tasks.forEach((task) => {
+      task(...args, done)
+    })
+  }
+}
+
+const asyncParallelHook = new AsyncParallelHook(['name'])
+
+asyncParallelHook.tapAsync('react', (name, cb) => {
+  setTimeout(() => {
+    console.log('react', name)
+    cb()
+  }, 1000)
+})
+
+asyncParallelHook.tapAsync('node', (name, cb) => {
+  setTimeout(() => {
+    console.log('node', name)
+    cb()
+  }, 1000)
+})
+
+asyncParallelHook.tapAsync('angular', (name, cb) => {
+  setTimeout(() => {
+    console.log('angular', name)
+    cb()
+  }, 2000)
+})
+
+asyncParallelHook.callAsync('studying', () => {
+  console.log('finished')
+})
+```
+
+#### AsyncParallelHook 的 Promise 版本
+
+```js
+const { AsyncParallelHook } = require('tapable')
+const asyncParallelHook = new AsyncParallelHook(['name'])
+
+asyncParallelHook.tapPromise('react', (name) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log('react', name)
+      resolve()
+    }, 1000)
+  })
+})
+
+asyncParallelHook.tapPromise('node', (name) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log('node', name)
+      resolve()
+    }, 1000)
+  })
+})
+
+asyncParallelHook.tapPromise('angular', (name) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log('angular', name)
+      resolve()
+    }, 2000)
+  })
+})
+
+asyncParallelHook.promise('studying').then(() => {
+  console.log('finished')
+})
+```
+
+#### 模拟实现 AsyncParallelHook 的 Promise 版本
+
+> 这里钩子还是 AsyncParallelHook 钩子，只是写法变成了 promise 的写法，去掉了回调函数 cb().变成了成功时去 resolve(). 其实用 Promise 可以更好解决异步并行的问题，因为 Promise 的原型方法上有个 all()方法，它的作用就是等待所有 promise 执行完毕后再去执行最终的 promise。
+
+```js
+// const { AsyncParallelHook } = require('tapable')
+class AsyncParallelHook {
+  constructor(...args) {
+    this.tasks = []
+  }
+  tapPromise(name, task) {
+    this.tasks.push(task)
+  }
+  promise(...args) {
+    return Promise.all(this.tasks.map((task) => task(...args)))
+  }
+}
+
+const asyncParallelHook = new AsyncParallelHook(['name'])
+
+asyncParallelHook.tapPromise('react', (name) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log('react', name)
+      resolve()
+    }, 1000)
+  })
+})
+
+asyncParallelHook.tapPromise('node', (name) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log('node', name)
+      resolve()
+    }, 1000)
+  })
+})
+
+asyncParallelHook.tapPromise('angular', (name) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log('angular', name)
+      resolve()
+    }, 2000)
+  })
+})
+
+asyncParallelHook.promise('studying').then(() => {
+  console.log('finished')
+})
+```
+
+运行后结果同上
+
+#### AsyncSeriesHook
+
+> AsyncSeriesHook 是异步串行的钩子， 串行，我们刚才说了， 它是一步步去执行的，下一步执行依赖上一步执行是否完成
+
+```js
+const { AsyncSeriesHook } = require('tapable')
+const asyncParallelHook = new AsyncSeriesHook(['name'])
+
+asyncParallelHook.tapAsync('react', (name, cb) => {
+  setTimeout(() => {
+    console.log('react', name)
+    cb()
+  }, 1000)
+})
+
+asyncParallelHook.tapAsync('node', (name, cb) => {
+  setTimeout(() => {
+    console.log('node', name)
+    cb()
+  }, 1000)
+})
+
+asyncParallelHook.tapAsync('angular', (name, cb) => {
+  setTimeout(() => {
+    console.log('angular', name)
+    cb()
+  }, 2000)
+})
+
+asyncParallelHook.callAsync('studying', () => {
+  console.log('finished')
+})
+```
+
+执行结果
+
+1. 1s 后输出 react studying
+2. 再过 1s 后输出 node studying
+3. 再过 2s 后输出 angular studying
+4. 最后输出 finished
+
+#### 模拟实现 AsyncSeriesHook
+
+> 因为是串行钩子，所以我们可以把每一个回调函数当做前一个函数的回调函数，这样就可以实现串行了。
+
+```js
+// const { AsyncSeriesHook } = require('tapable')
+class AsyncSeriesHook {
+  constructor(...args) {
+    this.tasks = []
+  }
+  tapAsync(name, task) {
+    this.tasks.push(task)
+  }
+  callAsync(...args) {
+    const finallyCallback = args.pop()
+    let index = 0
+    const next = () => {
+      if (index === this.tasks.length) {
+        return finallyCallback()
+      }
+      return this.tasks[index++](...args, next)
+    }
+    next()
+  }
+}
+
+const asyncParallelHook = new AsyncSeriesHook(['name'])
+
+asyncParallelHook.tapAsync('react', (name, cb) => {
+  setTimeout(() => {
+    console.log('react', name)
+    cb()
+  }, 1000)
+})
+
+asyncParallelHook.tapAsync('node', (name, cb) => {
+  setTimeout(() => {
+    console.log('node', name)
+    cb()
+  }, 1000)
+})
+
+asyncParallelHook.tapAsync('angular', (name, cb) => {
+  setTimeout(() => {
+    console.log('angular', name)
+    cb()
+  }, 2000)
+})
+
+asyncParallelHook.callAsync('studying', () => {
+  console.log('finished')
+})
+```
+
+#### AsyncSeriesHook 的 Promise 版本
+
+```js
+const { AsyncSeriesHook } = require('tapable')
+
+const asyncParallelHook = new AsyncSeriesHook(['name'])
+
+asyncParallelHook.tapPromise('react', (name) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log('react', name)
+      resolve()
+    }, 1000)
+  })
+})
+
+asyncParallelHook.tapPromise('node', (name) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log('node', name)
+      resolve()
+    }, 1000)
+  })
+})
+
+asyncParallelHook.tapPromise('angular', (name) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log('angular', name)
+      resolve()
+    }, 2000)
+  })
+})
+
+asyncParallelHook.promise('studying').then(() => {
+  console.log('finished')
+})
+```
+
+打印效果同上
+
+#### 模拟实现 AsyncSeriesHook 的 Promise 版本
+
+```js
+// const { AsyncSeriesHook } = require('tapable')
+class AsyncSeriesHook {
+  constructor(...args) {
+    this.tasks = []
+  }
+  tapPromise(name, task) {
+    this.tasks.push(task)
+  }
+  promise(...args) {
+    const [first, ...others] = this.tasks
+    // 类似 redux
+    return others.reduce((prev, next) => {
+      return prev.then(() => {
+        return next(...args)
+      })
+    }, first(...args))
+  }
+}
+
+const asyncParallelHook = new AsyncSeriesHook(['name'])
+
+asyncParallelHook.tapPromise('react', (name) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log('react', name)
+      resolve()
+    }, 1000)
+  })
+})
+
+asyncParallelHook.tapPromise('node', (name) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log('node', name)
+      resolve()
+    }, 1000)
+  })
+})
+
+asyncParallelHook.tapPromise('angular', (name) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log('angular', name)
+      resolve()
+    }, 2000)
+  })
+})
+
+asyncParallelHook.promise('studying').then(() => {
+  console.log('finished')
+})
+```
+
+#### AsyncSeriesWaterfallHook
+
+> AsyncSeriesWaterfallHook 异步的串行的瀑布钩子，首先 它是一个异步串行的钩子，同时 它的下一步依赖上一步的结果返回：
+
+```js
+const { AsyncSeriesWaterfallHook } = require('tapable')
+
+const asyncSeriesWaterfallHook = new AsyncSeriesWaterfallHook(['name'])
+
+asyncSeriesWaterfallHook.tapAsync('react', (name, cb) => {
+  setTimeout(() => {
+    console.log('react', name)
+    /** 第一次参数是err, 第二个参数是传递给下一步的参数 */
+    cb(null, 'react is very good')
+  }, 1000)
+})
+
+asyncSeriesWaterfallHook.tapAsync('node', (name, cb) => {
+  setTimeout(() => {
+    console.log('node', name)
+    // 如果第一个参数不是 Null, 就会终止后续函数的执行
+    // cb('error', 'node is very hard')
+    cb()
+  }, 1000)
+})
+
+asyncSeriesWaterfallHook.tapAsync('angular', (name, cb) => {
+  setTimeout(() => {
+    console.log('angular', name)
+    cb()
+  }, 2000)
+})
+
+asyncSeriesWaterfallHook.callAsync('studying', () => {
+  console.log('finished')
+})
+```
+
+执行结果是
+
+1. 1s 后输出 react studying
+2. 再过 1s 后输出 node react is very good
+3. 再过 2s 后输出 angular react is very good
+4. 最后输出 finished
+
+如果第二个函数中的 cb 是 `cb('error', 'node is very hard')` 则执行结果如下
+
+1. 1s 后输出 react studying
+2. 再过 1s 后输出 node react is very good
+3. 最后输出 finished
+
+#### 模拟实现 AsyncSeriesWaterfallHook
+
+```js
+// const { AsyncSeriesWaterfallHook } = require('tapable')
+
+class AsyncSeriesWaterfallHook {
+  constructor() {
+    this.tasks = []
+  }
+  tapAsync(name, task) {
+    this.tasks.push(task)
+  }
+  callAsync(...args) {
+    let index = 0
+    const finalCallBack = args.pop()
+    let next = (error, data) => {
+      if (error || index === this.tasks.length) {
+        finalCallBack()
+        return
+      }
+      let task = this.tasks[index++]
+      task(data, next)
+    }
+
+    const firstTask = this.tasks[index++]
+    firstTask(...args, next)
+  }
+}
+
+const asyncSeriesWaterfallHook = new AsyncSeriesWaterfallHook(['name'])
+
+asyncSeriesWaterfallHook.tapAsync('react', (name, cb) => {
+  setTimeout(() => {
+    console.log('react', name)
+    /** 第一次参数是err, 第二个参数是传递给下一步的参数 */
+    cb(null, 'react is very good')
+  }, 1000)
+})
+
+asyncSeriesWaterfallHook.tapAsync('node', (name, cb) => {
+  setTimeout(() => {
+    console.log('node', name)
+    // 如果第一个参数不是 Null, 就会终止后续函数的执行
+    // cb('error', 'node is very hard')
+    cb(null, 'node is very hard')
+  }, 1000)
+})
+
+asyncSeriesWaterfallHook.tapAsync('angular', (name, cb) => {
+  setTimeout(() => {
+    console.log('angular', name)
+    cb()
+  }, 2000)
+})
+
+asyncSeriesWaterfallHook.callAsync('studying', () => {
+  console.log('finished')
+})
 ```
 
 ### `Bail` 类型 Hook
@@ -436,6 +949,87 @@ function intentLog(...text) {
 详细的流程图如下：
 
 ![图片描述](./assets/5d076aef000151c908260538.png)
+
+#### 模拟实现
+
+```js
+class SyncLoopHook {
+  constructor(args) {
+    this.tasks = []
+    // this.reactIndex = 0
+    // this.nodeIndex = 0
+    // this.webpackIndex = 0
+  }
+  tap(name, fn) {
+    this.tasks.push(fn)
+  }
+  call(...args) {
+    // 以下是网上的普遍方案，实现是有问题的
+    // this.tasks.forEach((task) => {
+    //   let result
+    //   do {
+    //     result = task(...args)
+    //   } while (result !== undefined)
+    // })
+    // 模拟源码效果实现
+    for (let taskIndex = 0; taskIndex < this.tasks.length; taskIndex++) {
+      const currentTask = this.tasks[taskIndex]
+      let result
+      //  第一次
+      if (taskIndex === 0) {
+        do {
+          result = currentTask(...args)
+        } while (result !== undefined)
+        continue
+      }
+      //  第二次
+      result = currentTask(...args)
+      if (result === undefined) {
+        continue
+      } else {
+        taskIndex = -1
+      }
+    }
+  }
+}
+
+// const { SyncLoopHook } = require('tapable')
+const syncLoopHook = new SyncLoopHook(['name'])
+let reactIndex = 0
+let nodeIndex = 0
+let webpackIndex = 0
+syncLoopHook.tap('react', (name) => {
+  console.log('react', name)
+  reactIndex++
+  if (reactIndex === 2) {
+    reactIndex = 0
+    return undefined
+  }
+  return '继续学习 react'
+})
+
+syncLoopHook.tap('node', (name) => {
+  console.log('node', name)
+  nodeIndex++
+  if (nodeIndex == 2) {
+    nodeIndex = 0
+    return undefined
+  }
+  return '继续学习 node'
+})
+
+syncLoopHook.tap('webpack', (name) => {
+  console.log('webpack', name)
+  webpackIndex++
+  if (webpackIndex == 2) {
+    webpackIndex = 0
+    return undefined
+  }
+  return '继续学习 webpack'
+})
+
+syncLoopHook.call('javascript')
+```
 
 ## Tapable 的原理解析
 
@@ -808,3 +1402,7 @@ Tapable 的核心实现在绑定事件阶段跟我们平时的自定义 JavaScri
 > 本小节 Webpack 相关面试题：
 >
 > 1. Webpack 的核心模块 Tapable 有什么作用，是怎么实现的？
+
+```
+
+```
