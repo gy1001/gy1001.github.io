@@ -199,3 +199,145 @@ module.exports = loader
 另外，如果存在多个 loader 串行的情况，这些 loader 的 pitch 函数会从左到右依次执行，其示意图如下：
 
 ![img](./assets/5791681-9f38f12b5459cc19.png)
+
+## 手动实现 babel-loader
+
+[具体代码参见: loaders/babel-loader.js](https://github.com/gy1001/Javascript/blob/main/Webpack/zf-webpack/self-babel-loader/loaders/babel-loader.js)
+
+### 安装核心包
+
+```bash
+npm install @babel/core @babel/preset-env  -D
+```
+
+> webpack 5 已经可以直接在 loader 中通过 this.query 直接获取 loader 的 options 配置，所以不需要利用 loader-utils 工具获取：
+
+### loaders/babel-loader.js
+
+```js
+const babelCore = require('@babel/core')
+
+function babelLoader(source) {
+  // webpack 5 已经可以通过this.query 直接获取loader的options配置，所以不需要利用loader-utils工具获取：
+  // 异步 loader 必须要调用this.async()以及this.callback来告知
+  let cb = this.async()
+  // console.log(this.resourcePath) 是一个绝对路径
+  // /Users/gaoyuan/Code/learn/MyGithub/Javascript/Webpack/zf-webpack/self-babel-loader/src/index.js
+  babelCore.transform(
+    source,
+    {
+      ...this.query,
+      sourceMaps: true,
+      // 增加 filename 属性，用于生成 source-map 文件名,否则在浏览器中查看 source-map 文件名是空的
+      filename: this.resourcePath.split('/').pop(),
+    },
+    function (err, result) {
+      // 异步
+      cb(err, result.code, result.map)
+    },
+  )
+}
+
+module.exports = babelLoader
+```
+
+### 对应的 webpack.config.js
+
+```js
+const path = require('path')
+
+module.exports = {
+  mode: 'development',
+  entry: './src/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: __dirname + '/dist',
+  },
+  resolveLoader: {
+    modules: ['node_modules', path.resolve(__dirname, 'loaders')],
+  },
+  devtool: 'source-map',
+  module: {
+    rules: [
+      {
+        test: /\.js$/, // 匹配所有的js文件
+        exclude: /node_modules/, // 排除node_modules文件夹
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env'],
+            },
+          },
+        ],
+      },
+    ],
+  },
+}
+```
+
+## 手动实现 banner-loader
+
+[具体代码参见: loaders/banner-loader.js](https://github.com/gy1001/Javascript/blob/main/Webpack/zf-webpack/self-babel-loader/loaders/banner-loader.js)
+
+### loaders/banner-loader.js
+
+```js
+const schemeUtils = require('schema-utils')
+
+function bannerLoader(source) {
+  const cb = this.async()
+  schemeUtils.validate(
+    {
+      type: 'object',
+      properties: {
+        // 配置参数
+        text: {
+          type: 'string',
+        },
+      },
+    },
+    this.query,
+    // 错误模块文本，方便根据错误信息定位
+    'babel-loader',
+  )
+  cb(null, `/**${this.query.text}**/ ${source}`)
+}
+
+module.exports = bannerLoader
+```
+
+### 对应的 webpack.config.js
+
+```js
+const path = require('path')
+
+module.exports = {
+  mode: 'development',
+  entry: './src/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: __dirname + '/dist',
+  },
+  resolveLoader: {
+    modules: ['node_modules', path.resolve(__dirname, 'loaders')],
+  },
+  devtool: 'source-map',
+  module: {
+    rules: [
+      {
+        test: /\.js$/, // 匹配所有的js文件
+        exclude: /node_modules/, // 排除node_modules文件夹
+        use: [
+          {
+            loader: 'banner-loader',
+            options: {
+              text: '这是一个自定义的banner',
+            },
+          },
+        ],
+      },
+    ],
+  },
+}
+```
