@@ -64,7 +64,10 @@ export const sidebarZh: SidebarConfig = {
         '/zh/skill/front/mini-frame/mini-vue.md',
         {
           text: 'mini-webpack',
-          children: ['/zh/skill/front/mini-frame/mini-webpack/gy-webpack.md'],
+          children: [
+            '/zh/skill/front/mini-frame/mini-webpack/gy-webpack.md',
+            '/zh/skill/front/mini-frame/mini-webpack/loader.md',
+          ],
         },
         '/zh/skill/front/mini-frame/mini-router.md',
         '/zh/skill/front/mini-frame/mini-vue-router.md',
