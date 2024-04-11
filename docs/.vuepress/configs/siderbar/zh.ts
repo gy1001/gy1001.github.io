@@ -187,7 +187,10 @@ export const sidebarZh: SidebarConfig = {
     },
     {
       text: '算法相关',
-      children: ['/zh/interview/algorithm/01.md'],
+      children: [
+        '/zh/interview/algorithm/01.md',
+        '/zh/interview/algorithm/02.md',
+      ],
     },
     {
       text: '面试真题',
