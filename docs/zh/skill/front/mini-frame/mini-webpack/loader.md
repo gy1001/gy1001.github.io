@@ -341,3 +341,274 @@ module.exports = {
   },
 }
 ```
+
+## 手动实现 file-loader 和 url-loader
+
+[具体代码 file-loader](https://github.com/gy1001/Javascript/blob/main/Webpack/zf-webpack/self-babel-loader/loaders/file-loader.js)
+
+[具体代码 url-loader](https://github.com/gy1001/Javascript/blob/main/Webpack/zf-webpack/self-babel-loader/loaders/url-loader.js)
+
+### file-loader 实现如下
+
+```js
+// file-loader.js
+const loaderIUtils = require('loader-utils')
+// fileLoader 需要返回一个路径
+function fileLoader(source) {
+  // 处理文件逻辑
+  const fileName = loaderIUtils.interpolateName(this, '[hash].[ext]', {
+    content: source,
+  })
+  // 发射文件
+  this.emitFile(fileName, source)
+  // 返回处理后的内容
+  return `module.exports = ${JSON.stringify(fileName)}`
+}
+// 加上这一行后，拿到的 source 就会改为 buffer 模式，二进制
+fileLoader.raw = true
+module.exports = fileLoader
+```
+
+### url-loader 实现如下
+
+```js
+const fileLoader = require('./file-loader')
+var mime = require('mime-types') // 用于获取文件类型, mime最新版已经是 esm, 使用时会报错
+
+function urlLoader(source) {
+  console.log(mime.lookup(this.resourcePath)) // image/jpeg 等
+  const { limit } = this.query
+  if (limit && limit > source.length) {
+    return `module.exports="data:${mime.lookup(
+      this.resourcePath,
+    )};base64,${source.toString('base64')}"`
+  }
+  return fileLoader.call(this, source)
+}
+urlLoader.raw = true
+module.exports = urlLoader
+```
+
+### 对应的 webpack.config.js
+
+```js
+const path = require('path')
+
+module.exports = {
+  mode: 'development',
+  entry: './src/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: __dirname + '/dist',
+  },
+  resolveLoader: {
+    modules: ['node_modules', path.resolve(__dirname, 'loaders')],
+  },
+  devtool: 'source-map',
+  module: {
+    rules: [
+      {
+        test: /\.jpeg$/, // 匹配所有的js文件
+        exclude: /node_modules/, // 排除node_modules文件夹
+        use: [
+          // {
+          //   // 目的就是根据图片生成一个 md5 发射到 dist 目录下， file-loader 还会返回当前的图片路径
+          //   loader: 'file-loader',
+          // },
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 50 * 1024,
+            },
+          },
+        ],
+      },
+    ],
+  },
+}
+```
+
+## 实现 less-loader 和 style-loader
+
+[less-loader 实现](https://github.com/gy1001/Javascript/blob/main/Webpack/zf-webpack/self-babel-loader/loaders/less-loader.js)
+
+[style-loader 实现](https://github.com/gy1001/Javascript/blob/main/Webpack/zf-webpack/self-babel-loader/loaders/style-loader.js)
+
+### less-loader 实现
+
+```js
+// 依赖于 less
+const less = require('less')
+
+function lessLoader(source) {
+  let css = ''
+  less.render(source, (err, output) => {
+    if (err) {
+      console.log(err)
+    } else {
+      css = output.css
+    }
+  })
+  return css
+}
+module.exports = lessLoader
+```
+
+### style-loader 实现
+
+```js
+function styleLoader(source) {
+  const style = `
+  let style = document.createElement('style')
+  style.innerHTML = ${JSON.stringify(source)}
+  document.head.appendChild(style)
+  `
+  return style
+}
+module.exports = styleLoader
+```
+
+### 对应的 webpack.config.js
+
+```js
+const path = require('path')
+
+module.exports = {
+  mode: 'development',
+  entry: './src/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: __dirname + '/dist',
+  },
+  resolveLoader: {
+    modules: ['node_modules', path.resolve(__dirname, 'loaders')],
+  },
+  devtool: 'source-map',
+  module: {
+    rules: [
+      {
+        test: /\.less$/,
+        use: ['style-loader', 'less-loader'],
+      },
+    ],
+  },
+}
+```
+
+### 实现 css-loader
+
+[代码参考 css-loader](https://github.com/gy1001/Javascript/blob/main/Webpack/zf-webpack/self-babel-loader/loaders/css-loader.js)
+
+注意：其调用的 style-loader 增加了 pitch 属性
+
+> css-loader 用于解析 css 文件，并将其转换为 js 可以处理的模块。它允许你使用类似 `@import` 和 `url()` 的语法引用其他 CSS 文件或者图片等资源。`css-loader` 会处理这些引用，并将它们嵌入到最终的 CSS 中。它的主要功能是处理 CSS 文件之间的依赖关系。
+
+比如我们修改修改上一节的中的 index.less，加入引入图片
+
+```less
+// index.less
+@blueColor: blue;
+body {
+  background-color: @blueColor;
+  background-image: url(./img/person.jpeg);
+}
+```
+
+### 逻辑分析
+
+遇到 url() 的时候我们要把之前的存起来，url(xxx)这一部分替换掉存起来，后面的在存起来，然后拼接起来返回就可以了
+
+### 代码实现
+
+```js
+function CssLoader(source) {
+  let reg = /url\((.+?)\)/g
+  let pos = 0
+  let resultArr = []
+  resultArr.push('let list = []')
+  while ((match = reg.exec(source))) {
+    const [matchStr, groups] = match
+    // console.log(source.slice(pos, match.index))
+    resultArr.push(
+      `list.push(${JSON.stringify(source.slice(pos, match.index))})`,
+    )
+    pos = reg.lastIndex
+    // 这里把url 中匹配到的替换成 require 的写法
+    resultArr.push(`list.push('url(')`)
+    resultArr.push(`list.push(require(${groups}))`)
+    resultArr.push(`list.push(')')`)
+  }
+  resultArr.push(`list.push(${JSON.stringify(source.slice(pos))})`)
+  resultArr.push(`module.exports=list.join("")`)
+  return resultArr.join('\r\n')
+}
+
+module.exports = CssLoader
+```
+
+接着我们要使用到 loader.pitch 属性了，我们修改 style-loader 如下
+
+> 注意这里使用 loaderUtils.stringifyRequest 将绝对路径转换为相对路径
+>
+> 如：remainLoader 结果为：/Users/gaoyuan/Code/learn/MyGithub/Javascript/Webpack/zf-webpack/self-babel-loader/loaders/css-loader.js!/Users/gaoyuan/Code/learn/MyGithub/Javascript/Webpack/zf-webpack/self-babel-loader/loaders/less-loader.js!/Users/gaoyuan/Code/learn/MyGithub/Javascript/Webpack/zf-webpack/self-babel-loader/src/index.less
+>
+> loaderUtils.stringifyRequest(this, '!!' + remainLoader) 转换后的结果为："!!../loaders/css-loader.js!../loaders/less-loader.js!./index.less"
+>
+> 这里之所以要用到 !! 修饰符是为了我们只使用行内 loader，禁用其他 loader, 否则会进入死循环
+>
+> [具体可以参考简书：六、style-loader 中 pitch 的使用](https://www.jianshu.com/p/9dfb8e18e76d)
+>
+> 其大概的意思是，在 style-loader 的 pitch 方法有返回值时，剩余的 css-loader 的 pitch 方法、css-loader 的 normal 方法以及 style-loader 的 normal 方法都不会执行了。而 style-loader 的 pitch 方法里面调用了**require('!!.../x.css')**，这就会把 require 的 css 文件当作**新的入口文件**，重新链式调用剩余的 loader 函数进行处理。**（值得注意的是'!!'是一个标志，表示不会再重复递归调用 style-loader，而只会调用 css-loader 处理了）**。
+>
+> 作者：帅气的奶盖
+> 链接：https://www.jianshu.com/p/9dfb8e18e76d
+> 来源：简书
+> 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+```js
+// style-loader 增加 pitch 属性
+const loaderUtils = require('loader-utils') // 这里要使用 2.xx 版本，3版本中已经没有 stringifyRequest 这个方法了
+
+// 在styleLoader
+styleLoader.pitch = function (remainLoader) {
+  // 返回一个函数，这个函数会接收一个参数，这个参数就是源代码
+  let string = `
+    const style = document.createElement('style')
+    style.innerHTML = require(${loaderUtils.stringifyRequest(
+      this,
+      '!!' + remainLoader,
+    )})
+    document.head.appendChild(style)
+  `
+  return string
+}
+
+module.exports = styleLoader
+```
+
+### 对应的 webpack.config.js
+
+```js
+const path = require('path')
+
+module.exports = {
+  mode: 'development',
+  entry: './src/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: __dirname + '/dist',
+  },
+  resolveLoader: {
+    modules: ['node_modules', path.resolve(__dirname, 'loaders')],
+  },
+  devtool: 'source-map',
+  module: {
+    rules: [
+      {
+        test: /\.less$/,
+        use: ['style-loader', 'css-loader', 'less-loader'],
+      },
+    ],
+  },
+}
+```
