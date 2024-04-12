@@ -124,3 +124,174 @@ npm run dev
 异步promise插件执行了
 编译完成
 ```
+
+## 实现文件列表插件 FileListPlugin
+
+[具体代码查看 github 示例](https://github.com/gy1001/Javascript/blob/main/Webpack/zf-webpack/self-plugin/plugins/FileListPlugin.js)
+
+[webpack 官网之 compiler 钩子](https://www.webpackjs.com/api/compiler-hooks/)
+
+[webpack 官网之 compilation 钩子](https://www.webpackjs.com/api/compilation-hooks/)
+
+```js
+class FileListPlugin {
+  constructor(options) {
+    this.options = options
+  }
+  apply(compiler) {
+    compiler.hooks.compilation.tap('OnePlugin', (compilation) => {
+      compilation.hooks.additionalAssets.tapAsync('MyPlugin', (callback) => {
+        let content = `## 文件名  资源大小`
+        Object.entries(compilation.assets).forEach(([filename, stat]) => {
+          content += `\n- ${filename}   ${stat.size()}`
+        })
+        compilation.assets[this.options.filename] = {
+          source: function () {
+            return content
+          },
+          size: function () {
+            return content.length
+          },
+        }
+        // 继续执行后续操作
+        callback()
+      })
+    })
+  }
+}
+
+module.exports = FileListPlugin
+```
+
+## 实现内联插件
+
+[源码查看之 github 的 InlineSourcePlugin.js](https://github.com/gy1001/Javascript/blob/main/Webpack/zf-webpack/self-plugin/plugins/InlineSourcePlugin.js)
+
+### 实现逻辑以及代码
+
+> 我们这里把标签外联资源，变为内置，并删除原有资源
+>
+> 1. 我们使用 HtmlWebpackPlugin 中的钩子函数 [htmlwebapckplugin 的 hooks 事件文档](https://www.npmjs.com/package/html-webpack-plugin#events) 拿到即将生成的资源信息
+> 2. 分别遍历处理 headTag bodyTag 中的信息，与 webapck 配置插件中的 match 正则进行匹配
+> 3. processTag 处理单个标签，如果合适就重写信息，并赋值其 innerHTML 值为相应的资源信息，并删除原有资源
+> 4. 然后正常返回处理
+
+```js
+// 将外联的标签变为内联的，比如 link css 变为style 等
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+class InlineSourcePlugin {
+  constructor(options) {
+    this.options = options
+  }
+  // 处理某一个标签
+  processTag(tag, compilation) {
+    let newTag = {}
+    let url = ''
+    if (
+      tag.tagName === 'link' &&
+      this.options.match.test(tag.attributes.href)
+    ) {
+      newTag = {
+        tagName: 'style',
+        attributes: { rel: 'stylesheet', type: 'text/css' },
+      }
+      url = tag.attributes.href
+    }
+    if (
+      tag.tagName === 'script' &&
+      this.options.match.test(tag.attributes.src)
+    ) {
+      newTag = {
+        tagName: 'script',
+        attributes: { defer: true, type: 'application/javascript' },
+      }
+      url = tag.attributes.src
+    }
+    if (url) {
+      newTag.innerHTML = compilation.assets[url].source()
+      // 删除原标签对应资源
+      delete compilation.assets[url]
+      return newTag
+    }
+    return tag
+  }
+
+  // 处理引入标签的数据
+  processTags(data, compilation) {
+    let headTags = []
+    let bodyTags = []
+    data.headTags.forEach((tag) => {
+      headTags.push(this.processTag(tag, compilation))
+    })
+    data.bodyTags.forEach((tag) => {
+      bodyTags.push(this.processTag(tag, compilation))
+    })
+
+    return {
+      ...data,
+      headTags: headTags,
+      bodyTags: bodyTags,
+    }
+  }
+
+  apply(compiler) {
+    compiler.hooks.compilation.tap('InlineSourcePlugin', (compilation) => {
+      HtmlWebpackPlugin.getHooks(compilation).alterAssetTagGroups.tapAsync(
+        'alterPlugin',
+        (data, cb) => {
+          data = this.processTags(data, compilation)
+          cb(null, data)
+        },
+      )
+    })
+  }
+}
+module.exports = InlineSourcePlugin
+```
+
+### 对应的 webpack.config.js 内容如下
+
+```js
+const path = require('path')
+const DonePlugin = require('./plugins/DonePlugin')
+const AsyncPlugin = require('./plugins/AsyncPlugin')
+const FileListPlugin = require('./plugins/FileListPlugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const InlineSourcePlugin = require('./plugins/InlineSourcePlugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+
+module.exports = {
+  mode: 'development',
+  devtool: false,
+  entry: './src/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+  },
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+    ],
+  },
+  plugins: [
+    // ...
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+    }),
+    new DonePlugin(),
+    new AsyncPlugin(),
+    new HtmlWebpackPlugin({
+      template: './public/index.html',
+    }),
+    new FileListPlugin({
+      filename: 'fileList.md',
+    }),
+    new InlineSourcePlugin({
+      match: /\.(js|css)$/,
+    }),
+  ],
+}
+```
