@@ -44,6 +44,10 @@ webpack 通过 plugins 实现各种功能。开发者可以通过插件引入它
 
 ## 自定义插件 同步插件和异步插件
 
+[代码参考 DonePlugin.js](https://github.com/gy1001/Javascript/blob/main/Webpack/zf-webpack/self-plugin/plugins/DonePlugin.js)
+
+[代码参考 AsyncPlugin.js](https://github.com/gy1001/Javascript/blob/main/Webpack/zf-webpack/self-plugin/plugins/AsyncPlugin.js)
+
 ### 同步插件 DonePlugin
 
 ```js
@@ -120,6 +124,3 @@ npm run dev
 异步promise插件执行了
 编译完成
 ```
-
-
-
