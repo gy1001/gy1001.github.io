@@ -67,6 +67,7 @@ export const sidebarZh: SidebarConfig = {
           children: [
             '/zh/skill/front/mini-frame/mini-webpack/gy-webpack.md',
             '/zh/skill/front/mini-frame/mini-webpack/loader.md',
+            '/zh/skill/front/mini-frame/mini-webpack/plugin.md',
           ],
         },
         '/zh/skill/front/mini-frame/mini-router.md',
