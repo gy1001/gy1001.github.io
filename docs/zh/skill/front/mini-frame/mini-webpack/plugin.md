@@ -163,7 +163,7 @@ class FileListPlugin {
 module.exports = FileListPlugin
 ```
 
-## 实现内联插件
+## 实现内联插件 InlineSourcePlugin
 
 [源码查看之 github 的 InlineSourcePlugin.js](https://github.com/gy1001/Javascript/blob/main/Webpack/zf-webpack/self-plugin/plugins/InlineSourcePlugin.js)
 
@@ -280,6 +280,120 @@ module.exports = {
     // ...
     new MiniCssExtractPlugin({
       filename: '[name].css',
+    }),
+    new DonePlugin(),
+    new AsyncPlugin(),
+    new HtmlWebpackPlugin({
+      template: './public/index.html',
+    }),
+    new FileListPlugin({
+      filename: 'fileList.md',
+    }),
+    new InlineSourcePlugin({
+      match: /\.(js|css)$/,
+    }),
+  ],
+}
+```
+
+## 实现打包后自动化发布插件 UploadPlugin
+
+[源码参考 UploadPlugin.js](https://github.com/gy1001/Javascript/blob/main/Webpack/zf-webpack/self-plugin/plugins/UploadPlugin.js)
+
+> 这里我们可以借助于比如七牛上传功能，这里只是做个例子，其他的依照此例即可
+
+[七牛云之 Node.js SDK](https://developer.qiniu.com/kodo/1289/nodejs#form-upload-file)
+
+### 插件内容如下 UploadPlugin
+
+```js
+const qiniu = require('qiniu')
+const path = require('path')
+
+class UploadPlugin {
+  constructor(options) {
+    const { bucket = '', domain = '', accessKey = '', secretKey = '' } = options
+    let mac = new qiniu.auth.digest.Mac(accessKey, secretKey)
+    let putPolicy = new qiniu.rs.PutPolicy({ scope: bucket })
+    let config = new qiniu.conf.Config()
+    this.uploadToken = putPolicy.uploadToken(mac)
+    this.formUploader = new qiniu.form_up.FormUploader(config)
+    this.putExtra = new qiniu.form_up.PutExtra()
+  }
+
+  apply(compiler) {
+    compiler.hooks.afterEmit.tapPromise('UploadPlugin', (compilation) => {
+      const assets = compilation.assets
+      const promises = []
+      Object.keys(assets).forEach((filename) => {
+        promise.push(this.upload(filename))
+      })
+      return Promise.all(promises)
+    })
+  }
+
+  upload(filename) {
+    return new Promise((resolve, reject) => {
+      const localFile = path.join(compiler.outputPath, key)
+      this.formUploader.putFile(
+        this.uploadToken,
+        filename,
+        localFile,
+        this.putExtra,
+        (err, ret) => {
+          if (err || ret.statusCode !== 200) {
+            reject(err)
+          } else {
+            console.log('上传成功')
+            resolve()
+          }
+        },
+      )
+    })
+  }
+}
+
+module.exports = UploadPlugin
+```
+
+### 对应的 webpack.config.js 内容如下
+
+```js
+const path = require('path')
+const DonePlugin = require('./plugins/DonePlugin')
+const AsyncPlugin = require('./plugins/AsyncPlugin')
+const FileListPlugin = require('./plugins/FileListPlugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const InlineSourcePlugin = require('./plugins/InlineSourcePlugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const UploadPlugin = require('./plugins/UploadPlugin')
+
+module.exports = {
+  mode: 'development',
+  devtool: false,
+  entry: './src/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+  },
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+    ],
+  },
+  plugins: [
+    // ...
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+    }),
+    new UploadPlugin({
+      bucket: 'xxx',
+      domain: 'xxx',
+      accessKey: '',
+      secretKey: '',
     }),
     new DonePlugin(),
     new AsyncPlugin(),
