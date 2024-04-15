@@ -128,9 +128,9 @@ Compiler 类有三种类型的内置 Resolver：
 
 #### 注解 2：`thisCompilation`和`compilation`
 
-这里为什么会有 `thisCompilation`和`compilation` 两个钩子呢？其实是跟子编译（child compiler）有关， Compiler 实例通过 `createChildCompiler` 方法可以创建子编译实例 `childCompiler`。
+这里为什么会有 `thisCompilation`和`compilation` 两个钩子呢？其实是跟子编译（child compiler）有关， Compiler 实例通过 `createChildCompiler` 方法可以创建子编译实例 `childCompiler`。创建`childCompiler`时，`childCompiler`会复制 compiler 实例的任务点监听器。
 
-创建`childCompiler`时，`childCompiler`会复制 compiler 实例的任务点监听器。**`compilation`的钩子会被复制，而`thisCompilation` 钩子则不会被复制**。
+**`compilation`的钩子会被复制，而`thisCompilation` 钩子则不会被复制**。
 
 ## Compilation
 

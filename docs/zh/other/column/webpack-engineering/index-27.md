@@ -1,4 +1,4 @@
-# 27 从 Webpack 的产出代码来看 Webpack 是怎么执行的
+# 27-从 Webpack 的产出代码来看 Webpack 是怎么执行的
 
 ![img](./assets/5cd9648000019c9706400359.jpg)
 
@@ -244,31 +244,7 @@ function __webpack_require__(moduleId) {
    2. `l`：默认是 false，即有没有被注册执行过（应该是`loaded`简写）
    3. `exports`：模块的输出对象
 
-3. 使用
-
-   ```
-   call
-   ```
-
-   方法执行模块的
-
-   ```
-   factory
-   ```
-
-   函数，其中
-
-   ```
-   call
-   ```
-
-   上下文是
-
-   ```
-   module.exports
-   ```
-
-   ，同时传入 3 个参数：
+3. 使用`call`方法执行模块的`factory`函数，其中`call`上下文是`module.exports`，同时传入 3 个参数：
 
    1. `module`：模块本身
    2. `module.exports`：模块 `exports` 对象
@@ -282,8 +258,8 @@ function __webpack_require__(moduleId) {
 
 ```js
 function(module, exports, __webpack_require__) {
-    const name = __webpack_require__('./src/name.js');
-    console.log(name);
+  const name = __webpack_require__('./src/name.js');
+  console.log(name);
 }
 ```
 

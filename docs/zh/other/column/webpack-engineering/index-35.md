@@ -1,10 +1,8 @@
-# 35 Webpack 5.0
+# 35-Webpack 5.0
 
 ![img](./assets/5cd964f90001836a06400360.jpg)
 
-先相信你自己，然后别人才会相信你。
-
-——屠格涅夫
+> 先相信你自己，然后别人才会相信你。——屠格涅夫
 
 Webpack 5.0 从 2018 年年底就开始发布 alpha 版本了，截稿时间，已经过去大半年了还没有发布正式版本。上次 6 月份在 GMTC 大会上 Webpack 的核心开发者 Sean Larkin 说 Webpack 5.0 还需要几个月的时间完成集中的测试，总体来说 Webpack 5.0 离我们不远了。今天的文章来自于 Webpack 团队的 Dennis Gaebel 《[New features in Webpack 5](https://blog.logrocket.com/new-features-in-webpack-5-2559755adf5e/)》的英文版翻译（翻译参考《(Webpack 5 中的新特性
 )[https://zhuanlan.zhihu.com/p/56796027]》），要是说 Webpack 5.0 的新特性，没有人比作者自己更了解了！下面开始原文的翻译，其中增加本人对 Webpack 5.0 的一些认识和注解。

@@ -1,4 +1,4 @@
-# 33 实战：使用 Stats 数据结构生成 Webpack 构建报告
+# 33-实战：使用 Stats 数据结构生成 Webpack 构建报告
 
 ![img](./assets/5cd964dc0001b9bb06400359.jpg)
 
@@ -7,9 +7,11 @@
 上篇文章我们手写了一个 150 行左右的 dev-server 代码，在代码的最后我们使用了`Stats.toString`将本次打包的结果输出，效果如下图所示：
 
 ![图片描述](./assets/5d0845b3000114fd07110380.jpg)
+
 这时候的终端输出的日志虽然内容可以看，但是对于重点内容还是不够突出。如果我们的项目变大之后，大量的静态资源文件就会导致日志过长，根本找不到我们想要的信息，例如下图：
 
 ![图片描述](./assets/5d0845d30001156304320954.png)
+
 本篇文章将讲解如何通过 Stats 对象的数据结构找到想要的数据，并且做一个美化版的 Webpack 构建报告。
 
 ## Stats 输出报告原理和实现步骤
@@ -109,11 +111,7 @@ compiler.hooks.done.tap('plugin name', (stats) => {
 
 我们这次用到的是`entrypoints`、`assets`和`chunks`，三者的关系是：
 
-- ```
-  entrypoints
-  ```
-
-  ：是入口文件对应的 bundle 信息，内部包含每个 bundle 包含的：
+- `entrypoints`：是入口文件对应的 bundle 信息，内部包含每个 bundle 包含的：
 
   - `name`：webpack.config.js 中 entry 配置 key 值，例如`config.entry = {main:'src/index.js'}`，那么这个 `entry` 的 `name` 是`main`；
   - `chunks`：是 bundle 包含的 chunkId 数组，可以通过 id 在 `stats.chunks`找到对应的 chunk；
@@ -320,7 +318,3 @@ entries.map(({ files, siblings, children, names }) => {
 ## 总结
 
 通过本篇文章不仅可以美化 log，还可以让我们熟悉 Stats 的结构。
-
-实战：使用 Express 和中间件来实现 Webpack-dev-server
-
-实战：给 Webpack 项目添加 modern 模式打包

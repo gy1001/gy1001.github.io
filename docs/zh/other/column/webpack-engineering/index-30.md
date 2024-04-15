@@ -1,14 +1,16 @@
-# 30 实战：手写一个 markdown-loader
+# 30-实战：手写一个 markdown-loader
 
 ![img](./assets/5cd964af0001fdb906400360.jpg)
 
-古之立大事者，不唯有超世之才，亦必有坚韧不拔之志。
+> 古之立大事者，不唯有超世之才，亦必有坚韧不拔之志。——苏轼
 
-——苏轼
+根据上面的工作流程描述，我们知道在 Webpack 中，真正起编译作用的便是我们的 loader，`loader`实际就是处理单个模块的解析器（加载器不如解析器更好理解），平时我们进行 babel 的 ES6 编译，SCSS、LESS 等编译都是在 loader 里面完成的。
 
-根据上面的工作流程描述，我们知道在 Webpack 中，真正起编译作用的便是我们的 loader，`loader`实际就是处理单个模块的解析器（加载器不如解析器更好理解），平时我们进行 babel 的 ES6 编译，SCSS、LESS 等编译都是在 loader 里面完成的。loader 可以是异步的，也可以是同步的，同步的则直接返回处理后的模块内容，异步则调用异步回调函数输出处理后的模块内容。
+loader 可以是异步的，也可以是同步的，同步的则直接返回处理后的模块内容，异步则调用异步回调函数输出处理后的模块内容。
 
-实际上，loader 只是一个普通的 `funciton`，它会传入匹配到的文件内容（String 类型的 source），`loader`做的是只需要对这些字符串做些处理就好了。本小节将从写一个 `markdown-loader`入手，介绍`loader`编写中常见的问题和工具。
+实际上，loader 只是一个普通的 `function`，它会传入匹配到的文件内容（String 类型的 source），`loader`做的是只需要对这些字符串做些处理就好了。
+
+本小节将从写一个 `markdown-loader`入手，介绍`loader`编写中常见的问题和工具。
 
 ## loader 的用法
 
@@ -182,7 +184,11 @@ moudle.exports.raw = true // 不设置，就会拿到字符串
 
 ### loader 的 pitch
 
-前面一直在提醒大家 loader 的执行顺序是**从右到左**的链式调用。这种说法实际说的是 loader 中 `module.exports` 出来的执行方法顺序。在一些场景下，loader 并不依赖上一个 loader 的结果，而只关心原输入内容。这时候，要拿到一开始的文件原内容，就需要使用 `module.exports.pitch = function();`， `pitch` 方法在 loader 中便是从左到右执行的，并且可以通过 data 这个变量来进行 `pitch` 和 `normal` 之间的传递。例如下面的代码：
+前面一直在提醒大家 loader 的执行顺序是**从右到左**的链式调用。
+
+这种说法实际说的是 loader 中 `module.exports` 出来的执行方法顺序。
+
+在一些场景下，loader 并不依赖上一个 loader 的结果，而只关心原输入内容。这时候，要拿到一开始的文件原内容，就需要使用 `module.exports.pitch = function();`， `pitch` 方法在 loader 中便是从左到右执行的，并且可以通过 data 这个变量来进行 `pitch` 和 `normal` 之间的传递。例如下面的代码：
 
 ```js
 module.exports.pitch = function (remaining, preceding, data) {
@@ -221,7 +227,9 @@ module.exports = function (content) {
 
 ### 使用 Webpack 的 loader 工具库
 
-我们在 `webpack.config.js` 书写 loader 配置时，经常会见到 `options` 这样一个配置项，或者在写内联调用 loader 的时候会通过`querystring`的形式传入 options，这就是 Webpack 为 loader 用户提供的自定义配置。在我们的 loader 里，可以拿到这些自定义配置。为了方便编写 loader，Webpack 官方将编写 loader 中常用的工具函数打包成了`loader-utils`和`schema-utils`模块，这里面包括了常用的获取 loader 选项（options）和参数验证等方法。
+我们在 `webpack.config.js` 书写 loader 配置时，经常会见到 `options` 这样一个配置项，或者在写内联调用 loader 的时候会通过`querystring`的形式传入 options，这就是 Webpack 为 loader 用户提供的自定义配置。
+
+在我们的 loader 里，可以拿到这些自定义配置。为了方便编写 loader，Webpack 官方将编写 loader 中常用的工具函数打包成了`loader-utils`和`schema-utils`模块，这里面包括了常用的获取 loader 选项（options）和参数验证等方法。
 
 #### `loader-utils`工具库
 
@@ -375,9 +383,8 @@ console.log(html);
 ```html
 <h1 id="markdown">测试 markdown</h1>
 <p>
-  测试自动options 生效，自动检测网址添加 link：<a href="http://www.google.com"
-    >www.google.com</a
-  >
+  测试自动options 生效，自动检测网址添加 link：
+  <a href="http://www.google.com">www.google.com</a>
 </p>
 <h2 id="table">table</h2>
 <table>
@@ -407,7 +414,11 @@ console.log(html);
 
 ## 总结
 
-本小节主要让大家了解 Webapck 的 loader 编写知识，loader 本质上是一个函数，这个函数主要接收的参数是需要处理的文件内容，经过异步和同步处理内容之后通过`callback`的方式传递给后面的 loader 或者 Webpack 直接使用。loader 的链式调用顺序是从右到左的，但是也有`pitch`函数可以做到从左到右，这样可以在一些特殊场景中获取原来的文件内容，通过`data`进行传值。最后介绍了 loader-utils 和 schema-utils 两个在编写 loader 中常用的工具函数，介绍完这些 loader 开发的基础知识之后，小节最后使用了`showdown`来编写了一个 markdown-loader，通过实际代码帮助大家理解 loader 知识。
+本小节主要让大家了解 Webapck 的 loader 编写知识，loader 本质上是一个函数，这个函数主要接收的参数是需要处理的文件内容，经过异步和同步处理内容之后通过`callback`的方式传递给后面的 loader 或者 Webpack 直接使用。
+
+loader 的链式调用顺序是从右到左的，但是也有`pitch`函数可以做到从左到右，这样可以在一些特殊场景中获取原来的文件内容，通过`data`进行传值。
+
+最后介绍了 loader-utils 和 schema-utils 两个在编写 loader 中常用的工具函数，介绍完这些 loader 开发的基础知识之后，小节最后使用了`showdown`来编写了一个 markdown-loader，通过实际代码帮助大家理解 loader 知识。
 
 > 本小节 Webpack 相关面试题：
 >

@@ -1,12 +1,12 @@
-# 32 实战：使用 Express 和中间件来实现 Webpack-dev-server
+# 32-实战：使用 Express 和中间件来实现 Webpack-dev-server
 
 ![img](./assets/5cd964ce0001639e06400359.jpg)
 
->  世界上最快乐的事，莫过于为理想而奋斗。
+> 世界上最快乐的事，莫过于为理想而奋斗。——苏格拉底
 
-——苏格拉底
+在原理篇介绍[HMR](TODO)实现的文章中，我们对 Webpack-dev-server 和 HMR 做了深入的剖析。
 
-在原理篇介绍[HMR](TODO)实现的文章中，我们对 Webpack-dev-server 和 HMR 做了深入的剖析。在实际开发中，我们仅仅使用 Webpack-dev-server 功能可能不够，例如：
+在实际开发中，我们仅仅使用 Webpack-dev-server 功能可能不够，例如：
 
 - 不能监控 Webpack 配置文件更改之后重新启动；
 - 对于本身就是 Node.js 做后端服务器的项目来说，webpack-dev-server 反而会因为不能跟原服务器结合显得很鸡肋；
@@ -41,13 +41,21 @@ http.createServer(app).listen(3000)
 
 在上面的代码中，`app.get('url', callback)`形式就是一个`GET`路由，将`callback`和`URL`进行了映射绑定。
 
-在 Express 中封装了多种 HTTP 请求方式，我们主要用到的是 GET 和 POST 两种，即`app.get()`和`app.post()`。它们的第一个参数都是一个请求路径，第二个参数则为处理请求的回调函数。回调函数有两个参数，分别是`request`和`response`，即对应 HTTP 协议中的请求和响应两个概念。
+在 Express 中封装了多种 HTTP 请求方式，我们主要用到的是 GET 和 POST 两种，即`app.get()`和`app.post()`。
+
+它们的第一个参数都是一个请求路径，第二个参数则为处理请求的回调函数。
+
+回调函数有两个参数，分别是`request`和`response`，即对应 HTTP 协议中的请求和响应两个概念。
 
 > Tips：Express 的路由除了纯字符串这类，还支持正则、字符串通配符、命名参数等，但是应该注意路由的解析速度，如果一个正则路由写的匹配极低，那么会影响整个 Server 应用速度的。
 
 ### Request 和 Response
 
-Request 和 Response 分别对应着 HTTP 协议中的请求和响应。在 Express 中，将跟 HTTP 请求相关的变量都放到了 Request 对象中，例如：我们可以从 Request 对象中读取用户的浏览器 UserAgent、用户的 IP 地址、用户携带的 Cookie 信息等。Response 对象则主要提供跟做出 HTTP 响应相关的函数和属性，比如设置响应内容、设置 HTTP 响应头中的设置 Cookie、设置 HTTP 状态码等。
+Request 和 Response 分别对应着 HTTP 协议中的请求和响应。
+
+在 Express 中，将跟 HTTP 请求相关的变量都放到了 Request 对象中，例如：我们可以从 Request 对象中读取用户的浏览器 UserAgent、用户的 IP 地址、用户携带的 Cookie 信息等。
+
+Response 对象则主要提供跟做出 HTTP 响应相关的函数和属性，比如设置响应内容、设置 HTTP 响应头中的设置 Cookie、设置 HTTP 状态码等。
 
 下面的一段代码，用户访问`http://localhost:3000/`则显示用户的浏览器 UserAgent：
 
@@ -65,7 +73,9 @@ http.createServer(app).listen(3000)
 
 ### 中间件
 
-中间件是 Express 中最大的特性之一。我们可以将中间件看成由一串回调函数组成的回调栈，每个回调函数都会接受`request`、`response`和`next`参数，我们可以在各个回调函数中做不同的事情，例如专门记录请求日志的回调函数、处理 Cookie 的回调函数、专门处理 HTTP 请求头的回调函数、专门做错误页面展现的回调函数…通过一个 HTTP 请求（request）经过回调栈最终对 HTTP 做出响应（response）。
+中间件是 Express 中最大的特性之一。
+
+我们可以将中间件看成由一串回调函数组成的回调栈，每个回调函数都会接受`request`、`response`和`next`参数，我们可以在各个回调函数中做不同的事情，例如专门记录请求日志的回调函数、处理 Cookie 的回调函数、专门处理 HTTP 请求头的回调函数、专门做错误页面展现的回调函数…通过一个 HTTP 请求（request）经过回调栈最终对 HTTP 做出响应（response）。
 
 在 Express 中，可以使用`Express.use`方法给一个 server 添加中间件：
 
@@ -95,7 +105,11 @@ app.use((request, response) => {
 http.createServer(app).listen(3000)
 ```
 
-> Tips：在编写 Node.js 的 Server 端应用一定要做好内存管理。在浏览器内，每个用户访问同一个页面时都是一个独立的浏览器 Tab 甚至是独立的设备，所以内存使用不当造成内存泄漏的问题也不会特别严重，而在 Node.js Server 应用中，成千上万的用户会同时访问我们的服务，这时候应该注意：1. 不同的用户数据不能使用全局变量管理；2. 小的内存泄漏问题，因为请求多了执行次数增多而造成大的内存泄漏问题，所以开发 Node.js Server 应用一定要转变思想，不能依旧停留在浏览器开发模型中。在 Express 中，用户差异数据可以使用用户自己的`request`对象来存储，参考上面中间件示例中的`request.id`。
+> Tips：在编写 Node.js 的 Server 端应用一定要做好内存管理。
+>
+> 在浏览器内，每个用户访问同一个页面时都是一个独立的浏览器 Tab 甚至是独立的设备，所以内存使用不当造成内存泄漏的问题也不会特别严重，而在 Node.js Server 应用中，成千上万的用户会同时访问我们的服务，这时候应该注意：1. 不同的用户数据不能使用全局变量管理；2. 小的内存泄漏问题，因为请求多了执行次数增多而造成大的内存泄漏问题，所以开发 Node.js Server 应用一定要转变思想，不能依旧停留在浏览器开发模型中。
+>
+> 在 Express 中，用户差异数据可以使用用户自己的`request`对象来存储，参考上面中间件示例中的`request.id`。
 
 ## 使用 Express 及其中间件来实现 Webpack-dev-server
 
@@ -649,7 +663,3 @@ module.exports = (webpackConfig) => {
 ## 总结
 
 对于后端服务已经是 Express 或者有自己的后端逻辑需要 Express 来实现的时候，例如在我们项目中，后端服务器实际为 PHP+Smarty 模板的，我们就是用自定义的 Express 服务器实现一个 dev-server。它支持 Webpack-dev-server 的全部功能（本文内容就是其中一部功能），还能够利用 PHP `bin`命令来做 Smarty 模板数据 Mock 和模板渲染。本篇文章就是最简单地实现了 Webpack-dev-server 功能，并且我们还可以继续在本节源码技术上扩展自己的 Express 服务器功能。通过本文的内容，可以让我们更好地理解 Webpack-dev-server 和 HMR 内核实现，并且在实际项目中得到应用。
-
-实战：手写一个 prefetch-webpack-plugin 插件
-
-实战：使用 Stats 数据结构生成 Webpack 构建报告

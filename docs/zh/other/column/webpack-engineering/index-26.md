@@ -74,7 +74,11 @@ Webpack 的基本流程可以分为三个阶段：
 
 ### 准备阶段
 
-当我们开始运行 Webpack 的时候，就会创建 `Compiler` 实例并且加载内置插件。这里跟构建流程相关性比较大的内置插件是`EntryOptionPlugin`，它会解析传给 Webpack 的配置中的 `entry`。这里**不同类型的 entry**包括：`SingleEntryPlugin`、`MultiEntryPlugin`、`DynamicEntryPlugin`三类，分别对应着单文件入口、多文件入口和动态文件入口（忘记的翻下 Webpack 基础概念里面 entry 部分的内容），对应代码如下：
+当我们开始运行 Webpack 的时候，就会创建 `Compiler` 实例并且加载内置插件。
+
+这里跟构建流程相关性比较大的内置插件是`EntryOptionPlugin`，它会解析传给 Webpack 的配置中的 `entry`。
+
+这里**不同类型的 entry**包括：`SingleEntryPlugin`、`MultiEntryPlugin`、`DynamicEntryPlugin`三类，分别对应着单文件入口、多文件入口和动态文件入口（忘记的翻下 Webpack 基础概念里面 entry 部分的内容），对应代码如下：
 
 ```js
 // webpack 4.29.6
@@ -105,7 +109,9 @@ module.exports = class EntryOptionPlugin {
 }
 ```
 
-除了 `EntryOptionPlugin`，其他的内置插件也会监听特定的任务点来完成特定的逻辑，但我们这里不再仔细讨论。当 `Compiler` 实例加载完内置插件之后，下一步就会直接调用 `compiler.run` 方法来启动构建，这时候 Compiler 的`run` 钩子被触发，在`run`钩子回调中可以得到解析后的`compiler.options`。
+除了 `EntryOptionPlugin`，其他的内置插件也会监听特定的任务点来完成特定的逻辑，但我们这里不再仔细讨论。
+
+当 `Compiler` 实例加载完内置插件之后，下一步就会直接调用 `compiler.run` 方法来启动构建，这时候 Compiler 的`run` 钩子被触发，在`run`钩子回调中可以得到解析后的`compiler.options`。
 
 > Tips：`run`钩子只有在 Webpack 以正常模式运行的情况下会触发，如果我们以监听 （watch）模式运行 Webpack，那么`run`是不会触发的，但是会触发`watchRun`钩子。
 
@@ -164,7 +170,9 @@ newCompilationParams() {
 }
 ```
 
-紧接着 `Compiler` 实例开始创建 `Compilation` 对象，这个对象是后续构建流程中**最核心最重要的对象**，它包含了一次构建过程中所有的数据，一次构建过程对应一个 `Compilation` 实例。当 `Compilation` 实例创建完成之后，Webpack 的准备阶段已经完成，下一步将开始编译阶段。
+紧接着 `Compiler` 实例开始创建 `Compilation` 对象，这个对象是后续构建流程中**最核心最重要的对象**，它包含了一次构建过程中所有的数据，一次构建过程对应一个 `Compilation` 实例。
+
+当 `Compilation` 实例创建完成之后，Webpack 的准备阶段已经完成，下一步将开始编译阶段。
 
 ### 编译阶段
 
@@ -191,7 +199,9 @@ addEntry(context, entry, name, callback) {
 
 我们先讲一个 module 解析完成之后的操作，它会递归调用它所依赖的 modules 进行解析，所以当解析停止时，我们就能够得到项目中所有依赖的 modules，它们将存储在 Compilation 实例的 modules 属性中，并触发`compilation`的`finishModules`钩子。
 
-`module`对象有 `NormalModule`、 `MultiModule`、`ContextModule`、`DLLModule`等多种类型（分别在对应的`lib/*Module.js`中实现）。下面以`NormalModule`为例讲解下 module 的解析流程，其他类型的解析都是类似。
+`module`对象有 `NormalModule`、 `MultiModule`、`ContextModule`、`DLLModule`等多种类型（分别在对应的`lib/*Module.js`中实现）。
+
+下面以`NormalModule`为例讲解下 module 的解析流程，其他类型的解析都是类似。
 
 NormalModule 的实例化需要借用对应的`NormalModuleFactory.create()`，`NormalModuleFactory`则来自于上一阶段创建`Compilation`对象传入的参数。创建`NormalModule`之前会调用`resolver`来获取一个 module 的属性，比如解析这个 module 需要用到的 `loaders`，资源路径`resource` 等等。
 

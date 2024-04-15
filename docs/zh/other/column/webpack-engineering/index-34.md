@@ -1,10 +1,8 @@
-# 34 实战：给 Webpack 项目添加 modern 模式打包
+# 34-实战：给 Webpack 项目添加 modern 模式打包
 
 ![img](./assets/5cd964ea0001a95806400359.jpg)
 
-学习这件事不在乎有没有人教你，最重要的是在于你自己有没有觉悟和恒心。
-
-—— 法布尔
+> 学习这件事不在乎有没有人教你，最重要的是在于你自己有没有觉悟和恒心。—— 法布尔
 
 在 Vue-CLI 3 中有个[Modern Mode 的新功能](https://cli.vuejs.org/zh/guide/browser-compatibility.html#现代模式)，在现代模式（modern mode）下，打包出来的 JavaScript 代码是 ES2015+的，官方的解释是这样的：
 
@@ -180,7 +178,9 @@ presets.unshift([require('@babel/preset-env'), envOptions])
 
 ## 如何打包出来 Modern Mode 的 JavaScript 代码
 
-通过上面的介绍，我们知道了：要实现 Webpack 打包出支持 Modern Mode 的代码，需要设置`@babel/preset-env`的`targets={esmodule: true}`，而要打包出两份代码，则需要 Webpack 打包两次。那么在我们实际项目中，可以通过我们首先可以使用 Webpack 的 API 来打包，并且将 API 改写成 Promise 的方式，具体代码示例如下：
+通过上面的介绍，我们知道了：要实现 Webpack 打包出支持 Modern Mode 的代码，需要设置`@babel/preset-env`的`targets={esmodule: true}`，而要打包出两份代码，则需要 Webpack 打包两次。
+
+那么在我们实际项目中，可以通过我们首先可以使用 Webpack 的 API 来打包，并且将 API 改写成 Promise 的方式，具体代码示例如下：
 
 ```js
 const webpack = require('webpack')
@@ -216,7 +216,7 @@ webpackPromise(webpackConfig)
 
 上面的`webpackPromise`我们已经将 Webpack 的 API 调用改成了 Promise 的方式，那么下面是我们怎么将非现代浏览器的 Webpack 配置修改成现代浏览器的，即设置`@babel/preset-env`的`targets={esmodule: true}`，这里我们有很多办法，下面我推荐两种方式：
 
-1. 使用[webpack-merge](https://github.com/survivejs/webpack-merge)；
+1. 使用 [webpack-merge](https://github.com/survivejs/webpack-merge)；
 2. 零件配置方式。
 
 ### Webpack-merge
@@ -786,5 +786,3 @@ webpackPromise(webpackConfig)
 > 1. Vue-CLI 3 中的 modern mode 是怎么实现的？
 > 2. 如何让自己的项目在浏览器中直接执行 ES2015+ 代码？
 > 3. 你能够说出 Vue-CLI 3 一个印象深刻的功能吗？
-
-实战：使用 Stats 数据结构生成 Webpack 构建报告

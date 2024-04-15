@@ -1,12 +1,18 @@
-# 28 Webpack 的模块热替换做了什么？
+# 28-Webpack 的模块热替换做了什么？
 
 ![img](./assets/5cd9648e0001230906400360.jpg)
 
->  不安于小成，然后足以成大器；不诱于小利，然后可以立远功。 —— 方孝孺
+> 不安于小成，然后足以成大器；不诱于小利，然后可以立远功。 —— 方孝孺
 
-Webpack 的模块热替换（HMR - Hot Module Replacement，又称为热替换、热更新等）是 Webpack 最令人兴奋的特性之一。在没有 HMR 之前，Web 前端开发者使用类似 [LiveReload](http://livereload.com/) 这类工具配合浏览器插件监听文件变化，然后**重新加载整个页面**。当 Webpack 开启了 HMR 功能之后，我们的代码修改之时，Webpack 会重新打包，并且将修改后的代码发送到浏览器，浏览器替换老的代码，保证了页面状态不会丢失，在不刷新整个页面的前提下进行局部的更新。
+Webpack 的模块热替换（HMR - Hot Module Replacement，又称为热替换、热更新等）是 Webpack 最令人兴奋的特性之一。
 
-所谓保证页面状态，就是在不修改页面当前状态的情况下进行替换。举例来说，当我们打开一个页面，进行了很多步的操作（比如点击了页面的一个按钮），这时候页面弹出一个弹层，我们发现弹层的背景颜色不对，这时候我们可以直接修改代码，HMR 最终会在不刷新页面的前提下直接修改弹层的背景颜色，效果跟我们在 Chrome Devtools 内修改 CSS 样式一样。
+在没有 HMR 之前，Web 前端开发者使用类似 [LiveReload](http://livereload.com/) 这类工具配合浏览器插件监听文件变化，然后**重新加载整个页面**。
+
+当 Webpack 开启了 HMR 功能之后，我们的代码修改之时，Webpack 会重新打包，并且将修改后的代码发送到浏览器，浏览器替换老的代码，保证了页面状态不会丢失，在不刷新整个页面的前提下进行局部的更新。
+
+所谓保证页面状态，就是在不修改页面当前状态的情况下进行替换。
+
+举例来说，当我们打开一个页面，进行了很多步的操作（比如点击了页面的一个按钮），这时候页面弹出一个弹层，我们发现弹层的背景颜色不对，这时候我们可以直接修改代码，HMR 最终会在不刷新页面的前提下直接修改弹层的背景颜色，效果跟我们在 Chrome Devtools 内修改 CSS 样式一样。
 
 本篇文章先带领大家体验一下 HMR 的整个执行过程，然后深入到代码细节来看下 Webpack HMR 的实现原理。
 
@@ -94,9 +100,11 @@ module.exports = {
 配置完毕后，我们使用 npx 启动`webpack-dev-server --open`，这时候浏览器会自动打开我们的 HTML 首页：`http://localhost:9000`。我们修改`index.js`和`style.css`的内容，则浏览器的页面也进行变化，具体效果可以参考下面的 Gif 动图：
 
 ![图片描述](./assets/5d0777790001565a07370446.gif)
+
 这时候 HMR 并不是真正的局部刷新，而是重新加载，详细请看下面的 Gif 动图。注意观察 Chrome DevTools 的 Network 面板请求是重新加载的，而不是增量加载：
 
 ![图片描述](./assets/5d0777620001158503290372.gif)
+
 要解决这个问题，就需要我们在`src/index.js`增加一段代码：
 
 ```js
@@ -169,6 +177,7 @@ http://localhost:9000/main.c243117d7cba3d4c4390.hot-update.js
 ```
 
 ![图片描述](./assets/5d0775fd0001595a06680177.png)
+
 这两个请求的就是更新下来的更新的代码，下面我们来看下 Chrome 一开始加载的`main.2cd06169aeecf9cddf61.hot-update.js`文件和后来请求过来的`main.c243117d7cba3d4c4390.hot-update.js`内容，比较下`$node.innerHTML`内容就是我们刚刚修改`src/index.js`的内容了：
 
 ```js
@@ -221,7 +230,7 @@ webpackHotUpdate('main', {
 到此启动阶段结束，当 Webpack 监控的文件发生变化之后，这时候就进入了文件监控更新流程，当 Webpack 监控的依赖图中的某个文件修改之后：
 
 1. Webpack 会重新编译文件，这时候我们在`webpack.config.js`中添加的插件 `HotModuleReplacementPlugin` 会生成两次编译之间差异文件列表（manifest）文件`[hash].hot-update.json`，这个 manifest JSON 文件包含了变化文件的 **Update** 内容，即`[id].[hash].hot-update.js`。webpack-dev-server 中的 webpack-dev-middler 会通过 Webpack 的`Compiler`钩子监听打包进程，然后通知 webpack-dev-server 使用 WebSocket 长连接推送编译之后的 hash 值；
-2. 除了发送编译后 Hash 值之外，webpack-dev-server 还会通过长连接告诉浏览器当前的页面代码是**`invalid`**状态的，需要更新新的代码；
+2. 除了发送编译后 Hash 值之外，webpack-dev-server 还会通过长连接告诉浏览器当前的页面代码是 **`invalid`** 状态的，需要更新新的代码；
 3. 浏览器拿到 Hash 之后，会首先发起一个 Ajax 请求 manifest 文件`[hash].hot-update.json`文件内容；
 4. manifest 列表文件内容拿到之后，会告诉 HMR 的 Runtime 请求那些变化的 JavaScript 文件，这时候会 Runtime 会按照清单列表发起 JSONP 请求，将两次编译的差异文件`[id].[hash].hot-update.js`获取下来，插到页面`head`标签的`script`中执行，最终完成了更新的全流程。
 
@@ -242,11 +251,7 @@ WebSocket 消息的含义如下图所示：
 
   - webpack-dev-middleware：跟 Webpack 进行交互，通过`Compiler`的 Hook 来监控打包流程，保证文件修改后打包结束后请求新的文件，上线一个内存型的文件系统，文件直接从内存读取可以提升 webpack-dev-server 的速度。
 
-- ```
-  HotModuleReplacementPlugin
-  ```
-
-  ：插件是用来生成 HMR 的文件清单列表和差异文件的：
+- `HotModuleReplacementPlugin` 插件是用来生成 HMR 的文件清单列表和差异文件的：
 
   - manifest 文件：JSON 文件，文件名格式为`[hash].hot-update.json`，包含所有需要更新的文件信息；
   - update 文件：需要更新的 JavaScript 文件，文件名格式为`[id].[hash].hot-update.js`，包含 HMR 的差异化执行代码。
@@ -278,13 +283,9 @@ module.exports = {
 ![图片描述](./assets/5d07740a0001892e08340616.jpg)
 上图中，右边的 moduleID 为`4`和`9`的模块发生了变化，那么依赖两个模块的 4 个 Chunk 文件就需要更新，这 4 个 chunks 被放入了`manifest`JSON 文件中：
 
-- `moduleID=9`模块修改后：引入了新的依赖`12`，所以 `chunk=3`生成了包含`9`和`12`的 update 文件；
+- `moduleID=9` 模块修改后：引入了新的依赖`12`，所以 `chunk=3`生成了包含`9`和`12`的 update 文件；
 
-- ```
-  moduleID=4
-  ```
-
-  模块修改后：
+- `moduleID=4` 模块修改后：
 
   - 去掉了 `chunk=4`的依赖，所以`chunk=4`中的`10`和`11`没有其他的模块使用，所以删除掉；
   - 依赖`moduleID=4`模块的`chunk=1`需要更新`4`更新的内容；
@@ -510,7 +511,13 @@ module.hot
 
 ## 总结
 
-本文主要讲解 Webpack 的 Hot Module Replacement 流程和实现原理。先从实际项目复习了 HMR 的用法和体验了 HMR 的流程，然后详细讲解了 HMR 的整个流程中各个模块做的事情，最后在原理上通过解答 3 个问题来加深对 HMR 原理的理解。webpack-dev-server 虽然可以直接来启动 HMR，但是真正核心的是 webpack-dev-middleware。webpack-dev-server 除了这个中间件之外主要功能就是个静态服务器，而后面实战部分我会使用 Express、webpack-dev-middleware 自己来实现 「webpack-dev-server」，通过实战加深 HMR 原理 和 webpack-dev-server 功能理解。
+本文主要讲解 Webpack 的 Hot Module Replacement 流程和实现原理。
+
+先从实际项目复习了 HMR 的用法和体验了 HMR 的流程，然后详细讲解了 HMR 的整个流程中各个模块做的事情，最后在原理上通过解答 3 个问题来加深对 HMR 原理的理解。
+
+webpack-dev-server 虽然可以直接来启动 HMR，但是真正核心的是 webpack-dev-middleware。
+
+webpack-dev-server 除了这个中间件之外主要功能就是个静态服务器，而后面实战部分我会使用 Express、webpack-dev-middleware 自己来实现 「webpack-dev-server」，通过实战加深 HMR 原理 和 webpack-dev-server 功能理解。
 
 > 本小节 Webpack 相关面试题：
 >

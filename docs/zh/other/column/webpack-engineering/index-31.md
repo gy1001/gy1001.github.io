@@ -1,14 +1,18 @@
-# 31 实战：手写一个 prefetch-webpack-plugin 插件
-
-更新时间：2019-07-10 14:31:25
+# 31-实战：手写一个 prefetch-webpack-plugin 插件
 
 ![img](./assets/5cd964bf00013cec06400360.jpg)
 
-人生太短，要干的事太多，我要争分夺秒。
+> 人生太短，要干的事太多，我要争分夺秒。——爱迪生
 
-——爱迪生
+Webpack 的`plugin`是 Webpack 的核心概念，可以说整个 Webpack 都是由插件组成的。
 
-Webpack 的`plugin`是 Webpack 的核心概念，可以说整个 Webpack 都是由插件组成的。本章节讨论的内容是我们在配置文件配置的 plugin。这个是在整个工作流程的后半部分，Webpack 将整个模块的依赖关系都处理完毕，最终生成 bundle 的时候，然后扔给内置的插件和用户配置的插件依次处理。与`loader`只操作单个模块不同，`plugin`关注得是打包后的 bundle 整体，即所有模块组成的 bundle。所以跟产出相关的都是需要插件来实现的，比如压缩、拆分公共代码。
+本章节讨论的内容是我们在配置文件配置的 plugin。
+
+这个是在整个工作流程的后半部分，Webpack 将整个模块的依赖关系都处理完毕，最终生成 bundle 的时候，然后扔给内置的插件和用户配置的插件依次处理。
+
+与`loader`只操作单个模块不同，`plugin`关注得是打包后的 bundle 整体，即所有模块组成的 bundle。
+
+所以跟产出相关的都是需要插件来实现的，比如压缩、拆分公共代码。
 
 > 一句话：本质上来说，`plugin`就是通过监听 compiler 的某些 hook 特定时机，然后处理 stats。
 
@@ -53,7 +57,9 @@ module.exports = {
 
 > Tips：webpack 的插件实际是上一个包含`apply`方法的类。
 
-如果我们想在指定 compiler 钩子时机执行某些脚本，自然可以在对应的事件钩子上添加回调方法，在回调里执行你所需的操作。由于 webpack 的钩子都是来自于`Tapable`类，所以一些特殊类型的钩子需要特殊的`tap`方法，例如 compiler 的`emit` 钩子是支持`tap`、`tapPromise`和`tapAsync`多种类型的 tap 方式，但是不管哪种方式的 tap，都需要按照`Tapable`的规范来返回对应的值，下面的例子是使用了`emit.tapPromise`，则需要返回一个`Promise`对象。
+如果我们想在指定 compiler 钩子时机执行某些脚本，自然可以在对应的事件钩子上添加回调方法，在回调里执行你所需的操作。
+
+由于 webpack 的钩子都是来自于`Tapable`类，所以一些特殊类型的钩子需要特殊的`tap`方法，例如 compiler 的`emit` 钩子是支持`tap`、`tapPromise`和`tapAsync`多种类型的 tap 方式，但是不管哪种方式的 tap，都需要按照`Tapable`的规范来返回对应的值，下面的例子是使用了`emit.tapPromise`，则需要返回一个`Promise`对象。
 
 ```js
 class HelloWorldPlugin {
@@ -73,7 +79,11 @@ class HelloWorldPlugin {
 module.exports = HelloWorldPlugin
 ```
 
-通过上面最简单的 Plugin，结合之前讲解的 Compiler 和 Compilation 对象的部分内容，相信大家已经大概明白了 Plugin 的工作原理。一旦我们深入理解了 webpack compiler 和每个独立的 compilation，我们就能通过 Webpack 引擎本身做到无穷无尽的事情。我们可以重新格式化已有的文件，创建衍生的文件，或者制作全新的生成文件。
+通过上面最简单的 Plugin，结合之前讲解的 Compiler 和 Compilation 对象的部分内容，相信大家已经大概明白了 Plugin 的工作原理。
+
+一旦我们深入理解了 webpack compiler 和每个独立的 compilation，我们就能通过 Webpack 引擎本身做到无穷无尽的事情。
+
+我们可以重新格式化已有的文件，创建衍生的文件，或者制作全新的生成文件。
 
 ## 官方插件分析：FileListPlugin
 
@@ -114,6 +124,7 @@ module.exports = FileListPlugin
 我们将编写的代码放到了 webpack.config.js 配置中，直接执行后得到的命令行输出内容为：
 
 ![图片描述](./assets/5d078516000138b914420648.png)
+
 通过 log 发现多输出了一个`filelist.md`的文件，然后我们打开`dist`文件夹中的这个文件下看内容是否符合我们的预期：
 
 ```markdown
@@ -128,7 +139,9 @@ In this build:
 
 下面我们来编写个`prefetch-webpack-plugin`插件，这个插件的作用是将打包中遇见的`import()`或者`require.ensure()`这类异步懒加载的模块使用`<link>`标签的 `rel=prefetch`进行预加载，原理[参考文档](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Link_prefetching_FAQ)，这里不再就原理做深入介绍，简单来说就是将需要异步加载的模块，提前放到页面的 HTML 中进行预加载（需要浏览器支持）。
 
-在写一个插件之前，我们需要了解这个插件需要用到的钩子有哪些。这里我们其实用到的是`compiler.compilation`和`html-webpack-plugin`的钩子，其实这个插件可以理解成是 [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin)的插件，即一个 Webpack 插件的插件，这是因为 html-webpack-plugin 是处理 HTML 文件的插件，而且它本身也提供了钩子，我们可以从这些钩子中得到 HTML 的内容，从而修改 HTML 的页面结构。
+在写一个插件之前，我们需要了解这个插件需要用到的钩子有哪些。
+
+这里我们其实用到的是`compiler.compilation`和`html-webpack-plugin`的钩子，其实这个插件可以理解成是 [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin)的插件，即一个 Webpack 插件的插件，这是因为 html-webpack-plugin 是处理 HTML 文件的插件，而且它本身也提供了钩子，我们可以从这些钩子中得到 HTML 的内容，从而修改 HTML 的页面结构。
 
 在开始之前，继续介绍下 Webpack 的魔法注释，因为这个插件需要依赖魔法注释来标注一个模块是预取模块。
 
@@ -156,30 +169,12 @@ import(/* webpackPrefetch: true */ './lazy')
 
 1. 首先我们应该利用`compiler.compilation`这个钩子，得到`Compilation`对象；
 
-2. 然后在
+2. 然后在 `Compilation` 对象中监听 html-webpack-plugin 的钩子，拿到 HTML 对象，这里需要区分 html-webpack-plugin 的版本：
 
-   ```
-   Compilation
-   ```
-
-   对象中监听 html-webpack-plugin 的钩子，拿到 HTML 对象，这里需要区分 html-webpack-plugin 的版本：
-
-   1. 在`3.x`版本，html-webpack-plugin 的钩子是直接挂在 Compilation 对象上的，我们使用的是`compilation.hooks.htmlWebpackPluginAfterHtmlProcessing`；
+   1. 在`3.x`版本，html-webpack-plugin 的钩子是直接挂在 Compilation 对象上的，我们使用的是 `compilation.hooks.htmlWebpackPluginAfterHtmlProcessing`；
    2. 在`4.x`版本（截稿最新版本是 4.0-beta.3）中，html-webpack-plugin 自己使用`Tapable`实现了自定义钩子，需要使用`HtmlWebpackPlugin.getHooks(compilation)`的方式获取自定义的钩子。
 
-3. 然后我们从
-
-   ```
-   Compilation
-   ```
-
-   对象中读取当前 HTML 页面的所有
-
-   ```
-   chunks
-   ```
-
-   ，筛选异步加载的 chunk 模块，这里有两种情况：
+3. 然后我们从 `Compilation`对象中读取当前 HTML 页面的所有 `chunks`，筛选异步加载的 chunk 模块，这里有两种情况：
 
    1. 生成多个 HTML 页面，那么 html-webpack-plugin 插件会设置`chunks`选项，我们需要从 `Compilation.chunks`来选取 HTML 页面真正用到的 chunks，然后在从 chunks 中过滤出 Prefetch chunk；
    2. 如果是单页应用，那么不存在`chunks`选项，这时候默认`chunks='all'`，我们需要从全部 `Compilation.chunks` 中过滤出 Prefetch chunk。
@@ -229,11 +224,7 @@ apply(compiler) {
 
 - `compilation`：本次编译的 Compilation 对象；
 
-- ```
-  data
-  ```
-
-  ：是 html-webpack-plugin 创建的一个给其插件使用的对象，里面包含页面的 HTML 判断和 html-webpack-plugin 插件实例化后的实例本身；
+- `data`：是 html-webpack-plugin 创建的一个给其插件使用的对象，里面包含页面的 HTML 判断和 html-webpack-plugin 插件实例化后的实例本身；
 
   - `data.html`：这个是生成 HTML 页面的 HTML 片段字符串；
   - `data.plugin`：这个是 html-webpack-plugin 的实例，可以从`data.plugin.options`读取 html-webpack-plugin 插件的参数。
