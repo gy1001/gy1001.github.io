@@ -8,10 +8,11 @@ function generatorMdFileArr(modulePath) {
     .filter((item) => {
       return item.includes('.md')
     })
-    .map((item) => ({
-      text: item.replace(/\.md/, ''),
-      link: modulePath + item,
-    }))
+    .map((item) => modulePath + item)
+  // .map((item) => ({
+  //   text: item.replace(/\.md/, ''),
+  //   link: modulePath + item,
+  // }))
 }
 const VisualH5Arr = generatorMdFileArr('/zh/other/column/visual-h5/')
 const NestH5Arr = generatorMdFileArr('/zh/other/column/nest-h5/')
@@ -25,6 +26,7 @@ const RustCourseArr = generatorMdFileArr('/zh/other/column/rust-course/')
 const EngineeringProjectArr = generatorMdFileArr(
   '/zh/other/column/engineering-project/',
 )
+console.log(EngineeringProjectArr)
 
 export const sidebarZh: SidebarConfig = {
   '/zh/skill/front/': [
