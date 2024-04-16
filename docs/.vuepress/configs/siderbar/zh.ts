@@ -22,6 +22,9 @@ const TaroMultiEndedArr = generatorMdFileArr(
   '/zh/other/column/taro-multi-ended/',
 )
 const RustCourseArr = generatorMdFileArr('/zh/other/column/rust-course/')
+const EngineeringProjectArr = generatorMdFileArr(
+  '/zh/other/column/engineering-project/',
+)
 
 export const sidebarZh: SidebarConfig = {
   '/zh/skill/front/': [
@@ -957,6 +960,11 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/column/webpack-engineering/index-37.md',
             '/zh/other/column/webpack-engineering/index-38.md',
           ],
+        },
+        {
+          text: '从 0 到 1 落地前端工程化',
+          children: EngineeringProjectArr,
+          collapsible: true,
         },
         {
           text: '从零开发H5可视化搭建项目',
