@@ -18,6 +18,9 @@ const NestH5Arr = generatorMdFileArr('/zh/other/column/nest-h5/')
 const ComponentEssentialsArr = generatorMdFileArr(
   '/zh/other/column/component-essentials/',
 )
+const TaroMultiEndedArr = generatorMdFileArr(
+  '/zh/other/column/taro-multi-ended/',
+)
 
 export const sidebarZh: SidebarConfig = {
   '/zh/skill/front/': [
@@ -968,6 +971,11 @@ export const sidebarZh: SidebarConfig = {
           text: 'Vue.js 组件精讲',
           collapsible: true,
           children: ComponentEssentialsArr,
+        },
+        {
+          text: 'Taro 多端开发实现原理与项目实战',
+          collapsible: true,
+          children: TaroMultiEndedArr,
         },
       ],
     },
