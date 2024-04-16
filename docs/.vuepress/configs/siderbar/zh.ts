@@ -15,6 +15,9 @@ function generatorMdFileArr(modulePath) {
 }
 const VisualH5Arr = generatorMdFileArr('/zh/other/column/visual-h5/')
 const NestH5Arr = generatorMdFileArr('/zh/other/column/nest-h5/')
+const ComponentEssentialsArr = generatorMdFileArr(
+  '/zh/other/column/component-essentials/',
+)
 
 export const sidebarZh: SidebarConfig = {
   '/zh/skill/front/': [
@@ -960,6 +963,11 @@ export const sidebarZh: SidebarConfig = {
           text: '掘金小册 Nest 通关秘籍',
           collapsible: true,
           children: NestH5Arr,
+        },
+        {
+          text: 'Vue.js 组件精讲',
+          collapsible: true,
+          children: ComponentEssentialsArr,
         },
       ],
     },
