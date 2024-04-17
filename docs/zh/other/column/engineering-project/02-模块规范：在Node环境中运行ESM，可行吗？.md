@@ -1,39 +1,39 @@
-# 02-模块规范：在Node环境中运行ESM，可行吗？
+# 02-模块规范：在 Node 环境中运行 ESM，可行吗？
 
 > 技术要点：CJS、ESM、Nodemon
 
-### 前言
+## 前言
 
 `前端工程化`完全离不开`Node`，很多需求都基于`Node`完成。一般来说`Node开发`会使用`CJS`编码，但很多`Web开发`的同学已习惯使用`ESM`编码了。
 
 其实无需担心，`Web开发`转向`Node开发`完全可继续使用`ESM`编码。因为`Web`与`Node`都是一种`JS运行环境`，本质上只有`运行环境`不同。
 
-当前面临的核心问题是`Node`无法直接使用`ESM`编码。本章将带领你**部署Node的ESM开发环境**，无需关注`JS运行环境`涉及模块方案的差异性，让`Node开发`也变得像`Web开发`那样丝滑。
+当前面临的核心问题是`Node`无法直接使用`ESM`编码。本章将带领你**部署 Node 的 ESM 开发环境**，无需关注`JS运行环境`涉及模块方案的差异性，让`Node开发`也变得像`Web开发`那样丝滑。
 
-### 背景：模块化是什么
+## 背景：模块化是什么
 
 首先理解`前端工程化`中一个很重要的概念：**模块化**。一起聊聊`模块化`是什么以及`JS模块化`包括哪些解决方案。当然`CJS`与`ESM`这两种`模块规范`是重点回顾对象。
 
-##### 模块化
+### 模块化
 
 `JS`诞生于`1995年`，最初设计的目的是实现一些简单的浏览器交互效果，寥寥数语就能为用户提供良好的操作体验。随着`JS`的快速发展，各种前端技术得到广泛应用，特别是`AJAX`与`Jquery`引发的前端大革命让`JS`得到质的提升，但各种问题也接踵而至。
 
 在实际开发时，经常会遇到`变量名称`或`函数名称`一样的情况。这不仅容易造成**命名冲突**，还会污染全局变量。若在应用特别复杂，存在大量相似代码，又引用很多第三方库的情况下，稍不注意就很易造成文件的**依赖混乱**。
 
-基于此，`JS`也引入`模块化`的概念。**早期的模块化不是真正的模块化，只是通过一些“骚操作”实现看似是模块化的效果**，例如`立即调用函数表达式`(简称`IIFE`)就是一个在定义时可立即执行的函数，至于它如何实现`模块化`，可查看[MDN文档](https://link.juejin.cn/?target=https%3A%2F%2Fdeveloper.mozilla.org%2Fzh-CN%2Fdocs%2FGlossary%2FIIFE)，在此不深入讲述了。**后期的模块化才算是真正的模块化**，它包括`CJS`、`AMD`、`CMD`、`UMD`和`ESM`，经过多年演变，目前`Web开发`倾向于`ESM`，`Node开发`倾向于`CJS`。
+基于此，`JS`也引入`模块化`的概念。**早期的模块化不是真正的模块化，只是通过一些“骚操作”实现看似是模块化的效果**，例如`立即调用函数表达式`(简称`IIFE`)就是一个在定义时可立即执行的函数，至于它如何实现`模块化`，可查看[MDN 文档](https://link.juejin.cn/?target=https%3A%2F%2Fdeveloper.mozilla.org%2Fzh-CN%2Fdocs%2FGlossary%2FIIFE)，在此不深入讲述了。**后期的模块化才算是真正的模块化**，它包括`CJS`、`AMD`、`CMD`、`UMD`和`ESM`，经过多年演变，目前`Web开发`倾向于`ESM`，`Node开发`倾向于`CJS`。
 
 `模块化`让`JS`也能拥有自己的`模块化效果`，在实际开发中，**一个模块就是一个文件**。`模块化`的核心包括以下特性，基本都是围绕如何处理文件(`模块`)。
 
--  **拆分**：将代码根据功能拆分为多个可复用模块
--  **加载**：通过指定方式加载模块并执行与输出模块
--  **注入**：将一个模块的输出注入到另一个模块
--  **管理**：因为工程模块数量众多需管理模块间的依赖关系
+- **拆分**：将代码根据功能拆分为多个可复用模块
+- **加载**：通过指定方式加载模块并执行与输出模块
+- **注入**：将一个模块的输出注入到另一个模块
+- **管理**：因为工程模块数量众多需管理模块间的依赖关系
 
 前端代码爆炸式增长必然会引入`前端工程化`解决问题，`模块化`作为`前端工程化`中最低成本的应用，很值得每位开发者遵守。使用`模块化`开发代码，不仅能提高代码整体可读性，也能增强项目整体维护性。不管是个人开发还是协作开发，`模块化`都能带来很多好处。
 
 ![模块化作用](./assets/41E7DD7B-E541-41FD-A9E5-4DE6661238CB.png)
 
-##### 模块方案
+### 模块方案
 
 以前引用`js文件`都会使用多个`<script>`顺序处理，曾见过一个老旧项目多达`12`个`<script>`，这会导致很多问题，例如以下情况。
 
@@ -61,8 +61,6 @@
 | **属性引用** | 基本类型属于`复制不共享` 引用类型属于`浅拷贝且共享` | 所有类型属于`动态只读引用`                      |
 | **属性改动** | 工作空间可修改引用的值                              | 工作空间不可修改引用的值 但可通过引用的方法修改 |
 
-
-
 `Node开发`习惯使用`CJS`编码，但本章将改用`ESM`编码，因此在后续编码时可能会出现一些难以解释的问题，例如`循环引用`与`前置引用`，而了解它们的加载方式与行为可帮助你理解这些问题。
 
 - **运行时加载**指整体加载模块生成一个对象，再从对象中获取所需的属性方法去加载。最大特性是`全部加载`，只有运行时才能得到该对象，无法在编译时做静态优化。
@@ -70,11 +68,11 @@
 
 上述介绍了好几种模块方案，那`前端工程化`都会用到吗？当然不会，可能只需使用`CJS`或`ESM`，而目前只需使用`ESM`编码，因此接着重点关注`ESM`。
 
-### 现状：ESM能否在Node环境中运行
+## 现状：ESM 能否在 Node 环境中运行
 
 随着主流浏览器逐步支持`ESM`，越来越多目光投注于`Node`对于`ESM`的支持上。目前`Node`使用`CJS`作为官方模块方案，虽然内置模块方案促进`Node`的流行，但也阻碍了`ESM`的引入，这一点相信接触过`Node开发`的同学一定深有感触。
 
-##### 原生支持ESM
+### 原生支持 ESM
 
 `2017年10月31日`，`Node`发布了`v8.9.0`，从此只要在命令中加上`--experimental-modules`，`Node`就可象征性地支持`ESM`了。
 
@@ -88,70 +86,30 @@ node --experimental-modules index.js
 
 `--experimental-modules`特性包括以下方面。
 
-- 使用
-
-  ```
-  type
-  ```
-
-  指定模块方案
+- 使用`type`指定模块方案
 
   - 在`package.json`中指定`type`为`commonjs`，则使用`CJS`
   - 在`package.json`中指定`type`为`module`，则使用`ESM`
 
-- 使用
-
-  ```
-  --input-type
-  ```
-
-  指定入口文件的模块方案，与
-
-  ```
-  type
-  ```
-
-  一样
+- 使用`--input-type`指定入口文件的模块方案，与`type`一样
 
   - 命令中加上`--input-type=commonjs`，则使用`CJS`
   - 命令中加上`--input-type=module`，则使用`ESM`
 
-- 支持新文件后缀
-
-  ```
-  .cjs
-  ```
+- 支持新文件后缀`.cjs`
 
   - 文件后缀使用`.cjs`，则使用`CJS`
 
-- 使用
-
-  ```
-  --es-module-specifier-resolution
-  ```
-
-  指定文件名称引用方式
+- 使用`--es-module-specifier-resolution`指定文件名称引用方式
 
   - 命令中加上`--es-module-specifier-resolution=explicit`，则引用模块时必须使用文件后缀(`默认`)
   - 命令中加上`--es-module-specifier-resolution=node`，则引用模块时无需使用文件后缀
 
-- 使用
-
-  ```
-  main
-  ```
-
-  根据
-
-  ```
-  type
-  ```
-
-  指定模块方案加载文件
+- 使用`main`根据`type`指定模块方案加载文件
 
   - 在`package.json`中指定`mian`后会根据`type`指定模块方案加载文件
 
-##### CJS/ESM判断方式
+### CJS/ESM 判断方式
 
 `Node`要求使用`ESM`的文件采用`.mjs`后缀，只要文件中存在`import/export命令`就必须使用`.mjs`后缀。若不希望修改文件后缀，可在`package.json`中指定`type`为`module`。基于此，若其他文件使用`CJS`，就需将其文件后缀改成`.cjs`。若在`package.json`中未指定`type`或指定`type`为`commonjs`，则以`.js`为后缀的文件会被解析为`CJS`。
 
@@ -161,12 +119,12 @@ node --experimental-modules index.js
 
 刚才说了`Node v13.2.0`在默认情况下，会启动对`ESM`的实验支持，无需在命令中加上`--experimental-modules`参数。那`Node`是如何区分`CJS`与`ESM`？简而言之，`Node`会将以下情况视为`ESM`。
 
--  文件后缀为`.mjs`
--  文件后缀为`.js`且在`package.json`中指定`type`为`module`
--  命令中加上`--input-type=module`
--  命令中加上`--eval cmd`
+- 文件后缀为`.mjs`
+- 文件后缀为`.js`且在`package.json`中指定`type`为`module`
+- 命令中加上`--input-type=module`
+- 命令中加上`--eval cmd`
 
-### 方案：部署Node的ESM开发环境
+## 方案：部署 Node 的 ESM 开发环境
 
 虽然官方文档有明确的迁移方案，但很多同学还是会存在理解偏差。确实，一连串的操作会让很多未接触或很少接触`Node开发`的同学感觉无比混乱。为了愉快地部署`Node`的`ESM开发环境`，将实现高低两种版本的部署，规范好每种方案的实现方式，再根据自己喜好选择。
 
@@ -178,29 +136,29 @@ node --experimental-modules index.js
 
 ```json
 {
-	"name": "node-esm",
-	"version": "1.0.0",
-	"main": "src/index.js",
-	"scripts": {
-		"start": "node src/index.js"
-	},
-	"dependencies": {
-		"@yangzw/bruce-us": "1.0.3"
-	}
+  "name": "node-esm",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@yangzw/bruce-us": "1.0.3"
+  }
 }
 ```
 
 创建`src/index.js`文件，加入以下内容。示例引用我开源的[@yangzw/bruce-us](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FJowayYoung%2Fbruce%2Ftree%2Fmain%2Fpackages%2Fus)，其中`NodeType()`用于获取`Node`相关信息。
 
 ```js
-import { NodeType } from "@yangzw/bruce-us/dist/node";
+import { NodeType } from '@yangzw/bruce-us/dist/node'
 
-console.log(NodeType());
+console.log(NodeType())
 ```
 
 这一步完成就需分情况讨论了。
 
-##### Node原生部署方案
+### Node 原生部署方案
 
 假设`Node`是`v13.2.0`以上版本，执行`npm start`，输出以下信息表示运行失败。
 
@@ -224,11 +182,11 @@ SyntaxError: Cannot use import statement outside a module
 
 ```json
 {
-	"type": "module",
-	"engines": {
-		"node": ">=13.2.0",
-		"npm": ">=6.13.1"
-	}
+  "type": "module",
+  "engines": {
+    "node": ">=13.2.0",
+    "npm": ">=6.13.1"
+  }
 }
 ```
 
@@ -248,9 +206,9 @@ Did you mean to import @yangzw/bruce-us/dist/node.js?
 
 ```json
 {
-	"scripts": {
-		"start": "node --es-module-specifier-resolution=node src/index.js"
-	}
+  "scripts": {
+    "start": "node --es-module-specifier-resolution=node src/index.js"
+  }
 }
 ```
 
@@ -276,16 +234,16 @@ Did you mean to import @yangzw/bruce-us/dist/node.js?
 - `json文件`的引用可用`Fs模块`的`readFileSync`与`JSON.parse()`代替
 
 ```js
-import { readFileSync } from "fs";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
+import { readFileSync } from 'fs'
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-console.log(__filename, __dirname);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+console.log(__filename, __dirname)
 
-const json = readFileSync("./info.json");
-const info = JSON.parse(json);
+const json = readFileSync('./info.json')
+const info = JSON.parse(json)
 ```
 
 `CJS`的循环依赖关系已通过缓存各个模块的`module.exports`对象解决，但`ESM`用了所谓的绑定。简而言之，`ESM`模块不会导出导入值而是引用值。
@@ -295,7 +253,7 @@ const info = JSON.parse(json);
 
 而`CJS`允许在任何时间点将引用分配给模块的`module.exports`对象，让这些改动仅部分反映在其他模块。
 
-##### Node编译部署方案
+### Node 编译部署方案
 
 `Npm`很多模块都使用`CJS`编码，因为同时使用`require`与`export/import`会报错，所以单个模块无法切换到`ESM`。
 
@@ -311,23 +269,21 @@ npm i @babel/cli @babel/core @babel/node @babel/preset-env -D
 
 这四个`babel`子包很重要，`Node`能不能支持`ESM`的解析就看它们了。
 
--  **@babel/cli**：提供支持`@babel/core`的命令运行环境
--  **@babel/core**：提供转译函数
--  **@babel/node**：提供支持`ESM`的命令运行环境
--  **@babel/preset-env**：提供预设语法转换集成环境
+- **@babel/cli**：提供支持`@babel/core`的命令运行环境
+- **@babel/core**：提供转译函数
+- **@babel/node**：提供支持`ESM`的命令运行环境
+- **@babel/preset-env**：提供预设语法转换集成环境
 
 安装完毕，在`package.json`中指定`babel`相关配置，将`start`命令中的`node`替换为`babel-node`。
 
 ```json
 {
-	"scripts": {
-		"start": "babel-node src/index.js"
-	},
-	"babel": {
-		"presets": [
-			"@babel/preset-env"
-		]
-	}
+  "scripts": {
+    "start": "babel-node src/index.js"
+  },
+  "babel": {
+    "presets": ["@babel/preset-env"]
+  }
 }
 ```
 
@@ -346,55 +302,49 @@ npm i @babel/cli @babel/core @babel/node @babel/preset-env -D
 
 ```json
 {
-	"babel": {
-		"presets": [
-			["@babel/preset-env", { "targets": { "node": "8.0.0" } }]
-		]
-	}
+  "babel": {
+    "presets": [["@babel/preset-env", { "targets": { "node": "8.0.0" } }]]
+  }
 }
 ```
 
-##### 监听脚本自动重启命令
+### 监听脚本自动重启命令
 
 每次修改脚本都需重启命令才能让脚本内容生效，这太麻烦了，所以我始终喜欢在`Node`中使用`nodemon`。**nodemon**是一个自动检测项目文件发生变化就重启服务的`Npm模块`，是`Node开发`的必备工具。
 
-以**Node编译部署方案**的示例为例。执行`npm i -D nodemon`安装`nodemon`，在`package.json`中指定`nodemonConfig`相关配置，将`start`命令替换为`nodemon -x babel-node src/index.js`。
+以**Node 编译部署方案**的示例为例。执行`npm i -D nodemon`安装`nodemon`，在`package.json`中指定`nodemonConfig`相关配置，将`start`命令替换为`nodemon -x babel-node src/index.js`。
 
 ```json
 {
-	"nodemonConfig": {
-		"env": {
-			"NODE_ENV": "dev"
-		},
-		"execMap": {
-			"js": "node --harmony"
-		},
-		"ext": "js json",
-		"ignore": [
-			"dist/"
-		],
-		"watch": [
-			"src/"
-		]
-	}
+  "nodemonConfig": {
+    "env": {
+      "NODE_ENV": "dev"
+    },
+    "execMap": {
+      "js": "node --harmony"
+    },
+    "ext": "js json",
+    "ignore": ["dist/"],
+    "watch": ["src/"]
+  }
 }
 ```
 
-修改`src/index.js`内容，`nodemon`就能快速响应改动并重启命令。`nodemon配置`可查看[Nodemon官网](https://link.juejin.cn/?target=https%3A%2F%2Fnodemon.io)，在此不深入讲述了。
+修改`src/index.js`内容，`nodemon`就能快速响应改动并重启命令。`nodemon配置`可查看[Nodemon 官网](https://link.juejin.cn/?target=https%3A%2F%2Fnodemon.io)，在此不深入讲述了。
 
-### 总结
+## 总结
 
 很多同学接触`Node开发`都会使用`CJS`编码，但通过本章学习，相信能在`Node环境`中使用`ESM`编码有一个更充分的实践。所有`Node项目`都能通过上述探讨的解决方案改造为`ESM`形式，其余改动可能就是业务代码中`require()`与`import/export`的转换了。
 
 每种解决方案都可能有自身的局限，我根据以往开发经验对上述解决方案做一个应用场景的总结。考虑到实用性与稳定性，最终还是推荐使用第三种解决方案：**监听脚本自动重启命令**。
 
--  基于**Node原生部署方案**改造`Node项目`，适合在`高版本Node环境`中使用，点击查看[源码](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FJowayYoung%2Ffe-engineering%2Ftree%2Fmain%2Fnode-esm%2Ffor-node)
--  基于**Node编译部署方案**改造`Node项目`，适合在`低版本Node环境`或`任何版本Node环境`中使用，点击查看[源码](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FJowayYoung%2Ffe-engineering%2Ftree%2Fmain%2Fnode-esm%2Ffor-babel)
--  基于**监听脚本自动重启命令**改造`Node项目`，与`Node编译部署方案`一样的使用条件，中使用，点击查看[源码](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FJowayYoung%2Ffe-engineering%2Ftree%2Fmain%2Fnode-esm%2Ffor-nodemon)
+- 基于**Node 原生部署方案**改造`Node项目`，适合在`高版本Node环境`中使用，点击查看[源码](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FJowayYoung%2Ffe-engineering%2Ftree%2Fmain%2Fnode-esm%2Ffor-node)
+- 基于**Node 编译部署方案**改造`Node项目`，适合在`低版本Node环境`或`任何版本Node环境`中使用，点击查看[源码](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FJowayYoung%2Ffe-engineering%2Ftree%2Fmain%2Fnode-esm%2Ffor-babel)
+- 基于**监听脚本自动重启命令**改造`Node项目`，与`Node编译部署方案`一样的使用条件，中使用，点击查看[源码](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FJowayYoung%2Ffe-engineering%2Ftree%2Fmain%2Fnode-esm%2Ffor-nodemon)
 
 从`前端工程化`的角度来看，设计任何解决方案都要准备一些备用方案甚至是兜底方案，这些方案必须纳入考虑范围并使其具备可行性。
 
 本章内容到此为止，希望能对你有所启发，欢迎你把自己的学习心得打到评论区！
 
--  示例项目：[fe-engineering](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FJowayYoung%2Ffe-engineering)
--  正式项目：[bruce](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FJowayYoung%2Fbruce)
+- 示例项目：[fe-engineering](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FJowayYoung%2Ffe-engineering)
+- 正式项目：[bruce](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FJowayYoung%2Fbruce)
