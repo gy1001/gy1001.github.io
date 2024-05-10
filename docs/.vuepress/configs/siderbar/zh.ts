@@ -26,8 +26,7 @@ const RustCourseArr = generatorMdFileArr('/zh/other/column/rust-course/')
 const EngineeringProjectArr = generatorMdFileArr(
   '/zh/other/column/engineering-project/',
 )
-console.log(EngineeringProjectArr)
-
+const ReviewStudyArr = generatorMdFileArr('/zh/other/column/review-study/')
 export const sidebarZh: SidebarConfig = {
   '/zh/skill/front/': [
     {
@@ -992,6 +991,11 @@ export const sidebarZh: SidebarConfig = {
           text: 'Rust语言从入门到实战',
           collapsible: true,
           children: RustCourseArr,
+        },
+        {
+          text: '跟着高手学复盘',
+          collapsible: true,
+          children: ReviewStudyArr,
         },
       ],
     },
