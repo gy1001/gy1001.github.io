@@ -27,6 +27,9 @@ const EngineeringProjectArr = generatorMdFileArr(
   '/zh/other/column/engineering-project/',
 )
 const ReviewStudyArr = generatorMdFileArr('/zh/other/column/review-study/')
+const BusinessThinkingArr = generatorMdFileArr(
+  '/zh/other/column/business-thinking/',
+)
 export const sidebarZh: SidebarConfig = {
   '/zh/skill/front/': [
     {
@@ -996,6 +999,11 @@ export const sidebarZh: SidebarConfig = {
           text: '跟着高手学复盘',
           collapsible: true,
           children: ReviewStudyArr,
+        },
+        {
+          text: '商业思维案例笔记',
+          collapsible: true,
+          children: BusinessThinkingArr,
         },
       ],
     },
