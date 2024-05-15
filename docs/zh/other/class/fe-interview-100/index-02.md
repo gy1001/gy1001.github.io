@@ -127,7 +127,7 @@ PS: 算法达到 O(n^2), 算法基本是不可用的
     const length = arr.length
     if (!k || length === 0) return arr
     const step = Math.abs(k % length) // abs 取绝对值
-  
+
     // O(n^2)
     for (let i = 0; i < step; i++) {
       const n = arr.pop()
@@ -144,7 +144,7 @@ PS: 算法达到 O(n^2), 算法基本是不可用的
   ```typescript
   const arr = [1, 2, 3, 4, 5, 6, 7]
   const k = 3
-  
+
   const res = rotate1(arr, k)
   ```
 
@@ -160,7 +160,7 @@ PS: 算法达到 O(n^2), 算法基本是不可用的
     const length = arr.length
     if (!k || length === 0) return arr
     const step = Math.abs(k % length) // abs 取绝对值
-  
+
     // O(1)
     const part1 = arr.slice(-step) // O(1)
     const part2 = arr.slice(0, length - step)
@@ -174,7 +174,7 @@ PS: 算法达到 O(n^2), 算法基本是不可用的
   ```typescript
   const arr = [1, 2, 3, 4, 5, 6, 7]
   const k = 3
-  
+
   const res = rotate2(arr, k)
   ```
 
@@ -187,12 +187,12 @@ PS: 算法达到 O(n^2), 算法基本是不可用的
   - 使用`unshift`这样的方法会导致延迟，因为我们必须移动数组中每个元素的索引。因此，`unshift`操作的复杂度为**O(n)**
   - 同样复杂度操作的 API 还有 `splice`、`shift`
 
-- 思路 2 - `O(1)`。`slice` 和 `concat` 不会修改原数组，而数组是有序结构，复杂度是 `O(1)` 。
+- 思路 2 - `O(1)`。`slice` 和 `contact` 不会修改原数组，而数组是有序结构，复杂度是 `O(1)` 。
 
 空间复杂度
 
-- 思路 1 - `O(1)`
-- 思路 2 - `O(n)`
+- 思路 1 - `O(n)`
+- 思路 2 - `O(1)`
 
 经过性能测试，知道“思路 2”性能更优。看来，思路简单并不一定性能最优。
 
@@ -576,7 +576,7 @@ export class MyQueue {
   const arr = [100, 200, 300, 400, 500]
   const list = createLinkList(arr)
   console.info('list:', list)
-  
+
   const list1 = reverseLinkList(list)
   console.info('list1:', list1)
   ```

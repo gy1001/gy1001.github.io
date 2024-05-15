@@ -371,7 +371,7 @@ UDP 是一种无连接的、不可靠的传输层协议。而 TCP 需要连接�
 
 - 引入更多的缓存策略，如 `cache-control` `E-tag`
 - 长链接，默认开启 `Connection: keep-alive` ，一次 TCP 连接多次 http 请求
-- 断点续传，状态吗 `206`
+- 断点续传，状态码 `206`
 - 增加新的 method `PUT` `DELETE` 等，可用于 Restful API
 
 ### http2.0
