@@ -22,7 +22,6 @@ const ComponentEssentialsArr = generatorMdFileArr(
 const TaroMultiEndedArr = generatorMdFileArr(
   '/zh/other/column/taro-multi-ended/',
 )
-const RustCourseArr = generatorMdFileArr('/zh/other/column/rust-course/')
 const EngineeringProjectArr = generatorMdFileArr(
   '/zh/other/column/engineering-project/',
 )
@@ -985,11 +984,6 @@ export const sidebarZh: SidebarConfig = {
           text: 'Taro 多端开发实现原理与项目实战',
           collapsible: true,
           children: TaroMultiEndedArr,
-        },
-        {
-          text: 'Rust语言从入门到实战',
-          collapsible: true,
-          children: RustCourseArr,
         },
         {
           text: '跟着高手学复盘',

@@ -1,19 +1,18 @@
-# 26｜Rust GUI编程：用Slint为YOLOv8实现一个界面
-你好，我是Mike。
+# 26 ｜ Rust GUI 编程：用 Slint 为 YOLOv8 实现一个界面
 
-今天我们继续用Slint做一个小项目。这个项目的目标是为我们 [第 24 讲](https://time.geekbang.org/column/article/734943) 实现的用YOLOv8从图片中识别出对象及姿势的小应用提供一个GUI界面。
+你好，我是 Mike。
 
-这个GUI程序非常实用，可以以一种真观对比的形式让你看到对原始图片经过AI加工后的效果。比如像下面这样：
+今天我们继续用 Slint 做一个小项目。这个项目的目标是为我们 [第 24 讲](https://time.geekbang.org/column/article/734943) 实现的用 YOLOv8 从图片中识别出对象及姿势的小应用提供一个 GUI 界面。
 
-![图片](images/737452/ab5aebed249dc410328a4cee8305e6a4.png)
+这个 GUI 程序非常实用，可以以一种真观对比的形式让你看到对原始图片经过 AI 加工后的效果。比如像下面这样：
 
 ## 原理解析
 
-根据我们上节课学到的知识及第24讲里的操作流程，我们的实现应该分成4步。
+根据我们上节课学到的知识及第 24 讲里的操作流程，我们的实现应该分成 4 步。
 
 1. 选择一张图片，加载显示在界面左边。
 2. 点击 “Detect Objects”或 “Detect Poses”。
-3. 经过YOLOv8引擎计算和标注，生成一张新的图片。
+3. 经过 YOLOv8 引擎计算和标注，生成一张新的图片。
 4. 在界面右边加载这张新图片。
 
 下面让我们开始动手操作。
@@ -24,7 +23,7 @@
 
 ### 创建项目
 
-我们还是使用官方提供的Slint模板来创建，先下载模板。
+我们还是使用官方提供的 Slint 模板来创建，先下载模板。
 
 ```plain
 cargo generate --git https://github.com/slint-ui/slint-rust-template --name slint-yolov8-demo
@@ -38,11 +37,9 @@ cd slint-yolov8-demo
 
 这个应用其实不复杂，你可以这样来分解这个界面。
 
-![](images/737452/a7c4ecbf59ce56f727581577e65984a3.jpg)
-
-1. 从上到下使用一个 VerticalBox，分成三部分：Model说明、图片显示区、按钮区。
+1. 从上到下使用一个 VerticalBox，分成三部分：Model 说明、图片显示区、按钮区。
 2. 图片显示区使用一个 HorizontalBox，分成三部分：左边图片显示区、中间分隔线、右边图片显示区。图片使用 Image 基础元素来显示。
-3. 按钮区，使用HorizontalBox排列三个按钮：选择图片、探测对象、探测姿势，并且左对齐。
+3. 按钮区，使用 HorizontalBox 排列三个按钮：选择图片、探测对象、探测姿势，并且左对齐。
 
 这样界面就设计好了。
 
@@ -52,26 +49,17 @@ cd slint-yolov8-demo
 
 - 界面刚打开的时候，显示空白界面。
 
-  ![图片](images/737452/de7a2c40048a2794e5c2e0e482e84e74.png)
-
 - 点击 “Select Picture”后，弹出图片选择对话框，选择一张图片，并显示在左侧。
-
-  ![图片](images/737452/9315e64aa40a8b8abb5ec91817742943.png)
 
 - 点击“Detect Objects”，生成新图片，显示在右侧。
 
-  ![图片](images/737452/9a0a02da5e5f66ab8afyybed86a8b7e1.png)
-
 - 点击“Detect Poses”，生成新图片，显示在右侧。
-
-  ![图片](images/737452/178cf0f880ecbfb19827f34d0897c942.png)
-
 
 整个项目回调的逻辑就描述完成了。
 
 ### 下载模型
 
-我们最好先手动下载YOLOv8的两个模型文件，下载方式如下：
+我们最好先手动下载 YOLOv8 的两个模型文件，下载方式如下：
 
 ```plain
 HF_HUB_ENABLE_HF_TRANSFER=1 HF_ENDPOINT=https://hf-mirror.com huggingface-cli download lmz/candle-yolo-v8 yolov8m.safetensors
@@ -79,7 +67,7 @@ HF_HUB_ENABLE_HF_TRANSFER=1 HF_ENDPOINT=https://hf-mirror.com huggingface-cli do
 
 ```
 
-这是为 HuggingFace candle框架定制的两个模型文件，我们下载的是 object 和 pose medium 大小的 safetensors 格式的模型文件，我们需要把它们拷贝到当前项目的根目录下。像下面这样：
+这是为 HuggingFace candle 框架定制的两个模型文件，我们下载的是 object 和 pose medium 大小的 safetensors 格式的模型文件，我们需要把它们拷贝到当前项目的根目录下。像下面这样：
 
 ```plain
 $ ls -lh
@@ -183,7 +171,7 @@ export component AppWindow inherits Window {
 
 ```
 
-注意，orig-image 和 generated-image 类型是 image，是slint语言中的图像类型。orig-image-path 类型是 string，是slint语言中的字符串类型，它与 Rust 中的字符串类型可以通过下面的代码互相转换。
+注意，orig-image 和 generated-image 类型是 image，是 slint 语言中的图像类型。orig-image-path 类型是 string，是 slint 语言中的字符串类型，它与 Rust 中的字符串类型可以通过下面的代码互相转换。
 
 ```plain
 slint string -> Rust String:  .to_string()
@@ -208,7 +196,7 @@ Rust String -> slint string:  .into()
 
 ### main.rs
 
-接下来，我们看main文件内容。
+接下来，我们看 main 文件内容。
 
 ```plain
 use std::{path::PathBuf, sync::mpsc::channel};
@@ -319,9 +307,9 @@ fn load_image(path: std::path::PathBuf) -> slint::Image {
 
 ```
 
-main文件整体结构和上一讲差不多。这里我重点讲一下不同的地方。Slint里没有现成的文件选择组件，因此我们使用了 native\_dialog 这个 crate，它是一个跨平台的文件选择组件。FileDialog 这一段返回后的 path 是一个 `Option<PathBuf>`。如果选择了文件，就会是 `Some(path)`，如果没有选择文件，比如打开了文件选择框，但是又点击了取消按钮或者关闭按钮，就返回 None。
+main 文件整体结构和上一讲差不多。这里我重点讲一下不同的地方。Slint 里没有现成的文件选择组件，因此我们使用了 native_dialog 这个 crate，它是一个跨平台的文件选择组件。FileDialog 这一段返回后的 path 是一个 `Option<PathBuf>`。如果选择了文件，就会是 `Some(path)`，如果没有选择文件，比如打开了文件选择框，但是又点击了取消按钮或者关闭按钮，就返回 None。
 
-选择图片文件后，用这种 `set_* API` 把返回的完整路径填充到应用的顶层属性orig-image-path 和 orig-image 上去。
+选择图片文件后，用这种 `set_* API` 把返回的完整路径填充到应用的顶层属性 orig-image-path 和 orig-image 上去。
 
 ```plain
             ui.set_orig_image_path(path.to_string_lossy().to_string().into());
@@ -329,23 +317,23 @@ main文件整体结构和上一讲差不多。这里我重点讲一下不同的�
 
 ```
 
-load\_image 会把文件从磁盘里读出来，转换成 Slint 的 image 类型。
+load_image 会把文件从磁盘里读出来，转换成 Slint 的 image 类型。
 
-后台任务和channel架构也和上节课差不多，我就不赘述了。注意这里使用了模式匹配语法来析构元组消息内容。
+后台任务和 channel 架构也和上节课差不多，我就不赘述了。注意这里使用了模式匹配语法来析构元组消息内容。
 
-`yolov8engine::start_engine(task, model, img_path)` 是YOLOv8任务的执行器，分别传入任务类型 task、模型名字 model 和原始图片地址 img\_path 三个参数，并返回处理后的图片路径 path。然后调用 `slint::invoke_from_event_loop()` 来更新UI界面。
+`yolov8engine::start_engine(task, model, img_path)` 是 YOLOv8 任务的执行器，分别传入任务类型 task、模型名字 model 和原始图片地址 img_path 三个参数，并返回处理后的图片路径 path。然后调用 `slint::invoke_from_event_loop()` 来更新 UI 界面。
 
-注意，由于我们的主要逻辑是在后台任务中处理的，不能直接在后台任务中更新 UI 界面，必须使用 `slint::invoke_from_event_loop()` 把更新界面的逻辑包起来。在slint内部，它还是通过一个 channel queue 把里面的相关值发送到主UI线程来处理。看起来整个过程是自动的，如果不加这个函数，而是直接调用 UI 对象指针，会出现什么问题呢？
+注意，由于我们的主要逻辑是在后台任务中处理的，不能直接在后台任务中更新 UI 界面，必须使用 `slint::invoke_from_event_loop()` 把更新界面的逻辑包起来。在 slint 内部，它还是通过一个 channel queue 把里面的相关值发送到主 UI 线程来处理。看起来整个过程是自动的，如果不加这个函数，而是直接调用 UI 对象指针，会出现什么问题呢？
 
-没错，所有权问题！这可以看成是Rust的所有权系统在GUI领域的一次实践和验证，它可以在编译期间帮助我们发现和阻绝界面更新上的竞争问题。
+没错，所有权问题！这可以看成是 Rust 的所有权系统在 GUI 领域的一次实践和验证，它可以在编译期间帮助我们发现和阻绝界面更新上的竞争问题。
 
-这里，你可以想象一下，如果不创建后台任务，而是直接把业务逻辑写在回调函数里会怎样？也就是放在 `on_probe_objects()` 和 `on_probe_poses()` 中，你可以试一下。这里我分享一下我试验的结果：对于长时间执行的任务，Slint框架会主动把这些任务kill掉，以免对界面操作造成卡顿。
+这里，你可以想象一下，如果不创建后台任务，而是直接把业务逻辑写在回调函数里会怎样？也就是放在 `on_probe_objects()` 和 `on_probe_poses()` 中，你可以试一下。这里我分享一下我试验的结果：对于长时间执行的任务，Slint 框架会主动把这些任务 kill 掉，以免对界面操作造成卡顿。
 
 ### 改造 YOLOv8 示例
 
 剩下的主要工作就是看 `yolov8engine::start_engine(task, model, img_path)` 是怎么实现的了。
 
-我们在 [第 24 讲](https://time.geekbang.org/column/article/734943) 实现的YOLOv8的工具是一个命令行界面工具，使用 clap 实现。为了能够整合进现在这个GUI程序，我们首先应该对它的Args类型进行转换，转换成普通的结构体，结构体的字段一部分固定下来，一部分从UI界面传进来。
+我们在 [第 24 讲](https://time.geekbang.org/column/article/734943) 实现的 YOLOv8 的工具是一个命令行界面工具，使用 clap 实现。为了能够整合进现在这个 GUI 程序，我们首先应该对它的 Args 类型进行转换，转换成普通的结构体，结构体的字段一部分固定下来，一部分从 UI 界面传进来。
 
 ```plain
     let args = Args {
@@ -380,25 +368,23 @@ src/
 
 ```
 
-你会发现我们使用的是 2015 edition 的风格。这样做不丢人，很多人喜欢这种目录组织风格。这种风格还有一个好处是可以把第24讲的src代码直接拷贝进来，重命名成 yolov8engine，然后把里面的 main.rs 重命名成 mod.rs。整个代码的结构就重构完成了。
+你会发现我们使用的是 2015 edition 的风格。这样做不丢人，很多人喜欢这种目录组织风格。这种风格还有一个好处是可以把第 24 讲的 src 代码直接拷贝进来，重命名成 yolov8engine，然后把里面的 main.rs 重命名成 mod.rs。整个代码的结构就重构完成了。
 
 然后把 mod.rs 里面的 `fn main()` 函数改成 `start_engine(task, model, img_path)` 即可，这样整个代码结构也改造完成了，剩下的就是要处理一下函数参数的输入和返回值的类型。
 
-在第24讲的代码中， `run()` 函数没有把生成的新图片的path返回回来，我们将其返回回来，并进一步通过 `start_engine()` 函数的返回值返回给这个GUI程序的 `main()` 函数。然后整个业务就完成了。
+在第 24 讲的代码中， `run()` 函数没有把生成的新图片的 path 返回回来，我们将其返回回来，并进一步通过 `start_engine()` 函数的返回值返回给这个 GUI 程序的 `main()` 函数。然后整个业务就完成了。
 
 我把完成代码整理到 [这个地址](https://github.com/miketang84/jikeshijian/tree/master/26-slint-yolov8-demo) 了，你可以下载下来，按照说明运行一下看看效果，也可以基于这个代码随意改改，实现你的任何想法。
 
 ## 小结
 
-![](images/737452/2cba65908fe6ba1f7cd6f17e8ffc885e.jpg)
+这节课我们使用 Slint GUI 框架为 YOLOv8 对象和姿势引擎实现了一个图形化界面。有了这个 GUI 工具，任何人都可以来体验 Rust 的图像识别能力了。相比于命令行界面，我们将用户群体扩大到了普通用户。
 
-这节课我们使用Slint GUI框架为 YOLOv8 对象和姿势引擎实现了一个图形化界面。有了这个GUI工具，任何人都可以来体验Rust的图像识别能力了。相比于命令行界面，我们将用户群体扩大到了普通用户。
+Rust 应用的分发也很简单，将编译后的文件拷贝到另一台电脑上就可以运行了，只需要针对不同的平台分别编译不同的目标格式可执行文件。它不像 Python 实现的对象和姿势识别工具需要先安装一大堆依赖。
 
-Rust应用的分发也很简单，将编译后的文件拷贝到另一台电脑上就可以运行了，只需要针对不同的平台分别编译不同的目标格式可执行文件。它不像Python实现的对象和姿势识别工具需要先安装一大堆依赖。
+我们花了两节课的时间来熟悉使用 Slint GUI 框架。它是 Rust 社区冉冉升起的一个明星框架，目前虽然说不上成熟，但是胜在 **小巧、灵活，可定制性很强**。如果它缺失一些控件什么的，你也可以自己实现。
 
-我们花了两节课的时间来熟悉使用Slint GUI框架。它是Rust社区冉冉升起的一个明星框架，目前虽然说不上成熟，但是胜在 **小巧、灵活，可定制性很强**。如果它缺失一些控件什么的，你也可以自己实现。
-
-我们这两节课与第23、24讲结合在一起，做了两组Rust的AI工具。 **AI时代刚刚来临，Rust在AI领域有着巨大的潜力和机会。** AI本身覆盖面非常广，比如学术研究、算法实现、训练、推理、部署、云端计算、单机版模型、集群应用、工业应用、行业工具、终端设备、用户界面等等。未来使用Rust作为工具，也是一个相当好的切入点。
+我们这两节课与第 23、24 讲结合在一起，做了两组 Rust 的 AI 工具。 **AI 时代刚刚来临，Rust 在 AI 领域有着巨大的潜力和机会。** AI 本身覆盖面非常广，比如学术研究、算法实现、训练、推理、部署、云端计算、单机版模型、集群应用、工业应用、行业工具、终端设备、用户界面等等。未来使用 Rust 作为工具，也是一个相当好的切入点。
 
 ## 思考题
 

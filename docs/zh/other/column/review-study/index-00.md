@@ -1,11 +1,11 @@
-# 00-开篇词 | 为什么每个人都应该学会复盘？
+# 00-开篇词:为什么每个人都应该学会复盘？
 
 ![image-20240510111912573](./assets/image-20240510111912573.png)
 
-<audio controls="" title="开篇词 | 为什么每个人都应该学会复盘？">
+<audio controls="" title="开篇词:为什么每个人都应该学会复盘？">
   <source
     id="mp3"
-    src="/mp3/review-study/00-开篇词 | 为什么每个人都应该学会复盘.m4a"
+    src="/mp3/review-study/00-开篇词:为什么每个人都应该学会复盘.m4a"
   />
 </audio>
 

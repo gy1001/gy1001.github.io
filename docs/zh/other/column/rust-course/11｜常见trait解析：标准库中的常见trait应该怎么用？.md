@@ -1,17 +1,18 @@
-# 11｜常见trait解析：标准库中的常见trait应该怎么用？
-你好，我是Mike，今天我们一起来学习Rust中的常见trait。
+# 11 ｜常见 trait 解析：标准库中的常见 trait 应该怎么用？
 
-前面两节课我们已经讲过trait在Rust中的重要性了，这节课就是trait在Rust标准库中的应用。Rust标准库中包含大量的trait定义，甚至Rust自身的某些语言特性就是在这些trait的帮助下实现的。这些trait和标准库里的各种类型一起，构成了整个Rust生态的根基，只有了解它们才算真正了解Rust。
+你好，我是 Mike，今天我们一起来学习 Rust 中的常见 trait。
+
+前面两节课我们已经讲过 trait 在 Rust 中的重要性了，这节课就是 trait 在 Rust 标准库中的应用。Rust 标准库中包含大量的 trait 定义，甚至 Rust 自身的某些语言特性就是在这些 trait 的帮助下实现的。这些 trait 和标准库里的各种类型一起，构成了整个 Rust 生态的根基，只有了解它们才算真正了解 Rust。
 
 注：这节课大量代码来自 [Tour of Rust’s Standard Library Traits](https://github.com/pretzelhammer/rust-blog/blob/master/posts/tour-of-rusts-standard-library-traits.md)，我加了必要的注解和分析。
 
-学习完这节课的内容，你会对很多问题都豁然开朗。下面就让我们来学习标准库里一些比较常用的trait。
+学习完这节课的内容，你会对很多问题都豁然开朗。下面就让我们来学习标准库里一些比较常用的 trait。
 
-## 标准库中的常用trait
+## 标准库中的常用 trait
 
 ### Default
 
-我们来看Default trait的定义以及对Default trait的实现和使用。
+我们来看 Default trait 的定义以及对 Default trait 的实现和使用。
 
 ```plain
 trait Default {
@@ -37,7 +38,7 @@ fn main() {
 
 ```
 
-还有其他一些地方用到了Default，比如 `Option<T>` 的 `unwrap_or_default()`，在类型参数上调用 `default()` 函数。
+还有其他一些地方用到了 Default，比如 `Option<T>` 的 `unwrap_or_default()`，在类型参数上调用 `default()` 函数。
 
 ```plain
 fn paint(color: Option<Color>) {
@@ -56,7 +57,7 @@ fn guarantee_length<T: Default>(mut vec: Vec<T>, min_len: usize) -> Vec<T> {
 
 ```
 
-前面讲过，如果是struct，还可以使用部分更新语法，这个时候其实是Default在发挥作用。
+前面讲过，如果是 struct，还可以使用部分更新语法，这个时候其实是 Default 在发挥作用。
 
 ```plain
 #[derive(Default)]
@@ -97,7 +98,7 @@ impl Color {
 
 ```
 
-Rust标准库实际给我们提供了一个标注，也就是 `#[derive()]` 里面放 Default，方便我们为结构体自动实现Default trait。
+Rust 标准库实际给我们提供了一个标注，也就是 `#[derive()]` 里面放 Default，方便我们为结构体自动实现 Default trait。
 
 ```plain
 #[derive(Default)]
@@ -112,13 +113,13 @@ struct Color2(u8, u8, u8);
 
 ```
 
-注意这里的细节，我们用 `#[derive()]` 在两个结构体上作了标注，这里面出现的这个 Default 不是trait，它是一个同名的派生宏（我们后面会讲到）。这种派生宏标注帮助我们实现了 Default trait。Rustc能正确区分Default到底是宏还是trait，因为它们出现的位置不一样。
+注意这里的细节，我们用 `#[derive()]` 在两个结构体上作了标注，这里面出现的这个 Default 不是 trait，它是一个同名的派生宏（我们后面会讲到）。这种派生宏标注帮助我们实现了 Default trait。Rustc 能正确区分 Default 到底是宏还是 trait，因为它们出现的位置不一样。
 
-为什么可以自动实现Default trait呢？因为Color里面的类型是基础类型u8，而u8是实现了Default trait的，默认值为 0。
+为什么可以自动实现 Default trait 呢？因为 Color 里面的类型是基础类型 u8，而 u8 是实现了 Default trait 的，默认值为 0。
 
 ### Display
 
-我们看Display trait的定义。
+我们看 Display trait 的定义。
 
 ```plain
 trait Display {
@@ -127,7 +128,7 @@ trait Display {
 
 ```
 
-Display trait对应于格式化符号 `"{}"`，比如 `println!("{}", s)`，用于决定一个类型如何显示，其实就是把类型转换成字符串表达。Display需要我们自己手动去实现。
+Display trait 对应于格式化符号 `"{}"`，比如 `println!("{}", s)`，用于决定一个类型如何显示，其实就是把类型转换成字符串表达。Display 需要我们自己手动去实现。
 
 示例：
 
@@ -158,7 +159,7 @@ fn main() {
 
 ### ToString
 
-我们来看ToString trait 定义。
+我们来看 ToString trait 定义。
 
 ```plain
 trait ToString {
@@ -167,14 +168,14 @@ trait ToString {
 
 ```
 
-它提供了一个 to\_string() 方法，方便把各种类型实例转换成字符串。但实际上不需要自己去给类型实现ToString trait，因为标准库已经给我们做了总实现（ [第 9 讲](https://time.geekbang.org/column/article/723496) 提到过），像下面这个样子。
+它提供了一个 to_string() 方法，方便把各种类型实例转换成字符串。但实际上不需要自己去给类型实现 ToString trait，因为标准库已经给我们做了总实现（ [第 9 讲](https://time.geekbang.org/column/article/723496) 提到过），像下面这个样子。
 
 ```plain
 impl<T: Display> ToString for T
 
 ```
 
-也就是说，凡是实现了Display的就实现了ToString。这两个功能本质是一样的，就是把类型转换成字符串表达。只不过Display侧重于展现，ToString侧重于类型转换。下面这个示例证明这两者是等价的。
+也就是说，凡是实现了 Display 的就实现了 ToString。这两个功能本质是一样的，就是把类型转换成字符串表达。只不过 Display 侧重于展现，ToString 侧重于类型转换。下面这个示例证明这两者是等价的。
 
 ```plain
 #[test] // ✅
@@ -206,11 +207,11 @@ let s = obj.to_string();
 
 ### Debug
 
-Debug 跟 Display 很像，也主要是用于调试打印。打印就需要指定格式，区别在于Debug trait 是配对 `"{:?}"` 格式的，Display是配对 `"{}"` 的。它们本身都是将类型表示或转换成 String 类型。一般来说，Debug的排版信息比Display要多一点，因为它是给程序员调试用的，不是给最终用户看的。Debug还配套了一个美化版本格式 `"{:#?}"`，用来把类型打印得更具结构化一些，适合调试的时候查看，比如json结构会展开打印。
+Debug 跟 Display 很像，也主要是用于调试打印。打印就需要指定格式，区别在于 Debug trait 是配对 `"{:?}"` 格式的，Display 是配对 `"{}"` 的。它们本身都是将类型表示或转换成 String 类型。一般来说，Debug 的排版信息比 Display 要多一点，因为它是给程序员调试用的，不是给最终用户看的。Debug 还配套了一个美化版本格式 `"{:#?}"`，用来把类型打印得更具结构化一些，适合调试的时候查看，比如 json 结构会展开打印。
 
-Rust标准库提供了Debug宏。一般来说，我们都是以这个宏为目标类型自动生成Debug trait，而不是由我们自己手动去实现，这一点和Display正好相对，std标准库里并没有提供一个 Display 宏，来帮助我们自动实现 Display trait，需要我们手动实现它。
+Rust 标准库提供了 Debug 宏。一般来说，我们都是以这个宏为目标类型自动生成 Debug trait，而不是由我们自己手动去实现，这一点和 Display 正好相对，std 标准库里并没有提供一个 Display 宏，来帮助我们自动实现 Display trait，需要我们手动实现它。
 
-再提醒你一下，Rust的类型能够自动被derive的条件是，它里面的每个元素都能被derive，比如下面这个结构体里的每个字段，都是i32类型的，这种基础类型在标准库里已经被实现过Debug trait了，所以可以直接在Point上做derive为Point类型实现Debug trait。这个原则适用于所有trait，后面不再赘述。
+再提醒你一下，Rust 的类型能够自动被 derive 的条件是，它里面的每个元素都能被 derive，比如下面这个结构体里的每个字段，都是 i32 类型的，这种基础类型在标准库里已经被实现过 Debug trait 了，所以可以直接在 Point 上做 derive 为 Point 类型实现 Debug trait。这个原则适用于所有 trait，后面不再赘述。
 
 ```plain
 #[derive(Debug)]
@@ -221,16 +222,16 @@ struct Point {
 
 ```
 
-### PartialEq和Eq
+### PartialEq 和 Eq
 
-如果一个类型上实现了PartialEq，那么它就能比较两个值是否相等。这种可比较性满足数学上的对称性和传递性，我们通过两个例子具体来看。
+如果一个类型上实现了 PartialEq，那么它就能比较两个值是否相等。这种可比较性满足数学上的对称性和传递性，我们通过两个例子具体来看。
 
 - 对称性（symmetry）： `a == b` 导出 `b == a`。
 - 传递性（transitivity）： `a == b && b == c` 导出 `a == c`。
 
-而Eq定义为PartialEq的subtrait，在PartialEq的对称性和传递性的基础上，又添加了自反性，也就是对所有 `a` 都有 `a == a`。最典型的就是Rust中的浮点数只实现了PartialEq，没实现Eq，因为根据IEEE的规范，浮点数中存在一个NaN，它不等于自己，也就是 NaN ≠ NaN。而对整数来说，PartialEq和Eq都实现了。
+而 Eq 定义为 PartialEq 的 subtrait，在 PartialEq 的对称性和传递性的基础上，又添加了自反性，也就是对所有 `a` 都有 `a == a`。最典型的就是 Rust 中的浮点数只实现了 PartialEq，没实现 Eq，因为根据 IEEE 的规范，浮点数中存在一个 NaN，它不等于自己，也就是 NaN ≠ NaN。而对整数来说，PartialEq 和 Eq 都实现了。
 
-如果一个类型，它的所有字段都实现了PartialEq，那么使用标准库中定义的PartialEq派生宏，我们可以为目标类型自动实现可比较能力，用==号，或者用 `assert_eq!()` 做判断。
+如果一个类型，它的所有字段都实现了 PartialEq，那么使用标准库中定义的 PartialEq 派生宏，我们可以为目标类型自动实现可比较能力，用==号，或者用 `assert_eq!()` 做判断。
 
 ```plain
 #[derive(PartialEq, Debug)]    // 注意这一句
@@ -253,11 +254,11 @@ fn example_compare_collections<T: PartialEq>(vec1: Vec<T>, vec2: Vec<T>) {
 
 ```
 
-### PartialOrd和Ord
+### PartialOrd 和 Ord
 
-PartialOrd和PartialEq差不多，PartialEq只判断相等或不相等，PartialOrd在这个基础上进一步判断是小于、小于等于、大于还是大于等于。可以看到，它就是为排序功能准备的。
+PartialOrd 和 PartialEq 差不多，PartialEq 只判断相等或不相等，PartialOrd 在这个基础上进一步判断是小于、小于等于、大于还是大于等于。可以看到，它就是为排序功能准备的。
 
-PartialOrd被定义为 PartialEq的subtrait。它们在类型上可以用过程宏一起derive实现。
+PartialOrd 被定义为 PartialEq 的 subtrait。它们在类型上可以用过程宏一起 derive 实现。
 
 ```plain
 #[derive(PartialEq, PartialOrd)]
@@ -275,13 +276,13 @@ enum Stoplight {
 
 ```
 
-类似的，Ord 定义为 Eq + PartialOrd 的 subtrait。如果我们为一个类型实现了 Ord，那么对那个类型的所有值，我们可以做出一个严格的总排序，比如u8，我们可以严格地从0排到255，形成一个确定的从小到大的序列。
+类似的，Ord 定义为 Eq + PartialOrd 的 subtrait。如果我们为一个类型实现了 Ord，那么对那个类型的所有值，我们可以做出一个严格的总排序，比如 u8，我们可以严格地从 0 排到 255，形成一个确定的从小到大的序列。
 
 同样的，浮点数实现了 PartialOrd，但是没实现 Ord。
 
-由于Ord严格的顺序性，如果一个类型实现了Ord，那么这个类型可以被用作BTreeMap或BTreeSet的key。
+由于 Ord 严格的顺序性，如果一个类型实现了 Ord，那么这个类型可以被用作 BTreeMap 或 BTreeSet 的 key。
 
-> BTreeMap、BTreeSet：相对于HashMap和HashSet，是两种可排序结构。
+> BTreeMap、BTreeSet：相对于 HashMap 和 HashSet，是两种可排序结构。
 
 示例：
 
@@ -309,9 +310,9 @@ fn example_sort<T: Ord>(mut sortable: Vec<T>) -> Vec<T> {
 
 ### 运算符重载
 
-Rust提供了一个Add trait，用来对加号（+）做自定义，也就是运算符重载。
+Rust 提供了一个 Add trait，用来对加号（+）做自定义，也就是运算符重载。
 
-你可以看一下Add的定义，它带一个类型参数Rhs，这里的类型参数可以是任意名字，默认类型是Self，一个关联类型Output，一个方法add()。
+你可以看一下 Add 的定义，它带一个类型参数 Rhs，这里的类型参数可以是任意名字，默认类型是 Self，一个关联类型 Output，一个方法 add()。
 
 ```plain
 trait Add<Rhs = Self> {
@@ -350,7 +351,7 @@ fn main() {
 
 ```
 
-实际上，Rust标准库提供了一套完整的与运算符对应的trait，你在 [这里](https://doc.rust-lang.org/std/ops/index.html) 可以找到可重载的运算符。你可以按类似的方式练习如何自定义各种运算符。
+实际上，Rust 标准库提供了一套完整的与运算符对应的 trait，你在 [这里](https://doc.rust-lang.org/std/ops/index.html) 可以找到可重载的运算符。你可以按类似的方式练习如何自定义各种运算符。
 
 ### Clone
 
@@ -363,7 +364,7 @@ trait Clone {
 
 ```
 
-这个trait给目标类型提供了clone()方法用来完整地克隆实例。使用标准库里面提供的Clone派生宏可以方便地为目标类型实现Clone trait。
+这个 trait 给目标类型提供了 clone()方法用来完整地克隆实例。使用标准库里面提供的 Clone 派生宏可以方便地为目标类型实现 Clone trait。
 
 比如：
 
@@ -376,7 +377,7 @@ struct Point {
 
 ```
 
-因为每一个字段（u32类型）都实现了Clone，所以通过derive，自动为Point类型实现了Clone trait。实现后，Point的实例 point 使用 point.clone() 就可以把自己克隆一份了。
+因为每一个字段（u32 类型）都实现了 Clone，所以通过 derive，自动为 Point 类型实现了 Clone trait。实现后，Point 的实例 point 使用 point.clone() 就可以把自己克隆一份了。
 
 通过方法的签名，可以看到方法使用的是实例的不可变引用。
 
@@ -387,32 +388,32 @@ struct Point {
 
 这里面有两种情况。
 
-- 第一种是已经拿到实例的所有权，clone一份生成一个新的所有权并被局部变量所持有。
-- 第二种是只拿到一个实例的引用，想拿到它的所有权，如果这个类型实现了Clone trait，那么就可以clone一份拿到这个所有权。
+- 第一种是已经拿到实例的所有权，clone 一份生成一个新的所有权并被局部变量所持有。
+- 第二种是只拿到一个实例的引用，想拿到它的所有权，如果这个类型实现了 Clone trait，那么就可以 clone 一份拿到这个所有权。
 
-clone() 是对象的深度拷贝，可能会有比较大的额外负载，但是就大多数情况来说其实还好。不要担心在Rust中使用clone()，先把程序功能跑通最重要。Rust的代码，性能一般都不会太差，毕竟起点很高。
+clone() 是对象的深度拷贝，可能会有比较大的额外负载，但是就大多数情况来说其实还好。不要担心在 Rust 中使用 clone()，先把程序功能跑通最重要。Rust 的代码，性能一般都不会太差，毕竟起点很高。
 
 注：浅拷贝是按值拷贝一块连续的内存，只复制一层，不会去深究这个值里面是否有到其它内存资源的引用。与之相对，深拷贝就会把这些引用对象递归全部拷贝。
 
-在Rust生态的代码中，我们经常看到clone()。为什么呢？因为它把对实例引用的持有转换成了对对象所有权的持有。一旦我们拿到了所有权，很多代码写起来就比较轻松了。
+在 Rust 生态的代码中，我们经常看到 clone()。为什么呢？因为它把对实例引用的持有转换成了对对象所有权的持有。一旦我们拿到了所有权，很多代码写起来就比较轻松了。
 
 ### Copy
 
-接下来，我们看Copy trait的定义。
+接下来，我们看 Copy trait 的定义。
 
 ```plain
 trait Copy: Clone {}
 
 ```
 
-定义为Clone的subtrait，并且不包含任何内容，仅仅是一个标记（marker）。有趣的是，我们不能自己为自定义类型实现这个trait。比如下面这个示例就是不行的。
+定义为 Clone 的 subtrait，并且不包含任何内容，仅仅是一个标记（marker）。有趣的是，我们不能自己为自定义类型实现这个 trait。比如下面这个示例就是不行的。
 
 ```plain
 impl Copy for Point {} // 这是不行的
 
 ```
 
-但是Rust标准库提供了Copy过程宏，可以让我们自动为目标类型实现Copy trait。
+但是 Rust 标准库提供了 Copy 过程宏，可以让我们自动为目标类型实现 Copy trait。
 
 ```plain
 #[derive(Copy, Clone)]
@@ -420,9 +421,9 @@ struct SomeType;
 
 ```
 
-因为Copy是Clone的subtrait。所以理所当然要把Clone trait也一起实现，我们在这里一次性derive过来。
+因为 Copy 是 Clone 的 subtrait。所以理所当然要把 Clone trait 也一起实现，我们在这里一次性 derive 过来。
 
-Copy和Clone的区别是，Copy是浅拷贝只复制一层，不会去深究这个值里面是否有到其他内存资源的引用，比如一个字符串的动态数组。
+Copy 和 Clone 的区别是，Copy 是浅拷贝只复制一层，不会去深究这个值里面是否有到其他内存资源的引用，比如一个字符串的动态数组。
 
 ```plain
 struct Atype {
@@ -439,9 +440,9 @@ fn main() {
 
 ```
 
-代码第10行的操作是将a的所有权移动给b（ [第 2 讲](https://time.geekbang.org/column/article/718916) 的内容）。
+代码第 10 行的操作是将 a 的所有权移动给 b（ [第 2 讲](https://time.geekbang.org/column/article/718916) 的内容）。
 
-如果我们给这个结构体实现了Clone trait的话，我们可以调用.clone() 来产生一份新的所有权。
+如果我们给这个结构体实现了 Clone trait 的话，我们可以调用.clone() 来产生一份新的所有权。
 
 ```plain
 #[derive(Clone, Debug)]
@@ -469,9 +470,9 @@ Atype { num: 200, a_vec: [11, 21, 31] }
 
 ```
 
-通过例子可以看到，clone()一份新的所有权出来，b改动的值不影响a的值。
+通过例子可以看到，clone()一份新的所有权出来，b 改动的值不影响 a 的值。
 
-而一旦你想在 Atype 上实现 Copy trait的话，就会报错。
+而一旦你想在 Atype 上实现 Copy trait 的话，就会报错。
 
 ```plain
 error[E0204]: the trait `Copy` cannot be implemented for this type
@@ -485,9 +486,9 @@ error[E0204]: the trait `Copy` cannot be implemented for this type
 
 ```
 
-它说动态数组字段 a\_vec 没有实现Copy trait，所以你不能对Atype实现Copy trait。原因也好理解，Vec是一种所有权结构，如果你在它上面实现了Copy，那再赋值的时候，就会出现对同一份资源的两个指向，冲突了！
+它说动态数组字段 a_vec 没有实现 Copy trait，所以你不能对 Atype 实现 Copy trait。原因也好理解，Vec 是一种所有权结构，如果你在它上面实现了 Copy，那再赋值的时候，就会出现对同一份资源的两个指向，冲突了！
 
-一旦一个类型实现了Copy，它就会具备一个特别重要的特性： **再赋值的时候会复制一份自身**。那么就相当于新创建一份所有权。我们来看下面这个值全在栈上的类型。
+一旦一个类型实现了 Copy，它就会具备一个特别重要的特性： **再赋值的时候会复制一份自身**。那么就相当于新创建一份所有权。我们来看下面这个值全在栈上的类型。
 
 ```plain
 #[derive(Clone)]
@@ -503,7 +504,7 @@ fn main() {
 
 ```
 
-我们对 Point 实现Clone和Copy。
+我们对 Point 实现 Clone 和 Copy。
 
 ```plain
 #[derive(Copy, Clone)]
@@ -520,27 +521,27 @@ fn main() {
 
 ```
 
-仔细体会一下，现在你知道我们在第2讲里面讲到的复制与移动的语义区别根源在哪里了吧！
+仔细体会一下，现在你知道我们在第 2 讲里面讲到的复制与移动的语义区别根源在哪里了吧！
 
-你可能会问，Point结构体里面的字段其实全都是固定尺寸的，并且u32是copy语义的，按理说Point也是编译时已知固定尺寸的，为什么它默认不实现copy语义呢？
+你可能会问，Point 结构体里面的字段其实全都是固定尺寸的，并且 u32 是 copy 语义的，按理说 Point 也是编译时已知固定尺寸的，为什么它默认不实现 copy 语义呢？
 
-这其实是Rust设计者故意这么做的。因为Copy trait其实关联到赋值语法，仅仅从这个语法（let a = b;），很难一下子看出来这到底是copy还是move，它是一种 **隐式行为**。
+这其实是 Rust 设计者故意这么做的。因为 Copy trait 其实关联到赋值语法，仅仅从这个语法（let a = b;），很难一下子看出来这到底是 copy 还是 move，它是一种 **隐式行为**。
 
-而在所有权的第一设计原则框架下，Rust默认选择了move语义。所以方便起见，Rust设计者就只让最基础的那些类型，比如u32、bool等具有copy语义。而用户自定义的类型，一概默认move语义。如果用户想给自定义类型赋予copy语义内涵，那么他需要显式地在那个类型上添加Copy的derive。
+而在所有权的第一设计原则框架下，Rust 默认选择了 move 语义。所以方便起见，Rust 设计者就只让最基础的那些类型，比如 u32、bool 等具有 copy 语义。而用户自定义的类型，一概默认 move 语义。如果用户想给自定义类型赋予 copy 语义内涵，那么他需要显式地在那个类型上添加 Copy 的 derive。
 
-我们再回过头来看Clone，一个类型实现了Clone后，需要显式地调用 .clone() 方法才会导致对象克隆，这就在代码里面留下了足迹。而如果一个类型实现了Copy，那么它在用 = 号对实例再赋值的时候就发生了复制，这里缺少了附加的足迹。这就为潜在的Bug以及性能的降低埋下了隐患，并且由于没有附加足迹，导致后面再回头来审查的时候非常困难。
+我们再回过头来看 Clone，一个类型实现了 Clone 后，需要显式地调用 .clone() 方法才会导致对象克隆，这就在代码里面留下了足迹。而如果一个类型实现了 Copy，那么它在用 = 号对实例再赋值的时候就发生了复制，这里缺少了附加的足迹。这就为潜在的 Bug 以及性能的降低埋下了隐患，并且由于没有附加足迹，导致后面再回头来审查的时候非常困难。
 
-试想，如果是.clone()，那么我们只需要用代码搜索工具搜索代码哪些地方出现了clone函数就可以了。这个设计，在 `Option<T>` 和 `Result<T, E>` 的 `unwrap()` 系列函数上也有体现。
+试想，如果是.clone()，那么我们只需要用代码搜索工具搜索代码哪些地方出现了 clone 函数就可以了。这个设计，在 `Option<T>` 和 `Result<T, E>` 的 `unwrap()` 系列函数上也有体现。
 
-**显式地留下足迹，是Rust语言设计重要的哲学之一**。
+**显式地留下足迹，是 Rust 语言设计重要的哲学之一**。
 
-至于Copy为什么要定义成Clone的subtrait，而不是反过来，也是跟这个设计哲学相关。可以这么说，一般情况下，Rust鼓励优先使用Clone而不鼓励使用Copy，于是让开发者在derive Copy的时候，也必须derive Clone，相当于多打了几个字符，多付出了一点代价。也许开发者这时会想，可能Clone就能满足我的要求了，能在结构体上的derive宏里面少打几个字符，也是一件好事儿。
+至于 Copy 为什么要定义成 Clone 的 subtrait，而不是反过来，也是跟这个设计哲学相关。可以这么说，一般情况下，Rust 鼓励优先使用 Clone 而不鼓励使用 Copy，于是让开发者在 derive Copy 的时候，也必须 derive Clone，相当于多打了几个字符，多付出了一点代价。也许开发者这时会想，可能 Clone 就能满足我的要求了，能在结构体上的 derive 宏里面少打几个字符，也是一件好事儿。
 
-还有一个原因其实是，Clone和Copy在本质上其实是一样的，都是内存的按位复制，只是复制的规则有一些区别。
+还有一个原因其实是，Clone 和 Copy 在本质上其实是一样的，都是内存的按位复制，只是复制的规则有一些区别。
 
 ### ToOwned
 
-ToOwned相当于是Clone更宽泛的版本。ToOwned给类型提供了一个 `to_owned()` 方法，可以将引用转换为所有权实例。
+ToOwned 相当于是 Clone 更宽泛的版本。ToOwned 给类型提供了一个 `to_owned()` 方法，可以将引用转换为所有权实例。
 
 常见的比如：
 
@@ -550,27 +551,23 @@ let s: String = a.to_owned();
 
 ```
 
-通过查看标准库和第三方库接口文档，你可以确定有没实现这个trait。
+通过查看标准库和第三方库接口文档，你可以确定有没实现这个 trait。
 
 ### Deref
 
-Deref trait可以用来把一种类型转换成另一种类型，但是要在引用符号&、点号操作符 . 或其他智能指针的触发下才会产生转换。比如标准库里最常见的 &String 可以自动转换到 &str（请回顾 [第 4 讲](https://time.geekbang.org/column/article/720426)），就是因为String类型实现了Deref trait。
+Deref trait 可以用来把一种类型转换成另一种类型，但是要在引用符号&、点号操作符 . 或其他智能指针的触发下才会产生转换。比如标准库里最常见的 &String 可以自动转换到 &str（请回顾 [第 4 讲](https://time.geekbang.org/column/article/720426)），就是因为 String 类型实现了 Deref trait。
 
-![11-2](images/724942/6ec1b4f409fe430b14884d66a9354d46.jpg)
+还有 `&Vec<T>` 可以自动转换为 `&[T]`，也是因为 `Vec[T]` 实现了 Deref。
 
-还有 `&Vec<T>` 可以自动转换为 `&[T]`，也是因为 `Vec[T]` 实现了Deref。
+到这里，Rust 里很多魔法就开始揭开神秘面纱了。有了这些 trait 以及在各种类型上的实现，Rust 让我们可以写出顺应直觉、赏心悦目、功能强大的代码。
 
-![11-1](images/724942/801214ebaf258a873326b7cc047c1b58.jpg)
-
-到这里，Rust里很多魔法就开始揭开神秘面纱了。有了这些trait以及在各种类型上的实现，Rust让我们可以写出顺应直觉、赏心悦目、功能强大的代码。
-
-你还可以在标准库文档中搜索Deref，查阅所有实现了Deref trait的 [implementors](https://doc.rust-lang.org/std/ops/trait.Deref.html#implementors)。
+你还可以在标准库文档中搜索 Deref，查阅所有实现了 Deref trait 的 [implementors](https://doc.rust-lang.org/std/ops/trait.Deref.html#implementors)。
 
 这里需要提醒你一下，有人尝试 [用 Deref 机制去实现 OOP 继承](https://github.com/pretzelhammer/rust-blog/blob/master/posts/tour-of-rusts-standard-library-traits.md#deref--derefmut)，但是那是徒劳和不完整的，有兴趣的话你可以看一下我给出的链接。
 
 ### Drop
 
-Drop trait用于给类型做自定义垃圾清理（回收）。
+Drop trait 用于给类型做自定义垃圾清理（回收）。
 
 ```plain
 trait Drop {
@@ -579,7 +576,7 @@ trait Drop {
 
 ```
 
-实现了这个trait的类型的实例在走出作用域的时候，触发调用drop()方法，这个调用发生在这个实例被销毁之前。你可以看一下它的使用方式。
+实现了这个 trait 的类型的实例在走出作用域的时候，触发调用 drop()方法，这个调用发生在这个实例被销毁之前。你可以看一下它的使用方式。
 
 ```plain
 struct A;
@@ -591,11 +588,11 @@ impl Drop for A {
 
 ```
 
-一般来说，我们不需要为自己的类型实现这个trait，除非遇到特殊情况，比如我们要调用外部的C库函数，然后在C那边分配了资源，由C库里的函数负责释放，这个时候我们就要在Rust的包装类型（对C库中类型的包装）上实现Drop，并调用那个C库中释放资源的函数。课程最后两讲FFI编程中，你会看到Drop的具体使用。
+一般来说，我们不需要为自己的类型实现这个 trait，除非遇到特殊情况，比如我们要调用外部的 C 库函数，然后在 C 那边分配了资源，由 C 库里的函数负责释放，这个时候我们就要在 Rust 的包装类型（对 C 库中类型的包装）上实现 Drop，并调用那个 C 库中释放资源的函数。课程最后两讲 FFI 编程中，你会看到 Drop 的具体使用。
 
-### 闭包相关trait
+### 闭包相关 trait
 
-标准库中有3个trait与闭包相关，分别是FnOnce、FnMut、Fn。你可以看一下它们的定义。
+标准库中有 3 个 trait 与闭包相关，分别是 FnOnce、FnMut、Fn。你可以看一下它们的定义。
 
 ```plain
 trait FnOnce<Args> {
@@ -619,21 +616,21 @@ let get_range_count = || range.count();
 
 ```
 
-代码里的这个 get\_range\_count 就是闭包，range是被这个闭包捕获的环境变量。
+代码里的这个 get_range_count 就是闭包，range 是被这个闭包捕获的环境变量。
 
-虽然说它是一种函数，但是不通过fn进行定义。在Rust中，并不把这个闭包的类型处理成fn这种函数指针类型，而是有单独的类型定义。
+虽然说它是一种函数，但是不通过 fn 进行定义。在 Rust 中，并不把这个闭包的类型处理成 fn 这种函数指针类型，而是有单独的类型定义。
 
-那么，具体是什么类型呢？其实我们也不知道。闭包的类型是由Rust编译器在编译时确定的，并且在确定类型的时候要根据这个闭包捕获上下文环境变量时的行为来确定。
+那么，具体是什么类型呢？其实我们也不知道。闭包的类型是由 Rust 编译器在编译时确定的，并且在确定类型的时候要根据这个闭包捕获上下文环境变量时的行为来确定。
 
 总的来说有三种行为（⚠️ 所有权三态再现）。
 
 1. 获取了上下文环境变量的所有权，对应 FnOnce。
-2. 只获取了上下文环境变量的&mut引用，对应 FnMut。
+2. 只获取了上下文环境变量的&mut 引用，对应 FnMut。
 3. 只获取了上下文环境变量的&引用，对应 Fn。
 
-根据这三种不同的行为，Rust编译器在编译时把闭包生成为这三种不同类型中的一种。这三种不同类型的闭包，具体类型形式我们不知道，Rust没有暴露给我们。但是Rust给我们暴露了FnOnce、FnMut、Fn这3个trait，就刚好对应于那三种类型。结合我们前面讲到的trait object，就能在我们的代码中对那些类型进行描述了。
+根据这三种不同的行为，Rust 编译器在编译时把闭包生成为这三种不同类型中的一种。这三种不同类型的闭包，具体类型形式我们不知道，Rust 没有暴露给我们。但是 Rust 给我们暴露了 FnOnce、FnMut、Fn 这 3 个 trait，就刚好对应于那三种类型。结合我们前面讲到的 trait object，就能在我们的代码中对那些类型进行描述了。
 
-FnOnce代表的闭包类型只能被调用一次，比如；
+FnOnce 代表的闭包类型只能被调用一次，比如；
 
 ```plain
 fn main() {
@@ -647,7 +644,7 @@ fn main() {
 
 再调用就报错了。
 
-FnMut代表的闭包类型能被调用多次，并且能修改上下文环境变量的值，不过有一些副作用，在某些情况下可能会导致错误或者不可预测的行为。比如：
+FnMut 代表的闭包类型能被调用多次，并且能修改上下文环境变量的值，不过有一些副作用，在某些情况下可能会导致错误或者不可预测的行为。比如：
 
 ```plain
 fn main() {
@@ -678,7 +675,7 @@ fn main() {
 
 ```
 
-另外，fn这种函数指针，用在不需要捕获上下文环境变量的场景，比如：
+另外，fn 这种函数指针，用在不需要捕获上下文环境变量的场景，比如：
 
 ```plain
 fn add_one(x: i32) -> i32 {
@@ -698,7 +695,7 @@ fn main() {
 
 ### `From<T>` 和 `Into<T>`
 
-接下来，我们看 Rust 标准库中的两个关联的 trait `From<T>` 和 `Into<T>`，它们用于类型转换。 `From<T>` 可以把类型T转为自己，而 `Into<T>` 可以把自己转为类型T。
+接下来，我们看 Rust 标准库中的两个关联的 trait `From<T>` 和 `Into<T>`，它们用于类型转换。 `From<T>` 可以把类型 T 转为自己，而 `Into<T>` 可以把自己转为类型 T。
 
 ```plain
 trait From<T> {
@@ -710,7 +707,7 @@ trait Into<T> {
 
 ```
 
-可以看到它们是互逆的trait。实际上，Rust只允许我们实现 `From<T>`，因为实现了From后，自动就实现了Into，请看标准库里的这个实现。
+可以看到它们是互逆的 trait。实际上，Rust 只允许我们实现 `From<T>`，因为实现了 From 后，自动就实现了 Into，请看标准库里的这个实现。
 
 ```plain
 impl<T, U> Into<U> for T
@@ -724,7 +721,7 @@ where
 
 ```
 
-对一个类型实现了From后，就可以像下面这样约束和使用。
+对一个类型实现了 From 后，就可以像下面这样约束和使用。
 
 ```plain
 fn function<T>(t: T)
@@ -768,9 +765,9 @@ fn example() {
 
 ```
 
-其实From是单向的。对于两个类型要互相转的话，是需要互相实现From的。
+其实 From 是单向的。对于两个类型要互相转的话，是需要互相实现 From 的。
 
-本身， `From<T>` 和 `Into<T>` 都隐含了所有权， `From<T>` 的Self是具有所有权的， `Into<T>` 的T也是具有所有权的。 `Into<T>` 有个常用的比 `From<T>` 更自然的场景是，如果你已经拿到了一个变量，想把它变成具有所有权的值，Into写起来更顺手。因为 `into()` 是方法，而 `from()` 是关联函数。
+本身， `From<T>` 和 `Into<T>` 都隐含了所有权， `From<T>` 的 Self 是具有所有权的， `Into<T>` 的 T 也是具有所有权的。 `Into<T>` 有个常用的比 `From<T>` 更自然的场景是，如果你已经拿到了一个变量，想把它变成具有所有权的值，Into 写起来更顺手。因为 `into()` 是方法，而 `from()` 是关联函数。
 
 比如：
 
@@ -799,7 +796,7 @@ impl Person {
 
 ### TryFrom TryInto
 
-`TryFrom<T>` 和 `TryInto<T>` 是 `From<T>` 和 `Into<T>` 的可失败版本。如果你认为转换可能会出现失败的情况，就选择这两个trait来实现。
+`TryFrom<T>` 和 `TryInto<T>` 是 `From<T>` 和 `Into<T>` 的可失败版本。如果你认为转换可能会出现失败的情况，就选择这两个 trait 来实现。
 
 ```plain
 trait TryFrom<T> {
@@ -814,7 +811,7 @@ trait TryInto<T> {
 
 ```
 
-可以看到，调用 `try_from()` 和 `try_into()` 后返回的是Result，你需要对Result进行处理。
+可以看到，调用 `try_from()` 和 `try_into()` 后返回的是 Result，你需要对 Result 进行处理。
 
 ### FromStr
 
@@ -828,7 +825,7 @@ trait FromStr {
 
 ```
 
-其实我们前面已经遇到过这个trait，它就是字符串的 `parse()` 方法背后的trait。
+其实我们前面已经遇到过这个 trait，它就是字符串的 `parse()` 方法背后的 trait。
 
 ```plain
 use std::str::FromStr;
@@ -854,7 +851,7 @@ trait AsRef<T> {
 
 ```
 
-它把自身的引用转换成目标类型的引用。和Deref的区别是， `**deref()` 是隐式调用的，而 `as_ref()` 需要你显式地调用\*\*。所以代码会更清晰，出错的机会也会更少。
+它把自身的引用转换成目标类型的引用。和 Deref 的区别是， `**deref()` 是隐式调用的，而 `as_ref()` 需要你显式地调用\*\*。所以代码会更清晰，出错的机会也会更少。
 
 `AsRef<T>` 可以让函数参数中传入的类型更加多样化，不管是引用类型还是具有所有权的类型，都可以传递。比如；
 
@@ -884,22 +881,20 @@ fn example(slice: &str, borrow: &String, owned: String) {
 
 ```
 
-在这个例子里，具有所有权的String字符串也可以直接传入参数中了，相对于 &str 的参数类型表达更加扩展了一步。
+在这个例子里，具有所有权的 String 字符串也可以直接传入参数中了，相对于 &str 的参数类型表达更加扩展了一步。
 
 你可以把 Deref 看成是隐式化（或自动化）+弱化版本的 `AsRef<T>`。
 
 ## 小结
 
-这节课我们快速过了一遍标准库里最常见的一些trait，内容比较多。你可以先有个印象，后面遇到的时候再回过头来查阅。
+这节课我们快速过了一遍标准库里最常见的一些 trait，内容比较多。你可以先有个印象，后面遇到的时候再回过头来查阅。
 
-![](images/724942/189778d381ce4bbe1e25e0426fc82a70.jpg)
+这些 trait 非常重要，它们一起构成了 Rust 生态宏伟蓝图的基础。很多前面讲到的一些神奇的“魔法”都在这节课揭开了面纱。trait 这种设计真的给 Rust 带来了强大的表达力和灵活性，对它理解越深刻，越能体会 Rust 的厉害。trait 完全解构了从 C++、Java 以来编程语言的发展范式，从紧耦合转换成松散的平铺式，让新特性的添加不会对语言本身造成沉重的负担。
 
-这些trait非常重要，它们一起构成了Rust生态宏伟蓝图的基础。很多前面讲到的一些神奇的“魔法”都在这节课揭开了面纱。trait这种设计真的给Rust带来了强大的表达力和灵活性，对它理解越深刻，越能体会Rust的厉害。trait完全解构了从C++、Java以来编程语言的发展范式，从紧耦合转换成松散的平铺式，让新特性的添加不会对语言本身造成沉重的负担。
+到这节课为止，我们的第一阶段基础篇的学习就完成了。我们用 11 讲的内容详细介绍了 Rust 语言里最重要的部分，然而还有很多 Rust 的细节没办法展开，这需要你借助我提供的链接还有已有的资料持续学习。
 
-到这节课为止，我们的第一阶段基础篇的学习就完成了。我们用11讲的内容详细介绍了Rust语言里最重要的部分，然而还有很多Rust的细节没办法展开，这需要你借助我提供的链接还有已有的资料持续学习。
-
-基础篇相当于苦练内功，从下节课开始我们进入进阶篇，学习Rust语言及生态中面向实际场景的外功招式。
+基础篇相当于苦练内功，从下节课开始我们进入进阶篇，学习 Rust 语言及生态中面向实际场景的外功招式。
 
 ## 思考题
 
-请举例说明 `Deref` 与 `AsRef<T>` 的区别。欢迎你把你思考后的答案分享到评论区，我们一起讨论，也欢迎你把这节课的内容分享给其他朋友，邀他一起学习Rust，我们下节课再见！
+请举例说明 `Deref` 与 `AsRef<T>` 的区别。欢迎你把你思考后的答案分享到评论区，我们一起讨论，也欢迎你把这节课的内容分享给其他朋友，邀他一起学习 Rust，我们下节课再见！

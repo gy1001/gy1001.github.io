@@ -1,21 +1,20 @@
-# 27｜Rust Bevy游戏开发：用300行代码做一个贪吃蛇游戏
-你好，我是Mike。今天我们一起来学习Rust游戏编程技术。这节课我们会基于Bevy游戏框架来开发一个入门版的贪吃蛇游戏。
+# 27 ｜ Rust Bevy 游戏开发：用 300 行代码做一个贪吃蛇游戏
 
-Rust生态内目前已经有不少很不错的游戏开发框架，而Bevy是其中最热门的那一个，目前（2023年12月）最新版本是 0.12，还处在积极开发的过程中。Bevy框架和Axum Web框架、Slint框架给人的感觉有点儿像，都很简单、优美、灵活。用Bevy框架写游戏非常惬意，已经有不少人在尝试使用Bevy开发自己的独立游戏，目前有三款（Molecoole、Tiny Glade、Roids）已经上架或即将上架 Steam。
+你好，我是 Mike。今天我们一起来学习 Rust 游戏编程技术。这节课我们会基于 Bevy 游戏框架来开发一个入门版的贪吃蛇游戏。
 
-用Bevy开发的游戏能够运行在Windows、macOS、Linux, Web浏览器等平台。
+Rust 生态内目前已经有不少很不错的游戏开发框架，而 Bevy 是其中最热门的那一个，目前（2023 年 12 月）最新版本是 0.12，还处在积极开发的过程中。Bevy 框架和 Axum Web 框架、Slint 框架给人的感觉有点儿像，都很简单、优美、灵活。用 Bevy 框架写游戏非常惬意，已经有不少人在尝试使用 Bevy 开发自己的独立游戏，目前有三款（Molecoole、Tiny Glade、Roids）已经上架或即将上架 Steam。
 
-## Bevy框架
+用 Bevy 开发的游戏能够运行在 Windows、macOS、Linux, Web 浏览器等平台。
 
-Bevy 框架是一个数据驱动的游戏开发框架（引擎），其核心是一个ECS。
+## Bevy 框架
+
+Bevy 框架是一个数据驱动的游戏开发框架（引擎），其核心是一个 ECS。
 
 ### ECS
 
-ECS是 Entity Component System 的缩写，意思是实体-组件-系统。它是一种编程范式，这种范式非常有趣，也非常有潜力，现在的主流游戏引擎都开始支持这种编程范式了。这种范式是与传统的OOP（面向对象编程）范式相对的，跟Rust的 trait 的设计理念有一些相似之处。
+ECS 是 Entity Component System 的缩写，意思是实体-组件-系统。它是一种编程范式，这种范式非常有趣，也非常有潜力，现在的主流游戏引擎都开始支持这种编程范式了。这种范式是与传统的 OOP（面向对象编程）范式相对的，跟 Rust 的 trait 的设计理念有一些相似之处。
 
-我们用一个例子来说明ECS是怎样对问题进行建模的。假如现在有这样一幅画面：一个下午，在温暖的家里面，爸爸D正在边吃甜点边看书，妈妈M在边吃甜点边玩手机，儿子S在和狗狗B玩。你想一想，这个场景如果用OOP方式，应该如何建模呢？而用ECS范式可以这样建立模型：
-
-![图片](images/738048/8b2071ac10d130561aff84ccaaf600b6.jpg)
+我们用一个例子来说明 ECS 是怎样对问题进行建模的。假如现在有这样一幅画面：一个下午，在温暖的家里面，爸爸 D 正在边吃甜点边看书，妈妈 M 在边吃甜点边玩手机，儿子 S 在和狗狗 B 玩。你想一想，这个场景如果用 OOP 方式，应该如何建模呢？而用 ECS 范式可以这样建立模型：
 
 Systems:
 
@@ -29,17 +28,17 @@ system4: dog_task(query: Query<>)
 
 这样这个模型就建立好了。
 
-我们用类似数据库table或者Excel的datasheet的形式来描述 Entity 与 Component 之间的关系。Entity 就用简单的数字来表示，只要能区分不同的实体就可以。然后我们定义了Role、Name、Snack、Book、Phone、Playmat 6种Component。
+我们用类似数据库 table 或者 Excel 的 datasheet 的形式来描述 Entity 与 Component 之间的关系。Entity 就用简单的数字来表示，只要能区分不同的实体就可以。然后我们定义了 Role、Name、Snack、Book、Phone、Playmat 6 种 Component。
 
-这些Components就像数据库table的列。但是与数据库不同的是，在ECS范式中，这个table的列是可以随着程序的运行而动态增加、减少的。另外一个重要的不同是，并不是所有的Entity都强制拥有所有的Component（列），每个Entity其实只关心自己需要的Components就行了。因此，这里的table表示在数据上的话，更像一个稀疏矩阵或集合。
+这些 Components 就像数据库 table 的列。但是与数据库不同的是，在 ECS 范式中，这个 table 的列是可以随着程序的运行而动态增加、减少的。另外一个重要的不同是，并不是所有的 Entity 都强制拥有所有的 Component（列），每个 Entity 其实只关心自己需要的 Components 就行了。因此，这里的 table 表示在数据上的话，更像一个稀疏矩阵或集合。
 
-这其实体现了一种设计哲学： **将所有的信息铺平，用组合的方式来建模**。是不是与Rust的trait设计哲学有相似性？
+这其实体现了一种设计哲学： **将所有的信息铺平，用组合的方式来建模**。是不是与 Rust 的 trait 设计哲学有相似性？
 
-你可以把组件 Component 看作一组属性的集合，将属性按Component拆开来放置有利于复用。在这个例子里，4个实体都复用 Role 组件和 Name组件，Dad和Mommy复用Snack组件，Son和Dog复用Playmate组件。
+你可以把组件 Component 看作一组属性的集合，将属性按 Component 拆开来放置有利于复用。在这个例子里，4 个实体都复用 Role 组件和 Name 组件，Dad 和 Mommy 复用 Snack 组件，Son 和 Dog 复用 Playmate 组件。
 
-而System就是行为或逻辑，用来处理上面建好的表格数据。一个System对应在Bevy中，就是普通的Rust函数。当然，这个函数首先要有办法拿到上述表格（世界状态）的操作权力才行，操作的方法就是Query检索。
+而 System 就是行为或逻辑，用来处理上面建好的表格数据。一个 System 对应在 Bevy 中，就是普通的 Rust 函数。当然，这个函数首先要有办法拿到上述表格（世界状态）的操作权力才行，操作的方法就是 Query 检索。
 
-关于ECS与OOP的对比，你可以参考 [这里](https://bevy-cheatbook.github.io/programming/intro-data.html#comparison-with-object-oriented-programming)。
+关于 ECS 与 OOP 的对比，你可以参考 [这里](https://bevy-cheatbook.github.io/programming/intro-data.html#comparison-with-object-oriented-programming)。
 
 ### 资源（Resource）
 
@@ -51,25 +50,23 @@ system4: dog_task(query: Query<>)
 
 ### 世界状态
 
-基于ECS的设计，那张大表table其实就是一个世界状态。基于ECS的游戏引擎，就需要在内部维护这样一个世界状态。这个世界状态的维护非常关键，需要用高效的数据结构和算法实现。在Bevy中具体用什么数据结构来维护的，你可以参考 [这里](https://bevy-cheatbook.github.io/patterns/component-storage.html)。
+基于 ECS 的设计，那张大表 table 其实就是一个世界状态。基于 ECS 的游戏引擎，就需要在内部维护这样一个世界状态。这个世界状态的维护非常关键，需要用高效的数据结构和算法实现。在 Bevy 中具体用什么数据结构来维护的，你可以参考 [这里](https://bevy-cheatbook.github.io/patterns/component-storage.html)。
 
 ### 固定帧率
 
-游戏一般会以固定帧率运行，比如每秒60帧。游戏引擎通常会封装好这个，将你从帧率刷新的任务中释放出来，专注于游戏逻辑的设计。你只需要知道，你写的游戏逻辑会每秒执行60次，也就是60个滴答 tick。
+游戏一般会以固定帧率运行，比如每秒 60 帧。游戏引擎通常会封装好这个，将你从帧率刷新的任务中释放出来，专注于游戏逻辑的设计。你只需要知道，你写的游戏逻辑会每秒执行 60 次，也就是 60 个滴答 tick。
 
 ### 坐标系统
 
-Bevy的2D默认的坐标系统是原点在窗口正中间的一个正坐标系，像下面这样：
-
-![](images/738048/yyf79d21925f6787ab176cab1f853078.jpg)
+Bevy 的 2D 默认的坐标系统是原点在窗口正中间的一个正坐标系，像下面这样：
 
 ### 摄相机（Camera）
 
-游戏引擎中都会有Camera的概念，3D游戏的画面渲染严重依赖于Camera。2D游戏不太关心Camera，但使用Camera也会有放大缩小的效果，默认Bevy的Camera在坐标系的Z轴上，也就是当前你眼睛所处的位置。
+游戏引擎中都会有 Camera 的概念，3D 游戏的画面渲染严重依赖于 Camera。2D 游戏不太关心 Camera，但使用 Camera 也会有放大缩小的效果，默认 Bevy 的 Camera 在坐标系的 Z 轴上，也就是当前你眼睛所处的位置。
 
 ### 性能
 
-借助于ECS范式，加上Rust强大的无畏并发能力，Bevy能够让你的systems尽可能地运行在多个CPU核上，也就是并行运算。所以Bevy的基础性能是非常棒的，关于benchmarks的讨论，你可以看 [这里](https://github.com/bevyengine/bevy/discussions/655)。
+借助于 ECS 范式，加上 Rust 强大的无畏并发能力，Bevy 能够让你的 systems 尽可能地运行在多个 CPU 核上，也就是并行运算。所以 Bevy 的基础性能是非常棒的，关于 benchmarks 的讨论，你可以看 [这里](https://github.com/bevyengine/bevy/discussions/655)。
 
 有了这些基础知识的铺垫，我们下面进入实战环节吧。
 
@@ -77,9 +74,9 @@ Bevy的2D默认的坐标系统是原点在窗口正中间的一个正坐标系�
 
 这里我先给出完整代码的 [链接](https://github.com/miketang84/jikeshijian/tree/master/27-bevy_snake)，你最好下载下来边运行边对照下面的内容学习。
 
-### 第1步：引入Bevy库
+### 第 1 步：引入 Bevy 库
 
-很简单，引入Bevy库，创建一个App实例。
+很简单，引入 Bevy 库，创建一个 App 实例。
 
 ```plain
 use bevy::prelude::*;
@@ -92,9 +89,9 @@ fn main() {
 
 这个程序运行后马上就结束了，没有任何输出，也没有窗口打开。
 
-### 第2步：创建窗口
+### 第 2 步：创建窗口
 
-加入默认Plugin集合，里面有个主事件循环，还有个创建窗口的功能。然后我们需要设置2D的Camera。
+加入默认 Plugin 集合，里面有个主事件循环，还有个创建窗口的功能。然后我们需要设置 2D 的 Camera。
 
 ```plain
 use bevy::prelude::*;
@@ -112,15 +109,13 @@ fn setup_camera(mut commands: Commands) {
 
 ```
 
-由于引擎本身是一个托管系统（带主循环的Runtime），我们要在这个引擎所维护的世界状态里添加（或删除）新的东西，必须使用 Commands 这种任务指令形式。你可以把它想象成总线或消息队列编程模型。
+由于引擎本身是一个托管系统（带主循环的 Runtime），我们要在这个引擎所维护的世界状态里添加（或删除）新的东西，必须使用 Commands 这种任务指令形式。你可以把它想象成总线或消息队列编程模型。
 
 这一步运行后，弹出一个窗口，并且渲染默认背景色。
 
-![](images/738048/4071478ceeea97857b4ce155d5d5dc2d.png)
+### 第 3 步：画出蛇的头
 
-### 第3步：画出蛇的头
-
-这一步我们添加一个新函数，创建蛇的头，然后用 add\_systems 添加到bevy runtime 中。你可以看一下代码发生的变化。
+这一步我们添加一个新函数，创建蛇的头，然后用 add_systems 添加到 bevy runtime 中。你可以看一下代码发生的变化。
 
 ```plain
 const SNAKE_HEAD_COLOR: Color = Color::rgb(0.7, 0.7, 0.7);
@@ -150,19 +145,17 @@ fn spawn_snake(mut commands: Commands) {
 
 ```
 
-我们用 struct 定义了 SnakeHead Component，它没有任何字段。没关系，目前一个类型名字符号就能表达我们的意思，当一个tag用。你继续往后面看。
+我们用 struct 定义了 SnakeHead Component，它没有任何字段。没关系，目前一个类型名字符号就能表达我们的意思，当一个 tag 用。你继续往后面看。
 
-你可以看到，一个system就是一个普通的Rust函数。SpriteBundle 是一个Component Bundle，也就是组件包，可以把一组 components 组合在一起，SpriteBundle 里面就有 Sprite、Transform 等 components。Sprite 就是图片精灵的意思，是游戏里面表达角色的基本方法。Transform 抽象的是角色的运动，有位移、旋转和拉伸变换三种形式。
+你可以看到，一个 system 就是一个普通的 Rust 函数。SpriteBundle 是一个 Component Bundle，也就是组件包，可以把一组 components 组合在一起，SpriteBundle 里面就有 Sprite、Transform 等 components。Sprite 就是图片精灵的意思，是游戏里面表达角色的基本方法。Transform 抽象的是角色的运动，有位移、旋转和拉伸变换三种形式。
 
-`spawn_snake() system` 目的就是创建这个蛇的头，它作为一个entity被插入到世界状态中。 `.insert(SnakeHead)` 把 SnakeHead 这个 Component 添加到这个刚创建好的 entity 上面。
+`spawn_snake() system` 目的就是创建这个蛇的头，它作为一个 entity 被插入到世界状态中。 `.insert(SnakeHead)` 把 SnakeHead 这个 Component 添加到这个刚创建好的 entity 上面。
 
-`add_systems()` 中的第一个参数 Startup，用来表示这是游戏启动的时候执行的 systems。它们只执行一次，多个systems写在元组里面，更简洁。
+`add_systems()` 中的第一个参数 Startup，用来表示这是游戏启动的时候执行的 systems。它们只执行一次，多个 systems 写在元组里面，更简洁。
 
 你可以看一下这一步的运行效果，窗口中间出现了一个小方块，那就是蛇的头。
 
-![img(6)](images/738048/5378d9ae31aa7b4db568dbf4983c621e.png)
-
-### 第4步：让这条蛇动起来
+### 第 4 步：让这条蛇动起来
 
 这里我给出这一步添加的代码，我们边看边解读。
 
@@ -177,17 +170,15 @@ fn snake_movement(mut head_positions: Query<(&SnakeHead, &mut Transform)>) {
 
 ```
 
-这个 `snake_movement()` 就是处理蛇运动的system，请注意参数
+这个 `snake_movement()` 就是处理蛇运动的 system，请注意参数
 
-是 `Query<(&SnakeHead, &mut Transform)>` 类型，它的意思是从世界状态中去查找同时拥有 SnakeHead、Transform 两种 Components 的entity，它定义了一个迭代器，并且 Transform 的实例还是可以修改的。遍历这个迭代器，其实目前只有一个entity，更新负责管理它运动的 transform 实例。 `transform.translation.y += 2.` 就是纵向坐标向上移动 2 个像素。
+是 `Query<(&SnakeHead, &mut Transform)>` 类型，它的意思是从世界状态中去查找同时拥有 SnakeHead、Transform 两种 Components 的 entity，它定义了一个迭代器，并且 Transform 的实例还是可以修改的。遍历这个迭代器，其实目前只有一个 entity，更新负责管理它运动的 transform 实例。 `transform.translation.y += 2.` 就是纵向坐标向上移动 2 个像素。
 
-`add_systems()` 的第一个参数Update，表示这个system是运行在游戏运行过程中的，每一帧都需要更新一次（执行一次这个system），也就是这个函数1秒会执行60次。
+`add_systems()` 的第一个参数 Update，表示这个 system 是运行在游戏运行过程中的，每一帧都需要更新一次（执行一次这个 system），也就是这个函数 1 秒会执行 60 次。
 
 运行后你会发现这个小方块在自动向上移动，效果如下：
 
-![](images/738048/010cdb4abb3239ced41f6750ebd1954d.png)
-
-### 第5步：控制这条蛇的方向
+### 第 5 步：控制这条蛇的方向
 
 下面我们需要控制蛇的方向，上下左右四个方向。这一步就是给 `snake_movement system` 填充内容。
 
@@ -214,13 +205,13 @@ fn snake_movement(
 
 ```
 
-`Input<KeyCode>` 是Bevy系统级的资源，用于表示输入设备，这里是键盘设备。要访问资源就在system里用 `Res<T>` 这种参数类型。 `keyboard_input.pressed()` 用于判断是否键盘按下了。
+`Input<KeyCode>` 是 Bevy 系统级的资源，用于表示输入设备，这里是键盘设备。要访问资源就在 system 里用 `Res<T>` 这种参数类型。 `keyboard_input.pressed()` 用于判断是否键盘按下了。
 
 运行后，你就可以用方向键控制这个小方块的运动方向了。
 
-### 第6步：将窗口网格化
+### 第 6 步：将窗口网格化
 
-默认Bevy的窗口坐标粒度是以屏幕的逻辑像素为单位的。而像贪吃蛇这种游戏，会将整个画布分成一个个正方形的小方格。具体怎么做，你可以看一下这一步变化的代码。
+默认 Bevy 的窗口坐标粒度是以屏幕的逻辑像素为单位的。而像贪吃蛇这种游戏，会将整个画布分成一个个正方形的小方格。具体怎么做，你可以看一下这一步变化的代码。
 
 ```plain
 const ARENA_WIDTH: u32 = 10;
@@ -286,17 +277,15 @@ fn position_translation(primary_query: Query<&Window, With<bevy::window::Primary
 
 ```
 
-这一步，我们添加了 Position 和 Size 两种Components。用来控制蛇头的逻辑位置和显示大小。新增了 `size_scaling` 和 `position_translation` 两个system，用来在每一帧计算蛇头的尺寸和位置。
+这一步，我们添加了 Position 和 Size 两种 Components。用来控制蛇头的逻辑位置和显示大小。新增了 `size_scaling` 和 `position_translation` 两个 system，用来在每一帧计算蛇头的尺寸和位置。
 
-具体的算法理解上要注意的就是，坐标的原点是在窗口正中央，转换后的网格grid的坐标原点在窗口左下角。
+具体的算法理解上要注意的就是，坐标的原点是在窗口正中央，转换后的网格 grid 的坐标原点在窗口左下角。
 
 你可以看一下这一步运行后的效果。
 
-![](images/738048/38e680225d339594bf280af4830564e7.png)
+你可以看到，蛇的头的大小（为一个网格大小的 0.8）和位置已经变化了。这里的位置在 (3, 3)，网格总大小为 (10, 10)，左下角为 (0, 0)。
 
-你可以看到，蛇的头的大小（为一个网格大小的0.8）和位置已经变化了。这里的位置在 (3, 3)，网格总大小为 (10, 10)，左下角为 (0, 0)。
-
-### 第7步：让蛇按网格移动
+### 第 7 步：让蛇按网格移动
 
 下面要让蛇的运动适配网格。你看一下这一步改动的代码。
 
@@ -323,11 +312,9 @@ fn snake_movement(
 
 ```
 
-这一步我们要更新蛇头的逻辑坐标，也就是上一步定义那个Position component的实例。现在你可以通过方向键将这个小矩形块移动到其他位置。
+这一步我们要更新蛇头的逻辑坐标，也就是上一步定义那个 Position component 的实例。现在你可以通过方向键将这个小矩形块移动到其他位置。
 
-![](images/738048/eea91bfc1a4a308deea67f06fe4a0c97.png)
-
-### 第8步：配置窗口比例和尺寸
+### 第 8 步：配置窗口比例和尺寸
 
 默认打开的窗口是长方形的，我们要给它配置成方形。你可以看一下这一步的变化代码。
 
@@ -350,20 +337,18 @@ const ARENA_HEIGHT: u32 = 25;
 
 ```
 
-这一步我们做了4件事情。
+这一步我们做了 4 件事情。
 
-1. 设置窗口尺寸为500px x 500px。
+1. 设置窗口尺寸为 500px x 500px。
 2. 设置窗口标题为 Snake!。
 3. 设置窗口填充背景颜色为 Color::rgb(0.04, 0.04, 0.04)。
-4. 分割窗口grid为更大一点的数字，比如25x25。
+4. 分割窗口 grid 为更大一点的数字，比如 25x25。
 
 你看一下这一步的效果。
 
-![](images/738048/6b5d9639cc9dfeff05f3724fb39d369e.png)
-
 离我们期望的样子越来越近了。
 
-### 第9步：随机产生食物
+### 第 9 步：随机产生食物
 
 下面要开始产生食物。食物我们也用另一种小方块来表示。你看一下这一步变化的代码。
 
@@ -394,15 +379,13 @@ fn food_spawner(mut commands: Commands) {
 
 ```
 
-食物随机产生，所以需要用到random函数。同样，我们定义了 Food 这个 Compoment，然后定义了 food\_spawner system，并添加到runtime中去。创建的食物entity上带有 Sprite、Food、Position、Size 等 components。
+食物随机产生，所以需要用到 random 函数。同样，我们定义了 Food 这个 Compoment，然后定义了 food_spawner system，并添加到 runtime 中去。创建的食物 entity 上带有 Sprite、Food、Position、Size 等 components。
 
-可以想象，这个创建食物的system1秒会执行60次，也就是1秒钟会创建60个食物，速度太快了。
+可以想象，这个创建食物的 system1 秒会执行 60 次，也就是 1 秒钟会创建 60 个食物，速度太快了。
 
-![](images/738048/7bd5b3534a7b1a647380c76612b0cd57.png)
+### 第 10 步：使用定时器产生食物
 
-### 第10步：使用定时器产生食物
-
-下面我们要控制食物的产生速度，比如2秒产生一颗食物。我们来看这一步变化的代码。
+下面我们要控制食物的产生速度，比如 2 秒产生一颗食物。我们来看这一步变化的代码。
 
 ```plain
 #[derive(Resource)]
@@ -440,9 +423,9 @@ fn food_spawner(
 
 ```
 
-Timer 类型是Bevy提供的定时器类型，我们用newtype模式定义一个自己的定时器，它是一种资源（全局唯一）。我们使用 `insert_resource()` 将这个资源初始化并插入到托管系统中去。
+Timer 类型是 Bevy 提供的定时器类型，我们用 newtype 模式定义一个自己的定时器，它是一种资源（全局唯一）。我们使用 `insert_resource()` 将这个资源初始化并插入到托管系统中去。
 
-然后在 `food_spawner system` 中使用 `ResMut<FoodSpawnTimer>` 这种形式来使用资源。同时用 `Res<Time>` 这种形式来获取游戏中的时间，这个也是Bevy引擎提供的。细心的你可能发现了，Bevy采用的也是声明式参数实现，和前面课程讲到的Axum风格一样。这些参数顺序是可以变的！在这里你可以体会到Rust强大的表达能力。
+然后在 `food_spawner system` 中使用 `ResMut<FoodSpawnTimer>` 这种形式来使用资源。同时用 `Res<Time>` 这种形式来获取游戏中的时间，这个也是 Bevy 引擎提供的。细心的你可能发现了，Bevy 采用的也是声明式参数实现，和前面课程讲到的 Axum 风格一样。这些参数顺序是可以变的！在这里你可以体会到 Rust 强大的表达能力。
 
 我们再来看一句。
 
@@ -453,15 +436,13 @@ Timer 类型是Bevy提供的定时器类型，我们用newtype模式定义一个
 
 ```
 
-这一句表示每次执行这个 `food_spawner system`（1秒执行60次）时，先判断当前流逝了多少时间，如果定时器的一次间隔还没到，就直接返回，不执行这个函数后面的部分，也就不产生一个食物了。这样就实现了控制食物产生速率的目的。
+这一句表示每次执行这个 `food_spawner system`（1 秒执行 60 次）时，先判断当前流逝了多少时间，如果定时器的一次间隔还没到，就直接返回，不执行这个函数后面的部分，也就不产生一个食物了。这样就实现了控制食物产生速率的目的。
 
 你可以看一下运行效果。
 
-![](images/738048/9ef4345a3ca89a281ca25b264ebdc942.png)
+现在 2 秒产生一颗食物，速度比刚才慢多了。
 
-现在2秒产生一颗食物，速度比刚才慢多了。
-
-### 第11步：让蛇自动前进
+### 第 11 步：让蛇自动前进
 
 下面我们要让蛇自己动起来，而且也要控制它的运动速率。同样的我们会用定时器方法。
 
@@ -559,11 +540,11 @@ fn snake_movement(
 
 ```
 
-类似地，我们定义了BTimer来控制蛇的自动行走，0.2秒走一格。同时，我们现在可以给蛇指定行走的方向了，因此新定义了 Direction 枚举，并在 SnakeHead Component里添加了 direction 字段。
+类似地，我们定义了 BTimer 来控制蛇的自动行走，0.2 秒走一格。同时，我们现在可以给蛇指定行走的方向了，因此新定义了 Direction 枚举，并在 SnakeHead Component 里添加了 direction 字段。
 
-代码中的 `snake_movement_input.before(snake_movement)` 表示明确指定 `snake_movement_input` 在 `snake_movement system` 之前处理。因为bevy默认会尽可能并行化，所以这样指定能够明确system的执行顺序，不然可能是乱序执行的。
+代码中的 `snake_movement_input.before(snake_movement)` 表示明确指定 `snake_movement_input` 在 `snake_movement system` 之前处理。因为 bevy 默认会尽可能并行化，所以这样指定能够明确 system 的执行顺序，不然可能是乱序执行的。
 
-### 第12步：定义蛇身
+### 第 12 步：定义蛇身
 
 下面是定义蛇的身子，这是整个模型相对困难的一步。但其实把结构定义好了就会很简单。
 
@@ -625,11 +606,9 @@ fn spawn_segment(mut commands: Commands, position: Position) -> Entity {
 
 你可以看一下这一步运行后的效果。
 
-![](images/738048/d9c2ee5655cf634f05905964101d04b1.png)
-
 可以看到，这一节蛇身没有跟着头一起动。
 
-### 第13步：让蛇身跟着蛇的头一起运动
+### 第 13 步：让蛇身跟着蛇的头一起运动
 
 让蛇身跟着蛇头一起动，模型上其实就是让蛇身的每一节跟着蛇头的移动一起变换坐标就行了。我们看一下这一步的代码变化。
 
@@ -693,13 +672,11 @@ fn snake_movement(
 
 意思就是，当蛇动一步的时候，第一节蛇身的坐标值填充蛇头的坐标值，第二节蛇身的坐标值填充第一节蛇身的坐标值，以此类推，直到遍历完整个蛇身。
 
-可以看到，Rust可以把问题表达得相当精练。
+可以看到，Rust 可以把问题表达得相当精练。
 
 你看一下这一步运行后的效果。
 
-![](images/738048/48df50e0837a2080002b8bc343411865.png)
-
-### 第14步：边吃边长大
+### 第 14 步：边吃边长大
 
 下面就该处理吃食物并长大的效果了。吃食物的原理就是当蛇头占据了那个食物的位置时，就在系统中注销掉那个食物，然后在蛇身的尾巴位置处添加一个小方块。
 
@@ -756,23 +733,21 @@ fn snake_growth(
 
 ```
 
-我们添加了 `LastTailPosition(Option<Position>)` 这个蛇尾的位置坐标作为资源来实时更新，好知道蛇长长的时候，应该在哪个位置添加segment。然后新增了 `snake_eating` 和 `snake_growth` 两个 system。
+我们添加了 `LastTailPosition(Option<Position>)` 这个蛇尾的位置坐标作为资源来实时更新，好知道蛇长长的时候，应该在哪个位置添加 segment。然后新增了 `snake_eating` 和 `snake_growth` 两个 system。
 
 我们新定义了 GrowthEvent 长大的事件。
 
 `snake_eating system` 处理吃食物的业务，就是当蛇头的位置与食物位置重合时，就调用 `commands.entity(ent).despawn()` 将食物给注销掉。然后用 `growth_writer.send(GrowthEvent)` 向系统总线发送一个“长大”的事件。
 
-`snake_growth system` 处理蛇长大的业务，通过 `EventReader<GrowthEvent>` 定义的 growth\_reader，读取系统中的长大事件，使用 `spawn_segment()` 和 `segments.push()` 把尾巴添加到蛇的全局维护资源中去。
+`snake_growth system` 处理蛇长大的业务，通过 `EventReader<GrowthEvent>` 定义的 growth_reader，读取系统中的长大事件，使用 `spawn_segment()` 和 `segments.push()` 把尾巴添加到蛇的全局维护资源中去。
 
 `snake_eating` 和 `snake_growth` 在每一帧更新时都会执行。
 
-可以看到，通过这样的事件总线，Bevy系统把业务解耦得相当漂亮。每个system就专注于处理一件“小”事情就行了。这样对于构建复杂的游戏系统来说，大大减轻了我们的心智负担。
+可以看到，通过这样的事件总线，Bevy 系统把业务解耦得相当漂亮。每个 system 就专注于处理一件“小”事情就行了。这样对于构建复杂的游戏系统来说，大大减轻了我们的心智负担。
 
 你可以看一下这一步执行后的效果。
 
-![](images/738048/a4384058d0dfc46c3386c827bd7af652.png)
-
-### 第15步：撞墙和自身Game Over
+### 第 15 步：撞墙和自身 Game Over
 
 好了，我们的贪吃蛇的主体功能基本实现好了，下面需要加入撞墙和撞自身死的判断。你看一下这一步变化的代码。
 
@@ -822,35 +797,31 @@ fn game_over(
 
 ```
 
-撞墙这个只需要判断有没有超出grid边界就可以了。撞自身判断用 `segment_positions.contains(&head_pos)` 看所有蛇身的 segment 的position Vec里有没有包含蛇头的位置。
+撞墙这个只需要判断有没有超出 grid 边界就可以了。撞自身判断用 `segment_positions.contains(&head_pos)` 看所有蛇身的 segment 的 position Vec 里有没有包含蛇头的位置。
 
-我们添加了 `GameOverEvent` 事件和 `game_over system`，也是用的异步事件的方式。当收到 `GameOverEvent` 的时候，把所有的蛇的entity和食物的entity全部清理（despawn）掉。注意这里用了两个迭代器的 `.chain()` 方法，让清理工作表达得更紧凑，你可以体会一下。
+我们添加了 `GameOverEvent` 事件和 `game_over system`，也是用的异步事件的方式。当收到 `GameOverEvent` 的时候，把所有的蛇的 entity 和食物的 entity 全部清理（despawn）掉。注意这里用了两个迭代器的 `.chain()` 方法，让清理工作表达得更紧凑，你可以体会一下。
 
 清理完后，再重新创建蛇，游戏重新开始。到这一步，游戏已经基本能玩了，还写什么代码，先玩几把吧。
 
-![](images/738048/7f1b8ca4a2fd813a880363fcc78b6667.png)
-
-目前为止，整个代码不过330行左右。
+目前为止，整个代码不过 330 行左右。
 
 ## 小结
 
-这节课我们通过自己动手编写一个贪吃蛇小游戏，学习了Rust游戏开发引擎Bevy的基本使用方式。Bevy游戏引擎充分利用Rust语言的无忧并发和强大的表达能力，让开发游戏变得跟游戏一样好玩。整个过程下来，心情愉快、舒畅。你可以跟着我一步一步敲代码，体会这种感觉。
+这节课我们通过自己动手编写一个贪吃蛇小游戏，学习了 Rust 游戏开发引擎 Bevy 的基本使用方式。Bevy 游戏引擎充分利用 Rust 语言的无忧并发和强大的表达能力，让开发游戏变得跟游戏一样好玩。整个过程下来，心情愉快、舒畅。你可以跟着我一步一步敲代码，体会这种感觉。
 
-Bevy的核心是一套ECS系统，ECS本质上来说是一套编程范式，不仅限于在游戏中使用，它也可以在其他的业务系统中使用。你有必要多花点时间查阅相关资料去理解它。后面有机会我也会继续出相关的研究内容。
+Bevy 的核心是一套 ECS 系统，ECS 本质上来说是一套编程范式，不仅限于在游戏中使用，它也可以在其他的业务系统中使用。你有必要多花点时间查阅相关资料去理解它。后面有机会我也会继续出相关的研究内容。
 
-写Bevy代码的时候，我们要理解Bevy是一种Runtime，我们写的代码实际会被这个Runtime托管运行。我们要做的就是按照ECS规范定义Component、Resource、Event等，实现 system 添加到这个 Runtime 中。底层那些脏活累活Bevy全帮我们做了，我们只需要专心抽象模型、定义结构、处理业务。
+写 Bevy 代码的时候，我们要理解 Bevy 是一种 Runtime，我们写的代码实际会被这个 Runtime 托管运行。我们要做的就是按照 ECS 规范定义 Component、Resource、Event 等，实现 system 添加到这个 Runtime 中。底层那些脏活累活 Bevy 全帮我们做了，我们只需要专心抽象模型、定义结构、处理业务。
 
 然后，通过这节课的内容我们可以体会到，写小游戏其实也是一种相当好的建模能力的训练，我们可以通过这种有趣的方法提升自己在这方面的能力。
 
-![](images/738048/5cfe1952919841131d5c1a1b8deddayy.jpg)
+本讲源代码： [https://github.com/miketang84/jikeshijian/tree/master/27-bevy_snake](https://github.com/miketang84/jikeshijian/tree/master/27-bevy_snake)
 
-本讲源代码： [https://github.com/miketang84/jikeshijian/tree/master/27-bevy\_snake](https://github.com/miketang84/jikeshijian/tree/master/27-bevy_snake)
-
-必读的两个Bevy资料：
+必读的两个 Bevy 资料：
 
 - [https://bevyengine.org/learn/book/introduction/](https://bevyengine.org/learn/book/introduction/)
 - [https://bevy-cheatbook.github.io/introduction.html](https://bevy-cheatbook.github.io/introduction.html)
 
 ## 思考题
 
-这节课的代码还有个问题，就是食物有可能在已经产生过的地方产生，也有可能在蛇身上产生，请问如何处理这个Bug？欢迎你把你的处理思路和实现代码分享出来，我们一起探讨，如果你觉得这节课对你有帮助的话，也欢迎你把这节课的内容分享给其他朋友，我们下节课再见！
+这节课的代码还有个问题，就是食物有可能在已经产生过的地方产生，也有可能在蛇身上产生，请问如何处理这个 Bug？欢迎你把你的处理思路和实现代码分享出来，我们一起探讨，如果你觉得这节课对你有帮助的话，也欢迎你把这节课的内容分享给其他朋友，我们下节课再见！
