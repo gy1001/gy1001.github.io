@@ -30,6 +30,7 @@ const ReviewStudyArr = generatorMdFileArr('/zh/other/column/review-study/')
 const BusinessThinkingArr = generatorMdFileArr(
   '/zh/other/column/business-thinking/',
 )
+const LowCodeArr = generatorMdFileArr('/zh/other/column/low-code/')
 export const sidebarZh: SidebarConfig = {
   '/zh/skill/front/': [
     {
@@ -337,11 +338,6 @@ export const sidebarZh: SidebarConfig = {
             '/zh/other/class/frame-project-interview/index-11.md',
             '/zh/other/class/frame-project-interview/index-12.md',
           ],
-        },
-        {
-          text: '前端模拟面试：给你真实的求职体验和面试经验',
-          collapsible: true,
-          children: ['/zh/other/class/mock-interview/index-01.md'],
         },
         '/zh/other/class/ts-axios',
         {
@@ -1004,6 +1000,11 @@ export const sidebarZh: SidebarConfig = {
           text: '商业思维案例笔记',
           collapsible: true,
           children: BusinessThinkingArr,
+        },
+        {
+          text: '说透低代码',
+          collapsible: true,
+          children: LowCodeArr,
         },
       ],
     },
