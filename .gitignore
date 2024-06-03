@@ -1,0 +1,9 @@
+node_modules
+.temp
+.cache
+dist
+.yarn
+.history
+.idea
+yarn.lock
+.DS_Store
