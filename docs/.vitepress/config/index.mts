@@ -7,6 +7,9 @@ export default defineConfig({
   },
   title: 'gy-fly.top',
   description: 'my website',
+  lastUpdated: true,
+  cleanUrls: true,
+  metaChunk: true,
   locales: {
     root: { label: 'English', lang: 'en-US' },
     zh: { label: '中文', lang: 'zh-CN', ...zh },
@@ -21,6 +24,10 @@ export default defineConfig({
     footer: {
       message: 'Released under the MIT License.',
       copyright: `Copyright © 2022-${new Date().getFullYear()} G.Y`,
+    },
+
+    search: {
+      provider: 'local'
     },
 
     socialLinks: [

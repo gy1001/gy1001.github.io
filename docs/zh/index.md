@@ -10,7 +10,7 @@ hero:
   actions:
     - theme: brand
       text: 立即进入 →
-      link: /zh/skill/front/
+      link: /zh/skill/front/swordsman/
 
   image:
       src: /images/logo.png
