@@ -1,11 +1,11 @@
 ---
 layout: home
 
-title: gy fly
-titleTemplate: 基于vitepress的个人网站
+title: G.Y Fly
+titleTemplate: 基于 VitePress
 hero:
-  name: gy fly
-  text: 基于vitepress的个人网站
+  name: G.Y Fly
+  text: 基于 VitePress
   tagline: 种一棵树最好的时间是十年前，其次就是现在。
   actions:
     - theme: brand

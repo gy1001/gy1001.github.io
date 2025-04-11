@@ -5,7 +5,7 @@ export default defineConfig({
   rewrites: {
     'en/:rest*': ':rest*',
   },
-  title: 'gy fly',
+  title: 'G.Y Fly',
   description: 'my website',
   lastUpdated: true,
   cleanUrls: true,
@@ -31,7 +31,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/vuejs/vitepress' },
+      { icon: 'github', link: 'https://github.com/gy1001/gy1001.github.io' },
     ],
   },
 });

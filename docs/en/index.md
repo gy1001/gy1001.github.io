@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: "gy fly"
+  name: "G.Y Fly"
   text: "my website"
   tagline: waiting for translate please
   actions:
@@ -12,6 +12,6 @@ hero:
       link: /zh/
   image:
     src: /images/logo.png
-    alt: Gy Fly    
+    alt: G.Y Fly  
 ---
 
