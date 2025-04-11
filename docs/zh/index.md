@@ -1,10 +1,10 @@
 ---
 layout: home
 
-title: gyfly.top
+title: gy fly
 titleTemplate: 基于vitepress的个人网站
 hero:
-  name: gyfly.top
+  name: gy fly
   text: 基于vitepress的个人网站
   tagline: 种一棵树最好的时间是十年前，其次就是现在。
   actions:

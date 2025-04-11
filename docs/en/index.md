@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: "gy-fly.top"
+  name: "gy fly"
   text: "my website"
   tagline: waiting for translate please
   actions:

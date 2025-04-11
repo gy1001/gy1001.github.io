@@ -5,7 +5,7 @@ export default defineConfig({
   rewrites: {
     'en/:rest*': ':rest*',
   },
-  title: 'gy-fly.top',
+  title: 'gy fly',
   description: 'my website',
   lastUpdated: true,
   cleanUrls: true,
