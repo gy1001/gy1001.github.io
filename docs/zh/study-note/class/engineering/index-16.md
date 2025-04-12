@@ -2,7 +2,7 @@
 
 ## 01：脚手架运行流程图绘制
 
-```flow
+```txt
 start=>start: 开始
 check_node=>condition: 检查Node版本是否>=8.9.0
 imooc-build=>parallel: 开启服务
