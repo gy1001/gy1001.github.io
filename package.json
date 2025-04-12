@@ -16,5 +16,8 @@
   "devDependencies": {
     "gy-prettier": "^0.0.1",
     "vitepress": "^1.6.3"
+  },
+  "dependencies": {
+    "vue": "^3.5.13"
   }
 }
