@@ -72,7 +72,7 @@ export default {
 
 我们把代码放在创建的 vue2 项目中，运行至浏览器后，可以看到如下效果
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ba064e89415e4b039523361e11f1e3e1~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=698&h=135&s=10377&e=png&b=ffffff)
+![image.png](./assets/ba064e89415e4b039523361e11f1e3e1~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp)
 
 打开控制台后，效果如下：
 
@@ -156,7 +156,7 @@ export default {
 
 如上，我用 `v-bind` 增加了一系列的属性，并且在属性顺序上 `v-bind` 放在了最后, Vue 处理渲染后会是怎么样的效果呢？
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d4162bc6bc774103ab9525deb84766ee~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=534&h=238&s=12659&e=png&b=ffffff)
+![image.png](./assets/d4162bc6bc774103ab9525deb84766ee~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp)
 
 打开控制台，效果如下
 

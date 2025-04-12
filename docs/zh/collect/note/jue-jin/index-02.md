@@ -68,7 +68,7 @@ export default {
 
 我们在浏览器中点击子组件时候，触发 log 如下
 
-![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/022b61db87fb4ef289d2586198a0b3e4~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=720&h=206&s=22398&e=png&b=ffffff)
+![image.png](./assets/022b61db87fb4ef289d2586198a0b3e4~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp)
 
 我们发现它只触发了子组件的事件，并没有触发在父组件中绑定的 click 事件 ？？？
 
@@ -110,7 +110,7 @@ export default {
 
 打开浏览器控制台，点击子组件，效果如下
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/91d3a2b4cf1542af8820f465964e3c81~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=863&h=255&s=27302&e=png&b=ffffff)
+![image.png](./assets/91d3a2b4cf1542af8820f465964e3c81~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp)
 
 **先触发子组件事件，然后再触发父组件绑定的事件**
 
