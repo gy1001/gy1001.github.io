@@ -2,7 +2,7 @@
 import { h } from 'vue'
 import type { Theme } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
-import FlowChart from "../components/FlowChart.vue"
+// import FlowChart from "../components/FlowChart.vue"
 import './style.css'
 
 export default {
@@ -14,6 +14,6 @@ export default {
   },
   enhanceApp({ app, router, siteData }) {
     // ...
-    app.component("FlowChart", FlowChart)
+    // app.component("FlowChart", FlowChart)
   }
 } satisfies Theme

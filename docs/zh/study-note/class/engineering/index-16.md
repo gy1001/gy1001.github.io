@@ -2,16 +2,6 @@
 
 ## 01：脚手架运行流程图绘制
 
-
-<FlowChart 
-   :flow="`
-      st=>start: Start
-      e=>end: End
-      op=>operation: My Operation
-      st->op->e
-   `" 
-/>
-
 ```flow
 start=>start: 开始
 check_node=>condition: 检查Node版本是否>=8.9.0

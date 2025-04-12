@@ -16,8 +16,5 @@
   "devDependencies": {
     "gy-prettier": "^0.0.1",
     "vitepress": "^1.6.3"
-  },
-  "dependencies": {
-    "flowchart.js": "^1.18.0"
   }
 }
