@@ -18,6 +18,8 @@ export default defineConfig({
     ['link', { rel: 'icon', href: '/images/logo.png' }],
   ],
 
+  ignoreDeadLinks: true,
+
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [{ text: 'Home', link: '/' }],

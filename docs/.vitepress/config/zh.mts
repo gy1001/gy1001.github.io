@@ -29,19 +29,23 @@ function nav(): DefaultTheme.NavItem[] {
     {text: '首页', link: '/zh/'},
     {
       text: '技术相关',
-      link: '/zh/skill/front/swordsman',
+      link: '/zh/skill/front/swordsman/',
+      activeMatch: '/zh/skill/front/',
     },
     {
       text: '面试相关',
-      link: '/zh/interview',
+      link: '/zh/interview/',
+      activeMatch: '/zh/interview/',
     },
     {
       text: '美文推荐',
-      link: '/zh/collect',
+      link: '/zh/collect/',
+      activeMatch: '/zh/collect/',
     },
     {
       text: '其他',
       link: '/zh/other/',
+      activeMatch: '/zh/other/',
     },
   ]
 }
