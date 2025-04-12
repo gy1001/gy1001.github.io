@@ -19,6 +19,10 @@ export const zh = defineConfig({
       '/zh/other/': {
         base: '/zh/other/',
         items: sidebarOther()
+      },
+      '/zh/study-note/': {
+        base: '/zh/study-note/',
+        items: sideBarStudyNote()
       }
     },
     footer: {
@@ -54,6 +58,11 @@ function nav(): DefaultTheme.NavItem[] {
       text: '美文推荐',
       link: '/zh/collect/index',
       activeMatch: '/zh/collect/',
+    },
+    {
+      text: '学习笔记',
+      link: '/zh/study-note/class/vue3-learn-practice',
+      activeMatch: '/zh/study-note/',
     },
     {
       text: '其他',
@@ -220,16 +229,16 @@ function sidebarInterview(): DefaultTheme.SidebarItem[] {
       text: 'JavaScript 进阶相关',
       collapsed: false,
       items: [
-        { text: 'ES6 相关', link: 'es6/index-01.md' },
-        { text: 'TS 相关', link: 'ts/index-01.md' },
-        { text: '工程化相关', link: 'engineering/index-01.md' },
-        { text: 'Webpack 相关', link: 'webpack/index-01.md' },
-        { text: 'Vue 相关', link: 'vue/index-01.md' },
-        { text: 'React 相关', link: 'react/index-01.md' },
-        { text: 'Http 相关', link: 'http/http-01.md' },
-        { text: 'Node 相关', link: 'node/node-01.md' },
-        { text: '开发环境', link: 'environment/development/01.md' },
-        { text: '运行环境', link: 'environment/production/01.md' },
+        {text: 'ES6 相关', link: 'es6/index-01.md'},
+        {text: 'TS 相关', link: 'ts/index-01.md'},
+        {text: '工程化相关', link: 'engineering/index-01.md'},
+        {text: 'Webpack 相关', link: 'webpack/index-01.md'},
+        {text: 'Vue 相关', link: 'vue/index-01.md'},
+        {text: 'React 相关', link: 'react/index-01.md'},
+        {text: 'Http 相关', link: 'http/http-01.md'},
+        {text: 'Node 相关', link: 'node/node-01.md'},
+        {text: '开发环境', link: 'environment/development/01.md'},
+        {text: '运行环境', link: 'environment/production/01.md'},
       ]
     },
     {
@@ -344,5 +353,60 @@ function sidebarOther(): DefaultTheme.SidebarItem[] {
         link: 'question/bug-list-01.md'
       }],
     },
+  ]
+}
+
+function sideBarStudyNote(): DefaultTheme.SidebarItem[] {
+  return [
+    {
+      text: '课程学习笔记',
+      collapsed: false,
+      base: '/zh/study-note/class/',
+      items: [
+        {text: 'Vue3 从入门到实战', link: 'vue3-learn-practice'},
+        {
+          text: '编程基础',
+          collapsed: false,
+          items: [
+            {text: '编程基础-01', link: 'program-basic/index-01'},
+            {text: '编程基础-02', link: 'program-basic/index-02'},
+          ]
+        },
+        {text: '专为程序员设计的线性代数课程', link: 'linear-algebra'},
+        {text: '快速搞定前端技术一面', link: 'interview-front'},
+        {
+          text: '2周刷完100道前端优质面试真题',
+          collapsed: false,
+          items: [
+            {text: '课程简介', link: 'fe-interview-100/index-01'},
+            {text: '数据结构和算法（上），大厂面试必考', link: 'fe-interview-100/index-02'},
+            {text: '数据结构和算法（下），大厂面试必考', link: 'fe-interview-100/index-03'},
+            {text: '前端基础知识，必知必会', link: 'fe-interview-100/index-04'},
+            {text: '知识深度-原理和源码', link: 'fe-interview-100/index-05'},
+            {text: '知识广度 - 从前端到全栈', link: 'fe-interview-100/index-06'},
+            {text: '实际工作经验', link: 'fe-interview-100/index-07'},
+            {text: '编写高质量代码', link: 'fe-interview-100/index-08'},
+            {text: '分析和解决问题的思路', link: 'fe-interview-100/index-09'},
+            {text: '项目设计', link: 'fe-interview-100/index-10'},
+            {text: '软技能', link: 'fe-interview-100/index-11'},
+          ]
+        },
+        {
+          text: '框架项目－聚焦Vue3/React/Webpack',
+          collapsed: true,
+          items: [
+            {text: '课程导学', link: 'frame-project-interview/index-01'},
+            {text: '课程介绍', link: 'frame-project-interview/index-02'},
+            {text: 'Vue 使用', link: 'frame-project-interview/index-03'},
+            {text: 'Vue 原理', link: 'frame-project-interview/index-04'},
+            {text: 'Vue 面试真题演练', link: 'frame-project-interview/index-05'},
+            {text: 'Vue3 学习', link: 'frame-project-interview/index-06'},
+            {text: 'webpack 和 babel', link: 'frame-project-interview/index-10'},
+            {text: '项目设计', link: 'frame-project-interview/index-11'},
+            {text: '项目流程', link: 'frame-project-interview/index-12'},
+          ],
+        },
+      ]
+    }
   ]
 }
