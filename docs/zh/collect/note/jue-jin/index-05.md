@@ -76,13 +76,13 @@
        <Button type="primary" @click="handleOpenPopup">打开弹框</Button>
      </div>
    </template>
-
+   
    <script>
    export default {
      name: 'App',
    }
    </script>
-
+   
    <script setup>
    import { Button } from 'vant'
    import { ref } from 'vue'
@@ -95,7 +95,7 @@
      visible.value = false
    }
    </script>
-
+   
    <style></style>
    ```
 
@@ -105,4 +105,4 @@
 
    页面中的效果如下
 
-   ![2023-09-13 00-05-14.2023-09-13 00_05_53](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/45f0b8dbc4fc49ef84ee0fb38f7afc6f~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=374&h=666&s=143242&e=gif&f=93&b=ffffff)
+   ![2023-09-13 00-05-14.2023-09-13 00_05_53](./assets/45f0b8dbc4fc49ef84ee0fb38f7afc6f~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp)
