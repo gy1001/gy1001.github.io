@@ -66,9 +66,8 @@
 
 感觉气氛稍微有一点低沉，所以呢，在这次的专栏中，除了我，我们还请到了一个 “重量级” 嘉宾：小灰。
 
-<div align=center> 
-  <img src="http://img1.sycdn.imooc.com/5dfc45d70001ee3a03990857.png" />
-</div>
+<img src="./assets/5dfc45d70001ee3a03990857.png" />
+
 
 后边的故事呢，将不时的请小灰和它的小伙伴们一起为大家讲述” 程序员情商那些事 “。
 

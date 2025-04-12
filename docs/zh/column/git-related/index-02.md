@@ -130,7 +130,7 @@ sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/i
 
 执行安装命令完成之后，可以看到终端如下信息：
 
-```zh
+```bash
          __                                     __
   ____  / /_     ____ ___  __  __   ____  _____/ /_
  / __ \/ __ \   / __ `__ \/ / / /  /_  / / ___/ __ \
