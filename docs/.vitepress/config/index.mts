@@ -19,7 +19,7 @@ export default defineConfig({
   ],
   // 解决引入 awebp 图片打包失败的问题
   vite: {
-    assetsInclude: ['**/*.awebp'],
+    assetsInclude: ['**/*.awebp', '**/*.image'],
   },
   markdown: {
     attrs: {
