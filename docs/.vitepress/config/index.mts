@@ -21,11 +21,13 @@ export default defineConfig({
   vite: {
     assetsInclude: ['**/*.awebp'],
   },
-
+  markdown: {
+    attrs: {
+      disable: true
+    }
+  },
   ignoreDeadLinks: true,
-
   themeConfig: {
-
     // https://vitepress.dev/reference/default-theme-config
     nav: [{ text: 'Home', link: '/' }],
     logo: { src: '/images/logo.png', width: 24, height: 24 },

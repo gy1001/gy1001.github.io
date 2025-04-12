@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      flowchart.js:
+        specifier: ^1.18.0
+        version: 1.18.0
     devDependencies:
       gy-prettier:
         specifier: ^0.0.1
@@ -570,6 +574,13 @@ packages:
   estree-walker@2.0.2:
     resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
 
+  eve-raphael@0.5.0:
+    resolution: {integrity: sha512-jrxnPsCGqng1UZuEp9DecX/AuSyAszATSjf4oEcRxvfxa1Oux4KkIPKBAAWWnpdwfARtr+Q0o9aPYWjsROD7ug==}
+
+  flowchart.js@1.18.0:
+    resolution: {integrity: sha512-1rZflSLyrj5/+ryzU+qIQr6IGysPIHT4UrgN+6IaVv7pLDSLu7CvC9e0X7FU6ocpRAEtHk5+UaFXv9NZKRoG3g==}
+    engines: {node: '>=4.0.0'}
+
   focus-trap@7.6.4:
     resolution: {integrity: sha512-xx560wGBk7seZ6y933idtjJQc1l+ck+pI3sKvhKozdBV1dRZoKhkW5xoCaFv9tQiX5RH1xfSxjuNu6g+lmN/gw==}
 
@@ -650,6 +661,9 @@ packages:
 
   property-information@7.0.0:
     resolution: {integrity: sha512-7D/qOz/+Y4X/rzSB6jKxKUsQnphO046ei8qxG59mtM3RG3DHgTK81HrxrmoDVINJb8NKT5ZsRbwHvQ6B68Iyhg==}
+
+  raphael@2.3.0:
+    resolution: {integrity: sha512-w2yIenZAQnp257XUWGni4bLMVxpUpcIl7qgxEgDIXtmSypYtlNxfXWpOBxs7LBTps5sDwhRnrToJrMUrivqNTQ==}
 
   regex-recursion@6.0.2:
     resolution: {integrity: sha512-0YCaSCq2VRIebiaUviZNs0cBz1kg5kVS2UKUfNIx8YVs1cN3AV7NTctO5FOKBA+UT2BPJIWZauYHPqJODG50cg==}
@@ -1293,6 +1307,12 @@ snapshots:
 
   estree-walker@2.0.2: {}
 
+  eve-raphael@0.5.0: {}
+
+  flowchart.js@1.18.0:
+    dependencies:
+      raphael: 2.3.0
+
   focus-trap@7.6.4:
     dependencies:
       tabbable: 6.2.0
@@ -1386,6 +1406,10 @@ snapshots:
   preact@10.26.5: {}
 
   property-information@7.0.0: {}
+
+  raphael@2.3.0:
+    dependencies:
+      eve-raphael: 0.5.0
 
   regex-recursion@6.0.2:
     dependencies:
