@@ -11,6 +11,10 @@ export const zh = defineConfig({
       '/zh/interview/': {
         base: '/zh/interview/',
         items: sidebarInterview()
+      },
+      '/zh/collect/': {
+        base: '/zh/collect/',
+        items: sidebarCollect()
       }
     },
     footer: {
@@ -44,7 +48,7 @@ function nav(): DefaultTheme.NavItem[] {
     },
     {
       text: '美文推荐',
-      link: '/zh/collect/',
+      link: '/zh/collect/index',
       activeMatch: '/zh/collect/',
     },
     {
@@ -238,5 +242,66 @@ function sidebarInterview(): DefaultTheme.SidebarItem[] {
 
     },
     {text: '面试真题', link: 'questions/01.md'},
+  ]
+}
+
+function sidebarCollect(): DefaultTheme.SidebarItem[] {
+  return [
+    { text: 'Github大佬', link: 'github/github.md'},
+    {
+      text: '技术相关',
+      items: [
+        {
+          text: '简书',
+          items: [],
+        },
+        {
+          text: '掘金',
+          items: [],
+        },
+        {
+          text: '其他',
+          items: [
+            {
+              text: '设计模式',
+              base: 'https://',
+              link: 'refactoringguru.cn/design-patterns',
+            },
+            {
+              text: '数据结构',
+              base: 'https://',
+              link: 'mp.weixin.qq.com/s/PzncE_ofS4M0b6KB9ESWnA',
+            },
+          ],
+        },
+
+      ]
+    },
+    {
+      text: '读书笔记',
+      items: [
+        {
+          text: '简书',
+          items: [],
+        },
+        {
+          text: '掘金',
+          items: [
+            {text: 'Vue 组件间的属性透传 (01)--Vue2.x', link: 'note/jue-jin/index-01.md'},
+            {text: 'Vue 组件间的事件透传 (02)--Vue2.x', link: 'note/jue-jin/index-02.md'},
+            {text: 'Vue 组件间的属性透传 (03)--Vue3.x', link: 'note/jue-jin/index-03.md'},
+            {text: 'Vue 组件间的事件透传 (04)--Vue3.x', link: 'note/jue-jin/index-04.md'},
+            {text: 'Vue 组件间的属性、事件透传 (05)–实际应用', link: 'note/jue-jin/index-05.md'},
+          ],
+        },
+        {
+          text: '编程相关',
+          items: [
+            {text: '你不知道的JavaScript', link: 'books/你不知道的JavaScript.md'},
+            {text: 'JavaScript高级程序设计', link: 'books/JavaScript高级程序设计.md'},
+          ],
+        },
+      ],
+    },
   ]
 }
