@@ -536,22 +536,22 @@ function sideBarStudyNote(): DefaultTheme.SidebarItem[] {
             {text: '17-综合案例-事件分析库', link: 'crack-js/index-17'},
           ],
         },
-        // {
-        //   text: '前端主流布局系统进阶与实战',
-        //   collapsible: true,
-        //   children: [
-        //     '/zh/other/class/front-layout/README.md',
-        //     '/zh/other/class/front-layout/index-01.md',
-        //     '/zh/other/class/front-layout/index-02.md',
-        //     '/zh/other/class/front-layout/index-03.md',
-        //     '/zh/other/class/front-layout/index-04.md',
-        //     '/zh/other/class/front-layout/index-05.md',
-        //     '/zh/other/class/front-layout/index-06.md',
-        //     '/zh/other/class/front-layout/index-07.md',
-        //     '/zh/other/class/front-layout/index-08.md',
-        //     '/zh/other/class/front-layout/index-09.md',
-        //   ],
-        // },
+        {
+          text: '前端主流布局系统进阶与实战',
+          collapsed: true,
+          items: [
+            { text: '00-配套课件', link: "front-layout/index-00.md" },
+            { text: '01-课程介绍', link: "front-layout/index-01.md" },
+            { text: '02-CSS还原UI设计', link: "front-layout/index-02.md" },
+            { text: '03-布局中的尺寸与位置', link: "front-layout/index-03.md" },
+            { text: '04-Flex 弹性布局', link: "front-layout/index-04.md" },
+            { text: '05-Grid网格布局', link: "front-layout/index-05.md" },
+            { text: '06-移动端适配布局', link: "front-layout/index-06.md" },
+            { text: '07-响应式布局', link: "front-layout/index-07.md" },
+            { text: '08-综合实战 Ant Design Pro 管理系统', link: "front-layout/index-08.md" },
+            { text: '09-课程福利加餐', link: "front-layout/index-09.md" },
+          ],
+        },
         // {
         //   text: '快速掌握前端必会的7种设计模式',
         //   collapsible: true,
@@ -761,10 +761,14 @@ function sideBarStudyNote(): DefaultTheme.SidebarItem[] {
         //     '/zh/other/class/react-native/xiaohongshu/index-16.md',
         //   ],
         // },
-        // {
-        //   text: 'Node.js工程师养成计划',
-        //   children: ['/zh/other/class/node-nurture/index-01.md'],
-        // },
+        {
+          text: 'Node.js工程师养成计划',
+          collapsed: false,
+          items: [
+            {text: '01-Node 脚手架篇 - 打造自己的脚手架工具', link: 'node-nurture/index-01.md'},
+            {text: '02-Node原生实战篇-项目基建-原生Node开发Web服务器', link: 'node-nurture/index-02.md'}
+          ],
+        },
       ]
     }
   ]
