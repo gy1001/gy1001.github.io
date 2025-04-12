@@ -14,6 +14,9 @@ export default defineConfig({
     root: { label: 'English', lang: 'en-US' },
     zh: { label: '中文', lang: 'zh-CN', ...zh },
   },
+  head: [
+    ['link', { rel: 'icon', href: '/images/logo.png' }],
+  ],
 
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config

@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      gy-prettier:
+        specifier: ^0.0.1
+        version: 0.0.1
       vitepress:
         specifier: ^1.6.3
         version: 1.6.3(@algolia/client-search@5.23.3)(postcss@8.5.3)(search-insights@2.17.3)
@@ -574,6 +577,9 @@ packages:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
+
+  gy-prettier@0.0.1:
+    resolution: {integrity: sha512-hHhSXgtl0BUMkRmQf2cWWCkxf6nQJatMMRavWYjLw1QdgetCsBVM18Dmni+eARLJszQoqTa/IYM2G3utBovocA==}
 
   hast-util-to-html@9.0.5:
     resolution: {integrity: sha512-OguPdidb+fbHQSU4Q4ZiLKnzWo8Wwsf5bZfbvu7//a9oTYoqD/fWpe96NuHkoS9h0ccGOTe0C4NGXdtS0iObOw==}
@@ -1293,6 +1299,8 @@ snapshots:
 
   fsevents@2.3.3:
     optional: true
+
+  gy-prettier@0.0.1: {}
 
   hast-util-to-html@9.0.5:
     dependencies:

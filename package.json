@@ -14,6 +14,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.8.0",
   "devDependencies": {
+    "gy-prettier": "^0.0.1",
     "vitepress": "^1.6.3"
   }
 }
