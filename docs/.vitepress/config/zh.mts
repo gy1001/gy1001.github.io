@@ -15,6 +15,10 @@ export const zh = defineConfig({
       '/zh/collect/': {
         base: '/zh/collect/',
         items: sidebarCollect()
+      },
+      '/zh/other/': {
+        base: '/zh/other/',
+        items: sidebarOther()
       }
     },
     footer: {
@@ -53,7 +57,7 @@ function nav(): DefaultTheme.NavItem[] {
     },
     {
       text: '其他',
-      link: '/zh/other/',
+      link: '/zh/other/index',
       activeMatch: '/zh/other/',
     },
   ]
@@ -247,9 +251,10 @@ function sidebarInterview(): DefaultTheme.SidebarItem[] {
 
 function sidebarCollect(): DefaultTheme.SidebarItem[] {
   return [
-    { text: 'Github大佬', link: 'github/github.md'},
+    {text: 'Github大佬', link: 'github/github.md'},
     {
       text: '技术相关',
+      collapsed: false,
       items: [
         {
           text: '简书',
@@ -279,6 +284,7 @@ function sidebarCollect(): DefaultTheme.SidebarItem[] {
     },
     {
       text: '读书笔记',
+      collapsed: false,
       items: [
         {
           text: '简书',
@@ -286,6 +292,7 @@ function sidebarCollect(): DefaultTheme.SidebarItem[] {
         },
         {
           text: '掘金',
+          collapsed: false,
           items: [
             {text: 'Vue 组件间的属性透传 (01)--Vue2.x', link: 'note/jue-jin/index-01.md'},
             {text: 'Vue 组件间的事件透传 (02)--Vue2.x', link: 'note/jue-jin/index-02.md'},
@@ -296,12 +303,49 @@ function sidebarCollect(): DefaultTheme.SidebarItem[] {
         },
         {
           text: '编程相关',
+          collapsed: false,
           items: [
             {text: '你不知道的JavaScript', link: 'books/你不知道的JavaScript.md'},
             {text: 'JavaScript高级程序设计', link: 'books/JavaScript高级程序设计.md'},
           ],
         },
       ],
+    },
+  ]
+}
+
+function sidebarOther(): DefaultTheme.SidebarItem[] {
+  return [
+    {
+      text: '推荐',
+      collapsed: true,
+      items: [
+        {text: 'APP 推荐', link: 'index.md'},
+        {text: '影视博主推荐', link: 'video.md'},
+      ]
+    },
+    {
+      text: '常用快捷键',
+      collapsed: false,
+      items: [
+        {text: 'VSCode', link: 'hotkey/vscode.md'},
+        {text: 'Chrome', link: 'hotkey/chrome.md'},
+        {text: 'Karabiner Elements', link: 'hotkey/karabiner-elements.md'},
+      ],
+    },
+    {
+      text: '折腾笔记',
+      items: [
+        {text: 'Mac 在 Windows 下使用', link: 'toss/mac-in-windows.md'},
+        {text: 'Deepin', link: 'toss/deepin.md'},
+      ],
+    },
+    {
+      text: 'Bug 问题合集',
+      items: [{
+        text: '工作中遇到的问题',
+        link: 'question/bug-list-01.md'
+      }],
     },
   ]
 }
