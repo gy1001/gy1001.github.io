@@ -89,7 +89,7 @@ function sidebarFront(): DefaultTheme.SidebarItem[] {
     },
     {
       text: 'JavaScript相关',
-      collapsed: true,
+      collapsed: false,
       items: [
         {text: "Module-模块化", link: "about/module"},
         {text: 'Axios', link: "about/axios"},
@@ -105,7 +105,7 @@ function sidebarFront(): DefaultTheme.SidebarItem[] {
     },
     {
       text: '包管理相关',
-      collapsed: true,
+      collapsed: false,
       items: [
         {text: 'Npm', link: "package/npm"},
         {text: 'Npm Vs Yarn Vs Pnpm', link: "package/npm-yarn-pnpm"},
@@ -115,6 +115,7 @@ function sidebarFront(): DefaultTheme.SidebarItem[] {
     },
     {
       text: '前端框架',
+      collapsed: false,
       items: [
         {text: 'Vue', link: 'frame/vue.md'},
         {text: 'React', link: 'frame/react.md'},
@@ -122,6 +123,7 @@ function sidebarFront(): DefaultTheme.SidebarItem[] {
     },
     {
       text: 'mini-前端框架',
+      collapsed: false,
       items: [
         {
           text: 'mini-vue', link: 'mini-frame/mini-vue.md'
@@ -141,6 +143,7 @@ function sidebarFront(): DefaultTheme.SidebarItem[] {
     },
     {
       text: '源码解读',
+      collapsed: false,
       items: [
         {text: 'Axios', link: 'source/axios.md'},
         {text: 'Promise', link: 'source/promise.md'},
@@ -164,6 +167,7 @@ function sidebarFront(): DefaultTheme.SidebarItem[] {
     },
     {
       text: '一些翻译',
+      collapsed: false,
       items: [
         {text: 'RequireJs', link: 'translate/require-js.md'}
       ]
@@ -175,6 +179,7 @@ function sidebarInterview(): DefaultTheme.SidebarItem[] {
   return [
     {
       text: '面试题',
+      collapsed: false,
       items: [
         {text: '作用域', link: 'scope/'},
       ]
@@ -183,6 +188,7 @@ function sidebarInterview(): DefaultTheme.SidebarItem[] {
     {text: 'Html 相关', link: 'html/html.md'},
     {
       text: 'Css 相关',
+      collapsed: false,
       items: [
         {text: 'Css 面试题', link: 'css/index-01.md'},
         {text: 'Css 布局', link: 'css/css-layout.md'},
@@ -193,6 +199,7 @@ function sidebarInterview(): DefaultTheme.SidebarItem[] {
     },
     {
       text: 'JavaScript 相关',
+      collapsed: false,
       items: [
         {text: 'JavaScript 面试题', link: 'javascript/basic-00.md'},
         {text: '变量类型和计算', link: 'javascript/basic-01.md'},
@@ -210,37 +217,24 @@ function sidebarInterview(): DefaultTheme.SidebarItem[] {
       ],
     },
     {
-      text: 'ES6 相关', link: 'es6/index-01.md'
-    },
-    {
-      text: 'TS 相关', link: 'ts/index-01.md'
-    },
-    {
-      text: '工程化相关', link: 'engineering/index-01.md'
-    },
-    {
-      text: 'Webpack 相关', link: 'webpack/index-01.md'
-    },
-    {
-      text: 'Vue 相关', link: 'vue/index-01.md'
-    },
-    {
-      text: 'React 相关', link: 'react/index-01.md'
-    },
-    {
-      text: 'Http 相关', link: 'http/http-01.md'
-    },
-    {
-      text: 'Node 相关', link: 'node/node-01.md'
-    },
-    {
-      text: '开发环境', link: 'environment/development/01.md'
-    },
-    {
-      text: '运行环境', link: 'environment/production/01.md'
+      text: 'JavaScript 进阶相关',
+      collapsed: false,
+      items: [
+        { text: 'ES6 相关', link: 'es6/index-01.md' },
+        { text: 'TS 相关', link: 'ts/index-01.md' },
+        { text: '工程化相关', link: 'engineering/index-01.md' },
+        { text: 'Webpack 相关', link: 'webpack/index-01.md' },
+        { text: 'Vue 相关', link: 'vue/index-01.md' },
+        { text: 'React 相关', link: 'react/index-01.md' },
+        { text: 'Http 相关', link: 'http/http-01.md' },
+        { text: 'Node 相关', link: 'node/node-01.md' },
+        { text: '开发环境', link: 'environment/development/01.md' },
+        { text: '运行环境', link: 'environment/production/01.md' },
+      ]
     },
     {
       text: '算法相关',
+      collapsed: false,
       items: [{text: '01', link: 'algorithm/01.md'},
         {text: '02', link: 'algorithm/02.md'}],
 
@@ -266,6 +260,7 @@ function sidebarCollect(): DefaultTheme.SidebarItem[] {
         },
         {
           text: '其他',
+          collapsed: false,
           items: [
             {
               text: '设计模式',
@@ -318,7 +313,7 @@ function sidebarOther(): DefaultTheme.SidebarItem[] {
   return [
     {
       text: '推荐',
-      collapsed: true,
+      collapsed: false,
       items: [
         {text: 'APP 推荐', link: 'index.md'},
         {text: '影视博主推荐', link: 'video.md'},
@@ -335,6 +330,7 @@ function sidebarOther(): DefaultTheme.SidebarItem[] {
     },
     {
       text: '折腾笔记',
+      collapsed: false,
       items: [
         {text: 'Mac 在 Windows 下使用', link: 'toss/mac-in-windows.md'},
         {text: 'Deepin', link: 'toss/deepin.md'},
@@ -342,6 +338,7 @@ function sidebarOther(): DefaultTheme.SidebarItem[] {
     },
     {
       text: 'Bug 问题合集',
+      collapsed: false,
       items: [{
         text: '工作中遇到的问题',
         link: 'question/bug-list-01.md'
