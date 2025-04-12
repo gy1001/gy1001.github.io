@@ -212,7 +212,7 @@ module.exports = Compiler
 
 > 这里我们大部分框架都采用打包后的基本框架，只需要替换其中的 modules、entryId 即可
 
-```ejs
+```txt
 ;(() => {
   // webpackBootstrap
   'use strict'
@@ -438,7 +438,7 @@ module.exports = Compiler
 
 lib/templates.ejs 内容如下
 
-```ejs
+```txt
 ;(() => {
   // webpackBootstrap
   'use strict'
