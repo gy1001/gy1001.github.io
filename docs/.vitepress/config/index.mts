@@ -26,6 +26,7 @@ export default defineConfig({
     logo: { src: '/images/logo.png', width: 24, height: 24 },
     sidebar: [],
 
+
     footer: {
       message: 'Released under the MIT License.',
       copyright: `Copyright © 2022-${new Date().getFullYear()} G.Y`,
