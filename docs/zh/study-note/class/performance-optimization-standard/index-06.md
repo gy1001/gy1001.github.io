@@ -2,21 +2,21 @@
 
 ## 01:webpack的优化配置【了解这些优化配置才敢说会用webpack】
 
-![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8522d2e1b3bc47aa9a617d9922ba3f36~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)之前我们讲了不少的优化方法，如果都是通过手工去做会非常麻烦，如果可以利用 webpack 这样的构建工具帮我们自动化的完成这些任务，可以大大提高我们的开发效率 可以配置很多 plugins 和 loader 帮我们做很多工作，但我们很难记住所有的 plugins 和 loader，从 webpack4 开始引入了 mode 模式，可以配置开发和生产模式，就可以使用一些已经默认好的插件来帮我们达到一些想做的效果，不用再为这些配置发愁，这也是计算机常用的模式，叫做CONVENTION OVER CONFIGURATION(**约定大于配置**)，它给我们做了两个约定好的模式，我们直接使用就好了，如果这个模式里有些细微的东西我们觉得不太合适，做一些调整，可以重载里面的配置，不用大规模的自己重新进行配置，关于两种模式具体有哪些默认插件可以去官网进行了解
+![在这里插入图片描述](./assets/8522d2e1b3bc47aa9a617d9922ba3f36~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)之前我们讲了不少的优化方法，如果都是通过手工去做会非常麻烦，如果可以利用 webpack 这样的构建工具帮我们自动化的完成这些任务，可以大大提高我们的开发效率 可以配置很多 plugins 和 loader 帮我们做很多工作，但我们很难记住所有的 plugins 和 loader，从 webpack4 开始引入了 mode 模式，可以配置开发和生产模式，就可以使用一些已经默认好的插件来帮我们达到一些想做的效果，不用再为这些配置发愁，这也是计算机常用的模式，叫做CONVENTION OVER CONFIGURATION(**约定大于配置**)，它给我们做了两个约定好的模式，我们直接使用就好了，如果这个模式里有些细微的东西我们觉得不太合适，做一些调整，可以重载里面的配置，不用大规模的自己重新进行配置，关于两种模式具体有哪些默认插件可以去官网进行了解
 
-![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f185cd04550241e2ae70f804f16219cc~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+![在这里插入图片描述](./assets/f185cd04550241e2ae70f804f16219cc~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
 ![image-20230812110126739](./assets/image-20230812110126739.png)
 
 **npm run dev开发模式**
 
-![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/11d2b767288c423a987d7af412815fbc~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+![在这里插入图片描述](./assets/11d2b767288c423a987d7af412815fbc~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
 **npm run start生产模式**
 
 > app.bundle.js 少了一半
 
-![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/34fdb8f337b242079a78bc2af562f8ea~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+![在这里插入图片描述](./assets/34fdb8f337b242079a78bc2af562f8ea~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
 ### Tree-shaking
 
@@ -26,11 +26,11 @@
 
   > Tree-shaking 虽然很好，但也有它的局限性，它的实现是基于一定的规则，需要基于 es6 的模块化导入导出语法，在 js 里，我们可能会涉及到修改全局作用域，这里全局作用域对于前端或浏览器而言，就是 window 对象，可能在全局上添加了方法或者修改了属性，这个时候是体现不出来的，如果它把你这个 shake 掉了，代码就会出问题，所以它给我们留了后门，就是我们可以指定并告诉 webpack 哪些东西是有副作用的，不能在 Tree-shaking 中去掉
 
-  ![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/151a58caf3224a92be7ffb4d0bb01921~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+  ![在这里插入图片描述](./assets/151a58caf3224a92be7ffb4d0bb01921~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
 * 注意 Babel 默认配置的影响 preset 把常用的 babel 插件做了一个集合，我们调下这个集合就可以用这些插件，转码的时候会把es6模块化的语法转成其他模块化语法，我们希望保留 es6 模块化语法，所以要加上 modules: false 的配置，这样 Tree-shaking 才能起到作用
 
-  ![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6ef531a999d44e5fa95e1cdbcd126730~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+  ![在这里插入图片描述](./assets/6ef531a999d44e5fa95e1cdbcd126730~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
 ### JS压缩
 
@@ -88,25 +88,25 @@ console.log(str);
 
   > polyfill 是兼容旧浏览器去进行新的功能或者新的规范的一些实现 给浏览器不支持的语法打补丁，比如 promise、include 等 需要安装@babel/polyfill，安装了这个之后我们就可以兼容这些东西，但这个东西有些过大，把所有涉及到的东西都引入进来了，但我们用到的可能只是其中很小的部分，配置 “useBuiltIns”: "usage" 就可以达到我们的效果
 
-  ![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/01473aeaa3cc4c38bc8ebf92fe560b23~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+  ![在这里插入图片描述](./assets/01473aeaa3cc4c38bc8ebf92fe560b23~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
 * 辅助函数的按需引入
 
   > 声明了一个class，babel转码后是如下图的形式，使用了_classCallCheck这样的辅助函数，每当我们声明一个新的类时，都会生成这个辅助函数，但这个辅助函数是可以进行复用的，复用可以减少不少的代码，辅助函数的按需引入是对辅助函数的复用，只要把@babel/plugin-transform-runtime插件配置上就可以，剩下工作交给babel做
 
-  ![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7384969c71d44836b6487d2d8da430ff~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+  ![在这里插入图片描述](./assets/7384969c71d44836b6487d2d8da430ff~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
-  ![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/996f9fd35a4640c6b3ab628280d5a479~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+  ![在这里插入图片描述](./assets/996f9fd35a4640c6b3ab628280d5a479~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
 * 根据目标浏览器按需转换代码
 
   > 怎么通过babel设置目标浏览器 要对市场份额超过百分之0.25的所有浏览器都要进行支持，babel就要根据你的配置去决定最后转码要转成什么样，要转成支持你的要求的，如果支持得越少，它要做的转码工作或者转出来的代码体积就越小，但对用户的支持和体验来说是不好的，所以这通常要根据我们的实际情况进行设置
 
-  ![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c4d13411598e44fb8eec44fd5d0ba088~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+  ![在这里插入图片描述](./assets/c4d13411598e44fb8eec44fd5d0ba088~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
   **有哪些可以放在 browers 里进行设置，babel集成的是 browserslist 插件来进行刷选**
 
-  ![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d1e1264699f04506ba4cfdb914535d09~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+  ![在这里插入图片描述](./assets/d1e1264699f04506ba4cfdb914535d09~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
 ## 02：webpack的依赖优化【小改动，大作用】
 
@@ -291,7 +291,7 @@ module: {
 
 利用缓存可以帮我们提高用户在再次访问网站时的体验，加快网页加载速度，如何管理好这些缓存，要保证 html，css，js 都是最新的代码
 
-<img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6c5cdfea08074792a72f8dff0d6f5aac~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="在这里插入图片描述" style="zoom:50%;" />
+<img src="./assets/6c5cdfea08074792a72f8dff0d6f5aac~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="在这里插入图片描述" style="zoom:50%;" />
 
 更新部署过程中，这些资源的更新是有个时间间隔的，有先有后，假如这时用户进行访问，就很容易出现问题，可能拿到最新的 html，但是相关资源未拿到，这时浏览器就会使用之前缓存的 js、css，新的代码和旧的代码一起，会出现问题，该怎么管理好缓存？
 
@@ -325,7 +325,7 @@ plugins: [
 
 打出来的包 js 和 css 的 hash 一致
 
-![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1ee32537600f4e3fbff66ebe7579c838~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+![在这里插入图片描述](./assets/1ee32537600f4e3fbff66ebe7579c838~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
 修改成 contenthash 后，打出来的包css和js不一致
 
@@ -360,7 +360,7 @@ plugins: [
 
 使用方法：通过webpack --profile --json > stats.json 的命令把我们这个分析的数据导出来，这个数据还是来自于webpack，webpack去进行这个打包的时候，实际上可以给我们去生成这样的一个性能分析的数据文件，它是一个json文件，我们自己看会很麻烦，通过这种可视化的方式让大家更容易去把它读懂，得到这个文件后在这里进行上传，右侧的极坐标图会根据分析的数据进行展示，这个图是自内向外读的，里层的代表的是整个bundle的大小，这个图可以比较清晰的展示每一部分是由什么组成的，可以一层一层的去剖析
 
-![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5678dff2c15b41adacf62a699f38d6c2~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+![在这里插入图片描述](./assets/5678dff2c15b41adacf62a699f38d6c2~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
 上面的工具只能看个大概，还是不够细，想进一步可以用 bundle-analyzer 这样的工具实现，这里用 source-map-explorer，通过这个工具可以进一步进行分析，对 build 里所有的 js 进行分析，这个工具有个特点，首先分析不是基于最后我们的 bundle 文件，而是基于 sourcemap，所以我们需要生成sourcemap
 
@@ -381,11 +381,11 @@ module.exports = {
 
 先npm run build 再 npm run analyze，她会很快的帮我们去进行分析，然后打开一个网页给我们展示这个测试的报告，这个报告左上角有一个下拉菜单，我们通过这个去调整，去看具体的某一个bundle，或者这个第一个叫做这个 combined 就是我们所有的 bundle 的一个整体的分析，通过这个很容易了解到我们的每一个包里是什么东西？每块他到底占比怎么样？是不是需要去进行优化？
 
-![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b265c908c6154493a1cdece5b5e15a93~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+![在这里插入图片描述](./assets/b265c908c6154493a1cdece5b5e15a93~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
 另外看一下，官方推荐的bundle-analyzer，如果我们使用它去进行这样的类似这个分析的话，也可以得到类似这样的一个可视化的图，他也是通过这种矩形包含的关系去给我们展示这个占比的一个情况，而且他这个这个不同的这个颜色来进行区分，但是我觉得这个图可能跟我们刚才source-map-explorer相比，最大的一个缺点就是他没有把每一部分的这个体积和占比情况直接给我们标出来，看这个图还是有点类似刚刚的在线工具，只能看个大概，但是你去点击具体的部分时，会列出一些具体的内容，仍然没有占比信息，所以推荐使用 **source-map-explorer**
 
-![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/18fc89abfbfa407e8c2cc70c62bd2e55~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+![在这里插入图片描述](./assets/18fc89abfbfa407e8c2cc70c62bd2e55~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
 还有个**速度分析**：speed-measure-webpack-plugin
 
@@ -400,7 +400,7 @@ module.exports = smp.wrap({
 
 运行 npm run build，看如下构建日志，可以看到所有 plugins 和所有 loaders 的使用效率情况，会列出具体的工作时总的耗时
 
-![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/10637c8ddfdc4270a15ba85d5d755334~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+![在这里插入图片描述](./assets/10637c8ddfdc4270a15ba85d5d755334~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
 ## 07：React按需加载的实现方式【中高级前端必会的React按需加载】
 
@@ -440,6 +440,6 @@ class App extends React.Component {
 
 ### 总结代码拆分和不同技术的适用场景
 
-![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4643c7385872495bbf427b21b8bdc9f3~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+![在这里插入图片描述](./assets/4643c7385872495bbf427b21b8bdc9f3~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 
 代码拆解最初是为了解决我们这一个过大请求的问题，我们知道我们之前是把所有的资源都打成一个包，那么我们通过一个请求，把整个剥去加载到我们的这个首页，那么这个时候他在网络上的这个开销虽然相对的少了一些，因为只有一个请求，但是因为整个包体积比较大，所以他下载耗时非常的长，所以我们就做了一个事情，就是我们这个较大的包进行一个拆解，把它拆成了若干较小的包，这每个小的包只有当其中被用到时才会被加载，这就是**按需加载**，但这也有个问题，就是我们拆解要拆到什么力度，也就是这模块的定义，假如我们是定义到组件的水平，那所有组件都被拆成一个独立模块的话，我们会有很多很多bundle 或者 chunk，每当用到一个组件时就需要进行按需加载，会带来什么问题？我们想要获得这个页面上所有的资源，有若干个组件，就需要发起若干个请求，每个请求都有自己的网络开销，这些网络开销累积起来可能比之前一个请求的开销还大，所以拆解力度要控制好，**通常最合理的方式是按照路由进行按需加载，而当我们页面上的一些组件在不同路由页面会被进行复用时，才把组件单独进行拆解**
