@@ -12,7 +12,7 @@ CSS 网格布局除了提供定义网格和放置网格项目的相关属性之�
 
 对于大多数开发者来说，他们都知道 Web 有两根轴线：水平方向的  `x` 轴和垂直方向的 `y` 轴。只不过，在 Flexbox 布局中，不再称 `x` 轴和 `y` 轴了，它由 Flexbox 中的主轴（Main Axis）和侧轴（Cross Axis）替代了，并且 Flexbox 的主轴不再绝对的是 `x` 轴，侧轴也不再绝对的是 `y` 轴，它由 `flex-direction` 属性的值来决定：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c65c3b6710e34f3b806096d86c3f9a88~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c65c3b6710e34f3b806096d86c3f9a88~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 由于网格布局是唯一的二维布局，因此，网格布局中也有两条轴线，这两条轴线既不称为水平的 `x` 轴和垂直方向的 `y` 轴，也不像 Flexbox 布局中称为主轴和侧轴。它们有着新命名的两条轴线，即内联轴（Inline Axis）和块轴（Block Axis）：
 
@@ -21,15 +21,15 @@ CSS 网格布局除了提供定义网格和放置网格项目的相关属性之�
 
 即，内联轴和块轴会受 CSS 的 `direction` 、`writing-mode` 和 HTML 的 `dir` 属性值的影响，这个有点类似于 Flexbox 布局的主轴和侧轴，不是固定不变的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/eee6bbb25e80440595cd2b888d685c59~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/eee6bbb25e80440595cd2b888d685c59~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 网格布局中的内联轴（Inline Axis）和块轴（Block Axis）可以和网格中的行与列相映射，比如书写模式和阅读模式是 `ltr`（Left-To-Right）时，内联轴也称为行轴（Row Axis），块轴也称为列轴（Column Axis）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/aa6c0a8b030d479795e307cf8aafbcef~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/aa6c0a8b030d479795e307cf8aafbcef~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 需要注意的是，虽然内联轴（Inline Axis）和块轴（Block Axis）会因 CSS 的书写模式或文档的阅读模式改变，但网格中的行轴和列轴是始终不变的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/116d44dec0a3439390088c8ed8547df1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/116d44dec0a3439390088c8ed8547df1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 网格布局中，你就可以沿着这两条轴线来控制网格项目或网格轨道的对齐方式。
 
@@ -60,7 +60,7 @@ CSS 网格布局除了提供定义网格和放置网格项目的相关属性之�
 
 这几个属性都可以接受 `auto` 、`normal` 、`start` 、`end` 、`center` 、`stretch` 、 `baseline` 、`first baseline` 和 `last baseline` 值，但常用的值只有 `start` 、`end` 、`center` 和 `stretch` （默认值）。其中 `start` 、`center` 和 `end` 表示相应轴的起点位置，中心位置和终点位置：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/44d0a3da72984dcab95c35a0d220fe6f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/44d0a3da72984dcab95c35a0d220fe6f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 注意，这几个属性都是用来控制网格项目在所处网格区域内的内联轴或块轴方向的对齐，如果没有跨网格单元格，则在对应的网格单元格内的内联轴或块轴方向的对齐。
 
@@ -116,7 +116,7 @@ CSS 网格布局除了提供定义网格和放置网格项目的相关属性之�
 
 使用 `grid-row` 和 `grid-column` 将网格项目五放置指定的区域内（合并四行两列），相当于放置在 `grid-area: 1  /  9  / 5 ``/`` 11` 区域内：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/377823c139f14cdbbb55085f88fe2187~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/377823c139f14cdbbb55085f88fe2187~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你可以在网格容器上显式设置 `align-items` 属性的值，比如：
 
@@ -126,7 +126,7 @@ CSS 网格布局除了提供定义网格和放置网格项目的相关属性之�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4bbe2af1d92547539266c5e186afe463~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4bbe2af1d92547539266c5e186afe463~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 正如上图所示：
 
@@ -137,7 +137,7 @@ CSS 网格布局除了提供定义网格和放置网格项目的相关属性之�
 
 另外，`align-items` 取值为 `auto` 、`normal` 和 `last baseline` 值时，与取值 `stretch` 值效果等同；`baseline` 和  `first baseline` 的效果与 `start` 等同：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d0b368a2fb244036879fee897cb936c9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d0b368a2fb244036879fee897cb936c9~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/zYavJow>
 
@@ -170,7 +170,7 @@ CSS 网格布局除了提供定义网格和放置网格项目的相关属性之�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0ae4d6b56ab9494faedfbe9687127fa8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0ae4d6b56ab9494faedfbe9687127fa8~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/VwdvELO>
 
@@ -188,7 +188,7 @@ CSS 网格布局除了提供定义网格和放置网格项目的相关属性之�
 
 上面这个示例，网格项目一在块轴方向始终是是垂直居中的，因为它显式设置了 `align-self` 的值为 `center` ，其他网格项目在块轴的对齐方式则由网格容器上的 `align-items` 属性的值来决定：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f74ae2a117834dffb6b0439f4051e5a2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f74ae2a117834dffb6b0439f4051e5a2~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/NWzGOpp>
 
@@ -200,7 +200,7 @@ CSS 网格布局除了提供定义网格和放置网格项目的相关属性之�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4492253aa2274f1283fe3873ea35e392~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4492253aa2274f1283fe3873ea35e392~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 正如上图所示：
 
@@ -211,7 +211,7 @@ CSS 网格布局除了提供定义网格和放置网格项目的相关属性之�
 
 同样的，`justify-items` 取值是 `auto` 、`normal` 和 `last baseline` 时与 `stretch` 值效果等同；`baseline` 和  `first baseline` 的效果与 `start` 等同：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/047a6004abeb4eb995708829bdb6011a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/047a6004abeb4eb995708829bdb6011a~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/gOKaBvw>
 
@@ -361,13 +361,13 @@ place-self:  <align-self>  <justify-self>
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9b4952c534814c58bc6aa009e81a7112~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9b4952c534814c58bc6aa009e81a7112~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/xxzwQpV>
 
 用下面这张图来总结网格项目在内联轴和块轴上对齐方式的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/34f95b07e31d4bfe9805b51a6d2cc1e1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/34f95b07e31d4bfe9805b51a6d2cc1e1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ### 网格轨道对齐
 
@@ -404,7 +404,7 @@ CSS Grid 布局中的对齐方式和 Flexbox 布局中的对齐方式最大的�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2fbd1df278d24d5e9719dbf630449e7a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2fbd1df278d24d5e9719dbf630449e7a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 可以像 Flexbox 布局中的 `justify-content` 和 `align-content` 一样，将剩余空间分配到网格轨道之间。
 
@@ -416,33 +416,33 @@ CSS Grid 布局中的对齐方式和 Flexbox 布局中的对齐方式最大的�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/89c6b387290941e2935ba6535e347df8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/89c6b387290941e2935ba6535e347df8~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/MWXKjVj>
 
 你会发现，在这个示例中，`align-content` 取值为 `normal` 、`stretch` 、`baseline` 、`first baseline` 、`last baseline` 的效果与 `start` 是等同的。事实上，`algin-content` 取值 `stretch` 时会对网格轨道进行拉伸，但并不是所有情景都是如此，它对网格轨道尺寸的设置是有一定要求的。有关于这方面，我们将放到后面与 `justify-content` 统一阐述。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dcb789f9d9e64410a1f585f06d4b7c0f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/dcb789f9d9e64410a1f585f06d4b7c0f~tplv-k3u1fbpfcp-zoom-1.gif)
 
 虽然说 `align-content` 是用来控制网格行轨道在网格容器块轴方向的对齐方式，但从另一个角度来说，也是将网格容器的剩余空间分配给网格轨道之间。比如：
 
 `align-content` 取值为 `center` 时，网格容器的剩余空间将一分为二，第一行网格轨道在块轴的起始位置与网格容器块轴方向超始位置的距离等于最后一行网格轨道在块轴的结束位置与网格容器块轴方向结束位置的距离：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/510a9f2f859443c2bfe6c1c6d0d58f7a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/510a9f2f859443c2bfe6c1c6d0d58f7a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > **如果网格容器只有一行行网格轨道时，可以实现垂直居中的效果** 。
 
 `align-content` 取值为 `space-around` 时，分配给相邻两行网格道之间的网格容器的剩余空间，是第一行网格轨道块轴起始位置距网格容器块轴方向起始位置之间距离的两倍，也是最后一行网格轨道块轴结束位置距网格容器块轴方向结束位置之间距离的两倍。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/54d029f1bd774f739104a20ed319287d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/54d029f1bd774f739104a20ed319287d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 `align-content` 取值 `space-evenly` 的效果和 `space-around` 有点相似，只不过，分配给相邻两行网格轨道之间的网格容器的剩余空间，和第一行网格轨道块轴方向起始位置与网格容器块轴方向起始位置之间的距离相等，也和最后一行网格轨道块轴方向结束位置与网格容器块轴方向结束位置之间的距离相等：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4e3f779172674a9ba1a6c74a463d5f70~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4e3f779172674a9ba1a6c74a463d5f70~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 `align-content` 取值为 `space-between` 会令行网格轨道在网格容器块轴方向两端对齐，即网格容器的剩余空间会平均分配到相邻两行行网格轨道之间：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b2ed5e7fd2ff4ec5a5ee9c342c0cd417~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b2ed5e7fd2ff4ec5a5ee9c342c0cd417~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 需要注意的是，当行网格轨道的尺寸是 `fr` 值时，`align-content` 取任何值的效果都和其默认值 `start` 等同。比如：
 
@@ -458,7 +458,7 @@ CSS Grid 布局中的对齐方式和 Flexbox 布局中的对齐方式最大的�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bb4627d5c6864a25bcd2f65255d6433a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/bb4627d5c6864a25bcd2f65255d6433a~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/poKgeMR>
 
@@ -474,7 +474,7 @@ CSS Grid 布局中的对齐方式和 Flexbox 布局中的对齐方式最大的�
 
 网格项目溢出网格容器：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7ccf09937ed24168bd77d0500c057692~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7ccf09937ed24168bd77d0500c057692~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/dyKGWYa>
 
@@ -488,7 +488,7 @@ CSS Grid 布局中的对齐方式和 Flexbox 布局中的对齐方式最大的�
 - `space-between` 与 `start` 等同；
 - `space-evenly` 与 `center` 等同。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a08d4124aaa042a5bc66ed1d00639258~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a08d4124aaa042a5bc66ed1d00639258~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在网格容器上显式设置 `align-content` 值时，还有可能会造成网格区域变大。比如下面这个示例，网格项目一合并了两行两列。当 `align-content` 取值 `space-around` 、`sapce-evenly` 和 `space-between` 时，行网格轨道之间的间距就会产生变化，这样对于合并多行的网格项目一来说，尺寸（块轴方向尺寸，`block-size`）也会产生相应变化：
 
@@ -510,7 +510,7 @@ CSS Grid 布局中的对齐方式和 Flexbox 布局中的对齐方式最大的�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/80a173fcce0b40f5a427e93e2d9ffdf0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/80a173fcce0b40f5a427e93e2d9ffdf0~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/OJEMmxN>
 
@@ -524,13 +524,13 @@ CSS Grid 布局中的对齐方式和 Flexbox 布局中的对齐方式最大的�
 
 不难发现，`justify-content` 取值和 `align-content` 值效果是相同的，唯一不同的是， **`justify-content`** **是用来控制列网格轨道在网格容器的内联轴方向的对齐方式，即 分配网格容器内联轴方向的剩余空间** ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3db8586d00914a5db8fe5c825f38676b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3db8586d00914a5db8fe5c825f38676b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/eYKJWer>
 
 `justify-content` 取值为 `center` 、`space-around` 、`space-evenly` 和 `space-between` 分配网格容器内联轴方向剩余空间如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/540f709a36c54396afe67e4c81bba7cd~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/540f709a36c54396afe67e4c81bba7cd~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > **注意，如果网格只有一列，****`justify-content`****取值****`center`****可以实现水平居中效果** 。
 
@@ -542,7 +542,7 @@ CSS Grid 布局中的对齐方式和 Flexbox 布局中的对齐方式最大的�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f396d35a084c4a59b1956fb82a8219ae~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f396d35a084c4a59b1956fb82a8219ae~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/yLEeXOR>
 
@@ -562,13 +562,13 @@ CSS Grid 布局中的对齐方式和 Flexbox 布局中的对齐方式最大的�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e25856418d33428c82afa058525fb089~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e25856418d33428c82afa058525fb089~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/oNybwWx>
 
 `justify-content` 和 `align-content` 一样，取值为 `space-around` 、`space-evenly` 和 `space-between` 会影响网格区域内联尺寸方向的尺寸（`inline-size`），即宽度会变大：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b2d94a25c3ff40e3a5f294f93a4cc3c9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b2d94a25c3ff40e3a5f294f93a4cc3c9~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/YzvwQrN>
 
@@ -588,7 +588,7 @@ CSS Grid 布局中的对齐方式和 Flexbox 布局中的对齐方式最大的�
 - 当 `justify-content` 取值为 `stretch` 时，设置内在尺寸的列网格轨道在内联轴方向会被拉伸，网格项目会沿着网格容器的内联轴方向填满（整个网格容器内联轴方向可用空间）；
 - 当 `align-content` 取值为 `stretch` 时，设置内在尺寸的行网格轨道在块轴方向被拉伸，网格项目会沿着网格容器块轴方向填满（整个网格容器块轴方向可用空间）。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/894eb8aeea544df8a992069189ba2d13~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/894eb8aeea544df8a992069189ba2d13~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/GRGoEwQ>
 
@@ -620,7 +620,7 @@ CSS Grid 布局中的对齐方式和 Flexbox 布局中的对齐方式最大的�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a28a34ec24eb4beeaf133a07be50d376~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a28a34ec24eb4beeaf133a07be50d376~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/GRGoEwQ>
 
@@ -658,13 +658,13 @@ place-content: <align-content> <justify-content>
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ce8f7fb82a1149b581f825b72d39aa64~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ce8f7fb82a1149b581f825b72d39aa64~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/XWYmypr>
 
 用下图简单地总结一下，网格容器上设置 `justify-content` 或 `align-content` 属性的值，网格轨道的对齐方式如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9e2a2625b9ed491abf3aa42bdfeef853~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9e2a2625b9ed491abf3aa42bdfeef853~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/RwJrXrQ>
 
@@ -720,7 +720,7 @@ place-content: <align-content> <justify-content>
 
 使用上面的代码，构建了一个像下面这样的网格，其中网格项目一合并了两行两列：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9189ca12b08d4c229a8e72413d8081ea~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9189ca12b08d4c229a8e72413d8081ea~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 目前为止，并没有显式地设置任何与对齐有关的属性。事实上，它相当于在网格容器上显式设置了 `place-items` 的值为 `stretch` ，即：
 
@@ -740,7 +740,7 @@ place-content: <align-content> <justify-content>
 
 当你在网格容器 `.container` 显式设置 `place-items` 的值不是 `stretch` （非默认值）时，那么所有网格项目的对齐方式都会得到改变：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b5d7c2f1fe664993a181f61f1145cd3e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b5d7c2f1fe664993a181f61f1145cd3e~tplv-k3u1fbpfcp-zoom-1.gif)
 
 这个时候，要是你在单个网格项目上（比如网格项目一）显式设置了 `place-self` 的值为 `stretch` ，你会发现网格项目一在合并的网格区域的块轴和内联轴方向都会被拉伸，填满整个网格区域。即使是网格容器上显式设置了 `place-items` 的值为 `center  stretch` ：
 
@@ -754,7 +754,7 @@ place-content: <align-content> <justify-content>
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5937ed70081e4e4a9b9a26fccbf01f19~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5937ed70081e4e4a9b9a26fccbf01f19~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 单个设置 `place-self` 的权重要大于在网格容器上设置的 `place-items`。正如你所看到的，网格项目一最终以自身 `place-self` 的值来控制对齐方式：
 
@@ -762,7 +762,7 @@ place-content: <align-content> <justify-content>
 
 需要注意的是，`place-content` 的默认值是 `start` ，但这并不意味着网格容器默认就是 `place-content` 取值 `start` 的效果。就拿上面这个示例来说，在网格容器上设置 `place-content` 属性值为 `start` 前后的效果是不一样的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1b2b49e1d53746a6b5f8b258b18e7430~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1b2b49e1d53746a6b5f8b258b18e7430~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 也就是说，**如果网格容器上未显式设置** **`place-content`** **时，并不会以默认的** **`place-content: start`** **来控制网格轨道的对齐** 。
 
@@ -774,7 +774,7 @@ place-content: <align-content> <justify-content>
 - `place-items` 和 `place-self` 会改变网格项目在网格区域的对齐方式，同时也会改变网格项目的尺寸，但不会改变网格轨道之间的间距；
 - `place-items` 用于网格容器，会改变所有网格项目；`place-self` 用于网格项目，只会改变设置了该值的网格项目。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f57ff81584444d5b8639a0060c0a59eb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f57ff81584444d5b8639a0060c0a59eb~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：[codepen.io](https://codepen.io/airen/full/vYrLoaz)
 
@@ -782,11 +782,11 @@ place-content: <align-content> <justify-content>
 
 通过前面课程的学习，你已经知道了在 Flex 项目中设置 `margin` 属性的值为 `auto` 时，可以达到 Flex 项目对齐的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ce3f33aa26b545689e44f8efe4cb9a5d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ce3f33aa26b545689e44f8efe4cb9a5d~tplv-k3u1fbpfcp-zoom-1.png)
 
 网格布局中，在网格项目上设置 `margin` 的值为 `auto` 时也能达到相似的效果。比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/12da10c18ec84b17ba78fe1e6fe807e2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/12da10c18ec84b17ba78fe1e6fe807e2~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/YzvqKgz>
 
@@ -803,7 +803,7 @@ place-content: <align-content> <justify-content>
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/48930c11de1b409d94862351a165f2eb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/48930c11de1b409d94862351a165f2eb~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/xxzVxoV>
 
@@ -812,7 +812,7 @@ place-content: <align-content> <justify-content>
 - `gap` 是用来设置网格轨道之间的间距；
 - `margin` 是用来设置网格项目外侧边缘和网格区域边缘之间的间距。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/91353fda231c4be4887cc730a02d5e3f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/91353fda231c4be4887cc730a02d5e3f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你会发现，网格项目上设置 `margin` 值时，网格项目会向里收缩！另外，网格布局中网格项目或网格轨道的对齐都是沿着网格容器的块轴方向或内联轴方向，所以使用 `margin` 值为 `auto` 达到对齐效果时，更建议采用相应的逻辑属性，比如：
 

@@ -2,7 +2,7 @@
 
 通过前面几节课程的学习，我想你已经会使用 `grid-template-*` 、`grid-auto-*` 等属性定义一个符合 Web 布局的网格，但仅仅这样是不够的，我们还需要将网格项目放置到需要的（正确的）位置。那么在这节课程中，我们主要一起来探讨 CSS 网格布局中的网格项目是如何被放置的。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8e3d20d1c83341f481935b6a00faeab1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8e3d20d1c83341f481935b6a00faeab1~tplv-k3u1fbpfcp-zoom-1-20250412203828756.jpeg)
 
 ## 放置网格项目
 
@@ -117,7 +117,7 @@ CSS 网格布局中，网格项目的放置主要分为两种，第一种是由�
 
 使用 `grid-template-columns` 和 `grid-template-rows` 创建了一个三行三列（`3 x 3`）的网格（显式网格），相应的也就给对应的网格线赋予了数字编号：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5b088f0c8a4347b9a8b00d049b95edb1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5b088f0c8a4347b9a8b00d049b95edb1~tplv-k3u1fbpfcp-zoom-1-20250412203833607.jpeg)
 
 这样一来，你就可以在  `grid-row` （它的子属性 `grid-row-start` 或 `grid-row-end` ）、`grid-column` （它的子属性 `grid-column-start` 或 `grid-column-end`）或 `grid-area` 指定相应的网格线数字编号（即默认的网格线名称）。比如：
 
@@ -130,7 +130,7 @@ CSS 网格布局中，网格项目的放置主要分为两种，第一种是由�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c9f10711c043452292b6e78bce08223a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c9f10711c043452292b6e78bce08223a~tplv-k3u1fbpfcp-zoom-1-20250412203836332.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/rNKNOoJ>
 
@@ -145,7 +145,7 @@ CSS 网格布局中，网格项目的放置主要分为两种，第一种是由�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a5948869a1974507a3e6b7b5a8a8ee82~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a5948869a1974507a3e6b7b5a8a8ee82~tplv-k3u1fbpfcp-zoom-1-20250412203838688.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/eYKYJgj>
 
@@ -158,7 +158,7 @@ CSS 网格布局中，网格项目的放置主要分为两种，第一种是由�
 - `grid-column-start` 表示列网格线的起始位置；
 - `grid-column-end` 表示列网格线的结束（或终点）位置。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/66b01a45915e4d1096186d6446e3f30b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/66b01a45915e4d1096186d6446e3f30b~tplv-k3u1fbpfcp-zoom-1-20250412203841496.jpeg)
 
 当然，你也可以把 `-start` 和 `-end` 的网格线编号互换，也能达到相同的效果：
 
@@ -171,7 +171,7 @@ CSS 网格布局中，网格项目的放置主要分为两种，第一种是由�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/68501898d862445695cc1b709a597ae5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/68501898d862445695cc1b709a597ae5~tplv-k3u1fbpfcp-zoom-1-20250412203844352.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/gOKOPKm>
 
@@ -186,7 +186,7 @@ CSS 网格布局中，网格项目的放置主要分为两种，第一种是由�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9c8ee6f5ceb8464baadae0d4991e5ada~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9c8ee6f5ceb8464baadae0d4991e5ada~tplv-k3u1fbpfcp-zoom-1-20250412203847290.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/jOKOWvx>
 
@@ -205,7 +205,7 @@ CSS 网格布局中，网格项目的放置主要分为两种，第一种是由�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/027dce4f33024478be01eecd75f497af~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/027dce4f33024478be01eecd75f497af~tplv-k3u1fbpfcp-zoom-1-20250412203850698.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/LYrYZPe>
 
@@ -226,7 +226,7 @@ CSS 网格布局中，网格项目的放置主要分为两种，第一种是由�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f9a2dff2e6ec430f8957dad96f8af14c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f9a2dff2e6ec430f8957dad96f8af14c~tplv-k3u1fbpfcp-zoom-1-20250412203853777.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/vYrYKjP>
 
@@ -248,7 +248,7 @@ CSS 网格布局中，网格项目的放置主要分为两种，第一种是由�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7d62f400cd314cfd9f32605cc139b52b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7d62f400cd314cfd9f32605cc139b52b~tplv-k3u1fbpfcp-zoom-1-20250412203856275.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/JjZjRbV>
 
@@ -284,7 +284,7 @@ CSS 网格布局中，网格项目的放置主要分为两种，第一种是由�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cd1ced559e57414da64c0f42b0fcc97f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/cd1ced559e57414da64c0f42b0fcc97f~tplv-k3u1fbpfcp-zoom-1-20250412203859213.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/LYrYbKO>
 
@@ -343,7 +343,7 @@ CSS 网格布局中，网格项目的放置主要分为两种，第一种是由�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/076287ce832e46d5b442ad3f592600cb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/076287ce832e46d5b442ad3f592600cb~tplv-k3u1fbpfcp-zoom-1-20250412203902355.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/mdKdRpg>
 
@@ -351,7 +351,7 @@ CSS 网格布局中，网格项目的放置主要分为两种，第一种是由�
 
 这个示例中的 `grid-template-rows` 和 `grid-template-columns` 定义的只是一个三行三列（`3 x 3`）的网格，但由于网格项目一和网格项目二合并的行与列已经超出显式网格的范围，此时就会在显式网格基础上进行延伸，创建一个新的网格，也就是一个隐式网格，最终这个网格是一个六行四列（`6 x 4`）的网格，而且对应的隐式列网格轨道由 `grid-auto-columns` 属性指定大小（`150px`），隐式行网格轨道由 `grid-auto-rows` 属性指定大小（`150px`）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7b67075ddd284e329d17612c7b427aac~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7b67075ddd284e329d17612c7b427aac~tplv-k3u1fbpfcp-zoom-1-20250412203904634.jpeg)
 
 有意思的是，下面这两种组合方式都会被视为有效的：
 
@@ -404,7 +404,7 @@ CSS 网格布局中，网格项目的放置主要分为两种，第一种是由�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3514af5db2fc41a29dbb1e2bc46b7289~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3514af5db2fc41a29dbb1e2bc46b7289~tplv-k3u1fbpfcp-zoom-1-20250412203907450.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/qBKBvOP>
 
@@ -468,7 +468,7 @@ grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/353639a276514b9da6c74f23305affa0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/353639a276514b9da6c74f23305affa0~tplv-k3u1fbpfcp-zoom-1-20250412203910943.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/LYrYajd>
 
@@ -491,7 +491,7 @@ grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/46bac7bab912480b8e690525df599d80~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/46bac7bab912480b8e690525df599d80~tplv-k3u1fbpfcp-zoom-1-20250412203913304.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/KKeKEYa>
 
@@ -501,7 +501,7 @@ CSS 网格布局中，网格线的名称除了是数字索引编号之外，还�
 
 比如，我们要构建下图这样的一个常见的 Web 布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3ed188d0c37b48ac8694dd4088e94e08~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3ed188d0c37b48ac8694dd4088e94e08~tplv-k3u1fbpfcp-zoom-1-20250412203916035.png)
 
 使用 `grid-template-columns` 和 `grid-template-rows` 定义网格轨道时，可以同时给网格线命名：
 
@@ -524,7 +524,7 @@ body {
 
 这样除了会有默认的数字编码的网格线名称，还会有 `header-start` 、`header-end` 等命名的网格线名称：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f7b182015a18475188e2b0c7b2b8c2ff~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f7b182015a18475188e2b0c7b2b8c2ff~tplv-k3u1fbpfcp-zoom-1-20250412203919134.jpeg)
 
 如此一来，就可以在 `grid-row` 、`grid-column` 或 `grid-area` 属性上使用已命名的网格线名称来放置网格项目：
 
@@ -630,7 +630,7 @@ footer {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3b3d19365c494a438a14c0c5a79bbac0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3b3d19365c494a438a14c0c5a79bbac0~tplv-k3u1fbpfcp-zoom-1-20250412203923052.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/RwJwmYx>
 

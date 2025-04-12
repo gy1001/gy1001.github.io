@@ -10,22 +10,22 @@ CSS 的 `display` 属性是 W3C CSS 规范中的一个独立模块，[在该模�
 
 从 CSS 盒模型中可以知道，文档树中的每个元素都是一个矩形框（盒子）。广义上讲，这个“矩形框”由两部分组成。首先，我们有实际的盒子，由 `border`、`padding` 和 `margin` 区域组成；其次，我们有盒子的内容，即内容区域：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/514973f508d341c6878f41b4237603e7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/514973f508d341c6878f41b4237603e7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 默认情况之下，浏览器解析任何一个文档时，将会按下图方式来渲染文档流：
 
 - **垂直流** ，也称为块流，一般就是块元素默认流向，在不改变书写模式下，它一般由上往下垂直排列；
 - **水平流** ，也称为内联流，一般就是文档所用语言的书写方式或阅读方式的流向。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7d5ce7709aa44094a71d8a1db7799dfc~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7d5ce7709aa44094a71d8a1db7799dfc~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 我们可以通过 CSS 的 `display` 属性将任何一个文档流做出改变，如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a3a2a0dd076b46f39cfc71d176c25acc~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a3a2a0dd076b46f39cfc71d176c25acc~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 稍微对 CSS 有认识的 Web 开发者都知道，使用 CSS 的 `display` 属性可以改变元素盒子及其后代元素以不同的上下文格式（即，产生不同的视觉格式化模型）在浏览器中渲染。每个格式化上下文都拥有不同的渲染规则，而这些规则是用来决定其子元素如何定位，以及和其他元素的关系。通俗点讲，它就有点像把水倒进不同的器皿中，会有不同的形态：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/36affa3c16de4ebbbb4685c61454a35e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/36affa3c16de4ebbbb4685c61454a35e~tplv-k3u1fbpfcp-zoom-1.png)
 
 具体点说，当 `display` 取值为：
 
@@ -89,7 +89,7 @@ p {
 
 你将看到下图这样的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/36baad87ff4b4b4285a29b66294d3c32~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/36baad87ff4b4b4285a29b66294d3c32~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 `section` 元素的各种盒子样式都存在：
 
@@ -109,11 +109,11 @@ section {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0cd4f94f6b434d189ff11cf85966650b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0cd4f94f6b434d189ff11cf85966650b~tplv-k3u1fbpfcp-zoom-1.gif)
 
 你会发现， `section` 元素的 `display` 属性值为 `contents` 时，该元素自身的样式规则就像是被丢失或禁用了：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cbfeb9282a604d56a27f492d830b8ef5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/cbfeb9282a604d56a27f492d830b8ef5~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/vYrzMvQ>
 
@@ -155,7 +155,7 @@ p {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0fdc3c4c15014b9785ca8dbbf9d192b5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0fdc3c4c15014b9785ca8dbbf9d192b5~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/OJEoYXP>
 
@@ -197,7 +197,7 @@ p {
 </script> 
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d2516f67430a4206b4681c618b1c93e8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d2516f67430a4206b4681c618b1c93e8~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/vYrzwRB>
 
@@ -238,7 +238,7 @@ p {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bc842e7cc48e409c8e106bfb54f4d644~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/bc842e7cc48e409c8e106bfb54f4d644~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/mdKGYGe>
 
@@ -262,7 +262,7 @@ p {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c0aada3157d145c4bd7485127f2bef74~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c0aada3157d145c4bd7485127f2bef74~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/NWzLVog>
 
@@ -272,7 +272,7 @@ p {
 
 同样的现象也会发生在一些表单控件上。这是因为，部分表单元素并不是由一个单一的“盒子”组成的，但对于浏览器引擎来说，表单元素是由几个较小的元素组成的。与可替换元素相似，删除盒子也没有意义，因为它们并没有一个盒子。因此，像 `<select>` 、`<input>` 和 `<textarea>` 等表单控件元素，设置 `display` 的 `contents` 和 `none` 效果一样。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c885c4d8c0714bc99ab7ccd44472cc0e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c885c4d8c0714bc99ab7ccd44472cc0e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/VwdGovM>
 
@@ -320,7 +320,7 @@ header {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6b21717c9b764362b74d1dfaf09f92c3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6b21717c9b764362b74d1dfaf09f92c3~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你也看到了，当 `header` 元素的 `display` 值为：
 
@@ -344,11 +344,11 @@ ul {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/471eacdcb8054593b8283ce2c43d8bb7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/471eacdcb8054593b8283ce2c43d8bb7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 虽然这样操作，`li` 变成了 Flex 项目或网格项目，但它们与 Flex 容器或网格容器 `header` 没有一点关系，它始终只是 Flex 容器或网格容器 `ul` 的 Flex 项目或网格项目。同时，`ul` 既是 `header` 的 Flex 项目或网格项目，也是 `li` 的 Flex 容器或网格容器。如此一来就产生了嵌套的 Flexbox 或网格。也可以说，Flex 项目或网格项目 `li` 始终无法上升到 Flex 容器或网格容器 `header` 的项目。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0ef88f0646144bc285bbb4a3683fe215~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0ef88f0646144bc285bbb4a3683fe215~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 庆幸的是，如果我们显式把 `ul` 的 `display` 属性值设置为 `contents` ，那么 `li` 就能上升直接变成 Flex 容器或网格容器 `header` 的 Flex 项目或网格项目。
 
@@ -369,7 +369,7 @@ ul {
 
 前面提到过了，当元素（一般是指 HTML 中的普通元素，除可替换元素和表单控件之外的元素）的 `display` 设置为 `contents` 时，就相当于该元素的开始和闭合标签被丢弃。`li` 就相当于变成了 `header` 的子元素了（这只是一种理解方式，并不是真实的变成了`header` 的子元素），它就顺理成章的变成了 `header` 的项目（Flex 项目或网格项目）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/39f571e2e7da4fe0ac38ebc992efc534~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/39f571e2e7da4fe0ac38ebc992efc534~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/PoadMaL>
 
@@ -387,7 +387,7 @@ ul {
 
 如果这段话不易于理解（或者我翻译不够正确）的话，我想用下面这个示例来解释。假设我们要构建像下图这样的一个页头：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/22c47d81a3ab49db96c0b8d9c0412c47~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/22c47d81a3ab49db96c0b8d9c0412c47~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 就我个人习惯而言，为了让 Web 页面（比如该导航）更具可访问性，我会使用像下面这样的 HTML 结构：
 
@@ -425,7 +425,7 @@ ul {
 
 这样的结构是足够扁平了，也符合结构尽量简洁，能不嵌套就不嵌套的一种说法。但它最大的不足之处是，失去了语义，让你构建的 Web 页面可访问性较差。就算不考虑像屏幕阅读器访问你的 Web 页面，就只是在没有样式（样式失效）的情况下，这两种结构给用户带来的体验就有着很大的差别，前者用户易于访问，后者用户阅读起来还是很痛苦的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6a8899d60fb547bfac5610fb1fe8fa94~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6a8899d60fb547bfac5610fb1fe8fa94~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 与其牺牲有语义化的标签来简化实现符合视觉呈现的过程，比如减少 Flexbox 的嵌套，还不如使用 `display: contents` 。换句话说，在基于第一种我喜欢的模板结构上，使用 `display: contents` 也减少 Flexbox 嵌套的使用，类似达到第二种不好的模板结构的效果。
 
@@ -450,7 +450,7 @@ ul {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f5691051057c42bfb4eda472735f30f7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f5691051057c42bfb4eda472735f30f7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在 `.logo` 和 `ul` 上设置 `display: contents` 就可以将相关的子元素上升为 `header` 的 Flex 项目，实现相同的视觉效果：
 
@@ -471,7 +471,7 @@ ul {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4b4601e491294f13bea88423ce745d68~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4b4601e491294f13bea88423ce745d68~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/wvXYvOx>
 
@@ -479,11 +479,11 @@ ul {
 
 先来看一个表单方面的案例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/566b3de16f3b4a28a87fc6255c13100b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/566b3de16f3b4a28a87fc6255c13100b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 CSS 网格布局中的 `subgrid` （子网格）非常适用于表单中 `<label>` 、`<input>` 和 “验证信息” 几个部分的布局。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d720711da97d4ba4916ce1914a4b27d5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d720711da97d4ba4916ce1914a4b27d5~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 对于类似这样的布局，也很适用于 `display: contents` ，毕竟 `subgrid` 的支持度还是有一定的不足。也可以这么说吧，你可以把 `display: contents` 当作是 `subgrid` 的降级处理。当然，要不是为了向大家阐述 `display: contents` 作用，个人是不建议使用它来替代 `subgrid` 的。
 
@@ -591,7 +591,7 @@ figure {
 
 你在 Firefox 浏览器将看到的效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e2c989660fd34190a51a526fd25d50c7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e2c989660fd34190a51a526fd25d50c7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/oNyaLjN>
 
@@ -631,7 +631,7 @@ figure {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1c3c1a49aae44069b224280dcbe6e5dd~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1c3c1a49aae44069b224280dcbe6e5dd~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你可以看到，其中页面标题 `h1` 、登录表单 `.sign-in` 、分割线、注册信息都跨越了两列。这样做的原因之一是，登录表单中 `label` 和 `input` 是水平排列。
 
@@ -660,7 +660,7 @@ figure {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0188c7c18120410098ca0f09554fb481~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0188c7c18120410098ca0f09554fb481~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 但这还没有结束，示例中的 `label` 和 `input` 外面还有一层容器 `div.control` ，要让它们水平排列，还要按类似的方法，将 `div.control` 也定义成一个网格，继承它父网格 `.sign-in` 的列轨道：
 
@@ -676,7 +676,7 @@ figure {
 
 就这个登录表单的案例，如果不想使用 `subgrid` 来实现，又不牺牲语义化标签，那么可以尝试着使用 `display: contents` 来实现。前面介绍过，`display:contents` 可以让网格项目上升到需要的地方。即：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0f621f2aa2fc4b019b72109e0b788b19~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0f621f2aa2fc4b019b72109e0b788b19~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 当 `.sign-in` 、`sign-up` 和 `.control` 的 `display` 设置为 `contents` 时，HTML 结构就相当于变成，实际上 HTML 结构不会有任何的改变：
 
@@ -719,7 +719,7 @@ figure {
 
 使用 `grid-area` 把相应元素放置到已命名的网格区域中，并且调整它们各自的对齐方式，就实现了我们所期望的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/de4dfd5823dd4e18914c3f2795bd92b6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/de4dfd5823dd4e18914c3f2795bd92b6~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/BaVqPap>
 
@@ -787,7 +787,7 @@ button {
 
 使用 `subgrid` 和 `display: contents` 最终效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/24897400a3954c3ca753f968732b770d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/24897400a3954c3ca753f968732b770d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你可能已经发现了，虽然两者效果差不多，但使用 `display: contents` 时使用的代码量要多得多，你不得不对使用 `grid-area` （或 `grid-row` 和 `grid-column`）明确指定每个网格项目的位置。而且，随着网格项目数量变多，你需要做的事情也多，相应的代码量也将变得更多。
 

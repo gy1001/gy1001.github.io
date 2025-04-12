@@ -16,13 +16,13 @@
 
 就 Web 开发而言，移动端的 Web 页面（大家常说的 H5 页面）其实要比 PC 端或平板端的页面简单得多，就 UI 组件的还原、页面的布局而言，也要容易得多。但对于移动端的 Web 开发者而言，他们更为痛苦的不是 UI 的还原，页面的布局，而是要面对众多不同的移动端设备：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6506afa00fb24ea4962a8a405d9214ae~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6506afa00fb24ea4962a8a405d9214ae~tplv-k3u1fbpfcp-zoom-1.gif)
 
 在这种环境之下，CSS 的媒体查询已经无法满足我们的需求了。
 
 另外，早期移动端开发，只有 Android 系列存在终端适配问题，因为当时安卓品牌琳琅满目，而且很多设计师常常忽略 Android 适配问题，只出一套 iOS 设计稿。但随着 iPhone6，iPhone6+ 的出现，不仅 Android 系列有终端适配问题了，iOS系列也进入到多分辨率的时代，也从这个时候起，移动端适配全面进入到“杂屏”时代。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5051c38527134bf1ac80db92bce29dc4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5051c38527134bf1ac80db92bce29dc4~tplv-k3u1fbpfcp-zoom-1.png)
 
 > 上图来自于[paintcodeapp.com](http://www.paintcodeapp.com/news/ultimate-guide-to-iphone-resolutions)
 
@@ -36,13 +36,13 @@
 
 还是上一张图吧，一图胜过千言万语：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/32ae9d9096d2452c967c0d3695aa2aab~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/32ae9d9096d2452c967c0d3695aa2aab~tplv-k3u1fbpfcp-zoom-1.png)
 
 也就是说，**手淘设计师常选择 iPhone6 作为基准设计尺寸，交付给 Web 开发者的设计尺寸是按** **`750px x 1334px`** **为准(高度会随着内容多少而改变)。 Web 开发者通过一套适配规则自动适配到其他的尺寸** 。
 
 根据上面所说的，设计师给我们的设计图是一个 `750px x 1600px` 的页面：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/29de11280da544deb136b24931bfc988~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/29de11280da544deb136b24931bfc988~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ### 移动端适配设计思想
 
@@ -52,7 +52,7 @@
 
 就拿视窗为例吧，它又分为： **布局视窗** 、**视觉视窗**和**理想视窗** ，它们在屏幕适配中起着非常重要的作用。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/62f1715ef32a48f7b8fa6af7683fbd52~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/62f1715ef32a48f7b8fa6af7683fbd52~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 上图展示的是**布局视窗（Layout Viewport）** 的示意图。是我们可以进行网页布局区域的大小，以 CSS 像素做计量单位。移动设备默认会设置一个较大的视窗尺寸（比如，iOS 一般默认是 `980px`），布局视窗的宽度是大于浏览器可视区域的宽度的。布局视窗的尺寸可以通过下面 API 来获取：
 
@@ -61,7 +61,7 @@
 布局视窗高度 = document.documentElement.clientHeight
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9721b060a92e4a889f7298201895941a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9721b060a92e4a889f7298201895941a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 上图是**视觉视窗（Visual Viewport）** 的示意图。它就是设备的像素分辨率。视觉视窗的尺寸可以通过下面 API 来获取：
 
@@ -70,7 +70,7 @@
  视觉视窗高度 = window.innerHeight 
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2f1660363d6d479ab34a653ff28d7827~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2f1660363d6d479ab34a653ff28d7827~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 上图所示的就是**理想视窗（Ideal Viewport）** 了，它是一个能完美适配移动设备的视窗（Viewport）。无论是在何种密度屏幕，何种分辨率下，显示出来的大小都差不多。
 
@@ -83,7 +83,7 @@
 
 我们除了要面对不同视窗之外，移动设备还可以被用户随时旋转。当设备旋转之后，屏幕方向也会有变化，所以才会有**横屏**和**竖屏**之分：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fae8209441a349d19a6b349599030744~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/fae8209441a349d19a6b349599030744~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 可以使用 `window.orientation` 来判断设备是横屏还是竖屏：
 
@@ -121,7 +121,7 @@ window.addEventListener("resize", ()=>{
 
 庆幸的是，CSS 中有一种单位，叫**视窗单位** ，它能自动根据设备的“视觉视窗”的尺寸来计算：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bdac1316f6684703a12154ecbeaf5de9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/bdac1316f6684703a12154ecbeaf5de9~tplv-k3u1fbpfcp-zoom-1.png)
 
 例如，如果浏览器的高是 `900px` ，`1vh` 的值就是 `9px`。同理，如果浏览器视窗宽度为 `750px` ，`1vw` 的值就是 `7.5px`。
 
@@ -133,7 +133,7 @@ window.addEventListener("resize", ()=>{
 
 选择 CSS `rem` 单位来做适配方案设计主要原因是，**任何元素的属性值取** **`rem`** **作为单位的值，它始终都是相对于 HTML 的根元素** **`<html>`** **的** **`font-size`** **来计算** 。即，任何值为 `1rem` 的元素都等于 `16px`，当然，其前提是浏览器默认的 `font-size` 没有被用户重置，或者未显式地给 `html` 元素设置`font-size` 值；另外，`rem` 可以不管它的父元素的 `font-size` 如何！
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cb51162ad5794dfa9f47c9cd2eb32ecf~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/cb51162ad5794dfa9f47c9cd2eb32ecf~tplv-k3u1fbpfcp-zoom-1.png)
 
 从上图可以看出，就算在 `body` 中显式设置了 `font-size` 的值，也不会影响其子元素 `h3` 的 `font-size`，`h3` 的 `font-size` 始终都是相对于根元素 `<html>` 的 `font-size` 来计算的。
 
@@ -143,7 +143,7 @@ window.addEventListener("resize", ()=>{
 
 另外一个问题是，Web 开发者拿到的设计稿都是以 `px` 为单位，如何将 `px` 转为 `rem` 单位呢？
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5bfad31c916a47ab9f5d36850434d955~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5bfad31c916a47ab9f5d36850434d955~tplv-k3u1fbpfcp-zoom-1.png)
 
 REM 的适配方案会将基于 `750px` 的设计稿分成 `100` 个等份（这样设计的初衷是为了能更好地从 `rem` 过渡到 `vw` ），而每一等份被定义成一个单位 `a`。同时 `1rem` 单位被认定为 `10a`。针对我们这份视觉稿（基于 `750px` 的设计稿）可以计算出：
 
@@ -154,7 +154,7 @@ REM 的适配方案会将基于 `750px` 的设计稿分成 `100` 个等份（这
 
 那么我们这个示例的稿子就分成了 `10a`，也就是整个宽度为 `10rem` ，即 `750px` ；`<html>` 对应的 `font-size` 为 `75px`：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6672195f9f70492ab9e73dd3cbe51628~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6672195f9f70492ab9e73dd3cbe51628~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这样一来，对于视觉稿上的元素尺寸换算，只需要原始的 `px` 值除以 `rem` 基准值即可。例如此例视觉稿中的图片，其尺寸是 `176px x 176px`，转换成为 `2.346667rem x 2.346667rem`。
 
@@ -270,31 +270,31 @@ REM 的适配方案会将基于 `750px` 的设计稿分成 `100` 个等份（这
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b17c3fbd8f7c44fd801a41c73dfbec29~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b17c3fbd8f7c44fd801a41c73dfbec29~tplv-k3u1fbpfcp-zoom-1.png)
 
 但现在的 m.taobao.com 已经取消了最大宽度的限制：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/51726fdaa0d048a898ecc301a88d67cd~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/51726fdaa0d048a898ecc301a88d67cd~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 另外在一些大屏幕下（比如，京东），页面的呈现是有一定缺陷的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fdc75130a604424383f70a8f01f25de8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/fdc75130a604424383f70a8f01f25de8~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这就是 REM 适配布局带来的一定缺陷。
 
 相对而言，VW 比 REM 更易于适配百分百的屏幕，比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4dbc8ea50f9c4b0591c4485ccc4f7799~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4dbc8ea50f9c4b0591c4485ccc4f7799~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > 上图录制于手淘的金币庄园：<https://pages.tmall.com/wow/z/tmtjb/town/home-wx?spm=a215s.7406091.icons.6>
 
 但 VW 也有很大的缺陷，比如给页面设置一个最大宽度，让页面水平居中，VW 是无法做到的，因为整个页面的元素尺寸大小都是以 `vw` 单位来计算的。如果你在容器上显式设置一个最大值，就会造成页面布局的混乱：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b9766cadf8cc462f869caf94e474e597~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b9766cadf8cc462f869caf94e474e597~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 即使没有最大宽度的要求，在宽屏的时候，页面上一些组件 UI 也会有一定的缺陷，比如弹框：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f7c7e435af3a4b6b98f1a35b8cb488ac~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f7c7e435af3a4b6b98f1a35b8cb488ac~tplv-k3u1fbpfcp-zoom-1.png)
 
 正因为它们有一定的缺陷，我们应该有新的布局适配方案，来满足更多的终端设备，甚至是未来不知的设备。正基于此原因，我们需要一个更灵活，更稳定的响应式 UI 布局。
 
@@ -339,7 +339,7 @@ REM 的适配方案会将基于 `750px` 的设计稿分成 `100` 个等份（这
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6f103c7fc5b0401d98217d5aa1c6cd83~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6f103c7fc5b0401d98217d5aa1c6cd83~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/VwBLZVG>
 
@@ -357,7 +357,7 @@ REM 的适配方案会将基于 `750px` 的设计稿分成 `100` 个等份（这
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/426730e281d54b008da35063492ead24~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/426730e281d54b008da35063492ead24~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/zYLGYxp>
 
@@ -381,7 +381,7 @@ REM 的适配方案会将基于 `750px` 的设计稿分成 `100` 个等份（这
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b067e7b1a64c41a8bf08a08d7a65c8a0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b067e7b1a64c41a8bf08a08d7a65c8a0~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/QWBbWNK>
 
@@ -415,7 +415,7 @@ REM 的适配方案会将基于 `750px` 的设计稿分成 `100` 个等份（这
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8105685c5d674d8b9e9cccd9f0dda275~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8105685c5d674d8b9e9cccd9f0dda275~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/ZEjGEKa>
 
@@ -552,15 +552,15 @@ clamp(100px, 50vw, 50px) ➜ clamp(100px, 85px, 50px)
 
 随着 CSS 新特性的出现，不管是对于 Web 设计师还是 Web 开发者都不是件易事，因为要考虑的场景会越来越复杂。CSS 比较函数的到来，Web 设计师估计在提供设计稿的时候也要有一些思想上的变化。比如说，在这之前，Web 设计师可能会根据不同的场景为设计元素提供不同的尺寸：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/eb0efaf264e54349b282902cd947507c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/eb0efaf264e54349b282902cd947507c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 但现在或不久的将来，会像下面这样针对不同的场景来做设计：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1ff2bb39a71449348a57564c072db825~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1ff2bb39a71449348a57564c072db825~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 拿实际案例来说吧，在响应式设计中，希望在不同的终端上，文本的字号有所不同，那么就可以像下面这样使用：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f0f17fc9ab074d1580bc8c7829e9739b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f0f17fc9ab074d1580bc8c7829e9739b~tplv-k3u1fbpfcp-zoom-1.png)
 
 这和我们前面介绍的 `clamp()` 函数非常匹配：
 
@@ -600,13 +600,13 @@ aside {
 } 
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1b23600910094e1f8f3182624f5c1f00~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1b23600910094e1f8f3182624f5c1f00~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/zYLGpjg>
 
 再来看另一个两列布局示例，比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/30f5567eb681461496b577dc0e3aa68b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/30f5567eb681461496b577dc0e3aa68b~tplv-k3u1fbpfcp-zoom-1.png)
 
 就上图这布局，对于 CSS Flexbox 和 CSS Grid 而言，一点难度都没有。
 
@@ -640,13 +640,13 @@ main {
 
 在 `min-width` 属性上使用 `min()` 函数，给 Flex 项目 `main` 设置一个下限值。根据上下文环境计算，当 `18ch` 长度值小于 `100%`（父容器宽度的 `100%`），`min()` 函数会返回 `18ch`，反之则会返回 `100%`：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/239b2d70c7464a28983ac5cd675a8a75~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/239b2d70c7464a28983ac5cd675a8a75~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/ZEjGvPd>
 
 不知道你有没有发现，让浏览器视窗宽度小于 `320px` 的时候，页面的布局还是不够完美的。即：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ccd96a0c4ead441cb5e561d55593e3e6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ccd96a0c4ead441cb5e561d55593e3e6~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 我们可以在 `aside` 的 `flex-basis` 上使用 `min()` 函数，让它变得更为完善：
 
@@ -656,7 +656,7 @@ aside {
 } 
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/05aedcd95d2149c28c1b177b57bd18f0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/05aedcd95d2149c28c1b177b57bd18f0~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/gOjpvpe>
 
@@ -723,13 +723,13 @@ aside {
 
 能让卡片随容器尺寸做出响应：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8b71d51612a144fc8066dbf5bbaa9cb7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8b71d51612a144fc8066dbf5bbaa9cb7~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/abjOxBx>
 
 虽然上面的效果已经不错了，但还是没法在指定的视窗断点下显示具体的列数。有意思的是，我们可以使用 `clamp()` 来实现该效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bc391ef5063448bca3507a5343b61001~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/bc391ef5063448bca3507a5343b61001~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 上图的意思是，可以随着浏览器视窗宽度来改变排列的列数：
 
@@ -744,7 +744,7 @@ aside {
 初始宽度 = 容器宽度的 100% ÷ 列数 - （列数 - 1） × 列间距 = 100% ÷ P - (P - 1) × gap = 100% ÷ 4 - (4 - 1) × gap
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7ac525a1011d40cd82aae5d7c49c0316~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7ac525a1011d40cd82aae5d7c49c0316~tplv-k3u1fbpfcp-zoom-1.png)
 
 我们可以使用 CSS 自定义属性来替代上面所描述的参数：
 
@@ -780,7 +780,7 @@ aside {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/10905aaaf3864ec2ba5bb8aa83517c27~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/10905aaaf3864ec2ba5bb8aa83517c27~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/jOpPRoQ>
 
@@ -799,7 +799,7 @@ aside {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/db9a95d633764efaa3d0c93ea4e26a88~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/db9a95d633764efaa3d0c93ea4e26a88~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/MWBwMdQ>
 
@@ -842,7 +842,7 @@ width = 100% ÷ (P + 1) + 0.1%
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ec8e1de69aff4e4f81855bfc32925cfb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ec8e1de69aff4e4f81855bfc32925cfb~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/vYaOoGN>
 
@@ -854,7 +854,7 @@ width = 100% ÷ (P + 1) + 0.1%
 
 不过，这个方案运用于 CSS Grid 的轨道尺寸设置时会有一定的缺陷：当网格容器小于 `--ideal-size` 时，网格项目会溢出网格容器：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8ab7c6d157bd466eb3ca67df9c082851~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8ab7c6d157bd466eb3ca67df9c082851~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 我们可以使用 CSS 比较函数中的 `clamp()` 替换示例中的 `max()` ：
 
@@ -883,7 +883,7 @@ width = clamp(100% / (P + 1) + 0.1%, var(--ideal-size), 100%)
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/48f7c6276b8d4aeea0166f54bb562593~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/48f7c6276b8d4aeea0166f54bb562593~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/WNKvVJz>
 
@@ -938,7 +938,7 @@ width = clamp( 100% / (P + 1) + 0.1%, (var(--ideal-size) - 100vw) * 1000, 100% /
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9f93137aeb78418eafa0af3cde25608f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9f93137aeb78418eafa0af3cde25608f~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/KKBpOOb>
 
@@ -946,7 +946,7 @@ width = clamp( 100% / (P + 1) + 0.1%, (var(--ideal-size) - 100vw) * 1000, 100% /
 
 继续加码。如果期望每行列数从 `P ▶ O ▶ 1` 进行响应。要实现这样的响应，从代码上来看会比前面的复杂，需要引入浏览器视窗的断点值，比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c03621062a9b413aa122e4afe65860ff~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c03621062a9b413aa122e4afe65860ff~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 - 大于 `W1` 断点时每行保持 `P` 个项目；
 - 大于 `W2` 断点时每行保持 `O` 个项目；
@@ -997,13 +997,13 @@ clamp(
  } 
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a8d123bbcc7e49ccbf1ebd7b0e6d41dc~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a8d123bbcc7e49ccbf1ebd7b0e6d41dc~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/ExpVgeq>
 
 同样的原理，要实现更多的列响应，只需要新增断点和 `clamp()` 的嵌套，比如前面我们说的 `P ▶ O ▶ N ▶ 1` 的列响应：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ede875d6865245a0b34a424e6c53bf6d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ede875d6865245a0b34a424e6c53bf6d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```
 :root {
@@ -1030,7 +1030,7 @@ clamp(
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/388d690f42b941878a7416fd81c89a39~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/388d690f42b941878a7416fd81c89a39~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/eYjpBwd>
 
@@ -1040,7 +1040,7 @@ clamp(
 
 上面的示例都是围绕着 Flex 项目和 Grid 项目尺寸，前者是响应 Flex 项目的 `flex-basis` ，后者是响应 Grid 的列网格轨道。事实上，除此之外，CSS 比较函数还可以用来调整任何元素的 `width` 或 `height`。比如，下面这个示例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/039ac58776eb4f8995f6390e58876cb4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/039ac58776eb4f8995f6390e58876cb4~tplv-k3u1fbpfcp-zoom-1.png)
 
 在以往，我们一般会像下面这样编写 CSS 代码：
 
@@ -1072,7 +1072,7 @@ clamp(
 
 这段代码的意思是，当浏览器视窗宽度大于或等于 `1024px` 时，`.page__wrapper` 宽度是 `1024px`；一旦浏览器视窗宽度小于 `1024px` 时，`.page__wrapper` 的宽度是 `100% - 32px`（这里的 `32px` 是设置了 `padding-left` 和 `padding-right` 的和）。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c0136090e5d743b98df51a6eef27e625~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c0136090e5d743b98df51a6eef27e625~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/ZEjbLee>
 
@@ -1126,7 +1126,7 @@ p {
 
 注意，示例中 `max-height` 并没有设置 `100%`，而是取了一个较大的因定值 `1000px`，主要是因为`max-height` 取百分比，会致使用例失效（如果其父容器未显式设置 `height` 值，`max-height` 取百分比值会无效）。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ff626029a2fa4e7392950a47aceb5138~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ff626029a2fa4e7392950a47aceb5138~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/BaPopOo>
 
@@ -1156,7 +1156,7 @@ p {
 
 注意，示例中 `svg` 的 `width` 和 `height` 设置为 `1em` 很关键，可以让 `svg` 图标的大小相对于 `font-size` 进行计算。你可以尝试改变浏览器视窗的大小，当视窗宽度小于 `600px` 时，文本按钮会自动切换成一个图标按钮：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/72a90ff808c84657884f18428250676a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/72a90ff808c84657884f18428250676a~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/gOjazYp>
 
@@ -1205,7 +1205,7 @@ p {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b64818f07194416db2be6d7d48fe16c0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b64818f07194416db2be6d7d48fe16c0~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/GRBpdpp>
 
@@ -1229,7 +1229,7 @@ p {
 
 在一些设计方案中，有些元素的边框（`border-width`）和圆角半径（`border-radius`）很大，但希望在移动端上更小一些。比如下图这个设计：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/86bde0372fa4451db32687a322f541f1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/86bde0372fa4451db32687a322f541f1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 桌面端（宽屏）中卡片的圆角 `border-radius` 是 `8px`，移动端（窄屏）是 `0`。以往你可能是这样来写：
 
@@ -1284,13 +1284,13 @@ div {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/48bcd2f53ae9491f9b49646cf8814b97~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/48bcd2f53ae9491f9b49646cf8814b97~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/vYaLYBj>
 
 你也可以将 `min()` 和 `max()` 组合起来一起使用，达到 `clamp()` 相似的功能，即 `clamp(MIN, VAL, MAX)` 等同于 `max(MIN, min(VAL, MAX))` 。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/76a3836fb5ff43cda99335eed9614149~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/76a3836fb5ff43cda99335eed9614149~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > **注意，`min()`** **、`max()`** **函数中可以直接进行四则运算，不需要使用** **`calc()`** **函数。**
 
@@ -1303,7 +1303,7 @@ div {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/13507848e6df4bf19864f1187af95bb0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/13507848e6df4bf19864f1187af95bb0~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/rNrxNOM>
 
@@ -1335,7 +1335,7 @@ div {
 } 
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/48199281f88844ebb094f17a3d6b3852~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/48199281f88844ebb094f17a3d6b3852~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/xxJZxLp>
 
@@ -1349,7 +1349,7 @@ div {
 
 但很少有同学会留意，上面的渐变效果在不同屏幕（或不同尺寸的元素上）的效果是有一定差异的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3471aad7f5da4ed69ee5fed69e206d7d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3471aad7f5da4ed69ee5fed69e206d7d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如果想让渐变的效果在桌面端和移动端上看上去基本一致，一般会使用媒体查询来调整渐变颜色的位置：
 
@@ -1373,7 +1373,7 @@ div {
 } 
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5cfdc5bca7d34298b3ccdffd3c32fd18~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5cfdc5bca7d34298b3ccdffd3c32fd18~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 另外，平时在处理图片上文字效果时，为了增强文本可阅读性，你可能会在文本和图片之间增加一层渐变效果。那么这个时候，使用 `max()` 函数控制渐变中透明颜色位置就会有意义得多：
 
@@ -1383,13 +1383,13 @@ div {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/39a04a8cb7144da989226bf05e7b8053~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/39a04a8cb7144da989226bf05e7b8053~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ### 流畅的排版
 
 为了实现流畅的排版，[@Mike Riethmeuller 推广了一种技术](https://twitter.com/mikeriethmuller)。该技术使用 `calc()` 函数来设置最小字体大小、最大字体大小，并允许从最小值过渡至最大值。社区也把这种技术称为 **CSS 锁（CSS Locks）** 。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4615ab205aef4d7d86e81a183b608d01~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4615ab205aef4d7d86e81a183b608d01~tplv-k3u1fbpfcp-zoom-1.png)
 
 如果用 CSS 来描述的话会像下面这样：
 
@@ -1482,7 +1482,7 @@ html {
 
 开发者可以直接使用 [Adrian Bece 提供的在线工具 Modern Fluid Typography Editor](https://modern-fluid-typography.vercel.app/)：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/57c8e06b254d40a9803bde8b70abd0c0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/57c8e06b254d40a9803bde8b70abd0c0~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 使用 `clamp()` （或 `max()`）能让我们轻易实现文本大小随视窗宽度（或容器宽度）动态响应（进行缩放），直到达到设定的界限（最大值和最小值），从而实现流畅的排版效果。只不过，该技术对于 Web 可访问性是有一定伤害性的。
 
@@ -1492,7 +1492,7 @@ html {
 
 [@Georgi Nikoloff 在 Codepen 上提供了一个可具缩放的 UI 界面示例](https://codepen.io/gbnikolov/full/oNZRNQR)。以一种方式对下面这样的设计稿进行了完美地缩放，并保留所有文本的行数、边距、图像尺寸等：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a4a02af9cf9845cb8f528a241965b396~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a4a02af9cf9845cb8f528a241965b396~tplv-k3u1fbpfcp-zoom-1.png)
 
 Web 开发者对上图这样的设计应该很熟悉，特别是对常开发 PC 端产品或大屏幕的同学而言，更没有什么特殊性，也没有什么花哨的东西。
 
@@ -1618,7 +1618,7 @@ width: 828px;
 
 @Georgi Nikoloff 就是采用这种方式对各个元素做了计算，最终看到的效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7ea8f816f4a940f9a194a8a7b18cb5a6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7ea8f816f4a940f9a194a8a7b18cb5a6~tplv-k3u1fbpfcp-zoom-1.gif)
 
 按照前面的介绍，我们可以得到一个像素缩放计算的公式：
 
@@ -1760,7 +1760,7 @@ width: 828px;
 
 现在我们经常开发的都是移动端上的页面，大部分采用的都是 REM 适配 和 VW 适配方案。那么我们来尝试今天介绍的方案，在移动端上会是一个什么样的效果。接下来，我们以下图为例，真正实战一下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1f9b895113804e22bfb92015abc99ba8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1f9b895113804e22bfb92015abc99ba8~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 我们接下来只会还原上图中蓝色框框起的那张卡片。
 
@@ -1783,7 +1783,7 @@ root {
 
 如果你想给其加把锁，限制缩放在某个范围，可以根据现在主流移动手持设备的屏幕分辨率来做选择：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fd483f587eb14b2094d8fae6410ea133~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/fd483f587eb14b2094d8fae6410ea133~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 比如说在 `320px ~ 1440px` 范围内，即`--min-viewport-width` 是 `320px`，`--max-viewport-width` 是 `1440px`：
 
@@ -1997,7 +1997,7 @@ button {
 
 你将看到一个使用 `px` 单位实现的固定尺寸的卡片：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ab062231aad84995b5d2e801c4849cc1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ab062231aad84995b5d2e801c4849cc1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 目前没有任何可缩放而言。大家不要急，我们先把示例中使用到的固定单位 `px` 单独巴拉出来，为后续实现可缩放性做准备：
 
@@ -2168,13 +2168,13 @@ button {
 
 效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b8faba83e7b54fba91a82d8a4bf5cf00~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b8faba83e7b54fba91a82d8a4bf5cf00~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/xxJZGPV>
 
 我们再来验证一下，上面示例在真机上的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/78bf0d20d9f34e86a26fd0df7e80b591~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/78bf0d20d9f34e86a26fd0df7e80b591~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 也就是说，我们在构建 UI 界面时，特别是构建一个响应式 UI 界面时，我们应该将前面所介绍的内容结合在一起。因为我们知道了，在现代 Web 开发中，使用 `min()`、`max()` 、`calc()` 、`clamp()` 以及 CSS 的相对单位（比如，`rem`、`em`、`%`、`vw`、`vh` 等），尤其是 `clamp()` ，CSS 属性的值随着断点变化来动态响应。
 

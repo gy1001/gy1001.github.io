@@ -14,7 +14,7 @@
 
 如果你是一名经历过早期表格布局的 Web 开发者，那么对于嵌套网格就比较好理解。在 Web 布局技术匮乏的年代，要实现一个复杂的 Web 布局，往往需要在一个表格中嵌套一个或多个表格，比如下面这个 Web 页面：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fde83deb3c1d4cc3bb25c762f90d7419~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/fde83deb3c1d4cc3bb25c762f90d7419~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 上图中是一张 2003 年的 Web 页面，这张 Web 页面对于现在而言并不复杂，但在当初那个年代只能使用表格（HTML的 `<table>`）构建布局时，算是复杂的了，尤其是右侧的导航部分。因此使用了表格嵌套表格的技术来实现。
 
@@ -68,7 +68,7 @@
 
 如果用 DOM 树来描述的话，它们的关系如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b184c3b4c5d34e778c0f6ee841dbf32b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b184c3b4c5d34e778c0f6ee841dbf32b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 我们来看一个嵌套网格的真实示例：
 
@@ -101,7 +101,7 @@
  }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2bd105840b3e4367a4663ef3d7645b06~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2bd105840b3e4367a4663ef3d7645b06~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/MWXyqmW>
 
@@ -151,7 +151,7 @@
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/46c5c1feb11b4347896b20610e3830af~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/46c5c1feb11b4347896b20610e3830af~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/QWxNZqE>
 
@@ -165,7 +165,7 @@
 
 比如，你有下面这样的一个 Web 布局，它是一个 `12` 列网格，其中父网格中分成 `A` 和 `B` 相等的两列；但是 `B` 列里又包含了个子网格，它被为 `B1` 和 `B2` 两列，而且 `B2` 列的宽度是 `B1` 列的两倍：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a8a55fa023794d0e91c35d0b1dcfba31~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a8a55fa023794d0e91c35d0b1dcfba31~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 使用嵌套网格很容易就能实现：
 
@@ -203,7 +203,7 @@
 
 当父网格（`.parent--grid`）和子网格（`.sub--grid`）的列网格轨道比率是相同时，那么这个嵌套网格是完美的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4f679aaba81748a7a5fee665868da53f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4f679aaba81748a7a5fee665868da53f~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/XWYKpdP>
 
@@ -229,21 +229,21 @@
 
 实现的效果是相同的，也算是完美的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1b16807a1c184fe1b49d66978b491118~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1b16807a1c184fe1b49d66978b491118~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/NWzrdYw>
 
 看上去似乎是完美的，事实上你看到的是一种假象。你可以尝试着往里面填充真实的内容， `B1` 和 `B2` 计算出来的列网格轨道尺寸就有可能会小于其 `min-content` 尺寸。这个时候，子网格中网格项目的内容就会溢出网格容器，也将打破 Web 布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d6cef0eec3984e97b6481a7aa0a2b44b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d6cef0eec3984e97b6481a7aa0a2b44b~tplv-k3u1fbpfcp-zoom-1.gif)
 
 即使你在网格项目上显式设置了 `min-width` 的值为 `0` ，避免网格轨道尺寸小于网格项内容的最小尺寸（`min-content`），同样会造成内容溢出网格项目：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e06dc16cb7ea4e4e84b59aff0fbf2218~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e06dc16cb7ea4e4e84b59aff0fbf2218~tplv-k3u1fbpfcp-zoom-1.gif)
 
 因为 Web 的内容是动态的，你无法掌握输出的内容是什么？
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/21cf53f855ac4ada9d25ecbff440844d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/21cf53f855ac4ada9d25ecbff440844d~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/RwJRKEo>
 
@@ -251,7 +251,7 @@
 
 就这个示例而言，父网格和子网格的网格轨道尺寸的比率刚好相匹配，它们的网格轨道看上去重叠在一起（有点像是子网格继承了父网格的网格轨道），但很多时候构建的嵌套网格，父网格轨道和子网格轨道尺寸不是这么相匹配的，比如上面示例，将子网格的 `grid-template-colums` 设置为 `3fr 5fr` ，这个时候，子网格轨道和父网格轨道就不怎么相互匹配了：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/04537f9c24de4210bd402b38735a0bf8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/04537f9c24de4210bd402b38735a0bf8~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/ZEROeZQ>
 
@@ -279,7 +279,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/29ec74472e5f45ad96ebe078e16e9a79~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/29ec74472e5f45ad96ebe078e16e9a79~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/JjZKNNp>
 
@@ -307,7 +307,7 @@ body {
 
 只不过，到目前为止，网格布局中的 `subgrid` 只得到了 [Firefox 71+ 和 Safari 16 支持](https://caniuse.com/?search=subgrid)：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c1e06535bae140cd8c2841171377c1b8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c1e06535bae140cd8c2841171377c1b8~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 所以接下来的示例，都以在 Firefox 71+ 浏览器渲染的效果为最终结果。对于不支持 `subgrid` 的浏览器，可以使用 `@``supports` 来做降级处理。只不过，我们课程中的示例将不做任何降级处理。
 
@@ -343,7 +343,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e261d6bc261d43d6aa54f0eadbbba49f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e261d6bc261d43d6aa54f0eadbbba49f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/BaVzeOa>
 
@@ -372,7 +372,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e56234b9e0f4472a9809cd968d1e0632~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e56234b9e0f4472a9809cd968d1e0632~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/GRGqaeV>
 
@@ -398,7 +398,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8f078c1202aa4bf7a231520a63cc750d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8f078c1202aa4bf7a231520a63cc750d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/zYaBVxj>
 
@@ -406,7 +406,7 @@ body {
 
 虽然嵌套网格仍然独立于父网格(我们有两个网格)，但子网格是父网格的一部分(我们有一个网格)，因为子网格包含在相同的网格布局中——使用相同的行、列和间距。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8adf60fd781e4d1da97d710144a3d4fd~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8adf60fd781e4d1da97d710144a3d4fd~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/WNyxqrR>
 
@@ -424,23 +424,23 @@ body {
 
 先来看一个卡片列表的布局。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9e97c8e647ad44e09791afe007dd07cb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9e97c8e647ad44e09791afe007dd07cb~tplv-k3u1fbpfcp-zoom-1.png)
 
 上图是我们常见的一个布局模式，每一行有多个卡片。每张卡片由一个**标题** 、**缩略图**和**正文**三个部分组成 。卡片在设计的时候，通常都是完美的，比如说标题长度是确定好的、图片高度是一致的、正文内容是相同的。然而，在生产过程中，事情往往会有一些不同。标题和正文的长度在不同的卡片之间会有很大的差异。这可能会破坏整个行中漂亮均匀的卡片美感。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cad9455e358b4d93b731c28258decb2e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/cad9455e358b4d93b731c28258decb2e~tplv-k3u1fbpfcp-zoom-1.png)
 
 有一些方法可以解决这个问题，你可以限制允许使用的内容，在元素上设置一个最小高度或指定具体高度，以保持对齐，但这些都限制了内容，或者会导致视觉美感被牺牲掉。
 
 你可能想知道 Flexbox 是否是一个可能的解决方案。它们可以让你实现大部分需求，但你可能需要牺牲设计和（或）语义来达到预期的结果。你可以考虑嵌套网格，但问题是每个单独嵌套的网格都不知道其他网格的大小，这意味着轨道不会对齐，这与 Flexbox 的情况相似。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c3825492715a46b885d23f469a97e948~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c3825492715a46b885d23f469a97e948~tplv-k3u1fbpfcp-zoom-1.png)
 
 虽然卡片排列正确，但设计感就差了。
 
 如果我们使用 `subgrid` 呢？`subgrid` 让嵌套的网格容器能够继承父网格轨道的尺寸。如果不继承父网格轨道的尺寸，网格项目就会有独立的尺寸，这与前面提到的 Flexbox 或嵌套网格的例子相同。 由于父网格为三个轨道提供了尺寸，嵌套的子网格将继承父轨道的尺寸，并调整为整个行的最大网格单元。这样一来，项目就排成了一排！
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3e00d2b4af4d43b99ec89a524c308d7e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3e00d2b4af4d43b99ec89a524c308d7e~tplv-k3u1fbpfcp-zoom-1.png)
 
 假设实现上面示意图的效果，我们有一个像下面这样的 HTML 结构：
 
@@ -482,7 +482,7 @@ body {
 
 你将在浏览器看到的效果像下面这样：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b92bec884aa143589764d6e42618d614~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b92bec884aa143589764d6e42618d614~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你可能会认为上图中网格线是用于卡片（卡片是一个网格项目）上的（卡片的标题、缩略图和描述）。但是，这些网格线是用于网格容器 `.container` 的，只有网格项目 `.card` 可以使用它们，可以在卡片 `.card` 通过 `grid-row` 、`grid-column` 或 `grid-area` 使用这些网格线名称。比如：
 
@@ -496,7 +496,7 @@ body {
 
 而我们期望的是父网格（`.container`）的行网格轨道能传递给卡片的“标题”、“缩略图”和“描述”使用：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/785f340fcb41412ba35275d87eb83e3e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/785f340fcb41412ba35275d87eb83e3e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 要达到这个诉求，你需要在 `.card` 上使用下面的代码：
 
@@ -515,7 +515,7 @@ body {
 
 当使用子网格时，相当于卡片 `.card` 继承父网格 `.container` 的相关特性，即继承 `grid-template-columns` 、 `grid-template-rows` 和 `gap` 属性的值。有了它，网格看起来像这样：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b727ab7d4a784ad190129c18287ced00~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b727ab7d4a784ad190129c18287ced00~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/OJEXerm>
 
@@ -547,13 +547,13 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f2fa022aefbc4887819d3a92caded8a7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f2fa022aefbc4887819d3a92caded8a7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/ExRgmYg>
 
 这意味着父网格中的网格轨道（或网格项目）尺寸的任何改变都会延伸到其子网格相应的网格轨道（网格项目）；同样子，子网格的网格轨道的尺寸改变也会影响父网格轨道的尺寸。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8f9b0e63a3ed4d659095058d93e1f91e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8f9b0e63a3ed4d659095058d93e1f91e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你还可以只在一个维度中使用子网格，并在另一个维度中指定网格轨道数量和尺寸。意思是说，你只在 `grid-template-columns` 或 `grid-template-rows` 中的一个属性显式设置值为 `subgrid` ，另一个未显式设置 `subgrid` 值的属性可以设置其他的值。
 
@@ -576,7 +576,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1f4b0f45743b4e618508b0d2b697bd9e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1f4b0f45743b4e618508b0d2b697bd9e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/xxzEdeW>
 
@@ -601,7 +601,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a4ab44a435dc4162b1c23ee979cd4500~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a4ab44a435dc4162b1c23ee979cd4500~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/dyKpRXr>
 
@@ -624,7 +624,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/da24509ae5594292ae029f433f9d4c55~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/da24509ae5594292ae029f433f9d4c55~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/dyKpRVB>
 
@@ -649,7 +649,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9d73b8b589a04ce89d52348b853e5946~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9d73b8b589a04ce89d52348b853e5946~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/xxzErme>
 
@@ -708,7 +708,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7fd9e07ed36f44f3b4da61910f2ccc54~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7fd9e07ed36f44f3b4da61910f2ccc54~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/MWXjodB>
 
@@ -735,7 +735,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9e714dfa59bc45c6a4dbdef28ee308c6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9e714dfa59bc45c6a4dbdef28ee308c6~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/zYaKENN>
 
@@ -762,7 +762,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b2461279a73d4cf78d258c8c291a1bdd~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b2461279a73d4cf78d258c8c291a1bdd~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/gOKwGGZ>
 

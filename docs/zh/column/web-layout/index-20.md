@@ -14,13 +14,13 @@ CSS Grid 和 CSS Flexbox 都是当前 Web 布局的两大主流工具。可在�
 
  除此之外，CSS Grid 和 CSS Flexbox 两者之间还有很多相互重叠的特性：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cd976e4788a44dc2ad53a9b8f9c4cf16~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/cd976e4788a44dc2ad53a9b8f9c4cf16~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 所以说，如果你是一名 Web 开发者，不应该考虑的是 CSS Grid 会替代 CSS Flexbox ，也不应该考虑 CSS Grid 和 CSS Flexbox 两者谁更好。而是要考虑，什么时候使用 CSS Grid，什么时候使用 CSS Flexbox。要掌握这一点，那我们就需要对 CSS Grid 和 CSS Flexbox 有较深的了解，了解它们之间异同，只有这样，你才能做出正确的、适合的选择！
 
 ## CSS Grid vs. CSS Flexbox
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c758af8012c54113bea4083401b8c30d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c758af8012c54113bea4083401b8c30d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 CSS Grid 和 CSS Flexbox 的差异，我们主要可以从三个方面来对比：
 
@@ -34,7 +34,7 @@ CSS Grid 和 CSS Flexbox 最核心的区别就是维度方面：**二维 vs. 一
 
 **CSS Grid 是二维的。** 即， Grid 是为二维布局而设计的，你可以同时沿着内联轴和块轴排列元素。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/eb6258bab20944799ba662d2fc519465~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/eb6258bab20944799ba662d2fc519465~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 而 **CSS Flexbox 是一维布局，** 这意味着可以将元素按行或列排列，但不能同时按行或列排列：
 
@@ -71,7 +71,7 @@ CSS Grid 和 CSS Flexbox 最核心的区别就是维度方面：**二维 vs. 一
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2cb4d2ba1a354555af832ccb8afad454~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2cb4d2ba1a354555af832ccb8afad454~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/KKeoJoY>
 
@@ -86,19 +86,19 @@ CSS Grid 和 CSS Flexbox 最核心的区别就是维度方面：**二维 vs. 一
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d74406ae887c4b90a9a5608cef1b2d62~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d74406ae887c4b90a9a5608cef1b2d62~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/KKeoJoY>
 
 你也可能发现了，虽然 Flexbox 和 Grid 布局都能让元素因容器空间不足自动换行，但两者还是有差异的，**Flexbox 布局总是可以让 Flex 项目在同一行主轴方向均分容器空间，Grid 布局并不总是如此** 。换句话说，**当容器收缩时，网格项目保持完美对齐，而 Flex 项目则根据可用空间来伸缩它们的尺寸和对齐方式** ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/68907bcf6e1c4c0ba01aa7d59e974ce0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/68907bcf6e1c4c0ba01aa7d59e974ce0~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/KKeoJoY>
 
 既然 CSS 网格可以用于构建一维布局，那么 CSS Flexbox 也可以用来伪造一个看起来像网格的布局，只不过 Flexbox 算法却不知道第二个维度。比如下面这个常见的页面结构布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/735a6838de5e4a248cccee000e38095e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/735a6838de5e4a248cccee000e38095e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 上图所示是一个典型的二维布局，使用 CSS Grid 实现该布局效果有着天然的优势：
 
@@ -163,7 +163,7 @@ CSS Grid 和 CSS Flexbox 最核心的区别就是维度方面：**二维 vs. 一
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/80453f3ad2954dd495de3437bf38e1d6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/80453f3ad2954dd495de3437bf38e1d6~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如果使用 CSS Flexbox 布局来实现的话，你在 HTML 结构上就需要做相关的处理，添加额外的容器：
 
@@ -239,11 +239,11 @@ CSS Grid 和 CSS Flexbox 最核心的区别就是维度方面：**二维 vs. 一
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3968bb5046ce48adb6cbd291a569a8e7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3968bb5046ce48adb6cbd291a569a8e7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 最终实现的布局效果是相似的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/857f5b58fd1842de873538031366fa7c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/857f5b58fd1842de873538031366fa7c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/dyKmLxG>
 
@@ -258,7 +258,7 @@ CSS Grid 和 CSS Flexbox 除了一维和二维的区别之外，还有另一个�
 
 从前面的课程中，我们可以得知，**Flexbox 会监听它的内容，所以它是内容优先（内在）** 。 [W3C 规范在介绍 Flexbox 时这样描述过](https://www.w3.org/TR/css-flexbox-1/#overview)：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f8b822b4916d47f3b5c0e2e4cf463713~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f8b822b4916d47f3b5c0e2e4cf463713~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > In return it gains simple and powerful tools for distributing space and aligning content in ways that web apps and complex web pages often need.  —— [W3C Flexbox 规范](https://www.w3.org/TR/css-flexbox-1/#overview)
 
@@ -272,13 +272,13 @@ CSS Grid 和 CSS Flexbox 除了一维和二维的区别之外，还有另一个�
 - 内容的大小决定每个元素占据多少空间；
 - 如果元素换到了新的一行，它们会根据新行的可用空间决定它们自己的大小。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/791460baba704307a47270a1d50bb42c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/791460baba704307a47270a1d50bb42c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 CSS Grid 则是从布局入手。它提供了一种机制，你可以根据你预想的大小和结构来创建一个网格，然后再把元素放入网格中（放到一个网格单元格，或一个网格区域中），或者元素自动放置到网格中（根据网格项目自动放置算法放置）。
 
 不过，CSS Grid 无论如何，都将坚持它的行和列，所以它是布局优先（一种外在的行为）。当然，如果你愿意，你也可以让布局保持完全相同，尽管你可能不希望这样。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7bfb9fb1d1e14a4a975422dfa1839010~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7bfb9fb1d1e14a4a975422dfa1839010~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 也就是说，当你在抉择使用 CSS Flexbox 还是 CSS Grid 来布局时，你还可以问自己：
 
@@ -291,7 +291,7 @@ CSS Grid 和 CSS Flexbox 还有一个明显的差异就是：**CSS Grid 用于�
 
 事实上，在构建整个页面布局时，我不会对使用哪种技术有任何疑问，也不会过于强调哪种技术最好，我更强调的应该根据场景和需求选择最适合的技术。比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/32ca061278174015997d8bf7b51e67f1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/32ca061278174015997d8bf7b51e67f1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 就上图展示的 Web 页面布局效果而言，在 CSS Grid 出现之前，我们大多数人都是使用 CSS Flexbox 来完成的：
 
@@ -369,7 +369,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a47d50b7b79a4a48922fd45bf9a740e0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a47d50b7b79a4a48922fd45bf9a740e0~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/vYrjJEw>
 
@@ -457,7 +457,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ab8599da3eb44c268fbb3ff26a980212~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ab8599da3eb44c268fbb3ff26a980212~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/WNyyXQL>
 
@@ -465,11 +465,11 @@ body {
 
 理想情况下，这些小组件无论在页面上的位置如何，小组件布局都将自动调整。在某些情况下，你可能不知道组件将被放置在主内容列或侧边栏中，或两者都放置：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/658cd63736224a7395ad20e8984ee691~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/658cd63736224a7395ad20e8984ee691~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在不确定一个组件会在哪里放置的情况下，你需要确保组件可以随着环境调整布局。依旧拿卡片组件为例，你可能需要为同一个卡片小组件提供不同的布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6b3f8fde8e8e46889eae58fe90e78045~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6b3f8fde8e8e46889eae58fe90e78045~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 简单地说，在不确定一个组件会在哪里结束的情况下，你需要确保组件可以根据其容器进行自我调整。在 CSS 的众多布局技术中，CSS Flexbox 很适用于这些小组件的布局。
 
@@ -531,7 +531,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3cbf9bbb2c0149bba353265063a05a2b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3cbf9bbb2c0149bba353265063a05a2b~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/JjZZOBy>
 
@@ -611,7 +611,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4944314ec00a41bbb18575a31f2b2de1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4944314ec00a41bbb18575a31f2b2de1~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/bGKKaGG>
 
@@ -683,7 +683,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4d511f3d440d49c69b51442c6d5c2ada~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4d511f3d440d49c69b51442c6d5c2ada~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/oNyypLP>
 
@@ -691,7 +691,7 @@ body {
 
 对于很多人来说，CSS Flexbox 除了可以让 Flex 项目能根据容器主尺寸进行伸缩扩展之外，还有一个，就是强大的对齐能力。这让 Web 开发者构建**水平垂直居中** 、**等高**等布局变得很容易。当然，CSS Grid 也拥有强大的对齐能力，只不过，CSS Grid 和 CSS Flexbox 的对齐方式略有差异：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c3d91e407b5a4eb48c2a938f30888c01~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c3d91e407b5a4eb48c2a938f30888c01~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在 CSS Flexbox 中，其对齐方式主要分为：
 
@@ -761,7 +761,7 @@ p {
  }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e06c2238149447c5943724c094460a75~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e06c2238149447c5943724c094460a75~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你可能已经发现了，虽然有多个网格项目重叠，但这里并没有定位（`position`）相关属性的身影。在 Grid 布局，我们可以直接使用 `grid-column` 和 `grid-row` 属性放置网格项目（指定网格线名称，将网格项目放在指定的位置）上。
 
@@ -769,7 +769,7 @@ p {
 
 除了能灵活适配更多的内容之外，还可以使用 `grid-column` 和 `grid-row` 移动网格项目，使其在不同的位置呈现。简单地说，可以在该组件的基础上，得到更多的组件变体。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4c6236fc2d2d4388a1d324587ab3ab33~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4c6236fc2d2d4388a1d324587ab3ab33~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/vYrrwvg>
 
@@ -829,13 +829,13 @@ p {
 
 当然，这里并没有说 CSS Flexbox 不能实现类似上面这种层叠布局，只是说 CSS Grid 更适合。在不使用 CSS Grid 布局技术，要实现该示例的效果，你将付出的代价会大得多，即使实现了，也很难达到 CSS Grid 实现的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/28399ca35e834ab59dccfce7f2fad099~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/28399ca35e834ab59dccfce7f2fad099~tplv-k3u1fbpfcp-zoom-1.gif)
 
 ### 项目的伸缩扩展
 
 CSS Flexbox 和 CSS Grid 布局中，Flex 容器和网格容器的直接子元素都被称为**项目** （Flex 项目和网格项目），它们都具备伸缩扩展的特性。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/681b98a934f346d1ba9d7b8bab848a54~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/681b98a934f346d1ba9d7b8bab848a54~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 - CSS Flexbox 布局中，在 Flex 项目上设置 `flex` 属性值为 `1 1 0%` （通常大部分开发者直接设置为 `1`），Flex 项目将根据 Flex 容器的剩余空间或不足空间进行收缩扩展；
 - CSS Grid 布局中，是在网格容器的 `grid-template-rows` 或 `grid-template-columns` 属性上设置 `fr` 单位的值（设置网格轨道尺寸），网格项目将根据网格容器的可用空间来进行收缩扩展。
@@ -879,7 +879,7 @@ CSS Flexbox 和 CSS Grid 布局中，Flex 容器和网格容器的直接子元�
 
 也就是说，CSS 网格布局中，`fr` 与 `minmax()` 函数结合（一般是 `minmax(0, 1fr)`）使用时，`fr` 单位值可以让网格项目与 CSS Flexbox 中的 Flex 项目上设置 `flex` 属性达到非常相似的结果。只不过，CSS 网格仍然创建的是一个二维布局。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5b1a14bcdc594f39a60bd7fed1121189~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5b1a14bcdc594f39a60bd7fed1121189~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/bGKKPrO>
 
@@ -892,7 +892,7 @@ CSS Flexbox 和 CSS Grid 布局中，Flex 容器和网格容器的直接子元�
 - CSS Flexbox 布局可以根据可用空间适当地调整行中元素（Flex 项目）个数，当有足够的空间时，全部的六个 Flex 项目在同一行中展示，当容器变的过窄时，每行则可能只展示一个 Flex 项目；
 - CSS Grid 则不同，始终保持五列网格列轨道。虽然网格列轨道会自动拉伸，但始终会保持我们定义网格时的列轨道数量，在这个示例是六列。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/257e799c91704c79a254820a8fc2809e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/257e799c91704c79a254820a8fc2809e~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/yLEEdxN>
 
@@ -903,14 +903,14 @@ CSS Flexbox 和 CSS Grid 布局中，Flex 容器和网格容器的直接子元�
 - CSS Flexbox 布局中，不管是 `flex` 还是 `inline-flex`，默认情况下，都会让所有 Flex 项目排在一行或一列 ；
 - CSS Grid 布局中，不管是 `grid` 还是 `inline-grid`，默认情况下，都不会改变 Grid 项目的排列方式，将按照 HTML 结构中的源顺序排列，除非你在声明网格容器的时候，显式使用 `grid-template-*`（比如，`grid-template-columns`、`grid-template-rows` ）改变其排列方式；
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f108c3ea67354b889be6660ec2794994~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f108c3ea67354b889be6660ec2794994~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 不过，不管是 CSS Grid 布局还是 CSS Flexbox 布局，如果你需要，可以显式改变排列方向。
 
 - 在 CSS Flexbox 中，可以通过 `flex-direction` 属性来改变 Flex 项目在 Flex 容器中排列方式；
 - 在 CSS Grid 中，可以通过 `grid-auto-flow` 属性来改变网格项目在网格容器中默认的排列方式。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0a0c5ad5b86f4390890db8ebcadc99dd~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0a0c5ad5b86f4390890db8ebcadc99dd~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 不同的是，CSS Grid 布局还可以使用 `grid-template-rows` 或 `grid-template-columns` 来改变网格排列。比如：
 
@@ -924,22 +924,22 @@ CSS Flexbox 和 CSS Grid 布局中，Flex 容器和网格容器的直接子元�
 
 除此之外，还可以在网格项目上使用 `grid-row` 、`grid-column` 或 `grid-area` 来改变网格项目的默认排列位置。这是在 CSS Flexbox 布局中做不到的。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6ea35cf5c99d4d4282536aef5aab9df2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6ea35cf5c99d4d4282536aef5aab9df2~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 刚才有提到过，使用 CSS Flexbox 构建布局时，建议在 Flex 容器上显式设置 `flex-wrap` 的值为 `wrap` 。这样做的好处是，当 Flex 容器没有足够多的空间时，Flex 项目会自动换行（或列），不至于让 Flex 项目溢出 Flex 容器，打破 Web 布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2eff76cdc0404d0d98f6a32b746b4e6e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2eff76cdc0404d0d98f6a32b746b4e6e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 而在 CSS Grid 布局中要实现自动换行（列），就需要采用网格布局中的 RAM 布局技术，即 `repeat()` 、`minmax()` 函数结合起来，并且指定列（行）网格轨道数量时，不能使用具体的数值，要使用 `auto-fit` 或 `auto-fill` 关键词：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/074bd93a9c6c416a92c09b5bda09b25f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/074bd93a9c6c416a92c09b5bda09b25f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 虽然都能实现自动换行（列），但它们还是有差异的。
 
 - 在 CSS Flexbox 布局中，如果 Flex 项目具有伸缩扩展性（即 `flex: 1`），最后一行 Flex 项目有可能会填充整个 Flex 容器，比如最后一行只有一个 Flex 项目；
 - 在 CSS Grid 布局中，所有网格项目都会的大小都会由 `minmax(MIN,MAX)` 函数来决定，最小值是 `MIN` ，最大值是 `MAX` （一般是 `1fr`）。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/194c647811d04fc68f80bc86cd55207f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/194c647811d04fc68f80bc86cd55207f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```CSS
 /* CSS Flexobox */
@@ -965,11 +965,11 @@ CSS Flexbox 和 CSS Grid 布局中，Flex 容器和网格容器的直接子元�
 
 **CSS Flexbox 效果** ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/976ed0aa3eb54160ad77a95bdf6035be~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/976ed0aa3eb54160ad77a95bdf6035be~tplv-k3u1fbpfcp-zoom-1.gif)
 
 **CSS Grid 效果** ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6e8846a731924d12930fc32417be14de~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6e8846a731924d12930fc32417be14de~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/yLEqBzq>
 
@@ -987,7 +987,7 @@ CSS Flexbox 和 CSS Grid 布局中，Flex 容器和网格容器的直接子元�
 
 注意，`order` 的默认值是 `0` ，默认排列顺序是以出现在 HTML 文档的顺序排序。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3103734ca4bb414393470a53a1fa6b39~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3103734ca4bb414393470a53a1fa6b39~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/BaVPBXr>
 
@@ -1006,13 +1006,13 @@ CSS Flexbox 和 CSS Grid 布局中，Flex 容器和网格容器的直接子元�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/da865bae44ad4db1a170ffb0035fbb61~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/da865bae44ad4db1a170ffb0035fbb61~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/dyKjyMv>
 
 有关于 CSS Flexbox 和 CSS Grid 主要的差异就介绍到这了，这里附上它们之间特性的对比图：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4b280751f69943b6946059e2e11bad88~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4b280751f69943b6946059e2e11bad88~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > **猛击图片，查看大图** ！
 
@@ -1052,7 +1052,7 @@ CSS Flexbox 和 CSS Grid 布局中，Flex 容器和网格容器的直接子元�
 
 先来看一个 Web 中最常见的小组件——按钮组件：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ac8a3cdef4f2475e939f8cc960c82110~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ac8a3cdef4f2475e939f8cc960c82110~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这是一个再普通不过的按钮组件了。大家肯定会说，这有啥好思考的呢？不管是 Grid 还是 Flexbox ，这不都是分分钟的事情吗？如果仅考虑视觉上的展示，的确是如此。使用 Grid 和 Flexbox 都可以：
 
@@ -1074,13 +1074,13 @@ CSS Flexbox 和 CSS Grid 布局中，Flex 容器和网格容器的直接子元�
 } 
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2598a63f9a924e478bbcc6efe3711861~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2598a63f9a924e478bbcc6efe3711861~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/GRGByzK>
 
 正如你所看到的，使用 Flexbox 和 Grid 实现的按钮视觉效果都是一样的。但是，该按钮组件要是放置在某个容器中，且这个容器空间较小时，希望按钮能自动换行，而不是溢出容器：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4822b04e828b4c34b976ac8ef4eff889~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4822b04e828b4c34b976ac8ef4eff889~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 上图左侧是我们期望的效果，右侧是我们不想要的效果！ 在这样的交互或场景下，使用 Flexbox 来构建组件布局要比 Grid 灵活的多。
 
@@ -1090,11 +1090,11 @@ CSS Flexbox 和 CSS Grid 布局中，Flex 容器和网格容器的直接子元�
 
 此外，Flexbox 可以让你毫不费力地调整子元素的大小，这也是使用 Grid 更不适合之处，比如上面所演示的按钮组件。而且，像这样的场景到处可见：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/19d62f97a9e94d86b16b16fcb817dd12~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/19d62f97a9e94d86b16b16fcb817dd12~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 另外一个我更愿意使用 Flexbox 而不是 Grid 的原因是，如果我想创建一个设计，两个或多个元素水平对齐，其中一个沿着可用空间伸展，而其他元素保持其自然宽度。比如下图这样的场景：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9f3bd7001564439a949d85bc4841d6ac~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9f3bd7001564439a949d85bc4841d6ac~tplv-k3u1fbpfcp-zoom-1.png)
 
 ```HTML
 <div class="bar">
@@ -1132,11 +1132,11 @@ CSS Flexbox 和 CSS Grid 布局中，Flex 容器和网格容器的直接子元�
 
 分别在 `.bar` 和 `.form` 两个元素上创建了 Flex 容器，同时让 `.form` 和 `input` 两个元素上设置 `flex: 1  1 auto` ，让它们能在主轴上根据 Flex 容器空间进行伸缩扩展：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/187240bfae1d4cf6a081ad6160d3cc47~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/187240bfae1d4cf6a081ad6160d3cc47~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 当你改变容器大小时，你将看到的效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/894f8e39b97747cb8676b0095256b2ae~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/894f8e39b97747cb8676b0095256b2ae~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/wvXxmZO>
 
@@ -1158,17 +1158,17 @@ CSS Flexbox 和 CSS Grid 布局中，Flex 容器和网格容器的直接子元�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/42193a8df55a47b5bf86749138b1c60d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/42193a8df55a47b5bf86749138b1c60d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/yLEqjVJ>
 
 虽然最终结果是一样的，但我认为 Flexbox 是更好的选择，原因是，如果你以后决定在搜索栏两侧添加更多的图标时，你不需要修改任何的 CSS 样式：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1ff61afcd9cc4d4089f910359c9ef22d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1ff61afcd9cc4d4089f910359c9ef22d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 换作是 Grid 布局，虽然向搜索栏的右侧添加额外的图标，布局看起来还行，但向搜索栏的左侧添加额外的图标时，就会打乱原先的布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d47dbf4f783a4144ad9e78e5a5fd30e6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d47dbf4f783a4144ad9e78e5a5fd30e6~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这意味着你还必须根据新增的图标数量来调整CSS，比如在搜索栏左侧新增两个，右侧新增一个，你要像下面这样调整网格轨道数量：
 
@@ -1179,7 +1179,7 @@ CSS Flexbox 和 CSS Grid 布局中，Flex 容器和网格容器的直接子元�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/349303ec5b124e5a81930f7bd2ad9c62~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/349303ec5b124e5a81930f7bd2ad9c62~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/jOKpxaq>
 
@@ -1187,7 +1187,7 @@ CSS Flexbox 和 CSS Grid 布局中，Flex 容器和网格容器的直接子元�
 
 再来看一个页头相关的布局。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d960f35d509c44198360d080f52b0108~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d960f35d509c44198360d080f52b0108~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如下图所示，这个页面有三个部分组成：
 
@@ -1206,7 +1206,7 @@ header {
 
 Flex 容器的剩余空间是按 `space-between` 分配给了相邻 Flex 项目之间，并且第一个 Flex 项目（网站 Logo）紧挨着 Flex 容器左侧边缘（主轴起始边缘），最后一个 Flex 项目（用户头加购物车）紧挨着 Flex 容器右侧边缘（主轴的结束边缘）。或者说，两端是对齐了，但这个示例中本该水平居中的导航菜单却有一点点偏左：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c4903f159ebd4df6906084fc1331e2a9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c4903f159ebd4df6906084fc1331e2a9~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 造成这种现象的主要原因是，**导航菜单两边的 Flex 项目宽度不相等** 。所以最终渲染出来的结果并不符合设计要求的视觉效果。也就是说，构建这个页头的布局，使用 Flexbox 其实是不太适合的，如果你一定要使用 Flexbox 不是不可以，你需要添加额外的代码。如果使用 Grid 来布局的话，就会简单地多：
 
@@ -1220,21 +1220,21 @@ header {
 
 设置了一个三列网格，并且第二列的列宽是根据导航菜单的宽度来决定的（`auto`），并且把 Grid 容器可用空间（除导航栏宽度与列轨道间距之外的空间）均分成两等份（第一列和第三列列宽是 `1fr`），一份给了第一列（Logo 所占列），另一份给了第三列（用户头像、昵称和购物车按钮所在列）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4af13fa370694957b7a5ebd2312b771f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4af13fa370694957b7a5ebd2312b771f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 另外，就页面中导栏菜单和右侧的用户信息栏，我们可以使用 Flexbox 来布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0c0d88175c3c4f7b8a2790ee84c9da3b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0c0d88175c3c4f7b8a2790ee84c9da3b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这也是一个典型的 CSS Grid 和 CSS Flexbox 混合在一起使用的案例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3c4b1c1b68a14276adb995a95a77cd5c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3c4b1c1b68a14276adb995a95a77cd5c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/NWYmQmB>
 
 卡片组件在 Web 中是另一个常见的组件。像下图这样排列卡片的布局也是到处可见：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1204f0df4d5142d888f6568af63ee443~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1204f0df4d5142d888f6568af63ee443~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```HTML
 <article class="cta">
@@ -1314,13 +1314,13 @@ header {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c8de2d5fe271451b8dfa85534cf6e28c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c8de2d5fe271451b8dfa85534cf6e28c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/gOKjKQm>
 
 继续以卡片组件为例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b6fb920592c24a47aa5401542be2d835~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b6fb920592c24a47aa5401542be2d835~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 上图涉及到单张卡片和多张卡的布局。在 CSS Grid 没使用之前，不管是单张卡片还是多张卡片的布局，Web 开发者首先的布局方案是使用 CSS Flexbox。对于单张卡片的布局，使用 CSS Flexbox 一点问题都不存在。
 
@@ -1338,7 +1338,7 @@ header {
 
 对于单张卡片来说，使用 Flexbox 只是用来控制对齐方式、间距之类的。就这两方面来说，不使用 Flexbox 也可以。如果希望底部的按钮都能对齐，那就需要使用 Flexbox 来布局，这样可以很容易实现：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1482a9950e574cd5ad503031bde77e30~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1482a9950e574cd5ad503031bde77e30~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```CSS
 /* 单个 card 布局 */
@@ -1388,17 +1388,17 @@ button {
 
 这个时候效果看上去还是不错的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fcc68b136cdc42c6a997a62868f52c43~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/fcc68b136cdc42c6a997a62868f52c43~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/dyKjgGE>
 
 但突然有一天，设计师说，每行只排列三张卡片（`--columns: 3`）或者说卡片最小宽度不能小于某个尺寸，比如说 `300px` 。或者说，服务端输出的卡片数量不只四个，那么上面的布局就会因为设计需求调整或内容输出的变化，造成卡片换行展示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b45471af206143faa328e71f84f96b91~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b45471af206143faa328e71f84f96b91~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 而且，你还会发现，新换行的卡片宽度会根据 Flex 容器的空间伸缩扩展：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6667f95ce006485182f53cc865f7d596~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6667f95ce006485182f53cc865f7d596~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 虽然换行的卡片能自动进行伸缩扩展，但可能不符合预期的布局效果。如果要让布局符合预期，就需要你做一些其他的设置，比如说：
 
@@ -1426,13 +1426,13 @@ button {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c16da7c0556842d1929da65b39e9eab4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c16da7c0556842d1929da65b39e9eab4~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/WNygGVx>
 
 另外，CSS Flexbox 有一个效果实现起来难度也是非常的大。比如说，每张卡片每个元素区域在垂直方向都要对齐：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1a0495856caa43cb950b3e022cde3c07~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1a0495856caa43cb950b3e022cde3c07~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 就上图所示效果，对于 CSS Grid 布局来说，一点难度都没有。我们可以使用 CSS Grid 中的 `subgrid` (子网格)来实现：
 
@@ -1455,21 +1455,21 @@ button {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/385e45217ac74f3db917ab12f892ceb9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/385e45217ac74f3db917ab12f892ceb9~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 最终你在支持 `subgrid` 浏览器中看到的效果是很完美的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/23a1df0f7e234a6c975bbeea4bca723a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/23a1df0f7e234a6c975bbeea4bca723a~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/oNyPYXm>
 
 虽然 CSS Flexbox 能实现大部分 Web 布局，但也有不少布局是不太适用的，尤其是层叠类的布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f9ebed597017470f9afa7392cb2ecd6a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f9ebed597017470f9afa7392cb2ecd6a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 我们来看一个层叠方面的示例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f20acb2f1798436f82d0f8f08ff7b5d4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f20acb2f1798436f82d0f8f08ff7b5d4~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```CSS
 .cards {
@@ -1533,7 +1533,7 @@ li:nth-of-type(1) {
 
 这里使用了嵌套网格来实现的布局效果。父网格 `.cards` 构建一个九宫格的布局，每张卡片 `.card` 是一个内网格，并且使用 `grid-template-areas` 命名了网格区域，方便使用 `grid-area` 来放置网格项目（卡片上的每个元素）。其中最为关键的部分是 `figure` 和 `.card::before` 都跨越了整个网格列轨道和网格行轨道，填充整个网格，并且显式设置 `z-index` 值，指定其在 `z` 轴的层级。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bec2186c052d46279522a0950a4fd77e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/bec2186c052d46279522a0950a4fd77e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/YzvONXW>
 

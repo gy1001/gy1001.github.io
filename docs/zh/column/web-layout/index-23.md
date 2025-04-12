@@ -8,7 +8,7 @@
 
 在 CSS 中，我们可以通过 `letter-spacing` 属性来给英文字母间增加间距（它也被称为**活版印刷跟踪** ）。比如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7e1348ba9b8543369fa4489307b214b1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7e1348ba9b8543369fa4489307b214b1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 上图中的第二行使用了 `letter-spacing` 给字母间增加了间距，它看起来是正常的。但是，如果将相同的 `letter-spacing` 样式添加到阿拉伯语系的内容中，效果看起来就会非常的奇怪。比如下面这个示例：
 
@@ -18,7 +18,7 @@
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4fd2e6bab00a4ef8ac6bf24c35bf867c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4fd2e6bab00a4ef8ac6bf24c35bf867c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/wvXOQjB>
 
@@ -34,7 +34,7 @@
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2ef8d81c74564efb8603be3675e9d7b9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2ef8d81c74564efb8603be3675e9d7b9~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/oNyVQJQ>
 
@@ -44,13 +44,13 @@
 
 在 Web 开发中，给文本增加一定的透明度是很常见的一种行为。这在拉丁语体系（比如英语）和汉语体系（比如中文）都是可行的。然而，当内容是阿拉伯语体系（比如阿拉伯文）时，渲染出来的文本会给人一种怪怪的感觉：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5348c9b9ad18461cb4c66b7912d64ea2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5348c9b9ad18461cb4c66b7912d64ea2~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/eYKXbJM>
 
 你会发现字母之间有一些不同颜色的区域。看上去是有层叠区域造成的颜色不一致：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/067ee94236174271a8a43b1a9ce3d048~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/067ee94236174271a8a43b1a9ce3d048~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在这个例子中，字母间距没有调整，所以这个问题与字母间距无关。解决方案很简单，**设置不带透明度的颜色值，也不给文本设置透明度** 。
 
@@ -58,7 +58,7 @@
 
 不同语言中的字大小是有一定差异的。比如说英文翻译成阿拉伯文后，有些单词就会变大或变小，因此元素的大小也会发生变化（内容容器）。比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ee52974e06a842f492e11296d3ae2d49~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ee52974e06a842f492e11296d3ae2d49~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 正如上图所示，当英文网站翻译成阿拉伯语时，由于翻译后一些单词变大或变小，元素的大小也会发生变化。比如说：
 
@@ -67,28 +67,28 @@
 
 事实上，这种差异不只存在于拉丁语体系与阿拉伯语体系之间，它们也同样存在于汉语体系中。有些单词在不同语系中宽度有些相同，有些更大，也有一些更小：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9dcccf8b6ed74256b2d6a35c6d7a80db~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9dcccf8b6ed74256b2d6a35c6d7a80db~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在这种因语言不同，内容长度（大小）不同，要是在容器上显式设置宽度，就会造成内容被溢出，或断行；如果容器被设置了 `overflow: hidden`，还会造成内容被裁剪等现象。来看一个真实案例，比如 [Facebook 的登录页中的“新建帐户”按钮](https://zh-cn.facebook.com/)：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/afa6563b45ee4e3d885b7e69fe562595~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/afa6563b45ee4e3d885b7e69fe562595~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 不管是给按钮设置宽度为 `104px` 或 `219px` 都不是最佳的。
 
 - 如果设置最小值 `104px` ，其他语言版本就会内容溢出；
 - 如果设置最大值 `219px` ，其他语言版本就有可能会有很大的空白空间。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/49d2cdbfd9744314bdcda84de2cf784d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/49d2cdbfd9744314bdcda84de2cf784d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 针对这样的场景，更好的做法是，使用 CSS 的内在尺寸来定义元素容器的大小，比如可以将按钮设置的宽度为 `auto` 、`min-content` 或 `max-content` ，这样使不同版本语言下都有一个较好的宽度：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/92846bcc717d4bb887a4ae4c5c0ddedd~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/92846bcc717d4bb887a4ae4c5c0ddedd~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/ExRMrMN>
 
 面对多语言的 Web 布局时，给元素设置尺寸大小，使用 `auto` 、`min-content` 和 `max-content` 要比具体尺寸更为合适。但有的场景也会让你的 UI 看上去不太完美。就拿下图为例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ae1fcfec712d41138462619a752194d8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ae1fcfec712d41138462619a752194d8~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 英文版本“Done”按钮，在英文版本下，它视觉上，甚至可点击区域都是符合 Web 设计的，但它一到阿拉伯语言版本中，“Done”被翻译成“إنجاز”，不管是 UI 视觉还是按钮可点击区域都变小了，有可能它不符合 Web 设计需求，比如按钮可点击区域要求是 `44px x 44px` 。因此，除了给按钮设置宽度为 `auto` 或 `min-content` 或 `max-content` 时，最好也同时给按钮设置一个 `min-width` 值，比如上图中的 “Done”按钮：
 
@@ -104,7 +104,7 @@
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ad475b752c2447da9016175687f944d5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ad475b752c2447da9016175687f944d5~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/gOKEEXJ>
 
@@ -131,17 +131,17 @@
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cf2951b325664dc692bfa5607a9b2d9f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/cf2951b325664dc692bfa5607a9b2d9f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/wvXObbN>
 
 上面的效果应该是符合我们预期的。如果不慎在拉丁语体系和汉语体系中设置了 `dir="rtl"` 时，效果和我们阅读习惯就不同了，甚至是一种错误的表现行为：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8ddd739726394acca4b902c3e1411c79~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8ddd739726394acca4b902c3e1411c79~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 正如上图所示，英文和中文文本的截断不正确。它应该在元素的末尾，而不是开头。要解决这个问题，`dir` 需要根据语言的正确阅读方式来设置正确的值。如果你不清楚语言的阅读方式或者无法预判用户会将应用切换到何种语言的话，建议将 `dir` 的值设置为 `auto`。这样一来，浏览器会自动根据语言的阅读方式来处理文本截取的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bc82b275ab2e4e51852fe39891357551~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/bc82b275ab2e4e51852fe39891357551~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 当然，这种情况一般会发生在混合排版中，比如：
 
@@ -167,7 +167,7 @@
 
 对于大部分 Web 开发者，在开发多语言 Web 网站或应用时，很少会根据语言版本来选择不同的字体，为了避免麻烦，习惯性地选择系统默认字体。但事实上，这并不是一种较好的选择，尤其是 RTL 版本的设计，还是需要精心选择对应的字体，这样才能确保它具有良好的可读性。就拿 “Twitter” 这个词为例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a3f1b10b9467464389acdf47bbfeb91e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a3f1b10b9467464389acdf47bbfeb91e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 英文版本和阿拉伯语版本选择同一字体，但对于使用阿拉伯语的用户而言，“تغريد”这个词很难，原因如下:
 
@@ -177,13 +177,13 @@
 
 针对这种情形，应该为阿拉伯语（LTR 版本）选择一个更为适合的字体。比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/09cd832e91754c4796acceee1ccbf2d2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/09cd832e91754c4796acceee1ccbf2d2~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ## 不宜设置相同的 line-height
 
 如果需要更好的阅读体验，可能会为不同的语言（LTR 或 RTL）设置不同的布局。但是 LTR 和 RTL 排版设置相同的 `line-height` 的话，阅读体验就有可能达不到你预期的效果。比如给英文和阿拉伯文设置相同的 `line-height` ，在阿拉伯文中看上去行与行的间距要更小：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9e9f340b2b2a44d0afa46101e7681bf3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9e9f340b2b2a44d0afa46101e7681bf3~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如果想改变这样的现象，需要考虑为阿拉伯语的内容提供一个更适合的 `line-height`。比如：
 
@@ -199,33 +199,33 @@
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cb420196539544948a1e10e37a298378~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/cb420196539544948a1e10e37a298378~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/NWzJZzG>
 
 另外建议 `line-height` 不要使用固定单位的值，这样在一些语言的切换状态下很容易造成文本展示不全（类似被截）。比如下图的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9e2e33daf82d4302872fd7a3fed15bab~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9e2e33daf82d4302872fd7a3fed15bab~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ## 不采用默认的文本下划线
 
 有些文本会带有默认下划线的效果，比如 `<a>` 链接。在阿拉伯语言的文本中，默认的文本下划线会让阅读变得很困难。这种现象的产生，与阿拉伯语单词和字母的书写方式有关。如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b2c3012ac8474ae8b588f436a714c3bc~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b2c3012ac8474ae8b588f436a714c3bc~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你会发现，文本下划线会和一些文本重叠，比如单词中的一些点：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e0b2bac15a6640f4a33f26190345e09f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e0b2bac15a6640f4a33f26190345e09f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 另外，采用默认的文本下划线，不同的浏览器渲染出的效果也会有所差异：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8c719b0d80c34885b9db07accf2e0ca2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8c719b0d80c34885b9db07accf2e0ca2~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 很明显，Chrome 和 Firefox 浏览器不会出现我们上面所说的现象（在这方面可能做了一定的优化），但是在 Safari 浏览器中，就出现了上面所描述的现象。另外可能在一些 UI 效果上趋向于风格的统一。所以在给文本加下划线的时候，更建议采用自定义的下划线风格。
 
 在 CSS 中有很多种不同的方案来实现自定义下划线的效果，比如 `border-bottom`、`box-shadow`、`background-image`等，还可以给文本添加 SVG 的下划线。除此之外，[CSS Text Decoration Module Level 4](https://drafts.csswg.org/css-text-decor-4/) 提供的一系列 `text-decoration-*` 属性也可以实现一些个性化的下划线效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6dc50e1b46de48d6b6c26ed1f80c5207~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6dc50e1b46de48d6b6c26ed1f80c5207~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/dyKrxYL>
 
@@ -243,7 +243,7 @@ a:hover {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f2c6b48a214741d48c9af60224abd9ba~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f2c6b48a214741d48c9af60224abd9ba~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/Yzvgomb>
 
@@ -251,7 +251,7 @@ a:hover {
 
 如果使用断行处理的相关样式，比如 `word-break`，那么在阿拉伯语的应用中需要进行单独的测试，因为它可能会破坏阿拉伯语单词。如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/97d9b4cfa41741dcba27a0603e04899b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/97d9b4cfa41741dcba27a0603e04899b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 上图中圈出的部分是由于断句带来的影响。**在阿拉伯语中，没有断字这回事** 。一个单词的字母是相互联系的，所以不可能打破一个单词。
 
@@ -259,7 +259,7 @@ a:hover {
 
 在大多数 RTL 语言（比如阿拉伯语）的应用中，应该尽量避免使用粗体（`font-weight`）和斜体（`font-style: italic`）。因为大多数 RTL 语言中，粗体文本会让应用的可读性变得更为困难，而斜体几乎是不被使用。同样的，在 RTL 语言中，几乎会忽略大写字母。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/12f3a52c64b64cf89206e921bef29f5f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/12f3a52c64b64cf89206e921bef29f5f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ## 双向语言的最佳用户体验
 
@@ -267,7 +267,7 @@ a:hover {
 
 事实上除了开发者，对于设计师以及用户体验，双向语言都会有很多细节需要我们注意，或者说有很多问题需要我们一起面对。如果仅从 UI 布局上来看，**双向语言（LTR 和 RTL）的 UI 布局是一种镜向的布局效果**。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cc66004cf8dc44bc8f60b16558d4a5a4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/cc66004cf8dc44bc8f60b16558d4a5a4~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 表面看上去是一种反向的切换，但事实上，这里面有很多细节是需要我们注意或者单独处理的。接下来，我们来看看需要注意的一些细节（主要围绕着 UX 来展开）。
 
@@ -281,13 +281,13 @@ a:hover {
 
 Web 中的图标有些是没有方向性的，有些是带有方向性。比如下图所示的图标，图标中心线左右两侧是对称的，可以说是没有任何方向性：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8612f93a821143dcaf265b72e70985a1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8612f93a821143dcaf265b72e70985a1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 像上述这种对称性的图标，用在双向语言中，你不需要对这些图标做任何的处理（比如翻转）。
 
 在双向语言系统中有些图标是具有方向性的。也就是说在 LTR 和 RTL 中要改变它们的方向，而且这一点对于用户来说是非常重要的，可以更清楚地理解图标的含义。比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5dcc866547c54645bc7cfb25370d2b10~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5dcc866547c54645bc7cfb25370d2b10~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 对于需要镜像的图标，仅仅使用 `dir` (或 `direction` )无法达到所要的效果：
 
@@ -306,7 +306,7 @@ Web 中的图标有些是没有方向性的，有些是带有方向性。比如�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4129022de1f448dbbfc0017c456e97da~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4129022de1f448dbbfc0017c456e97da~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/mdKgMEb>
 
@@ -320,21 +320,21 @@ Web 中的图标有些是没有方向性的，有些是带有方向性。比如�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6bc3fd60d3d24ace8b8ccc288fede697~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6bc3fd60d3d24ace8b8ccc288fede697~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/ZERZJLr>
 
 也就是说，我们在 LTR 和 RTL 版本中使用图标时，应该尽可能像下图这样来使用：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/da9331f9cc8f45a996a8c08f3496e133~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/da9331f9cc8f45a996a8c08f3496e133~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 然而，总是有例外的。根据 [Material Design 指南](https://m2.material.io/design/usability/bidirectionality.html)，如果一个图标代表一个可以用右手拿着的对象，那么它不需要翻转。例如，搜索图标的手柄通常位于右下角，因为大多数用户都是右撇子。在使用 RTL 语言的国家，大多数用户也是右撇子，所以这样的图标不应该被镜像。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a00aca7c424140a5b181da162f3f346b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a00aca7c424140a5b181da162f3f346b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 还有一些图标是通用的，也不需要翻转它们。例如，播放器上的一些图标，它代表的是磁带播放的方向，而不是时间方向，所以不必要对它们做翻转。下图是 Spotify 应用程序的英语和阿拉伯语版本:
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b9754599e36a4868a6f3e7221e7880b5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b9754599e36a4868a6f3e7221e7880b5~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 所以说，在 LTR 和 RTL 下使用图标时，需要根据实际环境做出最合适的选择。
 
@@ -342,37 +342,37 @@ Web 中的图标有些是没有方向性的，有些是带有方向性。比如�
 
 通常有些按钮会带上相应的 Icon 图标。在这种情况下，在 RTL 布局中，图标的位置也需要进行翻转：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3aa9bef9a85742b3b1d2601d9b0b014e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3aa9bef9a85742b3b1d2601d9b0b014e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 对于表单控件也是如此，特别是对于输入型的 `input` 表单控件，还应该保持输入的方向性：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/38689fa16b6c4f91977ee6bf4de8e93f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/38689fa16b6c4f91977ee6bf4de8e93f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在 RTL 中，有些表单输入应该保持左对齐，例如电子邮件和手机号码。值得注意的是，如果占位符内容是阿拉伯语或其他 RTL 语言，那么占位符应该向右对齐。一旦输入框获得焦点，用户开始输入，对齐方式将翻转到左侧。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/35e8ce0ca6b144a1bc3b61f6567bfc0c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/35e8ce0ca6b144a1bc3b61f6567bfc0c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ### 导航菜单和面包屑
 
 对于导航菜单以及页头，还有面包屑等 UI 的设计在双向语言中是 UI 的镜像。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a1e5fdfcde6248549fe77222ee05b111~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a1e5fdfcde6248549fe77222ee05b111~tplv-k3u1fbpfcp-zoom-1.png)
 
 ### 数字顺序
 
 在双向语言中，对于数字的顺序（比如电话号码、门牌号等），不需要做镜像的处理。但要是带有图标的话，对应的图标还是需要做镜像处理的。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6df6c713914d47ffa94611c0733a6147~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6df6c713914d47ffa94611c0733a6147~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ### 组件的翻转
 
 在处理一些组件时，我需要一种快速翻转它们的方法。在 Sketch 应用中，我将复制一个组件，然后用 “flip” 命令翻转它。同样的功能也可以在 Adobe XD 和 Figma 中使用。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0a49dce378334638bab49064e31965a9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0a49dce378334638bab49064e31965a9~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 而我们在 Web 中构建 Web 组件时，大部分通过 HTML 的 `dir` 或 CSS 的 `direction` 就可以实现水平翻转的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7505e9a0031e42f6b7c0879db2bc396b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7505e9a0031e42f6b7c0879db2bc396b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/LYrvzPE>
 
@@ -417,7 +417,7 @@ header a:hover {
 
 先来看一个简单示例，看看 LTR 和 RTL 两个版本的 Web 布局要如何处理。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/615ee46892184646ad7d8290413fbdd0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/615ee46892184646ad7d8290413fbdd0~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/ZERZXwE>
 
@@ -443,7 +443,7 @@ header a:hover {
 
 先来看页头 `header` 的布局，它主要包含了 `.logo` 、`.nav` 和 `.user--profile` 三个部分：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d6bf994ae90e404f96115e5ca883e461~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d6bf994ae90e404f96115e5ca883e461~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 我们在 `header` 中使用 CSS Flexbox 布局，它可以自动适配 LTR 和 RTL 的布局：
 
@@ -468,7 +468,7 @@ header {
 
 第二部分 `.sub__title` 和 `header` 采用的是相同的布局方式：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/86c37e6705624b2584245aa0c8953753~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/86c37e6705624b2584245aa0c8953753~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```
 .sub__title {
@@ -483,7 +483,7 @@ header {
 
 对于主内容区域 `main` 中的卡片，我在这里使用了 CSS Grid 中的 RAM 布局技术，它也能很好匹配 LTR 和 RTL ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fd448b72e89d4d4f8369a07a08197bf1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/fd448b72e89d4d4f8369a07a08197bf1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```
 main {
@@ -494,7 +494,7 @@ main {
 
 对于单张卡片，在这个示例中没有使用 CSS Grid 中的 `subgrid` 来构建布局，选择的还是 CSS Flexbox 来布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6a1a9cefa1284576b43a89b73e6f110d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6a1a9cefa1284576b43a89b73e6f110d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```
 .media {
@@ -521,7 +521,7 @@ main {
 
 在我们这个示例中，很好地利用了 CSS Flexbox 和 CSS Grid 中的 `gap` 属性，来设置元素之间的间距：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7ad5441032c041f8b911688e2fdf0d1c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7ad5441032c041f8b911688e2fdf0d1c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如果不使用 `gap` 属性，很有可能需要使用到 `margin` 对应的逻辑属性，比如：
 
@@ -541,7 +541,7 @@ main {
 
 其实到这，LTR 和 RTL 布局基本上已经完成。不过，我还对示例中的图标做了些处理，比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b519df2a5d374a2888ef71d651e7bd2c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b519df2a5d374a2888ef71d651e7bd2c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```
 [dir="rtl"] .sub__title a svg,
@@ -552,7 +552,7 @@ main {
 
 这是一个关于 LTR 和 RTL 最基本的示例。你可能会说这是一个不真实的示例，那接下来，就以 [Facebook 的登录页](https://zh-cn.facebook.com/)为例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4084fa227c0241eda9e1a50b096ba069~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4084fa227c0241eda9e1a50b096ba069~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 构建一个这样的登录页，你可能需要的 HTML 结构：
 
@@ -691,7 +691,7 @@ body > * {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/20dfbdef477b43bbb73a1479766d43a2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/20dfbdef477b43bbb73a1479766d43a2~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 对于页面的口号（Sloga）和登录表单两个部分自动换行，这里在它的容器 `section` 中使用 CSS Grid 的 RAM 布局技术，并限制了每个部分的最小宽度（`min-inline-size`）：
 
@@ -766,7 +766,7 @@ section > * {
 
 这个时候，你将看到基本布局效果就出来了，而且能很好匹配 LTR 和 RTL 语言版本：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ca1b960039eb4e4794128dd9d064e394~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ca1b960039eb4e4794128dd9d064e394~tplv-k3u1fbpfcp-zoom-1.gif)
 
 当然，在开发 LTR 和 RTL （多语言版本）的 Web 网站或应用时，应该尽可能避免使用 CSS 的物理属性，我们这个示例中尽可能使用 CSS 的逻辑属性来替代其对应的物理属性：
 
@@ -891,15 +891,15 @@ section > * {
 
 对于开发者来说是件不易的事情，因为一些物理属性和逻辑属性是易于记忆的，像 `margin` 、`padding` 之类，但有一些是不易于记忆的，比如 `border` 和 `border-radius` 。就拿 `border-radius` 为例吧，与之对应的逻辑属性，在 `dir` 或 `direction` 和 `writing-mode` 下工作如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/96567f6231164887bb59e28f5e67295e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/96567f6231164887bb59e28f5e67295e~tplv-k3u1fbpfcp-zoom-1.png)
 
 这里我把以前整理的 `width` 、`hieght` 、`border` 、`padding` 、`top` 、`left` 、`bottom` 和 `right` 对应逻辑属性在 `dir` 、`direction` 和 `writing-mode` 下的工作情形用图来展示，希望有利于大家更好理解：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0e879a7963f14956adc03487c6cc5bfc~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0e879a7963f14956adc03487c6cc5bfc~tplv-k3u1fbpfcp-zoom-1.png)
 
 最后，要是你对 CSS 逻辑属性和物理属性之间的对应关系记不住，也不要紧，查看下图的即可：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a55b66f8f6174c1589c7b9d6cd8a3f3d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a55b66f8f6174c1589c7b9d6cd8a3f3d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 另外，需要注意的是，我们的示例在媒体查询中并没有使用 CSS 的逻辑属性，比如 `min-inline-size` ，那是因为到目前为止，它还不能作为媒体查询中的媒体条件。比如，下面这段代码是无法正常工作的：
 
@@ -944,13 +944,13 @@ section[dir="rtl"] .form--wrapper a:hover {
 
 最终你看到的效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/aa53b1d197b04a18a83a98eb706dfb74~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/aa53b1d197b04a18a83a98eb706dfb74~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/poKBGzK>
 
 再来看一个 [@Alaa Abd El-Rahim 在 Codepen 分享的一个示例](https://codepen.io/Alaa_AbdElrahim/full/XWaBBoq)，我在他的基础上 Fork 了一份，并在该示例的“英文”、“日文”、“阿拉伯文”的基础上新增了“中文”。这样就构建了一个四国语言的 Web 页面：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/155a87a3b565458591676b7922ddb292~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/155a87a3b565458591676b7922ddb292~tplv-k3u1fbpfcp-zoom-1.png)
 
 > Demo 地址：<https://codepen.io/airen/full/qBKwwdM>
 
@@ -1041,7 +1041,7 @@ html[dir="rtl"] .hero__social > div {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/65b4328de036454ba357feb9427bd35a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/65b4328de036454ba357feb9427bd35a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/mdKgYOR>
 
@@ -1081,7 +1081,7 @@ html:lang(zh) .about__text {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dd1df52b7559421c90c344eec32c0b04~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/dd1df52b7559421c90c344eec32c0b04~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 示例中还使用到了前面课程中没有介绍过的 CSS 知识。就是在伪元素 `::before` 或 `::after` 使用 `attr()` 函数，根据 HTML 标签元素的属性值生成伪元素的内容：
 
@@ -1130,7 +1130,7 @@ div::before {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7742ba2cfb954d48815c077b5036ee37~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7742ba2cfb954d48815c077b5036ee37~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 需要注意的是，`[dir="..."]` 、`[lang="..."]` 和 `:lang(...)` 除了可以选中显式设置了 `dir` 和 `lang` 属性的元素之外，也可以利用 CSS 的选择器组合功能选择与其相邻的元素，它的子元素以及它的后代元素，比如：
 
@@ -1414,7 +1414,7 @@ html:lang(en) .about__text {
 
 比如示例中圆角的使用：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7f984aba816347139ada810a65e06c0c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7f984aba816347139ada810a65e06c0c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```
 .cta__text {
@@ -1429,7 +1429,7 @@ html:lang(en) .about__text {
 
 你可能已经猜到了，整个页面的布局都是以 CSS Flexbox 和 CSS Grid 来构建的，所以不用太多担心 LTR 和 RTL 两种版本下因为布局会产生异常。具体原因在上一个示例中已经阐述过了。**CSS Flexbox 和 CSS Grid 都是基于文档书写模式而设计的** 。比如下图：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2a6a9fd22dea47e7afabf2173e43508a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2a6a9fd22dea47e7afabf2173e43508a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```
 .d-xl-flex {
@@ -1456,7 +1456,7 @@ html:lang(en) .about__text {
 
 再比如示例中卡片展示区域，使用 CSS Grid 构建的布局，也能很好适配 LTR 和 RTL 版本，即使卡片由三个增加到四个，它也能很好地展示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0aea3e5ca7ac4c7884b7065a07b7e0cd~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0aea3e5ca7ac4c7884b7065a07b7e0cd~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```
 .offers__content {
@@ -1470,11 +1470,11 @@ html:lang(en) .about__text {
 
 你可能已经发现了，在原作者的示例中，有些地方细节做得还是略有缺陷，比如示例中的按钮，因为不同版本语言，翻译出来的内容长度有所不同，有的按钮看上去较小：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9b911556865b4df397857cef9e1c8650~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9b911556865b4df397857cef9e1c8650~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 我在 Fork 的示例基础上对按钮做了一个最小尺寸的设置，这样做的主要原因是，在不同语言版本时，不会让有的语言版本下视觉看上去不美观，也避免按钮不好点击：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/309099ed834843fbb778cc2cf5bbc2f4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/309099ed834843fbb778cc2cf5bbc2f4~tplv-k3u1fbpfcp-zoom-1.gif)
 
 这个示例还使用 CSS 自定义构建了 Dark Mode （暗黑模式）的效果：
 
@@ -1530,7 +1530,7 @@ Dark Mode 的切换还是使用了一点点 JavaScript 脚本的：
 
 你切换模式的时候，能看到下图这样的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c1984c5b18284bf6a0048a29282074dd~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c1984c5b18284bf6a0048a29282074dd~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/qBKwwdM>
 

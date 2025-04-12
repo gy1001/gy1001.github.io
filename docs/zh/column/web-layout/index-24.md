@@ -10,7 +10,7 @@
 
 来看一个简单地示例，假设你从设计师手上拿到这样的一张设计稿：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/df4cb69bc0a14291b11508d0689efec8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/df4cb69bc0a14291b11508d0689efec8~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 拿示例中的 “View Themes” 按钮为例吧。大部分 Web 开发者拿到设计图，就会测量该按钮的几个视觉重要参数，比如 `width` 、`height` 和 `padding` 之类（如上图所示），然后就会根据设计稿所提供的模板尺寸进行开发：
 
@@ -30,7 +30,7 @@ button {
 
 默认情况之下， Web 开发者还原出来的结果都符合设计稿需求，但突然说输出给按钮的内容不是设计稿模板提供的内容，或者说按钮字号稍微调整。还原出来的结果就不一定符合设计稿的需求了：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/534b72f30b5e4b2faafcbe0ce43b9729~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/534b72f30b5e4b2faafcbe0ce43b9729~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/dyKENyW>
 
@@ -46,7 +46,7 @@ button {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b655e2bf26b5421c9802dca727262df9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b655e2bf26b5421c9802dca727262df9~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/KKeLazj>
 
@@ -60,7 +60,7 @@ button {
 
 就 Web 布局来说，它是继响应式 Web 设计之后又一个布局技术转折点：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b3ed00218975473e94e05c6041631c06~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b3ed00218975473e94e05c6041631c06~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 自从 Web 诞生以来，Web 开发者一直都在使用大量的 Hack 来完成所有与 Web 布局相关的事情，比如使用浮动（`float`）、引用外部第三方 CSS 框架（CSS Frameworks）和库（比如 Bootstrap）。而“内在 Web 设计”可以在“用最少的代码和复杂 Web 设计”之间取得完美的平衡。
 
@@ -74,7 +74,7 @@ button {
 
 换句话说，每一种设计都有自己的关键原则，内在 Web 设计也是如此。Jen 在她的分享中说“内在 Web 设计具有六个关键原则”：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8ade138acb3045f9a8effb6cad95e08e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8ade138acb3045f9a8effb6cad95e08e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 即：
 
@@ -107,11 +107,11 @@ button {
 
 在 CSS 的世界中，任何一个元素都会被视作为一个盒子，就像我们的柜子一样：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7bbf1faa5b474d80ab0bce1720888871~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7bbf1faa5b474d80ab0bce1720888871~tplv-k3u1fbpfcp-zoom-1.png)
 
 每一个盒子就是一个框，框的大小是由 CSS 的盒模型相关属性决定的。随着 CSS 逻辑属性的出现，CSS 的盒模型也可以分为 物理盒模型 和 逻辑盒模型，两种盒模型都有其对应的 CSS 属性：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fbd1ba0c882f47caab90b13c349b44b6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/fbd1ba0c882f47caab90b13c349b44b6~tplv-k3u1fbpfcp-zoom-1.png)
 
 抛开盒模型中其他属性不说（比如 `border` 和 `padding`，它们也会影响框的大小），其中 `width` 和 `height`（物理属性）；`inline-size` 和 `block-size` （逻辑属性）是用来设置框大小最直接的 CSS 属性。
 
@@ -151,7 +151,7 @@ button {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ec7b0c8b047345c4b11a778603d18aec~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ec7b0c8b047345c4b11a778603d18aec~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/qBKGrEK>
 
@@ -170,11 +170,11 @@ button {
 
 我在 Twitter 上看到 [@stefanjudis](https://twitter.com/stefanjudis) 录制了[一个视频](https://twitter.com/stefanjudis/status/1329345425640464384)，来展示 `min-content` 、`max-content` 和 `fit-content` 之间的差异，我觉得非常形象：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6c481a2f1f374d8dbc228c38b7ba55ee~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6c481a2f1f374d8dbc228c38b7ba55ee~tplv-k3u1fbpfcp-zoom-1.gif)
 
 我们通过下面这个示例来向大家阐述内在尺寸 `min-content` 、`max-content` 和 `fit-content` 之间的差异：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d54c70a686e04ae883cd35abde11b2c2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d54c70a686e04ae883cd35abde11b2c2~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/jOKoBMM>
 
@@ -190,7 +190,7 @@ button {
 
 当 `div` 没有显式设置 `width` 时，它通常会水平扩展到容器允许的宽度。在垂直方向上，它可以根据自己的内容进行折叠。比如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/50a03d6c1327477cbe75d4a5c9b74a7a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/50a03d6c1327477cbe75d4a5c9b74a7a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 上图就是 `div` 块元素默认渲染行为。 如果在 `div` 元素上运用 `min-content`：
 
@@ -202,11 +202,11 @@ button {
 
 容器宽度会成为最窄的宽度，其大小适合最宽的子元素。在这个示例中，是 `img` 元素的宽度：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6d6fbff7c31e48f884fe24a7f9e1e6f6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6d6fbff7c31e48f884fe24a7f9e1e6f6~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如果我们把 `img` 元素删除，那么宽度将是最长英文单词的宽度和把英文这个段落删除，只留下中文：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/00fcb8ac70af4b22abb8cf0eb3d2e12c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/00fcb8ac70af4b22abb8cf0eb3d2e12c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如果把 `div` 的宽度设置为:
 
@@ -226,11 +226,11 @@ p {
 
  `div` 中的内容不会被分解成更小的块，而是完全不考虑容器的大小，直接溢出容器（除非内容总宽度不足容器的宽度之外）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/de2855f1a7de4f4387418a6846a1f8d5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/de2855f1a7de4f4387418a6846a1f8d5~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如果把 `div` 的 `width` 设置为 `fit-content`，将会试图容纳最宽的内容，同时仍然尊重它的容器：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4aa4da1590d84e609aceeec70fb2f3c0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4aa4da1590d84e609aceeec70fb2f3c0~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如果上面这个示例过于复杂，我们来看一个简单示例，分别给 `h1` 的 `width` 设置了`auto`、`min-content` 、`max-content` 和 `fit-content` ：
 
@@ -252,13 +252,13 @@ h1[data-width="fit-content"] {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f3c558b3ae8a46d49f688a95eb3a18f8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f3c558b3ae8a46d49f688a95eb3a18f8~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/mdKYWjy>
 
 回过头来说，元素 `width` 取值 `<length>` 、`<percentage>` 、`auto` 、`min-content` 和 `max-content` 对于大家来说都易于理解，但当取值为 `fit-content` 时多少会令大家感到困惑。对于 `fit-content` ，它会检查可用空间（**`fill-available`**）与 `max-content` 和 `min-content` 大小，最后决定 `width` 取值：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/faae224268a74ff9ad31f7ee261c11d3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/faae224268a74ff9ad31f7ee261c11d3~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 另外，从本质上讲，`fit-content` 是以下内容的简写模式：
 
@@ -277,7 +277,7 @@ h1[data-width="fit-content"] {
 
 也就是说，在 CSS 中，我们现在有两种设置大小的方式：**内部尺寸设置** 和 **外部尺寸设置** 。后者是最常见的，这意味着使用固定的元素宽度或高度值。这样做有一个极大的缺陷，**内容断行或内容溢出** ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7ca171b28a80483abb714c78bb047ce0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7ca171b28a80483abb714c78bb047ce0~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 很多时候我们并不知道容器的内容会是什么，所占宽度是多少，这就会造成上图的现象。所以我们设置元素尺寸大小时，使用 `min-content`、`max-content` 和 `fit-content` 就可以让元素的大小取决于它的内容大小。避免内容溢出或断行等现象。
 
@@ -285,23 +285,23 @@ h1[data-width="fit-content"] {
 
 当 Flex 容器有足够空间时容纳所有 Flex 项目（Flex 项目未显式设置具体的宽度值），那么 Flex 项目的 `flex-basis` 值为 `max-content` 和 `fit-content` 的效果等同于 `auto` ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/61878575d31a44148ecfafefde881e20~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/61878575d31a44148ecfafefde881e20~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 当 Flex 容器空间不足时，由于 `flex-shrink` 的默认值为 `1` ，Flex 项目会按照 `flex-shrink` 的计算公式（《[07 | Flexbox 中的计算：通过收缩因子比例收缩 Flex 项目](https://juejin.cn/book/7161370789680250917/section/7164357320367931399)》）对 Flex 项目的 `flex-basis` 进行计算，直到 Flex 项目的 `flex-basis` 计算值等于 `min-content` 为止（不再进行收缩）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9f4823309da6426da84a70b44a6ce1a6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9f4823309da6426da84a70b44a6ce1a6~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 只不过要将 `flex-shrink` 的值由 `1` 变成 `0` ，让所有 Flex 项目不可收缩，那么 `flex-basis` 取值 `max-content` 时就会和 Flex 容器有足够的空间表现一样，不同的是 Flex 项目会溢出 Flex 容器：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1edfba722e9f4e19917690670fc70d96~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1edfba722e9f4e19917690670fc70d96~tplv-k3u1fbpfcp-zoom-1.gif)
 
 `flex-basis` 取值为 `min-content` 时，不管 Flex 容器是否有足够空间容纳 Flex 项目，它们的表现都是相似的，都以最长字符串的单词计算值为最终值：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0ba60fdbccf74602b673d911cedd6b0f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0ba60fdbccf74602b673d911cedd6b0f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 `flex-basis` 取值为 `min-content` 时，Flex 项目的 `flex-shrink` 的值不管是不是 `1` ，它始终以 `min-content` 为计算值。同样的，Flex 容器足够小，小到无法容纳所有 Flex 项目的 `min-content` 计算值总和时，Flex 项目会溢出 Flex 容器：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1ac53acb87fa40d08823938cf5810bb5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1ac53acb87fa40d08823938cf5810bb5~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/eYKaXEp>
 
@@ -331,17 +331,17 @@ h1[data-width="fit-content"] {
 
 按照对 `auto` 的一般理解，当 `grid-template-columns` 在设置列网格轨道尺寸的值为 `auto` 时，每列的宽度应该是所在列中网格项目内容最多的尺寸。应该内容有多长，列网格轨道尺寸就有多大，相当于 `max-content` ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2a21fc2e46bb49feb76ef0202ccdd2cb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2a21fc2e46bb49feb76ef0202ccdd2cb~tplv-k3u1fbpfcp-zoom-1.gif)
 
 需要记住的是，**当网格项目内容相同时，那么** **`auto`** **和** **`1fr`** **具有相同的效果，即平均占用网格容器可用空间。**
 
 就上例而言，如果将所有列网格轨道的尺寸都换成 `min-content` ，它最终的尺寸也像是 Flexbox 布局一样，以最长字符串长度为最终长度：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/15e4562aa578496e8cab30eeabe688b3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/15e4562aa578496e8cab30eeabe688b3~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 当网格列轨道尺寸都设置为 `max-content` 时，要是网格容器空间小于所有网格项目最大尺寸（`max-content`）总和，网格项目会溢出网格容器：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/90304d3d716d4a46b72593359c4812d8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/90304d3d716d4a46b72593359c4812d8~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/wvXbZmM>
 
@@ -349,7 +349,7 @@ h1[data-width="fit-content"] {
 
 正如前面课程《[13 | 可用于 Grid 布局中的函数](https://juejin.cn/book/7161370789680250917/section/7161624041885958151) 》中所述，在 `minmax()` 函数中的最小值和最大值都设置 `min-content` ，也更好地说明了 `min-content` 和 `max-content` 的差异：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bc64b27acd7446efbfecd81e7b832ca4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/bc64b27acd7446efbfecd81e7b832ca4~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/hkdc/full/EXRjpJ>
 
@@ -365,13 +365,13 @@ img {
 
 那么当网格轨道的尺寸被设置为 `min-content` 时，那么 `img` 会被视为 `width: 0` ，造成图片不可见：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5133919b879045b8ab53f8366d36be15~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5133919b879045b8ab53f8366d36be15~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/NWzVZpe>
 
 避免这种现象出现，最好的办法是使用 `minmax()` 函数，并且将该函数的 `MIN` 值设置一个具体的值，比如 `100px` ，然后将 `MAX` 值设置为 `min-content` ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b0737a2328ac405e8c933dee93c8dfdb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b0737a2328ac405e8c933dee93c8dfdb~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/eYKawep>
 
@@ -425,13 +425,13 @@ figure {
 
 如此一来，如果图像的宽度非常大，它也不会超过视窗宽度：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e3a6a4b7c90f410295f26ef46d8970d8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e3a6a4b7c90f410295f26ef46d8970d8~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/ZERNdjQ>
 
 接着看一个带有下划线的标题示例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9de7db63d5524b1884a81ef62b48d0c3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9de7db63d5524b1884a81ef62b48d0c3~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/BaVgoar>
 
@@ -480,13 +480,13 @@ header {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2f9b1187af154440b1e3790104434c26~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2f9b1187af154440b1e3790104434c26~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/QWxXjKY>
 
 接着来看一个 Todo List App 页面的布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0502d0cf947e43cfb96ec4d51588ec13~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0502d0cf947e43cfb96ec4d51588ec13~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 我们可以使用 CSS Grid 来构建该页面的布局：
 
@@ -497,7 +497,7 @@ header {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6462c64b9c0b4741be8b6e2fe3159b30~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6462c64b9c0b4741be8b6e2fe3159b30~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/WNyqyxj>
 
@@ -518,17 +518,17 @@ header {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2056dd42c0974733bafb4ad11e9bca74~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2056dd42c0974733bafb4ad11e9bca74~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/WNyqKvK>
 
 在顶部和底部使用 `min-content` ，那么顶部和底部的高度就不会超过它们各自的内容所占高度！基于该原理，Web 中很多应用程序都可以采用相似的布局技术，比如市面上的一些聊天应用（如微信）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9f7eb221accf4387b18cca38b2a3c780~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9f7eb221accf4387b18cca38b2a3c780~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 拿其中一个为例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1fbc49287e6b437d95c661eae9bb356d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1fbc49287e6b437d95c661eae9bb356d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 构建上图，你可能会需要下面这样的一个 HTML 结构：
 
@@ -567,7 +567,7 @@ header {
 
 同样使用 CSS Grid 来构建布局，我们可以像下图这样来定义网格列轨道和行轨道：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bbc08636fe60445c8d65a36ee15cafa3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/bbc08636fe60445c8d65a36ee15cafa3~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```CSS
 .chat {
@@ -603,7 +603,7 @@ main {
 
 初步结果出来了：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/386b3a44326e47bc9fe2856ce296edcf~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/386b3a44326e47bc9fe2856ce296edcf~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/KKejxRg>
 
@@ -611,7 +611,7 @@ main {
 
 最后再来看一个内在尺寸的用例。下图这种英雄（Hero）区域的设计在 Web 页面上很常见：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6eeff8ced60d4f1ea5437bb0ad85bbb7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6eeff8ced60d4f1ea5437bb0ad85bbb7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 上图虚线框框起来的部分包含一个“标题”和“描述文本”。如果设计师期望“**描述文本的宽度不要超过标题的宽度**”。以往都是将“标题”和“描述文本”设置同一个宽度值，但这样做有着明显的缺陷，因为内容是动态的，很有可能输出的标题内容宽度会超出所设置的宽度，造成标题断行。严重的甚至会影响设计的美观，这估计是设计师无法接受的。为了满足设计的需求，我想也有不少同学会借助 JavaScript 脚本来实现该设计需求。
 
@@ -637,7 +637,7 @@ main {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2495df9f89d1427e8e291df4a6999596~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2495df9f89d1427e8e291df4a6999596~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 看上去很完美了，但在移动端还是要对标题 `.hero__title` 的 `width` 做相应处理的，不然会让页面出现水平滚动条。为此，你可以考虑使用 CSS 媒体查询，调整 `.hero__title` 的 `width` 值，比如：
 
@@ -649,7 +649,7 @@ main {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/56acf9cf5cc9417792bcd137b0ac3424~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/56acf9cf5cc9417792bcd137b0ac3424~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/KKeOMVG>
 
@@ -669,11 +669,11 @@ img {
 
 它能满足大部分的场景。但有的时候会因为图片尺寸小于容器尺寸，造成图片拉伸扭曲：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b5ce4eb531474d5593ff8969038a1688~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b5ce4eb531474d5593ff8969038a1688~tplv-k3u1fbpfcp-zoom-1.png)
 
 其实，如果希望做得更好，我们应该利用更现代的 Web 技术来处理图片的适配处理。比如 `img` 图片元素，它新增了 `object-fit` 属性设置 `img` 图片样式：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dd0e4c3ebbb7424baea36bb2a26603f1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/dd0e4c3ebbb7424baea36bb2a26603f1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 对于背景图片，也有一个相似的属性 `background-size` ：
 
@@ -681,7 +681,7 @@ img {
 
 大家需要注意的是，`background-size` 、`object-fit` 包括从未介绍过的 `mask-size` 取 `cover` 和 `contain` 值时，它的计算都是复杂的。它们如何计算已经超出我们这个课程的范畴了，这里不详细阐述。但是为了满足大家的好奇心，我把 `cover` 和 `contain` 计算所涉及到的公式告诉大家。就拿 `background-size` 为例吧：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2f57050b208d47dab5f52bfc3fceac44~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2f57050b208d47dab5f52bfc3fceac44~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 `background-size` 取值为 `cover` 时，背景图片的尺寸计算：
 
@@ -706,7 +706,7 @@ if (Rimage ≥ Rcontainer) {
 
 再来看 `background-size` 取值为 `contain` 的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ba25d84b379c44ffbfe859aed83a507e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ba25d84b379c44ffbfe859aed83a507e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 它和 `cover` 是惊人的相似，从计算来讲，`contain` 的逻辑和 `cover` 刚好相反：
 
@@ -735,7 +735,7 @@ if (Rimage ≥ Rcontainer) {
 | **`Rimage ≥ Rcontainer`** | `H' = Hcontainer;``W' = H' x Rimage = Hcontainer x Rimage` | `W' = Wcontainer;``H' = W' ÷ Rimage = Wcontainer ÷ Rimage` | 背景图片是横屏的，`width > height` |
 | **`Rimage ≤ Rcontainer`** | `W' = Wcontainer;``H' = W' ÷ Rimage = Wcontainer ÷ Rimage` | `H' = Hcontainer;``W' = H' x Rimage = Hcontainer x Rimage` | 背景图片是竖屏的，`width < height` |
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a69e72c2fd4047c1858e3416536a8da0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a69e72c2fd4047c1858e3416536a8da0~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/MWXNjGb>
 
@@ -743,7 +743,7 @@ if (Rimage ≥ Rcontainer) {
 
 除了在 CSS 方面为图片适配处理提供了更多属性之外， HTML 也有一定的革新，比如 `<img>` 标签新增了 `srcset` 、`sizes` 等新属性，另外还新增了 `<picuture>` 标签元素。让 Web 开发者有了更多的选择：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9ef8d6aeec2f42f4ab11125d128b7de8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9ef8d6aeec2f42f4ab11125d128b7de8~tplv-k3u1fbpfcp-zoom-1.png)
 
 > **注意，有关于** **`<img>`** **的** **`srcset`** **和** **`sizes`** **特性以及** **`<picture>`** **已超出本节课的范畴，因此不在这里做过多阐述。感兴趣的同学，可以自己搜索相应关键词进行扩展阅读！**
 
@@ -751,7 +751,7 @@ if (Rimage ≥ Rcontainer) {
 
 使用一个示例来阐述 IWD 设计中为什么还可以使用固定尺寸的图片，以及它和 RWD 中灵活的图片技术差异。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3c671faea8e44733a4996d16b4d1fcf3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3c671faea8e44733a4996d16b4d1fcf3~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 就我个人经验来看，实现上面页头的效果，对于 Logo 图，基本上是在 Logo 外套一个标签元素，并且在该元素上显式设置具体的宽高值，比如：
 
@@ -821,7 +821,7 @@ header {
 
 你可以尝试一下，不管 Logo 尺寸怎么变化，Web 开发者都不需要去做额外的事情，整个导般布局中的 Logo 随时都可以符合设计师所需要的要求：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ec2d4a17dfd54a8ea4c4d84842e67ce3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ec2d4a17dfd54a8ea4c4d84842e67ce3~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/ExRqgOo>
 
@@ -841,13 +841,13 @@ header {
 
 这是 CSS Grid 布局技术中最为典型的布局之一。比如下面所示的效果，没有依赖任何 CSS 媒体查询特性，也能让每张卡片的布局适配任何终端：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3bd2c5f81d4f4d28917c33e5a6586090~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3bd2c5f81d4f4d28917c33e5a6586090~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/GRGVNPj>
 
 同样的，使用 CSS Flexbox 来布局，在某些情形之下，同样可以不依赖 CSS 媒体查询，可以响应不同环境下的布局效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f09b8741525d4207b6de3b24923cf5df~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f09b8741525d4207b6de3b24923cf5df~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/WNyVRrJ>
 
@@ -879,7 +879,7 @@ header {
 
 在上面示例的基础上，稍微调整样式，就可以实现下图这样的布局效果，同样是不依赖任何 CSS 媒体查询就可以实现：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5b8ba04adeeb43f8a9d5c57870aef1b5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5b8ba04adeeb43f8a9d5c57870aef1b5~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/KKeOaar>
 
@@ -915,7 +915,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/51f4b1e3546b44b7891484aa6920da8e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/51f4b1e3546b44b7891484aa6920da8e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/yLEmMYN>
 
@@ -1012,7 +1012,7 @@ body {
 
 利用该特性，我们就可以很容易实现类似一些具备条件判断的 UI 效果。比如在窄屏幕下，元素的圆角是 `0px` ，宽屏的时候是 `8px` ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a138d24fb8e14de4ab40b750f8577005~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a138d24fb8e14de4ab40b750f8577005~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```CSS
 :root { 
@@ -1028,13 +1028,13 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3559cef5fabe420a8f98e1b48b803d23~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3559cef5fabe420a8f98e1b48b803d23~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/ExRqmvd>
 
 我们还可以将 `min()` 和 `max()` 函数结合起来，实现等同的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5b6f2012cbe7457ca7776898f0bc6696~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5b6f2012cbe7457ca7776898f0bc6696~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```CSS
 .box { 
@@ -1048,13 +1048,13 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/84ceebc1ca6e4410a0cfad97608d6dd4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/84ceebc1ca6e4410a0cfad97608d6dd4~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/VwdobRv>
 
 甚至更为复杂的 UI，我们都可以采用这套技术体系来构建，比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fa010ac589904fd1922677c504cedf36~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/fa010ac589904fd1922677c504cedf36~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > **注意，上图这个效果是响应 UI 的最终效果，将会在后面花一节课来专门介绍，CSS 如何构建上图这种响应 UI 的布局技术** 。
 
@@ -1062,7 +1062,7 @@ body {
 
 内在 Web 设计还有一个可用的 CSS 特性就是 **CSS 容器查询特性** 。该特性一直以来都是 Web 开发者最为期待的特性：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3ae8c541a4d54761b0b19da45a208d91~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3ae8c541a4d54761b0b19da45a208d91~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > 自 2019 年开始，每年年底都会有一份关于 CSS 发展状态相关的报告（[2019](https://2019.stateofcss.com/)、[2020](https://2020.stateofcss.com/en-US/) 和 [2021](https://2021.stateofcss.com/en-US/)），其中 CSS 容器查询一直以来位居榜首！
 
@@ -1084,7 +1084,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8c272065c28a4bd8a634ab518d992cec~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8c272065c28a4bd8a634ab518d992cec~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/wvXVeMp>
 
@@ -1094,15 +1094,15 @@ body {
 
 [@Jen Simmons 在她分享的 PPT](https://talks.jensimmons.com/15TjNW/slides) 中介绍了一些如何使用 CSS Flexbox 和 CSS Grid 布局技术实现内在 Web 设计的案例。你可以从 labs.jensimmons.com 中获取到相关的案例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0597d05feff94aee9920504abba9bfe2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0597d05feff94aee9920504abba9bfe2~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 另外，使用课程中介绍的 CSS 技术，你还可以实现类似上图中这种杂志封面的布局效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/67e81b382ed445289e6ca08a3f9bfe96~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/67e81b382ed445289e6ca08a3f9bfe96~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 看上去是不是很有挑战性，我想很多 Web 开发者都会认为上图中的效果是很难使用 CSS 技术来实现的。事实上，现在使用 CSS 实现起来已经不是难事了。比如下图这个示例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0868b83797054b19adda6b88ecb4f56d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0868b83797054b19adda6b88ecb4f56d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 构建上图这种效果，你可能需要一个像下面这样的 HTML 结构：
 
@@ -1149,7 +1149,7 @@ header {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/99ff70a1e96c437daeeaaac5291ed2d0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/99ff70a1e96c437daeeaaac5291ed2d0~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 使用 `grid-row` 和 `grid-column` 将元素放置到需要的位置：
 
@@ -1170,7 +1170,7 @@ header img {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0a139e52490a4bce82ebc701986c19ed~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0a139e52490a4bce82ebc701986c19ed~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 现在基本布局已经有了，我们还需要在 `h1.site__name` 上再创建一个网格，使用同样的方式来放置“Graphicdesign” 词中的每个字母：
 
@@ -1259,27 +1259,27 @@ header img {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a5cc567f6e2645be8696ee93066ca721~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a5cc567f6e2645be8696ee93066ca721~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 再加上一些美化的样式规则，整体效果就出来了：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cb93a711754a47fe83ad7e7215fa2cd4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/cb93a711754a47fe83ad7e7215fa2cd4~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/ExRqMXY>
 
 感兴趣的同学，可以使用同样的方法来实现下图这个效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d594dde7bcca42e38b9ddf031bb8f4ff~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d594dde7bcca42e38b9ddf031bb8f4ff~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > 参考链接： labs.jensimmons.com/2019/01-004.html
 
 可能很多同学会说上面示例实用性不强，那我们再来看一个更趋向于工作中的示例吧。比如类似 [An Event Apart](https://aneventapart.com/) 的 [landing pages](https://aneventapart.com/24ways) 的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/08e4a2c4a7064beba12993ae7cbef4ac~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/08e4a2c4a7064beba12993ae7cbef4ac~tplv-k3u1fbpfcp-zoom-1.image)
 
 我在该示例基础上做了一些调整，接下来将要完成的是像下图这样的一个示例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6d0956c58b8a403688c9e7793bd2dcd2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6d0956c58b8a403688c9e7793bd2dcd2~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/JjZgVoE> （请使用 Firefox 浏览器查看，效果更佳）
 
@@ -1325,7 +1325,7 @@ main {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d431ef46573c4e9784673125939d9695~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d431ef46573c4e9784673125939d9695~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 同时在 `header` 定义一个网格（它嵌套 `body` 网格中）：
 
@@ -1337,7 +1337,7 @@ header {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/882ceec03a17483b9bb5fb5014b8315c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/882ceec03a17483b9bb5fb5014b8315c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在这个示例中，使用 `header` 的伪元素 `::after` 绘制了一个斑马线效果，并且使用 `grid-row` 指定其放置的位置：
 
@@ -1359,7 +1359,7 @@ header::before {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/946a046f99eb4f80aaea6166547faafd~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/946a046f99eb4f80aaea6166547faafd~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这里有一点需要特别注意，每个列表项跨越了 `5` 列，并且相邻的列都有一个单元格是相互重叠的：
 
@@ -1387,11 +1387,11 @@ header::before {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e39d181f48c042e4b6f39dda27e7268c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e39d181f48c042e4b6f39dda27e7268c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这样做的主要目的是，为了避免在每个列表项中使用 `clip-path` 来裁剪列表项时，造成较大的空间：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/812008395afe4520a1783b7af775043a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/812008395afe4520a1783b7af775043a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 我们真正期望的是 `li` 运用 `clip-path` 达到下图这样的效果，所以需要列与列之间有一个列轨道是相互重叠的：
 
@@ -1401,7 +1401,7 @@ header::before {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/acb126f9ad764e5cb040cf37bbf09f85~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/acb126f9ad764e5cb040cf37bbf09f85~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 另外，为了更好控制每一列的参数，图片 `picture` 、标题 `h4` 和描述文本 `span` 能更好的对齐。这里还使用了 CSS Grid 布局中的子网格 `subgrid` 特性。即，在 `li` 上定义了一个网格，并且使用 `subgrid` 特性，继承其父网格行网格轨道的相关参数：
 
@@ -1441,11 +1441,11 @@ header::before {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/87d6396392724c28ba6d4c8d34378907~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/87d6396392724c28ba6d4c8d34378907~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 到此，基本布局你就已经完成了。再添加一些装饰性的 CSS 规则，你将完成最终的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a85d04beb34848b0bacadfe0ff7109df~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a85d04beb34848b0bacadfe0ff7109df~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/JjZgVoE>
 

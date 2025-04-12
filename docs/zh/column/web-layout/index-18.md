@@ -17,7 +17,7 @@
 
 Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元素**”在其父容器中水平垂直居中：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dc025513ebcb4cb19e56ceb4d1ebc45f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/dc025513ebcb4cb19e56ceb4d1ebc45f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在 CSS 网格布局中，单个元素和多个元素就分别对应着：
 
@@ -44,7 +44,7 @@ Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元�
 
 这个时候，`div.item` 元素既是行和列网格轨道，也是一个网格项目。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e348e281c2e744ac880b946bdd126331~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e348e281c2e744ac880b946bdd126331~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 有了这个认知，选择正确的对齐方式就会容易得多。比如，你可以让网格轨道都居中：
 
@@ -60,7 +60,7 @@ Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fc074c665d064187ab48e3e9d2d734be~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/fc074c665d064187ab48e3e9d2d734be~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/BaVZWje>
 
@@ -83,7 +83,7 @@ Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8c88eb64fae048d5886fa1fc64b44671~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8c88eb64fae048d5886fa1fc64b44671~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/wvXeJNM>
 
@@ -103,13 +103,13 @@ Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/85e974e849d1402e9476a3e03afa0fd4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/85e974e849d1402e9476a3e03afa0fd4~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/gOKRWOa>
 
 通过前面课程的学习，我们知道，在网格项目上设置 `margin` 的值为 `auto` 时，也可以控制网格项目在内联轴和块轴方向的对齐方式：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/812c3786af84481b8a0820c500ae0c60~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/812c3786af84481b8a0820c500ae0c60~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 正如上图所示，当你将网格项目的 `margin` 属性的值设置为 `auto` 时，它就位于网格容器最中心的位置，即水平垂直居中的效果：
 
@@ -127,7 +127,7 @@ Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cb8a4517a8914cf7bbd39d5dfc1bb044~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/cb8a4517a8914cf7bbd39d5dfc1bb044~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/xxzrdOM>
 
@@ -143,7 +143,7 @@ Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元�
 
 当网格容器中有多个元素（网格项目）时，它和单个元素（网格项目）有所不同，它会创建一个一列多行的网格，其中行数等同于网格项目的数量：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/42dc08f358e748cb8e1ea8596e6aaf07~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/42dc08f358e748cb8e1ea8596e6aaf07~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 就我们这个示例而言，当 `.container` 定义为一个网格，其中 `grid-template-rows` 和 `grid-template-columns` 属性都未显式设置任何值（取的是它们自己的默认值 `auto`），就创建了一个一列三行的网格。要让它们在网格容器中水平垂直居中，就需要通过控制网格轨道的对齐才能实现。
 
@@ -161,11 +161,11 @@ Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元�
 
 但你会发现，即使在网格容器 `.container` 显式设置 `place-content:center` ，可视觉效果上并未实现水平居中：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/248f52e462ca442bb97aa59427a64706~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/248f52e462ca442bb97aa59427a64706~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 虽然视觉效果不符合预期，但这并不代表着渲染错误。在 CSS 网格布局中，它的表现行为是正确的，使用浏览器调试工具查看，你会发现整个网格已经实现了水平垂直居中：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/baa59f94d8b748e3a604c0072ff0336e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/baa59f94d8b748e3a604c0072ff0336e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 造成这种现象的原因是，第二个网格项目（`<h2>`）内容长度大于其他两个网格项目，加上网格轨道尺寸是默认值 `auto` ，浏览器将会以 `auto` 的行为来计算网格轨道尺寸。因此，我们还需要给所有网格项目设置一个 `justify-items` 的值为 `center` ，告诉浏览器，所有网格项目在其所在网格区域中，沿着块轴方向水平居中：
 
@@ -183,7 +183,7 @@ Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6909e96a22194067a9a232f237d21898~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6909e96a22194067a9a232f237d21898~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/qBKjmVe>
 
@@ -225,7 +225,7 @@ Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c5d8cd82b81d40e1b0d8c4586491c743~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c5d8cd82b81d40e1b0d8c4586491c743~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/RwJggvy>
 
@@ -249,7 +249,7 @@ Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2bba71d0afca4f08a228f5d1d0cb5627~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2bba71d0afca4f08a228f5d1d0cb5627~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/wvXeqqv>
 
@@ -268,7 +268,7 @@ Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/20e365d8374d49b69b8c18c9c23b7b7a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/20e365d8374d49b69b8c18c9c23b7b7a~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/YzvQxoo>
 
@@ -284,7 +284,7 @@ Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/213b1cb8415147c3985ce42ec04c73cc~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/213b1cb8415147c3985ce42ec04c73cc~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/jOKwLzr>
 
@@ -293,23 +293,23 @@ Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元�
 - 卡片能根据视窗宽度自动断行；
 - 图片在卡片中水平垂直居中。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6c8b32735e3b4646ac3b51fded10f00c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6c8b32735e3b4646ac3b51fded10f00c~tplv-k3u1fbpfcp-zoom-1.png)
 
 ## 等高布局
 
 众所周知，使用 Flexbox 布局技术实现等高布局已经是很容易的一件事情了。只不过使用 Flexbox 布局只能让元素（Flex 项目）等高，但要让 Flex 项目中的其他元素也具备等高的视觉效果，它还是做不到的。比如下图，卡片自身等高，但相邻卡片中的“标题”、“描述内容” 和 “按钮”之类就无法等高：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6eb9b946c5e2492b96268ec286efda3c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6eb9b946c5e2492b96268ec286efda3c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 从上图中你会发现，每张卡片标题内容高度不一致，导致其他元素无法在同一水平线上对齐，这可能不是设计师所期望的一个效果。设计师可能更期待的效果如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8009947c6e7c4d7bb7a0fb5c37ff3fae~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8009947c6e7c4d7bb7a0fb5c37ff3fae~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 虽然 Flexbox 布局技术灵活性很强大了，但它始终还是一种一维布局，无法控制元素两个维度的参数，所以要实现上图的效果，Flexbox 难免会心有余而力不足。不过，要是我们使用 CSS 网格和子网格技术的话，这一切又变得太容易了。
 
 你可以借助 CSS 子网格的特性，让卡片中每一个元素同时在相同的两个维度中。这样一来，无论哪个元素的尺寸变化了，其他卡片相同元素的尺寸也会跟着调整：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bb2b7842343045e0bcf81904a0e62b20~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/bb2b7842343045e0bcf81904a0e62b20~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 除了让每张卡片自身高度相等之外，卡片中每个元素的高度也会相等。做到真正的等高效果，而且还不用给任何元素设置高度值。
 
@@ -388,21 +388,21 @@ Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元�
 
 示例中的 `.cards` 和 `.card` 都是网格，其中 `.card` 网格是 `.cards` 网格的子网格，它的 `grid-template-rows` 显式设置为 `subgrid` 值，将继承了父网格的行网格轨道参数。另外，为了更好地放置卡片中的相关元素（`.card` 网格中的网格项目），在 `.card` 上使用 `grid-template-areas` 给子网格中的网格区域命名。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/930538e34f7545d09a1739b67286f50f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/930538e34f7545d09a1739b67286f50f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 类似上图这个效果的示例，在我们小册中出现多次了，在小册的其他课程中详细阐述过，这里就不再花篇幅来介绍示例中布局的相关代码了。你在支持 CSS 子网格的现代浏览器中将看到的效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/462f507ef4274f40989e10d2e0517d53~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/462f507ef4274f40989e10d2e0517d53~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/RwJgXpe>
 
 即使是在不支持子网格的浏览器中，它的效果也不会太差，与 Flexbox 实现的效果等同。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3bec8eb18ddd41e4ac445256f7b4f74b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3bec8eb18ddd41e4ac445256f7b4f74b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 **作业** ：使用 CSS 网格构建下图的布局效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f0313d6dbb68410989619f0aaf52c926~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f0313d6dbb68410989619f0aaf52c926~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ## 均分列
 
@@ -410,7 +410,7 @@ Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元�
 
 除此之外，还可以将 `fr` 单位值与 `minmax()` 函数结合起来使用，你只需要将网格轨道尺寸设置为 `minmax(0, 1fr)`，也可以达到在网格项目上显式设置 `min-width` 为 `0` 的相同效果。比如下图这个效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c8dc3fbdce6842dcaf40bb7fb84fbd33~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c8dc3fbdce6842dcaf40bb7fb84fbd33~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 使用 CSS 网格实现上图布局效果，你可能会使用一个像下面这样的 HTML 结构：
 
@@ -433,7 +433,7 @@ Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元�
 
 你将看到的效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/98b0127f71304bfc97a64e7ed2346e8b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/98b0127f71304bfc97a64e7ed2346e8b~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/vYrJNLy>
 
@@ -442,11 +442,11 @@ Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元�
 - 定义了网格轨道的尺寸是 `minmax(0, 1fr)` ，最小小到 `0` ，最大大到 `1fr` ，其中每一个 `fr` 相当于把网格容器的可用空间（除去所有列间距总和）均分成四份，每列拿了一个等份。
 - `minmax(0, 1fr)` 等同于将 `1fr` 的默认`min-width` 从 `min-content` （即 `auto`）重置为 `0` 。这样就允许网格轨道尺寸控制在 `0` 至 `1rf` 范围内（最小小到 `0` ，最大大到 `1fr`），从而创建保持相等的列。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0e76431660014fc283cde803d6edad87~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0e76431660014fc283cde803d6edad87~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 但这种布局也是有缺陷的，当网格容器小到一定程度时，比如小于所有网格项目最小内容总和，网格项目就会溢出网格容器，或者会出现水平滚动条：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/94753a7c308144c9b73d19e9297aa5ef~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/94753a7c308144c9b73d19e9297aa5ef~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 实际上，我们可以采用网格布局中的 RAM 布局技术，实现一个具有**响应式的均分列** 的效果：
 
@@ -457,29 +457,29 @@ Web 布局中的水平垂直居中分为“**单个元素**”或“**多个元�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/19e5cbfdc5df4781ae08ec65e93d9661~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/19e5cbfdc5df4781ae08ec65e93d9661~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/JjZyGNO>
 
 **作业** ：请使用 CSS 网格实现下图中等宽表格：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/66ed7a4fe75149b79433afa63449623b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/66ed7a4fe75149b79433afa63449623b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ## 圣杯布局
 
 Web 网站开发最经典的设计之一被称为“**圣杯（Holy Grail）**”。它的最大特色就是包含了“页头”、“页脚”和三列，并且以内容先行为设计原则。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/840eb32f0ad34f3aafbaf2210245e62e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/840eb32f0ad34f3aafbaf2210245e62e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 随着 Web 布局技术不断演变，尤其是响应式 Web 设计（RWD: Responsive Web Design）理念的提出，被称为经典的“圣杯布局”在视窗的不同断点之下也随之调整，如上图所示。
 
 另外，到现在为止，经典的“圣杯”布局所包含的内容并不总是都一样的，比如 Facebook、Medium 都在标准的“圣杯”(Holy Grail)布局上做了一个变化，他们去掉了一个突出的页脚。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/47a6322fdcfa4860a9ab3d1bb7fa6466~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/47a6322fdcfa4860a9ab3d1bb7fa6466~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 *facebook.com*
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6cca5ae0c7b84b60a95f4ea679a4beda~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6cca5ae0c7b84b60a95f4ea679a4beda~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 *medium.com*
 
@@ -514,7 +514,7 @@ Web 网站开发最经典的设计之一被称为“**圣杯（Holy Grail）**�
 
 但在一些终端上，Flexbox 技术实现起来就有不少的难度，比如要在同一 HTML 结构基础上实现平板端（Tablet）的“圣杯”布局效果，Flexbox 就不太可能了：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d452bca8f2924526a75440417780109e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d452bca8f2924526a75440417780109e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 Flexbox 是一种一维布局，要实现类似九宫格的布局，总是需要调整 HTML 结构的。但要是换成 CSS 网格布局技术的话，这一切都不再是问题。也就是说，使用 CSS 网格构建一个响应式的圣杯布局要比 Flexbox 技术容易得多。
 
@@ -554,7 +554,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/72781c9df04e44ec9f3bea38a0cdea98~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/72781c9df04e44ec9f3bea38a0cdea98~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > 注意，就我们这个示例来说，实现移动端的布局效果时，不显式设置 `grid-row` 的值能达到同等的效果。
 
@@ -569,7 +569,7 @@ body {
 
 这样一来，页面的“页头（`.header`）”、“导航栏（`.nav`）”、“侧边栏（`.sidebar`）”和“页脚（`.footer`）” 都将以自身内容来撑高其高度。网格容器在块轴方向剩余的空间都将给主内容（`.main`）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/eb4cb1804496430cac671aa3290773fb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/eb4cb1804496430cac671aa3290773fb~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你还可以在网格容器上设置一个 `gap` 值，让行与行之间有一定的间距，让视觉上看起来更好看一些：
 
@@ -583,7 +583,7 @@ body {
 
 移动端（浏览器视窗宽度小于 `768px`）的效果就出来了：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/647ab85722824fcda98f80a9c6a4c00a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/647ab85722824fcda98f80a9c6a4c00a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 移动端的布局完成之后，我们就可以来调整平板端的布局了。从示意图中可以知道，平板端的圣杯布局是一个两列布局。它对应的是一个 `2 x 4` 的网格（两列四行）。网格布局中定义行和列的轨道数量以及它的尺寸是通过 `grid-template-rows` 和 `grid-template-columns` 两个属性来完成的。也就是说，我们需要在符合浏览器视窗断点条件下，调整 `body` 的 `grid-template-columns` 和 `grid-template-rows` 值：
 
@@ -596,7 +596,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7d1216accd094628ac92c00e069bf8c7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7d1216accd094628ac92c00e069bf8c7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 示例中将 `grid-template-columns` 的值设置为 `220px  minmax(0, 1fr)` ，它将会告诉浏览器，网格第一列宽度是 `220px` ，第二列的宽度是 `0 ~ 1fr` ，即除去第一列宽度和列间距就是它的宽度了。这样做能实现第一列的宽度是一个固定尺寸，第二列的宽度能跟着浏览器视窗宽度自适应的调整。视窗宽度变大，它也能变宽，视窗宽度变小，它也随之变小。
 
@@ -646,11 +646,11 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9dc15a35008f4e9c8e3907f348cc8b6d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9dc15a35008f4e9c8e3907f348cc8b6d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这样就有了下图的效果，调整浏览器视窗宽度，你可以看到平板端和移动端两个不同断点下，圣杯布局的差异：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/90ccf58c9b0247bba104f0ad2da6608f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/90ccf58c9b0247bba104f0ad2da6608f~tplv-k3u1fbpfcp-zoom-1.gif)
 
 按此思路，调整桌面端中 `grid-template-rows` 和 `grid-template-columns` 的值，并且重新放置网格项目即可。
 
@@ -683,11 +683,11 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d78e598f731f475599eb6462143d866e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d78e598f731f475599eb6462143d866e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这样就完了一个终级版的带有响应式的圣杯布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/05e1f0e6be3541fb9e2559207b3f582e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/05e1f0e6be3541fb9e2559207b3f582e~tplv-k3u1fbpfcp-zoom-1.gif)
 
 从代码中不难发现，由于不同断点下创建的网格不同，不得不调整每个网格项目的 `grid-area` 值。其实，在网格布局中，有更优的方案来解决。那就是在不同断点下调整网格容器的 `grid-template-areas` 的值（给网格区域显示命名），如此一来，只需要把网格项目的 `grid-area` 值指定为已命名的网格区域名称即可。按这种方案把上面代码优化一下：
 
@@ -741,7 +741,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/00d6f1188c3541fe8092810e62647115~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/00d6f1188c3541fe8092810e62647115~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 最终构建一个具有响应式的圣杯布局所有代码如下所示：
 
@@ -806,17 +806,17 @@ body {
 
 现在你可以往每个网格项目中填充 Web 页面所需的内容。当然，你也可以根据设计稿的需求来调整网格轨道的尺寸，最终构建一个符合自己需求的响应式圣杯布局效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a3d358b987e44096b0e5167fb91d3463~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a3d358b987e44096b0e5167fb91d3463~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/wvXqYjo>
 
 **作业** ：使用网格布局，构建下图的布局效果，去掉页脚区域的圣杯布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d540d0f339964d1887a6837d1f8f1781~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d540d0f339964d1887a6837d1f8f1781~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ## Sticky Footer 布局
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7c7759b32a554c6fbbfdcf961e332723~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7c7759b32a554c6fbbfdcf961e332723~tplv-k3u1fbpfcp-zoom-1.png)
 
 使用 CSS 网格来构建 Sticky Footer 布局效果是件很容易的事情。只需要构建一个三行的网格（网格列轨道数量根据实际需要调整），并且让中间的行网格轨道尺寸能根据容器高度自动调整。CSS 网格要做到这一点只需要将网格行轨道的尺寸定义为 `auto minmax(0, 1fr) auto` ：
 
@@ -828,7 +828,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bc3be1d8e5374ae7863f3e5761ae510f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/bc3be1d8e5374ae7863f3e5761ae510f~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/yLEorWV>
 
@@ -841,7 +841,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/35eb6b85ac124688b09f44224470e535~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/35eb6b85ac124688b09f44224470e535~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/NWzvVab>
 
@@ -871,7 +871,7 @@ CSS 中很多属性的值都可以设置为 `auto` ，不同属性取值为 `aut
 
 按照对 `auto` 的一般理解，当 `grid-template-columns` 在设置列网格轨道尺寸的值为 `auto` 时，每列的宽度应该是所在列中网格项目内容最多的尺寸。应该内容有多长，列网格轨道尺寸就有多大，相当于 `max-content` ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d00122f7a144439ab9ecab9303da2f02~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d00122f7a144439ab9ecab9303da2f02~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 但事实上并非如此，最终表现却和 `repeat(5, 1fr)` 相似。它的计算过程大致像下面这样：
 
@@ -881,11 +881,11 @@ CSS 中很多属性的值都可以设置为 `auto` ，不同属性取值为 `aut
 - ④：将网格容器剩余的空间分成五个等份（有点类似于 Flex 项目都设置了 `flex-grow` 值为 `1` 的计算方式），每个等份相当于 `63.062px` （`315.31 ÷ 5 = 63.062`）；
 - ⑤：每列网格轨道尺寸，在原有内容宽度（`max-content` 计算值）基础上分别增加分得的网格容器空间，这样每列列宽就分别是 `79.892px` 、`80.802px` 、`827.832px` 、`82.482px` 和 `80.991px`。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/560889f099f2422d937e36326a206299~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/560889f099f2422d937e36326a206299~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 另外，网格对齐属性对 `auto` 计算值也是有影响的，如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e602e6d425234980b06778a43652b9e4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e602e6d425234980b06778a43652b9e4~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/jOKGGjG>
 
@@ -900,11 +900,11 @@ CSS 中很多属性的值都可以设置为 `auto` ，不同属性取值为 `aut
 
 另外就是，当网格项目内容相同时，那么 `auto` 和 `1fr` 具有相同的效果，即**平均占用网格容器可用空间** ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d53d1dddf0c640d1ad990052b3cae2a0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d53d1dddf0c640d1ad990052b3cae2a0~tplv-k3u1fbpfcp-zoom-1.gif)
 
 这就是制作 Sticky Footer 布局时，为什么使用 `auto` 和 `minmax(0, 1f)` 能达到相同的效果。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/28eee28384b84c81a61459a1a1f88cdb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/28eee28384b84c81a61459a1a1f88cdb~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你也可以将上图中的 `min-content` 替换成其他的长度值。相当于 `min-content` 是一个根据内容最小尺寸计算出来的一个长度值，它会占用网格容器一定的可用空间。如此一来，网格容器剩余的空间就会给 `auto` 或 `1fr` （也就是 `minmax(0, 1fr)` ）。所以它们最终的结果都是相似的。
 
@@ -950,13 +950,13 @@ body {
 
 它们得到的效果是相同的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9d9495f069df4b1ba85fad7d803d1549~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9d9495f069df4b1ba85fad7d803d1549~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/LYrzeMe>
 
 另一种布局效果拿移动端的页面布局为例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/55be553dfbde459a8489e7d7f68745dc~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/55be553dfbde459a8489e7d7f68745dc~tplv-k3u1fbpfcp-zoom-1.png)
 
 上图这种移动端页面是很常见的一种布局效果，页头和页脚是固定在页面顶端和底部，中间内容区域占用除页面和页脚之外剩下的空间，并且当内容超出时，会出现垂直滚动条。
 
@@ -1003,7 +1003,7 @@ footer {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2567d2f9d2e74096a28b2df44674d57c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2567d2f9d2e74096a28b2df44674d57c~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/rNKGdLQ>
 
@@ -1029,7 +1029,7 @@ body {
 - 整个弹窗在视窗中水平垂直居中；
 - 弹窗主内容过多时，内容区域自动出现垂直滚动条。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a5c7880395fd41e5bf43ba9da0db015a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a5c7880395fd41e5bf43ba9da0db015a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ## 12 列网格布局
 
@@ -1046,7 +1046,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/04c5b8802e304f759aaea1f5a2160908~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/04c5b8802e304f759aaea1f5a2160908~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 上图就是一个 12 列的网格，它的特征是：
 
@@ -1127,7 +1127,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c8f6576ec89941b3b98c23af17f86993~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c8f6576ec89941b3b98c23af17f86993~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/dyKVmQp>
 
@@ -1135,7 +1135,7 @@ body {
 
 基于该 12 列网格，你可以更容易与设计师的网格系统相匹配，也能更好地基于设计师的网格系统来实现 Web 布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9325facfd57140bb98cb26de565b80e5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9325facfd57140bb98cb26de565b80e5~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 来看一个简单的用例：
 
@@ -1215,7 +1215,7 @@ footer {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1cffdc75b50647d38b6f004b04b25e9c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1cffdc75b50647d38b6f004b04b25e9c~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/gOKGzJq>
 
@@ -1223,11 +1223,11 @@ footer {
 
 **作业** ：使用 CSS 网格技术，并且基于 12 列网格构建下图卡片布局效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/60074c0844bd4809ab7ef3d9ab85fe56~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/60074c0844bd4809ab7ef3d9ab85fe56~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ## 九宫布局
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9d7f49b251c0462287d69ddcfd7ee578~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9d7f49b251c0462287d69ddcfd7ee578~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 虽然 Flexbox 布局技术很强大，但要实现像上图中部分九宫格的布局，还是需要调整 HTML 结构才可以。要是换成 CSS 网格技术的话，它一点难度都没有。
 
@@ -1242,7 +1242,7 @@ footer {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/193744fcb27542cd8ec49302846b7cfb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/193744fcb27542cd8ec49302846b7cfb~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在这个基础上，只需要在网格项目上使用 `grid-area` （或 `grid-column` 或 `grid-row`）指定网格线名称，就能实现不同风格的九宫布局，比如：
 
@@ -1265,27 +1265,27 @@ footer {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c92e50dd322c4ff3a6e3d99e56f8f9d1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c92e50dd322c4ff3a6e3d99e56f8f9d1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/abKLKQR>
 
 简单地说，基于九宫格原理，你只需要调整 `grid-template-columns` 和 `grid-template-rows` 的值，就可以得到任意宫格布局效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/721f2a82b80144f7b5ea151829b4707f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/721f2a82b80144f7b5ea151829b4707f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 **作业** ：请使用 CSS 网格构建下图布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/18935d3b673f4d9aa780f05c4cfda2a1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/18935d3b673f4d9aa780f05c4cfda2a1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ## 灵活弹性框
 
 通过前面的示例学习，我们知道在 CSS 网格布局中，可以将 `grid-template-columns` 或 `grid-template-rows` 设置为 `auto minmax(0, 1fr)` 或 `min-content  auto`，就可以得到一个灵活的弹性框。即网格轨道对应的 `minmax(0, 1fr)` 或 `auto` 会根据网格容器的宽度或高度自适应：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0fd8456425794e2cb56196119b842efc~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0fd8456425794e2cb56196119b842efc~tplv-k3u1fbpfcp-zoom-1.gif)
 
 同时，我们也知道 Flexbox 布局中使用 `flex: 1` 也能让 Flex 项目根据 Flex 容器的空间自适应，但是 Flexobx 布局时，Flex 容器小到一定程度时，其他 Flex 项目会因空间不足而受到挤压（Flex 项目被收缩）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ed879b03611b4f2fac34200ac63283ac~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ed879b03611b4f2fac34200ac63283ac~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 为了达到所需效果，不得不将 Flex 项目的 `flex-shrink` 的值设置为 `0` ：
 
@@ -1335,7 +1335,7 @@ footer {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/07138a7313a64c3ea254ed46beb80e88~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/07138a7313a64c3ea254ed46beb80e88~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/poKWOgm>
 
@@ -1376,13 +1376,13 @@ footer {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c03ef119ae7a40d495edf688b0030b63~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c03ef119ae7a40d495edf688b0030b63~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/oNyGPww>
 
 上面示例是长文截取的一个常见案例，CSS 处理这种场景已有很成熟的解决方案了。除此之外，还有对列表项截取的场景，如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b33e1781bc544d46aa459cd4839b0685~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b33e1781bc544d46aa459cd4839b0685~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 设计师期望的效果是，列表项（标题下的“徽标”列表）总是只显示一行，并且当“徽标”项过多时，在最末尾添加省略号指示器（`...`）。
 
@@ -1444,7 +1444,7 @@ footer {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3d85e689716e46c3988c91c65923fa20~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3d85e689716e46c3988c91c65923fa20~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/YzvEGaE>
 
@@ -1500,13 +1500,13 @@ footer {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5e813a044da046e693207541ddced0d0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5e813a044da046e693207541ddced0d0~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/dyKZObm>
 
 ## 宽高比布局
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b17a3db9271f4885ac31f83c74133514~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b17a3db9271f4885ac31f83c74133514~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 按照宽高比的设计风格在 Web 页面中也很常见，但它一直受着技术实现的限制。虽然 CSS 的 `aspect-ratio` 得到大多主流浏览器的支持，但用于 Web 布局时，所受限制还是很大的。因为使用 `aspect-ratio` 总是会影响到元素盒子尺寸：
 
@@ -1515,7 +1515,7 @@ footer {
 
 但 Flexbox 和 Grid 布局中，Flex 项目和 Grid 项目尺寸会受对齐属性的影响。也正因此，在 Flexbox 布局中，一般将 `flex-grow` 和 `aspect-ratio` 设置同等比例，从而实现宽高比的布局效果。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e4145414d8504815b4de4d00bedc2d50~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e4145414d8504815b4de4d00bedc2d50~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/OJZvQop>
 
@@ -1541,7 +1541,7 @@ footer {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4b1b1e12bfc247fdbcbe760769bf8a1f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4b1b1e12bfc247fdbcbe760769bf8a1f~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/KKeyaKv>
 
@@ -1549,7 +1549,7 @@ footer {
 
 即使行网格轨道尺寸是 `auto` ，但网格项目总有不同的宽高比情况出现。你会发现，网格项目具有不同宽高比时，行网格轨道将会以最高的网格项目尺寸为计算值，这样网格项目之间就会有空白空间出现：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/75d5cd41855147dbaa4fd05bbe598ad1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/75d5cd41855147dbaa4fd05bbe598ad1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你可能会想到，像 Flexbox 布局那样，将每个网格项目计算宽高比例带上 `fr` 单位，当作网格轨道尺寸，比如：
 
@@ -1579,11 +1579,11 @@ footer {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6386afaadb2645fcad9152dca52d48b0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6386afaadb2645fcad9152dca52d48b0~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 看上去是不错，网格项目符合宽高比的布局。但网格不可能永远是一行多列的，它也会有多行，这才是我们更需要的网格。可是，当有多行出现，并且网格项目宽高比也不同时，网格又将会被打破：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/84ffd6ae3df54dcb84b4d784397c20c9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/84ffd6ae3df54dcb84b4d784397c20c9~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 当然，这是一种思路，只不过我们需要使用嵌套网格来构建，不同内部网格根据使用的网格数量和网格项目来重新定义列网格轨道尺寸。但**需要保证每个内部网格只有一行** ：
 
@@ -1629,7 +1629,7 @@ footer {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1c7a86a7aed845f19e17a50942755d28~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1c7a86a7aed845f19e17a50942755d28~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/YzvEZNQ>
 
@@ -1737,7 +1737,7 @@ footer {
 
 这样就创建了一个四列 `N` 行的网格，而且每个单元格的宽高比都是 `1 : 1` ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/df76173352df46d78739b351c9d7d4cc~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/df76173352df46d78739b351c9d7d4cc~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 根据需要，在网格项目上使用 `grid-area` （或 `grid-row` 和 `grid-column` ）放置网格项目，可以换作一个方式得到具有不同宽高比的网格项目：
 
@@ -1760,7 +1760,7 @@ footer {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/23845280a9be478785f777813f92e5e7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/23845280a9be478785f777813f92e5e7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/XWYzRbM>
 
@@ -1825,7 +1825,7 @@ footer {
 
  如此一来，每个网格单元格宽高比都是 `16:9` ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cd50b36d4034434da314e87dafa54065~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/cd50b36d4034434da314e87dafa54065~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 指定网格项目位置：
 
@@ -1890,7 +1890,7 @@ footer {
 
 **作业** ，请使用 CSS 网格布局，构建下图这个布局效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ed1e42108f7a4bd1834a4f1dcac76511~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ed1e42108f7a4bd1834a4f1dcac76511~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ## 小结
 
@@ -1900,4 +1900,4 @@ footer {
 
 **CSS Grid CheatSheet （CSS 网格备忘图）** ，你可以点击查看大图：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5edff371fb0644d99f4b34dd2dcfaccb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5edff371fb0644d99f4b34dd2dcfaccb~tplv-k3u1fbpfcp-zoom-1.jpeg)

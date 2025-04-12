@@ -1,6 +1,6 @@
 # 22-Web 中的向左向右：Flexbox 和 Grid 布局中的 LTR 与 RTL
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7fe85803de6642a5b6a04f00b0993c1f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7fe85803de6642a5b6a04f00b0993c1f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 几米的绘本《向左走，向右走》自1999年出版，就一直是爱情的代名词。在 Web 的世界中有着同样的故事，即 Web 的向左向右，指的就是 Web 的排版方式（比如，左浮动、右浮动）、对齐方式（比如左对齐、右对齐）、书写模式（比如从左向右、从右向左）等。而 Web 中的向左向右和书写模式、阅读方式有着紧密的关系，它将直接影响着 Web 布局的最终呈现。
 
@@ -12,7 +12,7 @@
 
 其实，你在访问互联网的 Web 页面，或者使用 Web App 时，很多 Web 网站或 Web 应用都提供了多语言设置。在 Web 中，不同的语言在电子屏幕上有着不同的呈现方式，比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/44e446f56a2a4b5384e73ab0407d2e26~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/44e446f56a2a4b5384e73ab0407d2e26~tplv-k3u1fbpfcp-zoom-1.png)s
 
 上图截取于“[联合国教科文组织](https://zh.unesco.org/)”官网，上图所列的语言也是[联合国常用语言种类](https://en.wikipedia.org/wiki/Official_languages_of_the_United_Nations)。
 
@@ -30,11 +30,11 @@
 
 面对不同语言场景，你可能会先想到，“界面必须翻转”。看上去很诡异，但这也是 `LTR` 转换成 `RTL`要做的第一件事情。比如 Facebook 官网的首页：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/43654b83eef84c239e5caac0e48dbfd5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/43654b83eef84c239e5caac0e48dbfd5~tplv-k3u1fbpfcp-zoom-1.png)
 
 如果你查看过其源码的话，你会发现在 `<body>` 元素上设置了 `dir` 属性，同时在 CSS 中设置了`direction` 属性：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2d0273d8cf194385bcabb69adcf0d52a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2d0273d8cf194385bcabb69adcf0d52a~tplv-k3u1fbpfcp-zoom-1.png)
 
 从技术角度上来说，Web 开发者需要做两件事，在 HTML 标记中，会使用 `lang` 属性指定使用的语言，`dir` 指定阅读模式，一般和语言相匹配。
 
@@ -142,7 +142,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2b5c49d4bfc445d9906e5b7979a9c1b7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2b5c49d4bfc445d9906e5b7979a9c1b7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/xxzmbgw>
 
@@ -165,7 +165,7 @@ CSS Flexbox 和 CSS Grid 布局，不管是 `ltr` 还是 `trl` ，都不需要�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5f6e4d1300024052a1535bf143937a47~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5f6e4d1300024052a1535bf143937a47~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/xxzmbgw>
 
@@ -185,7 +185,7 @@ CSS Flexbox 和 CSS Grid 布局，不管是 `ltr` 还是 `trl` ，都不需要�
 
 RTL 是 “Right To Left” 首字母的缩写，简单地说就是从右到左，在 Web 中主要是指布局和浏览方式。来看一个 RTL 的 Web 示例图：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dd7f2172a6ef45f18dffac117ca97fdb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/dd7f2172a6ef45f18dffac117ca97fdb~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 国内大多数 Web 开发者面对的 Web 排版方式（或者说书写方式）大多是 LTR（即“Left To Right”）。如果你使用浏览器开发者工具审查代码，你会发现客户端下的 `<html>` 元素的 `dir` 或它对应的 `direction` 属性的默认值会是 `ltr` 。
 
@@ -196,7 +196,7 @@ RTL 是 “Right To Left” 首字母的缩写，简单地说就是从右到左�
 
 两者在 Web 布局中对应的效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8cf6994c962748d3992131327f113adf~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8cf6994c962748d3992131327f113adf~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 正如你所看到的，对于 RTL，文本是从右向左读取的，这正好与 LTR 相反。幸运的是，客户端（比如浏览器）对这方面有较好的支持。如果我们希望切换文档语言的排列方向，最简单的方式就是在文档根元素（即 `<html>`）显式地设置 `dir` 属性：
 
@@ -244,11 +244,11 @@ p[Attributes Style] {
 
 先来看中文版本，通过浏览器开发者工具，你会看到像下图这样的结果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ad0ae376b5ac416c8c179b11509f51c7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ad0ae376b5ac416c8c179b11509f51c7~tplv-k3u1fbpfcp-zoom-1.png)
 
 可以看到，显式地在 `body` 中设置了 `direction: ltr`（正好和 `<body>` 中 `dir` 的 `ltr` 相匹配）。对于 `unicode-bidi` 属性，这里暂且忽略，就当这个属性未显式地在样式中设置。接着继续看另外一种场景（切换到阿拉伯版本的 Facebook），你会发现在阿拉伯语版本的时候，`<body>` 中的 `dir` 属性的值变成了 `rtl`，同时浏览器默认的 `direction` 和 CSS 中显式地在 `body` 中设置的`direction` 都有所调整：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b461e92d3c6241588427e1744e87a8b7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b461e92d3c6241588427e1744e87a8b7~tplv-k3u1fbpfcp-zoom-1.png)
 
 从最佳实践来看，更建议在 `<html>` 根元素上定义 `dir` 属性的值，以确保在没有显式设置 CSS 的 `direction` 样式的情况下也能较好实现双向布局。
 
@@ -269,11 +269,11 @@ p[Attributes Style] {
 
 如果你以前开发主要针对的是 LTR 模式，现在突然要过渡到 RTL 模式。给你最直观的差异就是 **UI 设计上的变化** ，简单地说，**RTL 相对于 LTR 就是一个水平翻转的设计** 。正如前面向大家展示的 Facebook 中文版（LTR）和阿拉伯语版本（RTL）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/06c149cf100a49ca95e7bdb0782cecf9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/06c149cf100a49ca95e7bdb0782cecf9~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 为了更好地展示 LTR 和 RTL 在翻转设计上的差异，我们把事情缩小一些，就拿最典型的一个模块来举例，即媒体对象（Media Object）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3bdef22949ca445d9b3d265fb9c23927~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3bdef22949ca445d9b3d265fb9c23927~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 针对于这样的一个模块，HTML 结构可能像下面这样：
 
@@ -307,7 +307,7 @@ p[Attributes Style] {
 
 添加一些非布局的样式，你将看到的效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/716431447a104dc19a72a00e81efd34f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/716431447a104dc19a72a00e81efd34f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 正如上图所示，浏览器可以根据 HTML 的 `dir` 属性值来识别文本书写方式，因为它是在 Unicode 字符集中分配的。但对于 Web 布局，还是需要额外通过 CSS 代码来实现。
 
@@ -325,7 +325,7 @@ p[Attributes Style] {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d6127ec895434157a7ae5450280da5f6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d6127ec895434157a7ae5450280da5f6~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/wvXRaZK>
 
@@ -340,7 +340,7 @@ p[Attributes Style] {
 
 你将看到的效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c8b5e3b8bf9b40c99291bdc78f546289~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c8b5e3b8bf9b40c99291bdc78f546289~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 为了达到让阿拉伯语（LRT）布局也能达到预期效果，在还没有 CSS 逻辑属性之前，你需要在 `[dir="rtl"]` 下调整浮动的方向：
 
@@ -380,7 +380,7 @@ p[Attributes Style] {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c1e13e9d1084456ca241982d8eded2f7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c1e13e9d1084456ca241982d8eded2f7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/jOKXbEB>
 
@@ -390,11 +390,11 @@ p[Attributes Style] {
 
 就 LTR 或者 RTL 单方面而言，都不是太难的事情，但是要将两者混合使用，比如中文（或英文）与阿拉伯语系混合在一起排版，而且布局是 LTR，将会发生什么呢？它们混合在一起的排版效果可能看起来像下图这样：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/09b5415973de4454bfd7d605c36f4ae7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/09b5415973de4454bfd7d605c36f4ae7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 就上图而言（默认是 LTR），对于一位阿拉伯语的用户来说，阅读起来是痛苦的，因为排版很混乱。它的读取顺序如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cbcf59f6b38046f0bde513ae3d39ce70~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/cbcf59f6b38046f0bde513ae3d39ce70~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 为了避免这个现象，我们应该尽可能设置适当的语言方向。
 
@@ -420,11 +420,11 @@ p[Attributes Style] {
 
 比如我们显式地在元素上设置 `dir="rtl"`，结果就会更符合预期的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7a33cc29354e4191b01c36920dda747c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7a33cc29354e4191b01c36920dda747c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 对于混合排版的场景，我们还可以显式地给 `dir` 设置属性值为 `auto`。这样可以由用户代理（比如浏览器）来决定方向。它在解析元素中字符时会运用一个基本算法，直到发现一个具有强方向性的字符，然后将这一方向应用于整个元素。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6a651a72eec648c4ba3c7e942cff54f5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6a651a72eec648c4ba3c7e942cff54f5~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/jOKXpQa>
 
@@ -443,17 +443,17 @@ p[Attributes Style] {
 - **`sideways-rl`** ：定义了内容从上到下垂直流动，所有字形，甚至是垂直脚本中的字形，都设置在右侧；
 - **`sideways-lr`** ：内容从上到下垂直流动，所有字形，甚至是垂直脚本中的字形，都设置在左侧。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/88fed7100532488b9e1449c253f34cdf~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/88fed7100532488b9e1449c253f34cdf~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/poKqOoK>
 
 这里所说的块流和文本流，主要指的是 HTML 块元素的流动方向和文本内容的流动方向，其中文本流也常称“内联方向”：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8fb3d1483ced4e9f91eb143d228199b5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8fb3d1483ced4e9f91eb143d228199b5~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在 Web 中除了文档有流方向一说之外，对于文本同样有流的概念，比如说英文，一般是从左到右，阿拉伯文是从右到左，而日文（古代的中文）从上到下，从右到左：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a05873bc3dd4409ba36cee911eb3e338~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a05873bc3dd4409ba36cee911eb3e338~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 不管是文档流还是文本流，它们都具有相应的物理特性，比如从左到右，从右到左，从上到下，从下到上。即，它们都没有离开 `top`、`right`、`bottom` 和 `left` 方向。 如此一来，一旦流被书写模式改变了，那么一些物理方向就会造成混乱了，比如 LTR 换成 RTL，`left` 就不再是 `left` 了。
 
@@ -471,7 +471,7 @@ p[Attributes Style] {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f2ae56cb1f094ce9aa2fdc00702d637c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f2ae56cb1f094ce9aa2fdc00702d637c~tplv-k3u1fbpfcp-zoom-1-20250412211113329.jpeg)
 
 甚至有的时候宽度不是宽度，比如 `horizontal-tb` 切换到 `vertical-rl` 模式时，宽度就变成了高度。
 
@@ -482,7 +482,7 @@ p[Attributes Style] {
 - 内联维度是在使用的书写模式中运行的文本行（文本流）所在的维度。即，对应于文本流（阅读方式）的轴线。例如，英文是从左到右的文本流（或阿拉伯文从右到左），因此内联轴是水平的；对于日文，它的阅读方式是自上而下，因此内联轴是垂直的。
 - 块维度是另一个维度，以及块（如段落）相继显示的方向。在英语和阿拉伯语中，这些是垂直的，而在任何垂直书写模式中，这些是水平的。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a2810f49556f4a82bb065666f5a85bcd~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a2810f49556f4a82bb065666f5a85bcd~tplv-k3u1fbpfcp-zoom-1-20250412211117081.jpeg)
 
 我们可以换过一种方式来理解：
 
@@ -491,7 +491,7 @@ p[Attributes Style] {
 
 简单地说，**`writing-mode`** **能很好****地****和块轴、行内轴、阅读模式以及书写模式结合起来** ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f549ea3458834984a1cd82797b98dfa6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f549ea3458834984a1cd82797b98dfa6~tplv-k3u1fbpfcp-zoom-1-20250412211123626.jpeg)
 
 为了更好地匹配书写模式或者说多语言的 Web 布局，我们需要从一些理念上做出改变。
 
@@ -506,7 +506,7 @@ p[Attributes Style] {
 
 接下来，我们通过几种典型的语言为例，来向大家阐述逻辑维度和物理维度的映射关系。 首先来看英文，英文的阅读方式一般是从左往右（即 `dirction: ltr` 和 `writing-mode:horizontal-tb` ），这种模式常称为 **LTR** （Left-To-Right）。它的内联轴是水平的，块轴是垂直的，相应的逻辑维度和物理维度映射关系如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/775aa7a121834eb380ed7dc450bacaae~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/775aa7a121834eb380ed7dc450bacaae~tplv-k3u1fbpfcp-zoom-1-20250412211130690.jpeg)
 
 | **逻辑维度**       | **物理维度** |
 | -------------- | -------- |
@@ -517,7 +517,7 @@ p[Attributes Style] {
 
 接着来看阿拉伯文，它的阅读方式是从右往左（即 `direction: rtl` 和 `writing-mode:horizontal-tb`），这种模式常称为 **RTL** （Right-To-Left）。它的内联轴是水平的，块轴是垂直的，相应的逻辑维度和物理维度映射关系如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/630cafe59bd34c2d9e7e10da90523857~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/630cafe59bd34c2d9e7e10da90523857~tplv-k3u1fbpfcp-zoom-1-20250412211138526.jpeg)
 
 | **逻辑维度**       | **物理维度** |
 | -------------- | -------- |
@@ -528,7 +528,7 @@ p[Attributes Style] {
 
 再来看日文，竖排（有点类似中国古代的汉字书写模式），对应的 `writing-mode: vertical-rl` 。它的内联轴是垂直的，块轴是水平的，相应的逻辑维度和物理维度映射关系如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/57d642bbcc9a419e9b46a02578639404~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/57d642bbcc9a419e9b46a02578639404~tplv-k3u1fbpfcp-zoom-1-20250412211152970.jpeg)
 
 **逻辑维度**       | **物理维度** |
 | -------------- | -------- |
@@ -539,7 +539,7 @@ p[Attributes Style] {
 
 最后再来看蒙文，也是竖排，和日文不同的是 `writing-mode: vertical-lr` 。它的内联轴是垂直的，块轴是水平的，相应的逻辑维度和物理维度映射关系如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6da342e400a3430e976fc503bf1e7ed2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6da342e400a3430e976fc503bf1e7ed2~tplv-k3u1fbpfcp-zoom-1-20250412211155087.jpeg)
 
 **逻辑维度**       | **物理维度** |
 | -------------- | -------- |
@@ -552,7 +552,7 @@ p[Attributes Style] {
 
 正如前面你所看到的，如果你要构建一个多语言的 Web 网站或 Web 应用，你需要同时考虑 LTR 和 RTL 的排版，甚至还需要考虑垂直方向的排版。在这种环境之下，以前的物理特性就不能很好地满足 Web 的布局所需，即使是能满足，也会给 Web 开发者增加额外的工作量，这些额外增加的代码，也会让你的项目代码变得冗余，不易于维护。比如下面这个示例。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/91670e8b5d2c4143b1b389368ec987ba~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/91670e8b5d2c4143b1b389368ec987ba~tplv-k3u1fbpfcp-zoom-1-20250412211158915.jpeg)
 
 ```
 .media__object {
@@ -580,7 +580,7 @@ p[Attributes Style] {
 
 我想你已经感受到两者（CSS 物理属性和逻辑属性）之间的差异了，如果还没有体会到，我想用下图来向大家展示它们之间的差异：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/361d9aa77108497eb12a36f1370ad4a6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/361d9aa77108497eb12a36f1370ad4a6~tplv-k3u1fbpfcp-zoom-1-20250412211200880.jpeg)
 
 使用 CSS 逻辑属性时，只需要设置 `float` 的值为 `inline-start` ，另外间距只需要设置 `margin-inline-end`，就可以将根据 HTML 文档的方向（`dir` 的值）自动匹配。这不是很强大吗?
 
@@ -591,11 +591,11 @@ p[Attributes Style] {
 - 只要 CSS 带有 `-top` 、`-right` 、`-bottom` 和 `-left` 属性，比如 `margin-left` 、`padding-top` 等，都可以映射到 `-start` 和 `-end` 属性上，比如 `margin-inline-start` 和 `padding-block-start` 等。
 - 只要 CSS 的属性值带有 `-top` 、`-right` 、`-bottom` 和 `-left` ，比如 `float: left` ，都可以映射到 `-start` 和 `-end` 上，比如 `float: inline-start`。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9b91af72f9e0482e8ab517462c007a41~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9b91af72f9e0482e8ab517462c007a41~tplv-k3u1fbpfcp-zoom-1-20250412211202973.png)
 
 CSS 物理属性和逻辑属性之间映射关系，更详细的如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4575cc9f4e934048945c56a7be38da1a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4575cc9f4e934048945c56a7be38da1a~tplv-k3u1fbpfcp-zoom-1-20250412211216396.jpeg)
 
 为了加深大家对 CSS 逻辑属性和物理属性差异的理解，我们再来看 Inline 和 Block之间的差异。
 
@@ -615,13 +615,13 @@ CSS 物理属性和逻辑属性之间映射关系，更详细的如下图所示�
 
 基于这个模式之下，如果我们只是调整 HTML 的 `dir` 或 CSS 的 `direction` 值，这个布局不会有什么太大的影响，那是因为 `ltr` 或 `rtl` ，宽度依然还是宽度，高度依然还是高度，它改变的只是文本流的方向：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/514b368392844fe38b2a57ddec49f48d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/514b368392844fe38b2a57ddec49f48d~tplv-k3u1fbpfcp-zoom-1-20250412211225654.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/MWXZxKo>
 
 但如果使用 `writing-mode` 来改变书写模式，比如从 `horizontal-tb` 切换到 `vertical-lr` （或 `vertical-rl`），正常情况之下，宽度要切换成高度，高度切换成宽度。但实际情渲染出来的情形并非如此，它依旧是宽度是宽度，高度是高度，但元素的内容排版却不一样：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d41a7eeb41f244f98331e2d4af12e167~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d41a7eeb41f244f98331e2d4af12e167~tplv-k3u1fbpfcp-zoom-1-20250412211231508.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/MWXLOWb>
 
@@ -634,23 +634,23 @@ CSS 物理属性和逻辑属性之间映射关系，更详细的如下图所示�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/359d531bbaca42cf9d514c5980e0159c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/359d531bbaca42cf9d514c5980e0159c~tplv-k3u1fbpfcp-zoom-1-20250412211237723.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/NWzowrG>
 
 同样拿不同的语言为例，比如英文（`writing-mode: horizontal-tb` 和 `direction: ltr`）、阿拉伯文（`writing-mode: horizontal-tb` 和 `direction: rtl`）、日文（`writing-mode: vertical-rl`）和蒙文（`writing-mode: vertical-lr`）。具体的效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/05a4539626f84dff884713b87a5547f5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/05a4539626f84dff884713b87a5547f5~tplv-k3u1fbpfcp-zoom-1-20250412211246067.jpeg)
 
 你会发现，多语言 Web 布局和 LTR 和 RTL（阅读模式）、CSS 书写模式（水平、垂直）和 CSS 逻辑属性有着紧密的关系。同时不难发现，正因为阅读模式、书写模式的不同，以前的物理特性是无法满足多语言 Web 布局的。
 
 庆幸的是，在 CSS Flexbox 和 CSS Grid 布局中，和具体的物理方向性已无太紧密关系。比如在 Flexbox 中，不再关注方向，而是更关注主轴和侧轴，而且每根轴不是以物理方向来描述，而是以逻辑方向来描述，即 `start` 、`end` 替代以前的 `left` 、`right` 、`top` 和 `bottom` ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7881e640db8b4e5fbcf181315fa1413b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7881e640db8b4e5fbcf181315fa1413b~tplv-k3u1fbpfcp-zoom-1-20250412211251390.jpeg)
 
 特别是进入到 CSS Grid 的时代，方向性更不重要了。因为在 Grid 的时代变成了：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/141ce180c8fe4739ad9f13a18e5cc3ab~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/141ce180c8fe4739ad9f13a18e5cc3ab~tplv-k3u1fbpfcp-zoom-1-20250412211255704.jpeg)
 
 在 Flexbox 和 Grid 中，不再有具体的方向性的概念，有的只是开始（`start`）和结束（`end`）。如果你用过了 Flexbox 布局或 Grid 布局，我想你已经有用到框对齐（Box Alignment）模块中的对齐属性，比如 `justify-*` （`justify-content` 、 `justify-self`）。它们可以取物理值的 `left` 和 `right` ，但在实际使用的时候，却更多使用的是 `flex-start` 、`flex-end` （Flexbox 布局中对齐）和 `start` 、 `end` （CSS Grid 布局中对齐）。
 
@@ -662,17 +662,17 @@ Flexbox 是现代 Web 布局中最受欢迎的模式之一。主要是因为有�
 
 Flexbox 具备这样的特性主要是因为它是基于文档的书写模式，而书写模式又主要用于指定块在页面上的布局方式。在 Flexbox 布局中，Flex 项目根据文档的书写模式来分配。在英语和阿拉伯语中，书写模式（`writing-mode`）的默认值是`horizontal-tb` ，只是 `dir` 分别是 `ltr` （英语）和 `rtl` （阿拉伯文）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/49533eb13b3a496c9e1789119922d1e3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/49533eb13b3a496c9e1789119922d1e3~tplv-k3u1fbpfcp-zoom-1-20250412211306872.jpeg)
 
 了解 Flexbox 的同学都知道，在 Flexbox 容器中有一个 `flex-direction` 属性，在主轴方向（Main Axis）有两个属性值 `row`（默认值）和 `row-reverse`。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/97eb7e4938c345499f1dd935e12d99ed~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/97eb7e4938c345499f1dd935e12d99ed~tplv-k3u1fbpfcp-zoom-1-20250412211319023.jpeg)
 
 从效果上看， `flex-direction` 可以很轻易地实现类似 LTR 和 RTL 的效果。但事实上，它和 `dir`（或 `direction`）有着紧密的关系。
 
 如果 `dir` (或 `direction` )的值为 `ltr` 时，则 `flex-direction` 取值为 `row` 时，Flex 项目从左到右排列，如果取值为 `rtl` 时，则 Flex 项目从右到左排列。而 `flex-direction` 取值为 `row-reverse` 时效果刚好与 `row` 相反。简单地说，HTML 的 `dir` 和 CSS 的 `direction` 取值对 `flex-direction` 渲染结果有着直接的影响：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2753aae3c83d4d4e813e925b278f7442~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2753aae3c83d4d4e813e925b278f7442~tplv-k3u1fbpfcp-zoom-1-20250412211324751.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/oNympPL>
 
@@ -695,11 +695,11 @@ Flexbox 具备这样的特性主要是因为它是基于文档的书写模式，
 
 当页面的方向被更改为 RTL 时（即 `dir="rtl"` 或 `direction: trl`），Flexbox 会相应地翻转它的元素（Flex 项目）。这是一个巨大的好处！下面图展示了如何根据方向翻转 Flexbox 轴（主轴）。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0fadcf12f55841b7a363c6e5271c69d8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0fadcf12f55841b7a363c6e5271c69d8~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 也就是说，使用 CSS Flexbox 构建 Web 布局时，我们不需要针对 LTR 和 RTL 提供不同的样式，它可以根据 `dir` 或 `direction` 自动翻转。 `flex-direction:row` 和 `dir` 结合起来就可以很好地实现 LTR 和 RTL 的布局效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2cb13870d43f41d0b2f2e698ba8608a3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2cb13870d43f41d0b2f2e698ba8608a3~tplv-k3u1fbpfcp-zoom-1.png)
 
 利用上面说到的特性，重新来构造媒体对象的布局效果（中文版本和阿拉伯语版本），它会比 CSS 浮动简单地多：
 
@@ -744,29 +744,29 @@ Flexbox 具备这样的特性主要是因为它是基于文档的书写模式，
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5d75f3609c0e438fb91569f0a779f4bb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5d75f3609c0e438fb91569f0a779f4bb~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/KKeJQaj>
 
 刚才提到过，Flexbox 是基于文档书写模式来布局的，而且在介绍 `flex-direction` 以及 Flexbox 中对齐方式时有说过，“**CSS 书写模式** **`writing-mode`** **会影响** **`flex-direction`** **和对齐方式的渲染结果** ”。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f3823bd3b33c420ea300828595ee87b3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f3823bd3b33c420ea300828595ee87b3~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 从效果上来看，`writing-mode` 取值为 `horizontal-tb` 时，LTR 、RTL 和 `flex-direction: row` 结合效果都是完美的。但是将 `writing-mode` 更换为垂直排版（`vertical-lr` 和 `vertical-rl`）时，整体的效果就不是那么的理想了。
 
 如果你需要在竖排的时候效果也不错，那就要在设计上做一些调整，比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0d2091ea03e648579708d5346f5a21b1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0d2091ea03e648579708d5346f5a21b1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 针对这种情况，需要在竖排模式下，`flex-direction` 从默认值 `row` 更换成 `column` 。有关`writing-mode` 、`dir` 对 `flex-direction` 取值的影响如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7fed663371024f1785131318fd8eda68~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7fed663371024f1785131318fd8eda68~tplv-k3u1fbpfcp-zoom-1.png)
 
 > Demo 地址：<https://codepen.io/airen/full/gOKEavY>
 
 来看一个简单示例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b70242f85a66428097d576db7fbed1a2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b70242f85a66428097d576db7fbed1a2~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```
 <div class="wrapper">
@@ -815,7 +815,7 @@ h1.lr {
 
 在这个示例中，采用的是 Flexbox 和 Grid 结合的布局，图片区域采用的是 CSS 网格布局，标题和图片区域采用的是 Flexbox 布局。在 Flex 容器 `.wrapper` 设置 `writing-mode` 的值为 `vertical-lr` 或 `vertical-rl` （相互切换）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1516e879d6d84ba389db5c740d4833ea~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1516e879d6d84ba389db5c740d4833ea~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/bGKZVZw>
 
@@ -852,17 +852,17 @@ h1.lr {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/78f40113b0e04576ae88f5a91299ee71~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/78f40113b0e04576ae88f5a91299ee71~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/JjZzXLW>
 
 同样的，CSS Grid 也会受 `writing-mode` 的影响，比如上面示列，当 `writing-mode` 的值为 `vertical-lr` 和 `vertical-rl` 时的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5afc164432f24b06bbd60ad1c1b1d29a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5afc164432f24b06bbd60ad1c1b1d29a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 我们一起来看一个有关于 Logo 的布局设计，它是使用 CSS Grid 和 `writing-mode` 结合的案例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7cefddeae48946e48330276684a74053~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7cefddeae48946e48330276684a74053~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/jOKJrmq>
 
@@ -905,7 +905,7 @@ span:nth-child(3) {
 
 再来看一个 [@JENSIMMONS](http://twitter.com/jensimmons) 的 [Layout Lab](https://labs.jensimmons.com/) 网站首页 Hero 区域的布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/08cb604f650747ceab9e439a3cc8e192~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/08cb604f650747ceab9e439a3cc8e192~tplv-k3u1fbpfcp-zoom-1.gif)
 
 ```
 <header class="header">
@@ -1006,7 +1006,7 @@ header .workshop-link {
 
 比如下面这个示例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a85d3b3e41bd445fa60341dc28ac4810~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a85d3b3e41bd445fa60341dc28ac4810~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/rNKRMKR>
 

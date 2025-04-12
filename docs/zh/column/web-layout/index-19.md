@@ -6,7 +6,7 @@ CSS 网格模块为 Web 布局提供了前所未有的可能性。我们可以�
 
 ## 网格能构建哪些有创意性的 Web 布局？
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7b2444f91776410eaac521e8b74bdbc9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7b2444f91776410eaac521e8b74bdbc9~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如上图所示，在 Web 中类似于杂志类排版的布局越来越多，以往要实现杂志报刊类 Web 布局是件痛苦的事情，即使能实现，也会让 HTML 结构变得臃肿复杂。现在我们只需要在 CSS 网格模块的基础上，再结合一些其他的 CSS 特性就可以实现。换句话说，实现类似杂志、报刊类的 Web 布局，你可能还会用到以下 CSS 特性：
 
@@ -22,17 +22,17 @@ CSS 网格模块为 Web 布局提供了前所未有的可能性。我们可以�
 
 除了杂志类的 Web 布局之外，CSS 网格布局技术、 CSS 的 `clip-path` （剪切）和 `mask` （蒙板）等技术的结合，还可以实现类似海报、漫画类的 Web 布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3531955f55d44916ad72e8480b65cc0b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3531955f55d44916ad72e8480b65cc0b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 除此之外，还可以让一些常规的 Web 布局在视觉上的效果与众不同。虽然视觉上变得更复杂了，但实现的过程却不见得更复杂，有些甚至变得更简单。比如下图中的卡片、图文层叠、混排等效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b22ae88097024aeb9e6b6a7607d3f836~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b22ae88097024aeb9e6b6a7607d3f836~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 接下来，我们一起动手，写几个 Demo。希望大家能在下面这几个实战的案例进一步加强 CSS 网格布局的理解！
 
 ## 杂志报刊类布局
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3f974e31b3a44d5ba1e590486e8e41fa~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3f974e31b3a44d5ba1e590486e8e41fa~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这是一个简化版的杂志类风格的 Web 布局效果。它有着几个明显的特征：
 
@@ -70,7 +70,7 @@ HTML 结构简洁清晰。对于实现所需的布局效果也很简单。
 
 假设设计师在设计图上就给 Web 上每个内容区域定义好网格的区域和位置等，如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/80c4035645e04ffa959ba7d6345970a0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/80c4035645e04ffa959ba7d6345970a0~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 很明显，它就是一个两行八列（`2 x 8`）的网格。用 CSS 网格的 `grid-template-rows` 和 `grid-template-columns` 很容易就定义出这样的网格：
 
@@ -84,11 +84,11 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dae5c4c8ef5d4a1dbf23d6384113cefd~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/dae5c4c8ef5d4a1dbf23d6384113cefd~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 从设计稿上，不难发现 Web 页同上的每个区域都被划分在指定的网格线围绕的区域内：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/47f40c80da6441d1a0ae1ff56285114f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/47f40c80da6441d1a0ae1ff56285114f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你可能已经想到了。CSS 网格模块中的 `grid-area` 、`grid-row` 和 `grid-column` 可以很容易实现它：
 
@@ -130,7 +130,7 @@ figure {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b067d646e2204627bf1c0c46705edd61~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b067d646e2204627bf1c0c46705edd61~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 标题背景（平形四边形）的效果，对于大家来说应该不会有任何难度了。这里为了避免文本也因 `transform` 的 `skewX()` 变形（扭曲），所以标题背景通过 `h1` 的伪元素 `::after` 来实现：
 
@@ -187,7 +187,7 @@ ul {
 
 一个简单的杂志类布局效果就完成了：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4e4f91bc86dd4d59bdf48a7ee37ff83f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4e4f91bc86dd4d59bdf48a7ee37ff83f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/qBKpJRX>
 
@@ -268,31 +268,31 @@ ul {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6f69bfd14dd54a04b6715c55fe5a56a0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6f69bfd14dd54a04b6715c55fe5a56a0~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/XWYVoMw>
 
 **作业** ：使用 CSS 网格和媒体查询完成下图的布局效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5d8ec338acb54086a103348e7a693f12~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5d8ec338acb54086a103348e7a693f12~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ## 动漫和画报类布局
 
 你可能会觉得杂志报刊类的 Web 布局没有太多的挑战性，那么接下来的动漫和画报类的布局，可能会更有意思一些。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/608a9cde7e554c34b8a0502deb335908~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/608a9cde7e554c34b8a0502deb335908~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 *漫画类布局效果*！
 
 > 特别声明：该插图来自于 @Andy Clarke  的 《[Art Direction for the Web](https://stuffandnonsense.co.uk/artdirectionfortheweb/index.html)》一书
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0f34a7a6f1f949099b7a2bdf4ce1baea~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0f34a7a6f1f949099b7a2bdf4ce1baea~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 *画报（海报）类布局效果* ！
 
 我们先来看漫画类的布局效果！
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b2543fdf29e040948e94c47587170f1c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b2543fdf29e040948e94c47587170f1c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这个故事中包括了六个元素（移动端只有五个元素）：
 
@@ -320,7 +320,7 @@ ul {
 
 我们将使用网格来构建所需要的布局效果。简单地说，我们需要在不同断点下构建不同的网格，如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1a88123220194864a39d64dc7b476ff3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1a88123220194864a39d64dc7b476ff3~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 正如上图所示，左侧是平板和移动端（断点小于 `1024px` ），即默认的列网格轨道数量和尺寸：
 
@@ -435,7 +435,7 @@ main {
 
 这时候你看到布局越来越接近所期望的了：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7d0a32785ec7440c994bcd1efee066d8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7d0a32785ec7440c994bcd1efee066d8~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 需要注意的是，“漫画图3” 只在浏览器视窗宽度大于 `1024px` 中显示，因此为了让布局不因它打破，需要在小于 `1024px` 断点下将其隐藏：
 
@@ -453,21 +453,21 @@ main {
 
 现在剩下的就是完善 Web 页面元素的其他样式了。最终你看到的效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/877cdeed0b1443238b4096970893a96e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/877cdeed0b1443238b4096970893a96e~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/QWxaYYj>  （**特别声明：该插图来自于 @Andy Clarke 的《[Art Direction for the Web](https://stuffandnonsense.co.uk/artdirectionfortheweb/index.html)》一书** ！）
 
 再来看另一个案例，即“画报类”布局效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9eb462f7b1214a7ab38ecf046b805a8a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9eb462f7b1214a7ab38ecf046b805a8a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 其实这个示例的布局是非常简单的。它和我们前面课程中看到的“图片墙”、“九宫格”以及“交叉类”布局是非常相似的。简单地说，它就是一个多行多列的的网格，并且因部分网格项目放置同一个网格单元格，它们有相互重叠的效果。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/97a175fd46b5479780f82acef7d58689~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/97a175fd46b5479780f82acef7d58689~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 就上图而言，不规则的效果并不是因为网格产生，而是在不同的网格项目上使用了 `clip-path` 特性，裁剪出不同的多边形形状，并且在网格中堆叠在一起。最后实现类似画报（或海报）类的布局效果。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/17a7063c011746a28c7a4fa35a73e576~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/17a7063c011746a28c7a4fa35a73e576~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 有了这个基础，我们就可以开始动手实现画报类的布局了。
 
@@ -635,7 +635,7 @@ body {
 
 你现在看到的网格是这样的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cb03bdceff264fa89676145d570fcfea~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/cb03bdceff264fa89676145d570fcfea~tplv-k3u1fbpfcp-zoom-1.gif)
 
 根据需要，在网格项目上使用 `clip-path` 裁剪出不同（或相同）风格的多边形形状的效果：
 
@@ -701,27 +701,27 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2425fa4c25a8461c9fc521b3f34e136a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2425fa4c25a8461c9fc521b3f34e136a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 剩余的就是往里面填画报图（或海报图）了。我在示例中填充的是一些随机图片。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/256bccdc7e49413c841f620bec88c151~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/256bccdc7e49413c841f620bec88c151~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/NWzygOd>
 
 **作业** ，使用 CSS 网格构建下图布局效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/317f17d155c0475db228d0e5ba2c773c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/317f17d155c0475db228d0e5ba2c773c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ## 堆叠布局
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/03df128044f7477aaa3f52ae532343e7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/03df128044f7477aaa3f52ae532343e7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > 上图来 Fork 自[@Morten Rand-Hendriksen 写的 Demo](https://codepen.io/mor10/full/oNBdamz)!
 
 我们在介绍 CSS 网格模块理论知识的时候，就多次提到过，**使用 CSS 网格实现堆叠布局效果，要比其他的布局技术简单****得****多** 。另外，堆叠的布局效果在 Web 中也随处可见，比如下图这种卡片组件：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bedaf68e1c4446848999da31a37c1dd4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/bedaf68e1c4446848999da31a37c1dd4~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/MWvyGWp>
 
@@ -729,7 +729,7 @@ body {
 
 事实上，基于该原理，稍微发挥你的创意，同样是展示产品，可以有更好的创意。比如 [@Andy Barefoot](https://twitter.com/andybarefoot) 在[他的个人网站](http://andybarefoot.com/) 和 [Codepen](https://codepen.io/andybarefoot) 上提供了很多有创意的响应式布局效果。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/08df9e24a0a14049b76acc9b13a6a43b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/08df9e24a0a14049b76acc9b13a6a43b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 - ①：[Technical Product Grid](https://codepen.io/andybarefoot/full/eYzMoYv)；
 - ②：[Responsive Product Grid with layered background](https://codepen.io/andybarefoot/full/wvKJweJ)；
@@ -743,11 +743,11 @@ body {
 
 这几个案例除了创意新颖之外，还有一个共同的特性，具有响应式网格布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3e162a18c53b4cbe9ef8a8ed965443dd~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3e162a18c53b4cbe9ef8a8ed965443dd~tplv-k3u1fbpfcp-zoom-1.png)
 
 接下来，我们以列表中的编号是 ② 和 ⑨  为例，了解如何使用网格布局技术来实现具有响应式的堆叠效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/851bedb76d6f4fc3986b15c533c6e926~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/851bedb76d6f4fc3986b15c533c6e926~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 除了具有响应式效果之外，它们还有一个共同的特征：不同层的叠加。另外，它们都采用了相似的 CSS 特性，比如 CSS 网格布局、自定义属性和媒体查询等。
 
@@ -792,7 +792,7 @@ ul {
 
 注意，编号 ⑨ 案例的 `--columns` 的值为 `3` 。移动端（Mobile）下编号 ② 和 ⑨ 对应的网格如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7554ab3c900b44cc9cec8b185dffc6e4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7554ab3c900b44cc9cec8b185dffc6e4~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 使用 `@media` 在不同断点改变 `--columns` 的值，就可以在不同断点下得到不一样的网格：
 
@@ -866,7 +866,7 @@ ul {
 } 
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/eb8602eb9d2d41c789c240552449f090~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/eb8602eb9d2d41c789c240552449f090~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 定义好网格之后只需要使用 `grid-*`（比如 `grid-column`、`grid-row` 或 `grid-area`）来明确放置网格项目：
 
@@ -943,21 +943,21 @@ li:nth-child(2n) {
 
 编号 ② 相对于 编号 ⑨ 要简单得多，它的网格项目是自动放置的，即 `grid-row` 、`grid-column` 的值为 `auto` 。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f5369025347448199a270364908ee0c5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f5369025347448199a270364908ee0c5~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如果只是要实现具有响应式的网格布局，那么到这里就结束了。但我们的示例还有另外一个特征，那就是多层堆叠在一起，构建出具有层次感的产品展示效果。
 
 不难发现，这两个案例，每个 `li` （单个网格项目）都由四个层级堆叠在一起：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0e44350f28194dd299991d98691471da~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0e44350f28194dd299991d98691471da~tplv-k3u1fbpfcp-zoom-1.png)
 
 为了减少额外的 HTML 标签元素，这里使用了 CSS 的伪元素 `::before` 和 `::after` 来替代空的 HTML 标签元素。它们之间的层级关系如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c00c697acefa4b0480e0a63a1a680384~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c00c697acefa4b0480e0a63a1a680384~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 我们以编号 ⑨  为例，因为编号 ② 比较简单（编号 ② 的[单个 li 的堆叠效果](https://codepen.io/airen/full/RwgVOYb)）。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c1eab26d8926438d9822ec7d6aa98380~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c1eab26d8926438d9822ec7d6aa98380~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 实现这个效果关键点是在 `li::before` 和 `li::after` 层，因为 `li` 层是一个纯色，`img` 层就是一个图片元素。这里使用了 CSS 的圆锥渐变 `conic-gradient()` 来绘制 `li::before` 和 `li::after` 层：
 
@@ -975,7 +975,7 @@ li::after {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a627aa5114774dd4924f2e30f4970e69~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a627aa5114774dd4924f2e30f4970e69~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 注意，它们的大小都是 `1:1` 的，你可以使用 `aspect-ratio: 1` ，根据元素宽度实现一个正方形，并且放置 `45deg` 就能实现类似上图的效果。但这还是不够的，我们还需要使用 `clip-path` 对 `li::before` 和 `li::after` 做一些裁剪，不然会遮盖住产品图 `img` ：
 
@@ -989,11 +989,11 @@ li::after {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3d1bffa2589b45418bc27349e194425f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3d1bffa2589b45418bc27349e194425f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 将它们合成在一起就得到我们想要的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/20d24036f084485596219383511ceea8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/20d24036f084485596219383511ceea8~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/vYNdrLL>
 
@@ -1003,27 +1003,27 @@ li::after {
 
 **编号 ②** :
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f0a2fefee3264c51a0664dba5dc06d61~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f0a2fefee3264c51a0664dba5dc06d61~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/dyKddzV>
 
 **编号 ⑨** ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d80930e6e2a54a15a4b7308890b9e6b4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d80930e6e2a54a15a4b7308890b9e6b4~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/wvXyyqR>
 
 **作业** ，使用 CSS 网格布局技术实现下图时间轴效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7ea1cb27cf7242649456bd10a6dff666~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7ea1cb27cf7242649456bd10a6dff666~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ## 剪贴簿布局（Scrapbook Layout）
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/62b633ea9b9f4cdaa9d533e242ee2fec~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/62b633ea9b9f4cdaa9d533e242ee2fec~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 上图中的效果是不是很像贴满标签的标签簿（或墙）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0f659f996dcf4e8784f4db9dd2ee219c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0f659f996dcf4e8784f4db9dd2ee219c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 我把这种布局效果称之为**剪贴簿布局（Scrapbook Layout）** ，不过这里不会花时间来阐述什么是“剪贴簿布局”。将会介绍实现类似剪贴簿布局效果的新的布局方式，这种新的布局方式也是基于网格布局的，只不过它被称为**复合网格布局** 。
 
@@ -1031,7 +1031,7 @@ li::after {
 
 在前面课程中所涉及到的网格，大多数都是类似于我们熟知的标准网格，比如 `12` 列或 `24` 列网格，它们一般情况下具有相同的**列宽**和**列间距。**而 @Andy Clarke 所说的复合网格是**由两个或多个网格分层创建的** ，类似于将五列网格叠加到四列网格上的并列排列所产生的有节奏图案，并且比规则网格具有更多的动态布局可能性。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/47a88a42d75e4103a41086784c54ceca~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/47a88a42d75e4103a41086784c54ceca~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如果你仔细观察，你应该会注意到复合网格是如何将你的设计引向与 `12` 列对称列不同的方向的。如上图所示，通过在一个四列网格上叠加了一个五列的网格，将创建一个八列的网格，而且这复合网格的列轨道尺寸是 `4fr 1fr 3fr 2fr 2fr 3fr 1fr 4fr` ，即：
 
@@ -1043,7 +1043,7 @@ li::after {
 
 使用 `fr` 单位可以很好地将复合网格转换为 CSS 网格。你可能会说，多个网格叠加重新合成出来的新网格（也就是复合网格）和普通网格并没有两样呀。是的，这从心理学和技术角度来说，**尽管使用复合网格，也完全有可能构建一个非常普通的布局** 。比如 stuffandnonsense.co.uk 首页中的一部分：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/09ae43f6c49a4139a3726b6cca7a7e79~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/09ae43f6c49a4139a3726b6cca7a7e79~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 采用的模式就是 `6 | 1 | 4 | 3 | 3 | 4 | 1 | 6` ，即：
 
@@ -1055,13 +1055,13 @@ li::after {
 
 虽然它看上去和前面课程中所介绍的网格没啥区别，但使用更有趣的网格可以激发创造力！正如 @Andy Clarke 的《[Inspired Design Decisions: Pressing Matters](https://www.smashingmagazine.com/2019/07/inspired-design-decisions-pressing-matters/)》文章中所说的一样，可以创建出更创意的 Web 布局。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3125a851bda0466ea8dd8195e7a40b9d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3125a851bda0466ea8dd8195e7a40b9d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 虽然复合网格这想法在 Web 布局中很有创意，也能更好地创建出不是对称性的网格，但在生成新的网格轨道数量和尺寸，对于 Web 开发者来说是额外的成本。尤其是制作复杂的网格时，计算它们的过程更复杂，还有可能是个障碍。
 
 幸运的是，[@Michelle Barker 在 Codepen 上提供了一个生成复合网格的小工具](https://codepen.io/michellebarker/full/zYOMYWv)，只需要输入不同网格的列数（每个网格最多 `10` 列），然后点击生成器按钮就可以将两个网格组合起来，生成一个复合网格。这个小工具会生成 `grid-template-columns` 属性所需要的值：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c86d3e2fb54849a8843091fc2df6fbd7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c86d3e2fb54849a8843091fc2df6fbd7~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > 复合网格生成器：<https://codepen.io/michellebarker/full/zYOMYWv>
 
@@ -1089,13 +1089,13 @@ li::after {
 
 现在你对复合网格可能有了一个基础认识，接下来我们就使用复合网格来构建像下图这样的剪贴簿布局效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/884ca69cf6fc4543b64d3485e3457022~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/884ca69cf6fc4543b64d3485e3457022~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/poKLjBr>
 
 在这个布局效果中，采用了 `5` 列网格与 `6` 网格的合成：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7657a914735848248005be2d1e7ba847~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7657a914735848248005be2d1e7ba847~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 即：
 
@@ -1109,7 +1109,7 @@ li::after {
 
 从效果图中不难发现，相邻两图片之间有重叠，为了控制这个重叠部分的大小，可以使用 CSS 自定义属性来设置，比如 `--overlap` ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c37aebaa8c284f268c91ed0e86cdf4e7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c37aebaa8c284f268c91ed0e86cdf4e7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 就这个示例网格来说，网格列轨道数量和尺寸都定义好了，关键是行网格轨道的数量和尺寸。由于我们无法提前知道网格中的网格项目有多少，为此便于网格自行扩展。使用了 `grid-template-rows` 和 `grid-auto-rows` 来定义网格行轨道的尺寸：
 
@@ -1131,11 +1131,11 @@ li::after {
 
 另外，每一张图片都有一个简短的文字描述，在文字的上方和下方要有一定的空间，避免文字上下图片重叠或碰撞。这意味着在文字上方和下方添加一个网格行，示例中使用 `--verticalPadding` 来定义其大小。这样一来，你将得到像下面这样的一个网格：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f0f3232cbf404eea9acc23f493b2110e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f0f3232cbf404eea9acc23f493b2110e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 定义好网格之后，就可以使用 `grid-row` 、`grid-column` 或 `grid-area` 来放置网格项目了。在这个示例中，每个图片至少要跨越 `4` 行，顶部有重叠的图片需要越 `5` 行：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/21b5ef81d29e4cab8b0e08429c33238d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/21b5ef81d29e4cab8b0e08429c33238d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 注意，你可以根据自己设计的需要来调整跨越的行数。正如上图所示，图片对应的文字尽可能地放在离顶部和底部图片有一个行的网格轨道。
 
@@ -1250,7 +1250,7 @@ p:last-of-type {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/54975980195048cba472e99ca6f76450~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/54975980195048cba472e99ca6f76450~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/poKLjBr>
 

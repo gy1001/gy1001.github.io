@@ -8,7 +8,7 @@
 
 也就是说，我们又一次见证了响应式设计生态系统的演变，即 **CSS** **新增的特性将直接基于组件而不是基于页面注入样式响应能力**。这种能力被称为 **组件驱动 Web 设计（Component-Driven Web Design）** ，基于组件驱动的开发将会成为一种真正流行的开发模式。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ed25203aec9044bab5962863af6033cf~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ed25203aec9044bab5962863af6033cf~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 为了理解这种开发模式的转变，并为即将到来的变化浪潮做好准备，让我们看看在响应式 Web 设计运动中，我们可以期待的变化。
 
@@ -16,11 +16,11 @@
 
 理论上，响应式 Web 页面能够适应不同的终端设备：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/acb583f6b4ec4fb0a20927ce6c7dc80e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/acb583f6b4ec4fb0a20927ce6c7dc80e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如果用一句话来描述响应式 Web 设计的话，我觉得这句最经典：“**Content is like water**”，即 “**如果将屏幕看作容器器皿，那么内容就像水一样**”，可以随着器皿的不同成不同的形状：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0294bbb6d2444d46904eae1a1a1b7c75~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0294bbb6d2444d46904eae1a1a1b7c75~tplv-k3u1fbpfcp-zoom-1.png)
 
 这也正如 @Ethan Marcotte 所言： “**未来我们应该这样，随着访问网页的设备增加，我们不会为每个设备单独设计，而只会做一份设计，把每个设备作为这份设计要照顾的一个方面** ”。
 
@@ -36,11 +36,11 @@
 
 [@Aaron Gustafson](https://twitter.com/AaronGustafson) 有一本书叫《[Adaptive Design](https://adaptivewebdesign.info/)》：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e666b5ed917c47189f9815c02d0f3950~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e666b5ed917c47189f9815c02d0f3950~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 他认为 AWD 在包括 RWD 的 CSS 媒体查询技术以外，还需要借助 JavaScript 脚本来操作 HTML ，使其更适应移动终端的能力。AWD 有可能会针对移动端用户“**减去内容，减少功能** ”。 AWD 可以在服务端就进行优化，把优化过的内容输送到客户端上。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dde059fc8d1a4988adb2d7dcc98a28d0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/dde059fc8d1a4988adb2d7dcc98a28d0~tplv-k3u1fbpfcp-zoom-1.png)
 
 如果用一句话来描述 RWD 和 AWD 区别的话：
 
@@ -63,11 +63,11 @@ CSS 像素（CSS Pixel，简称 `px`）也称为**设备独立像素** 、**逻�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e39d84bf6fa34f4fb039497561f71d57~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e39d84bf6fa34f4fb039497561f71d57~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如果你在设计软件中（比如 Sketch ）把一张 `375px x 815px` 图片放大（使用软件中的放大镜工具，放大到 `N` 倍），可以看到一个个方块点：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/556a1de25f9740ffa08ec7358fb9dded~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/556a1de25f9740ffa08ec7358fb9dded~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这些个小方块点具有特定的位置和颜色。正如上图所示，图片（或电子屏幕，比如手机、显示器屏幕等）就是由无数个具有特定颜色和特定位置的小方块拼接而成。
 
@@ -80,7 +80,7 @@ CSS 像素具有两个方面的相对性：
 
 你可能在用浏览器访问一个 Web 页面的时候，会有放大缩小的操作，会引起 CSS 中 `px` 的变化，可能会出现等于、大于或小于的三种情况：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e1a2ab47acc64b63841d7c5dc2a5a733~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e1a2ab47acc64b63841d7c5dc2a5a733~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 另外，CSS像素也会受到 “**每英寸像素（PPI）” 和 “设备像素比（DPR）** ” 的影响。
 
@@ -88,7 +88,7 @@ CSS 像素具有两个方面的相对性：
 
 设备像素（Device Pixels，简写 `DP`），又称**物理像素** ，是设备能控制显示的最小单位，我们可以把它看作显示器上的一个点，即屏幕上可以显示的最小颗粒，在同一设备上，它的物理像素是固定的。我们常说的 `1920 x 1080` 像素分辨率就是用的**设备像素单位** 。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d31fcf092a2c4f50a4ce364c6949a414~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d31fcf092a2c4f50a4ce364c6949a414~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 我们平时所说的一倍屏、两倍屏和三倍屏，指的是设备以多少物理像素来显示一个 CSS 像素，所用的物理像素越多，一个 CSS 像素清晰度就越高。。
 
@@ -109,11 +109,11 @@ window.screen.height //获得屏幕垂直方向上的像素数
 
 如 MacBook Pro 16″的原始分辨率为 `3072px x 1920px`。就是说屏幕水平方向上有 `3072` 个像素点；在垂直方向有 `1920` 个像素点。屏幕分辨率是机器生产时已经确定好的了，即已经规定好了机器屏幕上是有多少个像素点组合而成。但我们也知道，我们可以修改电脑的屏幕分辨率。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/454703cbfa9547648a3df5664f53d3f8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/454703cbfa9547648a3df5664f53d3f8~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 图片分辨率则是单位英寸中所包含的像素点数，其定义更趋近于分辨率本身的定义。从这个定义上来看很明显，跟 PPI（像素密度）的含义是一样的，所以 PPI 是用来表示图片分辨率的单位，比如，`100ppi` 的图片分辨率，其意思是每英寸中有 `100` 个像素。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/042b9223dec340a5a3405521a6068401~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/042b9223dec340a5a3405521a6068401~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 跟显示分辨率一样，图片分辨率也可以用`水平像素数 x 垂直像素数`来表达。其实我们知道 `ppi`，也知道图片的宽高（如英寸为单位），就能算出图片是由多少个像素组成，即`水平像素数 x 垂直像素数`。
 
@@ -128,13 +128,13 @@ window.screen.height //获得屏幕垂直方向上的像素数
 - 屏幕分辨率比例是指屏幕的宽和高的像素比例；
 - 图片分辨率比例是指图片的宽和高的像素比例。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e4e1bd06513741c29e4a54d1c21b7d28~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e4e1bd06513741c29e4a54d1c21b7d28~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ### 屏幕尺寸
 
 屏幕尺寸指的不是屏幕的宽高，它说的就是屏幕的尺寸。实际上，在介绍产品时常说的，手机屏幕尺寸是 `5.3` 英寸，电脑屏幕多少英寸之类的，不是指屏幕的宽高，而是指屏幕的对角线长度：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/55f12ec82ee5415a9cefe762127be330~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/55f12ec82ee5415a9cefe762127be330~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ### 设备独立像素
 
@@ -142,7 +142,7 @@ window.screen.height //获得屏幕垂直方向上的像素数
 
 在 CSS 规范中，长度单位可以分为绝对单位和相对单位。`px` 是一个 相对单位，相对的是设备像素。比如有些 iPhone 设备（iPhone 12系列）使用的是视网膜屏幕（Retina），用 `3 x 3` 的设备像素（Device Pixels）代表 `1 x 1` 的 CSS 像素（CSS Pixel）。拿 iPhone 12 Pro Max来说，它的设备像素是 `1284px x 2778px`，而 CSS 逻辑像素是 `428px x 926px`。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c7775fe417c64bb1ac940d66ee4e111b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c7775fe417c64bb1ac940d66ee4e111b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ### 设备像素比（DPR）
 
@@ -165,7 +165,7 @@ DPR = 物理像素数 / 逻辑像素数 = 屏幕物理像素数 / 设备独立�
 
 简单地说，一个逻辑像素（`1pt`）既可以对应一个物理像素点（`1px`），也可以对应 `1.5px`、`2px` 或更多个`px`。这也是我们常说的几倍屏：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c42e60b7fd064549b8791282af4a5d4e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c42e60b7fd064549b8791282af4a5d4e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 也就是说：
 
@@ -176,11 +176,11 @@ DPR = 2,   1pt = 2px
 DPR = 3,   1pt = 3px
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/58b27fed1c7d4c48b86d8324d180f441~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/58b27fed1c7d4c48b86d8324d180f441~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 对于 Web 开发者而言，我们可以使用 `window.devicePixelRatio` 来获取设备的 `dpr`：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f105def283084840a0a961bc70a3af34~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f105def283084840a0a961bc70a3af34~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在 CSS 中可以通过 `@media` 的 `min-device-pixel-ratio` 来区分 `dpr`：
 
@@ -194,7 +194,7 @@ DPR = 3,   1pt = 3px
 
 实际上，设备会自动把 `1242 x 2208` 个像素点塞进 `1080 x 1920` 个物理像素点来渲染，我们不用关心这个过程，而 `1242 x 2208` 被称为屏幕的“设计像素”（我们开发也是以这个设计像素为准）也称为渲染像素：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e962bd1ec8e34610b281b48b85fe4439~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e962bd1ec8e34610b281b48b85fe4439~tplv-k3u1fbpfcp-zoom-1.png)
 
 ### 像素密度（PPI）
 
@@ -202,11 +202,11 @@ DPR = 3,   1pt = 3px
 
 对于一个设备来说，屏幕尺寸指的是屏幕对角线长度，屏幕的分辨率是指屏幕宽高的像素值，那么屏幕的宽高和对角线就形成了一个垂直三角形。利用勾股定理，可以算出对角线的像素值。而知道了对角线的英寸值，那么就可以算出屏幕的 PPI 值。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a7a3e641a7f3448d918c19d321085205~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a7a3e641a7f3448d918c19d321085205~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 比如 iPhone XS Max，根据上面公式可以算出其 `PPI = 458`：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/56465a58cce547ca92caa49b9a0f9dcc~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/56465a58cce547ca92caa49b9a0f9dcc~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ### DPI
 
@@ -230,23 +230,23 @@ PPI 和 DPI 经常都会出现混用现象。但是他们所用的领域也存�
 
 构建响应式 Web 布局有三大核心技术：**流体网格（Fluid Grids）** 、**灵活的图片（Flexible Images）** 和**媒体查询（Media Queries）** 。我们可以使用这三种技术来构建一个适应不同屏幕尺寸或不同移动终端设备的 Web 页面。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/35f42571af484d78bcdd93a4da497a8b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/35f42571af484d78bcdd93a4da497a8b~tplv-k3u1fbpfcp-zoom-1.gif)
 
 ### 流体网格
 
 响应式 Web 布局中最常见的列结构有 `8`、`12`、`16` 和 `20` 列网格。选择多少列网格，取决于你的设计需求。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3f4b4b58b9bc470b84bef9425b6714b3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3f4b4b58b9bc470b84bef9425b6714b3~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 其中 `12` 列的结构是最灵活的。它可以进一步分解为在 `4-4-4` 或 `3-3-3` 大小的父容器中对齐内容。
 
 而且，网格的列结构、列宽度、列间距和边距依赖于浏览器视窗的断点。父容器根据不同的断点进行堆叠或缩放，重新调整以获得最佳视图。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7dbaf2ffaccc4e429860fd2130336d17~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7dbaf2ffaccc4e429860fd2130336d17~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在原生 CSS Grid 还没得到主流浏览器支持的时候，响应式 Web 中的流体网格实质上采用的是百分比来构建的单一维度的网格。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d319ed4924f3469bb0770e4b2a0ad21e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d319ed4924f3469bb0770e4b2a0ad21e~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > 上图是在线流体网格生成器：<http://www.responsivegridsystem.com/calculator/>
 
@@ -387,7 +387,7 @@ img {
 
 庆幸的是，HTML 的 `<img>` 标签元素新增的 `srcset` 、`sizes` 等新属性以及新增的 `<picuture>` 标签元素，让 Web 开发者在构建响应式 Web 布局时，对图片的使用有了更多的选择，可以说真正解决了图片在响应式 Web 布局中的适配痛点，真正达到了“灵活的图片”一原则：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/00b49350eff54a19a87e43641b2849c2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/00b49350eff54a19a87e43641b2849c2~tplv-k3u1fbpfcp-zoom-1.png)
 
 > **注意，有关于** **`<img>`** **的** **`srcset`** **和** **`sizes`** **特性以及** **`<picture>`** **已超出本节课的范畴，因此不在这里做过多阐述。感兴趣的同学，可以自己搜索相应关键词进行扩展阅读！**
 
@@ -397,15 +397,15 @@ img {
 
 CSS 媒体查询也是一个复杂的体系，所涉及到的知识点较多，如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e223e34ecfee4975b5b471bbd99bd940~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e223e34ecfee4975b5b471bbd99bd940~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 只不过，构建响应式 Web 的时候，大多数是使用 CSS 媒体查询 的 `@media`  规则，根据指定的**媒体类型** 、**媒体逻辑运算符**和**媒体特性** 给元素指定样式规则：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/201e1f2bd8bc4dde841e80ad94035b9e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/201e1f2bd8bc4dde841e80ad94035b9e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 简单地说，CSS 媒体查询根据浏览器视窗的断点来给元素设置不同的样式规则：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2f7dd7dfbbd64cbd987ab2950a1e6476~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2f7dd7dfbbd64cbd987ab2950a1e6476~tplv-k3u1fbpfcp-zoom-1.png)
 
 比如：
 
@@ -452,15 +452,15 @@ CSS 媒体查询也是一个复杂的体系，所涉及到的知识点较多，�
 
 另外，除了在布局发生显著变化时选择主断点之外，针对微小的变化进行调整时，你可以设置次断点，这样也很有帮助。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4e4ebe2562d74082949f3ae0c0869d64~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4e4ebe2562d74082949f3ae0c0869d64~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 当然，如果你不想追求极致的话，可以考虑几个常用的断点：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/eb5dcf5917144a51a1171a2275b794cd~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/eb5dcf5917144a51a1171a2275b794cd~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 虽然说分主，次断点能给响应式 Web 布局带来更极致的体验，但对于 Web 开发者而言，开发成本和维护成本也随断点数量增加而增加。而且，常用断点可以满足大部分场景。比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/41dde3c6c6cc48ae984eb00016d85976~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/41dde3c6c6cc48ae984eb00016d85976~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这里，我们仅向大家展示了 CSS 媒体查询最基本的功能，使用 `min-width` 或 `max-width` 来指定不同断点的条件。假设，你需要在 `480px` 断插入一个断点，请在 CSS 的末尾为布局创建两个媒体查询，一个在浏览器视窗宽度处于 `480px` 及以下时使用，另一个在浏览器宽度大于 `480px` 时使用：
 
@@ -476,11 +476,11 @@ CSS 媒体查询也是一个复杂的体系，所涉及到的知识点较多，�
 
 最后，请重构 CSS。在`max-width`为`480px`的媒体查询中添加仅适用于小屏幕的 CSS。在`min-width`为`481px`的媒体查询中添加适用于更大屏幕的 CSS。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3be88067433f4cebb4c6eb88ae3af4a8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3be88067433f4cebb4c6eb88ae3af4a8~tplv-k3u1fbpfcp-zoom-1.png)
 
 不知道大家和我是否有同样的感觉，在 `@media` 中使用 `min-width` 或 `max-width` 时，总是傻傻分不清楚，易于搞错。要告诉大家的是，自 [CSS Media Queries Level 4](https://www.w3.org/TR/mediaqueries-4/) 开始，我们可以使用较为熟悉的数学表达式了，在媒体条件中使用 `>` 、`>=` 、`<` 或 `<=` 等数学表达式：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/328be8cd992a41798e2ef6c6a3dace60~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/328be8cd992a41798e2ef6c6a3dace60~tplv-k3u1fbpfcp-zoom-1.png)
 
 上图中使用 `@media` 语法表达的话，像下面这样：
 
@@ -514,7 +514,7 @@ CSS 媒体查询也是一个复杂的体系，所涉及到的知识点较多，�
 
 除此之外，[CSS Media Queries Level 5](https://www.w3.org/TR/mediaqueries-5/) 引入了一些用户偏好的媒体查询设置：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3d48817ebe5041c7bcd2acdec7c9cd25~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3d48817ebe5041c7bcd2acdec7c9cd25~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这些媒体查询特性可以用来构建响应用户需求的响应式。这已是下一代响应式 Web 中的一部分，我们稍后会介绍。
 
@@ -526,15 +526,15 @@ CSS 媒体查询也是一个复杂的体系，所涉及到的知识点较多，�
 
 时至今日，虽然已是移动终端的天下，但如果要给不同终端提供设计稿的话，Web 设计师还是会为不同的设备终端提供不同的设计稿。比如，为不同的设备视窗尺寸（如手机、平板和桌面端）提供不同的设计稿：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/15ace11cf4f74efa94c19411e30043b5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/15ace11cf4f74efa94c19411e30043b5~tplv-k3u1fbpfcp-zoom-1.png)
 
 我们来看下简化后的不同版本的设计线框图，如下所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fe097cd7d8b54a75a0484296332fb820~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/fe097cd7d8b54a75a0484296332fb820~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在上图中，设计师为卡片（Card）组件提供了三种不同的 UI 效果。虽然卡片在不同设备视窗下有着不同的 UI 效果，但它们构成的元素是相同，都有卡片容器、卡片缩略图、卡片标题 和 卡片描述等：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/60a46c56db3b4252b1566b2ad22314e0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/60a46c56db3b4252b1566b2ad22314e0~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 作为 Web 设计师，已经使用了多个版本的布局来展示同一个组件三种不同状态下的 UI 变化。可以说把足够多的信息传递给了 Web 开发者！到这一步，Web 设计师已给 Web 开发者提供了具有响应式的 Web 设计稿。
 
@@ -665,19 +665,19 @@ CSS 媒体查询也是一个复杂的体系，所涉及到的知识点较多，�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a456401c96db433a9ba7835d9229eeb2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a456401c96db433a9ba7835d9229eeb2~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/abjZwgw>
 
 这种方式只能适合于**同一组件独立存在于不同断点下** 。如果同一组件的两种（或多种）效果存在于同一断点下时，上面的示例代码就无法达成所需效果了。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8fd9825738294dffb3b48b21083dba6d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8fd9825738294dffb3b48b21083dba6d~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/bGjerYd>
 
 正如你所看到的，移动端（Mobile）和平板端（Tablet）都能符合设计稿所示的效果，但在桌面端（Desktop）有两种 UI 的卡片存在。上面的示例代码就无法达到设计稿的效果。此时，为了满足该设计效果，我们需要额外添加一些类名，在同一断点下为不同 UI 的卡片组件设置样式：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8aa36cda7c934a598e7ef493c5f9f470~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8aa36cda7c934a598e7ef493c5f9f470~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```CSS
 /* Mobile */
@@ -824,23 +824,23 @@ CSS 媒体查询也是一个复杂的体系，所涉及到的知识点较多，�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/34cb5e3b6f4e4c168eb428bb482e6a29~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/34cb5e3b6f4e4c168eb428bb482e6a29~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/rNrLqKo>
 
 看上去是不错，但问题是，只有当视窗宽度大于一个特定的值时（常指的分辨率断点值），相应的组件变体才会生效，比如当视窗宽度大于 `1024px` 时，`.card--feature` 卡片 UI 效果才生效。换句话说，如果在平板端无法看到 `.card--feature` 卡片效果，那是因为它要媒体查询在 `1024px` 或更大的视窗宽度下才会生效。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5ecd843229484469ad0dc6fee320d858~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5ecd843229484469ad0dc6fee320d858~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 不仅如此，Web 的内容是动态的，有的时候输出的内容可能和设计预定的卡片数量不相符，在这种情况之下，要么会有一个空的空间，要么卡片会扩展以填补容器的剩余（或可用）空间。
 
 比如我们这个示例中，在视窗宽度为 `768px` 或更大的视窗宽度中，`.card--feature` 都有可能出现这样的场景。如果你的卡片容器 `.container` 不是使用 CSS Grid 的 RAM 布局，而是采用的 CSS Flexbox 布局，那卡片 `.card` 还可能出现跨越多列的现象：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/baad18730c9e4ca2a48724ee037bc570~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/baad18730c9e4ca2a48724ee037bc570~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 上图只是 Web 开发者基于 CSS 媒体查询实现的响应式卡片布局效果。但这可能并不是设计师真正的意图，设计师的意图可能是像下图这样：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fc825efa4b8642a5817395fb9b63714c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/fc825efa4b8642a5817395fb9b63714c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在这种场景之下，使用 CSS 媒体查询特性实现起来会比较棘手，但使用 CSS 容器查询特性就会容易得多，我们可以通过查询卡片父容器来决定如何显示卡片去解决这些问题（稍后会介绍）。
 
@@ -896,13 +896,13 @@ Web 设计师现在要克服的挑战是，目前的响应式 Web 设计方法�
 
 这只是 CSS 的 `@media` 最基础的一部分规则，事实上，`@media` 规则大约包含了 `24` 个可供查询的特性，其中大约 `19` 个查询规则得到较好的支持。其中有些新增的查询特性是用来改善用户体验的，比如 [Media Queries Level 5](https://www.w3.org/TR/mediaqueries-5/#mf-user-preferences) 规范中的第十一部分，能够让你根据用户自身的特定偏好和需求来设计 Web 体验。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5c7a59b3a3ec424eba512f3359b634e9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5c7a59b3a3ec424eba512f3359b634e9~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 也意味着这些新增的媒体查询特性允许你根据用户的偏好来调整用户的体验。
 
 现在很多设备提供了一些用户偏好的设置。比如在 Mac 电脑上，用户可以根据自己喜好做一些设置：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/072b37a9f8b74df88a518498935150b8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/072b37a9f8b74df88a518498935150b8~tplv-k3u1fbpfcp-zoom-1.png)
 
 CSS 媒体查询提供了一些用户喜好的查询特性，这些特性可以识别出用户在系统上的偏好设置，帮助 Web 开发者构建更加健壮和个性化的 Web 体验，特别是对于那些具有可访问性需求的用户。
 
@@ -910,7 +910,7 @@ CSS 媒体查询提供了一些用户喜好的查询特性，这些特性可以�
 
 Web 页面或应用少不了用一些动效来点缀，但有些用户不喜欢这些动画效果，甚至对于少数用户来说，这些动效会让他们身体不适。这就是为什么现在大多数设备都支持用户根据自己的喜好来做设置。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c735fd4782a94f24a19a4bd77e5e7241~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c735fd4782a94f24a19a4bd77e5e7241~tplv-k3u1fbpfcp-zoom-1.png)
 
 `prefers-reduced-motion` 媒体查询用于检测用户的系统是否被开启了动画减弱功能。比如下面的这个示例，将会展示一组令人心烦的动画，不过当你开启了系统的“减少运动”后，就能看到动画减弱的效果了。
 
@@ -926,7 +926,7 @@ Web 页面或应用少不了用一些动效来点缀，但有些用户不喜欢�
 } 
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cea8cad3360445bd95a54af7e2d011ca~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/cea8cad3360445bd95a54af7e2d011ca~tplv-k3u1fbpfcp-zoom-1.gif)
 
 示例效果演示的是 `prefers-reduced-motion` 媒体特性如何让 `animation` 停止，其实 CSS 的 `transition` 也可以实现动画效果，加上并不是所有设备对动效都有很好的性能支持（毕竟动效是较耗性能的），因此，我们可以像下面这样来写 CSS：
 
@@ -966,7 +966,7 @@ Web 页面或应用少不了用一些动效来点缀，但有些用户不喜欢�
 
 你可能知道了，macOS 系统和 iOS13 之后，苹果设备具备 **Dark Mode 效果** ，就是用户可以根据自己的喜好来选择系统提供的色系：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/35ee4ccb1342443eafb267f14eb75aad~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/35ee4ccb1342443eafb267f14eb75aad~tplv-k3u1fbpfcp-zoom-1.gif)
 
 使用 `prefers-color-scheme` 查询特性可以让你对用户是否打开了设备上 Dark Mode 来做出响应。
 
@@ -990,7 +990,7 @@ Web 页面或应用少不了用一些动效来点缀，但有些用户不喜欢�
 } 
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c780f0cdb8cf4c48bed02098e87fe8d9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c780f0cdb8cf4c48bed02098e87fe8d9~tplv-k3u1fbpfcp-zoom-1.png)
 
 我们来看一个具体的案例：
 
@@ -1081,13 +1081,13 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a9a7d55f9f444060999740a569c72cd1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a9a7d55f9f444060999740a569c72cd1~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/rNrLoGw>
 
 使用 `prefers-color-scheme` 来定制不同外观主题时，还可以和 `theme-color` 以及 `color-scheme` 结合起来使用。这将能控制系统应用的（比如浏览器）主题颜色：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/188e9fcbb7de4da788e8a7f906974bf3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/188e9fcbb7de4da788e8a7f906974bf3~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 而 `color-scheme` 这个 CSS 属性和 `<meta>` 的 `name` 为 `theme-color` 是相同的。它们都是让开发者更容易根据用户的喜好设置来控制 Web 应用或页面的主题，即**允许开发者根据用户喜好设置添加特定的主题样式** 。
 
@@ -1129,11 +1129,11 @@ body {
 
 请注意，`<fieldset>` 元素的背景颜色是如何根据是否启用了深色模式而改变的，它遵循了开发者在页面上提供的内联样式表的规则。它要么是 `gainsboro`，要么是 `darkslategray`。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/08ca64f90b024dcba468ac537f694c7e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/08ca64f90b024dcba468ac537f694c7e~tplv-k3u1fbpfcp-zoom-1.png)
 
 上图是亮色模式（`light`）下，由开发者和用户代理指定的样式。根据用户代理的样式表，文本是黑色的，背景是白色的。`<fieldset>` 元素的背景颜色是 `gainsboro`，由开发者在内联的式表中指定颜色。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/83a5e465f672432595672b43ce44eb32~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/83a5e465f672432595672b43ce44eb32~tplv-k3u1fbpfcp-zoom-1.png)
 
 上图是暗色模式（`dark`）下，由开发者和用户代理指定的样式。根据用户代理的样式表，文本是白色的，背景是黑色的。`<fieldset>` 元素的背景色是 `darkslategray`，由开发者在内联样式表中指定颜色。
 
@@ -1143,21 +1143,21 @@ body {
 
 `border-top-color` 和 `border-bottom-color` 的计算值从 `rgba(0,0,0,.847)`（偏黑）切换到 `rgba(255, 255, 255, .847)`（偏白），因为用户代理根据颜色方案动态地更新 `ButtonFace`，同样适用于 `<button>` 元素的 `color` 属性，它被设置为相应的系统颜色`ButtonText` 。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1764f3bc0231453bbc6b383651d023ab~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1764f3bc0231453bbc6b383651d023ab~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 看上去不错，但这也引出另一个新的概念，[系统颜色](https://drafts.csswg.org/css-color/#css-system-colors)。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5d85882dc94542ccaa4831b4f7fa4171~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5d85882dc94542ccaa4831b4f7fa4171~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 再回过头来看 `theme-color` 的一个示例。它能和一些组件一起实现一些不一样的交互效果。比如和进度条组件（Progress Bar）结合起来，可以实现，在完成不同的步数就改变 `theme-color` 的值：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b16a77c602e64810ba3a57f70705f8bc~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b16a77c602e64810ba3a57f70705f8bc~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/poZbqKR>
 
 点击示例中的 “next” 和 “pre” 按钮，就能看到标签栏颜色随之改变：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9050b0f2eb294ae3b95f9140879f1876~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9050b0f2eb294ae3b95f9140879f1876~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 #### prefers-reduced-data
 
@@ -1179,7 +1179,7 @@ body {
 
 当用户在设备上开启了 “Low Data Mode”（低数据模式），会加载占流量更低的 `light.avif` 图像，可以帮助iPhone 上的应用程序减少网络数据的使用：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/306c6d4c878b4c5580823b7c8c199c95~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/306c6d4c878b4c5580823b7c8c199c95~tplv-k3u1fbpfcp-zoom-1.png)
 
 插个题外话，上面提到的这三个媒体查询特性主要是运用于 CSS 中，但它们还可以和 HTML 的 `<picture>` 元素的 `<source>` 标签元素结合起来使用。可以根据用户对设备的偏好设置来选择不同的图片源：
 
@@ -1208,7 +1208,7 @@ body {
 
 媒体查询主要用于检测用户是否要求系统增加或减少相邻颜色之间的对比度。比如一些喜欢阅读电子书的用户，在阅读与文本背景对比度相差不大的文本时会遇到困难，他们更喜欢较大的对比度，利于阅读。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5158c663a7604d91bcea051989be662b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5158c663a7604d91bcea051989be662b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 比如像下面这个示例：  
 
@@ -1357,7 +1357,7 @@ main p {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/37510eafa002425eac4de0117d03e0bf~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/37510eafa002425eac4de0117d03e0bf~tplv-k3u1fbpfcp-zoom-1.image)
 
 > Demo 地址：<https://codepen.io/airen/full/BaPzvbo>
 
@@ -1371,15 +1371,15 @@ main p {
 
 折叠设备在市场上已经存在多年，你可能已经接触过像下图这样的一些设备：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ab483b6c1c7c48b1af4bc260b03dcb2a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ab483b6c1c7c48b1af4bc260b03dcb2a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 大致主要分为两种类型，双屏可折叠设备（如 Microsoft Surface Duo）和单屏可折叠设备（如 Huawei Mate XS）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c10f2a9c51ef411b80343121f44e4fd1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c10f2a9c51ef411b80343121f44e4fd1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在多屏幕或可折叠设备上，Web 应用或 Web 页面在这些设备上的打开姿势也将会有所不同，应用可以单屏显示，也可以跨屏显示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3704992cab1c47238b0318b9e299cd9e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3704992cab1c47238b0318b9e299cd9e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 换句话说，我们的应用或页面要具备这种跨越屏幕的能力，也要具备响应这种跨越的能力，以及还可能需要具备逻辑分隔内容的能力等。
 
@@ -1395,25 +1395,25 @@ main p {
 
 [@argyleink](https://github.com/argyleink) 在 Github 上发起了一个使用 CSS 媒体特性来检测折叠屏的讨论。也就是说，Web 开发者可以使用`@media` 相关的特性来识别折叠屏，为折叠屏的类型（比如“有缝”和“无缝”）提供相应的媒体查询。 比如，我们可以使用 `screen-spanning` 这个特性可以用来帮助 Web 开发人员检测“根视图”是否跨越多个相邻显示区域，并提供有关这些相邻显示区域配置的详细信息。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/758143c70a4d4f8ea2d7c942e7f1f0e4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/758143c70a4d4f8ea2d7c942e7f1f0e4~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 也可以使用 `screen-fold-posture` 和 `screen-fold-angle` 两个媒体查询来对无缝设备进行查询：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e6a4d38f61104a6595205f1253012f01~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e6a4d38f61104a6595205f1253012f01~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 还可以使用 `horizontal-viewport-segments` 和 `vertical-viewport-segments` 查询视口的数量：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a2bc43c9a48a4545bc25e1cb301ae8f9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a2bc43c9a48a4545bc25e1cb301ae8f9~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 `horizontal-viewport-segments` 和 `vertical-viewport-segments` 是最新的两个查询特性，它们将替代最初的 `screen-spanning` 这个媒体查询特性！
 
 除此之外，还可以通过一些折叠姿势来进行查询：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b6e912108d134f53ae86446c38a25e81~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b6e912108d134f53ae86446c38a25e81~tplv-k3u1fbpfcp-zoom-1.png)
 
 除了 CSS 媒体查询之外，还引入了六个新的 CSS 环境变量，以帮助开发者计算显示区域的几何形状，计算铰链区域被物理特征遮挡的几何形状：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/16bbfc0c50284fc4909fdb04742caf8d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/16bbfc0c50284fc4909fdb04742caf8d~tplv-k3u1fbpfcp-zoom-1.image)
 
 上图中展示的这六个 CSS 环境变量将替代以前的 `env(fold-top)`、`env(fold-left)`、`env(fold-width)` 和 `env(fold-height)`。
 
@@ -1464,7 +1464,7 @@ main {
 } 
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2f49f183439f46ba9032b2c8225d89d0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2f49f183439f46ba9032b2c8225d89d0~tplv-k3u1fbpfcp-zoom-1.gif)
 
 @Stephanie 在她的最新博文《[Building Web Layouts For Dual-Screen And Foldable Devices](https://www.smashingmagazine.com/2022/03/building-web-layouts-dual-screen-foldable-devices/)》中也向大家提供了[一个示例](https://www.stephaniestimac.com/demos/smashing-ds-demo)，演示了按屏幕数量（`horizontal-viewport-segments: 2`）查询的示例：
 
@@ -1521,7 +1521,7 @@ img {
 
 上面是从示例中截取的有关于布局的关键代码。最终效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6d5acc8f39af4be884708053a75a7008~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6d5acc8f39af4be884708053a75a7008~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://stephaniestimac.com/demos/smashing-ds-demo/>
 
@@ -1537,7 +1537,7 @@ body {
 
 在不同的终端上看到的效果如下（比如 PC 机显示器上，移动设备上和折叠设备）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/430679a64aa64d858d93a11abcea4b81~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/430679a64aa64d858d93a11abcea4b81~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 使用 `@media` 可以在手机上设置一个 `green` 背景色：
 
@@ -1551,7 +1551,7 @@ body {
 
 这个时候，手机上的背景颜色变成了绿色：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d12ff9c6c2644f59bada78c9362efce2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d12ff9c6c2644f59bada78c9362efce2~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如果把 `screen-spanning` 媒体查询加进来，可以给折叠设备设置另一个背景颜色：
 
@@ -1565,7 +1565,7 @@ body {
 
 这个时候，三种不同类型设备`body` 背景颜色将分别是 `orange`，`green` 和 `yellow`：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/59b8d4f7c3ff4767b4f56a64221fb76a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/59b8d4f7c3ff4767b4f56a64221fb76a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 按类似的方式，我们可以使用 CSS 的 Grid、`env()` 和 `screen-spanning` 构建一个更复杂的布局。比如：
 
@@ -1632,7 +1632,7 @@ body {
 
 在浏览器中打开这个页面，看到的效果会像下图这样：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6db09e5b0af84c6998b0eb8b9ecb9859~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6db09e5b0af84c6998b0eb8b9ecb9859~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在上面基础上使用 `@media` 给 iPhone 和 iPad 中改变布局：
 
@@ -1672,7 +1672,7 @@ body {
 
 效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5d06a5ae71254ef8bff37810814593de~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5d06a5ae71254ef8bff37810814593de~tplv-k3u1fbpfcp-zoom-1.gif)
 
 使用 `screen-spanning`、`env()` 和 `calc()` 给像微软 Surface Due 这样的折叠设备添加样式：
 
@@ -1711,7 +1711,7 @@ body {
 
 你可以在模拟器上看到像下图这样的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3881a55737e44946970539dc6eb48cff~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3881a55737e44946970539dc6eb48cff~tplv-k3u1fbpfcp-zoom-1.gif)
 
 如果你感兴趣的话，可以使用折叠屏API中提供的 `screen-fold-posture` 或 `screen-fold-angle` 给像三星Galaxy Fold、三星 Galaxy Flip Z 折叠设备提供不同的布局效果。要是你有华为 Mate x 设备，也可以尝试着改写上面的 Demo，查看效果。
 
@@ -1719,7 +1719,7 @@ body {
 
 虽然现在 VR 和 AR 用于其他行业的场景还很少见，但我们可以预见，在 VR 和 AR 设备越来越成熟和更多的设备发布之后，我们看到 VR 和 AR，就像我们已经看到几十年前的触摸屏设备一样。或许有一天，你设计（或开发）的 Web 页面或应用就能在 VR 和 AR 设备上有一个较好的呈现。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9be7bd2a309a456bb9c8990e5632d868~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9be7bd2a309a456bb9c8990e5632d868~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > 上图来自于《[UX Case Study: Metaverse Banking VR / AR Design Concept of the Future](https://www.theuxda.com/blog/how-online-banking-design-should-work-ux-case-study)》一文。UXDA的专业金融用户体验架构师和设计师团队向您介绍第一个混合现实银行概念，包括 VR 和 AR 银行设计、平板电脑、可穿戴设备、桌面和移动银行 UI / UX。
 

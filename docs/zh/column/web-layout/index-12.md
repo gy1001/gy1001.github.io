@@ -36,7 +36,7 @@
 
 `grid-template-columns` 和 `grid-template-rows` 分别相对于网格容器的 `width` 和 `height` ，可以计算出网格轨道（列轨道和行轨道）尺寸。如下所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/15d4dc6f2306408abd5a08dedb2d2b9d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/15d4dc6f2306408abd5a08dedb2d2b9d~tplv-k3u1fbpfcp-zoom-1-20250412203516731.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/ZEoVxNe>
 
@@ -57,7 +57,7 @@
 
 众所周知，当 `width` 值为 `100%` 且该元素显式设置了 `padding` 或 `border-width` 值时，并且 `box-sizing` 不是 `border-box` 时，设置宽度为 `100%` 的元素就会溢出容器；或者 `width` 为 `100%` 的元素碰到外边距 `margin` 也会引起元素溢出容器：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8772c0f25c20465383c772e95b560621~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8772c0f25c20465383c772e95b560621~tplv-k3u1fbpfcp-zoom-1-20250412203521154.jpeg)
 
 在网格布局中同样会有类似的现象。当网格轨道的值都是百分比值，而且总值是 `100%` 时，要是加上 `gap` 设置网格轨道间距，就会造成总值超过网格容器，网格就会溢出。这是因为，网格轨道取值百分比时，它是基于网格容器的大小计算，并不会关心网格容中的其他情况。
 
@@ -76,7 +76,7 @@
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/48ea1ed402694b7fa792e179e53306fb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/48ea1ed402694b7fa792e179e53306fb~tplv-k3u1fbpfcp-zoom-1-20250412203524317.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/bGMzVgz>
 
@@ -105,7 +105,7 @@
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/207390b724944ea7a8b8b68f6b3100a5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/207390b724944ea7a8b8b68f6b3100a5~tplv-k3u1fbpfcp-zoom-1-20250412203527504.jpeg)
 
 不过，这一现象在网格中的表现却有所不同。网格轨道的尺寸值总和是 `100%` ，这个时候在网格项目上设置 `margin` 值时，并不会致使网格溢出容器，只会让网格项目距所在单元格（或网格区域）四边有一定的间距（`margin` 值）。它表现出来的现象就像是网格项目向内收缩一样：
 
@@ -121,7 +121,7 @@
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8e1ccfb815e64acfbb7e8458b0608733~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8e1ccfb815e64acfbb7e8458b0608733~tplv-k3u1fbpfcp-zoom-1-20250412203530452.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/BaxMjbL>
 
@@ -142,7 +142,7 @@
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e25efb9d4cd94ce79501bb8276c958c0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e25efb9d4cd94ce79501bb8276c958c0~tplv-k3u1fbpfcp-zoom-1-20250412203533040.jpeg)
 
 正如你所看到的，网格溢出了容器。
 
@@ -159,7 +159,7 @@
 
 你将看到，使用 `fr` 单位的网格，即 `gap` 设置的值为`20px` 也不会让网格溢出容器：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/29d347af74be4ad284157d5a11ced44d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/29d347af74be4ad284157d5a11ced44d~tplv-k3u1fbpfcp-zoom-1-20250412203535524.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/xxjMOKV>
 
@@ -180,7 +180,7 @@
 - 当第二列轨道变大时，第一列和第三列就会变小；
 - 当第二列轨道变小时，第一列和第三列就会变大。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/10946ba807894e31b53945d41681f473~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/10946ba807894e31b53945d41681f473~tplv-k3u1fbpfcp-zoom-1-20250412203539883.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/NWMoNxa>
 
@@ -192,7 +192,7 @@
 
 网格轨道使用 `fr` 单位时，一般会按下面公式来计算：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/315892da25114b3bb75fdf965fb50ca2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/315892da25114b3bb75fdf965fb50ca2~tplv-k3u1fbpfcp-zoom-1-20250412203542680.jpeg)
 
 公式中所谓的**弹性系数指的就是设置了** **`fr`** **单位的值** ，即：
 
@@ -252,7 +252,7 @@
 
 所有列网格轨道的尺寸都设置为 `min-content` 。在 Flexbox 的课程中我们介绍过 `min-content` 值，放到网格布局中是一样的，它对应的就是所在网格项目最小内容的长度。在我们这个示例中，这个时候网格容器会有一定的剩余空间出现：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/989ad249a92d402483080d7c4b0ee275~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/989ad249a92d402483080d7c4b0ee275~tplv-k3u1fbpfcp-zoom-1-20250412203546080.jpeg)
 
 前面说了，设置了 `fr` 单位的网格轨道就是弹性网格轨道，它能像 Flexbox 布局中的设置了 `flex:auto` 的 Flex 项目一样，按照相应的弹性系数来分配空间（在网格中分配的是可用空间）。比如每个列网格轨道都显式设置是 `1fr` ：
 
@@ -287,7 +287,7 @@
 
 但事实上并非如此，浏览器计算出来的结果不是你想象的那样，每个列网格轨道尺寸是 `200px` ，实际计算出来的如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1dfc472f412d4d14acbfd681dd172e32~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1dfc472f412d4d14acbfd681dd172e32~tplv-k3u1fbpfcp-zoom-1-20250412203549503.jpeg)
 
 造成这种现象，是因为第三列网格轨道触发了最小尺寸的现象（它的最小尺寸是 `220px`）。简单地说，计算出来的网格轨道尺寸不能小于其内容的最小尺寸（即计算出来的 `1fr` 尺寸`200px` 小于`min-content` 的尺寸`220px`），即**计算出来的值不能小于 `min-content`** 。
 
@@ -299,7 +299,7 @@
 
 这就是为什么浏览器计算出来的第一、二和四列网格轨道尺寸是 `193.33px` ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f36e07254da0483b9a8f7d0491b57f63~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f36e07254da0483b9a8f7d0491b57f63~tplv-k3u1fbpfcp-zoom-1-20250412203552121.jpeg)
 
 浏览器在计算网格轨道的尺寸时是循环遍历的一个过程。要是重新计算出来的网格轨道尺寸小于其最小尺寸，就需要再次按照上面的方式进行计算，直到符合要求为止。
 
@@ -326,7 +326,7 @@
 网格列轨道4尺寸 = 1fr × 800px ÷ 5fr = 1 × 800 ÷ 5 = 160px
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2282abbd84484e24a94def1a80a53643~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2282abbd84484e24a94def1a80a53643~tplv-k3u1fbpfcp-zoom-1-20250412203556340.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/wvjNWYb>
 
@@ -363,7 +363,7 @@ grid-template-columns: 1fr 1fr 220px 1fr;
 网格列轨道4尺寸 = 1fr × (800px - 220px) ÷ 3fr = 1 × 580 ÷ 3 = 193.33px
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ef1b42b2a1af4148830d6e6f2c7302db~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ef1b42b2a1af4148830d6e6f2c7302db~tplv-k3u1fbpfcp-zoom-1-20250412203559508.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/wvjNReB>
 
@@ -403,7 +403,7 @@ gap: 20px;
 网格列轨道4尺寸 = 1fr × (800px - 220px - 20px × 3) ÷ 3fr = 1 × 520 ÷ 3 = 173.33px
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ed9f58fce30c470faf71c54285b30df5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ed9f58fce30c470faf71c54285b30df5~tplv-k3u1fbpfcp-zoom-1-20250412203602855.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/YzLBBXz>
 
@@ -442,13 +442,13 @@ gap: 20px;
 网格列轨道4尺寸 = 0.5fr × (800px - 220px - 20px × 3) ÷ 1.5fr = 0.5 × 520 ÷ 1.5 = 173.33px
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ce88d4d05aa54d7caa98ca16cf2b064c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ce88d4d05aa54d7caa98ca16cf2b064c~tplv-k3u1fbpfcp-zoom-1-20250412203605916.jpeg)
 
 该示例的所有弹性列网格轨道总系数是 `1.5fr` ，它大于 `1fr` 。网格布局中 **`1` 个 `fr` （即 `1fr`）就是 `100%`** 网格容器可用空间，也正因为如此，弹性列网格轨道把网格容器可用空间都按弹性系数分完了，**网格容器也就不会有任何的剩余空间产生**。
 
 既然弹性总和会有大于等于`1` 的情况，那也有可能会是小于 `1` 的情景。在网格布局中，如果弹性网格系数总和小于 `1` ，那计算 `fr` 的值就不能再使用前面的计算公式了，它需要按照下面的公式来计算网格轨道尺寸：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/be5508b4e1bc4841982f62bd03605ff6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/be5508b4e1bc4841982f62bd03605ff6~tplv-k3u1fbpfcp-zoom-1-20250412203608701.jpeg)
 
 > **注意，你可以不改变计算公式，只不过当弹性系数小于 `1`** **时，那么** **`1fr`** **就是网格容器可用空间** !
 
@@ -487,7 +487,7 @@ gap: 20px;
 
 计算之后的所有列网格轨道的尺寸总和是 `584px` （即 `156px + 104px + 220px + 104px = 584px`），即使加上列网格轨道之间的间距，总占用网格容器的空间是`644px` （`584px + 20px × 3 = 644px`），都小于网格容器的可用空间 `800px` 。也就是说，**当所有网格轨道弹性系数（****`fr`****）之和小于** **`1`** **时，它们将占用小于** **`100%`** **的网格容器的可用空间，即网格容器会有剩余空间出现** 。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e0320d765d784dd1a3c5010b2e63514c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e0320d765d784dd1a3c5010b2e63514c~tplv-k3u1fbpfcp-zoom-1-20250412203611600.jpeg)
 
 值得注意的是，当网格轨道的弹性系数是一个小于 `1` 的值时，更易于触及网格轨道最小尺寸的边缘。
 
@@ -564,7 +564,7 @@ gap: 20px;
 网格列轨道4尺寸 = min-content = 75.38px
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/497468ee3c9444d385561b65fc7a66e4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/497468ee3c9444d385561b65fc7a66e4~tplv-k3u1fbpfcp-zoom-1-20250412203615705.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/XWqOOpy>
 
@@ -576,7 +576,7 @@ gap: 20px;
 
  使用饼图可以很形象地描述`fr`：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/90bd56460a144ea6b88badeed11d63b9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/90bd56460a144ea6b88badeed11d63b9~tplv-k3u1fbpfcp-zoom-1-20250412203618878.jpeg)
 
 **注意，一个饼图（圆）就相当于网格容器的可用空间，分割的份数就相当于设置了弹性系数的网格轨道** 。
 
@@ -600,7 +600,7 @@ gap: 20px;
 
 每列网格轨道宽度都是网格容器可用空间（`800px`）的 `25%`，即：`800px × 25% = 200px`：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3a552cdf095142d99097dd0263bf0caf~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3a552cdf095142d99097dd0263bf0caf~tplv-k3u1fbpfcp-zoom-1-20250412203622039.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/mdLvYME>
 
@@ -614,7 +614,7 @@ gap: 20px;
 
 网格“Nick”列轨道溢出了网格容器：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4a44debe3a74424297ac992ceb88a95e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4a44debe3a74424297ac992ceb88a95e~tplv-k3u1fbpfcp-zoom-1-20250412203624782.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/rNvPgRg>
 
@@ -637,7 +637,7 @@ gap: 20px;
 
 重新计算并设置网格列轨道值之后，网格列不会溢出网格容器了，但每列的列宽就变了，但还是保持了“Tom”列宽是其他列宽的两倍：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c19d05ea2f11485396c80c743efafc87~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c19d05ea2f11485396c80c743efafc87~tplv-k3u1fbpfcp-zoom-1-20250412203627162.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/NWMoZGL>
 
@@ -651,7 +651,7 @@ gap: 20px;
 
 新增的“Tony”列将会溢出网格容器：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ce6e8b46f60e4b618aa32c5f0ae89d20~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ce6e8b46f60e4b618aa32c5f0ae89d20~tplv-k3u1fbpfcp-zoom-1-20250412203629469.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/QWrYXvY>
 
@@ -676,7 +676,7 @@ gap: 20px;
  } 
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4f92b645f8c249cb89b3459d3beba333~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4f92b645f8c249cb89b3459d3beba333~tplv-k3u1fbpfcp-zoom-1-20250412203631929.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/wvjNLjR>
 

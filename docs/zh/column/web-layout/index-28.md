@@ -10,11 +10,11 @@ CSS 的媒体查询引发了一场响应式 Web 设计的革命，为开发者�
 
 一直以来，CSS 容器查询都是大家期待的一个特性，在这几年的 CSS 发展报告中，它一直位居第一：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/18f52d4afa58406b8dcb466de9ca9605~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/18f52d4afa58406b8dcb466de9ca9605~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 通过前面课程的学习，我们知道了。在 CSS 中，Web 开发者可以根据 CSS 媒体查询特性（通常是视窗宽度、媒体设备特性等）来为 Web 页面定制不同的表现形式，比如可以根据用户浏览内容的设备特性来呈现不同的布局、字体大小和图片等。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a049e0660b06465a8d50e8badaa5d0b2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a049e0660b06465a8d50e8badaa5d0b2~tplv-k3u1fbpfcp-zoom-1.png)
 
 但对于 Web 设计师或 Web 开发者来说，在现代 Web 设计或布局中仍然缺少一特性，页面的组件设计不能够响应其容器的宽度（或其他特性）。也就是说，如果 Web 开发者能够根据容器宽度来改变 UI 样式，那就更好了。容器查询将在很大程度上帮助 Web 开发者更好地完成他们的工作，在为 Web 开发基于组件代码时，容器查询特性的缺失是一个巨大的限制。
 
@@ -38,17 +38,17 @@ CSS 的媒体查询引发了一场响应式 Web 设计的革命，为开发者�
 
 这个提议已经被 [W3C 的 CSS 工作组](https://drafts.csswg.org/css-contain-3/)采纳，并已经添加到 **[CSS Containment Module Level 3](https://www.w3.org/TR/css-contain-3)** 模块中。有关于该功能的相关问题和各网络平台推进进度，[可以点击这里查阅](https://github.com/w3c/csswg-drafts/projects/18)。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/15fb2c4de8004eada8d8283406fdcc02~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/15fb2c4de8004eada8d8283406fdcc02~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 其实，自从我们在 2021 年 4 月第一次看到容器查询原型以来，它的语法已经更改了几次。庆幸的是，现在容器查询的规范也稳定了，浏览器也准备发布了！现在使用，你也不必担心其语法规则的变化了。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d00258457baf49eba863a203afc1ae64~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d00258457baf49eba863a203afc1ae64~tplv-k3u1fbpfcp-zoom-1.image)
 
 当然，如果你在互联网上阅读 CSS 容器查询相关的教程，看到文章中的示例没有任何效果，很有可能示例使用的是老的语法规则。
 
 直到现在为止（写这篇课程的时间），[CSS 容器查询在现代主流浏览器上都可以查看到相应的效果](https://caniuse.com/css-container-queries)：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c4188c738c2445969576ad058fac47f9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c4188c738c2445969576ad058fac47f9~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 但你要运用于实际生产中，还是需要慎重，或者可以尝试依赖 [CSS 容器查询相关的 Polyfill](https://github.com/GoogleChromeLabs/container-query-polyfill) 来保证其在生产中的正常运行。
 
@@ -60,11 +60,11 @@ CSS 容器查询最大的特点是： **容器查询允许开发者定义任何�
 
 容器查询为响应式 Web 设计提供了一种更加动态的方法。这意味着，如果你卡片组件同时放在侧边栏（`aside`）和页面主内容栏中（`main`），则卡片组件本身可以根据容器（`aside` 和 `main`）而不是浏览器视窗进行响应式的信息展示（卡片组件 UI 不同）。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c7515be040494766bd8fa2fc12c9f295~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c7515be040494766bd8fa2fc12c9f295~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 简化一下，以卡片 `.card` 组件为例。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d9e5f5a03e3944c58894355da448c3a3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d9e5f5a03e3944c58894355da448c3a3~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 同一个卡片组件 `Card` ，它有三种不同的 UI 状态，分别是 `S` 、`M` 和 `L` 。
 
@@ -110,7 +110,7 @@ CSS 容器查询最大的特点是： **容器查询允许开发者定义任何�
 
 也就是说，当卡片组件（`.card`）被放在一个容器（`.card__container`）中时，代表着它被包含在该容器中，比如上面代码中的 `.card__container`。这也意味着，我们可以使用 CSS 的 `container` 来查询 `.card__container` 的宽度，并在 `@container` 对 `.card` 设置不同的样式规则，从而达到设计师真正的意图，比如，容器宽度（`.card__container`）分别在默认、 `>650px`和`>820px` 时，为 `.card` 设置不同样式：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8520402c0a9d45749c76a20fc8ce791e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8520402c0a9d45749c76a20fc8ce791e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 代码可能像下面这样：
 
@@ -331,7 +331,7 @@ CSS 容器查询最大的特点是： **容器查询允许开发者定义任何�
 
 拖动卡片右下角的滑块，改变 `.card__container` 容器大小，你可以看到卡片组件（`.card`）UI 效果的变化：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/15e3014cd1d54e148d3f9bbbbb947736~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/15e3014cd1d54e148d3f9bbbbb947736~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/QWBKdzP>
 
@@ -572,11 +572,11 @@ CSS 包含性上下文提供了一种方法来隔离页面的各个部分，并�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/160504ca68cc439ea42fcf53c5c5884e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/160504ca68cc439ea42fcf53c5c5884e~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/jOpMmZa>
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0052e9d1703a4b26bedbcff91d7ee06c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0052e9d1703a4b26bedbcff91d7ee06c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 正如上图所示， `.product-card-container` 、`.card-button-container` 和 `.cart-icon` 都是一个包含性上下文，因为它们都显式地设置了 `container-type` 的值为 `inline-size` 。如果没有使用 `container-type` 命名，那么像 `.card-button` 会先根据 `.cart-button-container` 查询容器进行查询，因为该包含性上下文离其最近。
 
@@ -584,7 +584,7 @@ CSS 包含性上下文提供了一种方法来隔离页面的各个部分，并�
 
 我想大家对容器查询有了一个初步的认识。接下来，我们把前面示例中的卡片组件放到相应的布局中，比如把卡片分别放置到左侧边栏和主内容栏中：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/77005055ea1d4283b56b9f059a7d2f26~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/77005055ea1d4283b56b9f059a7d2f26~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/yLqawaQ>
 
@@ -697,21 +697,21 @@ CSS 包含性上下文提供了一种方法来隔离页面的各个部分，并�
 
 卡片 `.card` 可以根据其容器 `.card__container` 的宽度调整 UI 布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8f7f449b50b34c35bb1a0a0a5c3828e0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8f7f449b50b34c35bb1a0a0a5c3828e0~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/QWBKdzP>
 
 有了这样一个卡片组件之后，如果将其放在不同的位置，即使是同一页面，同一视窗断点下，也会根据其容器断点自动匹配最为适合的布局（或UI效果）。比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/01f7a34d3b29457bbbe5b6940e9fb554~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/01f7a34d3b29457bbbe5b6940e9fb554~tplv-k3u1fbpfcp-zoom-1.png)
 
 从上图的效果中不难发现，位于侧边栏 `aside` 的卡片组件，它始终能保持下图呈现：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d4fbe8c546e846d5a20a95302a8de9ab~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d4fbe8c546e846d5a20a95302a8de9ab~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 位于 `main` 栏的卡片将会根据 `.card__container` 的宽度有着不同的方式呈现：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b04f3388dc64487e904a1362b6387f6c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b04f3388dc64487e904a1362b6387f6c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 就我们这个示例，`aside` 和 `main` 的布局，我们采用了 CSS 媒体查询，分别在 `768px` 和 `1024px` 断点调整了网格列轨道的尺寸：
 
@@ -783,7 +783,7 @@ main .grid {
 - 大于 `60em` 时，`.grid` 为三列 `repeat(3, 1fr)`；
 - 大于 `80em` 时， `.grid` 为四列 `repeat(4, 1fr)`。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ba0e22a8e4a74d4eab2e19b961f1f251~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ba0e22a8e4a74d4eab2e19b961f1f251~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 关键代码如下：
 
@@ -921,13 +921,13 @@ main {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ed9e41f698734e13ab414b1d9abce2e9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ed9e41f698734e13ab414b1d9abce2e9~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/QWBKRmg>
 
 我们前面有提到过，Web 内容输出是动态的，可能因为卡片的扩展或收缩，CSS Flexbox 布局最终呈现的效果会和设计效果不一致：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8c5815e2204442c69a523773f124c9a2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8c5815e2204442c69a523773f124c9a2~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 但有了 CSS 容器查询特性之后，这一切都变得很简单。就拿上面的示例来说，如果我们使用跨越多列来模拟卡片数量输出的不一致，你会发现，使用了容器查询的卡片会因为其查询容易自动匹配相应的布局效果：
 
@@ -975,7 +975,7 @@ main {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/71c25ebbf4e74fed9283323626190932~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/71c25ebbf4e74fed9283323626190932~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/vYaXqNK>
 
@@ -989,7 +989,7 @@ main {
 
 很多时候，响应式 Web 设计不是关于浏览器视窗尺寸，而是关于容器的尺寸大小，比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6276e844b4854f0cbe16fb927ee38933~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6276e844b4854f0cbe16fb927ee38933~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 庆幸的是，CSS 容器查询的出现，使我们超越了只考虑浏览器视窗尺寸的范围，并允许任何组件或元素对定义的容器尺寸做出响应。因此，虽然你可能仍然使用响应式来给 Web 页面布局，但 Web 页面的任何一个组件都可能通过容器查询来定义自己的样式变化。然后，它可以根据它是在一个窄的还是宽的容器中显示，来调整它的样式。
 
@@ -997,13 +997,13 @@ main {
 
 也就是说，有了 CSS 容器查询，你就能以一种非常精确和可预测的方式定义一个组件的全部样式。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a0e63613edb7428389f3ac57cb5d1884~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a0e63613edb7428389f3ac57cb5d1884~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ## 设计时考虑容器查询
 
 虽然响应式 Web 设计给 Web 设计师带来了更多的可能性，但响应式 Web 设计还是有很多的局限性。对于 Web 设计师而言，更期待的是能够根据组件容器尺寸来提供不同的设计风格。依旧拿卡片组件来举例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2dc3d4b806a743a08bf13aa0dfec7ef4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2dc3d4b806a743a08bf13aa0dfec7ef4~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 也就是说，CSS 容器查询特性来了之后，作为一名 Web 设计师，在设计 Web 页面（或组件）时，就需要基于容器尺寸考虑如何设计。这样一来，可以向 Web 开发人员提供组件的细节和变化，Web 开发人员也可以基于这些细节进行编码（进行开发）。
 
@@ -1015,23 +1015,23 @@ main {
 
 比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/06fbf92e923442e0998f8c5a59ecabc4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/06fbf92e923442e0998f8c5a59ecabc4~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在未来，Web 设计师给 Web 开发者投喂的设计稿可能就会像下图这样了：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/00b0103f11fe4861be272bafb3349749~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/00b0103f11fe4861be272bafb3349749~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 或许因为容器查询的到来，设计师在设计 Web 的时候，也可能会做出相应的调整。投喂给 Web 开发的设计稿也可能会和以往的模式有所差异。那么这个时候，Web 开发者就需要正确理解设计师的意图了。比如，Web 设计师可能在未来的设计中提供向下图的卡片组件设计：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e70a570ffee740ddab9c861cdca7288d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e70a570ffee740ddab9c861cdca7288d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 作为 Web 开发人员，看到上图设计效果，需要改变以往对设计图意图的理解，不能继续执着于基于视窗尺寸来调整组件 UI。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9094d802c2294cb58da5a9380a84c8d4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9094d802c2294cb58da5a9380a84c8d4~tplv-k3u1fbpfcp-zoom-1.png)
 
 上图是基于视窗的一种开发模式，需要为卡片组件设置不同的类名，并且基于视窗尺寸，在相应的类名下调整卡片组件 UI。有了容器特性时，我们可以基于现代的 Web 布局技术，比如 Flexbox 或 Grid 布局，让卡片组件基于其容器来调整其 UI：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1fd2475dbc974b11a9ac5591bba3c394~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1fd2475dbc974b11a9ac5591bba3c394~tplv-k3u1fbpfcp-zoom-1.png)
 
 正如上图所示，可以基于视窗大小采用 CSS 媒体查询特性，Flexbox 或 Grid 布局等技术改变卡片容器 `.card__container` 的大小，从而让卡片组件根据其容器尺寸大小做出相应响应。
 
@@ -1041,13 +1041,13 @@ main {
 
 组件是由很多个元素组合在一起构成的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8153b89132914976bcd69b15ffc1f616~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8153b89132914976bcd69b15ffc1f616~tplv-k3u1fbpfcp-zoom-1.png)
 
 虽然容器查询特性到来，可以让组件根据其容器尺寸来做出响应，但要记住的是，做出响应变化应该要有一个度。如果过度设计的话，对于 Web 开发人员而言，与其使用容器查询特性来实现 UI 响应，还不如重新构建一个独立的全新组件。
 
 拿用户信息组件（`UserProfile`）为例，组件内部结构保持不变，或者至少不会增加新的结构，只需稍加调整，比如调整布局，就可以实现不同的 UI 效果，或者让内部元素显示隐藏切换等。在这种情景之中，采用容器查询特性才能显现其魅力：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8e2b70eece7a4e62ae39bcbe92774aa2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8e2b70eece7a4e62ae39bcbe92774aa2~tplv-k3u1fbpfcp-zoom-1.png)
 
 ```
 .card {
@@ -1168,7 +1168,7 @@ figure {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4bf0a29068fc4cc0bed7bc0f198078a3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4bf0a29068fc4cc0bed7bc0f198078a3~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/JjBRQvG>
 
@@ -1184,17 +1184,17 @@ figure {
 
 简单地说，媒体查询，查询的是浏览器视窗宽度，而容器查询，查询的是组件容器的宽度。这个容器可以是组件的父元素，也可以是其祖先元素。也就是说，如果需要的话，可以在组件顶层容器上进行查询。用下图可以很清晰地阐述媒体查询和容器查询的差异：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a13c522ecf5941f6ba53a858d4d495c1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a13c522ecf5941f6ba53a858d4d495c1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 容器查询和媒体查询两者不是谁替代谁的关系，更应该是两者共存的关系。容器查询特性的出现，我们可以不再局限于视窗断点来调整布局或 UI 样式，还可以基于容器断点来调整布局或 UI 。
 
 换句话说，**媒体查询是一种宏观的布局（Macro Layout），可以用于整体页面布局；而容器查询可以调整组件的每个元素，创建了一种微观的布局（Micro Layout）** 。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bfe193296ef94b0090ef618f691ab311~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/bfe193296ef94b0090ef618f691ab311~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 就拿前面的示例为例。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/98b0b34be6d0462291f97e4879a2a4f8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/98b0b34be6d0462291f97e4879a2a4f8~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/yLqawaQ>
 
@@ -1481,7 +1481,7 @@ main .grid {
 
 搜索表单在一些业务场景很常见，它会根据容器的宽度有不同的状态，这样的搜索组件就非常适用于 CSS 容器查询：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c9fd1c66aeae405d91266d8a8829ce99~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c9fd1c66aeae405d91266d8a8829ce99~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 构建这个搜索表单，可能需要一个这样的 HTML 结构：
 
@@ -1640,7 +1640,7 @@ main .grid {
 
 你将看到的效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4b86a704901a4540bf082911fa7dc1b7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4b86a704901a4540bf082911fa7dc1b7~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/xxJgaEZ>
 
@@ -1648,11 +1648,11 @@ main .grid {
 
 Web 页面导航栏是常见的一个组件，在宽屏和窄屏的时候，它会向用户呈现不同的 UI 效果，如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/377da24573e94e7fad69e14c4a3bda2e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/377da24573e94e7fad69e14c4a3bda2e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 就拿我自己的博客（[www.w3cplus.com](www.w3cplus.com)）航栏为例吧。它也有类似的效果，只不过是使用 CSS 媒体查询实现的，现在我们使用 CSS 容器查询来实现：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1994924745e64cd18a4f2c29eaad28bd~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/1994924745e64cd18a4f2c29eaad28bd~tplv-k3u1fbpfcp-zoom-1.png)
 
 具体代码如下：
 
@@ -1688,7 +1688,7 @@ Web 页面导航栏是常见的一个组件，在宽屏和窄屏的时候，它�
 </div>
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/22e4cb8166a3423182bfaa0ed2fc65ec~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/22e4cb8166a3423182bfaa0ed2fc65ec~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/OJwWovo>
 
@@ -1696,7 +1696,7 @@ Web 页面导航栏是常见的一个组件，在宽屏和窄屏的时候，它�
 
 分页器组件（`Pagination`）类似于导航栏，也很适合于使用容器查询：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8ee84e06935c45e5a3b6f1313a5e6136~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8ee84e06935c45e5a3b6f1313a5e6136~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```
 <nav class="pagination__container">
@@ -1856,7 +1856,7 @@ Web 页面导航栏是常见的一个组件，在宽屏和窄屏的时候，它�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/eaef1633c72d4cc7a0b0b94b64b53548~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/eaef1633c72d4cc7a0b0b94b64b53548~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/VwBPGEr>
 
@@ -1864,11 +1864,11 @@ Web 页面导航栏是常见的一个组件，在宽屏和窄屏的时候，它�
 
 在一些 Web 应用的侧边栏（比如 Gitlab 的侧边栏、Facebook 聊天界面，其实 Web 版本的微信群也有点类似于 Facebook 聊天室）像下图这样的模式：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a91bcb7022ee474791ff40c7a4aa77f5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a91bcb7022ee474791ff40c7a4aa77f5~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 像上图这样的效果，我们可以使用 CSS 容器查询来实现。当有足够的空间时，侧边栏的列表会展开，如果没有足够空间时，侧边栏只会展示 Icon 图标（或用户头像）。我们来实现一个像下图的布局效果。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f32211f443d64fb6ae129e7fdb2f88bc~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f32211f443d64fb6ae129e7fdb2f88bc~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```
 <div class="wrapper">
@@ -2045,7 +2045,7 @@ aside {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/445f2685103a4a02a4dda5fc50756b1d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/445f2685103a4a02a4dda5fc50756b1d~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/KKBaroo>
 
@@ -2091,7 +2091,7 @@ aside {
 
 比如下面这个示例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/70e70650a1b44224b56b3564d2557735~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/70e70650a1b44224b56b3564d2557735~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Dem 地址：<https://codepen.io/airen/full/NWBpRYE>
 
@@ -2162,7 +2162,7 @@ aside {
 
 你知道吗？随着容器查询的出现，CSS 值单位也新增了**容器查询单位**。它的工作原理和视窗单位，比如 `vw` 、`vh` 、`vmin` 、`vmax` 等非常相似。不同的是，**视窗单位是相对于浏览器视窗尺寸计算；容器查询单位是相对于查询容器尺寸计算** ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6ac1159cf2f44ee7952242d709c23213~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6ac1159cf2f44ee7952242d709c23213~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 - `1cqw` 等于查询容器宽度（`width`）的 `1%`；
 - `1cqh` 等于查询容器高度（`height`）的 `1%`；
@@ -2224,13 +2224,13 @@ aside {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c2c118fabbe2405e80d87c753319a99a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c2c118fabbe2405e80d87c753319a99a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > 注意，早期的容器查询单位原型是 `q*` 而不是现在的 `cq*` ，所以可能会在早期的一些容器查询单位的 Demo 中看到类似 `qw` 、`qh` 单位，而且很有可能不能正常运行。
 
 接下来看一个容器查询单位的真实案例，这个案例是 [@Scott Kellum](https://codepen.io/scottkellum) 在 [Codepen 上提供的](https://codepen.io/scottkellum/full/jOwmOZE)，我直接 Fork 了一份出来：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cab59d7f46124dd6b829331e90bff594~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/cab59d7f46124dd6b829331e90bff594~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/rNryMVg>
 
@@ -2302,7 +2302,7 @@ h1,
 
 样式查询仍然处于实验阶段，目前仅在 [Chrome Canary](https://www.google.com/intl/en_sg/chrome/canary/) 中实现。要测试它们，请访问 `chrome://flags` 并激活“Experimental Web Platform features”，将其设置为 `Enabled` 状态：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/47a836af66f546ca94e5b2cee223864a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/47a836af66f546ca94e5b2cee223864a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这样你就可以使用样式查询：
 
@@ -2332,7 +2332,7 @@ h1,
 
 请看下图。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/20d623b746c742deba944b0dbdcca01c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/20d623b746c742deba944b0dbdcca01c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 请注意，容器查询和样式查询的主要区别在于，**容器查询用于查询容器尺寸大小，样式查询用于查询容器样式** 。你可能会感到好奇，既然可以查询容器尺寸大小了，为什么还需要查询容器样式呢？
 
@@ -2340,7 +2340,7 @@ h1,
 
 还是拿卡片组件 `Card` 为例吧：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a3df7e48361e489ebb91680fc9e78453~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a3df7e48361e489ebb91680fc9e78453~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 我们知道，使用容器查询可以很容易实现上图所示的效果：
 
@@ -2496,7 +2496,7 @@ h1,
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/629754c9cf3d423a93a2ead0e710d2b4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/629754c9cf3d423a93a2ead0e710d2b4~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/LYBWWWZ>
 
@@ -2523,7 +2523,7 @@ h1,
 - 容器宽度大于 `400px` ，并且容器中的 `--horizontal` 为 `true` 时，卡片组件会有水平排列的样式；
 - 容器宽度大于 `768px` ，并且容器中的 `--featured` 为 `true` 时，卡片组件会有 Featured 样式网格。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bad77b85ce7244589967b9cff405f842~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/bad77b85ce7244589967b9cff405f842~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/JjBWNPN> （请使用 Chrome Canary 查看 ）
 
@@ -2537,11 +2537,11 @@ h1,
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b00300e84bba4508becaaad804280b50~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b00300e84bba4508becaaad804280b50~tplv-k3u1fbpfcp-zoom-1.gif)
 
 上面示例是容器查询和样式查询组合在一起的。你可能还没有体会到样式查询所起的作用。那我们来看两个纯样式查询的示例。比如下图这个布局效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a313b06ad07f45a387f0ec4aace10310~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a313b06ad07f45a387f0ec4aace10310~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```
 <div class="avatars__container">
@@ -2598,13 +2598,13 @@ h1,
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ebe6ef39a73d473281bb306eda6661d0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ebe6ef39a73d473281bb306eda6661d0~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/abjJWeK> （请使用 Chrome Canary 查看 ）
 
 你可能从上面的示例中体验出样式查询所起的作用了。其实它用于主题切换（比如暗黑模式）、多语言 Web 网站等，会起更大的作用。比如下面这个卡片组件：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b92927579bc7436e9b929903d01eb4c4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b92927579bc7436e9b929903d01eb4c4~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/bGjqRrg> （请使用 Chrome Canary 查看 ）
 
@@ -2698,7 +2698,7 @@ RTL 和 LTR 不同之处是，渐变背景颜色刚好相反，另外 ICON 图�
 
 响应式 Web 设计已经将 Web 带到了今天人们所能接触到的每一个连接的屏幕上。Web 设计师和创意开发者用创造性的思维、大胆的想法和某种无畏的精神探索、测试和迭代他们的想法，使在线体验更有吸引力、更容易访问和更智能，推动了设计方法的发展。就好比这里所提到的组件驱动式 Web 设计。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8114cae1efe94c00a574c4605fc0b410~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8114cae1efe94c00a574c4605fc0b410~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 组件驱动式 Web 设计的到来或者说 CSS 容器查询、样式查询等特性的出现，这些先进的特性使我们有机会从页面布局、全局样式和用户样式中孤立组件样式，从而实现更具弹性的响应式设计。这意味着你现在可以使用基于页面的媒体查询设计宏观布局，包括多屏或折叠屏的细微差异；同时使用基于容器查询给组件设计做微观上布局，并添加基于用户偏好的媒体查询，来实现基于用户的独特偏好和需求的定制化体验。
 

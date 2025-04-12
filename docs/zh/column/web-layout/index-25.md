@@ -6,11 +6,11 @@
 
 这不管是对于 Web 设计师还是 Web 开发者而言，都是痛苦的，他们无法真正发挥自己的优势，把自己的创意带来到 Web 中。值得庆幸的是，Web 开发者一直没有放弃。社区中有着一群 Web 开发者一直在试图通过使用 CSS 创建几何形状来打破矩形限制，而且 CSS Shapes 真正改为了这一点。**它为 Web 设计师提供了一种新的方式来改变内容在任意复杂形状内部和周围的流动式方** —— 这是我们以前从未做到的，即使是使用 JavaScript 也无法做到。比如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/09332bf4c25a4f55a3fc794ecf67fdb2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/09332bf4c25a4f55a3fc794ecf67fdb2~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 简而言之，CSS Shapes 的出现，允许我们对文本进行包装，而不仅仅是矩形框。**你现在可以将文本在圆形** 、**椭圆** 、**多边形甚至图像上周围或内部流动**。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b2866ed48c9e4bfc9035f91d625e0bae~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b2866ed48c9e4bfc9035f91d625e0bae~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这节课，我们就讲讲 CSS 如何实现类似上图这样不规则的布局。
 
@@ -26,7 +26,7 @@
 
 不知道大家是否和我有同样的一个感觉，每当拿起一篇杂志文章，总能发现左边或右边有图片，文字流畅地围着图片，这就是打印世界中看到的浮动：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/952c59eaa7db43c8973812a5bb0bf6fd~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/952c59eaa7db43c8973812a5bb0bf6fd~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在 Web 的世界中，CSS 浮动 `float` 设计初衷也是用来处理文本围绕图片排版的，就像在杂志布局中一样。碍于当时 Web 布局可用方案的局限性，才有了把浮动用于 Web 布局技术，而且一用就是很多年，直到 CSS Flexbox 布局的成熟才慢慢看不到浮动布局。
 
@@ -36,33 +36,33 @@
 
 > **浮动是在当前行上向左或向右移动框（盒子）。浮动最有趣的特性是内容可能沿着它的****侧****边流动。内容沿着左浮动框的右侧向下流动，并沿着右浮动框的左侧向下流动** 。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/846afca4d21a49f4bdcc1abd827bb34c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/846afca4d21a49f4bdcc1abd827bb34c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在 Web 中，HTML 文档会受到一些规则约束，特别是正常的文档流。在正常的文档流中，每个块级元素（比如 `div`、`p`等）垂直地堆叠在一起，从视图的顶部向下堆叠。但元素要是使用了浮动特性，元素会脱离文档流。
 
 咱们可以这样来理解，把 HTML 文档当作一张白纸。当我们在一个元素上运用浮动时，就像是在该元素上添加了另一张纸：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/536820af076f4e26b00c0e395f2df0f7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/536820af076f4e26b00c0e395f2df0f7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 浮动元素将会浮动到新图层上：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/59c6c23d3d0146669f362895b7f330f2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/59c6c23d3d0146669f362895b7f330f2~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 由于它不再是原始层（正常文档流）的一部分，下面的块元素会向上移动（非块元素表现行为有所差异），就像浮动元素从来没有在文档中存在过一样：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7f5148b65f0a40e2969dcbb83eaaa8ae~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7f5148b65f0a40e2969dcbb83eaaa8ae~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 事实上，浮动元素首先根据常规流布局，然后从常规流中取出并将其移到父元素的最右侧或最左侧（取决于应用浮动的哪个值）。也就是说，如果父元素中有足够的空间容纳每个浮动元素，那么它们就会从一个堆叠变成与另一个相邻。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/59826e7870df4775b9060ed54f1f04c2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/59826e7870df4775b9060ed54f1f04c2~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 另外，容器中有多个元素使用浮动时，当容器没有足够空间的容纳浮动元素时，那么浮动元素就会另起新的一行排列。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e4459ce8f8a840bda4734859ee028e55~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e4459ce8f8a840bda4734859ee028e55~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 我们来看一个录屏效果，可能会更清晰一些：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6f1edd4d83ed4f1fb48fa848b6ba68a9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6f1edd4d83ed4f1fb48fa848b6ba68a9~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/dyKxxwj>
 
@@ -71,7 +71,7 @@
 - `display:inline-block` 仅仅一个水平排列方向，从左往右（也有可能从右向左，得看书写模式）；
 - 浮动不受书写模式的限制可以从左往右排列，也可以从右往左排列。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a8ec044c002f4f4fb9082e6e1bb09e80~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a8ec044c002f4f4fb9082e6e1bb09e80~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/LYrwwKB>
 
@@ -95,7 +95,7 @@ CSS 浮动 `float` 的使用是很简单的，该属性主要接受：
 
 分别在 `img` 上运用 `float:left` 和 `float:right` ，你将看到的效果如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ceb8857610ed4fa3877acfec7ff5bc80~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ceb8857610ed4fa3877acfec7ff5bc80~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 从效果上可以看到文本会围绕着 `img` 排版。这个效果是 `float` 最初的设计效果。
 
@@ -116,17 +116,17 @@ CSS 的浮动是一个非常奇特的属性，它一方面给我们带来了足�
 } 
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d25ef6042b7b470b87f8d731b8fd9e35~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d25ef6042b7b470b87f8d731b8fd9e35~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 其实该现象如果要说的严谨一点的话：**容器中的所有元素都浮动的话，容器元素就会塌陷；如果有任何一个非浮动元素存在，那么容器的高度将与非浮动元素高度等同** ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ab473d280bef4b028a32a12e2d1d84e6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ab473d280bef4b028a32a12e2d1d84e6~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ### 前面的元素会将浮动元素向下推
 
 虽然浮动元素会尽量靠近父元素的顶部，然而文档中浮动元素前面的兄弟元素会把浮动元素向下推。无论前面的元素是内联元素还是块元素。也就是说，如果我们在浮动元素之前或之后有一个段落，将会得到不同的效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f90453ca707443c08b4e0754842530b3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f90453ca707443c08b4e0754842530b3~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ### 前面的浮动元素将得到更好的位置
 
@@ -141,33 +141,33 @@ CSS 的浮动是一个非常奇特的属性，它一方面给我们带来了足�
 </div>
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8d0b76ec9339430fa682b04df07c8b50~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8d0b76ec9339430fa682b04df07c8b50~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ### 接近于父元素的顶部优先于左边/右边
 
 当有多个浮动元素向同一个方向浮动时，随后的元素为了更接近父元素的顶部，将会选择远离父元素左边/右边的位置。这就意味着多个浮动元素将尽可能并排排列，只有当父元素的宽度不能容纳它们，它们才会移动到下面。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b8e95ab5d5cb440d8d70e4bce9472c81~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b8e95ab5d5cb440d8d70e4bce9472c81~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ### 浮动元素不能延伸到它的父元素外面
 
 左浮动的元素不会延伸到父元素的左边缘外。左浮动的元素不应该延伸到父元素的右外边缘外，除非父元素没有剩余的空间。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a471279a51cf460c8cb05568b71fb4f6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a471279a51cf460c8cb05568b71fb4f6~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ### 对非浮动兄弟元素的影响
 
 如果浮动元素的兄弟元素（非浮动）是一个块级元素，那么该元素会忽视浮动元素，而占据浮动元素的位置，并且元素会处在浮动元素的下层（并且无法通过 `z-index` 属性改变它们的层叠位置），但它的内部文字和其他行内元素都会环绕浮动元素。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6d4f0676062c404b97d650293e72f97d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6d4f0676062c404b97d650293e72f97d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如果非浮动的块元素在浮动元素的前面，其行为又将会有所不同：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6e47a522361644228088819793dced2b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6e47a522361644228088819793dced2b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如果非浮动元素不是块级元素，而是内联级元素，则元素会环绕浮动元素排列。如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0c9c7bce8dd64304a1912c1ba946fff1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0c9c7bce8dd64304a1912c1ba946fff1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ## 清除浮动
 
@@ -218,11 +218,11 @@ CSS 的浮动是一个非常奇特的属性，它一方面给我们带来了足�
 
 我想你现在已经知道了，我们可以使用 CSS 的浮动 `float` 特性，让文本围绕着某个元素左侧或右侧排列，但 CSS 浮动特性始终无法实现文本围绕着某元素四周排版，就像一些办公软件（比如 Word）中，文本围绕着图片四周排列：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d639e88f30544122b135afce10693df2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d639e88f30544122b135afce10693df2~tplv-k3u1fbpfcp-zoom-1.png)
 
 庆幸的是，CSS 中提供了一个新模块，即 [CSS Exclusions 模块](https://www.w3.org/TR/css3-exclusions/)，它致力于解决**文本围绕图片方式** 。它不需要依赖浮动 `float` ，也不管是否设置了 `position` 的值为 `absolute`、`relative` 或者 `fixed` 。允许内容围绕一个内联元素。如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b7f390626c8046d1b5a63a2a93d33a78~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b7f390626c8046d1b5a63a2a93d33a78~tplv-k3u1fbpfcp-zoom-1.gif)
 
 该模块引入了两个新属性和值：
 
@@ -231,7 +231,7 @@ CSS 的浮动是一个非常奇特的属性，它一方面给我们带来了足�
 
 不幸运的是，到目前为止，该模块中提供的属性还只是一个实验性属性，目前只有在[微软平台的浏览器中可以查看到相应的效果](https://caniuse.com/css-exclusions)：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/da83f1ecc5f1472ea786c66226af11c4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/da83f1ecc5f1472ea786c66226af11c4~tplv-k3u1fbpfcp-zoom-1.png)
 
 所以，到目前为止，这两个特性只能用于实验性的项目中，不适合用于生产项目。但如果你对这个特性感兴趣，建议你花几分钟时间了解一下，说不定哪一天，其他平台也快速支持了该特性。
 
@@ -247,17 +247,17 @@ CSS 的浮动是一个非常奇特的属性，它一方面给我们带来了足�
 
 在没有使用 CSS Exclusions 时，看到的效果类似于：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a46de749bb794c3996f93730dcc947d3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a46de749bb794c3996f93730dcc947d3~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如果使用 `wrap-flow` ，它对应的值取得的效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/33606440f1874b16b5e06a57e18d3acb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/33606440f1874b16b5e06a57e18d3acb~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 可以说，一旦 `wrap-flow` 不再仅是一个实验性特性时，它可以让我们文本流的排列方式更接近像 Word 办公软件中的文本流排列方式。
 
 另外，`wrap-flow` 中的 `start` 和 `end` 值也会受 CSS 的书写模式和语言的阅读模式所影响：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2c172584104243acbb0d3cefba1ae7d9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2c172584104243acbb0d3cefba1ae7d9~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 `wrap-flow` 是一个可继承属性，如果不希望后代元素继承 `wrap-flow` 的特性，可以在其后代元素上使用 `wrap-through` 属性，并且设置其值为 `none` 。
 
@@ -275,7 +275,7 @@ CSS 的浮动是一个非常奇特的属性，它一方面给我们带来了足�
 
 比如，@Andy Clarke 在他的文章《[Art Direction For The Web Using CSS Shapes](https://www.smashingmagazine.com/2019/04/art-direction-for-the-web-using-css-shapes/)》中，使用 CSS Shapes 给 Web 设计带来很多边界性的突破，可以说它已超越了基本的 CSS Shapes，并向大家展示了如何使用它们给 Web 布局带来的突破。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2bdf0c3f329a4a0c8841fe442a712dce~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2bdf0c3f329a4a0c8841fe442a712dce~tplv-k3u1fbpfcp-zoom-1.png)
 
 > 上图来自于 @Andy Clarker 的《[Art Direction For The Web Using CSS Shapes](https://www.smashingmagazine.com/2019/04/art-direction-for-the-web-using-css-shapes/)》一文！
 
@@ -324,7 +324,7 @@ CSS Shapes 规范曾经是 **CSS Shapes 和 CSS Exclusions 规范** ，但后面
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6ae7e64236a34b3eaa8d5b8d48a71a93~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6ae7e64236a34b3eaa8d5b8d48a71a93~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 只不过，`shape-inside` 新扩展出来的 `display` 值相关的介绍，主要在 **[CSS Round Display Level 1](https://www.w3.org/TR/css-round-display-1/#shape-inside-property)** 模中进行阐述。而且这部分相关的阐述已超出本文要阐述的范围，因此接下来不会做过多阐述。
 
@@ -332,7 +332,7 @@ W3C 的 CSS 工作小组把 `shape-inside` 、`shape-padding` 和 `shape()` 单�
 
 虽然 Level 2 没得到主流浏览器支持，但就目前来看，**[主流浏览器对  CSS Shapes Module Level 1  的支持度还是很好的](https://caniuse.com/css-shapes)**：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b982cf1a54854036b04a8874ba7d44c5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b982cf1a54854036b04a8874ba7d44c5~tplv-k3u1fbpfcp-zoom-1.png)
 
 所以接下来，我们的课程中主要会围绕着 CSS Shapes 中的 `shape-outside` 、`shape-image-threshold` 和 `shape-margin` 三个属性来展开。
 
@@ -392,11 +392,11 @@ W3C 的 CSS 工作小组把 `shape-inside` 、`shape-padding` 和 `shape()` 单�
 
 你会发现，文本内容会围绕着 `.shape` 元素流动：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7bc754efe8f046ed9ef7deb039fe352f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7bc754efe8f046ed9ef7deb039fe352f~tplv-k3u1fbpfcp-zoom-1.gif)
 
 不过，`.shape` 视觉外形是一个圆，主要是因为 `border-radius` 属性定义的。但 `border-radius` 没有定义实际的元素形状，此段落并没有构成圆形曲线。使用浏览器的开发者工具审查该元素，我们会发现这个元素实际上仍然是一个矩形框。 所以，即使 `.shape` 有圆的形状，`border-radius` 对这个元素的实际形状并没有任何影响。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a00ef3343a5b4c229bb5534e743410a8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a00ef3343a5b4c229bb5534e743410a8~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 为了让文本的流动能够贴到圆上面，我们需要通过 `shape-outside` 属性来改变 `.shape` 元素的实际的形状；比如，把 `shape-outside` 的值设置为 `circle()` ，将圆形这个形状应用到 `.shape` 函数上：
 
@@ -410,13 +410,13 @@ W3C 的 CSS 工作小组把 `shape-inside` 、`shape-padding` 和 `shape()` 单�
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e7ff6bcb8d9b4e5da701e123c7aa64da~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e7ff6bcb8d9b4e5da701e123c7aa64da~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/jOpNdaV>
 
 现在你已经看到了，文本围绕着圆在流动。另外，再用浏览器开发者工具审查 `.shape` 元素时，你会发现这个元素确实被正确地渲染成了一个圆。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/89c0396672f74db9b0fc2fe78cb29591~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/89c0396672f74db9b0fc2fe78cb29591~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ### 创建圆形
 
@@ -479,24 +479,24 @@ circle() = circle(r at cx cy)
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4856d53d2a904e6798dfed1aca8c80ae~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4856d53d2a904e6798dfed1aca8c80ae~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你除了可以使用任何长度单位 `<length>`（比如，`px`、`em`、`pt` 、`rem`等）和百分比单位指定圆的半径之外，还也可以使用关键词 `closest-side` 和 `farthest-side` 来指定圆的半径：
 
 - **`closest-side`** ：从形状中心到参考框最近边的长度。对于圆来说，这是任何维度中最近的边；对于椭圆来说，这是半径维度中最近的边；
 - **`farthest-side`** ：从形状中心到参考框最远边的长度。对于圆来说，这是任何维度中最远的边；对于椭圆来说，这是半径维度中最远的边。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/874e629be2274ccaacbfb4903b11abdb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/874e629be2274ccaacbfb4903b11abdb~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 `circle()` 函数的半径要是以 `closest-side` 或 `farthest-side` 关键词作为半径时，只有元素是矩形的状态下，才会有差异，如果元素是正方形的状态下，它们的表现是相似的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/380b6a9d2cb04cc192b61f0530ea53c7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/380b6a9d2cb04cc192b61f0530ea53c7~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/rNrBRRX>
 
 再回过头来看 `circle()` 函数的半径 `r` 取百分比的情况。前面说过，如果半径的值是个百分比值，它是从参考框的宽度和高度解析出来的。它的[计算稍微比较复杂](https://www.w3.org/TR/css-shapes/#funcdef-circle)，不过，我们可以按照下面这个公式来计算：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/64f1c413af32461cb7be37110d034358~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/64f1c413af32461cb7be37110d034358~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 理解这一点很有用，因为它可以帮助你想象，如果元素的尺寸不相等，得到的圆会是什么形状。
 
@@ -527,7 +527,7 @@ ellipse(rx ry at cx cy)
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/930d4d2c38d94c2ebf890ce3b3ee04c2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/930d4d2c38d94c2ebf890ce3b3ee04c2~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/xxJxwYv>
 
@@ -557,15 +557,15 @@ ellipse(rx ry at cx cy)
 
 这听起来可能令人感到困惑。不是说 Web 中的任一元素都是一个矩形盒子？既然如此，为什么还要创建一个矩形呢？我尝试着用一个示例来阐述，为什么要单独使用一个函数来创建矩形。假设浮动元素是像下图所示的一张图片：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/17d82ca6cead48409d1a5a6cfe6e413b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/17d82ca6cead48409d1a5a6cfe6e413b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 但我们的需求是，文本流动的时候只围绕着图片中的蛋糕，就像下图这样：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bb2b9b34a5654e2db999069989f06454~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/bb2b9b34a5654e2db999069989f06454~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这个时候，我们使用创建矩形的函数就比较适合：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/37546faee0564ebf80f40dc19068768b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/37546faee0564ebf80f40dc19068768b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```HTML
 <section>
@@ -589,7 +589,7 @@ ellipse(rx ry at cx cy)
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e5c4f734dc124c14aef2b259e65cf48b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e5c4f734dc124c14aef2b259e65cf48b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/MWBWKKM>
 
@@ -673,7 +673,7 @@ Step06: 50% - 10% = 40%
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6aaf9c3db099496992746b55a6ccbe62~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6aaf9c3db099496992746b55a6ccbe62~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/bGjGEZy>
 
@@ -687,7 +687,7 @@ polygon() = polygon( <'fill-rule'>? , [<length-percentage> <length-percentage>]#
 
 其格式为 `polygon(x1 y1, x2 y2，…)`，其中为多边形的每个顶点(点)指定一对 `(x, y)` 坐标。指定多边形的最小对数是 `3`，即三角形。如果使用 `polygon()` 来绘制一个三角形的话，那么就会有三对坐标点，每对之间用一个逗号（`,`）分隔，比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6172134e4197409ba011d0ac1c36b0b2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6172134e4197409ba011d0ac1c36b0b2~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 我们要是把上图中 `polygon()` 绘制的三角形运用于 `shape-outside` 属性：
 
@@ -709,7 +709,7 @@ polygon() = polygon( <'fill-rule'>? , [<length-percentage> <length-percentage>]#
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8c258f7eaa2944159f7e30882f9a1f8c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8c258f7eaa2944159f7e30882f9a1f8c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 正如你所看到的，文本流只是围绕着 `polygon()` 函数绘制的多边形流动，有些文本还是覆盖着元素框。但如果你希望元素也具备同等的形状，那就需要使用 CSS 的 `clip-path` 属性，将 `shape-outside` 属性上的 `polygon()` 函数同样运用于 `clip-path` ：
 
@@ -733,13 +733,13 @@ polygon() = polygon( <'fill-rule'>? , [<length-percentage> <length-percentage>]#
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3e5d1574a20647ad95d5a98702a76174~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3e5d1574a20647ad95d5a98702a76174~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/RwBwaXw>
 
 你可以在 `polygon()` 函数运用更多的坐标点，比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a2daf24d5edd46b6bd5a9115a70eb042~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a2daf24d5edd46b6bd5a9115a70eb042~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 把相应坐标点运用到 `polygon()` 函数上，这个时候，文本就会围绕着 `polygon()` 函数绘制出来的图形流动：
 
@@ -789,25 +789,25 @@ main::before {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7c605d7786194951970fd315ebd11e1a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7c605d7786194951970fd315ebd11e1a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/LYBYZRw>
 
 使用上面示例的方法，我们就可以使用 CSS Shapes 来构建“爱丽丝梦游仙境（Alice in Wonderland）”故事绘的布局效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/37d9ed893c454b599c3339f48f7446c6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/37d9ed893c454b599c3339f48f7446c6~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 拿第一张为例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/721c48a96c9c4eb2a198878ab1c63d99~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/721c48a96c9c4eb2a198878ab1c63d99~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如果未来 `shape-inside` 得到支持之后，我们只需要将中间文本流对应的形状用 `polygon()` 绘制出来，并运用于 `shape-inside` 即可：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8e788ab350304d62ba388e1f6a996cd6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8e788ab350304d62ba388e1f6a996cd6~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 不过，在当下做不到的情况之下，只能基于 `shape-outside` 基础上，将原来的一个形状分成两个形状来做：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/568c6289301f42e9ad3687c2357d7360~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/568c6289301f42e9ad3687c2357d7360~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 所以我们需要一个这样的 HTML 结构：
 
@@ -941,11 +941,11 @@ main {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9f63238743ed42f8a7e006c4a2e855ab~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9f63238743ed42f8a7e006c4a2e855ab~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 把运用在 `.shape` 上的装饰样式去除掉，最终得到想要的布局效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/975df0c960b047919277998ad39e5d56~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/975df0c960b047919277998ad39e5d56~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/RwBwRvp>
 
@@ -953,7 +953,7 @@ main {
 
 **`nonzero`** 值采用的算法是：从需要判定的点向任意方向发射线，然后计算图形与线段交点处的走向；计算结果从 `0` 开始，每有一个交点处的线段是从左到右的，就加 `1` ；每有一个交点处的线段是从右到左的，就减 `1` ；这样计算完所有交点后，如果这个计算的结果不等于 `0` ，则该点在图形内，需要填充；如果该值等于 `0` ，则在图形外，不需要填充。比如下图：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/49d43c8071d24a6da352f5093e316ff4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/49d43c8071d24a6da352f5093e316ff4~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 来看一个示例：
 
@@ -969,19 +969,19 @@ main {
 
 效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5c9bbbf34648423b86509902f8ff43de~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5c9bbbf34648423b86509902f8ff43de~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 星星是由一条相交的路径组成的，太阳则是由一条长复合的路径组成。每个形状的内部最初并不清楚，可以根据作者的意图而有所不同。在这些情况下，`fill-rule` 允许进一步澄清。
 
 在下一个例子中，我们可以看得更清楚些，当 `nonzero` 算法被应用到类似的图形时，究竟发生了什么？
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/33e5546280c64eff8e4ae9bd26f4753a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/33e5546280c64eff8e4ae9bd26f4753a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 从上图中我们可以理解成，当方向是顺时针时，加 `1` ，逆时针时减 `1`。相交的值不等于 `0` 则填充，如果等于 `0` 则不填充。
 
 **`evenodd`**  值采用的算法是，从需要判定的点向任意方向发射线，然后计算图形与线段交点的个数，个数为奇数则该点在图形内，则需要填充；个数为偶数，则该点在图形外，不需要填充。如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bb9d929560e3430ea2615da3f5ccca3f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/bb9d929560e3430ea2615da3f5ccca3f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 上面的示例稍作调整：
 
@@ -997,11 +997,11 @@ main {
 
  运用 `fill-rule="evenodd"` 的星星和太阳的效果就和刚才的不一样了：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/216b872a21da48ee8657784706be01e6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/216b872a21da48ee8657784706be01e6~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 同样用一张图来描述，可能更易于理解：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/04d3fd3a76a540439fb0ca0c92807661~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/04d3fd3a76a540439fb0ca0c92807661~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 `evenodd` 规则是特定的算法，与 `nonzero` 情况不同，其算法和内部形状绘制的方向不相关，因为只是简单地计算它们穿过直线的路径数是不是奇偶数。
 
@@ -1039,7 +1039,7 @@ path() = path( [<'fill-rule'>,]? <string> )
 
 比如你有一张像带有透明度的图像，如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/eae407db347846c5aa22179cacb93fbb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/eae407db347846c5aa22179cacb93fbb~tplv-k3u1fbpfcp-zoom-1.png)
 
 假设上图用于下面这样的 HTML 结构中：
 
@@ -1060,7 +1060,7 @@ path() = path( [<'fill-rule'>,]? <string> )
 
 先在  `img.shape` 上使用 `float: left` ，你会发现文本流会沿着元素框从右侧向下流动，并没有其他形状（还是矩形）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b040083aad1b460b85d901d27839a4ce~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b040083aad1b460b85d901d27839a4ce~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你可能会认为，这是因为在 `.shape` 上没有使用 `shape-outside` 。接下来，我们在上面的代码基础上添加：
 
@@ -1077,7 +1077,7 @@ path() = path( [<'fill-rule'>,]? <string> )
 
 尝试着将 `url()` 中的图片资源换成 URI：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c117aba875ab4ba3882fa0513036ddbc~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c117aba875ab4ba3882fa0513036ddbc~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你可以在浏览器开发者工具中，直接获取图片的 URI：
 
@@ -1090,7 +1090,7 @@ path() = path( [<'fill-rule'>,]? <string> )
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/309932bd569c4324a2ae6cbe5edecfbf~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/309932bd569c4324a2ae6cbe5edecfbf~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/wvxvoZW>
 
@@ -1111,7 +1111,7 @@ path() = path( [<'fill-rule'>,]? <string> )
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/12d298ed3fcc41dd9e29fde865317bbf~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/12d298ed3fcc41dd9e29fde865317bbf~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/ZEjEeWg>
 
@@ -1142,7 +1142,7 @@ path() = path( [<'fill-rule'>,]? <string> )
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5fcf9a9b9f644d74b6b7b5224dbbeb6e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5fcf9a9b9f644d74b6b7b5224dbbeb6e~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/KKBKWvL>
 
@@ -1152,15 +1152,15 @@ path() = path( [<'fill-rule'>,]? <string> )
 
 比如，下面这个示例，你希望文本能围绕着下图中的鹦鹉流动：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f0ea3117b8d0490bbf3bd3cb34a90e8a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f0ea3117b8d0490bbf3bd3cb34a90e8a~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这是 `polygon()` 函数无法做到的，即使能做到，最终绘制出来的形状曲线也是不够顺滑的。这个时候，你可以借助一些制作软件，比如 Photoshop，从原图中提取出鹦鹉图形的形状：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9f63db4d891245809ccca47573881a41~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9f63db4d891245809ccca47573881a41~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 然后将其保存为 `.png` 格式的图片，如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b131b3bc4a724d8989c05d60914e0a48~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b131b3bc4a724d8989c05d60914e0a48~tplv-k3u1fbpfcp-zoom-1.png)
 
 这样你就从原图中提取出所需要的图像形状。注意鹦鹉的颜色是什么不重要，你也可以将上图中的红色替换成任何你喜欢的颜色。这个时候你就可以像下面这样使用了：
 
@@ -1182,13 +1182,13 @@ section {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/426ce2a8f79342dfa230a40d67e58a8b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/426ce2a8f79342dfa230a40d67e58a8b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/bGjGxJJ>
 
 除了从原图中提取出和图片一样的形状之外，CSS 中还有另外一种方式，可以使用 CSS 的蒙板 `mask` 特性。比如像下面这个示例，你希望文本能围绕着一片叶子流动，你可以利用一张像下图这样的图片：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bd66c7a3f4114ae3bc564cec3051989a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/bd66c7a3f4114ae3bc564cec3051989a~tplv-k3u1fbpfcp-zoom-1.image)
 
 将其用于 `.shape` 元素上：
 
@@ -1204,7 +1204,7 @@ section {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e5e7476237d2493aba85aa6d7c0824cf~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e5e7476237d2493aba85aa6d7c0824cf~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/zYLYyNx>
 
@@ -1212,7 +1212,7 @@ section {
 
 除了直接使用具有透明度的 PNG 图像之外，在 `url()` 函数中还可以使用 SVG 绘制的形状，比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f66c863a02b44491afbccd817ca2dda6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f66c863a02b44491afbccd817ca2dda6~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 尝试着将上面示例中的叶子换成枫叶形（SVG 绘制的枫叶形状）：
 
@@ -1228,7 +1228,7 @@ section {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4064c0db655749f0ba4180f8c9b19a94~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4064c0db655749f0ba4180f8c9b19a94~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/vYaYvjW>
 
@@ -1240,11 +1240,11 @@ section {
 
 事实上，这些函数创建的形状都被定位在一个虚拟盒子（Virtual Box）中，也就是参考框（Reference Box）。 这个参考框是元素周围的一个虚拟框，它定义形状的坐标系统，坐标系统的原点在元素的左上角，`x` 轴指向右，`y` 轴指向下。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4319ab574d4f4bd680f6333a41737629~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4319ab574d4f4bd680f6333a41737629~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 CSS Shpaes 参考框会影响绘制形状的函数如何如何绘制和定位。它对应有四种参考框可供选择：`margin-box` 、 `padding-box` 、 `border-box` 和 `content-box`。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/69069735fe1349be8413316d9576e71b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/69069735fe1349be8413316d9576e71b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 每种引用框都会产生不同的结果。请继续往下阅读，了解它们是如何工作。
 
@@ -1273,15 +1273,15 @@ CSS Shpaes 参考框会影响绘制形状的函数如何如何绘制和定位。
 
 坐标系统的原点现在位于元素内容区域之外(向上 `100px`，向左 `100px`)，圆心也是如此。圆半径的计算值也会随着 `margin-box` 参考框建立的坐标系统表面的增加而增加。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e0526793fa2645cab4afce4ecbc8bb42~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e0526793fa2645cab4afce4ecbc8bb42~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 将参考框运用到示例中，它的作用如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2ba0e380998943dd9ef4844f8b2c54f5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2ba0e380998943dd9ef4844f8b2c54f5~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 最终示例效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ae8be1f91cf7440a816e273f1e4197c6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ae8be1f91cf7440a816e273f1e4197c6~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/ZEjEwQO>
 
@@ -1318,13 +1318,13 @@ CSS Shpaes 参考框会影响绘制形状的函数如何如何绘制和定位。
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ada5505394fe43528fc39932a3f36de2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ada5505394fe43528fc39932a3f36de2~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/XWBWGjB>
 
 CSS Shape 参考框所对应的关系如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/33532149dfd34d3abebcea96d32845d9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/33532149dfd34d3abebcea96d32845d9~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > **注意，CSS Shape 参考框会受 CSS 的** **`box-sizing`** **属性的影响，上图是** **`box-sizing`** **取值** **`border-box`** **的效果** 。
 
@@ -1335,7 +1335,7 @@ CSS Shape 参考框所对应的关系如下图所示：
 | **`padding-box`**    | `width = width + padding` `height = height + padding`        | `width = width - padding` `height = height - padding`        |
 | **`content-box`**    | `width = width` `height = hegiht`                            | `width = width - border - padding` `height = height - border -padding` |
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3d471f6caa5247fd87f7d0f4860d42bf~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3d471f6caa5247fd87f7d0f4860d42bf~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/abjbxLd>
 
@@ -1343,13 +1343,13 @@ CSS Shape 参考框所对应的关系如下图所示：
 
 不过，我们前面也提到过，`circle()` 和 `ellipse()` 的百分比单位半径计算公式要稍微复杂一些：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e3334b8f05064bc0b16419c70208f54e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e3334b8f05064bc0b16419c70208f54e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这只是 `circle()` 和 `ellips()` 半径的特殊情况；其他形状函数，如 `polygon()`，则不受此限制。
 
 当内容的数量会影响一个或两个维度时，理解这个公式对于想象 `content-box` 参考框很重要。值得注意的是，这种可变维度的情况也适用于其他参考框，而不是 `content-box` 特有的。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/21652ca00c76452ba4213e8c9f0cb878~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/21652ca00c76452ba4213e8c9f0cb878~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在上面的插图中，我们观察到圆形没有触及内容框的上下边缘，但它扩展了其左右边缘。这是意料之中的，有两个原因:
 
@@ -1360,11 +1360,11 @@ CSS Shape 参考框所对应的关系如下图所示：
 
 想象一下，使用 `polygon()` 创建一个锯状的形状，沿着元素的一侧向下延伸。CSS 形状还没有 `repeat` 属性。在 `content-box` 参考框中使用渐进式形状显示，它可以与一种使用由重复模式组成的较大形状达到相同的效果。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b77cdf0a22cf4831948d242d40963074~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b77cdf0a22cf4831948d242d40963074~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 需要记住的是，`margin-box` 参考框会负责实际裁剪超大形状。如果元素周围有外边距（`margin`），形状可能会扩展到 `content-box` 参考框之外，但只会被 `margin-box` 参考框裁剪。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/de75abb3fe5740b899666b6e0c9b2de1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/de75abb3fe5740b899666b6e0c9b2de1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 通过这几个实例，只是想告诉大家，CSS Shape 中的参考框可以帮助我们更好地控制 `shape-outside` 绘制的形状大小和位置。它们抽象了坐标系统的一些复杂性，使我们不必手动定义每个元素的尺寸。这有助于制作在屏幕之间和项目之间都可移植的响应式形状。
 
@@ -1385,7 +1385,7 @@ CSS Shape 参考框所对应的关系如下图所示：
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/97ef19a4f0784123873ae4a64cf36d37~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/97ef19a4f0784123873ae4a64cf36d37~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/gOjONNW>
 
@@ -1404,7 +1404,7 @@ CSS Shape 参考框所对应的关系如下图所示：
 
 当然，你可以以这种方式使用所有的参考框。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/61498ae7da45459190d45d96b393dc75~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/61498ae7da45459190d45d96b393dc75~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/KKBKOpG>
 
@@ -1421,7 +1421,7 @@ blockquote {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/00100955bfa241febca4858d55873ef7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/00100955bfa241febca4858d55873ef7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/LYBYwyR>
 
@@ -1440,7 +1440,7 @@ blockquote {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a185a3ef8d4e4efb81250c3ea8722440~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a185a3ef8d4e4efb81250c3ea8722440~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/NWBPpyO>
 
@@ -1464,13 +1464,13 @@ blockquote {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/13c5e71a831e4d89ac3579e70659a658~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/13c5e71a831e4d89ac3579e70659a658~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/oNMgZmw>
 
 我使用下图来描述 `shape-outside` 和 `shape-margin` 之间的关系：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/41dd6327e5e5494b976613211d48b0de~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/41dd6327e5e5494b976613211d48b0de~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 `shape-margin` 创建与多边形形状`shape-outside` 的偏移量。红色区域显示 `200 x 200px` 的浮动形状，蓝色区域显示 `10px` 的偏移量（`shape-margin` 的值）。
 
@@ -1488,13 +1488,13 @@ blockquote {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/87e9029a38d54123b7ad5a59fb7b56be~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/87e9029a38d54123b7ad5a59fb7b56be~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/bGjNWPE>
 
 这个效果和我们使用常规 `margin` 属性时的效果类似，但是 `shape-margin` 只影响 `shape-outside` 值周围的空间。只有在坐标系统中有空间时，它才会在形状周围添加间距。这就是为什么在上面的例子中，圆半径被设置为 `40%`，而不是 `50%`。如果半径设置为 `50%`，圆将占据坐标系统中的所有空间，因此没有 `shape-margin`的效果。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/06fa2885a74449d782a16e5cbde70ac0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/06fa2885a74449d782a16e5cbde70ac0~tplv-k3u1fbpfcp-zoom-1.gif)
 
 记住，形状最终受限于元素的 `margin-box` (元素加上它周围的外边距 `margin`)。如果形状更大并且溢出，它将被剪切到 `margin-box`，最终会得到一个矩形形状。
 
@@ -1508,11 +1508,11 @@ blockquote {
 
 比如下图这个示例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3d08152adfa845199041f66a283ec14f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3d08152adfa845199041f66a283ec14f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 首先左、右浮动元素自身就是一个不规则的形状，在 CSS 中要实现上图这种不规则的效果，首先可以考虑的是 `clip-path` 属性。我们可以在 `clip-path` 属性上运用 `polygon()` 函数绘制出所需要的多边形状：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/94570865d77f4b0cb1595affb5c5da43~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/94570865d77f4b0cb1595affb5c5da43~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 `clip-path` 要比 `shape-outside` 更具可视化。也就是说，如果你希望 `shape-outside` 绘制出来的形状通过可视化展示出来，那么使用 `clip-path` 要简易得多。
 
@@ -1536,7 +1536,7 @@ blockquote {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cd27cd760a0e4b49b4a1759c61859999~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/cd27cd760a0e4b49b4a1759c61859999~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 正如上图所示，`shape-outside` 和 `clip-path` 的 `polygon()` 坐标点参数值都是相同的，文本围绕着相应的形状流动，但运用形状的元素还是矩形，这可能和你预期的效果不一样。如果希望元素的自身的形状和 `shape-outside` 绘制的形状一致，就需要显式在元素上使用 `clip-path` 属性，并且让 `clip-path` 和 `shape-outside` 的值相同：
 
@@ -1560,7 +1560,7 @@ blockquote {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/488f2d20c0e34985ad9d7a1e6ad73979~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/488f2d20c0e34985ad9d7a1e6ad73979~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/BaPyZzK>
 
@@ -1568,17 +1568,17 @@ blockquote {
 
 前面介绍过，我们可以通过图形来创建形状。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/862761d314554cd4a976b6829044ff20~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/862761d314554cd4a976b6829044ff20~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/BaPywYg>
 
 就上图的效果，可以通过 `shape-outside` 属性来引用一个带有透明度的 PNG 图像实现：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5354a2ba29e74882b50e556d20877da5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5354a2ba29e74882b50e556d20877da5~tplv-k3u1fbpfcp-zoom-1.png)
 
 虽然说，带有透明度的图像可以创建类似图像的形状，但元素框自身并不会受影响：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/95585936e15e4e7fbd781744b95815f7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/95585936e15e4e7fbd781744b95815f7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 如果希望元素也具备形状一样的效果，我们就需要借助 CSS 的 `mask` 来实现。也就是说，我们可以将 `shape-outside` （引用图像创建形状）和 `mask` 结合起来使用，让元素自身也具备一定的形状，而且还可以让文本围绕着形状流动：
 
@@ -1598,7 +1598,7 @@ blockquote {
 
 从这两个示例的效果中，我们不难发现，CSS Shapes 只影响应用于元素的形状。如果元素有背景，则不会被形状裁切。要实现这种效果，必须结合 CSS 的 `clip-path` 或者 `mask-image` 一起使用。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f5b9cf7a5704403095ef380249aedeba~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f5b9cf7a5704403095ef380249aedeba~tplv-k3u1fbpfcp-zoom-1.png)
 
 - **剪切** 需要一个剪切路径，剪切路径可以是一个闭合矢量路径、形状或多边形；剪切路径是一个区域，该区域内部的所有内容都可以显示出来，外部的所有内容将被剪切掉，在页面上不可见；
 - **遮罩** 需要一个高亮或 Alpha 遮罩层，将源和遮罩层合在一起会创建一个缓冲区域，在合层阶段之前，亮度和 Alpha 遮罩会影响这个缓冲区的透明度，从而实现完全或部分遮罩源的部分。
@@ -1618,11 +1618,11 @@ blockquote {
 
 相比而言，Firefox下的工具更好用一些。假设你想让文本围绕下图来做布局，你可以先用图片当作背景图，成为 CSS Shapes 的一个占位图，比如下面这张图：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a078a91e02b541f79f4b029abd7c7fa6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a078a91e02b541f79f4b029abd7c7fa6~tplv-k3u1fbpfcp-zoom-1.png)
 
 接着先随便绘制几个点，使用 `polygon(55px -1px, 9.57% 8.45%)` ，再借助浏览器插件跟着背景图来描边（拖动点，添加点）：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/169f76c1fe0548bb834c7e1b81361815~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/169f76c1fe0548bb834c7e1b81361815~tplv-k3u1fbpfcp-zoom-1.gif)
 
 然后将最终的 `polygon()` 的值复制出来给 `shape-outside`:
 
@@ -1639,7 +1639,7 @@ blockquote {
 
  最终你能看到的效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c7282416bc3742a3982ab1a53c8c0a12~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c7282416bc3742a3982ab1a53c8c0a12~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/LYBYZRw>
 
@@ -1647,7 +1647,7 @@ blockquote {
 
 除了浏览器内置的 CSS Shapes 形状编辑器之外，还可以借助 [Clippy 工具](https://bennettfeely.com/clippy/)来编辑复杂的形状：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fe2c27a7415e4d3e9f91f9a1c57552d1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/fe2c27a7415e4d3e9f91f9a1c57552d1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Clippy 工具地址：<https://bennettfeely.com/clippy/>
 
@@ -1666,7 +1666,7 @@ blockquote {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/86c4daabe07142919800d064ba390890~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/86c4daabe07142919800d064ba390890~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/qByEVge>
 
@@ -1687,7 +1687,7 @@ blockquote {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/307f137a560b47b8ac93a1c0316e41d7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/307f137a560b47b8ac93a1c0316e41d7~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/abjzEZo>
 
@@ -1723,7 +1723,7 @@ blockquote {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4b1a8aba8ebf4a4392173e8eec4dd135~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/4b1a8aba8ebf4a4392173e8eec4dd135~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/MWBYrbL>
 
@@ -1745,7 +1745,7 @@ blockquote {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/da2c19f412d844fba7f2e66e6dd7c470~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/da2c19f412d844fba7f2e66e6dd7c470~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/gOjbeYY>
 
@@ -1789,13 +1789,13 @@ blockquote {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/36aa7628bbcf4573b5fd8f5d45833e37~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/36aa7628bbcf4573b5fd8f5d45833e37~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/dyjPmoa>
 
 不管是 `clip-path` 还是 `shape-outside` 属性，其他函数也可以像上面示例中的 `circle()` 函数一样，让形状带有动画效果。只不过使用 `polygon()` 函数绘制形状的时候，应该尽可能保持一样的节点数。比如我们希望形状从一个五角形过渡到一个正方形。一般情况下，五角形有十个节点位置，而正方形只有四个节点位置：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/68a6469a815345f4b32c33fc3470f8f0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/68a6469a815345f4b32c33fc3470f8f0~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 两个图形的节点数要是不一致的话，做出来的动画效果就会让人感到不协调：
 
@@ -1841,13 +1841,13 @@ blockquote {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b007e6950852449fb07ebe2adf3439f8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/b007e6950852449fb07ebe2adf3439f8~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/dyjPmoa>
 
 你已经看到了，示例中的矩形是使用的是 `inset()` 函数绘制的。其实，我们也可以使用 `polygon()` ，也用十个点来绘制矩形：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/664a411fd53c438e8aeec82bfb44cb39~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/664a411fd53c438e8aeec82bfb44cb39~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```CSS
 .shape{
@@ -1913,7 +1913,7 @@ blockquote {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/112c98ee9646494ca4fec83a06133ecd~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/112c98ee9646494ca4fec83a06133ecd~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/bGjNvRB>
 
@@ -1934,11 +1934,11 @@ blockquote {
 
 其中 `div.placeholder` 是用来当作 CSS Shapes 的占位符，比如我们要的是一个 V 字型，其实是两个三角形拼出来的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5ea70f8f71f441478f42e32cfba2104c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/5ea70f8f71f441478f42e32cfba2104c~tplv-k3u1fbpfcp-zoom-1.png)
 
 如此一来，可以借助 `::before` 和 `::after` 来使用两张图片，不过对于类似这样的三角形，还可以借助`polygon()` 来绘制。为了方便，可以使用 [Clippy](https://bennettfeely.com/clippy/) 工具来完成：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/88ff108ea6004a09b1fe40a649e1a6c8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/88ff108ea6004a09b1fe40a649e1a6c8~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```CSS
 .shape-placeholder { 
@@ -1963,13 +1963,13 @@ blockquote {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/92893ec0e3c6478bb6d402a451b95b30~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/92893ec0e3c6478bb6d402a451b95b30~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/ExpaEer>
 
 利用类似的原理，还可以实现很多其他的效果。比如下面这个示例：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/58691dd7d64841828a921ad22920efd4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/58691dd7d64841828a921ad22920efd4~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/eYjmrNx>
 
@@ -2024,7 +2024,7 @@ section div:nth-of-type(2) {
 
 如果你感兴趣，还可以查看 @Jen Simmons 的 labs.jensimmons.com 中提供的示例 ：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bbcc823d5dc74f6aabcc86b1115d2efb~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/bbcc823d5dc74f6aabcc86b1115d2efb~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ## 小结
 

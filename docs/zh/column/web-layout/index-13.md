@@ -43,7 +43,7 @@
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ce95f8f9bfc64e3f805ef32ab9fef539~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ce95f8f9bfc64e3f805ef32ab9fef539~tplv-k3u1fbpfcp-zoom-1-20250412203715125.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/xxjNjeL>
 
@@ -60,7 +60,7 @@
 
 代码中的 `repeat(3, 1fr 200px)` 意思是 `1fr 200px` 会重复 `3` 次，相当于创建了一个六列的网格：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/66eb94f3d15e423698a0e0fa8a550d0f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/66eb94f3d15e423698a0e0fa8a550d0f~tplv-k3u1fbpfcp-zoom-1-20250412203717818.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/RwymJZO>
 
@@ -77,7 +77,7 @@
 
 要是在 `repeat()` 函数中重复网格线名称的话，结束的网格线名称最终会与下一条开始网格线名称共享同一个网格线名称：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/40c4dae0850747a3b25343fdb6bf0de6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/40c4dae0850747a3b25343fdb6bf0de6~tplv-k3u1fbpfcp-zoom-1-20250412203720212.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/WNJBKVg>
 
@@ -128,7 +128,7 @@
 
 庆幸的是，`repeat()` 函数的第一个参数除了可以接受一个整数值之外，还可以接受 **`atuto-fit`** 和 **`auto-fill`** 两个关键词。它们会告诉浏览器处理网格轨道的大小和断行（或断列），以便当容器空间不足以容纳元素时，元素会自动换行（或列）而不会造成溢出。但 `auto-fill` 和 `auto-fit` 两者之间还是有一些细微差异的。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d21f9de878af480cb3895bc65fa6a7e0~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d21f9de878af480cb3895bc65fa6a7e0~tplv-k3u1fbpfcp-zoom-1-20250412203724692.jpeg)
 
 - **`auto-fill`** ：在同一行中填充尽可能多的列。因此，只要能容纳新的列，就会自动创建隐式列，因为它试图在同一行中填充尽可能多的列。新添加的列（隐式列）可以是空的，但是它们仍然会在行中占据指定的空间。
 - **`auto-fit`** ：将当前可用的列扩展到空间中，以便它们占用容器可用空间。当容器有可用空间时，浏览器会将可用空间均分给列，让列自动变宽填满整个容器；当容器可用空间为负值时，会另起一行排列。
@@ -137,7 +137,7 @@
 
 在实际使用过程中，网格容器中有多个和仅有一个网格项目时，使用 `auto-fill` 与 `auto-fit` 的差异：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8fd772d07e1742c699a3038b2a5a15f4~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8fd772d07e1742c699a3038b2a5a15f4~tplv-k3u1fbpfcp-zoom-1-20250412203729312.jpeg)
 
 上面两张图展示了 `auto-fit` 和 `auto-fill` 在网格布局中的差异。那它们两者又是如何工作的呢？我们以一个实例来向大家介绍 `auto-fit` 和 `auto-fill` 是如何工作的。
 
@@ -174,11 +174,11 @@
 
 浏览器计算出这个“**`?`** ” 大约会是 `7.66667` ，所以浏览创建了一个七列的网格。不同的是 `auto-fit` 会把空的网格轨道折叠在一起（空网格轨道是指没有放置网格项目的网格轨道）。折叠的轨道尺寸大小会被视为 `0px`。浏览器为了找到自动重复的轨道数，会将轨道尺寸限制为用户代理指定的值（比如 `1px`），来避免被零除。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/19a88ff0221a4759a89a9471fd9e606c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/19a88ff0221a4759a89a9471fd9e606c~tplv-k3u1fbpfcp-zoom-1-20250412203732300.jpeg)
 
 `auto-fill` 则不会将创建的空网格轨道折叠在一起：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/750ab74773d148709b2275d655f85c58~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/750ab74773d148709b2275d655f85c58~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 `repeat()` 函数中使用 `auto-fit` 或 `auto-fill` 关键词替代重复的次数时，又被称为**自动换行** 。当网格容器无法容纳网格轨道时（有网格项目的），就会自动创建新的一行：
 

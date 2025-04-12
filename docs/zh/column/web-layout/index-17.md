@@ -6,7 +6,7 @@
 
 在 Web 布局中，常常会用到卡片组件，子网格来构建卡片组件布局是很有用的。接下来，我们一起来看两种卡片组件的布局。先来看第一种：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/083ae04152f24fd2a9347c2cfb246a1e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/083ae04152f24fd2a9347c2cfb246a1e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/zYaKmpZ>
 
@@ -48,7 +48,7 @@
 
 第一列列轨道设置尺寸是 `minmax(7em, 12em)` ，这样做是让卡片上缩略图的大小控制在 `7em ~ 12em` 之间。由于媒体导航项的内容大小我们并不知，因此这里使用 `max-content` 来控制，最后一列设置 `1fr` ，将可用空间都留给这个列：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/399b5dacf7b9465db3114c6ab268e098~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/399b5dacf7b9465db3114c6ab268e098~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 每张卡片（`.card`）它跨越五列（`grid-column: 1 / -1` 或 `grid-column: 1 / span 5`），可以在 `.card` 的 `grid-template-columns` 设置 `subgrid` ，继承父网格（`.cards`）的列轨道尺寸。另外在子网格上使用 `grid-template-rows` 重新定义自己的行网格轨道尺寸：
 
@@ -63,7 +63,7 @@
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/455fdf53a2b9491184a716729db90793~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/455fdf53a2b9491184a716729db90793~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 创建好网格之后，卡片中的标题（`h3` ）、描述文本（`p`）、缩略图（`img`）和导航列表项（`span`）就可以根据子网格（`.card`）的网格线名称放置到指定位置：
 
@@ -83,7 +83,7 @@ img {
 
 另一个卡片组件是像下图这样的，在内联轴方向平铺：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/25268de6eed946a1a2fb2eae6832658e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/25268de6eed946a1a2fb2eae6832658e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/abKmQWj>
 
@@ -117,7 +117,7 @@ img {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a36815091a0c40d29f0445c5691c9167~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a36815091a0c40d29f0445c5691c9167~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 每张卡片 `.card` 是父网格（`.cards`）的一个子网格，跨越父网格五行，并且继承父网格行网格轨道，不同的是重新定义了网格列轨道数量和尺寸，同时为了让卡片中的每个元素更易于放置，使用 `grid-template-areas` 在子网格上显式定义了网格区域名称。并且显式设置`gap` 值为 `0` ，重置了子网格轨道之间的间距：
 
@@ -138,7 +138,7 @@ img {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2eda52a75ef34697aab07f7b4d814cdd~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2eda52a75ef34697aab07f7b4d814cdd~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 卡片中的每个网格项目就可以使用 `grid-area` 来指定位置：
 
@@ -179,7 +179,7 @@ h3 {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6dca94529b7344048ab48553992286e7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6dca94529b7344048ab48553992286e7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在`.media` 网格中的网格项目也可以使用 `grid-area` 放置到对应的网格区域中，因为我们在 `.media` 中使用 `grid-template-areas` 创建了网格区域：
 
@@ -198,7 +198,7 @@ h3 {
 
 事实上，这种布局技术还可以用于 Web 上其他地方，比如页脚的导航、下拉菜单等：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3bb29df201de4ceb810755e19abc4d20~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/3bb29df201de4ceb810755e19abc4d20~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 就拿页脚导航为例吧。构建这样的布局，你可能需要一个像下面这样的 HTML 结构：
 
@@ -220,14 +220,14 @@ h3 {
 
 我们要的是这样的一个效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/913208cb97e74c3189b7e8dadfe8a31b~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/913208cb97e74c3189b7e8dadfe8a31b~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 - 列数能够根据视窗大小自动调整，即自动断行；
 - 导航菜单中，同一行中的区域，其标题与标题对齐，菜单项与菜单项对齐。
 
 实现第一个要求，在 CSS 网格布局中很简单，只需要使用 RAM 布局技术即可。但没有子网格（`subgrid`）的话，第二个要求实现起来就比较难，你得到的效果将会像下图这样：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/45866cc5f95f4bf99064eb96fbe667ba~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/45866cc5f95f4bf99064eb96fbe667ba~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你可以像上面卡片示例一样，将 `.menu` 和 `.menu__item` 都定义为网格，而且 `.meun__item` 网格是 `.menu` 网格的子网格，在子网格 `.menu__item` 跨越两行，并且设置它的 `grid-template-rows` 值为 `subgrid` 。这样做是让子网格继承父网格的行网格轨道，当子网格行网格轨道尺寸变大时，它的父网格行网格轨道也会变大。你就可以实现第二个要求。
 
@@ -292,19 +292,19 @@ footer {
 
 你最终看到的效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/659526f8e7d64e459e50dbaf562aad28~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/659526f8e7d64e459e50dbaf562aad28~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/poKNLbE>
 
 感兴趣的同学，可以使用同样的技术（RAM 布局技术和子网格布局）来实现下图中下拉导航的布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f0d4330200d84a579a2b8ae9d34fba7f~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f0d4330200d84a579a2b8ae9d34fba7f~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ## 品牌页（区）布局
 
 在 Web 页面的设计中，常常会有通栏的横幅的设计效果，往往把这种效果称为 **Branding** 。如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fcb8b31b500a4760ac2e15ff0fa1e7b1~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/fcb8b31b500a4760ac2e15ff0fa1e7b1~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 它包含了三个部分：
 
@@ -351,7 +351,7 @@ footer {
 
 假设设计师将整个 Branding 区域**均分为五列** ，除了“特色功能区域（Featured Section）” 占了三列之外，其他两个区域（Headline 和 Card）只各占一列，如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/efe64e47f4264ef4b9739f66871ea895~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/efe64e47f4264ef4b9739f66871ea895~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 使用网格布局很容易就将它均分成五份，使用网格线可以将它们放置到指定的区域：
 
@@ -400,7 +400,7 @@ footer {
 
 内容区域占一列，缩略图占两列：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0d1ce51ed1454125b86244b0c0a5b36c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0d1ce51ed1454125b86244b0c0a5b36c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```
 .featured__content {
@@ -418,7 +418,7 @@ footer {
 
 在这个基础上，你还可以稍微加点内容，改变一下结构，就可以构建出一个 Landing Page 页的布局效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ac78cb4075084d77bbb940fcd8dee964~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ac78cb4075084d77bbb940fcd8dee964~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/abKBLGJ>
 
@@ -451,7 +451,7 @@ footer {
 - 将新增的 `.featured--section` 容器合并三列四行，同时将 `grid-template-rows` 和 `grid-template-columns` 定义为 `subgrid` ，让该子网格继承其父网格 `.landing` 的网格特性。
 - 在 `.featured--section` 的 `.featured` 和 `ul` （列表）也是一个子网格，它们都跨越三列，继承父网格 `.featured--section` 网格轨道。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/772204318c0a42b4a9713087480ba30e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/772204318c0a42b4a9713087480ba30e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```
 .landing {
@@ -549,7 +549,7 @@ button {
 
 在“特色功能区域”中还可以与 CSS 的多列布局结合在一起，构建类似一个简单的报刊类的布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7144d19abba44e079f220f0b33d466d8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/7144d19abba44e079f220f0b33d466d8~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/GRGNyVO>
 
@@ -599,7 +599,7 @@ button {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ad4801c8b6324cf882d4dca6ad05fc24~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ad4801c8b6324cf882d4dca6ad05fc24~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 示例中，在内容区域`.featured__content` 使用 CSS 多列布局中的 `column-count` 、`column-gap` 和 `column-rule` 将其分成三列布局：
 
@@ -615,11 +615,11 @@ button {
 
 子网格用来构建图片墙也是很有用的，比如下图这样的布局，左侧有一个内容区域，它包含了一个标题和一段描述文本，右侧是九宫的图片展示区：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ad67a745e17f409090f010d0f9631f54~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/ad67a745e17f409090f010d0f9631f54~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 上图仅是图片墙的一种排列网格，其实右侧你可以根据自己的需要，设计出不同的九宫格网格，甚至是比九宫格风格复杂繁多的宫格，比如下图这些延伸的风格：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d6b9538a3e5b43cc9e3a50d6c39e67f6~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/d6b9538a3e5b43cc9e3a50d6c39e67f6~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 当然，你可能会说，不使用子网格也可以构建出所期望的图片墙的布局效果。的确如此，不使用子网格，你需要创建一个复杂的网格。如果使用子网格，你更多的关注点是在右图宫格的布局上，而这种九宫格的布局风格，CSS 网格是有天然优势的。
 
@@ -692,7 +692,7 @@ button {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fda3f46191f84215b81b3223b6b07d8e~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/fda3f46191f84215b81b3223b6b07d8e~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址： <https://codepen.io/airen/full/eYKggqV>
 
@@ -702,13 +702,13 @@ button {
 
 不知道你平时浏览 Web 页面或 Web 设计，有没有留意到，Web 页面元素相互交叉叠加的布局效果越来越频繁，比如：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/89c2da1b3ec142b4823ee41d57b339b5~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/89c2da1b3ec142b4823ee41d57b339b5~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在还没有 CSS 网格布局技术之前，Web 开发者一般都是采用绝对定位来构建。虽然绝对定位可以实现上图中交叉叠加的布局效果，但缺乏灵活性和适配性，无法较好地适配更多的终端设备。不过，使用 CSS 网格布局，尤其是结合子网格特性，就显得要容易得多，而且适配性、灵活性都要比绝对定位强很多。
 
 我们一起来看一个很有创意性的示例，这个示例是 [@Michelle Barker 在 Codepen 上写的](https://codepen.io/michellebarker/full/JjGNdNY)，我觉得很有创意，就拿来和大家一起探讨。示例的效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9cc1ca79ec2647ee8dac6fc5fb7a4b4a~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9cc1ca79ec2647ee8dac6fc5fb7a4b4a~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/poKRPxz> 注意，上图这个效果是在 [@Michelle Barker](https://codepen.io/michellebarker/full/JjGNdNY)提供的案例上做了改良的 ！
 
@@ -730,7 +730,7 @@ button {
 
 因为 Web 设计预期的效果是 “鼠标悬浮到图片或卡片内容时，才改变相应的样式”（如上图所示）。为了达到这样的交互效果，我们添加了一个空的链接标签`<a>` ，并且使用其伪元素 `::before` 和 `::after`来生成一个空白区域，分别遮盖在卡片的图片和内容区域上面：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/22a63f3a5d794cce86743b4fa9fc4739~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/22a63f3a5d794cce86743b4fa9fc4739~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```
 .link:hover ~ img,
@@ -745,7 +745,7 @@ button {
 
 类似下图这样的一个效果就实现了：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e991d1fbc883462da7e33a78fdda8065~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/e991d1fbc883462da7e33a78fdda8065~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/shadeed/full/jOOwwpY/66e9c2039b50463d96a2a9832f05ec0f>
 
@@ -834,7 +834,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/16edb28bda4c42ec83f9fe10af4b1ba7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/16edb28bda4c42ec83f9fe10af4b1ba7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 我们需要将 `a.link` 的伪元素 `::before` 和 `::after` 分别遮盖在卡片的图片`.grid__img` 和 `.grid__card` 上面，为了位置和大小能和它们完全相匹配，采用子网格是较好的一种策略。我们需要做的是：
 
@@ -869,7 +869,7 @@ body {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8a4a7a5fed434adcb214806ef1dfd7c9~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8a4a7a5fed434adcb214806ef1dfd7c9~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 由于卡片上的缩略图（`.grid__img`）、内容区域（`.grid__card`）、链接伪元素（`.link::before` 和 `.link::after`）会有一定区域的交叉和层叠：
 
@@ -902,11 +902,11 @@ body {
 
 再来看一个运用 `subgrid` 布局的卡片组件：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f5a8cfff72c34bdcbbd664a69de0476d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f5a8cfff72c34bdcbbd664a69de0476d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 看上去很普通的一个卡片组件，但它有一个很显著的特征，图片的标注和卡片标题是对齐，并且主内容与图片之间有一定的空白间距：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/91ea82684caa4552a2a4cec900cc0d24~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/91ea82684caa4552a2a4cec900cc0d24~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你可能会说，CSS 实现上图这样的布局效果已经是非常容易的了。这样说并不错，但是在一定的结构限制之下，比如说，为了让 Web 可访问性做得更好一些，对屏幕阅读器更友好一些，构建上图的 HTML 结构可能会是下面这样：
 
@@ -935,7 +935,7 @@ body {
  }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0fd058b67da34458b33595b31e2b40b7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/0fd058b67da34458b33595b31e2b40b7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 同时 `figure` 跨五列两行：
 
@@ -946,7 +946,7 @@ body {
 } 
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a9359f11102f48f79a3c9f3e934fc68c~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/a9359f11102f48f79a3c9f3e934fc68c~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 此时，在 `figure` 上使用 `subgrid` ，并将 `img` 和 `figcaption` 按网格线放置到指定位置：
 
@@ -968,11 +968,11 @@ figcaption {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/853fe9fe141e49148d07375d531b2003~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/853fe9fe141e49148d07375d531b2003~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你最终看到的效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cde0a86c6863420cb972207dc1bb1459~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/cde0a86c6863420cb972207dc1bb1459~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/YzvZKxV>
 
@@ -980,7 +980,7 @@ figcaption {
 
 百分百宽度的条纹布局其实是 **Full-Bleed** 布局效果的延伸，它看起来像下面这样：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6a229d20e4d943359897c304d489af44~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6a229d20e4d943359897c304d489af44~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 上图这种布局效果也是 Web 布局中常见的一种，它有着自己的特色，比如有全屏的、距离左侧或右侧有一定空白空间的。
 
@@ -1026,7 +1026,7 @@ figcaption {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c6d063337c2a49ec8eaf06df9110a258~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/c6d063337c2a49ec8eaf06df9110a258~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/vYrxErN>
 
@@ -1081,7 +1081,7 @@ figcaption {
 
 使用子网格和直接使用网格构建出来的 Full-Bleed 布局效果是一样的：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/10eff151fd6b4b148fe04ac06a03359d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/10eff151fd6b4b148fe04ac06a03359d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 > Demo 地址：<https://codepen.io/airen/full/gOKmbQL>
 
@@ -1108,7 +1108,7 @@ figcaption {
 
 我们可以像下图这样来定义网格：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2bd27b363f8644eda92ddcb51cac7004~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2bd27b363f8644eda92ddcb51cac7004~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 正如你所看到的：
 
@@ -1153,7 +1153,7 @@ figcaption {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f1b343aaef8943f4a45949c7d3df1f64~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f1b343aaef8943f4a45949c7d3df1f64~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这样，你就可以使用网格线名称，将网格项目放置到相应的位置，完成最终所需要的布局效果：
 
@@ -1203,13 +1203,13 @@ figcaption {
 
 最终效果如下：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/721b53c9f1034ce984799df277ae29d3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/721b53c9f1034ce984799df277ae29d3~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/ZEReYVq>
 
 注意，你也可以在上面示例基础上进一步加工，实现下图这样的布局效果：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8ce60203dffd4b78ba92f17f55352ed8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/8ce60203dffd4b78ba92f17f55352ed8~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 就当上图是个小作业，感兴趣的同学不妨试一试，看看你能用多少种布局方案实现上图的布局效果。
 
@@ -1217,7 +1217,7 @@ figcaption {
 
 时间轴卡片组件也是 Web 中常见的一种设计，我们可以在上面的“百分百宽度的条纹布局”技术方案的基础上来构建时间轴卡片组件。
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/05ed74596f6d4812be9a29d6018f3948~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/05ed74596f6d4812be9a29d6018f3948~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 使用网格和子网格，再借助 CSS 媒体查询，你就可以很轻易构建出上图所示的时间轴卡片组件。
 
@@ -1226,7 +1226,7 @@ figcaption {
 
 另外，每张卡片的数字指示器，都能和卡片的标题垂直对齐：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/24e5367e137b47e2bdcc4818a269ad01~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/24e5367e137b47e2bdcc4818a269ad01~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址：<https://codepen.io/airen/full/KKeWVNq>
 
@@ -1257,7 +1257,7 @@ figcaption {
 
 对于构建上图这样的响应式时间轴卡片组件，我们遵循**移动端先行**的原则，即：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f0b18e99b46a41ea86b7a13f767bc876~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/f0b18e99b46a41ea86b7a13f767bc876~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 你已经看到了，时间轴卡片组件的**轴和卡片的数字指示器**都在卡片的左侧，这样一来：
 
@@ -1274,7 +1274,7 @@ figcaption {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/19582dcd1e8e4bc7978fc1365c8059e7~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/19582dcd1e8e4bc7978fc1365c8059e7~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 按照网格项目放置的方法，将时间轴和卡片放置到指定的位置：
 
@@ -1321,7 +1321,7 @@ figcaption {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/169386e8a3ad47be9e6b00bf742e01d8~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/169386e8a3ad47be9e6b00bf742e01d8~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这样你就可以使用网格线，将卡片数字指示器 `.card--wrapper::before` 和卡片 `.card` 放置到指定的位置：
 
@@ -1404,13 +1404,13 @@ figcaption {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2103dcd6f9f64f5db52bdd6062442254~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/2103dcd6f9f64f5db52bdd6062442254~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ## 表单布局
 
 表单是 Web 中不可或缺的部分，因为 Web 需要用表单来和用户进行交流，所以将表单布局设计的好就显得尤为重要。比如下面这个登录表单：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9c20e8654d3347d88d1e8924b09f0663~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/9c20e8654d3347d88d1e8924b09f0663~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 这是一个具有响应式能力的登录表单。暂且抛开其 UI 不谈，就只聊表单控件。在移动端上，布局相对较为简单，表单控件的标签 `<label>` 、表单控件（比如 `<input>`）、验证信息等都是垂直排列的。平板和桌面端，由于空间变大，更好地利用水平方向的空间，会把垂直排列的布局，调整为水平排列的布局，即 表单控件标签居左，表单控件和验证信息居右，甚至有的元素占两列，比如上图中的“登录按钮”。
 
@@ -1469,7 +1469,7 @@ figcaption {
 
 简单地分析一下，基于上面这个 HTML 结构，构建上图表单布局，可能会定义的网格有：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/17c33b5d1f0747a29e0d57e418e8260d~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/17c33b5d1f0747a29e0d57e418e8260d~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 - `body` 定义一个网格，主要用于整体的页面布局，构建一个 Full-Bleed 布局；
 - `.form--wrapper` 定义一个网格，是构建表单 UI 主体布局，也是主网格；
@@ -1515,7 +1515,7 @@ body {
 
 `.form` 网格是 `.form--wrapper` 网格的子网格，它继承了其父网格所有参数：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6234181631c54978acb6c62a0cfad323~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/6234181631c54978acb6c62a0cfad323~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 在移动端下，网格项目都层叠在一起，如上图所示，整个表单 `<form>` 堆叠在图片 `<figure>` 之上。这在网格布局中是很容易就能做到的：
 
@@ -1532,7 +1532,7 @@ body {
 
 在平板和桌面端时，使用 CSS 媒体查询特性来调整 `.form` 网格的列轨道，并且将 `<form>` 和 `<figure>` 位置调整为水平排列，不再是堆叠在一起了：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dfae34b4f659486899e2d44f81decef3~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/dfae34b4f659486899e2d44f81decef3~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 ```
 @media only screen and (min-width: 768px) {
@@ -1573,7 +1573,7 @@ form {
 }
 ```
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/891e6f508d5c42b59da552323a608339~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/891e6f508d5c42b59da552323a608339~tplv-k3u1fbpfcp-zoom-1.jpeg)
 
 根据网格线，将网格项目放置到指定位置：
 
@@ -1778,7 +1778,7 @@ form h3 {
 
 最终的效果如下图所示：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/92984e5b70f54a61a92242f9278811b2~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/92984e5b70f54a61a92242f9278811b2~tplv-k3u1fbpfcp-zoom-1.gif)
 
 > Demo 地址： <https://codepen.io/airen/full/LYrWMwP>
 
@@ -1790,4 +1790,4 @@ form h3 {
 
 心动不如行动，最后给大家布置一个小作业，请使用 CSS 子网格构建下图中天气组件的布局：
 
-![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/afff8ca9c9ec4cde8820b8a9250726cc~tplv-k3u1fbpfcp-zoom-1.image)
+![img](./assets/afff8ca9c9ec4cde8820b8a9250726cc~tplv-k3u1fbpfcp-zoom-1.jpeg)
