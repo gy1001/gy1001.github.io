@@ -17,15 +17,19 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', href: '/images/logo.png' }],
   ],
+  // 解决引入 awebp 图片打包失败的问题
+  vite: {
+    assetsInclude: ['**/*.awebp'],
+  },
 
   ignoreDeadLinks: true,
 
   themeConfig: {
+
     // https://vitepress.dev/reference/default-theme-config
     nav: [{ text: 'Home', link: '/' }],
     logo: { src: '/images/logo.png', width: 24, height: 24 },
     sidebar: [],
-
 
     footer: {
       message: 'Released under the MIT License.',
