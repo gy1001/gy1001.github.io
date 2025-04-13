@@ -115,7 +115,7 @@ function nav(): DefaultTheme.NavItem[] {
     },
     {
       text: '专栏学习',
-      link: '/zh/column/emotional-intelligence-lessons/index-01',
+      link: '/zh/column/emotional-intelligence-lessons/01-开篇词',
       activeMatch: '/zh/column/',
     },
     {
