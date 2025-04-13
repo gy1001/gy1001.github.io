@@ -651,7 +651,7 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
     {
       text: '2小时搞定移动端混合开发基础入门',
       collapsed: true,
-      items: HyBirdAppArr
+      items: HyBirdAppArr,
     },
     {
       text: '玩转Vim 从放弃到爱不释手',
