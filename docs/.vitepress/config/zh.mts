@@ -1,5 +1,40 @@
 import {defineConfig, type DefaultTheme} from "vitepress";
+import fs from "node:fs"
+import path from "node:path"
 
+const rootPath = process.cwd()
+
+function generatorMdFileArr(modulePath, linkPath) {
+  const resolvedModulePath = path.resolve(rootPath, "docs" + modulePath)
+  return fs.readdirSync(resolvedModulePath).filter((item) => {
+    return item.includes('.md')
+  }).map(item => {
+    const itemName = item.replace('.md', '')
+    return {
+      text: itemName,
+      link: linkPath + itemName
+    }
+  })
+}
+
+const EngineeringProjectArr = generatorMdFileArr(
+  '/zh/column/engineering-project/',
+  "engineering-project/"
+)
+
+const VisualH5Arr = generatorMdFileArr('/zh/column/visual-h5/', 'visual-h5/')
+const NestH5Arr = generatorMdFileArr('/zh/column/nest-h5/','nest-h5/')
+const ComponentEssentialsArr = generatorMdFileArr(
+  '/zh/column/component-essentials/','component-essentials/'
+)
+const TaroMultiEndedArr = generatorMdFileArr(
+  '/zh/column/taro-multi-ended/','taro-multi-ended/'
+)
+const ReviewStudyArr = generatorMdFileArr('/zh/column/review-study/', 'review-study/')
+const BusinessThinkingArr = generatorMdFileArr(
+  '/zh/column/business-thinking/','business-thinking/'
+)
+const LowCodeArr = generatorMdFileArr('/zh/column/low-code/', 'low-code/')
 export const zh = defineConfig({
   themeConfig: {
     nav: nav(),
@@ -1045,45 +1080,45 @@ function sidebarColumn(): DefaultTheme.sidebaritem[] {
         {text: '38-附录：项目中常用的插件', link: 'webpack-engineering/index-38.md'},
       ],
     },
-    // {
-    //   text: '从 0 到 1 落地前端工程化',
-    //   children: EngineeringProjectArr,
-    //   collapsible: true,
-    // },
-    // {
-    //   text: '从零开发H5可视化搭建项目',
-    //   collapsible: true,
-    //   children: VisualH5Arr,
-    // },
-    // {
-    //   text: '掘金小册 Nest 通关秘籍',
-    //   collapsible: true,
-    //   children: NestH5Arr,
-    // },
-    // {
-    //   text: 'Vue.js 组件精讲',
-    //   collapsible: true,
-    //   children: ComponentEssentialsArr,
-    // },
-    // {
-    //   text: 'Taro 多端开发实现原理与项目实战',
-    //   collapsible: true,
-    //   children: TaroMultiEndedArr,
-    // },
-    // {
-    //   text: '跟着高手学复盘',
-    //   collapsible: true,
-    //   children: ReviewStudyArr,
-    // },
-    // {
-    //   text: '商业思维案例笔记',
-    //   collapsible: true,
-    //   children: BusinessThinkingArr,
-    // },
-    // {
-    //   text: '说透低代码',
-    //   collapsible: true,
-    //   children: LowCodeArr,
-    // },
+    {
+      text: '从 0 到 1 落地前端工程化',
+      collapsed: true,
+      items: EngineeringProjectArr,
+    },
+    {
+      text: '从零开发H5可视化搭建项目',
+      collapsed: true,
+      items: VisualH5Arr,
+    },
+    {
+      text: '掘金小册 Nest 通关秘籍',
+      collapsed: true,
+      items: NestH5Arr,
+    },
+    {
+      text: 'Vue.js 组件精讲',
+      collapsed: true,
+      items: ComponentEssentialsArr,
+    },
+    {
+      text: 'Taro 多端开发实现原理与项目实战',
+      collapsed: true,
+      items: TaroMultiEndedArr,
+    },
+    {
+      text: '跟着高手学复盘',
+      collapsed: true,
+      items: ReviewStudyArr,
+    },
+    {
+      text: '商业思维案例笔记',
+      collapsed: true,
+      items: BusinessThinkingArr,
+    },
+    {
+      text: '说透低代码',
+      collapsed: true,
+      items: LowCodeArr,
+    },
   ]
 }
