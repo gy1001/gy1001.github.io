@@ -21,7 +21,10 @@ const EngineeringProjectArr = generatorMdFileArr(
   '/zh/column/engineering-project/',
   "engineering-project/"
 )
-
+const WebpackEngineeringArr = generatorMdFileArr("/zh/column/webpack-engineering/", 'webpack-engineering/')
+const FrontMasterAdvancedArr = generatorMdFileArr("/zh/column/front-master-advanced/", 'front-master-advanced/')
+const WebLayoutArr = generatorMdFileArr('/zh/column/web-layout/', 'web-layout/')
+const FeInterview100Arr = generatorMdFileArr('/zh/class/fe-interview-100/', 'fe-interview-100/')
 const VisualH5Arr = generatorMdFileArr('/zh/column/visual-h5/', 'visual-h5/')
 const NestH5Arr = generatorMdFileArr('/zh/column/nest-h5/','nest-h5/')
 const ComponentEssentialsArr = generatorMdFileArr(
@@ -35,6 +38,10 @@ const BusinessThinkingArr = generatorMdFileArr(
   '/zh/column/business-thinking/','business-thinking/'
 )
 const LowCodeArr = generatorMdFileArr('/zh/column/low-code/', 'low-code/')
+const FrameProjectInterviewArr = generatorMdFileArr('/zh/class/frame-project-interview/', 'frame-project-interview/')
+const DevelopPointArr = generatorMdFileArr('/zh/class/develop-point/', 'develop-point/')
+const HyBirdAppArr = generatorMdFileArr('/zh/class/hyBird-app/', 'hyBird-app/')
+
 export const zh = defineConfig({
   themeConfig: {
     nav: nav(),
@@ -57,7 +64,7 @@ export const zh = defineConfig({
       },
       '/zh/class/': {
         base: '/zh/class/',
-        items: sideBarStudyNote()
+        items: sideBarClass()
       },
       '/zh/column/': {
         base: '/zh/column/',
@@ -402,7 +409,7 @@ function sidebarOther(): DefaultTheme.SidebarItem[] {
   ]
 }
 
-function sideBarStudyNote(): DefaultTheme.SidebarItem[] {
+function sideBarClass(): DefaultTheme.SidebarItem[] {
   return [
     {text: 'Vue3 从入门到实战', link: 'vue3-learn-practice'},
     {
@@ -418,34 +425,12 @@ function sideBarStudyNote(): DefaultTheme.SidebarItem[] {
     {
       text: '2周刷完100道前端优质面试真题',
       collapsed: true,
-      items: [
-        {text: '课程简介', link: 'fe-interview-100/index-01'},
-        {text: '数据结构和算法（上），大厂面试必考', link: 'fe-interview-100/index-02'},
-        {text: '数据结构和算法（下），大厂面试必考', link: 'fe-interview-100/index-03'},
-        {text: '前端基础知识，必知必会', link: 'fe-interview-100/index-04'},
-        {text: '知识深度-原理和源码', link: 'fe-interview-100/index-05'},
-        {text: '知识广度 - 从前端到全栈', link: 'fe-interview-100/index-06'},
-        {text: '实际工作经验', link: 'fe-interview-100/index-07'},
-        {text: '编写高质量代码', link: 'fe-interview-100/index-08'},
-        {text: '分析和解决问题的思路', link: 'fe-interview-100/index-09'},
-        {text: '项目设计', link: 'fe-interview-100/index-10'},
-        {text: '软技能', link: 'fe-interview-100/index-11'},
-      ]
+      items: FeInterview100Arr
     },
     {
       text: '框架项目－聚焦Vue3/React/Webpack',
       collapsed: true,
-      items: [
-        {text: '课程导学', link: 'frame-project-interview/index-01'},
-        {text: '课程介绍', link: 'frame-project-interview/index-02'},
-        {text: 'Vue 使用', link: 'frame-project-interview/index-03'},
-        {text: 'Vue 原理', link: 'frame-project-interview/index-04'},
-        {text: 'Vue 面试真题演练', link: 'frame-project-interview/index-05'},
-        {text: 'Vue3 学习', link: 'frame-project-interview/index-06'},
-        {text: 'webpack 和 babel', link: 'frame-project-interview/index-10'},
-        {text: '项目设计', link: 'frame-project-interview/index-11'},
-        {text: '项目流程', link: 'frame-project-interview/index-12'},
-      ],
+      items: FrameProjectInterviewArr,
     },
     {text: '使用 typescript 封装 axios', link: 'axios-typescript'},
     {text: '从0到1开发一款IOS APP', link: 'ios-development/01',},
@@ -661,23 +646,12 @@ function sideBarStudyNote(): DefaultTheme.SidebarItem[] {
     {
       text: '六大场景 梳理开发痛点 解锁前端进阶路',
       collapsed: true,
-      items: [
-        {text: '01-场景一：这么多框架怎么来学？', link: "develop-point/index-01.md"},
-        {text: '02-场景二：前端工程化如何入门到进阶？', link: "develop-point/index-02.md"},
-        {text: '03-场景三：开发如剑，测试如具，调试如诊', link: "develop-point/index-03.md"},
-        {text: '04-场景四：通用 Nodejs 后台打通全栈第一脉', link: "develop-point/index-04.md"},
-        {text: '05-场景五：自动化流程及缺陷管理', link: "develop-point/index-05.md"},
-        {text: '06-场景六：多端、跨端应用该何去何从', link: "develop-point/index-06.md"},
-      ],
+      items: DevelopPointArr,
     },
     {
       text: '2小时搞定移动端混合开发基础入门',
       collapsed: true,
-      items: [
-        {text: '01-混合开发介绍', link: "hyBird-app/index-01.md"},
-        {text: '02-混合开发核心技术 JSBridge', link: "hyBird-app/index-02.md"},
-        {text: '03-实现一个简单的混合 APP', link: "hyBird-app/index-03.md"},
-      ],
+      items: HyBirdAppArr
     },
     {
       text: '玩转Vim 从放弃到爱不释手',
@@ -965,121 +939,17 @@ function sidebarColumn(): DefaultTheme.sidebaritem[] {
     {
       text: '现代web布局',
       collapsed: true,
-      items: [
-        {text: '01-Web 布局技术演进', link: 'web-layout/index-01.md'},
-        {text: '02-现代 Web 布局技术术语', link: 'web-layout/index-02.md'},
-        {text: '03-Flexbox 布局基础使用', link: 'web-layout/index-03.md'},
-        {text: '04-Flexbox 布局中的对齐方式', link: 'web-layout/index-04.md'},
-        {text: '05-Flexbox 布局中的 flex 属性的基础运用', link: 'web-layout/index-05.md'},
-        {text: '06-Flexbox 中的计算', link: 'web-layout/index-06.md'},
-        {text: '07-Flexbox 中的计算', link: 'web-layout/index-07.md'},
-        {text: '08-Flexbox 布局中的 flex-basis', link: 'web-layout/index-08.md'},
-        {text: '09-使用 Flexbox 构建经典布局', link: 'web-layout/index-09.md'},
-        {text: '10-Grid 布局的基础知识', link: 'web-layout/index-10.md'},
-        {text: '11-定义一个网格布局', link: 'web-layout/index-11.md'},
-        {text: '12-Grid 布局中的计算', link: 'web-layout/index-12.md'},
-        {text: '13-可用于 Grid 布局中的函数', link: 'web-layout/index-13.md'},
-        {text: '14-网格项目的放置和层叠', link: 'web-layout/index-14.md'},
-        {text: '15-Grid 布局中的对齐方式', link: 'web-layout/index-15.md'},
-        {text: '16-网格布局中的子网格和嵌套网格', link: 'web-layout/index-16.md'},
-        {text: '17-使用子网格构建 Web 布局', link: 'web-layout/index-17.md'},
-        {text: '18-使用 Grid 构建经典布局：10 种经典布局', link: 'web-layout/index-18.md'},
-        {text: '19-使用 Grid 构建创意性 Web 布局', link: 'web-layout/index-19.md'},
-        {text: '20-Flexbox or Grid', link: 'web-layout/index-20.md'},
-        {text: '21-display：contents 改变 Flexbox 和 Grid 布局模式', link: 'web-layout/index-21.md'},
-        {text: '22-Web 中的向左向右', link: 'web-layout/index-22.md'},
-        {text: '23-Web 中的向左向右', link: 'web-layout/index-23.md'},
-        {text: '24-内在 Web 设计', link: 'web-layout/index-24.md'},
-        {text: '25-创建不规则 Web 布局', link: 'web-layout/index-25.md'},
-        {text: '26-如何构建响应式 UI？', link: 'web-layout/index-26.md'},
-        {text: '27-下一代响应式 Web 设计', link: 'web-layout/index-27.md'},
-      ],
+      items: WebLayoutArr,
     },
     {
       text: '前端高手进阶',
       collapsed: true,
-      items: [
-        {text: '00-开篇词', link: 'front-master-advanced/index-00.md'},
-        {text: '01-你真的熟悉 HTML 标签吗？', link: 'front-master-advanced/index-01.md'},
-        {text: '02-如何高效操作 DOM 元素？', link: 'front-master-advanced/index-02.md'},
-        {text: '03-3 个使用场景助你用好 DOM 事件', link: 'front-master-advanced/index-03.md'},
-        {text: '04-掌握 CSS 精髓：布局', link: 'front-master-advanced/index-04.md'},
-        {text: '05-如何管理你的 CSS 代码？', link: 'front-master-advanced/index-05.md'},
-        {text: '06-浏览器如何渲染页面？', link: 'front-master-advanced/index-06.md'},
-        {text: '07-关于 JavaScript 的数据类型，你知多少？', link: 'front-master-advanced/index-07.md'},
-        {text: '08-为什么说函数是 JavaScript 的一等公民？', link: 'front-master-advanced/index-08.md'},
-        {text: '09-为什么代码没有按照编写顺序执行？', link: 'front-master-advanced/index-09.md'},
-        {text: '10-怎么复用你的代码？', link: 'front-master-advanced/index-10.md'},
-        {text: '11-为什么说 JavaScript 不适合大型项目？', link: 'front-master-advanced/index-11.md'},
-        {text: '12-浏览器如何执行 JavaScript 代码? ', link: 'front-master-advanced/index-12.md'},
-        {text: '13-区分浏览器中的进程与线程', link: 'front-master-advanced/index-13.md'},
-        {text: '14-HTTP 协议和它的“补丁”们', link: 'front-master-advanced/index-14.md'},
-        {text: '15-如何让浏览器更快地加载网络资源？', link: 'front-master-advanced/index-15.md'},
-        {text: '16-浏览器同源策略与跨域方案详解', link: 'front-master-advanced/index-16.md'},
-        {text: '17-前后端如何有效沟通？', link: 'front-master-advanced/index-17.md'},
-        {text: '18-你是怎么理解“组件”这个概念的？', link: 'front-master-advanced/index-18.md'},
-        {text: '19-把路由放在前端意味着什么？', link: 'front-master-advanced/index-19.md'},
-        {text: '20-详解组件通信之状态管理', link: 'front-master-advanced/index-20.md'},
-        {text: '21-你的代码到底是怎么编译的？', link: 'front-master-advanced/index-21.md'},
-        {text: '22-如何合理搭建前端项目？', link: 'front-master-advanced/index-22.md'},
-        {text: '23-谈性能优化到底在谈什么？', link: 'front-master-advanced/index-23.md'},
-        {text: '24-你的代码是怎么成为黑客工具的？', link: 'front-master-advanced/index-24.md'},
-        {text: '25-Node.js == 全栈？', link: 'front-master-advanced/index-25.md'},
-        {text: '26-常用的数据结构了解多少？', link: 'front-master-advanced/index-26.md'},
-        {text: '27-到底该不该了解算法？', link: 'front-master-advanced/index-27.md'},
-        {text: '28-你都了解过哪些编程方式？', link: 'front-master-advanced/index-28.md'},
-        {text: '29-框架到底用了哪些设计模式？', link: 'front-master-advanced/index-29.md'},
-        {text: '30-前端热点技术之 Serverless', link: 'front-master-advanced/index-30.md'},
-        {text: '31-微前端与功能的可重用性', link: 'front-master-advanced/index-31.md'},
-        {text: '32-加餐 1-手写 CSS 预处理', link: 'front-master-advanced/index-32.md'},
-        {text: '33-加餐 2-手写 Promise、async await', link: 'front-master-advanced/index-33.md'},
-        {text: '34-彩蛋：如何获得心仪的 Offer？', link: 'front-master-advanced/index-34.md'},
-        {text: '35-结束语：谈谈前端工程师的职业规划（如何跳槽、如何晋升）', link: 'front-master-advanced/index-35.md'},
-      ],
+      items: FrontMasterAdvancedArr,
     },
     {
       text: 'Webpack 从零入门到工程化实战',
       collapsed: true,
-      items: [
-        {text: '01-开篇词', link: 'webpack-engineering/index-01.md'},
-        {text: '02-什么是 Webpack', link: 'webpack-engineering/index-02.md'},
-        {text: '03-Webpack 开发环境搭建', link: 'webpack-engineering/index-03.md'},
-        {text: '04-使用 webpack-cli 体验零配置打包', link: 'webpack-engineering/index-04.md'},
-        {text: '05-基础概念和常见配置项介绍（一）', link: 'webpack-engineering/index-05.md'},
-        {text: '06-基础概念和常见配置项介绍（二）', link: 'webpack-engineering/index-06.md'},
-        {text: '07-Webpack 中的模块化开发', link: 'webpack-engineering/index-07.md'},
-        {text: '08-在 Webpack 中使用 Babel 转换 JavaScript 代码', link: 'webpack-engineering/index-08.md'},
-        {text: '09-Webpack 中使用 TypeScript 开发项目', link: 'webpack-engineering/index-09.md'},
-        {text: '10-Webpack 中样式相关的配置', link: 'webpack-engineering/index-10.md'},
-        {text: '11-Webpack 中使用 lint 工具来保证代码风格和质量', link: 'webpack-engineering/index-11.md'},
-        {text: '12-使用 Webpack 管理项目中的静态资源', link: 'webpack-engineering/index-12.md'},
-        {text: '13-Webpack 中打包 HTML 和多页面配置', link: 'webpack-engineering/index-13.md'},
-        {text: '14-Webpack Dev Server 本地开发服务', link: 'webpack-engineering/index-14.md'},
-        {text: '15-Webpack 中配置 React 和 Vue 开发环境', link: 'webpack-engineering/index-15.md'},
-        {text: '16-Webpack 环境相关配置及配置文件拆分', link: 'webpack-engineering/index-16.md'},
-        {text: '17-Webpack 优化之体积优化', link: 'webpack-engineering/index-17.md'},
-        {text: '18-Webpack 优化之增强缓存命中率', link: 'webpack-engineering/index-18.md'},
-        {text: '19-使用 Webpack 的 splitChunks 功能来拆分代码', link: 'webpack-engineering/index-19.md'},
-        {text: '20-Webpack 优化之速度优化', link: 'webpack-engineering/index-20.md'},
-        {text: '21-使用 Webpack 的 Tree-Shaking', link: 'webpack-engineering/index-21.md'},
-        {text: '22-为你准备了一份 Webpack 工程化最佳实践总结', link: 'webpack-engineering/index-22.md'},
-        {text: '23-怎么调试 Webpack？', link: 'webpack-engineering/index-23.md'},
-        {text: '24-Tapable —— Webpack 的核心模块', link: 'webpack-engineering/index-24.md'},
-        {text: '25-Webpack 的 Compiler 和 Compilation', link: 'webpack-engineering/index-25.md'},
-        {text: '26-Webpack 工作流程', link: 'webpack-engineering/index-26.md'},
-        {text: '27-从 Webpack 的产出代码来看 Webpack 是怎么执行的', link: 'webpack-engineering/index-27.md'},
-        {text: '28-Webpack 的模块热替换做了什么？', link: 'webpack-engineering/index-28.md'},
-        {text: '29-实战：使用 PostCSS 打造移动适配方案', link: 'webpack-engineering/index-29.md'},
-        {text: '30-实战：手写一个 markdown-loader', link: 'webpack-engineering/index-30.md'},
-        {text: '31-实战：手写一个 prefetch-webpack-plugin 插件', link: 'webpack-engineering/index-31.md'},
-        {text: '32-实战：使用 Express 和中间件来实现 Webpack-dev-server', link: 'webpack-engineering/index-32.md'},
-        {text: '33-实战：使用 Stats 数据结构生成 Webpack 构建报告', link: 'webpack-engineering/index-33.md'},
-        {text: '34-实战：给 Webpack 项目添加 modern 模式打包', link: 'webpack-engineering/index-34.md'},
-        {text: '35-Webpack 5.0', link: 'webpack-engineering/index-35.md'},
-        {text: '36-课程总结', link: 'webpack-engineering/index-36.md'},
-        {text: '37-附录：项目中常用的 loader', link: 'webpack-engineering/index-37.md'},
-        {text: '38-附录：项目中常用的插件', link: 'webpack-engineering/index-38.md'},
-      ],
+      items: WebpackEngineeringArr,
     },
     {
       text: '从 0 到 1 落地前端工程化',
