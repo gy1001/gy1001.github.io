@@ -95,7 +95,7 @@ function nav(): DefaultTheme.NavItem[] {
     },
     {
       text: '美文推荐',
-      link: '/zh/collect/index',
+      link: '/zh/collect/github/github',
       activeMatch: '/zh/collect/',
     },
     {
@@ -300,6 +300,7 @@ function sidebarInterview(): DefaultTheme.SidebarItem[] {
 function sidebarCollect(): DefaultTheme.SidebarItem[] {
   return [
     {text: 'Github大佬', link: 'github/github.md'},
+    {text: '推荐', link: 'index'},
     {
       text: '技术相关',
       collapsed: false,

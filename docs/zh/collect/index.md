@@ -1,6 +1,6 @@
-## 推荐
+# 推荐
 
-### VuePress
+## VuePress
 
 [vuepress-theme-hope: 一个具有强大功能的 vuepress 主题](https://vuepress-theme-hope.github.io/v2/zh/)
 
