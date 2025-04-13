@@ -38,9 +38,12 @@ const BusinessThinkingArr = generatorMdFileArr(
   '/zh/column/business-thinking/','business-thinking/'
 )
 const LowCodeArr = generatorMdFileArr('/zh/column/low-code/', 'low-code/')
+const gitRelatedArr = generatorMdFileArr("/zh/column/git-related/", "git-related/")
 const FrameProjectInterviewArr = generatorMdFileArr('/zh/class/frame-project-interview/', 'frame-project-interview/')
 const DevelopPointArr = generatorMdFileArr('/zh/class/develop-point/', 'develop-point/')
 const HyBirdAppArr = generatorMdFileArr('/zh/class/hyBird-app/', 'hyBird-app/')
+const EmotionalIntelligenceLessonsArr = generatorMdFileArr('/zh/column/emotional-intelligence-lessons/', 'emotional-intelligence-lessons/')
+const Vue3LearnArr = generatorMdFileArr("/zh/class/vue3-learn/", "vue3-learn/")
 
 export const zh = defineConfig({
   themeConfig: {
@@ -437,24 +440,7 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
     {
       text: 'Vue3 源码解析，打造自己的 Vue3 框架，领悟尤大思维精髓',
       collapsed: true,
-      items: [
-        {text: '01-框架设计前瞻', link: 'vue3-learn/index-01'},
-        {text: '02-Vue3 源码结构', link: 'vue3-learn/index-02'},
-        {text: '03-响应系统的核心设计原则', link: 'vue3-learn/index-03'},
-        {text: '04-初见 reactivity 模块', link: 'vue3-learn/index-04'},
-        {text: '05-响应系统-ref 的响应性', link: 'vue3-learn/index-05'},
-        {text: '06-响应系统-compute && watch', link: 'vue3-learn/index-06'},
-        {text: '07-runtime 运行时-运行时核心设计原则', link: 'vue3-learn/index-07'},
-        {text: '08-runtime 运行时-构建 h 函数，生成 VNode', link: 'vue3-learn/index-08'},
-        {text: '09-runtime 运行时-构建 renderer 渲染器', link: 'vue3-learn/index-09'},
-        {text: '10-runtime 运行时-组件的设计原理与渲染方案', link: 'vue3-learn/index-10'},
-        {text: '11-runtime 运行时-diff 算法核心实现', link: 'vue3-learn/index-11'},
-        {text: '12-compiler 编译器-编译时核心设计原则', link: 'vue3-learn/index-12'},
-        {text: '13-compiler 编译器-构建 compile 编译器', link: 'vue3-learn/index-13'},
-        {text: '14-compiler 编译器 - 深入编辑器处理逻辑（困难）', link: 'vue3-learn/index-14'},
-        {text: '15-运行时+编译时-合并 vue 处理逻辑', link: 'vue3-learn/index-15'},
-        {text: '16-总结', link: 'vue3-learn/index-16'},
-      ],
+      items: Vue3LearnArr,
     },
     {
       text: '吃透前端工程化，大厂级实战项目以战带练',
@@ -791,67 +777,12 @@ function sidebarColumn(): DefaultTheme.sidebaritem[] {
     {
       text: '给程序员的职场情商课',
       collapsed: true,
-      items: [
-        {text: '01-开篇词', link: 'emotional-intelligence-lessons/index-01.md'},
-        {text: '02-不一样的情商课', link: 'emotional-intelligence-lessons/index-02.md'},
-        {text: '03-做高情商的“面试者”', link: 'emotional-intelligence-lessons/index-03.md'},
-        {text: '04-与“难缠面试官”不得不说的故事', link: 'emotional-intelligence-lessons/index-04.md'},
-        {text: '05-解读“上班第一天”的职场规则', link: 'emotional-intelligence-lessons/index-05.md'},
-        {text: '06-“什么都不懂，还爱瞎指挥”', link: 'emotional-intelligence-lessons/index-06.md'},
-        {text: '07-从“我干活，你抢功”聊起之“抢功劳的上司”篇', link: 'emotional-intelligence-lessons/index-07.md'},
-        {text: '08-从“我干活，你抢功”聊起之“抢功精同事”篇', link: 'emotional-intelligence-lessons/index-08.md'},
-        {text: '09-从被抢功到会邀功', link: 'emotional-intelligence-lessons/index-09.md'},
-        {text: '10-谈谈职场薪水观', link: 'emotional-intelligence-lessons/index-10.md'},
-        {text: '11-“996”的心酸与无奈', link: 'emotional-intelligence-lessons/index-11.md'},
-        {text: '12-“背锅”的艺术', link: 'emotional-intelligence-lessons/index-12.md'},
-        {text: '13-该不该“巴结领导”？', link: 'emotional-intelligence-lessons/index-13.md'},
-        {text: '14-多干多错，少干少错？”', link: 'emotional-intelligence-lessons/index-14.md'},
-        {text: '15-“我不会，但我愿意学”', link: 'emotional-intelligence-lessons/index-15.md'},
-        {text: '16-职场“站队”难', link: 'emotional-intelligence-lessons/index-16.md'},
-        {
-          text: '17-为什么大多数人宁愿吃生活的苦，也不愿意吃学习的苦',
-          link: 'emotional-intelligence-lessons/index-17.md'
-        },
-        {text: '18-别输在“情绪管理”', link: 'emotional-intelligence-lessons/index-18.md'},
-        {text: '19-从“年薪170w大牛征婚”聊起', link: 'emotional-intelligence-lessons/index-19.md'},
-        {text: '20-结束语：大道行思,取则行远', link: 'emotional-intelligence-lessons/index-20.md'},
-      ]
+      items: EmotionalIntelligenceLessonsArr,
     },
     {
       text: 'Git原理详解与实操指南',
       collapsed: true,
-      items: [
-        {text: '01-为什么选择Git', link: 'git-related/index-01.md'},
-        {text: '02-环境准备', link: 'git-related/index-02.md'},
-        {text: '03-初识Git', link: 'git-related/index-03.md'},
-        {text: '04-拉取远端代码', link: 'git-related/index-04.md'},
-        {text: '05-提交代码', link: 'git-related/index-05.md'},
-        {text: '06-查看代码修改', link: 'git-related/index-06.md'},
-        {text: '07-忽略文件权限', link: 'git-related/index-07.md'},
-        {text: '08-忽略指定文件或目录', link: 'git-related/index-08.md'},
-        {text: '09-图形工具使用', link: 'git-related/index-09.md'},
-        {text: '10-分支管理', link: 'git-related/index-10.md'},
-        {text: '11-文件忽略进阶', link: 'git-related/index-11.md'},
-        {text: '12-比较分支差异', link: 'git-related/index-12.md'},
-        {text: '13-reset命令', link: 'git-related/index-13.md'},
-        {text: '14-删除过期分支', link: 'git-related/index-14.md'},
-        {text: '15-配置多个远端仓库', link: 'git-related/index-15.md'},
-        {text: '16-本地覆盖远端', link: 'git-related/index-16.md'},
-        {text: '17-远端覆盖本地', link: 'git-related/index-17.md'},
-        {text: '18-恢复已删除的分支', link: 'git-related/index-18.md'},
-        {text: '19-比较历史版本差异', link: 'git-related/index-19.md'},
-        {text: '20-单独回滚代码', link: 'git-related/index-20.md'},
-        {text: '21-merge合并操作', link: 'git-related/index-21.md'},
-        {text: '22-客户端钩子使用', link: 'git-related/index-22.md'},
-        {text: '23-服务端钩子使用', link: 'git-related/index-23.md'},
-        {text: '24-合并代码保留提交记录', link: 'git-related/index-24.md'},
-        {text: '25-复制记录到当前分支', link: 'git-related/index-25.md'},
-        {text: '26-工作区暂存', link: 'git-related/index-26.md'},
-        {text: '27-临时任务流程', link: 'git-related/index-27.md'},
-        {text: '28-代码冲突解决', link: 'git-related/index-28.md'},
-        {text: '29-历史记录清理', link: 'git-related/index-29.md'},
-        {text: '30-搭建Git服务器', link: 'git-related/index-30.md'},
-      ],
+      items: gitRelatedArr,
     },
     {
       text: 'JavaScript 设计模式精讲',
