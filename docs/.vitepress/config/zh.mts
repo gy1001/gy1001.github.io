@@ -44,6 +44,7 @@ const DevelopPointArr = generatorMdFileArr('/zh/class/develop-point/', 'develop-
 const HyBirdAppArr = generatorMdFileArr('/zh/class/hyBird-app/', 'hyBird-app/')
 const EmotionalIntelligenceLessonsArr = generatorMdFileArr('/zh/column/emotional-intelligence-lessons/', 'emotional-intelligence-lessons/')
 const Vue3LearnArr = generatorMdFileArr("/zh/class/vue3-learn/", "vue3-learn/")
+const DesignPatternClassArr = generatorMdFileArr("/zh/class/design-pattern/", "design-pattern/")
 
 export const zh = defineConfig({
   themeConfig: {
@@ -567,21 +568,7 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
     {
       text: '快速掌握前端必会的7种设计模式',
       collapsed: true,
-      items: [
-        {text: '01-课程介绍', link: "design-pattern/index-01.md"},
-        {text: '02-面向对象 OOP 和 UML 类图', link: "design-pattern/index-02.md"},
-        {text: '03-设计原则', link: "design-pattern/index-03.md"},
-        {text: '04-工厂模式', link: "design-pattern/index-04.md"},
-        {text: '05-单例模式', link: "design-pattern/index-05.md"},
-        {text: '06-观察者模式', link: "design-pattern/index-06.md"},
-        {text: '07-迭代器模式', link: "design-pattern/index-07.md"},
-        {text: '08-原型模式', link: "design-pattern/index-08.md"},
-        {text: '09-装饰器模式', link: "design-pattern/index-09.md"},
-        {text: '10-代理模式', link: "design-pattern/index-10.md"},
-        {text: '11-其他设计模式', link: "design-pattern/index-11.md"},
-        {text: '12-实战演练', link: "design-pattern/index-12.md"},
-        {text: '13-课程总结', link: "design-pattern/index-13.md"},
-      ],
+      items: DesignPatternClassArr,
     },
     {
       text: '高阶前端进阶必修，自主打造同比AntD的React组建库',
