@@ -47,6 +47,7 @@ const Vue3LearnArr = generatorMdFileArr("/zh/class/vue3-learn/", "vue3-learn/")
 const DesignPatternClassArr = generatorMdFileArr("/zh/class/design-pattern/", "design-pattern/")
 const designPatternDepthColumnsArr = generatorMdFileArr("/zh/column/design-pattern-depth/", "design-pattern-depth/")
 const JsCoreAdvancedArr = generatorMdFileArr("/zh/class/js-core-advanced/", "js-core-advanced/")
+const ReactNativeXiaoHongShuArr = generatorMdFileArr("/zh/class/react-native/xiaohongshu/", "react-native/xiaohongshu/")
 
 export const zh = defineConfig({
   themeConfig: {
@@ -664,24 +665,7 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
     {
       text: 'React Native 保姆教程及实战小红书',
       collapsed: true,
-      items: [
-        {text: '01-学前准备', link: 'react-native/xiaohongshu/index-01.md'},
-        {text: '02-环境搭建', link: 'react-native/xiaohongshu/index-02.md'},
-        {text: '03-为“原生开发”同学补充前端基础', link: 'react-native/xiaohongshu/index-03.md'},
-        {text: '04-为“前端开发”同学补充原生知识', link: 'react-native/xiaohongshu/index-04.md'},
-        {text: '05-工程结构和React必备知识', link: 'react-native/xiaohongshu/index-05.md'},
-        {text: '06-全面掌握系统组件的使用方法以及各种属性的应用场景', link: 'react-native/xiaohongshu/index-06.md'},
-        {text: '07-夯实基础-常用 API', link: 'react-native/xiaohongshu/index-07.md'},
-        {text: '08-夯实基础-RN动画系统', link: 'react-native/xiaohongshu/index-08.md'},
-        {text: '09-小试牛刀-练习项目，账号密码本', link: 'react-native/xiaohongshu/index-09.md'},
-        {text: '10-练兵场-TypeScript快速进阶', link: 'react-native/xiaohongshu/index-10.md'},
-        {text: '11-进阶学习-Context上下文', link: 'react-native/xiaohongshu/index-11.md'},
-        {text: '12-进阶学习-HOC高阶组件', link: 'react-native/xiaohongshu/index-12.md'},
-        {text: '13-高手必学-memo与性能优化', link: 'react-native/xiaohongshu/index-13.md'},
-        {text: '14-高手必学-ref转发', link: 'react-native/xiaohongshu/index-14.md'},
-        {text: '15-高手必学-桥接原生', link: 'react-native/xiaohongshu/index-15.md'},
-        {text: '16-仿写小红书', link: 'react-native/xiaohongshu/index-16.md'},
-      ],
+      items: ReactNativeXiaoHongShuArr,
     },
     {
       text: 'Node.js工程师养成计划',
