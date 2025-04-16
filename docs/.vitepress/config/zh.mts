@@ -48,6 +48,11 @@ const DesignPatternClassArr = generatorMdFileArr("/zh/class/design-pattern/", "d
 const designPatternDepthColumnsArr = generatorMdFileArr("/zh/column/design-pattern-depth/", "design-pattern-depth/")
 const JsCoreAdvancedArr = generatorMdFileArr("/zh/class/js-core-advanced/", "js-core-advanced/")
 const ReactNativeXiaoHongShuArr = generatorMdFileArr("/zh/class/react-native/xiaohongshu/", "react-native/xiaohongshu/")
+const CssArr = generatorMdFileArr("/zh/interview/css/", "css/")
+const AboutArr = generatorMdFileArr("/zh/skill/front/about/", "about/")
+const PackageArr = generatorMdFileArr("/zh/skill/front/package/", "package/")
+const FrameArr = generatorMdFileArr("/zh/skill/front/frame/", "frame/")
+const MiniWebpackArr = generatorMdFileArr("/zh/skill/front/mini-frame/mini-webpack/", "mini-frame/mini-webpack/")
 
 export const zh = defineConfig({
   themeConfig: {
@@ -157,36 +162,17 @@ function sidebarFront(): DefaultTheme.SidebarItem[] {
     {
       text: 'JavaScript相关',
       collapsed: false,
-      items: [
-        {text: "Module-模块化", link: "about/module"},
-        {text: 'Axios', link: "about/axios"},
-        {text: 'Babel', link: "about/babel"},
-        {text: 'Grunt', link: "about/grunt"},
-        {text: 'Gulp', link: "about/gulp"},
-        {text: 'JQuery', link: "about/jquery"},
-        {text: 'Promise', link: "about/promise"},
-        {text: 'TypeScript', link: "about/typescript"},
-        {text: 'Webpack', link: "about/webpack"},
-        {text: 'Todo', link: "about/todo"},
-      ]
+      items: AboutArr,
     },
     {
       text: '包管理相关',
       collapsed: false,
-      items: [
-        {text: 'Npm', link: "package/npm"},
-        {text: 'Npm Vs Yarn Vs Pnpm', link: "package/npm-yarn-pnpm"},
-        {text: 'Pnpm', link: "package/pnpm"},
-        {text: 'Yarn', link: "package/yarn"},
-      ]
+      items: PackageArr,
     },
     {
       text: '前端框架',
       collapsed: false,
-      items: [
-        {text: 'Vue', link: 'frame/vue.md'},
-        {text: 'React', link: 'frame/react.md'},
-      ],
+      items: FrameArr,
     },
     {
       text: 'mini-前端框架',
@@ -197,11 +183,7 @@ function sidebarFront(): DefaultTheme.SidebarItem[] {
         },
         {
           text: 'mini-webpack',
-          items: [
-            {text: 'gy-webpack', link: 'mini-frame/mini-webpack/gy-webpack.md'},
-            {text: 'loader', link: 'mini-frame/mini-webpack/loader.md'},
-            {text: 'plugin', link: 'mini-frame/mini-webpack/plugin.md'},
-          ],
+          items: MiniWebpackArr,
         },
         {text: 'mini-router', link: 'mini-frame/mini-router.md'},
         {text: 'mini-vue-router', link: 'mini-frame/mini-vue-router.md'},
@@ -256,13 +238,7 @@ function sidebarInterview(): DefaultTheme.SidebarItem[] {
     {
       text: 'Css 相关',
       collapsed: false,
-      items: [
-        {text: 'Css 面试题', link: 'css/index-01.md'},
-        {text: 'Css 布局', link: 'css/css-layout.md'},
-        {text: 'Css 定位', link: 'css/css-position.md'},
-        {text: 'Css 图形', link: 'css/css-graphics.md'},
-        {text: 'Css 响应式', link: 'css/css-reactive.md'},
-      ],
+      items: CssArr,
     },
     {
       text: 'JavaScript 相关',
