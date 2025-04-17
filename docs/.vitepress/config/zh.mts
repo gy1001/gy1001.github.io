@@ -26,16 +26,16 @@ const FrontMasterAdvancedArr = generatorMdFileArr("/zh/column/front-master-advan
 const WebLayoutArr = generatorMdFileArr('/zh/column/web-layout/', 'web-layout/')
 const FeInterview100Arr = generatorMdFileArr('/zh/class/fe-interview-100/', 'fe-interview-100/')
 const VisualH5Arr = generatorMdFileArr('/zh/column/visual-h5/', 'visual-h5/')
-const NestH5Arr = generatorMdFileArr('/zh/column/nest-h5/','nest-h5/')
+const NestH5Arr = generatorMdFileArr('/zh/column/nest-h5/', 'nest-h5/')
 const ComponentEssentialsArr = generatorMdFileArr(
-  '/zh/column/component-essentials/','component-essentials/'
+  '/zh/column/component-essentials/', 'component-essentials/'
 )
 const TaroMultiEndedArr = generatorMdFileArr(
-  '/zh/column/taro-multi-ended/','taro-multi-ended/'
+  '/zh/column/taro-multi-ended/', 'taro-multi-ended/'
 )
 const ReviewStudyArr = generatorMdFileArr('/zh/column/review-study/', 'review-study/')
 const BusinessThinkingArr = generatorMdFileArr(
-  '/zh/column/business-thinking/','business-thinking/'
+  '/zh/column/business-thinking/', 'business-thinking/'
 )
 const LowCodeArr = generatorMdFileArr('/zh/column/low-code/', 'low-code/')
 const gitRelatedArr = generatorMdFileArr("/zh/column/git-related/", "git-related/")
@@ -53,6 +53,12 @@ const AboutArr = generatorMdFileArr("/zh/skill/front/about/", "about/")
 const PackageArr = generatorMdFileArr("/zh/skill/front/package/", "package/")
 const FrameArr = generatorMdFileArr("/zh/skill/front/frame/", "frame/")
 const MiniWebpackArr = generatorMdFileArr("/zh/skill/front/mini-frame/mini-webpack/", "mini-frame/mini-webpack/")
+const SourceArr = generatorMdFileArr("/zh/skill/front/source/", "source/")
+const VueSourceArr = generatorMdFileArr("/zh/skill/front/source/vue/", "source/vue/")
+const JavaScriptArr = generatorMdFileArr("/zh/interview/javascript/", "javascript/")
+const QuestionsArr = generatorMdFileArr("/zh/interview/questions/", "questions/")
+const AlgorithmArr = generatorMdFileArr("/zh/interview/algorithm/", "algorithm/")
+const JavaScriptAdvancedArr = generatorMdFileArr("/zh/interview/javascript-advanced/", "javascript-advanced/")
 
 export const zh = defineConfig({
   themeConfig: {
@@ -194,24 +200,13 @@ function sidebarFront(): DefaultTheme.SidebarItem[] {
       text: '源码解读',
       collapsed: false,
       items: [
-        {text: 'Axios', link: 'source/axios.md'},
-        {text: 'Promise', link: 'source/promise.md'},
-        {text: 'Utils', link: 'source/utils.md'},
-        {text: 'JQuery', link: 'source/jquery.md'},
+        ...SourceArr,
         {
           text: 'Vue源码',
           collapsed: false,
-          items: [
-            {text: 'Mustache', link: 'source/vue/mustache.md'},
-            {text: 'Diff', link: 'source/vue/diff.md'},
-            {text: 'Reactivity', link: 'source/vue/reactivity.md'},
-            {text: 'AST', link: 'source/vue/ast.md'},
-            {text: 'Direct', link: 'source/vue/direct-method.md'},
-            {text: 'Vue-Question', link: 'source/vue/vue-question.md'},
-          ],
+          items: VueSourceArr,
         },
-        {text: 'Vuex源码', link: 'source/vuex.md'},
-        {text: '自定义Router', link: 'source/router.md',},
+
       ],
     },
     {
@@ -243,47 +238,23 @@ function sidebarInterview(): DefaultTheme.SidebarItem[] {
     {
       text: 'JavaScript 相关',
       collapsed: false,
-      items: [
-        {text: 'JavaScript 面试题', link: 'javascript/basic-00.md'},
-        {text: '变量类型和计算', link: 'javascript/basic-01.md'},
-        {text: '原型和原型链', link: 'javascript/basic-02.md'},
-        {text: '作用域和闭包', link: 'javascript/basic-03.md'},
-        {text: '异步和单线程', link: 'javascript/basic-04.md'},
-        {text: '异步进阶', link: 'javascript/basic-05.md'},
-        {text: 'JS-Web-API-DOM', link: 'javascript/basic-06.md'},
-        {text: 'JS-Web-API-BOM操作', link: 'javascript/basic-07.md'},
-        {text: 'JS-Web-API-事件', link: 'javascript/basic-08.md'},
-        {text: 'JS-Web-API-Ajax', link: 'javascript/basic-09.md'},
-        {text: 'JS-Web-API-存储', link: 'javascript/basic-10.md'},
-        {text: 'New 关键字', link: 'javascript/new.md'},
-        {text: 'This', link: 'javascript/this.md'},
-      ],
+      items: JavaScriptArr,
     },
     {
       text: 'JavaScript 进阶相关',
       collapsed: false,
-      items: [
-        {text: 'ES6 相关', link: 'es6/index-01.md'},
-        {text: 'TS 相关', link: 'ts/index-01.md'},
-        {text: '工程化相关', link: 'engineering/index-01.md'},
-        {text: 'Webpack 相关', link: 'webpack/index-01.md'},
-        {text: 'Vue 相关', link: 'vue/index-01.md'},
-        {text: 'React 相关', link: 'react/index-01.md'},
-        {text: 'Http 相关', link: 'http/http-01.md'},
-        {text: 'Node 相关', link: 'node/node-01.md'},
-        {text: '开发环境', link: 'environment/development/01.md'},
-        {text: '运行环境', link: 'environment/production/01.md'},
-      ]
+      items: JavaScriptAdvancedArr,
     },
     {
       text: '算法相关',
       collapsed: false,
-      items: [
-        {text: '01', link: 'algorithm/01.md'},
-        {text: '02', link: 'algorithm/02.md'}
-      ],
+      items: AlgorithmArr,
     },
-    {text: '面试真题', link: 'questions/01.md'},
+    {
+      text: '面试真题',
+      collapsed: false,
+      items: QuestionsArr,
+    },
   ]
 }
 

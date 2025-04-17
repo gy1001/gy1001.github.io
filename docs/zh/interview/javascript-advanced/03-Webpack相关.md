@@ -69,14 +69,14 @@
 
 5. 执行脚本`npm  run build`，生成内容如下
 
-   ```javascript
+   ```html
    // dist/js/app.js
    "use strict";
    
    var sum = function sum(a, b) {
      return a + b;
    };
-   //# sourceMappingURL=app.js.map
+   // sourceMappingURL=app.js.map
    
    // dist/js/app.js.map
    {"version":3,"file":"app.js","names":["sum","a","b"],"sources":["../../src/js/app.js"],"sourcesContent":["let sum = (a, b) => a + b\n"],"mappings":";;AAAA,IAAIA,GAAG,GAAG,SAANA,GAAGA,CAAIC,CAAC,EAAEC,CAAC;EAAA,OAAKD,CAAC,GAAGC,CAAC;AAAA"}
