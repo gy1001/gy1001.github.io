@@ -44,9 +44,11 @@ const DevelopPointArr = generatorMdFileArr('/zh/class/develop-point/', 'develop-
 const HyBirdAppArr = generatorMdFileArr('/zh/class/hyBird-app/', 'hyBird-app/')
 const EmotionalIntelligenceLessonsArr = generatorMdFileArr('/zh/column/emotional-intelligence-lessons/', 'emotional-intelligence-lessons/')
 const Vue3LearnArr = generatorMdFileArr("/zh/class/vue3-learn/", "vue3-learn/")
+const ViteLearnArr = generatorMdFileArr("/zh/class/vite-learn/", "vite-learn/")
 const DesignPatternClassArr = generatorMdFileArr("/zh/class/design-pattern/", "design-pattern/")
 const designPatternDepthColumnsArr = generatorMdFileArr("/zh/column/design-pattern-depth/", "design-pattern-depth/")
 const JsCoreAdvancedArr = generatorMdFileArr("/zh/class/js-core-advanced/", "js-core-advanced/")
+const HttpProtocolLarnArr = generatorMdFileArr("/zh/class/http-protocol-learn/", "http-protocol-learn/")
 const ReactNativeXiaoHongShuArr = generatorMdFileArr("/zh/class/react-native/xiaohongshu/", "react-native/xiaohongshu/")
 const CssArr = generatorMdFileArr("/zh/interview/css/", "css/")
 const AboutArr = generatorMdFileArr("/zh/skill/front/about/", "about/")
@@ -394,6 +396,11 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
       items: Vue3LearnArr,
     },
     {
+      text: 'Vite 从入门到精通',
+      collapsed: true,
+      items: ViteLearnArr,
+    },
+    {
       text: '吃透前端工程化，大厂级实战项目以战带练',
       collapsed: true,
       items: [
@@ -603,6 +610,11 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
         {text: '01-整体介绍', link: "http-protocol/index-01.md"},
         {text: '02-HTTP初相识--了解HTTP协议', link: "http-protocol/index-02.md"},
       ],
+    },
+    {
+      text: 'Http 协议',
+      collapsed: true,
+      items: HttpProtocolLarnArr,
     },
     {
       text: 'JavaScript 核心进阶',
