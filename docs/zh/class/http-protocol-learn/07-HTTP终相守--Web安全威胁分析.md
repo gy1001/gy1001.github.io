@@ -376,7 +376,7 @@ CSRF： Cross-Site Request Forgery 跨站请求伪造，是一种对网站的恶
 ### 6.2. 典型的 CSRF 攻击传递
 
 - Alice 登录了一个 金融网站 mybank.com
-- Bob 知道这个金融网站 mybank.com, 并且发现这个网站的转账功能有 CSRF 漏洞
+- Bob 知道这个金融网站 mybank.com, 并且发现这个网站的转账功能有 CSRF 漏洞 
 - 于是，Bob 在 mybolog.com 上发表了一个 bolg, 这个 blog 支持 img 自定义功能
 - 所以 Bob 插入了这样一行代码
 
