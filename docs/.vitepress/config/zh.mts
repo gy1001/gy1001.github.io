@@ -25,6 +25,7 @@ const WebpackEngineeringArr = generatorMdFileArr("/zh/column/webpack-engineering
 const FrontMasterAdvancedArr = generatorMdFileArr("/zh/column/front-master-advanced/", 'front-master-advanced/')
 const WebLayoutArr = generatorMdFileArr('/zh/column/web-layout/', 'web-layout/')
 const FeInterview100Arr = generatorMdFileArr('/zh/class/fe-interview-100/', 'fe-interview-100/')
+const ProgramBasicArr = generatorMdFileArr('/zh/class/program-basic/', 'program-basic/')
 const VisualH5Arr = generatorMdFileArr('/zh/column/visual-h5/', 'visual-h5/')
 const NestH5Arr = generatorMdFileArr('/zh/column/nest-h5/', 'nest-h5/')
 const ComponentEssentialsArr = generatorMdFileArr(
@@ -356,10 +357,12 @@ function sidebarOther(): DefaultTheme.SidebarItem[] {
     {
       text: 'Bug 问题合集',
       collapsed: false,
-      items: [{
-        text: '工作中遇到的问题',
-        link: 'question/bug-list-01.md'
-      }],
+      items: [
+        {
+          text: '工作中遇到的问题',
+          link: 'question/bug-list-01.md'
+        }
+      ],
     },
   ]
 }
@@ -370,10 +373,7 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
     {
       text: '编程基础',
       collapsed: true,
-      items: [
-        {text: '编程基础-01', link: 'program-basic/index-01'},
-        {text: '编程基础-02', link: 'program-basic/index-02'},
-      ]
+      items: ProgramBasicArr,
     },
     {text: '专为程序员设计的线性代数课程', link: 'linear-algebra'},
     {text: '快速搞定前端技术一面', link: 'interview-front'},
