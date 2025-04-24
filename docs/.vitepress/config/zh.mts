@@ -59,6 +59,8 @@ const SourceArr = generatorMdFileArr("/zh/skill/front/source/", "source/")
 const VueSourceArr = generatorMdFileArr("/zh/skill/front/source/vue/", "source/vue/")
 const JavaScriptArr = generatorMdFileArr("/zh/interview/javascript/", "javascript/")
 const QuestionsArr = generatorMdFileArr("/zh/interview/questions/", "questions/")
+const NoteJueJinArr = generatorMdFileArr("/zh/collect/note/jue-jin/", "note/jue-jin/")
+const BooksArr = generatorMdFileArr("/zh/collect/books/", "books/")
 const AlgorithmArr = generatorMdFileArr("/zh/interview/algorithm/", "algorithm/")
 const JavaScriptAdvancedArr = generatorMdFileArr("/zh/interview/javascript-advanced/", "javascript-advanced/")
 
@@ -307,20 +309,17 @@ function sidebarCollect(): DefaultTheme.SidebarItem[] {
           text: '掘金',
           collapsed: false,
           items: [
-            {text: 'Vue 组件间的属性透传 (01)--Vue2.x', link: 'note/jue-jin/index-01.md'},
-            {text: 'Vue 组件间的事件透传 (02)--Vue2.x', link: 'note/jue-jin/index-02.md'},
-            {text: 'Vue 组件间的属性透传 (03)--Vue3.x', link: 'note/jue-jin/index-03.md'},
-            {text: 'Vue 组件间的事件透传 (04)--Vue3.x', link: 'note/jue-jin/index-04.md'},
-            {text: 'Vue 组件间的属性、事件透传 (05)–实际应用', link: 'note/jue-jin/index-05.md'},
+            {
+              text: 'vue组件之间的传递',
+              items: NoteJueJinArr,
+              collapsed: true
+            },
           ],
         },
         {
           text: '编程相关',
-          collapsed: false,
-          items: [
-            {text: '你不知道的JavaScript', link: 'books/你不知道的JavaScript.md'},
-            {text: 'JavaScript高级程序设计', link: 'books/JavaScript高级程序设计.md'},
-          ],
+          collapsed: true,
+          items: BooksArr
         },
       ],
     },
