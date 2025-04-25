@@ -48,6 +48,8 @@ const Vue3LearnArr = generatorMdFileArr("/zh/class/vue3-learn/", "vue3-learn/")
 const ViteLearnArr = generatorMdFileArr("/zh/class/vite-learn/", "vite-learn/")
 const FrontEngineeringArr = generatorMdFileArr('/zh/class/front-engineering/', 'front-engineering/')
 const TypescriptSimpleArr = generatorMdFileArr('/zh/class/typescript-simple', 'typescript-simple/')
+const TypescriptSupplementArr = generatorMdFileArr('/zh/class/typescript-supplement/', 'typescript-supplement/')
+const CrackJsArr = generatorMdFileArr('/zh/class/crack-js', 'crack-js/')
 const TypescriptAdvancedArr = generatorMdFileArr('/zh/class/typescript-advanced/', 'typescript-advanced/')
 const DesignPatternClassArr = generatorMdFileArr("/zh/class/design-pattern/", "design-pattern/")
 const designPatternDepthColumnsArr = generatorMdFileArr("/zh/column/design-pattern-depth/", "design-pattern-depth/")
@@ -420,35 +422,12 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
     {
       text: 'TS 相关补充',
       collapsed: true,
-      items: [
-        {text: '02-全栈思维全面深度掌握 TS 类', link: 'typescript-supplement/index-02'},
-        {text: '03-TS 类方法代码优化的三大法宝', link: 'typescript-supplement/index-03'},
-        {text: '04-TS 类易被忽视的重要技能', link: 'typescript-supplement/index-04'},
-        {text: '05-TS 继承深入+手写优化底层源码', link: 'typescript-supplement/index-05'},
-      ],
+      items: TypescriptSupplementArr,
     },
     {
       text: '破解JavaScript高级玩法，成为精通 JS 的原生专家',
       collapsed: true,
-      items: [
-        {text: '01-课堂介绍', link: 'crack-js/index-01'},
-        {text: '02-数据类型容易忽略的细节', link: 'crack-js/index-02'},
-        {text: '03-对象认知升级', link: 'crack-js/index-03'},
-        {text: '04-运算符的妙用以及部分机理解析', link: 'crack-js/index-04'},
-        {text: '05-玩转数组高级技法', link: 'crack-js/index-05'},
-        {text: '06-从函数到函数式编程之路', link: 'crack-js/index-06'},
-        {text: '07-如果不用 vue，react 框架，如何操作 DOM？', link: 'crack-js/index-07'},
-        {text: '08-被我们忽视的 BOM', link: 'crack-js/index-08'},
-        {text: '09-深入探索网络请求', link: 'crack-js/index-09'},
-        {text: '10-爱上异步编程', link: 'crack-js/index-10'},
-        {text: '11-“永动机”- 事件循环', link: 'crack-js/index-11'},
-        {text: '12-玩转客户端存储', link: 'crack-js/index-12'},
-        {text: '13-动起来：计时器和JS动画', link: 'crack-js/index-13'},
-        {text: '14-亡羊补牢-异常处理', link: 'crack-js/index-14'},
-        {text: '15-ES高级特性', link: 'crack-js/index-15'},
-        {text: '16-绕不过坎，字符编码', link: 'crack-js/index-16'},
-        {text: '17-综合案例-事件分析库', link: 'crack-js/index-17'},
-      ],
+      items: CrackJsArr,
     },
     {
       text: '前端主流布局系统进阶与实战',
