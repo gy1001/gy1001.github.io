@@ -58,7 +58,8 @@ const TypescriptAdvancedArr = generatorMdFileArr('/zh/class/typescript-advanced/
 const DesignPatternClassArr = generatorMdFileArr("/zh/class/design-pattern/", "design-pattern/")
 const PerformanceOptimizationStandardArr = generatorMdFileArr('/zh/class/performance-optimization-standard/', 'performance-optimization-standard/')
 const PerformanceOptimizationIntroductionArr = generatorMdFileArr('/zh/class/performance-optimization-introduction/', 'performance-optimization-introduction/')
-const designPatternDepthColumnsArr = generatorMdFileArr("/zh/column/design-pattern-depth/", "design-pattern-depth/")
+const DesignPatternDepthColumnsArr = generatorMdFileArr("/zh/column/design-pattern-depth/", "design-pattern-depth/")
+const DockerK8sArr = generatorMdFileArr('/zh/column/docker-k8s/', 'docker-k8s/')
 const JsCoreAdvancedArr = generatorMdFileArr("/zh/class/js-core-advanced/", "js-core-advanced/")
 const HttpProtocolLarnArr = generatorMdFileArr("/zh/class/http-protocol-learn/", "http-protocol-learn/")
 const HttpProtocolArr = generatorMdFileArr("/zh/class/http-protocol/", "http-protocol/")
@@ -535,55 +536,12 @@ function sidebarColumn(): DefaultTheme.sidebaritem[] {
     {
       text: 'JavaScript 设计模式精讲',
       collapsed: true,
-      items: designPatternDepthColumnsArr,
+      items: DesignPatternDepthColumnsArr,
     },
     {
       text: '跟BAT技术专家学Docker + K8s',
       collapsed: true,
-      items: [
-        {text: '01-开篇词', link: 'docker-k8s/index-01.md'},
-        {text: '02-成王败寇容器的发展之路', link: 'docker-k8s/index-02.md'},
-        {text: '03-Docker 安装与运行', link: 'docker-k8s/index-03.md'},
-        {text: '04-小身材大能量：Docker 概览', link: 'docker-k8s/index-04.md'},
-        {text: '05-立足之本 Docker 镜像介绍', link: 'docker-k8s/index-05.md'},
-        {text: '06-葵花宝典：Docker 操作参数详解', link: 'docker-k8s/index-06.md'},
-        {text: '07-统一镜像管理镜像仓库介绍', link: 'docker-k8s/index-07.md'},
-        {text: '08-站在巨人的肩膀上', link: 'docker-k8s/index-08.md'},
-        {text: '09-站在巨人的肩膀上', link: 'docker-k8s/index-09.md'},
-        {text: '10-站在巨人的肩膀上', link: 'docker-k8s/index-10.md'},
-        {text: '11-动手实践从 0 到 1 构建自己的 Docker 应用', link: 'docker-k8s/index-11.md'},
-        {text: '12-Docker 隔离的本质 namespace', link: 'docker-k8s/index-12.md'},
-        {text: '13-Docker 资源限制的幕后主使：cgroup', link: 'docker-k8s/index-13.md'},
-        {text: '14-Docker 镜像你真的理解了吗？', link: 'docker-k8s/index-14.md'},
-        {text: '15-Docker 的本质是进程', link: 'docker-k8s/index-15.md'},
-        {text: '16-镜像构建指南Dockerfile', link: 'docker-k8s/index-16.md'},
-        {text: '17-Docker 网络初探', link: 'docker-k8s/index-17.md'},
-        {text: '18-Docker 网络模式', link: 'docker-k8s/index-18.md'},
-        {text: '19-容器间网络通信link 的技术原理解析', link: 'docker-k8s/index-19.md'},
-        {text: '20-数据存储Docker 数据存储的三种模式', link: 'docker-k8s/index-20.md'},
-        {text: '21-数据共享volume 的使用指南', link: 'docker-k8s/index-21.md'},
-        {text: '22-Dockerfile 你真的会用吗？', link: 'docker-k8s/index-22.md'},
-        {text: '23-Docker 最佳实践如何构建最小的镜像', link: 'docker-k8s/index-23.md'},
-        {text: '24-Docker 最佳实践tag 如何使用？', link: 'docker-k8s/index-24.md'},
-        {text: '25-为什么说容器是个单进程模型', link: 'docker-k8s/index-25.md'},
-        {text: '26-大话容器设计模式', link: 'docker-k8s/index-26.md'},
-        {text: '27-Docker 容器监控方案概览', link: 'docker-k8s/index-27.md'},
-        {text: '28-从 0 到 1 构建分布式高可用的 web 应用', link: 'docker-k8s/index-28.md'},
-        {text: '29-云原生技术简介', link: 'docker-k8s/index-29.md'},
-        {text: '30-Kubernetes 是什么？', link: 'docker-k8s/index-30.md'},
-        {text: '31-资源隔离Namespace 剖析', link: 'docker-k8s/index-31.md'},
-        {text: '32-Kubernetes 核心概念解析：Pod（一）', link: 'docker-k8s/index-32.md'},
-        {text: '33-Kubernetes 核心概念解析：Pod（二）', link: 'docker-k8s/index-33.md'},
-        {text: '34-配置管理ConfigMap 和 Secret', link: 'docker-k8s/34-jQuery 封装思想.md'},
-        {text: '35-容器化守护进程 DaemonSet', link: 'docker-k8s/index-35.md'},
-        {text: '36-Kubernetes ReplicationController 和 ReplicaSet 介绍', link: 'docker-k8s/index-36.md'},
-        {text: '37-Kubernetes Deployment 使用', link: 'docker-k8s/index-37.md'},
-        {text: '38-Kubernetes 批处理介绍：Job 和 CronJob', link: 'docker-k8s/index-38.md'},
-        {text: '39-Kubernetes 控制器模式介绍', link: 'docker-k8s/index-39.md'},
-        {text: '40-Kubernetes 有状态应用管理 StatefulSet', link: 'docker-k8s/index-40.md'},
-        {text: '41-使用 Service 访问一组特定的 Pod', link: 'docker-k8s/index-41.md'},
-        {text: '42-Kubernetes Service 类型', link: 'docker-k8s/index-42.md'},
-      ],
+      items: DockerK8sArr,
     },
     {
       text: '现代web布局',
