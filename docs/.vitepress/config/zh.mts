@@ -48,7 +48,9 @@ const HyBirdAppArr = generatorClassMdFileFunc('hyBird-app/')
 const VimClassArr = generatorClassMdFileFunc('vim-class/')
 const TddBddArr = generatorClassMdFileFunc('tdd-bdd/')
 const Vue3LearnArr = generatorClassMdFileFunc("vue3-learn/")
-const ViteLearnArr = generatorClassMdFileFunc("vite-learn/")
+const ViteNoviceToMasteryArr = generatorClassMdFileFunc("vite-novice-to-mastery/")
+const ViteDeeplyUnderstandArr = generatorClassMdFileFunc('vite-deeply-understand/')
+
 const FrontEngineeringArr = generatorClassMdFileFunc('front-engineering/')
 const TypescriptSimpleArr = generatorClassMdFileFunc('typescript-simple/')
 const TypescriptSupplementArr = generatorClassMdFileFunc('typescript-supplement/')
@@ -388,6 +390,22 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
   return [
     {text: 'Vue3 从入门到实战', link: 'vue3-learn-practice'},
     {
+      text: 'Vite 相关',
+      collapsed: true,
+      items: [
+        {
+          text: 'Vite 从入门到精通',
+          collapsed: true,
+          items: ViteNoviceToMasteryArr,
+        },
+        {
+          text: 'Vite 深入浅出',
+          collapsed: true,
+          items: ViteDeeplyUnderstandArr,
+        }
+      ]
+    },
+    {
       text: '编程基础',
       collapsed: true,
       items: ProgramBasicArr,
@@ -410,11 +428,6 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
       text: 'Vue3 源码解析，打造自己的 Vue3 框架，领悟尤大思维精髓',
       collapsed: true,
       items: Vue3LearnArr,
-    },
-    {
-      text: 'Vite 从入门到精通',
-      collapsed: true,
-      items: ViteLearnArr,
     },
     {
       text: '吃透前端工程化，大厂级实战项目以战带练',
