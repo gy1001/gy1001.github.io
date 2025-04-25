@@ -89,7 +89,7 @@
 
 7. 配置`build`命令为`webpack`,在`package.json`中增加如下内容
 
-   ```javascript
+   ```json
    {
      "scripts": {
        "build": "webpack"
@@ -156,7 +156,7 @@ module.exports = {
 }
 ```
 
-重新执行`npm run build`，可以看到`dist` 目录下多了一个`bundle.js.map`文件，而`bundle.js`文件内容如下
+重新执行`npm run build`，可以看到`dist` 目录下多了一个 `bundle.js.map` 文件，而`bundle.js`文件内容如下
 
 ```javascript
 /******/ ;(() => {
@@ -169,12 +169,12 @@ module.exports = {
 
   /******/
 })()
-//# sourceMappingURL=bundle.js.map
+`//# sourceMappingURL=bundle.js.map` 
 ```
 
-而`bundle.js.map`文件内容如下
+而 `bundle.js.map` 文件内容如下
 
-```javascript
+```txt
 {
   "version": 3,
   "file": "bundle.js", // 对应的源文件
@@ -207,7 +207,7 @@ module.exports = {
 
 每个位置使用五位，表示五个字段（webpack 5.xx 打包后只留下四位，第五位不是必需的）
 
-```tex
+```txt
 从左边开始
 　　- 第一位，表示这个位置在（转换后的代码的）的第几列。
 　　- 第二位，表示这个位置属于sources属性中的哪一个文件。
@@ -222,7 +222,7 @@ module.exports = {
 
 1. 实际上只有 **每个分号中的第一串英文** 是用来表示代码的 **第几行、第几列** 的绝对位置外，后面的都是相对于之前的位置来做 **加减法** 的
 
-   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/430f2bbe58b2452da5c40148097a9b2d~tplv-k3u1fbpfcp-watermark.image?)
+   ![image.png](./assets/430f2bbe58b2452da5c40148097a9b2d~tplv-k3u1fbpfcp-watermark.png)
 
 2. 注意：Base-VLQ 编码》
 
@@ -239,7 +239,7 @@ module.exports = {
        - 正数，所以最后一位是 0；
        - 最后只有三位，所以前置位补 0；
        - 得出的 VLQ 编码就是`001110`；
-       - ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bfef3c9831194a3bb1b24d4ee4339d38~tplv-k3u1fbpfcp-watermark.image?)
+       - ![image.png](./assets/bfef3c9831194a3bb1b24d4ee4339d38~tplv-k3u1fbpfcp-watermark.png)
      - **对于 1200**：二进制是：10010110000
        - 多个单元，所以连续，最高位是 1；
        - 正数，所以最后一位是 0；
@@ -254,7 +254,7 @@ module.exports = {
 
 3. VLQ 编码和 base64 编码的对应关系如下表：
 
-   ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ebe0b5c88f56454f9a7b2088d92b5b27~tplv-k3u1fbpfcp-watermark.image?)
+   ![image.png](./assets/ebe0b5c88f56454f9a7b2088d92b5b27~tplv-k3u1fbpfcp-watermark.png)
 
 ## 04：通过 webpack loader 打包 css 文件
 
@@ -314,7 +314,7 @@ module.exports = {
 
    ```javascript
    module.exports = {
-     ...
+     // ...
      module: {
        rules: [{ test: /.css$/, use: ['css-loader'] }],
      },
@@ -329,7 +329,7 @@ module.exports = {
 
    1. 通过查看`bundle.js`可以看到如下
 
-      ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a1df6fe2a9d14069a96bbd2bbe5bfb34~tplv-k3u1fbpfcp-watermark.image?)
+      ![image.png](./assets/a1df6fe2a9d14069a96bbd2bbe5bfb34~tplv-k3u1fbpfcp-watermark.png)
 
    2. 生成了一个变量`___CSS_LOADER_EXPORT___`，但是导出后并没有进行下一步的处理
 
@@ -343,7 +343,7 @@ module.exports = {
 
     ```javascript
     module.exports = {
-      ...
+      // ...
       module: {
         rules: [{ test: /.css$/, use: ['style-loader','css-loader'] }],
       },
@@ -470,7 +470,7 @@ module.exports = {
 
 2. 重新运行`npm run build`，可以看到`bundle.js`顶部已经添加了这句话
 
-   ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/20c0964985754e4889042d76cf88f97e~tplv-k3u1fbpfcp-watermark.image?)
+   ![image.png](./assets/20c0964985754e4889042d76cf88f97e~tplv-k3u1fbpfcp-watermark.png)
 
 3. 我们打开`node_modules/webpack/lib/BannerPlugin.js`中可以看到这个实现原理
 
@@ -523,4 +523,4 @@ module.exports = {
 
 3. 重新打包`npm run build`，打开`bundle.js`可以看到如下内容
 
-   ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/df99c1e271ff4d7f82cdceec3d5e7893~tplv-k3u1fbpfcp-watermark.image?)
+   ![image.png](./assets/df99c1e271ff4d7f82cdceec3d5e7893~tplv-k3u1fbpfcp-watermark.png)
