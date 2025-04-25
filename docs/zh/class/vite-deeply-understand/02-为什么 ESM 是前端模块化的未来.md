@@ -1,3 +1,5 @@
+# 02- 模块标准：为什么 ESM 是前端模块化的未来？
+
 2002 年 AJAX 诞生至今，前端从刀耕火种的年代，经历了一系列的发展，各种标准和工具百花齐放。下图中我们可以看到，自 2009 年 Node.js 诞生，前端先后出现了 `CommonJS`、`AMD`、`CMD`、`UMD`和`ES Module` 等模块规范，底层规范的发展催生出了一系列工具链的创新，比如 AMD 规范提出时社区诞生的模块加载工具`requireJS`，基于 CommonJS 规范的模块打包工具`browserify`，还有能让用户提前用上 `ES Module` 语法的 JS 编译器`Babel`、兼容各种模块规范的重量级打包工具`Webpack`以及基于浏览器原生 ES Module 支持而实现的 **no-bundle** 构建工具 `Vite` 等等。
 
 ![img](./assets/1745592110832-63da38e4-5142-4104-bd53-ec139b3bfa9d.png)
