@@ -43,6 +43,8 @@ const gitRelatedArr = generatorMdFileArr("/zh/column/git-related/", "git-related
 const FrameProjectInterviewArr = generatorMdFileArr('/zh/class/frame-project-interview/', 'frame-project-interview/')
 const DevelopPointArr = generatorMdFileArr('/zh/class/develop-point/', 'develop-point/')
 const HyBirdAppArr = generatorMdFileArr('/zh/class/hyBird-app/', 'hyBird-app/')
+const VimClassArr = generatorMdFileArr('/zh/class/vim-class/', 'vim-class/')
+const TddBddArr = generatorMdFileArr('/zh/class/tdd-bdd/', 'tdd-bdd/')
 const EmotionalIntelligenceLessonsArr = generatorMdFileArr('/zh/column/emotional-intelligence-lessons/', 'emotional-intelligence-lessons/')
 const Vue3LearnArr = generatorMdFileArr("/zh/class/vue3-learn/", "vue3-learn/")
 const ViteLearnArr = generatorMdFileArr("/zh/class/vite-learn/", "vite-learn/")
@@ -54,9 +56,12 @@ const FrontLayoutArr = generatorMdFileArr('/zh/class/front-layout/', 'front-layo
 const DuYiMasterArr = generatorMdFileArr('/zh/class/duyi-master/', 'duyi-master/')
 const TypescriptAdvancedArr = generatorMdFileArr('/zh/class/typescript-advanced/', 'typescript-advanced/')
 const DesignPatternClassArr = generatorMdFileArr("/zh/class/design-pattern/", "design-pattern/")
+const PerformanceOptimizationStandardArr = generatorMdFileArr('/zh/class/performance-standard-standard/', 'performance-standard-standard/')
+const PerformanceOptimizationIntroductionArr = generatorMdFileArr('/zh/class/performance-introduction/', 'performance-introduction/')
 const designPatternDepthColumnsArr = generatorMdFileArr("/zh/column/design-pattern-depth/", "design-pattern-depth/")
 const JsCoreAdvancedArr = generatorMdFileArr("/zh/class/js-core-advanced/", "js-core-advanced/")
 const HttpProtocolLarnArr = generatorMdFileArr("/zh/class/http-protocol-learn/", "http-protocol-learn/")
+const HttpProtocolArr = generatorMdFileArr("/zh/class/http-protocol/", "http-protocol/")
 const ReactNativeXiaoHongShuArr = generatorMdFileArr("/zh/class/react-native/xiaohongshu/", "react-native/xiaohongshu/")
 const CssArr = generatorMdFileArr("/zh/interview/css/", "css/")
 const AboutArr = generatorMdFileArr("/zh/skill/front/about/", "about/")
@@ -457,29 +462,12 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
     {
       text: '前端性能优化 掌握行业实用专业前沿的解决方案',
       collapsed: true,
-      items: [
-        {text: '01-课程介绍', link: "performance-optimization-standard/index-01.md"},
-        {text: '02-性能优化的指标和工具', link: "performance-optimization-standard/index-02.md"},
-        {text: '03-渲染优化', link: "performance-optimization-standard/index-03.md"},
-        {text: '04-代码优化', link: "performance-optimization-standard/index-04.md"},
-        {text: '05-优化(经典性能优化解决方案)', link: "performance-optimization-standard/index-05.md"},
-        {text: '06-构建优化', link: "performance-optimization-standard/index-06.md"},
-        {text: '07-传输加载优化', link: "performance-optimization-standard/index-07.md"},
-        {text: '08-前沿优化解决方案', link: "performance-optimization-standard/index-08.md"},
-        {text: '09-性能优化问题面试指南', link: "performance-optimization-standard/index-09.md"},
-        {text: '10-互联网外企offer与立足之道', link: "performance-optimization-standard/index-10.md"},
-      ],
+      items: PerformanceOptimizationStandardArr,
     },
     {
       text: '前端性能优化入门与案例实战',
       collapsed: true,
-      items: [
-        {text: '01-前端进阶核心技能-性能优化介绍', link: "performance-optimization-introduction/index-01.md"},
-        {text: '02-了解页面生命周期', link: "performance-optimization-introduction/index-02.md"},
-        {text: '03-前端性能优化常见的四种方法', link: "performance-optimization-introduction/index-03.md"},
-        {text: '04-前端性能检测工具', link: "performance-optimization-introduction/index-04.md"},
-        {text: '05-总结', link: "performance-optimization-introduction/index-05.md"},
-      ],
+      items: PerformanceOptimizationIntroductionArr,
     },
     {
       text: '六大场景 梳理开发痛点 解锁前端进阶路',
@@ -494,30 +482,17 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
     {
       text: '玩转Vim 从放弃到爱不释手',
       collapsed: true,
-      items: [
-        {text: '01-玩转vim 从放弃到爱不释手', link: "vim-class/index-01.md"},
-        {text: '02-初识 Vim，想说爱你不容易', link: "vim-class/index-02.md"},
-      ],
+      items: VimClassArr,
     },
     {
       text: '前端要学的测试课 从Jest入门到TDD/BDD双实战',
       collapsed: true,
-      items: [
-        {text: '01-课程导学', link: "tdd-bdd/index-01.md"},
-        {text: '02-Jest 前端自动化测试框架基础入门', link: "tdd-bdd/index-02.md"},
-        {text: '03-Jest难点进阶', link: "tdd-bdd/index-03.md"},
-        {text: '04-Vue 中的 TDD 与 单元测试', link: "tdd-bdd/index-04.md"},
-        {text: '05-Vue 中的 BDD 与 集成测试', link: "tdd-bdd/index-05.md"},
-        {text: '06-测试的思考总结', link: "tdd-bdd/index-06.md"},
-      ],
+      items: TddBddArr,
     },
     {
       text: '编程必备基础-大话 HTTP 协议',
       collapsed: true,
-      items: [
-        {text: '01-整体介绍', link: "http-protocol/index-01.md"},
-        {text: '02-HTTP初相识--了解HTTP协议', link: "http-protocol/index-02.md"},
-      ],
+      items: HttpProtocolArr,
     },
     {
       text: 'Http 协议',
