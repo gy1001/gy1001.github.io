@@ -59,7 +59,8 @@ const TypescriptAdvancedArr = generatorClassMdFileFunc('typescript-advanced/')
 const DesignPatternClassArr = generatorClassMdFileFunc("design-pattern/")
 const PerformanceOptimizationStandardArr = generatorClassMdFileFunc('performance-optimization-standard/')
 const PerformanceOptimizationIntroductionArr = generatorClassMdFileFunc('performance-optimization-introduction/')
-const JsCoreAdvancedArr = generatorClassMdFileFunc("js-core-advanced/")
+const JavascriptCoreAdvancedArr = generatorClassMdFileFunc("javascript-core-advanced/")
+const JavascriptCorePrincipleArr = generatorClassMdFileFunc('javascript-core-principle/')
 const HttpProtocolLarnArr = generatorClassMdFileFunc("http-protocol-learn/")
 const HttpProtocolArr = generatorClassMdFileFunc("http-protocol/")
 const ReactNativeXiaoHongShuArr = generatorClassMdFileFunc("react-native/xiaohongshu/")
@@ -506,7 +507,12 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
     {
       text: 'JavaScript 核心进阶',
       collapsed: true,
-      items: JsCoreAdvancedArr,
+      items: JavascriptCoreAdvancedArr,
+    },
+    {
+      text: 'JavaScript 核心原理精讲',
+      collapsed: true,
+      items: JavascriptCorePrincipleArr
     },
     {
       text: 'React Native 保姆教程及实战小红书',
