@@ -896,8 +896,9 @@ export const HASH_RE = /#.*$/s;
 ### 6.1.  路径解析插件
 
 当浏览器解析到如下的标签时:
-
+```html
 <script type="module" src="/src/main.tsx"></script>
+```
 
 会自动发送一个路径为`/src/main.tsx`的请求，但如果服务端不做任何处理，是无法定位到源文件的，随之会返回 404 状态码:
 
