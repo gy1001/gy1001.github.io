@@ -50,6 +50,8 @@ const FrontEngineeringArr = generatorMdFileArr('/zh/class/front-engineering/', '
 const TypescriptSimpleArr = generatorMdFileArr('/zh/class/typescript-simple', 'typescript-simple/')
 const TypescriptSupplementArr = generatorMdFileArr('/zh/class/typescript-supplement/', 'typescript-supplement/')
 const CrackJsArr = generatorMdFileArr('/zh/class/crack-js', 'crack-js/')
+const FrontLayoutArr = generatorMdFileArr('/zh/class/front-layout/', 'front-layout/')
+const DuYiMasterArr = generatorMdFileArr('/zh/class/duyi-master/', 'duyi-master/')
 const TypescriptAdvancedArr = generatorMdFileArr('/zh/class/typescript-advanced/', 'typescript-advanced/')
 const DesignPatternClassArr = generatorMdFileArr("/zh/class/design-pattern/", "design-pattern/")
 const designPatternDepthColumnsArr = generatorMdFileArr("/zh/column/design-pattern-depth/", "design-pattern-depth/")
@@ -432,18 +434,7 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
     {
       text: '前端主流布局系统进阶与实战',
       collapsed: true,
-      items: [
-        {text: '00-配套课件', link: "front-layout/index-00.md"},
-        {text: '01-课程介绍', link: "front-layout/index-01.md"},
-        {text: '02-CSS还原UI设计', link: "front-layout/index-02.md"},
-        {text: '03-布局中的尺寸与位置', link: "front-layout/index-03.md"},
-        {text: '04-Flex 弹性布局', link: "front-layout/index-04.md"},
-        {text: '05-Grid网格布局', link: "front-layout/index-05.md"},
-        {text: '06-移动端适配布局', link: "front-layout/index-06.md"},
-        {text: '07-响应式布局', link: "front-layout/index-07.md"},
-        {text: '08-综合实战 Ant Design Pro 管理系统', link: "front-layout/index-08.md"},
-        {text: '09-课程福利加餐', link: "front-layout/index-09.md"},
-      ],
+      items: FrontLayoutArr,
     },
     {
       text: '快速掌握前端必会的7种设计模式',
@@ -461,13 +452,7 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
     {
       text: '渡一大师课',
       collapsed: true,
-      items: [
-        {text: '01-原理-事件循环', link: "duyi-master/index-01.md"},
-        {text: '02-原理-浏览器渲染原理', link: "duyi-master/index-02.md"},
-        {text: '03-实战-歌词滚动效果', link: "duyi-master/index-03.md"},
-        {text: '04-实战-购物车效果', link: "duyi-master/index-04.md"},
-        {text: '05-知识-属性描述符', link: "duyi-master/index-05.md"},
-        {text: '06-框架-vue从入门到手撕', link: "duyi-master/index-06.md"},],
+      items: DuYiMasterArr
     },
     {
       text: '前端性能优化 掌握行业实用专业前沿的解决方案',
