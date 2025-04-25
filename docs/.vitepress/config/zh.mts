@@ -46,6 +46,7 @@ const HyBirdAppArr = generatorMdFileArr('/zh/class/hyBird-app/', 'hyBird-app/')
 const EmotionalIntelligenceLessonsArr = generatorMdFileArr('/zh/column/emotional-intelligence-lessons/', 'emotional-intelligence-lessons/')
 const Vue3LearnArr = generatorMdFileArr("/zh/class/vue3-learn/", "vue3-learn/")
 const ViteLearnArr = generatorMdFileArr("/zh/class/vite-learn/", "vite-learn/")
+const FrontEngineeringArr = generatorMdFileArr('/zh/class/front-engineering/', 'front-engineering/')
 const DesignPatternClassArr = generatorMdFileArr("/zh/class/design-pattern/", "design-pattern/")
 const designPatternDepthColumnsArr = generatorMdFileArr("/zh/column/design-pattern-depth/", "design-pattern-depth/")
 const JsCoreAdvancedArr = generatorMdFileArr("/zh/class/js-core-advanced/", "js-core-advanced/")
@@ -402,34 +403,8 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
     {
       text: '吃透前端工程化，大厂级实战项目以战带练',
       collapsed: true,
-      items: [
-        {text: '01-为什么前端工程化必须学？', link: 'engineering/index-01'},
-        {text: '02-零基础：极速入门前端工程化基石之模块化技术', link: 'engineering/index-02'},
-        {text: '03-入门到进阶：玩转 Webpack 打包构建', link: 'engineering/index-03'},
-        {text: '04-原生 js 项目：零基础', link: 'engineering/index-04'},
-        {text: '05-原生 js 项目：零基础', link: 'engineering/index-05'},
-        {text: '06-原生 js 项目：进阶实战', link: 'engineering/index-06'},
-        {text: '07-原生 js 项目：进阶实战', link: 'engineering/index-07'},
-        {text: '08-大型前端项目：进阶实战', link: 'engineering/index-08'},
-        {text: '09-HMR 原理解析: vue-cli 核心源码解析', link: 'engineering/index-09'},
-        {text: '10-Vue3 框架升级', link: 'engineering/index-10'},
-        {text: '11-Webpack 性能优化', link: 'engineering/index-11'},
-        {text: '12-大型前端项目：尝鲜', link: 'engineering/index-12'},
-        {text: '13-通关：前端工程化脚手架设计', link: 'engineering/index-13'},
-        {text: '14-工程化脚手架：进阶实战', link: 'engineering/index-14'},
-        {text: '15-工程化脚手架：进阶实战', link: 'engineering/index-15'},
-        {text: '16-工程化脚手架：进阶实战', link: 'engineering/index-16'},
-        {text: '17-工程化脚手架：进阶实战', link: 'engineering/index-17'},
-        {text: '18-工程化脚手架：进阶实战', link: 'engineering/index-18'},
-        {text: '19-抢先实战：零基础 Vite 快速入门', link: 'engineering/index-19'},
-        {text: '20-抢先实战：进阶实战——Vite 接入工程化脚手架', link: 'engineering/index-20'},
-        {text: '21-加餐：高阶实战', link: 'engineering/index-21'},
-        {text: '22-高阶实战——webpack5 源码解析', link: 'engineering/index-22'},
-        {text: '23-高阶实战——vue-loader 源码解析', link: 'engineering/index-23'},
-        {text: '24-高阶实战——vue-cli5 源码解析', link: 'engineering/index-24'},
-      ],
+      items: FrontEngineeringArr,
     },
-
     {
       text: '专为小白设计的TypeScript入门课',
       collapsed: true,
