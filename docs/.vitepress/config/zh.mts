@@ -47,6 +47,8 @@ const EmotionalIntelligenceLessonsArr = generatorMdFileArr('/zh/column/emotional
 const Vue3LearnArr = generatorMdFileArr("/zh/class/vue3-learn/", "vue3-learn/")
 const ViteLearnArr = generatorMdFileArr("/zh/class/vite-learn/", "vite-learn/")
 const FrontEngineeringArr = generatorMdFileArr('/zh/class/front-engineering/', 'front-engineering/')
+const TypescriptSimpleArr = generatorMdFileArr('/zh/class/typescript-simple', 'typescript-simple/')
+const TypescriptAdvancedArr = generatorMdFileArr('/zh/class/typescript-advanced/', 'typescript-advanced/')
 const DesignPatternClassArr = generatorMdFileArr("/zh/class/design-pattern/", "design-pattern/")
 const designPatternDepthColumnsArr = generatorMdFileArr("/zh/column/design-pattern-depth/", "design-pattern-depth/")
 const JsCoreAdvancedArr = generatorMdFileArr("/zh/class/js-core-advanced/", "js-core-advanced/")
@@ -408,44 +410,12 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
     {
       text: '专为小白设计的TypeScript入门课',
       collapsed: true,
-      items: [
-        {text: '01-都 2022 了，还不抓紧学 TypeScript?', link: 'typescript-simple/index-01'},
-        {text: '02-TypeScript 基础语法入门', link: 'typescript-simple/index-02'},
-        {text: '03-使用 TypeScript 编写爬虫工具', link: 'typescript-simple/index-03'},
-        {text: '04-TypeScript 语法进阶', link: 'typescript-simple/index-04'},
-        {text: '05-使用 Express 框架开发数据爬取及展示接口', link: 'typescript-simple/index-05'},
-        {text: '06-TypeScript 高级语法', link: 'typescript-simple/index-06'},
-        {text: '07-Express 项目代码改良', link: 'typescript-simple/index-07'},
-        {text: '08-使用 React 编写爬取数据的展示页面', link: 'typescript-simple/index-08'},
-        {text: '09-课程总结及后续学习方法推荐', link: 'typescript-simple/index-09'},
-      ],
+      items: TypescriptSimpleArr,
     },
     {
       text: 'TS 从入门到深度掌握，晋级TypeScript高手',
       collapsed: true,
-      items: [
-        {text: '01-课程介绍', link: 'typescript-advanced/index-01'},
-        {text: '02-深入 TS 核心语法+各种实战应用（上）', link: 'typescript-advanced/index-02'},
-        {text: '03-深入 TS 核心语法+各种实战应用（下）', link: 'typescript-advanced/index-03'},
-        {text: '04-tsconfig.json 核心配置和系列相关问题', link: 'typescript-advanced/index-04'},
-        {text: '05-深学 TS 必会的 JS 技术【不会 JS 原型继承的进入学习】', link: 'typescript-advanced/index-05'},
-        {
-          text: '06-TS 高频使用技能: 类型断言、类型守卫、自定义守卫+ 多态+类型守卫组合应用',
-          link: 'typescript-advanced/index-06'
-        },
-        {text: '07-泛型从入门到深度掌握', link: 'typescript-advanced/index-07'},
-        {text: '08-泛型晋级', link: 'typescript-advanced/index-08'},
-        {
-          text: '09-深入 infer、TS 高级类型、泛型再进阶【全方位深度掌握 TS 泛型】',
-          link: 'typescript-advanced/index-09'
-        },
-        {text: '10-TS 声明文件，TS 模块', link: 'typescript-advanced/index-10'},
-        {
-          text: '11-从装饰器应用，底层 JS 到 仿 Nestjs 实战，路由器底层复杂泛型（上）',
-          link: 'typescript-advanced/index-11'
-        },
-        {text: '13-运用 TS 手写 Promise 源码', link: 'typescript-advanced/index-13'},
-      ],
+      items: TypescriptAdvancedArr,
     },
     {
       text: 'TS 相关补充',
