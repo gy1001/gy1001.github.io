@@ -150,7 +150,7 @@ function nav(): DefaultTheme.NavItem[] {
     },
     {
       text: '课程笔记',
-      link: '/zh/class/vue3-learn-practice',
+      link: '/zh/class/front-layout/01-课程介绍',
       activeMatch: '/zh/class',
     },
     {
