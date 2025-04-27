@@ -14,7 +14,7 @@ URL 路由我们已经学完了，所以这一节课我们将实现请求参数�
 
 我们可以写一个拦截切面，专门用来解析 HTTP 请求中的数据，包括 URL 参数和 POST 请求数据。我们首先来解析请求的 URL 参数，这个比较简单。
 
-```js
+```javascript
 // aspect/param.js
 const url = require('url');
 const querystring = require('querystring');
@@ -27,9 +27,9 @@ module.exports = async function (ctx, next) {
 };
 ```
 
-上面的代码是一个简单的拦截切面，使用内置模块 querystring 解析 URL 参数。querystring 可以将类似于`key1=value1&key2=value2&key3=value3`的 query 字符串解析成如下对象：
+上面的代码是一个简单的拦截切面，使用内置模块 querystring 解析 URL 参数。querystring 可以将类似于 `key1=value1&key2=value2&key3=value3` 的 query 字符串解析成如下对象：
 
-```js
+```text
 {
   key1: 'value1',
   key2: 'value2',
@@ -148,7 +148,7 @@ app.use(router.all('.*', async ({params, req, res}, next) => {
 
 ![](https://p5.ssl.qhimg.com/t011805c10db6dc1eb5.jpg)
 
-访问`http://localhost:9090/coronavirus/2020-01-22`可以获得 2020 年 1 月 22 日当天的疫情 JSON 数据：
+访问 `http://localhost:9090/coronavirus/2020-01-22` 可以获得 2020 年 1 月 22 日当天的疫情 JSON 数据：
 
 ![](https://p5.ssl.qhimg.com/t010ba4e6fb84b5a268.jpg)
 
@@ -156,7 +156,7 @@ app.use(router.all('.*', async ({params, req, res}, next) => {
 
 ## 服务端渲染
 
-服务端渲染是指 HTTP 服务器直接根据用户的请求，获取数据，生成完整的 HTML 页面返回给客户端（浏览器）展现。相对地，HTTP 服务器根据用户请求返回对应的 JSON 数据，在 HTML 页面中通过 JavaScript 来生成最终用户看到的页面，叫做客户端渲染。比如，现在非常流行的 Vue 框架就是客户端渲染的一个应用。
+服务端渲染是指 `HTTP` 服务器直接根据用户的请求，获取数据，生成完整的 HTML 页面返回给客户端（浏览器）展现。相对地，HTTP 服务器根据用户请求返回对应的 JSON 数据，在 HTML 页面中通过 JavaScript 来生成最终用户看到的页面，叫做客户端渲染。比如，现在非常流行的 Vue 框架就是客户端渲染的一个应用。
 
 实际上，在早期的 Web 1.0 时代，绝大部分 Web 应用都是使用服务端渲染的。那时候浏览器和 JavaScript 的能力有限，开发者除了在服务器生成好页面给客户端之外，几乎没什么其他选择。但是到了 Web 2.0 时代，Web 应用变得复杂，相比于服务端渲染要发送完整页面，客户端渲染每次只需要请求页面上需要更新的数据，网络传输数据量小，**能够显著减轻服务器压力**。而且客户端渲染**真正实现了前后端职责分离**，后端只需关注数据，逻辑由前端的 JS 去完成，这种开发模式更加灵活，效率也更高。因此，客户端渲染渐渐成为了主流。
 
@@ -198,7 +198,7 @@ npm install handlebars --save
 </html>
 ```
 
-`{{#each}}`是 handlebars 的循环指令，data 是传给 handlebars 模板的数据，在`/coronavirus/index`中，我们传的数据是一个数组。我们修改对应的拦截切面：
+`{ { #each } }` 是 handlebars 的循环指令，data 是传给 handlebars 模板的数据，在 `/coronavirus/index` 中，我们传的数据是一个数组。我们修改对应的拦截切面：
 
 ```js
 app.use(router.get('/coronavirus/index', async ({route, res}, next) => {
