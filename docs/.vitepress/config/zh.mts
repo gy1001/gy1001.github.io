@@ -32,12 +32,6 @@ const generatorCollectMdFileFunc = (path) =>
   generatorMdFileArr('/zh/collect/' + path, path);
 
 // column 相关
-const EngineeringProjectArr = generatorColumnMdFileFunc('engineering-project/');
-const WebpackEngineeringArr = generatorColumnMdFileFunc('webpack-engineering/');
-const FrontMasterAdvancedArr = generatorColumnMdFileFunc(
-  'front-master-advanced/'
-);
-const WebLayoutArr = generatorColumnMdFileFunc('web-layout/');
 const VisualH5Arr = generatorColumnMdFileFunc('visual-h5/');
 const NestH5Arr = generatorColumnMdFileFunc('nest-h5/');
 const TaroMultiEndedArr = generatorColumnMdFileFunc('taro-multi-ended/');
@@ -48,9 +42,7 @@ const gitRelatedArr = generatorColumnMdFileFunc('git-related/');
 const EmotionalIntelligenceLessonsArr = generatorColumnMdFileFunc(
   'emotional-intelligence-lessons/'
 );
-const DesignPatternDepthColumnsArr = generatorColumnMdFileFunc(
-  'design-pattern-depth/'
-);
+const PlanRunCareerArr = generatorColumnMdFileFunc('plan-run-career/');
 const DockerK8sArr = generatorColumnMdFileFunc('docker-k8s/');
 
 // class 相关
@@ -107,12 +99,21 @@ const JavascriptCoreAdvancedArr = generatorClassMdFileFunc(
 const JavascriptCorePrincipleArr = generatorClassMdFileFunc(
   'javascript-core-principle/'
 );
+const FrontMasterAdvancedArr = generatorClassMdFileFunc(
+  'front-master-advanced/'
+);
 const HttpProtocolLarnArr = generatorClassMdFileFunc('http-protocol-learn/');
 const HttpProtocolArr = generatorClassMdFileFunc('http-protocol/');
 const ReactNativeXiaoHongShuArr = generatorClassMdFileFunc(
   'react-native/xiaohongshu/'
 );
 const LowCodeArr = generatorClassMdFileFunc('low-code/');
+const EngineeringProjectArr = generatorClassMdFileFunc('engineering-project/');
+const WebpackEngineeringArr = generatorClassMdFileFunc('webpack-engineering/');
+const WebLayoutArr = generatorClassMdFileFunc('web-layout/');
+const DesignPatternDepthColumnsArr = generatorClassMdFileFunc(
+  'design-pattern-depth/'
+);
 // skill front 相关
 const AboutArr = generatorSkillFrontMdFileFunc('about/');
 const PackageArr = generatorSkillFrontMdFileFunc('package/');
@@ -750,6 +751,11 @@ function sidebarColumn(): DefaultTheme.sidebaritem[] {
       text: '给程序员的职场情商课',
       collapsed: true,
       items: EmotionalIntelligenceLessonsArr,
+    },
+    {
+      text: '程序员职业小白书-—如何规划和经营你的职业',
+      collapsed: true,
+      items: PlanRunCareerArr
     },
     {
       text: 'Git原理详解与实操指南',
