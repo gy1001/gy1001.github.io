@@ -65,9 +65,6 @@ const ViteDeeplyUnderstandArr = generatorClassMdFileFunc(
 const ViteComponentLibraryPractice = generatorClassMdFileFunc(
   'vite-component-library-practice/'
 );
-const Vue3TechnologyRevelationArr = generatorClassMdFileFunc(
-  'vue3-technology-revelation/'
-);
 const Vue3ComponentEssentialsArr = generatorClassMdFileFunc(
   'vue3-component-essentials/'
 );
@@ -474,11 +471,6 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
           text: 'Vue.js 组件精讲',
           collapsed: true,
           items: Vue3ComponentEssentialsArr,
-        },
-        {
-          text: 'Vue3 技术揭秘',
-          collapsed: true,
-          items: Vue3TechnologyRevelationArr,
         },
       ],
     },
