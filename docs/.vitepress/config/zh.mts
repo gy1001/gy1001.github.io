@@ -70,6 +70,7 @@ const ViteNoviceToMasteryArr = generatorClassMdFileFunc(
 const ViteDeeplyUnderstandArr = generatorClassMdFileFunc(
   'vite-deeply-understand/'
 );
+const ViteComponentLibraryPractice = generatorClassMdFileFunc('vite-component-library-practice/')
 const Vue3TechnologyRevelationArr = generatorClassMdFileFunc(
   'vue3-technology-revelation/'
 );
@@ -521,6 +522,11 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
           collapsed: true,
           items: ViteDeeplyUnderstandArr,
         },
+        {
+          text: '基于 Vite 的组件库工程化实战',
+          collapsed: true,
+          items: ViteComponentLibraryPractice
+        }
       ],
     },
     {
