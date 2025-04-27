@@ -82,9 +82,6 @@ const TypescriptSimpleArr = generatorClassMdFileFunc('typescript-simple/');
 const TypescriptBeginnerTutorialArr = generatorClassMdFileFunc(
   'typescript-beginner-tutorial/'
 );
-const TypescriptClearanceSecretArr = generatorClassMdFileFunc(
-  'typescript-clearance-secret/'
-);
 const TypescriptSupplementArr = generatorClassMdFileFunc(
   'typescript-supplement/'
 );
@@ -574,11 +571,6 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
           text: 'TypeScript 入门教程',
           collapsed: true,
           items: TypescriptBeginnerTutorialArr,
-        },
-        {
-          text: 'TypeScript 类型体操通关秘籍',
-          collapsed: true,
-          items: TypescriptClearanceSecretArr,
         },
         {
           text: 'TS 从入门到深度掌握，晋级TypeScript高手',
