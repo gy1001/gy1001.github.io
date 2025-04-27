@@ -43,7 +43,7 @@ const NestH5Arr = generatorColumnMdFileFunc('nest-h5/');
 const TaroMultiEndedArr = generatorColumnMdFileFunc('taro-multi-ended/');
 const ReviewStudyArr = generatorColumnMdFileFunc('review-study/');
 const BusinessThinkingArr = generatorColumnMdFileFunc('business-thinking/');
-const LowCodeArr = generatorColumnMdFileFunc('low-code/');
+
 const gitRelatedArr = generatorColumnMdFileFunc('git-related/');
 const EmotionalIntelligenceLessonsArr = generatorColumnMdFileFunc(
   'emotional-intelligence-lessons/'
@@ -112,7 +112,7 @@ const HttpProtocolArr = generatorClassMdFileFunc('http-protocol/');
 const ReactNativeXiaoHongShuArr = generatorClassMdFileFunc(
   'react-native/xiaohongshu/'
 );
-
+const LowCodeArr = generatorClassMdFileFunc('low-code/');
 // skill front 相关
 const AboutArr = generatorSkillFrontMdFileFunc('about/');
 const PackageArr = generatorSkillFrontMdFileFunc('package/');
@@ -703,6 +703,17 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
       ],
     },
     {
+      text: '低代码相关',
+      collapsed: true,
+      items: [
+        {
+          text: '说透低代码',
+          collapsed: true,
+          items: LowCodeArr,
+        },
+      ]
+    },
+    {
       text: '编程基础',
       collapsed: true,
       items: ProgramBasicArr,
@@ -774,11 +785,6 @@ function sidebarColumn(): DefaultTheme.sidebaritem[] {
       text: '商业思维案例笔记',
       collapsed: true,
       items: BusinessThinkingArr,
-    },
-    {
-      text: '说透低代码',
-      collapsed: true,
-      items: LowCodeArr,
     },
   ];
 }
