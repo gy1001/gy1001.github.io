@@ -104,7 +104,6 @@ const PerformanceOptimizationIntroductionArr = generatorClassMdFileFunc(
 );
 const NodeNurtureArr = generatorClassMdFileFunc('node-nurture/');
 const NodeFullStackArr = generatorClassMdFileFunc('nodejs-full-stack/');
-const NodejsCoreBaseArr = generatorClassMdFileFunc('nodejs-core-base/');
 const NodejsMiniProgramDevelopmentArr = generatorClassMdFileFunc(
   'nodejs-mini-program-development/'
 );
@@ -673,11 +672,6 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
           text: 'Nodejs 从前端到全栈',
           collapsed: true,
           items: NodeFullStackArr,
-        },
-        {
-          text: 'nodejs-core-base',
-          collapsed: true,
-          items: NodejsCoreBaseArr,
         },
         {
           text: '基于hapi的Nodejs小程序后端开发实践指南',
