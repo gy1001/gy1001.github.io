@@ -1,4 +1,4 @@
-import {defineConfig, type DefaultTheme} from "vitepress";
+import {type DefaultTheme, defineConfig} from "vitepress";
 import fs from "node:fs"
 import path from "node:path"
 
@@ -20,7 +20,7 @@ function generatorMdFileArr(modulePath, linkPath) {
 const generatorColumnMdFileFunc = (path) => generatorMdFileArr('/zh/column/' + path, path)
 const generatorClassMdFileFunc = (path) => generatorMdFileArr('/zh/class/' + path, path)
 const generatorSkillFrontMdFileFunc = (path) => generatorMdFileArr('/zh/skill/front/' + path, path)
-const generatorInterviewMdFileFunc = (path) =>  generatorMdFileArr('/zh/interview/' + path, path)
+const generatorInterviewMdFileFunc = (path) => generatorMdFileArr('/zh/interview/' + path, path)
 const generatorCollectMdFileFunc = (path) => generatorMdFileArr('/zh/collect/' + path, path)
 
 // column 相关
@@ -61,6 +61,7 @@ const TypescriptAdvancedArr = generatorClassMdFileFunc('typescript-advanced/')
 const DesignPatternClassArr = generatorClassMdFileFunc("design-pattern/")
 const PerformanceOptimizationStandardArr = generatorClassMdFileFunc('performance-optimization-standard/')
 const PerformanceOptimizationIntroductionArr = generatorClassMdFileFunc('performance-optimization-introduction/')
+const NodeNurtureArr = generatorClassMdFileFunc('node-nurture/')
 const JavascriptCoreAdvancedArr = generatorClassMdFileFunc("javascript-core-advanced/")
 const JavascriptCorePrincipleArr = generatorClassMdFileFunc('javascript-core-principle/')
 const HttpProtocolLarnArr = generatorClassMdFileFunc("http-protocol-learn/")
@@ -388,7 +389,73 @@ function sidebarOther(): DefaultTheme.SidebarItem[] {
 
 function sideBarClass(): DefaultTheme.SidebarItem[] {
   return [
-    {text: 'Vue3 从入门到实战', link: 'vue3-learn-practice'},
+    {
+      text: 'CSS 相关',
+      collapsed: true,
+      items: [
+        {
+          text: '前端主流布局系统进阶与实战',
+          collapsed: true,
+          items: FrontLayoutArr,
+        },
+        {
+          text: '现代web布局',
+          collapsed: true,
+          items: WebLayoutArr,
+        }
+      ]
+    },
+    {
+      text: 'Vue3 相关',
+      collapsed: true,
+      items: [
+        {
+          text: 'Vue3 源码解析，打造自己的 Vue3 框架，领悟尤大思维精髓',
+          collapsed: true,
+          items: Vue3LearnArr,
+        },
+        {
+          text: 'Vue3 从入门到实战',
+          link: 'vue3-learn-practice',
+        },
+        {
+          text: 'Vue.js 组件精讲',
+          collapsed: true,
+          items: ComponentEssentialsArr,
+        },
+      ]
+    },
+    {
+      text: 'JavaScript 相关',
+      collapsed: true,
+      items: [
+        {
+          text: '破解JavaScript高级玩法，成为精通 JS 的原生专家',
+          collapsed: true,
+          items: CrackJsArr,
+        },
+        {
+          text: 'JavaScript 核心进阶',
+          collapsed: true,
+          items: JavascriptCoreAdvancedArr,
+        },
+        {
+          text: 'JavaScript 核心原理精讲',
+          collapsed: true,
+          items: JavascriptCorePrincipleArr
+        },
+        {
+          text: '前端高手进阶',
+          collapsed: true,
+          items: FrontMasterAdvancedArr,
+        },
+        {
+          text: '六大场景 梳理开发痛点 解锁前端进阶路',
+          collapsed: true,
+          items: DevelopPointArr,
+        },
+      ]
+    },
     {
       text: 'Vite 相关',
       collapsed: true,
@@ -406,64 +473,164 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
       ]
     },
     {
+      text: '设计模式相关',
+      collapsed: true,
+      items: [
+        {
+          text: 'JavaScript 设计模式精讲',
+          collapsed: true,
+          items: DesignPatternDepthColumnsArr,
+        },
+        {
+          text: '快速掌握前端必会的7种设计模式',
+          collapsed: true,
+          items: DesignPatternClassArr,
+        },
+      ]
+    },
+    {
+      text: 'TypeScript 相关',
+      collapsed: true,
+      items: [
+        {
+          text: '专为小白设计的TypeScript入门课',
+          collapsed: true,
+          items: TypescriptSimpleArr,
+        },
+        {
+          text: 'TS 从入门到深度掌握，晋级TypeScript高手',
+          collapsed: true,
+          items: TypescriptAdvancedArr,
+        },
+        {
+          text: 'TS 相关补充',
+          collapsed: true,
+          items: TypescriptSupplementArr,
+        },
+        {
+          text: '使用 typescript 封装 axios',
+          link: 'axios-typescript'
+        },
+      ]
+    },
+    {
+      text: 'HTTP 相关',
+      collapsed: true,
+      items: [
+        {
+          text: '编程必备基础-大话 HTTP 协议',
+          collapsed: true,
+          items: HttpProtocolArr,
+        },
+        {
+          text: 'Http 协议',
+          collapsed: true,
+          items: HttpProtocolLarnArr,
+        },
+      ]
+    },
+    {
+      text: '工程化相关',
+      collapsed: true,
+      items: [
+        {
+          text: '吃透前端工程化，大厂级实战项目以战带练',
+          collapsed: true,
+          items: FrontEngineeringArr,
+        },
+        {
+          text: 'Webpack 从零入门到工程化实战',
+          collapsed: true,
+          items: WebpackEngineeringArr,
+        },
+        {
+          text: '从 0 到 1 落地前端工程化',
+          collapsed: true,
+          items: EngineeringProjectArr,
+        },
+      ]
+    },
+    {
+      text: '性能优化相关',
+      collapsed: true,
+      items: [
+        {
+          text: '前端性能优化 掌握行业实用专业前沿的解决方案',
+          collapsed: true,
+          items: PerformanceOptimizationStandardArr,
+        },
+        {
+          text: '前端性能优化入门与案例实战',
+          collapsed: true,
+          items: PerformanceOptimizationIntroductionArr,
+        },
+      ]
+    },
+    {
+      text: 'Nodejs 相关',
+      collapsed: true,
+      items: [
+        {
+          text: 'Node.js工程师养成计划',
+          collapsed: true,
+          items: NodeNurtureArr,
+        },
+      ]
+    },
+    {
+      text: '面试相关',
+      collapsed: true,
+      items: [
+        {
+          text: '快速搞定前端技术一面',
+          link: 'interview-front'
+        },
+        {
+          text: '渡一大师课',
+          collapsed: true,
+          items: DuYiMasterArr
+        },
+        {
+          text: '2周刷完100道前端优质面试真题',
+          collapsed: true,
+          items: FeInterview100Arr
+        },
+        {
+          text: '框架项目－聚焦Vue3/React/Webpack',
+          collapsed: true,
+          items: FrameProjectInterviewArr,
+        },
+      ]
+    },
+    {
+      text: 'React Native 相关',
+      collapsed: true,
+      items: [
+        {
+          text: 'React Native 保姆教程及实战小红书',
+          collapsed: true,
+          items: ReactNativeXiaoHongShuArr,
+        },
+      ]
+    },
+    {
+      text: '测试课相关',
+      collapsed: true,
+      items: [
+        {
+          text: '前端要学的测试课 从Jest入门到TDD/BDD双实战',
+          collapsed: true,
+          items: TddBddArr,
+        },
+      ]
+    },
+    {
       text: '编程基础',
       collapsed: true,
       items: ProgramBasicArr,
     },
     {text: '专为程序员设计的线性代数课程', link: 'linear-algebra'},
-    {text: '快速搞定前端技术一面', link: 'interview-front'},
-    {
-      text: '2周刷完100道前端优质面试真题',
-      collapsed: true,
-      items: FeInterview100Arr
-    },
-    {
-      text: '框架项目－聚焦Vue3/React/Webpack',
-      collapsed: true,
-      items: FrameProjectInterviewArr,
-    },
-    {text: '使用 typescript 封装 axios', link: 'axios-typescript'},
     {text: '从0到1开发一款IOS APP', link: 'ios-development/01',},
-    {
-      text: 'Vue3 源码解析，打造自己的 Vue3 框架，领悟尤大思维精髓',
-      collapsed: true,
-      items: Vue3LearnArr,
-    },
-    {
-      text: '吃透前端工程化，大厂级实战项目以战带练',
-      collapsed: true,
-      items: FrontEngineeringArr,
-    },
-    {
-      text: '专为小白设计的TypeScript入门课',
-      collapsed: true,
-      items: TypescriptSimpleArr,
-    },
-    {
-      text: 'TS 从入门到深度掌握，晋级TypeScript高手',
-      collapsed: true,
-      items: TypescriptAdvancedArr,
-    },
-    {
-      text: 'TS 相关补充',
-      collapsed: true,
-      items: TypescriptSupplementArr,
-    },
-    {
-      text: '破解JavaScript高级玩法，成为精通 JS 的原生专家',
-      collapsed: true,
-      items: CrackJsArr,
-    },
-    {
-      text: '前端主流布局系统进阶与实战',
-      collapsed: true,
-      items: FrontLayoutArr,
-    },
-    {
-      text: '快速掌握前端必会的7种设计模式',
-      collapsed: true,
-      items: DesignPatternClassArr,
-    },
     {
       text: '高阶前端进阶必修，自主打造同比AntD的React组建库',
       collapsed: true,
@@ -471,26 +638,6 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
         {text: '01-搭建开发环境', link: "component-lib/index-01.md"},
         {text: '02-完整的写一个 Button 组件', link: "component-lib/index-02.md"},
       ],
-    },
-    {
-      text: '渡一大师课',
-      collapsed: true,
-      items: DuYiMasterArr
-    },
-    {
-      text: '前端性能优化 掌握行业实用专业前沿的解决方案',
-      collapsed: true,
-      items: PerformanceOptimizationStandardArr,
-    },
-    {
-      text: '前端性能优化入门与案例实战',
-      collapsed: true,
-      items: PerformanceOptimizationIntroductionArr,
-    },
-    {
-      text: '六大场景 梳理开发痛点 解锁前端进阶路',
-      collapsed: true,
-      items: DevelopPointArr,
     },
     {
       text: '2小时搞定移动端混合开发基础入门',
@@ -501,44 +648,6 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
       text: '玩转Vim 从放弃到爱不释手',
       collapsed: true,
       items: VimClassArr,
-    },
-    {
-      text: '前端要学的测试课 从Jest入门到TDD/BDD双实战',
-      collapsed: true,
-      items: TddBddArr,
-    },
-    {
-      text: '编程必备基础-大话 HTTP 协议',
-      collapsed: true,
-      items: HttpProtocolArr,
-    },
-    {
-      text: 'Http 协议',
-      collapsed: true,
-      items: HttpProtocolLarnArr,
-    },
-    {
-      text: 'JavaScript 核心进阶',
-      collapsed: true,
-      items: JavascriptCoreAdvancedArr,
-    },
-    {
-      text: 'JavaScript 核心原理精讲',
-      collapsed: true,
-      items: JavascriptCorePrincipleArr
-    },
-    {
-      text: 'React Native 保姆教程及实战小红书',
-      collapsed: true,
-      items: ReactNativeXiaoHongShuArr,
-    },
-    {
-      text: 'Node.js工程师养成计划',
-      collapsed: true,
-      items: [
-        {text: '01-Node 脚手架篇 - 打造自己的脚手架工具', link: 'node-nurture/index-01.md'},
-        {text: '02-Node原生实战篇-项目基建-原生Node开发Web服务器', link: 'node-nurture/index-02.md'}
-      ],
     },
   ]
 }
@@ -556,34 +665,9 @@ function sidebarColumn(): DefaultTheme.sidebaritem[] {
       items: gitRelatedArr,
     },
     {
-      text: 'JavaScript 设计模式精讲',
-      collapsed: true,
-      items: DesignPatternDepthColumnsArr,
-    },
-    {
       text: '跟BAT技术专家学Docker + K8s',
       collapsed: true,
       items: DockerK8sArr,
-    },
-    {
-      text: '现代web布局',
-      collapsed: true,
-      items: WebLayoutArr,
-    },
-    {
-      text: '前端高手进阶',
-      collapsed: true,
-      items: FrontMasterAdvancedArr,
-    },
-    {
-      text: 'Webpack 从零入门到工程化实战',
-      collapsed: true,
-      items: WebpackEngineeringArr,
-    },
-    {
-      text: '从 0 到 1 落地前端工程化',
-      collapsed: true,
-      items: EngineeringProjectArr,
     },
     {
       text: '从零开发H5可视化搭建项目',
@@ -594,11 +678,6 @@ function sidebarColumn(): DefaultTheme.sidebaritem[] {
       text: '掘金小册 Nest 通关秘籍',
       collapsed: true,
       items: NestH5Arr,
-    },
-    {
-      text: 'Vue.js 组件精讲',
-      collapsed: true,
-      items: ComponentEssentialsArr,
     },
     {
       text: 'Taro 多端开发实现原理与项目实战',
