@@ -1,8 +1,26 @@
-import { type DefaultTheme, defineConfig } from 'vitepress';
+import {type DefaultTheme, defineConfig} from 'vitepress';
 import fs from 'node:fs';
 import path from 'node:path';
 
 const rootPath = process.cwd();
+const columnPath = path.resolve(rootPath, 'docs/zh/column/')
+const columnsArr = fs.readdirSync(columnPath);
+
+// 整理 column文件夹下的额
+const columnsMdArr = []
+columnsArr.forEach((column) => {
+  fs.stat(columnPath + "/" + column, (err, dirName) => {
+    if (dirName.isDirectory()) {
+      // 这里是文件夹
+      const items = generatorMdFileArr('/zh/column/' + column + "/", column + "/")
+      columnsMdArr.push({
+        text: column,
+        collapsed: true,
+        items: items
+      })
+    }
+  })
+})
 
 function generatorMdFileArr(modulePath, linkPath) {
   const resolvedModulePath = path.resolve(rootPath, 'docs' + modulePath);
@@ -19,9 +37,6 @@ function generatorMdFileArr(modulePath, linkPath) {
       };
     });
 }
-
-const generatorColumnMdFileFunc = (path) =>
-  generatorMdFileArr('/zh/column/' + path, path);
 const generatorClassMdFileFunc = (path) =>
   generatorMdFileArr('/zh/class/' + path, path);
 const generatorSkillFrontMdFileFunc = (path) =>
@@ -30,21 +45,6 @@ const generatorInterviewMdFileFunc = (path) =>
   generatorMdFileArr('/zh/interview/' + path, path);
 const generatorCollectMdFileFunc = (path) =>
   generatorMdFileArr('/zh/collect/' + path, path);
-
-// column 相关
-const VisualH5Arr = generatorColumnMdFileFunc('visual-h5/');
-const NestH5Arr = generatorColumnMdFileFunc('nest-h5/');
-const TaroMultiEndedArr = generatorColumnMdFileFunc('taro-multi-ended/');
-const ReviewStudyArr = generatorColumnMdFileFunc('review-study/');
-const BusinessThinkingArr = generatorColumnMdFileFunc('business-thinking/');
-
-const gitRelatedArr = generatorColumnMdFileFunc('git-related/');
-const EmotionalIntelligenceLessonsArr = generatorColumnMdFileFunc(
-  'emotional-intelligence-lessons/'
-);
-const PlanRunCareerArr = generatorColumnMdFileFunc('plan-run-career/');
-const DockerK8sArr = generatorColumnMdFileFunc('docker-k8s/');
-
 // class 相关
 const FeInterview100Arr = generatorClassMdFileFunc('fe-interview-100/');
 const ProgramBasicArr = generatorClassMdFileFunc('program-basic/');
@@ -62,7 +62,9 @@ const ViteNoviceToMasteryArr = generatorClassMdFileFunc(
 const ViteDeeplyUnderstandArr = generatorClassMdFileFunc(
   'vite-deeply-understand/'
 );
-const ViteComponentLibraryPractice = generatorClassMdFileFunc('vite-component-library-practice/')
+const ViteComponentLibraryPractice = generatorClassMdFileFunc(
+  'vite-component-library-practice/'
+);
 const Vue3TechnologyRevelationArr = generatorClassMdFileFunc(
   'vue3-technology-revelation/'
 );
@@ -73,15 +75,23 @@ const Vue3ComponentEssentialsArr = generatorClassMdFileFunc(
   'vue3-component-essentials/'
 );
 const FrontEngineeringArr = generatorClassMdFileFunc('front-engineering/');
-const FrontEndEngineeringPreliminary = generatorClassMdFileFunc('front-end-engineering-preliminary/')
+const FrontEndEngineeringPreliminary = generatorClassMdFileFunc(
+  'front-end-engineering-preliminary/'
+);
 const TypescriptSimpleArr = generatorClassMdFileFunc('typescript-simple/');
-const TypescriptBeginnerTutorialArr = generatorClassMdFileFunc('typescript-beginner-tutorial/');
-const TypescriptClearanceSecretArr = generatorClassMdFileFunc('typescript-clearance-secret/');
+const TypescriptBeginnerTutorialArr = generatorClassMdFileFunc(
+  'typescript-beginner-tutorial/'
+);
+const TypescriptClearanceSecretArr = generatorClassMdFileFunc(
+  'typescript-clearance-secret/'
+);
 const TypescriptSupplementArr = generatorClassMdFileFunc(
   'typescript-supplement/'
 );
 const TypescriptAdvancedArr = generatorClassMdFileFunc('typescript-advanced/');
-const TypescriptFullyAdvancedGuideArr = generatorClassMdFileFunc('typescript-fully-advanced-guide/')
+const TypescriptFullyAdvancedGuideArr = generatorClassMdFileFunc(
+  'typescript-fully-advanced-guide/'
+);
 const CrackJsArr = generatorClassMdFileFunc('crack-js/');
 const FrontLayoutArr = generatorClassMdFileFunc('front-layout/');
 const DuYiMasterArr = generatorClassMdFileFunc('duyi-master/');
@@ -93,6 +103,11 @@ const PerformanceOptimizationIntroductionArr = generatorClassMdFileFunc(
   'performance-optimization-introduction/'
 );
 const NodeNurtureArr = generatorClassMdFileFunc('node-nurture/');
+const NodeFullStackArr = generatorClassMdFileFunc('nodejs-full-stack/');
+const NodejsCoreBaseArr = generatorClassMdFileFunc('nodejs-core-base/');
+const NodejsMiniProgramDevelopmentArr = generatorClassMdFileFunc(
+  'nodejs-mini-program-development/'
+);
 const JavascriptCoreAdvancedArr = generatorClassMdFileFunc(
   'javascript-core-advanced/'
 );
@@ -181,7 +196,7 @@ export const zh = defineConfig({
 
 function nav(): DefaultTheme.NavItem[] {
   return [
-    { text: '首页', link: '/zh/' },
+    {text: '首页', link: '/zh/'},
     {
       text: '技术相关',
       link: '/zh/skill/front/swordsman/',
@@ -204,7 +219,7 @@ function nav(): DefaultTheme.NavItem[] {
     },
     {
       text: '专栏学习',
-      link: '/zh/column/emotional-intelligence-lessons/01-开篇词',
+      link: '/zh/column/Git 原理详解及实用指南/00什么是版本控制系统（VCS）',
       activeMatch: '/zh/column/',
     },
     {
@@ -266,9 +281,9 @@ function sidebarFront(): DefaultTheme.SidebarItem[] {
           text: 'mini-webpack',
           items: MiniWebpackArr,
         },
-        { text: 'mini-router', link: 'mini-frame/mini-router.md' },
-        { text: 'mini-vue-router', link: 'mini-frame/mini-vue-router.md' },
-        { text: 'mini-pinia', link: 'mini-frame/mini-pinia.md' },
+        {text: 'mini-router', link: 'mini-frame/mini-router.md'},
+        {text: 'mini-vue-router', link: 'mini-frame/mini-vue-router.md'},
+        {text: 'mini-pinia', link: 'mini-frame/mini-pinia.md'},
       ],
     },
     {
@@ -286,7 +301,7 @@ function sidebarFront(): DefaultTheme.SidebarItem[] {
     {
       text: '一些翻译',
       collapsed: false,
-      items: [{ text: 'RequireJs', link: 'translate/require-js.md' }],
+      items: [{text: 'RequireJs', link: 'translate/require-js.md'}],
     },
   ];
 }
@@ -296,10 +311,10 @@ function sidebarInterview(): DefaultTheme.SidebarItem[] {
     {
       text: '面试题',
       collapsed: false,
-      items: [{ text: '作用域', link: 'scope/' }],
+      items: [{text: '作用域', link: 'scope/'}],
     },
-    { text: '简历相关', link: 'resume/index' },
-    { text: 'Html 相关', link: 'html/html.md' },
+    {text: '简历相关', link: 'resume/index'},
+    {text: 'Html 相关', link: 'html/html.md'},
     {
       text: 'Css 相关',
       collapsed: false,
@@ -330,8 +345,8 @@ function sidebarInterview(): DefaultTheme.SidebarItem[] {
 
 function sidebarCollect(): DefaultTheme.SidebarItem[] {
   return [
-    { text: 'Github大佬', link: 'github/github.md' },
-    { text: '推荐', link: 'index' },
+    {text: 'Github大佬', link: 'github/github.md'},
+    {text: '推荐', link: 'index'},
     {
       text: '技术相关',
       collapsed: false,
@@ -397,25 +412,25 @@ function sidebarOther(): DefaultTheme.SidebarItem[] {
       text: '推荐',
       collapsed: false,
       items: [
-        { text: 'APP 推荐', link: 'index.md' },
-        { text: '影视博主推荐', link: 'video.md' },
+        {text: 'APP 推荐', link: 'index.md'},
+        {text: '影视博主推荐', link: 'video.md'},
       ],
     },
     {
       text: '常用快捷键',
       collapsed: false,
       items: [
-        { text: 'VSCode', link: 'hotkey/vscode.md' },
-        { text: 'Chrome', link: 'hotkey/chrome.md' },
-        { text: 'Karabiner Elements', link: 'hotkey/karabiner-elements.md' },
+        {text: 'VSCode', link: 'hotkey/vscode.md'},
+        {text: 'Chrome', link: 'hotkey/chrome.md'},
+        {text: 'Karabiner Elements', link: 'hotkey/karabiner-elements.md'},
       ],
     },
     {
       text: '折腾笔记',
       collapsed: false,
       items: [
-        { text: 'Mac 在 Windows 下使用', link: 'toss/mac-in-windows.md' },
-        { text: 'Deepin', link: 'toss/deepin.md' },
+        {text: 'Mac 在 Windows 下使用', link: 'toss/mac-in-windows.md'},
+        {text: 'Deepin', link: 'toss/deepin.md'},
       ],
     },
     {
@@ -527,8 +542,8 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
         {
           text: '基于 Vite 的组件库工程化实战',
           collapsed: true,
-          items: ViteComponentLibraryPractice
-        }
+          items: ViteComponentLibraryPractice,
+        },
       ],
     },
     {
@@ -564,7 +579,7 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
         {
           text: 'TypeScript 类型体操通关秘籍',
           collapsed: true,
-          items: TypescriptClearanceSecretArr
+          items: TypescriptClearanceSecretArr,
         },
         {
           text: 'TS 从入门到深度掌握，晋级TypeScript高手',
@@ -572,9 +587,9 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
           items: TypescriptAdvancedArr,
         },
         {
-          text:"TypeScript 全面进阶指南",
+          text: 'TypeScript 全面进阶指南',
           collapsed: true,
-          items: TypescriptFullyAdvancedGuideArr
+          items: TypescriptFullyAdvancedGuideArr,
         },
         {
           text: 'TS 相关补充',
@@ -610,7 +625,7 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
         {
           text: '初探前端工程化',
           collapsed: true,
-          items: FrontEndEngineeringPreliminary
+          items: FrontEndEngineeringPreliminary,
         },
         {
           text: '吃透前端工程化，大厂级实战项目以战带练',
@@ -653,6 +668,21 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
           text: 'Node.js工程师养成计划',
           collapsed: true,
           items: NodeNurtureArr,
+        },
+        {
+          text: 'Nodejs 从前端到全栈',
+          collapsed: true,
+          items: NodeFullStackArr,
+        },
+        {
+          text: 'nodejs-core-base',
+          collapsed: true,
+          items: NodejsCoreBaseArr,
+        },
+        {
+          text: '基于hapi的Nodejs小程序后端开发实践指南',
+          collapsed: true,
+          items: NodejsMiniProgramDevelopmentArr,
         },
       ],
     },
@@ -712,20 +742,20 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
           collapsed: true,
           items: LowCodeArr,
         },
-      ]
+      ],
     },
     {
       text: '编程基础',
       collapsed: true,
       items: ProgramBasicArr,
     },
-    { text: '专为程序员设计的线性代数课程', link: 'linear-algebra' },
-    { text: '从0到1开发一款IOS APP', link: 'ios-development/01' },
+    {text: '专为程序员设计的线性代数课程', link: 'linear-algebra'},
+    {text: '从0到1开发一款IOS APP', link: 'ios-development/01'},
     {
       text: '高阶前端进阶必修，自主打造同比AntD的React组建库',
       collapsed: true,
       items: [
-        { text: '01-搭建开发环境', link: 'component-lib/index-01.md' },
+        {text: '01-搭建开发环境', link: 'component-lib/index-01.md'},
         {
           text: '02-完整的写一个 Button 组件',
           link: 'component-lib/index-02.md',
@@ -746,51 +776,5 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
 }
 
 function sidebarColumn(): DefaultTheme.sidebaritem[] {
-  return [
-    {
-      text: '给程序员的职场情商课',
-      collapsed: true,
-      items: EmotionalIntelligenceLessonsArr,
-    },
-    {
-      text: '程序员职业小白书-—如何规划和经营你的职业',
-      collapsed: true,
-      items: PlanRunCareerArr
-    },
-    {
-      text: 'Git原理详解与实操指南',
-      collapsed: true,
-      items: gitRelatedArr,
-    },
-    {
-      text: '跟BAT技术专家学Docker + K8s',
-      collapsed: true,
-      items: DockerK8sArr,
-    },
-    {
-      text: '从零开发H5可视化搭建项目',
-      collapsed: true,
-      items: VisualH5Arr,
-    },
-    {
-      text: '掘金小册 Nest 通关秘籍',
-      collapsed: true,
-      items: NestH5Arr,
-    },
-    {
-      text: 'Taro 多端开发实现原理与项目实战',
-      collapsed: true,
-      items: TaroMultiEndedArr,
-    },
-    {
-      text: '跟着高手学复盘',
-      collapsed: true,
-      items: ReviewStudyArr,
-    },
-    {
-      text: '商业思维案例笔记',
-      collapsed: true,
-      items: BusinessThinkingArr,
-    },
-  ];
+  return columnsMdArr
 }
