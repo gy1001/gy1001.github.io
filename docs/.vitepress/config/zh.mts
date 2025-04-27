@@ -81,13 +81,16 @@ const Vue3ComponentEssentialsArr = generatorClassMdFileFunc(
 );
 const FrontEngineeringArr = generatorClassMdFileFunc('front-engineering/');
 const TypescriptSimpleArr = generatorClassMdFileFunc('typescript-simple/');
+const TypescriptBeginnerTutorialArr = generatorClassMdFileFunc('typescript-beginner-tutorial/');
+const TypescriptClearanceSecretArr = generatorClassMdFileFunc('typescript-clearance-secret/');
 const TypescriptSupplementArr = generatorClassMdFileFunc(
   'typescript-supplement/'
 );
+const TypescriptAdvancedArr = generatorClassMdFileFunc('typescript-advanced/');
+const TypescriptFullyAdvancedGuideArr = generatorClassMdFileFunc('typescript-fully-advanced-guide/')
 const CrackJsArr = generatorClassMdFileFunc('crack-js/');
 const FrontLayoutArr = generatorClassMdFileFunc('front-layout/');
 const DuYiMasterArr = generatorClassMdFileFunc('duyi-master/');
-const TypescriptAdvancedArr = generatorClassMdFileFunc('typescript-advanced/');
 const DesignPatternClassArr = generatorClassMdFileFunc('design-pattern/');
 const PerformanceOptimizationStandardArr = generatorClassMdFileFunc(
   'performance-optimization-standard/'
@@ -546,9 +549,24 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
           items: TypescriptSimpleArr,
         },
         {
+          text: 'TypeScript 入门教程',
+          collapsed: true,
+          items: TypescriptBeginnerTutorialArr,
+        },
+        {
+          text: 'TypeScript 类型体操通关秘籍',
+          collapsed: true,
+          items: TypescriptClearanceSecretArr
+        },
+        {
           text: 'TS 从入门到深度掌握，晋级TypeScript高手',
           collapsed: true,
           items: TypescriptAdvancedArr,
+        },
+        {
+          text:"TypeScript 全面进阶指南",
+          collapsed: true,
+          items: TypescriptFullyAdvancedGuideArr
         },
         {
           text: 'TS 相关补充',
