@@ -76,8 +76,8 @@ const Vue3TechnologyRevelationArr = generatorClassMdFileFunc(
 const Vue3EnterprisePractical = generatorClassMdFileFunc(
   'vue3-enterprise-practical/'
 );
-const ComponentEssentialsArr = generatorClassMdFileFunc(
-  'component-essentials/'
+const Vue3ComponentEssentialsArr = generatorClassMdFileFunc(
+  'vue3-component-essentials/'
 );
 const FrontEngineeringArr = generatorClassMdFileFunc('front-engineering/');
 const TypescriptSimpleArr = generatorClassMdFileFunc('typescript-simple/');
@@ -459,7 +459,7 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
         {
           text: 'Vue.js 组件精讲',
           collapsed: true,
-          items: ComponentEssentialsArr,
+          items: Vue3ComponentEssentialsArr,
         },
         {
           text: 'Vue3 技术揭秘',
