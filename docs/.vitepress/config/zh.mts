@@ -81,6 +81,7 @@ const Vue3ComponentEssentialsArr = generatorClassMdFileFunc(
   'vue3-component-essentials/'
 );
 const FrontEngineeringArr = generatorClassMdFileFunc('front-engineering/');
+const FrontEndEngineeringPreliminary = generatorClassMdFileFunc('front-end-engineering-preliminary/')
 const TypescriptSimpleArr = generatorClassMdFileFunc('typescript-simple/');
 const TypescriptBeginnerTutorialArr = generatorClassMdFileFunc('typescript-beginner-tutorial/');
 const TypescriptClearanceSecretArr = generatorClassMdFileFunc('typescript-clearance-secret/');
@@ -605,6 +606,11 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
       text: '工程化相关',
       collapsed: true,
       items: [
+        {
+          text: '初探前端工程化',
+          collapsed: true,
+          items: FrontEndEngineeringPreliminary
+        },
         {
           text: '吃透前端工程化，大厂级实战项目以战带练',
           collapsed: true,
