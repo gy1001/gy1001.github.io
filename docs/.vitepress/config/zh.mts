@@ -209,7 +209,7 @@ function nav(): DefaultTheme.NavItem[] {
     },
     {
       text: '专栏学习',
-      link: '/zh/column/Git 原理详解及实用指南/00什么是版本控制系统（VCS）',
+      link: '/zh/column/Git原理详解及实用指南/00-什么是版本控制系统（VCS）',
       activeMatch: '/zh/column/',
     },
     {
