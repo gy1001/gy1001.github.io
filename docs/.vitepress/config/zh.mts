@@ -7,7 +7,7 @@ const columnPath = path.resolve(rootPath, 'docs/zh/column/')
 const columnsArr = fs.readdirSync(columnPath);
 
 // 整理 column文件夹下的额
-const columnsMdArr = []
+const columnsMdArr: DefaultTheme.SidebarItem[] = []
 columnsArr.forEach((column) => {
   fs.stat(columnPath + "/" + column, (err, dirName) => {
     if (dirName.isDirectory()) {
@@ -745,6 +745,6 @@ function sideBarClass(): DefaultTheme.SidebarItem[] {
   ];
 }
 
-function sidebarColumn(): DefaultTheme.sidebaritem[] {
+function sidebarColumn(): DefaultTheme.SidebarItem[] {
   return columnsMdArr
 }
